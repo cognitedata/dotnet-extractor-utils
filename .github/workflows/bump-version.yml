@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 3.1.101
 
     - name: Dotnet Pack
-      run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${{ GITHUB_REF##*/v }}  
+      run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
 
     - name: Dotnet Nuget Push
       run: dotnet nuget push nuget-packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
