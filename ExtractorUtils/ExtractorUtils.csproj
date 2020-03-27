@@ -1,9 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Cognite.ExtractorUtils</PackageId>
+    <Author>Cognite AS</Author>
+    <Company>Cognite AS</Company>
+    <Copyright>Cognite AS</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
-
+  <ItemGroup>
+    <None Include="..\LICENSE" Pack="true" Visible="false" PackagePath=""/>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="YamlDotNet" Version="8.1.0" />
   </ItemGroup>
