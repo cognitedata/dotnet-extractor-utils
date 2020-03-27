@@ -10,26 +10,19 @@ jobs:
       - uses: actions/checkout@master
       - name: Bump version and push tag
         uses: mathieudutour/github-tag-action@v4
+        id: bump
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           default_bump: prerelease
-  
-  publish:
-    needs: tagging
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: olegtarasov/get-tag@v2
-      id: tagName
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
-    - name: Test with dotnet
-      run: dotnet test
-    - name: Create Nuget package
-      run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${{ steps.tagName.outputs.tag }}
-    - name: Push 
-      run: dotnet nuget push nuget-packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+      - name: Test with dotnet
+        run: dotnet test
+      - name: Create Nuget package
+        run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${{ steps.bump.outputs.new_tag }}
+      - name: Push 
+        run: dotnet nuget push nuget-packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
