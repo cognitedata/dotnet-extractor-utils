@@ -2,9 +2,14 @@
     <img src="./cognite_logo.png" alt="Cognite logo" title="Cognite" align="right" height="80" />
 </a>
 
-# .Net Utilities for Building Cognite Extractors
+.Net Utilities for Building Cognite Extractors
 =======================
+![Release](https://github.com/cognitedata/dotnet-extractor-utils/workflows/Create%20Release/badge.svg)
+[![Nuget](https://img.shields.io/nuget/vpre/Cognite.ExtractorUtils)](https://www.nuget.org/packages/Cognite.ExtractorUtils/)
 
+_**Under development**, not recommended for production use cases_
+
+A library containing utilities for building extractors in .Net
 
 # Code of Conduct
 
