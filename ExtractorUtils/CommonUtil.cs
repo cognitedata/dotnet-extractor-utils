@@ -2,7 +2,7 @@
 
 namespace ExtractorUtils
 {
-    public static class CommonUtil
+    internal static class CommonUtil
     {
         public static bool IsNumericType(this Type t)
         {

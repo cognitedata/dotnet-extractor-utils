@@ -7,12 +7,14 @@
     <Company>Cognite AS</Company>
     <Copyright>Cognite AS</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Description>
+      A library containing utilities for building extractors in .Net
+    </Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\LICENSE" Pack="true" Visible="false" PackagePath=""/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="YamlDotNet" Version="8.1.0" />
+    <PackageReference Include="YamlDotNet" Version="8.1.0"/>
   </ItemGroup>
-
 </Project>

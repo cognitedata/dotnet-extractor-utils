@@ -69,5 +69,22 @@ namespace ExtractorUtils.Test
             Assert.Equal("more bar: too here", x.Foo);
         }
 
+        [Fact]
+        public static void TagMapping()
+        {
+            string yaml = $"!test{Environment.NewLine}foo: bar{Environment.NewLine}bar: 1";
+            Configuration.AddTagMapping<TestConfig>("!test");
+            TestConfig x = Configuration.ReadString<TestConfig>(yaml);
+            Assert.Equal("bar", x.Foo);
+            Assert.Equal(1, x.Bar);
+        }
+
+        [Fact]
+        public static void BaseConfig()
+        {
+            string yaml = "version: 2";
+            BaseConfig config = Configuration.ReadString<BaseConfig>(yaml);
+            Assert.Equal(2, config.Version);
+        }
     }
 }
