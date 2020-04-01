@@ -114,7 +114,7 @@ namespace ExtractorUtils.Test
 
             var services = new ServiceCollection();
             var ex = Assert.Throws<ConfigurationException>(() => services.AddConfig<TestBaseConfig>(path, versions));
-            Assert.True(ex.Message.Contains("version 2 is not supported"));
+            Assert.Contains("version 2 is not supported", ex.Message);
 
             versions.Add(2);
             services.AddConfig<TestBaseConfig>(path, versions);
