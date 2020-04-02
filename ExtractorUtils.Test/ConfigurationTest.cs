@@ -1,15 +1,22 @@
+using System.Collections.Generic;
+using System.IO;
 using System;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ExtractorUtils.Test
 {
     #pragma warning disable CA1812
-        class TestConfig
-#pragma warning restore CA1812
-        {
-            public string Foo { get; set; } = "";
-            public int Bar { get; set; }
-        }
+    class TestConfig
+    #pragma warning restore CA1812
+    {
+        public string Foo { get; set; } = "";
+        public int Bar { get; set; }
+    }
+
+    class TestBaseConfig : BaseConfig {
+        public string Foo { get; set; } = "";
+    }
 
     public class ConfigurationTest
     {
@@ -85,6 +92,38 @@ namespace ExtractorUtils.Test
             string yaml = "version: 2";
             BaseConfig config = Configuration.ReadString<BaseConfig>(yaml);
             Assert.Equal(2, config.Version);
+        }
+
+        [Fact]
+        public static void ReadFromFile() {
+            string path = "test-config.yml";
+            string[] lines = { "version: 1", "foo: bar" };
+            File.WriteAllLines(path, lines);
+            var config = Configuration.Read<TestBaseConfig>(path);
+            Assert.Equal(1, config.Version);
+            Assert.Equal("bar", config.Foo);
+            File.Delete(path);
+        }
+
+        [Fact]
+        public static void InjectConfiguration() {
+            string path = "test-config.yml";
+            string[] lines = { "version: 2", "foo: bar" };
+            File.WriteAllLines(path, lines);
+            var versions = new List<int>() { 1 };
+
+            var services = new ServiceCollection();
+            var ex = Assert.Throws<ConfigurationException>(() => services.AddConfig<TestBaseConfig>(path, versions));
+            Assert.Contains("version 2 is not supported", ex.Message);
+
+            versions.Add(2);
+            services.AddConfig<TestBaseConfig>(path, versions);
+            using (var provider = services.BuildServiceProvider()) {
+                var config = provider.GetRequiredService<TestBaseConfig>();
+                Assert.Equal(2, config.Version);
+                Assert.Equal("bar", config.Foo);
+            }
+            File.Delete(path);
         }
     }
 }

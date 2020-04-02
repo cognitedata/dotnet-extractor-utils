@@ -1,10 +1,12 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using System.Collections.Generic;
 
 namespace ExtractorUtils
 {
@@ -56,6 +58,71 @@ namespace ExtractorUtils
         public static void AddTagMapping<T>(string tag) {
             builder = builder.WithTagMapping(tag, typeof(T));
             deserializer = builder.Build();
+        }
+    }
+
+    /// <summary>
+    /// Extension utilities for configuration.
+    /// </summary>
+    public static class ConfigurationExtensions {
+        
+        /// <summary>
+        /// Read the config of type <typeparamref name="T"/> from the YAML file in <paramref name="path"/>
+        /// and adds it as a singleton to the service collection <paramref name="services"/>
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <param name="path">Path to the YAML file</param>
+        /// <param name="acceptedConfigVersions">Accepted versions of the config file</param>
+        /// <typeparam name="T">A type that inherits from the BaseConfig.</typeparam>
+        /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
+        /// the config file is not found or in case of YAML parsing error.</exception>
+        public static void AddConfig<T>(this IServiceCollection services,
+                                        string path,
+                                        IList<int> acceptedConfigVersions) where T : BaseConfig {
+            try {
+                var config = Configuration.Read<T>(path);
+                // Check config version
+                if (!acceptedConfigVersions.Contains(config.Version))
+                {
+                    throw new ConfigurationException($"Config version {config.Version} is not supported in this version of the PI Extractor");
+                }
+                services.AddSingleton(config);
+
+            }
+            catch (System.IO.FileNotFoundException fnfe)
+            {
+                throw new ConfigurationException($"Config file not found: {path}", fnfe);
+            }
+            catch (YamlDotNet.Core.YamlException ye)
+            {
+                throw new ConfigurationException($"Failed to load config at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Exception produced by the configuration utils 
+    /// </summary>
+    public class ConfigurationException : Exception
+    {
+        /// <summary>
+        /// Create a new configuration exception with the given <paramref name="message"/>
+        /// </summary>
+        /// <param name="message">Exception message</param>
+        /// <returns></returns>
+        public ConfigurationException(string message) : base(message)
+        {
+        }
+
+        /// <summary>
+        /// Create a new configuration exception with the given <paramref name="message"/>
+        /// and containing the given <paramref name="innerException"/>
+        /// </summary>
+        /// <param name="message">Exception message</param>
+        /// <param name="innerException">Inner exception</param>
+        /// <returns></returns>
+        public ConfigurationException(string message, Exception innerException) : base(message, innerException)
+        {
         }
     }
 
