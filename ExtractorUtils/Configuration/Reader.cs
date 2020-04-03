@@ -86,7 +86,8 @@ namespace ExtractorUtils
                 {
                     throw new ConfigurationException($"Config version {config.Version} is not supported in this version of the PI Extractor");
                 }
-                services.AddSingleton(config);
+                services.AddSingleton<T>(config);
+                services.AddSingleton<BaseConfig>((BaseConfig) config); // Allows it to be resolved as BaseConfig
 
             }
             catch (System.IO.FileNotFoundException fnfe)
