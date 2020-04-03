@@ -49,9 +49,9 @@ namespace ExtractorUtils {
     public class ConsoleConfig
     {
         /// <summary>
-        /// Logging level. One of 'verbose', 'debug', 'information', 'warning', 'error', 'fatal'.
+        /// Logging level.
         /// </summary>
-        /// <value>Log level name</value>
+        /// <value>One of 'verbose', 'debug', 'information', 'warning', 'error', 'fatal'</value>
         public string Level { get; set; }
     }
 
@@ -61,9 +61,9 @@ namespace ExtractorUtils {
     public class FileConfig
     {
         /// <summary>
-        /// Logging level. One of 'verbose', 'debug', 'information', 'warning', 'error', 'fatal'.
+        /// Logging level.
         /// </summary>
-        /// <value>Log level name</value>
+        /// <value>One of 'verbose', 'debug', 'information', 'warning', 'error', 'fatal'</value>
         public string Level { get; set; }
         
         /// <summary>
@@ -79,6 +79,12 @@ namespace ExtractorUtils {
         /// </summary>
         /// <value>Maximum number of files</value>
         public int RetentionLimit { get; set; } = 31;
+
+        /// <summary>
+        /// Rolling interval for log files.
+        /// </summary>
+        /// <value>One of 'day', 'hour'. Defaults to 'day'</value>
+        public string RollingInterval { get; set; } = "day";
     }
 
     /// <summary>

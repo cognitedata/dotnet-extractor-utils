@@ -46,9 +46,13 @@ namespace ExtractorUtils {
 
             if (logToFile && config.File.Path != null)
             {
+                RollingInterval ri = RollingInterval.Day;
+                if (config.File.RollingInterval == "hour") {
+                    ri = RollingInterval.Hour;
+                }
                 logConfig.WriteTo.Async(p => p.File(
                     config.File.Path,
-                    rollingInterval: RollingInterval.Day,
+                    rollingInterval: ri,
                     retainedFileCountLimit: config.File.RetentionLimit,
                     restrictedToMinimumLevel: fileLevel,
                     outputTemplate: fileLevel <= LogEventLevel.Debug ? outputTemplateDebug : outputTemplate));

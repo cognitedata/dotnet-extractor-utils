@@ -27,7 +27,8 @@ namespace ExtractorUtils.Test
                                 "    level: verbose",
                                 "  file:",
                                 "    level: debug",
-                               @"    path: logs/log.txt" };
+                               @"    path: logs/log.txt",
+                                "    rolling-interval: day" };
             File.WriteAllLines(path, lines);
             var versions = new List<int>() { 2 };
 
