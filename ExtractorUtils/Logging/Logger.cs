@@ -81,12 +81,20 @@ namespace ExtractorUtils {
             Log.Logger = logConfig.CreateLogger();
         }
 
+        /// <summary>
+        /// Create a default console logger and returns it.
+        /// </summary>
+        /// <returns>A <see cref="Microsoft.Extensions.Logging.ILogger"/> logger with default properties</returns>
         public static Microsoft.Extensions.Logging.ILogger GetDefault() {
             var loggerFactory = new LoggerFactory();
             loggerFactory.AddSerilog(GetSerilogDefault(), true);
             return loggerFactory.CreateLogger("default");
         }
 
+        /// <summary>
+        /// Create a default Serilog console logger and returns it.
+        /// </summary>
+        /// <returns>A <see cref="Serilog.ILogger"/> logger with default properties</returns>
         public static Serilog.ILogger GetSerilogDefault() {
             return new LoggerConfiguration().WriteTo.Console().CreateLogger();
         }
@@ -118,10 +126,25 @@ namespace ExtractorUtils {
         }
     }
 
+    /// <summary>
+    /// Extension utilities for logging
+    /// </summary>
     public static class LoggingExtensions {
+        
+        /// <summary>
+        /// Adds a configured Serilog logger as singletons of <see cref="Microsoft.Extensions.Logging.ILogger"/> and
+        /// <see cref="Serilog.ILogger"/> to the <paramref name="services"/> collection.
+        /// A configuration object of type <see cref="BaseConfig"/> is required, and should have been added to the
+        /// collection as well.
+        /// </summary>
+        /// <param name="services">The service collection</param>
         public static void AddLogger(this IServiceCollection services) {
             services.AddSingleton<Serilog.ILogger>(s => {
                 var config = s.GetRequiredService<BaseConfig>();
+                if (config.Logger == null) {
+                    // No logging configuration
+                    return Logging.GetSerilogDefault();
+                }
                 Logging.Configure(config.Logger);
                 return Log.Logger;
             });
