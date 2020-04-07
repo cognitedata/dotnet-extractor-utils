@@ -20,6 +20,7 @@ namespace ExtractorUtils {
         private MetricsConfig _config;
         private ILogger<MetricsService> _logger;
         private IList<MetricPusher> _pushers;
+        private MetricServer _server;
 
         internal const string HttpClientName = "prometheus-httpclient";
 
@@ -40,19 +41,29 @@ namespace ExtractorUtils {
         /// Starts a Prometheus server for scrape and multiple push gateway destinations, based on the configuration. 
         /// </summary>
         public void Start() {
-            if (_config == null) {
+            if (_config == null)
+            {
                 _logger.LogWarning("Metrics disabled: metrics configuration missing");
                 return;
             }
 
             var pushGateways = _config.PushGateways;
-            if (pushGateways != null && pushGateways.Any()) {
-                foreach (var gateway in pushGateways) {
+            if (pushGateways != null && pushGateways.Any())
+            {
+                foreach (var gateway in pushGateways)
+                {
 
                     HttpClient client = _clientFactory.CreateClient(HttpClientName);
                     var pusher = StartPusher(gateway, client);
-                    _pushers.Add(pusher);
+                    if (pusher != null)
+                    {
+                        _pushers.Add(pusher);
+                    }
                 }
+            }
+
+            if (_config.Server != null) {
+                _server = StartServer(_config.Server);
             }
         }
 
@@ -61,8 +72,13 @@ namespace ExtractorUtils {
         /// </summary>
         /// <returns></returns>
         public async Task Stop() {
-            if (_pushers.Any()) {
+            if (_pushers.Any())
+            {
                 await Task.WhenAll(_pushers.Select(p => p.StopAsync()));
+            }
+            if (_server != null)
+            {
+                await _server.StopAsync();
             }
         }
 
@@ -75,7 +91,8 @@ namespace ExtractorUtils {
 
             _logger.LogInformation("Pushing metrics to {PushgatewayHost} with job name {PushgatewayJob}", config.Host, config.Job);
 
-            if (config.Username.TrimToNull() != null && config.Password.TrimToNull() != null) {
+            if (config.Username.TrimToNull() != null && config.Password.TrimToNull() != null)
+            {
                 var headerValue = Convert.ToBase64String(
                         System.Text.Encoding
                             .GetEncoding("ISO-8859-1")
@@ -87,17 +104,33 @@ namespace ExtractorUtils {
             {
                 Endpoint =  config.Host,
                 Job = config.Job,
+                IntervalMilliseconds = config.PushInterval * 1_000L,
                 HttpClientProvider = () => client
             });
-            try {
+            try 
+            {
                 pusher.Start();
             }
-            catch (InvalidOperationException e) {
+            catch (InvalidOperationException e)
+            {
                 _logger.LogWarning("Could not start metrics pusher to {PushgatewayHost}: {Message}", config.Host, e.Message);
                 return null;
             }
             return pusher;
-        } 
+        }
+
+        private MetricServer StartServer(MetricsServerConfig config)
+        {
+            if (config.Host.TrimToNull() == null || config.Port <= 0)
+            {
+                _logger.LogWarning("Invalid metrics server (missing Host or Port)");
+                return null;
+            }
+            var server = new MetricServer(hostname: config.Host, port: config.Port);
+            server.Start();
+            _logger.LogInformation("Metrics server started at {MetricsServerHost}:{MetricsServerPort}", config.Host, config.Port);
+            return server;
+        }
     }
 
     /// <summary>

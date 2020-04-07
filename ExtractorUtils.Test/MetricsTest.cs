@@ -50,7 +50,8 @@ namespace ExtractorUtils.Test {
                                $"    - host: {endpoint}",
                                $"      job: {job}",
                                 "      username: user",
-                                "      password: pass" };
+                                "      password: pass",
+                                "      push-interval: 1" };
             File.WriteAllLines(path, lines);
 
             // Mock http client factory
@@ -160,5 +161,6 @@ namespace ExtractorUtils.Test {
 
             File.Delete(path);
         }
+
     }
 }

@@ -150,7 +150,7 @@ namespace ExtractorUtils {
         /// <summary>
         /// Host name
         /// </summary>
-        /// <value>Server host</value>
+        /// <value>Host name for the server. Example: localhost (without scheme and port)</value>
         public string Host { get; set; }
         /// <summary>
         /// Port
@@ -165,9 +165,9 @@ namespace ExtractorUtils {
     public class PushGatewayConfig
     {
         /// <summary>
-        /// Host name
+        /// Gateway host
         /// </summary>
-        /// <value>Gateway host</value>
+        /// <value>Absolute Uri for the host. Example: http://localhost:9091</value>
         public string Host { get; set; }
         /// <summary>
         /// Job name
@@ -184,6 +184,11 @@ namespace ExtractorUtils {
         /// </summary>
         /// <value>Password</value>
         public string Password { get; set; }
+        /// <summary>
+        /// Interval in seconds for pushing data to the gateway.
+        /// </summary>
+        /// <value></value>
+        public int PushInterval { get; internal set; } = 1;
     }
 
 #endregion
