@@ -11,21 +11,34 @@ using Polly.Extensions.Http;
 using System.Threading.Tasks;
 
 namespace ExtractorUtils {
-    public class MetricsPusher {
+    /// <summary>
+    /// Utility class for configuring <see href="https://prometheus.io/">Prometheus</see> for monitoring and metrics.
+    /// A metrics server and multiple push gateway destinations can be configured according to <see cref="MetricsConfig"/>.
+    /// </summary>
+    public class MetricsService {
         private IHttpClientFactory _clientFactory;
         private MetricsConfig _config;
-        private ILogger<MetricsPusher> _logger;
+        private ILogger<MetricsService> _logger;
         private IList<MetricPusher> _pushers;
 
         internal const string HttpClientName = "prometheus-httpclient";
 
-        public MetricsPusher(IHttpClientFactory clientFactory, BaseConfig config, ILogger<MetricsPusher> logger) {
+        /// <summary>
+        /// Initialized the metrics service with the given <paramref name="config"/> object.
+        /// </summary>
+        /// <param name="clientFactory">A pre-configured http client factory</param>
+        /// <param name="config">Configuration object</param>
+        /// <param name="logger">Logger</param>
+        public MetricsService(IHttpClientFactory clientFactory, BaseConfig config, ILogger<MetricsService> logger) {
             _clientFactory = clientFactory;
             _config = config.Metrics;
             _logger = logger;
             _pushers = new List<MetricPusher>();
         }
 
+        /// <summary>
+        /// Starts a Prometheus server for scrape and multiple push gateway destinations, based on the configuration. 
+        /// </summary>
         public void Start() {
             if (_config == null) {
                 _logger.LogWarning("Metrics disabled: metrics configuration missing");
@@ -43,6 +56,10 @@ namespace ExtractorUtils {
             }
         }
 
+        /// <summary>
+        /// Stops the metrics service.
+        /// </summary>
+        /// <returns></returns>
         public async Task Stop() {
             if (_pushers.Any()) {
                 await Task.WhenAll(_pushers.Select(p => p.StopAsync()));
@@ -50,7 +67,7 @@ namespace ExtractorUtils {
         }
 
         private MetricPusher StartPusher(PushGatewayConfig config, HttpClient client) {
-            if (config.Host == null || config.Job == null)
+            if (config.Host.TrimToNull() == null || config.Job.TrimToNull() == null)
             {
                 _logger.LogWarning("Invalid metrics push destination (missing Host or Job)");
                 return null;
@@ -83,13 +100,22 @@ namespace ExtractorUtils {
         } 
     }
 
+    /// <summary>
+    /// Extension utilities for metrics.
+    /// </summary>
     public static class MetricsExtensions {
         
+        /// <summary>
+        /// Adds a configured metrics service to the <paramref name="services"/> collection
+        /// Also adds a named <see cref="IHttpClientFactory"/> to be used by the push gateways, with
+        /// simple retry policy to handle transient http errors configured (5 retries with exponential backoff).
+        /// </summary>
+        /// <param name="services"></param>
         public static void AddMetrics(this IServiceCollection services)
         {
-            services.AddHttpClient(MetricsPusher.HttpClientName)
+            services.AddHttpClient(MetricsService.HttpClientName)
                 .AddPolicyHandler(GetRetryPolicy());
-            services.AddSingleton<MetricsPusher>();
+            services.AddSingleton<MetricsService>();
         }
 
         static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()

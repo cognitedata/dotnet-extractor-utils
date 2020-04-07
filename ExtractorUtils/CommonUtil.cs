@@ -11,8 +11,15 @@ namespace ExtractorUtils
         }
     }
 
+    /// <summary>
+    /// Various utility functions
+    /// </summary>
     public static class Utils
     {
+        /// <summary>
+        /// Trim this string object to null
+        /// </summary>
+        /// <returns>A string with all leading and trailing white-space. If empty or null, returns null</returns>
         public static string TrimToNull(this string @this)
         {
             string s = @this?.Trim() ?? null;

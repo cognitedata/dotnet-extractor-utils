@@ -19,7 +19,11 @@ namespace ExtractorUtils {
         /// <value>A <see cref="LoggerConfig"/> config object</value>
         public LoggerConfig Logger { get; set; }
 
-        public MetricsConfig Metrics;
+        /// <summary>
+        /// Metrics configuration (optional)
+        /// </summary>
+        /// <value>A <see cref="MetricsConfig"/> config object</value>
+        public MetricsConfig Metrics { get; set; }
     }
 
 #region Logging configuration
@@ -116,26 +120,69 @@ namespace ExtractorUtils {
 #endregion
 
 #region Metrics configuration
+    
+    /// <summary>
+    /// Metrics configuration object
+    /// </summary>
     public class MetricsConfig
     {
+        /// <summary>
+        /// Start a metrics server in the extractor for Prometheus scrape (optional)
+        /// </summary>
+        /// <value>A <see cref="MetricsServerConfig"/> config object</value>
         public MetricsServerConfig Server { get; set; }
 #pragma warning disable CA2227 // Collection properties should be read only
+        
+        /// <summary>
+        /// A list of Prometheus push gateway destinations (optional)
+        /// </summary>
+        /// <value>A list <see cref="PushGatewayConfig"/> of config objects</value>
         public List<PushGatewayConfig> PushGateways { get; set; }
 #pragma warning restore CA2227 // Collection properties should be read only
 
     }
 
+    /// <summary>
+    /// Metrics server configuration
+    /// </summary>
     public class MetricsServerConfig
     {
+        /// <summary>
+        /// Host name
+        /// </summary>
+        /// <value>Server host</value>
         public string Host { get; set; }
+        /// <summary>
+        /// Port
+        /// </summary>
+        /// <value>Server port</value>
         public int Port { get; set; }
     }
 
+    /// <summary>
+    /// Push gateway configuration
+    /// </summary>
     public class PushGatewayConfig
     {
+        /// <summary>
+        /// Host name
+        /// </summary>
+        /// <value>Gateway host</value>
         public string Host { get; set; }
+        /// <summary>
+        /// Job name
+        /// </summary>
+        /// <value>Name of the job</value>
         public string Job { get; set; }
+        /// <summary>
+        /// Username for basic authentication (optional)
+        /// </summary>
+        /// <value>Username</value>
         public string Username { get; set; }
+        /// <summary>
+        /// Password for basic authentication (optional)
+        /// </summary>
+        /// <value>Password</value>
         public string Password { get; set; }
     }
 
