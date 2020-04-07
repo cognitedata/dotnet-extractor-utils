@@ -9,6 +9,15 @@ namespace ExtractorUtils
             var tc = Type.GetTypeCode(t);
             return tc >= TypeCode.SByte && tc <= TypeCode.Decimal;
         }
+    }
+
+    public static class Utils
+    {
+        public static string TrimToNull(this string @this)
+        {
+            string s = @this?.Trim() ?? null;
+            return string.IsNullOrEmpty(s) ? null : s;
+        }
 
     }
 }

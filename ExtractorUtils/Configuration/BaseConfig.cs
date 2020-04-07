@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ExtractorUtils {
     
     /// <summary>
@@ -16,6 +18,8 @@ namespace ExtractorUtils {
         /// </summary>
         /// <value>A <see cref="LoggerConfig"/> config object</value>
         public LoggerConfig Logger { get; set; }
+
+        public MetricsConfig Metrics;
     }
 
 #region Logging configuration
@@ -109,5 +113,31 @@ namespace ExtractorUtils {
         /// <value>Log name</value>
         public string LogName { get; set; }
     }
+#endregion
+
+#region Metrics configuration
+    public class MetricsConfig
+    {
+        public MetricsServerConfig Server { get; set; }
+#pragma warning disable CA2227 // Collection properties should be read only
+        public List<PushGatewayConfig> PushGateways { get; set; }
+#pragma warning restore CA2227 // Collection properties should be read only
+
+    }
+
+    public class MetricsServerConfig
+    {
+        public string Host { get; set; }
+        public int Port { get; set; }
+    }
+
+    public class PushGatewayConfig
+    {
+        public string Host { get; set; }
+        public string Job { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
 #endregion
 }
