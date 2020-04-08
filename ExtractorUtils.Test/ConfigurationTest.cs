@@ -96,7 +96,7 @@ namespace ExtractorUtils.Test
 
         [Fact]
         public static void ReadFromFile() {
-            string path = "test-config.yml";
+            string path = "test-file-config.yml";
             string[] lines = { "version: 1", "foo: bar" };
             File.WriteAllLines(path, lines);
             var config = Configuration.Read<TestBaseConfig>(path);
@@ -107,7 +107,7 @@ namespace ExtractorUtils.Test
 
         [Fact]
         public static void InjectConfiguration() {
-            string path = "test-config.yml";
+            string path = "test-inject-config.yml";
             string[] lines = { "version: 2", "foo: bar" };
             File.WriteAllLines(path, lines);
             var versions = new List<int>() { 1 };

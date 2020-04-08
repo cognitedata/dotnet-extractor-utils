@@ -20,7 +20,7 @@ namespace ExtractorUtils.Test
             Assert.NotNull(l1);
             l1.LogInformation("Testing logger injection");
 
-            string path = "test-config.yml";
+            string path = "test-logging-config.yml";
             string[] lines = {  "version: 2", 
                                 "logger:",
                                 "  console:",
