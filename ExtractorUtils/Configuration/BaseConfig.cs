@@ -24,6 +24,8 @@ namespace ExtractorUtils {
         /// </summary>
         /// <value>A <see cref="MetricsConfig"/> config object</value>
         public MetricsConfig Metrics { get; set; }
+
+        public CogniteConfig Cognite { get; set; }
     }
 
 #region Logging configuration
@@ -190,6 +192,30 @@ namespace ExtractorUtils {
         /// <value></value>
         public int PushInterval { get; internal set; } = 1;
     }
+
+#endregion
+
+#region Cognite configuration
+    public class CogniteConfig
+    {
+        public string Project { get; set; }
+        public string ApiKey { get; set; }
+        public AuthenticatorConfig IdpAuthentication{ get; set; }
+        public string Host { get; set; } = "https://api.cognitedata.com";
+        public string ExternalIdPrefix { get; set; } = "";
+
+    }
+
+    public class AuthenticatorConfig
+    {
+        public string ClientId { get; set; }
+        public string Tenant { get; set; }
+        public string Secret { get; set; }
+        public string Scope { get; set; }
+
+        public int MinTtl { get; set; } = 30;
+    }
+
 
 #endregion
 }
