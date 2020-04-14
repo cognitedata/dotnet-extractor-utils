@@ -13,12 +13,22 @@ namespace ExtractorUtils
 {
     public static class CdfUtils
     {
-        public static Client.Builder Configure(this Client.Builder @this, CogniteConfig config, Authenticator auth, string appId)
+        public static Client.Builder Configure(
+            this Client.Builder @this, 
+            CogniteConfig config,
+            string appId,
+            Authenticator auth = null, 
+            ILogger<Client> logger = null)
         {
             var builder = @this
                 .SetAppId(appId)
                 .SetProject(config.Project);
                 //.SetMetrics(_cdfMetrics);
+            
+            if (logger != null) {
+                builder = builder
+                    .SetLogger(logger);
+            }
 
             if (config.ApiKey.TrimToNull() != null)
             {
@@ -81,7 +91,7 @@ namespace ExtractorUtils
             return Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(80)); // timeout for each individual try
         }
 
-        public static void AddCogniteClient(this IServiceCollection services, string appId)
+        public static void AddCogniteClient(this IServiceCollection services, string appId, bool setLogger = false)
         {
             services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
                 .AddPolicyHandler((provider, message) => { return GetRetryPolicy(provider.GetRequiredService<ILogger>()); })
@@ -92,7 +102,9 @@ namespace ExtractorUtils
                 var conf = provider.GetRequiredService<BaseConfig>();
                 var auth = conf.Cognite?.IdpAuthentication != null ? 
                     provider.GetRequiredService<Authenticator>() : null;
-                return cdfBuilder.Configure(conf.Cognite, auth, appId).Build();
+                var logger = setLogger ? 
+                    provider.GetRequiredService<ILogger<Client>>() : null;
+                return cdfBuilder.Configure(conf.Cognite, appId, auth, logger).Build();
             });
 
         }
