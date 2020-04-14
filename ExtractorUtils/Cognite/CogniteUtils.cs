@@ -12,10 +12,28 @@ using Polly.Timeout;
 
 namespace ExtractorUtils
 {
+    /// <summary>
+    /// Utility class for configuring a <see href="https://github.com/cognitedata/cognite-sdk-dotnet">Cognite SDK</see> client
+    /// </summary>
     public static class CogniteUtils
     {
+        /// <summary>
+        /// Configure a <see cref="Client.Builder"/> according to the <paramref name="config"/> object
+        /// </summary>
+        /// <param name="clientBuilder">This builder</param>
+        /// <param name="config">A <see cref="CogniteConfig"/> configuration object</param>
+        /// <param name="appId">Identifier of the application using the Cognite API</param>
+        /// <param name="auth">A <see cref="Authenticator"/> authenticator used to obtain bearer access token. 
+        /// If null, API keys are used for authentication</param>
+        /// <param name="logger">A <see cref="ILogger"/> logger that the client can use to log calls to the 
+        /// Cognite API (enabled in debug mode)</param>
+        /// <param name="metrics">A <see cref="IMetrics"/> metrics collector, that the client can use
+        /// to report metrics on the number and duration of API requests</param>
+        /// <returns>A configured builder</returns>
+        /// <exception cref="CogniteUtilsException">Thrown when <paramref name="config"/> is null or 
+        /// the configured project is empty</exception>
         public static Client.Builder Configure(
-            this Client.Builder @this, 
+            this Client.Builder clientBuilder, 
             CogniteConfig config,
             string appId,
             Authenticator auth = null, 
@@ -31,7 +49,7 @@ namespace ExtractorUtils
                 throw new CogniteUtilsException("CDF project is not configured");
             }
 
-            var builder = @this
+            var builder = clientBuilder
                 .SetAppId(appId)
                 .SetProject(config.Project);
             
@@ -49,8 +67,10 @@ namespace ExtractorUtils
             }
 
             if (logger != null) {
+                // TODO: Make format and level properties in the configuration object
                 builder = builder
-                    .SetLogLevel(LogLevel.Trace) // Log as verbose
+                    .SetLogLevel(LogLevel.Debug) // Log as debug
+                    .SetLogFormat("CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms")
                     .SetLogger(logger);
             }
 
@@ -62,6 +82,14 @@ namespace ExtractorUtils
             return builder;
         }
 
+        /// <summary>
+        /// Verifies that the <paramref name="client"/> configured according to <paramref name="config"/>
+        /// can access Cognite Data Fusion
+        /// </summary>
+        /// <param name="client">Cognite SDK client</param>
+        /// <param name="config">Configuration object</param>
+        /// <exception cref="CogniteUtilsException">Thrown when credentials are invalid
+        /// or the client cannot be used to access CDF resources</exception>
         public async static Task TestCogniteConfig(Client client, CogniteConfig config)
         {
             var loginStatus = await client.Login.StatusAsync(CancellationToken.None);
@@ -89,14 +117,25 @@ namespace ExtractorUtils
         }
     }
 
+    /// <summary>
+    /// Exceptions produced by the Cognite utility classes
+    /// </summary>
     public class CogniteUtilsException : Exception
     {
+        /// <summary>
+        /// Create a new Cognite utils exception with the given <paramref name="message"/>
+        /// </summary>
+        /// <param name="message">Message</param>
+        /// <returns>A new <see cref="CogniteUtilsException"/> exception</returns>
         public CogniteUtilsException(string message) : base(message)
         {
         }
 
     }
 
+    /// <summary>
+    /// Extension utilities for the Cognite client
+    /// </summary>
     public static class CogniteExtensions
     {
         static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger logger)
@@ -141,6 +180,15 @@ namespace ExtractorUtils
             return Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(80)); // timeout for each individual try
         }
 
+        /// <summary>
+        /// Adds a configured Cognite client to the <paramref name="services"/> collection as a transient service
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <param name="appId">Identifier of the application using the Cognite API</param>
+        /// <param name="setLogger">If true, a <see cref="ILogger"/> logger is created and used by the client log calls to the 
+        /// Cognite API (enabled in debug mode)</param>
+        /// <param name="setMetrics">If true, a <see cref="IMetrics"/> metrics collector is created and used by the client
+        /// to report metrics on the number and duration of API requests</param>
         public static void AddCogniteClient(this IServiceCollection services, string appId, bool setLogger = false, bool setMetrics = false)
         {
             services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)

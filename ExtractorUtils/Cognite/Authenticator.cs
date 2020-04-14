@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace ExtractorUtils
 {
+    /// <summary>
+    /// Authenticator that obtains bearer access tokens from a <see href="https://login.microsoftonline.com/">Microsoft</see> endpoint
+    /// </summary>
     public class Authenticator
     {
 
@@ -31,6 +34,12 @@ namespace ExtractorUtils
         private ResponseDTO _response;
         private DateTime _requestTime;
 
+        /// <summary>
+        /// Creates a new authenticator
+        /// </summary>
+        /// <param name="baseConfig">Configuration object</param>
+        /// <param name="client">Http client</param>
+        /// <param name="logger">Logger</param>
         public Authenticator(BaseConfig baseConfig, HttpClient client, ILogger<Authenticator> logger)
         {
             _config = baseConfig.Cognite.IdpAuthentication;
@@ -74,10 +83,12 @@ namespace ExtractorUtils
             return _requestTime + TimeSpan.FromSeconds(_response.ExpiresIn) > DateTime.UtcNow + TimeSpan.FromSeconds(_config.MinTtl);
         }
 
-        /**
-         * Request a token and cache it until it expires.
-         * TODO: could start a background task to update the token so that this call does not block on the HTTP request.
-         **/
+        /// <summary>
+        /// Request a token and cache it until it expires.
+        /// TODO: could start a background task to update the token so that this call does not block on the HTTP request.
+        /// </summary>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A valid bearer access token</returns>
         public async Task<string> GetToken(CancellationToken token = default)
         {
             if (_config == null) {
