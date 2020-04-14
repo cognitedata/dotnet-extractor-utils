@@ -91,7 +91,7 @@ namespace ExtractorUtils.Test
             // Setup services
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
-            services.AddConfig<BaseConfig>(path, new List<int>() { 2 });
+            services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
             services.AddHttpClient<Authenticator>();
             using (var provider = services.BuildServiceProvider()) {
@@ -131,7 +131,8 @@ namespace ExtractorUtils.Test
                 reply = "{" + Environment.NewLine + 
                         "  \"data\": {" +  Environment.NewLine +
                        $"    \"user\": \"testuser\",{Environment.NewLine}" +
-                       $"    \"loggedIn\": true{Environment.NewLine}" +
+                       $"    \"loggedIn\": true,{Environment.NewLine}" +
+                       $"    \"project\": \"{_project}\"" + Environment.NewLine +
                         "  }" + Environment.NewLine +
                         "}";
             }
@@ -185,14 +186,21 @@ namespace ExtractorUtils.Test
             // Setup services
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
-            services.AddConfig<BaseConfig>(path, new List<int>() { 2 });
+            services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
             services.AddCogniteClient("testApp", true, true);
             using (var provider = services.BuildServiceProvider()) {
+                var config = provider.GetRequiredService<BaseConfig>();
+                config.Cognite.Project = "Bogus";
+                var ex = Assert.Throws<CogniteUtilsException>(() => provider.GetRequiredService<Client>());
+                Assert.Contains("not associated with project Bogus", ex.Message);
+
+                config.Cognite.Project = _project;
                 var cogClient = provider.GetRequiredService<Client>();
                 var loginStatus = await cogClient.Login.StatusAsync(CancellationToken.None);
                 Assert.True(loginStatus.LoggedIn);
                 Assert.Equal("testuser", loginStatus.User);
+                Assert.Equal(_project, loginStatus.Project);
 
                 var options = new TimeSeriesQuery()
                 {
@@ -206,7 +214,7 @@ namespace ExtractorUtils.Test
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
-                    Times.Exactly(2),
+                    Times.Exactly(5), // 3 times trying to resolve the client (TestCogniteConfig method) and 2 times when using the client
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
 

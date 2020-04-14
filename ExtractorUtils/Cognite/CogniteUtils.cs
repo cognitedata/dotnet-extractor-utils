@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ using Polly.Timeout;
 
 namespace ExtractorUtils
 {
-    public static class CdfUtils
+    public static class CogniteUtils
     {
         public static Client.Builder Configure(
             this Client.Builder @this, 
@@ -21,6 +22,15 @@ namespace ExtractorUtils
             ILogger<Client> logger = null,
             IMetrics metrics = null)
         {
+            if (config == null) {
+                throw new CogniteUtilsException("Cognite configuration missing");
+            }
+            
+            if (config.Project.TrimToNull() == null)
+            {
+                throw new CogniteUtilsException("CDF project is not configured");
+            }
+
             var builder = @this
                 .SetAppId(appId)
                 .SetProject(config.Project);
@@ -52,8 +62,42 @@ namespace ExtractorUtils
             return builder;
         }
 
+        public async static Task TestCogniteConfig(Client client, CogniteConfig config)
+        {
+            var loginStatus = await client.Login.StatusAsync(CancellationToken.None);
+            if (!loginStatus.LoggedIn)
+            {
+                throw new CogniteUtilsException("CDF credentials are invalid");
+            }
+            if (!loginStatus.Project.Equals(config.Project))
+            {
+                throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
+            }
+
+            try
+            {
+                var options = new TimeSeriesQuery()
+                {
+                    Limit = 1
+                };
+                var ts = await client.TimeSeries.ListAsync(options);
+            }
+            catch (ResponseException)
+            {
+                throw new CogniteUtilsException("Could not access CDF Time Series - most likely due to insufficient access rights");
+            }
+        }
     }
-    public static class CdfExtensions
+
+    public class CogniteUtilsException : Exception
+    {
+        public CogniteUtilsException(string message) : base(message)
+        {
+        }
+
+    }
+
+    public static class CogniteExtensions
     {
         static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger logger)
         {
@@ -113,7 +157,9 @@ namespace ExtractorUtils
                     provider.GetRequiredService<ILogger<Client>>() : null;
                 var metrics = setMetrics ?
                     provider.GetRequiredService<IMetrics>() : null;
-                return cdfBuilder.Configure(conf.Cognite, appId, auth, logger, metrics).Build();
+                var client = cdfBuilder.Configure(conf.Cognite, appId, auth, logger, metrics).Build();
+                CogniteUtils.TestCogniteConfig(client, conf.Cognite).GetAwaiter().GetResult();
+                return client;
             });
 
         }
