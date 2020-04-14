@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -13,8 +12,6 @@ using Xunit;
 
 namespace ExtractorUtils.Test
 {
-
-    
     public class CogniteTest
     {
         private const string _authTenant = "someTenant";
@@ -109,7 +106,7 @@ namespace ExtractorUtils.Test
                 Assert.Null(token);
             }
 
-            // Verify that the authentication endpoint was called 2 times
+            // Verify that the authentication endpoint was called 3 times
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
@@ -136,7 +133,8 @@ namespace ExtractorUtils.Test
                         "  }" + Environment.NewLine +
                         "}";
             }
-            else {
+            else
+            {
                 Assert.Equal(HttpMethod.Post, message.Method);
                 message.Headers.TryGetValues("api-key", out IEnumerable<string> keys);
                 Assert.Contains(_apiKey, keys);
