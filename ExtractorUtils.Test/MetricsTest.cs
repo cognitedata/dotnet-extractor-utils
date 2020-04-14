@@ -68,7 +68,7 @@ namespace ExtractorUtils.Test {
             // Setup services
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
-            services.AddConfig<BaseConfig>(path, new List<int>() { 2 });
+            services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
             services.AddMetrics();
 
@@ -132,7 +132,7 @@ namespace ExtractorUtils.Test {
             // Setup services
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
-            services.AddConfig<BaseConfig>(path, new List<int>() { 2 });
+            services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
             services.AddMetrics();
 

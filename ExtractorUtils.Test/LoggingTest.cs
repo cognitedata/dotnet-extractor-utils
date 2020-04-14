@@ -30,11 +30,10 @@ namespace ExtractorUtils.Test
                                @"    path: logs/log.txt",
                                 "    rolling-interval: day" };
             File.WriteAllLines(path, lines);
-            var versions = new List<int>() { 2 };
-
+            
             l1.LogInformation("Adding Configuration and Logging services...");
             var services = new ServiceCollection();
-            services.AddConfig<TestLoggingConfig>(path, versions);
+            services.AddConfig<TestLoggingConfig>(path, 2);
             services.AddLogger();
 
             using (var provider = services.BuildServiceProvider()) {

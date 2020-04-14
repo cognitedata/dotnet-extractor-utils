@@ -108,22 +108,42 @@ namespace ExtractorUtils.Test
         [Fact]
         public static void InjectConfiguration() {
             string path = "test-inject-config.yml";
-            string[] lines = { "version: 2", "foo: bar" };
-            File.WriteAllLines(path, lines);
-            var versions = new List<int>() { 1 };
+            string[] lines = { "version: 2", "newfoo: bar" };
 
+            string path1 = "test-inject-config1.yml";
+            string[] lines1 = { "version: \"2.0\"", "newfoo: bar" };
+
+            string path2 = "test-inject-config2.yml";
+            string[] lines2 = { "ver: 2", "newfoo: bar" };
+
+            string path3 = "test-inject-config3.yml";
+            string[] lines3 = { "version: 2", "foo: bar" };
+
+            File.WriteAllLines(path, lines);
+            File.WriteAllLines(path1, lines1);
+            File.WriteAllLines(path2, lines2);
+            File.WriteAllLines(path3, lines3);
+            
             var services = new ServiceCollection();
-            var ex = Assert.Throws<ConfigurationException>(() => services.AddConfig<TestBaseConfig>(path, versions));
+            var ex = Assert.Throws<ConfigurationException>(() => services.AddConfig<TestBaseConfig>(path, 1));
             Assert.Contains("version 2 is not supported", ex.Message);
 
-            versions.Add(2);
-            services.AddConfig<TestBaseConfig>(path, versions);
+            ex = Assert.Throws<ConfigurationException>(() => services.AddConfig<TestBaseConfig>(path1, 1));
+            Assert.Contains("tag should be integer", ex.Message);
+
+            ex = Assert.Throws<ConfigurationException>(() => services.AddConfig<TestBaseConfig>(path2, 1));
+            Assert.Contains("should contain a 'version' tag", ex.Message);
+
+            services.AddConfig<TestBaseConfig>(path3, 1, 2);
             using (var provider = services.BuildServiceProvider()) {
                 var config = provider.GetRequiredService<TestBaseConfig>();
                 Assert.Equal(2, config.Version);
                 Assert.Equal("bar", config.Foo);
             }
             File.Delete(path);
+            File.Delete(path1);
+            File.Delete(path2);
+            File.Delete(path3);
         }
     }
 }
