@@ -64,15 +64,9 @@ namespace ExtractorUtils
                 if(int.TryParse(version, out int intVersion)) {
                     return intVersion;
                 }
-                else
-                {
-                    throw new ConfigurationException("The value of the 'version' tag should be integer");
-                } 
+                throw new ConfigurationException("The value of the 'version' tag should be integer");
             }
-            else
-            {
-                throw new ConfigurationException("The yaml configuration file should contain a 'version' tag");
-            }
+            throw new ConfigurationException("The yaml configuration file should contain a 'version' tag");
         }
 
         /// <summary>
