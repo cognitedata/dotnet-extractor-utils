@@ -81,7 +81,7 @@ namespace ExtractorUtils
             return Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(80)); // timeout for each individual try
         }
 
-        public static void AddCdfClient(this IServiceCollection services, string appId)
+        public static void AddCogniteClient(this IServiceCollection services, string appId)
         {
             services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
                 .AddPolicyHandler((provider, message) => { return GetRetryPolicy(provider.GetRequiredService<ILogger>()); })
