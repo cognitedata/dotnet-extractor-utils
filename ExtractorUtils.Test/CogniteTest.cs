@@ -187,7 +187,7 @@ namespace ExtractorUtils.Test
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, new List<int>() { 2 });
             services.AddLogger();
-            services.AddCogniteClient("testApp", true);
+            services.AddCogniteClient("testApp", true, true);
             using (var provider = services.BuildServiceProvider()) {
                 var cogClient = provider.GetRequiredService<Client>();
                 var loginStatus = await cogClient.Login.StatusAsync(CancellationToken.None);
