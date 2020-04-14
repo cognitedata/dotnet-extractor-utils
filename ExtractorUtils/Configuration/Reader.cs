@@ -7,6 +7,7 @@ using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Collections.Generic;
+using Microsoft.CSharp;
 
 namespace ExtractorUtils
 {
@@ -50,6 +51,31 @@ namespace ExtractorUtils
         }
 
         /// <summary>
+        /// Get the integer value of the <c>version</c> tag.
+        /// </summary>
+        /// <param name="path">Path to the config yml file</param>
+        /// <returns></returns>        
+        /// <exception cref="ConfigurationException">Thrown when the version tag is 
+        /// not found or is not of the integer type.</exception>
+        public static int GetVersion(string path)
+        {
+            Dictionary<object, object> versionedConfig = Configuration.Read<dynamic>(path);
+            if (versionedConfig.TryGetValue("version", out dynamic version)) {
+                if(int.TryParse(version, out int intVersion)) {
+                    return intVersion;
+                }
+                else
+                {
+                    throw new ConfigurationException("The value of the 'version' tag should be integer");
+                } 
+            }
+            else
+            {
+                throw new ConfigurationException("The yaml configuration file should contain a 'version' tag");
+            }
+        }
+
+        /// <summary>
         /// Maps the given tag to the type T.
         /// Mapping is only required for custom tags.
         /// </summary>
@@ -78,14 +104,16 @@ namespace ExtractorUtils
         /// the config file is not found or in case of YAML parsing error.</exception>
         public static void AddConfig<T>(this IServiceCollection services,
                                         string path,
-                                        IList<int> acceptedConfigVersions) where T : BaseConfig {
+                                        params int[] acceptedConfigVersions) where T : BaseConfig {
             try {
-                var config = Configuration.Read<T>(path);
                 // Check config version
-                if (!acceptedConfigVersions.Contains(config.Version))
-                {
-                    throw new ConfigurationException($"Config version {config.Version} is not supported in this version of the PI Extractor");
+                int configVersion = Configuration.GetVersion(path);
+                var accept = new List<int>(acceptedConfigVersions);
+                if (!accept.Contains(configVersion)) {
+                    throw new ConfigurationException($"Config version {configVersion} is not supported by this extractor");
                 }
+
+                var config = Configuration.Read<T>(path);
                 services.AddSingleton<T>(config);
                 services.AddSingleton<BaseConfig>((BaseConfig) config); // Allows it to be resolved as BaseConfig
 
