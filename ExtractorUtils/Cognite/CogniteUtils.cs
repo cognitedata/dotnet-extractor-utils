@@ -192,7 +192,7 @@ namespace ExtractorUtils
         public static void AddCogniteClient(this IServiceCollection services, string appId, bool setLogger = false, bool setMetrics = false)
         {
             services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
-                .AddPolicyHandler((provider, message) => { return GetRetryPolicy(provider.GetRequiredService<ILogger>()); })
+                .AddPolicyHandler((provider, message) => { return GetRetryPolicy(provider.GetRequiredService<ILogger<Client>>()); })
                 .AddPolicyHandler(GetTimeoutPolicy());
             services.AddHttpClient<Authenticator>();
             services.AddSingleton<IMetrics, CdfMetricCollector>();

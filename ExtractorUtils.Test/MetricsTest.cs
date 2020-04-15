@@ -22,7 +22,7 @@ namespace ExtractorUtils.Test {
             var auth = message.Headers.Authorization;
 
             // Verify endpoint, content and authentication
-            Assert.Equal($@"{endpoint}/job/{job}", message.RequestUri.ToString());
+            Assert.Equal($@"{endpoint}/metrics/job/{job}", message.RequestUri.ToString());
             Assert.Equal(HttpMethod.Post, message.Method);
             Assert.Contains("TYPE extractor_utils_test_count counter", content);
             Assert.NotNull(auth);
