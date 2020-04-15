@@ -22,7 +22,7 @@ namespace ExtractorUtils.Test {
             var auth = message.Headers.Authorization;
 
             // Verify endpoint, content and authentication
-            Assert.Equal($@"{endpoint}/job/{job}", message.RequestUri.ToString());
+            Assert.Equal($@"{endpoint}/metrics/job/{job}", message.RequestUri.ToString());
             Assert.Equal(HttpMethod.Post, message.Method);
             Assert.Contains("TYPE extractor_utils_test_count counter", content);
             Assert.NotNull(auth);
@@ -149,14 +149,14 @@ namespace ExtractorUtils.Test {
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
                     Times.AtLeastOnce(), // push every second
-                    ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint}/job/{job}"),
+                    ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint}/metrics/job/{job}"),
                     ItExpr.IsAny<CancellationToken>());
 
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
                     Times.AtLeastOnce(), // push every second
-                    ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint2}/job/{job2}"),
+                    ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint2}/metrics/job/{job2}"),
                     ItExpr.IsAny<CancellationToken>());
 
             File.Delete(path);

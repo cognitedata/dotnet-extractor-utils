@@ -100,9 +100,14 @@ namespace ExtractorUtils {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", headerValue);
             }
 
+            var uri = new Uri(config.Host);
+            if (uri.Segments.Last() != "metrics" && uri.Segments.Last() != "metrics/") {
+                uri = new Uri(uri, "metrics/");
+            }
+
             var pusher = new MetricPusher(new MetricPusherOptions
             {
-                Endpoint =  config.Host,
+                Endpoint =  uri.ToString(),
                 Job = config.Job,
                 IntervalMilliseconds = config.PushInterval * 1_000L,
                 HttpClientProvider = () => client

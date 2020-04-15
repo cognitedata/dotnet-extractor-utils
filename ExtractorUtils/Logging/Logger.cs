@@ -33,7 +33,9 @@ namespace ExtractorUtils {
             var logConfig = new LoggerConfiguration();
             logConfig
                 .Enrich.With<UtcTimestampEnricher>()
-                .MinimumLevel.Verbose();
+                .MinimumLevel.Verbose()
+                .MinimumLevel.Override("System", LogEventLevel.Error)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Error);
 
             var outputTemplate = "[{UtcTimestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
             var outputTemplateDebug = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";
@@ -136,8 +138,8 @@ namespace ExtractorUtils {
     public static class LoggingExtensions {
         
         /// <summary>
-        /// Adds a configured Serilog logger as singletons of <see cref="Microsoft.Extensions.Logging.ILogger"/> and
-        /// <see cref="Serilog.ILogger"/> to the <paramref name="services"/> collection.
+        /// Adds a configured Serilog logger as singletons of the <see cref="Microsoft.Extensions.Logging.ILogger"/> and
+        /// <see cref="Serilog.ILogger"/> types to the <paramref name="services"/> collection.
         /// A configuration object of type <see cref="BaseConfig"/> is required, and should have been added to the
         /// collection as well.
         /// </summary>
@@ -147,7 +149,9 @@ namespace ExtractorUtils {
                 var config = s.GetRequiredService<BaseConfig>();
                 if (config.Logger == null) {
                     // No logging configuration
-                    return Logging.GetSerilogDefault();
+                    var defLog = Logging.GetSerilogDefault();
+                    defLog.Warning("No Logging configuration found. Using default logger");
+                    return defLog;
                 }
                 Logging.Configure(config.Logger);
                 return Log.Logger;
