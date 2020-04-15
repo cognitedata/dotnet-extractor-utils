@@ -149,14 +149,14 @@ namespace ExtractorUtils.Test {
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
                     Times.AtLeastOnce(), // push every second
-                    ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint}/job/{job}"),
+                    ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint}/metrics/job/{job}"),
                     ItExpr.IsAny<CancellationToken>());
 
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
                     Times.AtLeastOnce(), // push every second
-                    ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint2}/job/{job2}"),
+                    ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint2}/metrics/job/{job2}"),
                     ItExpr.IsAny<CancellationToken>());
 
             File.Delete(path);
