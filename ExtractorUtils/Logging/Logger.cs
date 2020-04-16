@@ -12,6 +12,7 @@ using Serilog.Extensions.Logging;
 using Serilog.Sinks.GoogleCloudLogging;
 
 namespace ExtractorUtils {
+
     /// <summary>
     /// Utility class for configuring extractor loggers.
     /// The logging framework used is <see href="https://serilog.net/">Serilog</see>.
@@ -20,6 +21,9 @@ namespace ExtractorUtils {
     /// </summary>
     public static class Logging {
         
+        private const string _logTemplate = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+        private const string _logTemplateWithContext = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";
+
         /// <summary>
         /// Configure Serilog's shared logger according to the configuration in <paramref name="config"/>.
         /// </summary>
@@ -37,13 +41,10 @@ namespace ExtractorUtils {
                 .MinimumLevel.Override("System", LogEventLevel.Error)
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Error);
 
-            var outputTemplate = "[{UtcTimestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
-            var outputTemplateDebug = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff zzz} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";
-
             if (logToConsole)
             {
                 logConfig.WriteTo.Console(consoleLevel, consoleLevel <= LogEventLevel.Debug 
-                    ? outputTemplateDebug : outputTemplate);
+                    ? _logTemplateWithContext : _logTemplate);
             }
 
             if (logToFile && config.File.Path != null)
@@ -57,7 +58,7 @@ namespace ExtractorUtils {
                     rollingInterval: ri,
                     retainedFileCountLimit: config.File.RetentionLimit,
                     restrictedToMinimumLevel: fileLevel,
-                    outputTemplate: fileLevel <= LogEventLevel.Debug ? outputTemplateDebug : outputTemplate));
+                    outputTemplate: fileLevel <= LogEventLevel.Debug ? _logTemplateWithContext : _logTemplate));
             }
 
             if (logToStackdriver)
@@ -102,7 +103,10 @@ namespace ExtractorUtils {
         /// </summary>
         /// <returns>A <see cref="Serilog.ILogger"/> logger with default properties</returns>
         public static Serilog.ILogger GetSerilogDefault() {
-            return new LoggerConfiguration().WriteTo.Console().CreateLogger();
+            return new LoggerConfiguration()
+                .Enrich.With<UtcTimestampEnricher>()
+                .WriteTo.Console(LogEventLevel.Information, _logTemplate)
+                .CreateLogger();
         }
 
 #pragma warning disable CA1812 // Internal class
