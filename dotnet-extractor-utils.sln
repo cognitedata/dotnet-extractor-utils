@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractorUtils", "ExtractorUtils\ExtractorUtils.csproj", "{E18EE09E-8E0E-4C2E-B190-663200A3A63E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtractorUtils", "ExtractorUtils\ExtractorUtils.csproj", "{E18EE09E-8E0E-4C2E-B190-663200A3A63E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractorUtils.Test", "ExtractorUtils.Test\ExtractorUtils.Test.csproj", "{33921BFF-0C76-4998-8AAE-679DDD394120}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtractorUtils.Test", "ExtractorUtils.Test\ExtractorUtils.Test.csproj", "{33921BFF-0C76-4998-8AAE-679DDD394120}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{746595B3-119E-4A8B-90FD-5664B185FACC}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +20,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E18EE09E-8E0E-4C2E-B190-663200A3A63E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +46,11 @@ Global
 		{33921BFF-0C76-4998-8AAE-679DDD394120}.Release|x64.Build.0 = Release|Any CPU
 		{33921BFF-0C76-4998-8AAE-679DDD394120}.Release|x86.ActiveCfg = Release|Any CPU
 		{33921BFF-0C76-4998-8AAE-679DDD394120}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {143EECE4-FF2C-48A9-9773-15A425EC2D43}
 	EndGlobalSection
 EndGlobal

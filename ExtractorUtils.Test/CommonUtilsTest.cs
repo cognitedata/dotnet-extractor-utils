@@ -2,7 +2,7 @@ using System.Reflection;
 using Xunit;
 
 namespace ExtractorUtils.Test {
-    public class UtilsTest {
+    public static class CommonUtilsTest {
 
         [Theory]
         [InlineData("", null)]
