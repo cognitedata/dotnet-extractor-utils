@@ -7,27 +7,22 @@ using System.Threading;
 
 namespace ExtractorUtils
 {
+    /// <summary>
+    /// Support for splitting sequences into sequences of sequences subject to various constraints, as well as running 
+    /// a sequence of tasks in parallel.
+    /// </summary>
     static public class Chunking
     {
-        public static IEnumerable<IEnumerable<T>> Chunked<T>(this IEnumerable<T> things, int itemsPerChunk)
-        {
-            var list = new List<T>(itemsPerChunk);
-            foreach (var thing in things)
-            {
-                list.Add(thing);
-                if (list.Count == itemsPerChunk)
-                {
-                    yield return list;
-                    list = new List<T>(itemsPerChunk);
-                }
-            }
-
-            if (list.Any())
-            {
-                yield return list;
-            }
-        }
-
+        /// <summary>
+        /// Chunk the input [(key, [values])] sequence into a sequence subject to constraints on the number
+        /// of keys and total number of values per chunk.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TVal"></typeparam>
+        /// <param name="points"></param>
+        /// <param name="maxPerList"></param>
+        /// <param name="maxKeys"></param>
+        /// <returns></returns>
         public static IEnumerable<IEnumerable<(TKey Key, IEnumerable<TVal> Values)>> ChunkBy<TKey, TVal>(
             this IEnumerable<(TKey, IEnumerable<TVal>)> points, int maxPerList, int maxKeys)
         {
@@ -96,6 +91,14 @@ namespace ExtractorUtils
             }
         }
 
+        /// <summary>
+        /// Chunk the input sequence into a sequence of sequences subject to a constraint on the maximum
+        /// number of elements per inner sequence.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="input"></param>
+        /// <param name="maxSize"></param>
+        /// <returns></returns>
         public static IEnumerable<IEnumerable<T>> ChunkBy<T>(IEnumerable<T> input, int maxSize)
         {
             return input
@@ -114,9 +117,16 @@ namespace ExtractorUtils
             return ret;
         }
 
+        /// <summary>
+        /// Runs the generated tasks in parallell subject to the maximum parallelism.
+        /// </summary>
+        /// <param name="generators"></param>
+        /// <param name="parallelism"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public static async Task RunThrottled(
             this IEnumerable<Func<Task>> generators,
-            int limit,
+            int parallelism,
             CancellationToken token)
         {
             List<Task> tasks = new List<Task>();
@@ -136,10 +146,10 @@ namespace ExtractorUtils
                     tasks.Remove(task);
                 }
 
-                Debug.Assert(tasks.Count < limit);
+                Debug.Assert(tasks.Count < parallelism);
                 if (generatorQueue.Any())
                 {
-                    int toInsert = limit - tasks.Count;
+                    int toInsert = parallelism - tasks.Count;
                     tasks.AddRange(generatorQueue.Dequeue(toInsert).Select(gen => gen()));
                 }
             }

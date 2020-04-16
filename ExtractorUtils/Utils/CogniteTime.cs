@@ -2,6 +2,9 @@
 
 namespace ExtractorUtils
 {
+    /// <summary>
+    /// DateTime utility functions.
+    /// </summary>
     public static class CogniteTime
     {
         /// <summary>
@@ -10,7 +13,7 @@ namespace ExtractorUtils
         public static DateTime DateTimeEpoch => new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         
         private static readonly long epochTicks = DateTimeEpoch.Ticks;
-        private static readonly long maxTsValue = DateTime.MaxValue.MillisecondsSinceEpoch();
+        private static readonly long maxTsValue = DateTime.MaxValue.ToUnixTimeMilliseconds();
         private static readonly long maxTicksValue = DateTime.MaxValue.TicksSinceEpoch();
 
         /// <summary>
@@ -52,7 +55,7 @@ namespace ExtractorUtils
         /// </summary>
         /// <param name="time">DateTime object to convert</param>
         /// <returns>Number of milliseconds since Epoch</returns>
-        public static long MillisecondsSinceEpoch(this DateTime time)
+        public static long ToUnixTimeMilliseconds(this DateTime time)
         {
             var timestamp = TicksSinceEpoch(time) / TimeSpan.TicksPerMillisecond;
             return timestamp;
@@ -93,17 +96,27 @@ namespace ExtractorUtils
             return timestamp * 100;
         }
 
-        // Return ISO 8601 formatted string
+        /// <summary>
+        /// Return ISO 8601 formatted string with millisecond resolution.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns>ISO 8601 formatted string</returns>
         public static string ToISOString(this DateTime time)
         {
             return time.ToString("yyyy-MM-dd HH\\:mm\\:ss.fff");
         }
 
+        /// <summary>
+        /// Return latest DateTime.
+        /// </summary>
         public static DateTime Max(DateTime t1, DateTime t2)
         {
             return t1 > t2 ? t1 : t2;
         }
 
+        /// <summary>
+        /// Return earliest DateTime.
+        /// </summary>
         public static DateTime Min(DateTime t1, DateTime t2)
         {
             return t1 < t2 ? t1 : t2;

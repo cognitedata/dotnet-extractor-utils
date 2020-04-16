@@ -45,7 +45,7 @@ namespace ExtractorUtils.Test
         [Fact]
         public static void TestMaxValue()
         {
-            var msMax = DateTime.MaxValue.MillisecondsSinceEpoch();
+            var msMax = DateTime.MaxValue.ToUnixTimeMilliseconds();
             var dMax = CogniteTime.FromMilliseconds(msMax);
             Assert.Equal("9999-12-31 23:59:59.999", dMax.ToISOString());
             Assert.Equal(DateTime.MaxValue.Ticks / 10_000, dMax.Ticks / 10_000);
@@ -59,7 +59,7 @@ namespace ExtractorUtils.Test
 
             Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromMilliseconds(-1));
 
-            var outOfRangeValue = DateTime.MaxValue.MillisecondsSinceEpoch() + 1;
+            var outOfRangeValue = DateTime.MaxValue.ToUnixTimeMilliseconds() + 1;
             Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromMilliseconds(outOfRangeValue));
         }
 

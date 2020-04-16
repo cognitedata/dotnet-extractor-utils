@@ -54,17 +54,6 @@ namespace ExtractorUtils.Test {
             Assert.Equal(3, completed.Sum());
         }
 
-        private static IEnumerable<(string id, double value)> DataPoints(int timeseries, int datapoints)
-        {
-            for (int i = 0; i < timeseries; i++)
-            {
-                for (int j = 0; j < datapoints; j++)
-                {
-                    yield return ($"id{i}", j);
-                }
-            }
-        }
-        
         [Theory]
         [InlineData(100_000, 10_000, 20000, 100, 20, 1000, 100000)]
         [InlineData(100_000, 10_000, 200, 10000, 20, 10, 100000)]
