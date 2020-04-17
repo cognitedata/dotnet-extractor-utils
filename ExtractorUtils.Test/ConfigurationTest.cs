@@ -106,6 +106,33 @@ namespace ExtractorUtils.Test
         }
 
         [Fact]
+        public static void TestInvalidFile()
+        {
+            var e = Assert.Throws<ConfigurationException>(() => Configuration.TryReadConfigFromFile<TestBaseConfig>("./invalid", 0));
+            Assert.IsType<FileNotFoundException>(e.InnerException);
+        }
+
+
+        [Theory]
+        [InlineData("version: 0\nfooo: foo")]
+        [InlineData("version: 0\ncognite: foo")]
+        public static void TestInvalidString(string yaml)
+        {
+            var e = Assert.Throws<ConfigurationException>(() => Configuration.TryReadConfigFromString<TestBaseConfig>(yaml, 0));
+            Assert.IsType<YamlDotNet.Core.YamlException>(e.InnerException);
+        }
+
+        [Fact]
+        public static void TestValidString()
+        {
+            var yaml = "version: 0\ncognite: \n  project: project\nlogger:\n  console:\n    level: debug";
+            var conf = Configuration.TryReadConfigFromString<TestBaseConfig>(yaml, 0);
+            Assert.NotNull(conf.Cognite);
+            Assert.NotNull(conf.Logger);
+            Assert.NotNull(conf.Logger.Console);
+        }
+
+        [Fact]
         public static void InjectConfiguration() {
             string path = "test-inject-config.yml";
             string[] lines = { "version: 2", "newfoo: bar" };
@@ -139,6 +166,9 @@ namespace ExtractorUtils.Test
                 var config = provider.GetRequiredService<TestBaseConfig>();
                 Assert.Equal(2, config.Version);
                 Assert.Equal("bar", config.Foo);
+                Assert.Null(provider.GetService<CogniteConfig>());
+                Assert.Null(provider.GetService<LoggerConfig>());
+                Assert.Null(provider.GetService<MetricsConfig>());
             }
             File.Delete(path);
             File.Delete(path1);

@@ -154,20 +154,20 @@ namespace ExtractorUtils {
         /// <summary>
         /// Adds a configured Serilog logger as singletons of the <see cref="Microsoft.Extensions.Logging.ILogger"/> and
         /// <see cref="Serilog.ILogger"/> types to the <paramref name="services"/> collection.
-        /// A configuration object of type <see cref="BaseConfig"/> is required, and should have been added to the
+        /// A configuration object of type <see cref="LoggerConfig"/> is required, and should have been added to the
         /// collection as well.
         /// </summary>
         /// <param name="services">The service collection</param>
         public static void AddLogger(this IServiceCollection services) {
             services.AddSingleton<Serilog.ILogger>(s => {
-                var config = s.GetRequiredService<BaseConfig>();
-                if (config.Logger == null) {
+                var config = s.GetService<LoggerConfig>();
+                if (config == null) {
                     // No logging configuration
                     var defLog = Logging.GetSerilogDefault();
                     defLog.Warning("No Logging configuration found. Using default logger");
                     return defLog;
                 }
-                return Logging.GetConfiguredLogger(config.Logger);
+                return Logging.GetConfiguredLogger(config);
             });
             services.AddLogging(loggingBuilder => {
                 loggingBuilder.Services.AddSingleton<ILoggerProvider, SerilogLoggerProvider>(s => 

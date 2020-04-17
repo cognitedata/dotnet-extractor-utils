@@ -91,6 +91,81 @@ namespace ExtractorUtils.Test {
             File.Delete(path);
         }
 
+        [Fact]
+        public static async Task TestDisableMetricsAsync() {
+            Metrics.SuppressDefaultMetrics();
+
+            string path = "test-disable-metrics-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  file:",
+                                "    level: warning",
+                               @"    path: metrics-logs/log.txt"};
+            File.WriteAllLines(path, lines);
+            
+            // Setup services
+            var services = new ServiceCollection();
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddMetrics();
+
+            using (var provider = services.BuildServiceProvider()) {
+                var metrics = provider.GetRequiredService<MetricsService>();
+                metrics.Start();
+                await metrics.Stop();
+            }
+
+            var logfile = $@"metrics-logs/log{DateTime.Now.ToString("yyyyMMdd")}.txt";
+            Assert.True(File.Exists(logfile));
+            using (StreamReader r = new StreamReader(logfile))
+            {
+                string line1 = r.ReadLine();
+                Assert.Contains("Metrics disabled: metrics configuration missing", line1);
+                Assert.Null(r.ReadLine());
+            }
+            Directory.Delete("metrics-logs", true);
+            File.Delete(path);
+        }
+
+        [Fact]
+        public static async Task TestInvalidPushGatewayAsync() {
+            Metrics.SuppressDefaultMetrics();
+
+            string path = "test-invalid-pg-config.yml";
+            string[] lines = {  "version: 2",
+                                "metrics:",
+                                "  push-gateways:",
+                                "    - host: ",
+                                "      job: ",
+                                "logger:",
+                                "  file:",
+                                "    level: warning",
+                               @"    path: pg-logs/log.txt"};
+            File.WriteAllLines(path, lines);
+            
+            // Setup services
+            var services = new ServiceCollection();
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddMetrics();
+
+            using (var provider = services.BuildServiceProvider()) {
+                var metrics = provider.GetRequiredService<MetricsService>();
+                metrics.Start();
+                await metrics.Stop();
+            }
+
+            var logfile = $@"pg-logs/log{DateTime.Now.ToString("yyyyMMdd")}.txt";
+            Assert.True(File.Exists(logfile));
+            using (StreamReader r = new StreamReader(logfile))
+            {
+                string line1 = r.ReadLine();
+                Assert.Contains("Invalid metrics push destination", line1);
+                Assert.Null(r.ReadLine());
+            }
+            Directory.Delete("pg-logs", true);
+            File.Delete(path);
+        }
 
         private static Task<HttpResponseMessage> MockNoAssertSendAsync(HttpRequestMessage message , CancellationToken token) {
             return Task.FromResult(new HttpResponseMessage
