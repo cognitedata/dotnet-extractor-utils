@@ -30,9 +30,9 @@ namespace ExtractorUtils {
         /// <param name="clientFactory">A pre-configured http client factory</param>
         /// <param name="config">Configuration object</param>
         /// <param name="logger">Logger</param>
-        public MetricsService(IHttpClientFactory clientFactory, BaseConfig config, ILogger<MetricsService> logger) {
+        public MetricsService(IHttpClientFactory clientFactory, ILogger<MetricsService> logger, MetricsConfig config = null) {
             _clientFactory = clientFactory;
-            _config = config.Metrics;
+            _config = config;
             _logger = logger;
             _pushers = new List<MetricPusher>();
         }
