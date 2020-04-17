@@ -26,9 +26,20 @@ namespace ExtractorUtils {
 
         /// <summary>
         /// Configure Serilog's shared logger according to the configuration in <paramref name="config"/>.
+        /// Use this method only when the static <see cref="Serilog.Log"/> is used by the application for logging
         /// </summary>
         /// <param name="config">Configuration object</param>
         public static void Configure(LoggerConfig config)
+        {
+            Log.Logger = GetConfiguredLogger(config);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Serilog.ILogger"/> logger according to the configuration in <paramref name="config"/>
+        /// </summary>
+        /// <param name="config">Configuration object of <see cref="LoggerConfig"/> type</param>
+        /// <returns>A configured logger</returns>
+        public static Serilog.ILogger GetConfiguredLogger(LoggerConfig config)
         {
             var logToConsole = Enum.TryParse(config.Console?.Level, true, out LogEventLevel consoleLevel);
             var logToFile = Enum.TryParse(config.File?.Level, true, out LogEventLevel fileLevel);
@@ -84,8 +95,7 @@ namespace ExtractorUtils {
                     logConfig.WriteTo.GoogleCloudLogging(gcConfig);
                 }
             }
-
-            Log.Logger = logConfig.CreateLogger();
+            return logConfig.CreateLogger();
         }
 
         /// <summary>
@@ -157,8 +167,7 @@ namespace ExtractorUtils {
                     defLog.Warning("No Logging configuration found. Using default logger");
                     return defLog;
                 }
-                Logging.Configure(config);
-                return Log.Logger;
+                return Logging.GetConfiguredLogger(config);
             });
             services.AddLogging(loggingBuilder => {
                 loggingBuilder.Services.AddSingleton<ILoggerProvider, SerilogLoggerProvider>(s => 
