@@ -198,15 +198,15 @@ namespace ExtractorUtils
             services.AddSingleton<IMetrics, CdfMetricCollector>();
             services.AddTransient(provider => {
                 var cdfBuilder = provider.GetRequiredService<Client.Builder>();
-                var conf = provider.GetRequiredService<BaseConfig>();
-                var auth = conf.Cognite?.IdpAuthentication != null ? 
+                var conf = provider.GetService<CogniteConfig>();
+                var auth = conf?.IdpAuthentication != null ? 
                     provider.GetRequiredService<Authenticator>() : null;
                 var logger = setLogger ? 
                     provider.GetRequiredService<ILogger<Client>>() : null;
                 var metrics = setMetrics ?
                     provider.GetRequiredService<IMetrics>() : null;
-                var client = cdfBuilder.Configure(conf.Cognite, appId, auth, logger, metrics).Build();
-                CogniteUtils.TestCogniteConfig(client, conf.Cognite).GetAwaiter().GetResult();
+                var client = cdfBuilder.Configure(conf, appId, auth, logger, metrics).Build();
+                CogniteUtils.TestCogniteConfig(client, conf).GetAwaiter().GetResult();
                 return client;
             });
 

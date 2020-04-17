@@ -37,12 +37,12 @@ namespace ExtractorUtils
         /// <summary>
         /// Creates a new authenticator
         /// </summary>
-        /// <param name="baseConfig">Configuration object</param>
+        /// <param name="cogConfig">Configuration object</param>
         /// <param name="client">Http client</param>
         /// <param name="logger">Logger</param>
-        public Authenticator(BaseConfig baseConfig, HttpClient client, ILogger<Authenticator> logger)
+        public Authenticator(CogniteConfig cogConfig, HttpClient client, ILogger<Authenticator> logger)
         {
-            _config = baseConfig.Cognite.IdpAuthentication;
+            _config = cogConfig.IdpAuthentication;
             _client = client;
             _logger = logger;
         }
