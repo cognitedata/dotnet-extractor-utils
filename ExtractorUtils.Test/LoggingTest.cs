@@ -10,8 +10,9 @@ namespace ExtractorUtils.Test
         public string Foo { get; set; } = "";
     }
 
-    public class LoggingTest
+    public sealed class LoggingTest
     {
+
         [Fact]
         public static void TestLogging() {
             // To log messages before a logger configured, the default console logger can be used.

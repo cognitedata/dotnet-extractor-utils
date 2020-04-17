@@ -17,7 +17,7 @@ namespace ExtractorUtils.Test {
         private const string endpoint = @"http://localhost101:9091";
         private const string job = "unit-test-job";
 
-        private static async Task<HttpResponseMessage> mockSendAsync(HttpRequestMessage message , CancellationToken token) {
+        private static async Task<HttpResponseMessage> MockSendAsync(HttpRequestMessage message , CancellationToken token) {
             var content = await message.Content.ReadAsStringAsync();
             var auth = message.Headers.Authorization;
 
@@ -61,7 +61,7 @@ namespace ExtractorUtils.Test {
                 .Setup<Task<HttpResponseMessage>>("SendAsync", 
                                                   ItExpr.IsAny<HttpRequestMessage>(), 
                                                   ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(mockSendAsync);
+                .Returns<HttpRequestMessage, CancellationToken>(MockSendAsync);
             var client = new HttpClient(mockHttpMessageHandler.Object);
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
             
@@ -92,7 +92,7 @@ namespace ExtractorUtils.Test {
         }
 
 
-        private static Task<HttpResponseMessage> mockNoAssertSendAsync(HttpRequestMessage message , CancellationToken token) {
+        private static Task<HttpResponseMessage> MockNoAssertSendAsync(HttpRequestMessage message , CancellationToken token) {
             return Task.FromResult(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK
@@ -125,7 +125,7 @@ namespace ExtractorUtils.Test {
                 .Setup<Task<HttpResponseMessage>>("SendAsync", 
                                                   ItExpr.IsAny<HttpRequestMessage>(), 
                                                   ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(mockNoAssertSendAsync);
+                .Returns<HttpRequestMessage, CancellationToken>(MockNoAssertSendAsync);
             var client = new HttpClient(mockHttpMessageHandler.Object);
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
             

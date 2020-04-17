@@ -155,9 +155,15 @@ namespace ExtractorUtils
         {
         }
 
+        private static bool IsNumericType(Type t)
+        {
+            var tc = Type.GetTypeCode(t);
+            return tc >= TypeCode.SByte && tc <= TypeCode.Decimal;
+        }
+
         bool INodeDeserializer.Deserialize(IParser parser, Type expectedType, Func<IParser, Type, object> nestedObjectDeserializer, out object value)
         {
-            if (expectedType != typeof(string) && !expectedType.IsNumericType())
+            if (expectedType != typeof(string) && !IsNumericType(expectedType))
             {
                 value = null;
                 return false;
