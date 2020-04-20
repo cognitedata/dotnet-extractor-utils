@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using Xunit;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace ExtractorUtils.Test
 {
@@ -193,6 +196,8 @@ namespace ExtractorUtils.Test
                 Assert.Contains("not associated with project Bogus", ex.Message);
                 config.Project = _project;
 
+                await cogClient.TestCogniteConfig(config, CancellationToken.None);
+
                 var loginStatus = await cogClient.Login.StatusAsync(CancellationToken.None);
                 Assert.True(loginStatus.LoggedIn);
                 Assert.Equal("testuser", loginStatus.User);
@@ -210,7 +215,7 @@ namespace ExtractorUtils.Test
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
-                    Times.Exactly(3), // 3 times trying to resolve the client (TestCogniteConfig method) and 2 times when using the client
+                    Times.Exactly(4), // 3 times trying to resolve the client (TestCogniteConfig method) and 2 times when using the client
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
 
@@ -218,9 +223,9 @@ namespace ExtractorUtils.Test
         }
 
         [Fact]
-        public async Task TestCogniteInvalidApiKeyClient()
+        public async Task TestInvalidApiKeyClient()
         {
-            string path = "test-cognite-invalid-client-config.yml";
+            string path = "test-ensure-time-series-config.yml";
             string[] lines = {  "version: 2",
                                 "cognite:",
                                $"  project: {_project}",
@@ -254,5 +259,165 @@ namespace ExtractorUtils.Test
 
             System.IO.File.Delete(path);
         }
+
+        [Theory]
+        [InlineData("id1", "id2")]
+        [InlineData("id1", "id2", "id3", "id4", "id5")]
+        [InlineData("missing1", "missing2")]
+        [InlineData("id1", "id2", "missing1", "id4", "missing2")]
+        [InlineData("duplicated1", "duplicated2")]
+        [InlineData("id1", "id2", "duplicated1", "id4", "duplicated2")]
+        [InlineData("id1", "missing1", "id2", "duplicated1", "missing2", "duplicated2")]
+        public async Task TestEnsureTimeSeries(params string[] ids)
+        {
+            string path = "test-cognite-invalid-client-config.yml";
+            string[] lines = {  "version: 2",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: {_apiKey}",
+                               $"  host: {_host}" };
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureTimeSeriesSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            // Setup services
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddCogniteClient("testApp");
+            using (var provider = services.BuildServiceProvider()) {
+                var config = provider.GetRequiredService<CogniteConfig>();
+                var cogClient = provider.GetRequiredService<Client>();
+                
+                Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> createFunction = 
+                    (ids) => {
+                        var toCreate = new List<TimeSeriesCreate>();
+                        foreach (var id in ids)
+                        {
+                            toCreate.Add(new TimeSeriesCreate
+                            {
+                                ExternalId = id
+
+                            });
+                        }
+                        return toCreate;
+                    };
+                ensuredTimeSeries.Clear();
+                var ts = await cogClient.EnsureTimeSeries(
+                    ids,
+                    createFunction, 
+                    2, 
+                    2,
+                    CancellationToken.None
+                );
+                Assert.Equal(ids.Count(), ts.Where(t => ids.Contains(t.ExternalId)).Count());
+            }
+
+            System.IO.File.Delete(path);
+        }
+
+        private static List<string> ensuredTimeSeries = new List<string>();
+
+        private static async Task<HttpResponseMessage> mockEnsureTimeSeriesSendAsync(HttpRequestMessage message , CancellationToken token) {
+            var uri = message.RequestUri.ToString();
+            var responseBody = "";
+            var statusCode = HttpStatusCode.OK;
+
+            var content = await message.Content.ReadAsStringAsync();
+            var ids = JsonConvert.DeserializeObject<dynamic>(content);
+            IEnumerable<dynamic> items = ids.items;
+
+
+            if (uri.Contains("/timeseries/byids"))
+            {
+                dynamic missingData = new ExpandoObject();
+                missingData.error = new ExpandoObject();
+                missingData.error.code = 400;
+                missingData.error.message = "Ids not found";
+                missingData.error.missing = new List<ExpandoObject>();
+
+                dynamic result = new ExpandoObject();
+                result.items = new List<ExpandoObject>();
+
+                foreach (var item in items)
+                {
+                    string id = item.externalId;
+                    if (!ensuredTimeSeries.Contains(id) && !id.StartsWith("id")) {
+                        dynamic missingId = new ExpandoObject();
+                        missingId.externalId = id;
+                        missingData.error.missing.Add(missingId);
+                    }
+                    else
+                    {
+                        dynamic tsData = new ExpandoObject();
+                        tsData.externalId = id;
+                        result.items.Add(tsData);
+                        ensuredTimeSeries.Add(id);
+                    }
+
+                }
+                if (missingData.error.missing.Count > 0)
+                {
+                    responseBody = JsonConvert.SerializeObject(missingData);
+                    statusCode = HttpStatusCode.BadRequest;
+                }
+                else
+                {
+                    responseBody = JsonConvert.SerializeObject(result);
+                }                
+            }
+            else {
+                dynamic duplicateData = new ExpandoObject();
+                duplicateData.error = new ExpandoObject();
+                duplicateData.error.code = 409;
+                duplicateData.error.message = "ExternalIds duplicated";
+                duplicateData.error.duplicated = new List<ExpandoObject>();
+
+                dynamic result = new ExpandoObject();
+                result.items = new List<ExpandoObject>();
+
+                foreach (var item in items)
+                {
+                    string id = item.externalId;
+                    if (!ensuredTimeSeries.Contains(id) && id.StartsWith("duplicated")) {
+                        dynamic duplicatedId = new ExpandoObject();
+                        duplicatedId.externalId = id;
+                        duplicateData.error.duplicated.Add(duplicatedId);
+                        ensuredTimeSeries.Add(id);
+                    }
+                    else
+                    {
+                        dynamic tsData = new ExpandoObject();
+                        tsData.externalId = id;
+                        result.items.Add(tsData);
+                        ensuredTimeSeries.Add(id);
+                    }
+
+                }
+                if (duplicateData.error.duplicated.Count > 0)
+                {
+                    responseBody = JsonConvert.SerializeObject(duplicateData);
+                    statusCode = HttpStatusCode.Conflict;
+                }
+                else
+                {
+                    responseBody = JsonConvert.SerializeObject(result);
+                }
+
+            }
+
+            var response = new HttpResponseMessage
+            {
+                StatusCode = statusCode,
+                Content = new StringContent(responseBody)               
+            };
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            response.Headers.Add("x-request-id", "1");
+            
+            return response;
+        }
+
     }
 }
