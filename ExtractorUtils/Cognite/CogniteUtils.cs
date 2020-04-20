@@ -40,23 +40,19 @@ namespace ExtractorUtils
             ILogger<Client> logger = null,
             IMetrics metrics = null)
         {
-            if (config == null) {
-                throw new CogniteUtilsException("Cognite configuration missing");
-            }
-            
-            if (config.Project.TrimToNull() == null)
-            {
-                throw new CogniteUtilsException("CDF project is not configured");
-            }
-
             var builder = clientBuilder
                 .SetAppId(appId)
-                .SetProject(config.Project);
+                .SetProject(config?.Project);
+
+            if (config?.Project?.TrimToNull() != null)
+            {
+                builder = builder.SetProject(config?.Project);
+            }
             
-            if (config.Host.TrimToNull() != null)
+            if (config?.Host?.TrimToNull() != null)
                 builder = builder.SetBaseUrl(new Uri(config.Host));
 
-            if (config.ApiKey.TrimToNull() != null)
+            if (config?.ApiKey?.TrimToNull() != null)
             {
                 builder = builder
                     .SetApiKey(config.ApiKey);
@@ -80,40 +76,6 @@ namespace ExtractorUtils
             }
 
             return builder;
-        }
-
-        /// <summary>
-        /// Verifies that the <paramref name="client"/> configured according to <paramref name="config"/>
-        /// can access Cognite Data Fusion
-        /// </summary>
-        /// <param name="client">Cognite SDK client</param>
-        /// <param name="config">Configuration object</param>
-        /// <exception cref="CogniteUtilsException">Thrown when credentials are invalid
-        /// or the client cannot be used to access CDF resources</exception>
-        public async static Task TestCogniteConfig(Client client, CogniteConfig config)
-        {
-            var loginStatus = await client.Login.StatusAsync(CancellationToken.None);
-            if (!loginStatus.LoggedIn)
-            {
-                throw new CogniteUtilsException("CDF credentials are invalid");
-            }
-            if (!loginStatus.Project.Equals(config.Project))
-            {
-                throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
-            }
-
-            try
-            {
-                var options = new TimeSeriesQuery()
-                {
-                    Limit = 1
-                };
-                var ts = await client.TimeSeries.ListAsync(options);
-            }
-            catch (ResponseException)
-            {
-                throw new CogniteUtilsException("Could not access CDF Time Series - most likely due to insufficient access rights");
-            }
         }
     }
 
@@ -206,7 +168,6 @@ namespace ExtractorUtils
                 var metrics = setMetrics ?
                     provider.GetRequiredService<IMetrics>() : null;
                 var client = cdfBuilder.Configure(conf, appId, auth, logger, metrics).Build();
-                CogniteUtils.TestCogniteConfig(client, conf).GetAwaiter().GetResult();
                 return client;
             });
 

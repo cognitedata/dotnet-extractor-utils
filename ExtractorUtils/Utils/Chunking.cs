@@ -99,7 +99,7 @@ namespace ExtractorUtils
         /// <param name="input"></param>
         /// <param name="maxSize"></param>
         /// <returns></returns>
-        public static IEnumerable<IEnumerable<T>> ChunkBy<T>(IEnumerable<T> input, int maxSize)
+        public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> input, int maxSize)
         {
             return input
                 .Select((x, i) => new { Index = i, Value = x })

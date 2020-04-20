@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -75,15 +76,9 @@ namespace ExtractorUtils.Test
                                 "    min-ttl: 0" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", 
-                                                  ItExpr.IsAny<HttpRequestMessage>(), 
-                                                  ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(mockAuthSendAsync);
-            var client = new HttpClient(mockHttpMessageHandler.Object);
-            var mockFactory = new Mock<IHttpClientFactory>();
-            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            var mocks = GetMockedHttpClientFactory(mockAuthSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
 
             // Setup services
             var services = new ServiceCollection();
@@ -125,10 +120,12 @@ namespace ExtractorUtils.Test
             if (message.RequestUri.ToString() == $@"{_host}/login/status")
             {
                 Assert.Equal(HttpMethod.Get, message.Method);
+                message.Headers.TryGetValues("api-key", out IEnumerable<string> keys);
+                var loggedIn = keys.Contains(_apiKey) ? "true" : "false";
                 reply = "{" + Environment.NewLine + 
                         "  \"data\": {" +  Environment.NewLine +
                        $"    \"user\": \"testuser\",{Environment.NewLine}" +
-                       $"    \"loggedIn\": true,{Environment.NewLine}" +
+                       $"    \"loggedIn\": {loggedIn},{Environment.NewLine}" +
                        $"    \"project\": \"{_project}\"" + Environment.NewLine +
                         "  }" + Environment.NewLine +
                         "}";
@@ -171,15 +168,9 @@ namespace ExtractorUtils.Test
                                $"  host: {_host}" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", 
-                                                  ItExpr.IsAny<HttpRequestMessage>(), 
-                                                  ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(mockCogniteSendAsync);
-            var client = new HttpClient(mockHttpMessageHandler.Object);
-            var mockFactory = new Mock<IHttpClientFactory>();
-            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            var mocks = GetMockedHttpClientFactory(mockCogniteSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
 
             // Setup services
             var services = new ServiceCollection();
@@ -188,13 +179,20 @@ namespace ExtractorUtils.Test
             services.AddLogger();
             services.AddCogniteClient("testApp", true, true);
             using (var provider = services.BuildServiceProvider()) {
-                var config = provider.GetRequiredService<BaseConfig>();
-                config.Cognite.Project = "Bogus";
-                var ex = Assert.Throws<CogniteUtilsException>(() => provider.GetRequiredService<Client>());
-                Assert.Contains("not associated with project Bogus", ex.Message);
-
-                config.Cognite.Project = _project;
+                var config = provider.GetRequiredService<CogniteConfig>();
                 var cogClient = provider.GetRequiredService<Client>();
+                var ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogClient.TestCogniteConfig(null, CancellationToken.None));
+                Assert.Contains("configuration missing", ex.Message);
+
+                config.Project = null;
+                ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogClient.TestCogniteConfig(config, CancellationToken.None));
+                Assert.Contains("project is not configured", ex.Message);
+
+                config.Project = "Bogus";
+                ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogClient.TestCogniteConfig(config, CancellationToken.None));
+                Assert.Contains("not associated with project Bogus", ex.Message);
+                config.Project = _project;
+
                 var loginStatus = await cogClient.Login.StatusAsync(CancellationToken.None);
                 Assert.True(loginStatus.LoggedIn);
                 Assert.Equal("testuser", loginStatus.User);
@@ -212,11 +210,64 @@ namespace ExtractorUtils.Test
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
-                    Times.Exactly(5), // 3 times trying to resolve the client (TestCogniteConfig method) and 2 times when using the client
+                    Times.Exactly(3), // 3 times trying to resolve the client (TestCogniteConfig method) and 2 times when using the client
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
 
             System.IO.File.Delete(path);
+        }
+
+        [Fact]
+        public async Task TestCogniteInvalidApiKeyClient()
+        {
+            string path = "test-cognite-invalid-client-config.yml";
+            string[] lines = {  "version: 2",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: otherApiKey",
+                               $"  host: {_host}" };
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = GetMockedHttpClientFactory(mockCogniteSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            // Setup services
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddCogniteClient("testApp");
+            using (var provider = services.BuildServiceProvider()) {
+                var config = provider.GetRequiredService<CogniteConfig>();
+                var cogClient = provider.GetRequiredService<Client>();
+                var ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogClient.TestCogniteConfig(config, CancellationToken.None));
+                Assert.Contains("credentials are invalid", ex.Message);
+            }
+
+            // Verify that the authentication endpoint was called 2 times
+            mockHttpMessageHandler.Protected()
+                .Verify<Task<HttpResponseMessage>>(
+                    "SendAsync", 
+                    Times.Exactly(1),
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>());
+
+            System.IO.File.Delete(path);
+        }
+
+        private (Mock<IHttpClientFactory> factory, Mock<HttpMessageHandler> handler) GetMockedHttpClientFactory(
+            Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> mockSendAsync)
+        {
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", 
+                                                  ItExpr.IsAny<HttpRequestMessage>(), 
+                                                  ItExpr.IsAny<CancellationToken>())
+                .Returns<HttpRequestMessage, CancellationToken>(mockSendAsync);
+            var client = new HttpClient(mockHttpMessageHandler.Object);
+            var mockFactory = new Mock<IHttpClientFactory>();
+            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            return (mockFactory, mockHttpMessageHandler);
         }
     }
 }
