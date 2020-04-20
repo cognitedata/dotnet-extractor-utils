@@ -55,15 +55,9 @@ namespace ExtractorUtils.Test {
             File.WriteAllLines(path, lines);
 
             // Mock http client factory
-            var mockFactory = new Mock<IHttpClientFactory>();
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", 
-                                                  ItExpr.IsAny<HttpRequestMessage>(), 
-                                                  ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(MockSendAsync);
-            var client = new HttpClient(mockHttpMessageHandler.Object);
-            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(MockSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
             
             // Setup services
             var services = new ServiceCollection();
@@ -194,15 +188,9 @@ namespace ExtractorUtils.Test {
             File.WriteAllLines(path, lines);
 
             // Mock http client factory
-            var mockFactory = new Mock<IHttpClientFactory>();
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", 
-                                                  ItExpr.IsAny<HttpRequestMessage>(), 
-                                                  ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(MockNoAssertSendAsync);
-            var client = new HttpClient(mockHttpMessageHandler.Object);
-            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(MockNoAssertSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
             
             // Setup services
             var services = new ServiceCollection();

@@ -76,7 +76,7 @@ namespace ExtractorUtils.Test
                                 "    min-ttl: 0" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = GetMockedHttpClientFactory(mockAuthSendAsync);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockAuthSendAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;
 
@@ -168,7 +168,7 @@ namespace ExtractorUtils.Test
                                $"  host: {_host}" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = GetMockedHttpClientFactory(mockCogniteSendAsync);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockCogniteSendAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;
 
@@ -228,7 +228,7 @@ namespace ExtractorUtils.Test
                                $"  host: {_host}" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = GetMockedHttpClientFactory(mockCogniteSendAsync);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockCogniteSendAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;
 
@@ -253,21 +253,6 @@ namespace ExtractorUtils.Test
                     ItExpr.IsAny<CancellationToken>());
 
             System.IO.File.Delete(path);
-        }
-
-        private (Mock<IHttpClientFactory> factory, Mock<HttpMessageHandler> handler) GetMockedHttpClientFactory(
-            Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> mockSendAsync)
-        {
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", 
-                                                  ItExpr.IsAny<HttpRequestMessage>(), 
-                                                  ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(mockSendAsync);
-            var client = new HttpClient(mockHttpMessageHandler.Object);
-            var mockFactory = new Mock<IHttpClientFactory>();
-            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
-            return (mockFactory, mockHttpMessageHandler);
         }
     }
 }
