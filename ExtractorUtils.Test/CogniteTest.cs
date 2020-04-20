@@ -215,7 +215,7 @@ namespace ExtractorUtils.Test
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
-                    Times.Exactly(4), // 3 times trying to resolve the client (TestCogniteConfig method) and 2 times when using the client
+                    Times.Exactly(4), // 2 time trying to test the client and 2 times when using the client
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
 
