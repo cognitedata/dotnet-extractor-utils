@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -11,7 +10,8 @@ using Moq.Protected;
 using Prometheus;
 using Xunit;
 
-namespace ExtractorUtils.Test {
+namespace ExtractorUtils.Test
+{
     public class MetricsTest {
         private static readonly Counter testCount = Metrics.CreateCounter("extractor_utils_test_count", "Counter used for unit testing.");
         private const string endpoint = @"http://localhost101:9091";

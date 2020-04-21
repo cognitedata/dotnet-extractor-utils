@@ -268,6 +268,16 @@ namespace ExtractorUtils.Test
         [InlineData("duplicated1", "duplicated2")]
         [InlineData("id1", "id2", "duplicated1", "id4", "duplicated2")]
         [InlineData("id1", "missing1", "id2", "duplicated1", "missing2", "duplicated2")]
+        [InlineData("id1", "id2", "missing1", "duplicated1-2", "duplicated2-4", "duplicated3-3")]
+        /// <summary>
+        /// External ids starting with 'id' exist in the mocked endpoint.
+        /// External ids starting with 'missing' do not exist, but can be successfully created.
+        /// External ids starting with 'duplicated' do not exist, and fail during creation as duplicated.
+        /// Duplicated with a suffix '-N', where N is an int will be reported by the endpoint as duplicated
+        /// a total of N times.
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
         public async Task TestEnsureTimeSeries(params string[] ids)
         {
             string path = "test-cognite-invalid-client-config.yml";
@@ -304,7 +314,7 @@ namespace ExtractorUtils.Test
                         }
                         return toCreate;
                     };
-                ensuredTimeSeries.Clear();
+                _ensuredTimeSeries.Clear();
                 var ts = await cogClient.EnsureTimeSeries(
                     ids,
                     createFunction, 
@@ -318,7 +328,7 @@ namespace ExtractorUtils.Test
             System.IO.File.Delete(path);
         }
 
-        private static List<string> ensuredTimeSeries = new List<string>();
+        private static Dictionary<string, int> _ensuredTimeSeries = new Dictionary<string, int>();
 
         private static async Task<HttpResponseMessage> mockEnsureTimeSeriesSendAsync(HttpRequestMessage message , CancellationToken token) {
             var uri = message.RequestUri.ToString();
@@ -344,7 +354,8 @@ namespace ExtractorUtils.Test
                 foreach (var item in items)
                 {
                     string id = item.externalId;
-                    if (!ensuredTimeSeries.Contains(id) && !id.StartsWith("id")) {
+                    var ensured = _ensuredTimeSeries.TryGetValue(id, out int countdown) && countdown <= 0;
+                    if (!ensured && !id.StartsWith("id")) {
                         dynamic missingId = new ExpandoObject();
                         missingId.externalId = id;
                         missingData.error.missing.Add(missingId);
@@ -354,7 +365,7 @@ namespace ExtractorUtils.Test
                         dynamic tsData = new ExpandoObject();
                         tsData.externalId = id;
                         result.items.Add(tsData);
-                        ensuredTimeSeries.Add(id);
+                        _ensuredTimeSeries.TryAdd(id, 0);
                     }
 
                 }
@@ -381,18 +392,21 @@ namespace ExtractorUtils.Test
                 foreach (var item in items)
                 {
                     string id = item.externalId;
-                    if (!ensuredTimeSeries.Contains(id) && id.StartsWith("duplicated")) {
+                    var hasValue = _ensuredTimeSeries.TryGetValue(id, out int countdown);
+                    if ((!hasValue || countdown > 0) && id.StartsWith("duplicated")) {
+                        var splittedId = id.Split('-');
+                        var count = splittedId.Count() == 2 ? int.Parse(splittedId[1]) - 1 : 0;
                         dynamic duplicatedId = new ExpandoObject();
                         duplicatedId.externalId = id;
                         duplicateData.error.duplicated.Add(duplicatedId);
-                        ensuredTimeSeries.Add(id);
+                        _ensuredTimeSeries[id] = hasValue ? countdown - 1 : count;
                     }
                     else
                     {
                         dynamic tsData = new ExpandoObject();
                         tsData.externalId = id;
                         result.items.Add(tsData);
-                        ensuredTimeSeries.Add(id);
+                        _ensuredTimeSeries.TryAdd(id, 0);
                     }
 
                 }

@@ -7,6 +7,9 @@ using CogniteSdk;
 
 namespace ExtractorUtils
 {
+    /// <summary>
+    /// Extension utility methods for <see cref="Client"/>
+    /// </summary>
     public static class CogniteClientExtensions
     {
         /// <summary>
@@ -99,6 +102,10 @@ namespace ExtractorUtils
             catch (ResponseException e) 
             {
                 if (e.Code != 409 || !e.Duplicated.Any())
+                {
+                    throw;
+                }
+                if (backoff > 10) // ~3.5 min total backoff time
                 {
                     throw;
                 }
