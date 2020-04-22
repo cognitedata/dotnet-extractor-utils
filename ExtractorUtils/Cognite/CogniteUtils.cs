@@ -170,7 +170,7 @@ namespace ExtractorUtils
                 var client = cdfBuilder.Configure(conf, appId, auth, logger, metrics).Build();
                 return client;
             });
-
+            services.AddTransient<CogniteDestination>();
         }
     }
 }

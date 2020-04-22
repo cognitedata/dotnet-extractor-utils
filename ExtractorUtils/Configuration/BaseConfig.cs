@@ -236,6 +236,15 @@ namespace ExtractorUtils {
         /// <value>Prefix</value>
         public string ExternalIdPrefix { get; set; } = "";
 
+        /// <summary>
+        /// Chunking sizes towards CDF 
+        /// </summary>
+        public ChunkingConfig CdfChunking { get; set; } = new ChunkingConfig();
+        
+        /// <summary>
+        /// Throttling of requests to CDF
+        /// </summary>
+        public ThrottlingConfig CdfThrottling { get; set; } = new ThrottlingConfig();
     }
 
     /// <summary>
@@ -275,6 +284,29 @@ namespace ExtractorUtils {
         public int MinTtl { get; set; } = 30;
     }
 
+    /// <summary>
+    /// Chunking configuration
+    /// </summary>
+    public class ChunkingConfig
+    {
+        /// <summary>
+        /// Maximum chunk size for time series operations
+        /// </summary>
+        /// <value>Maximum chunk size</value>
+        public int TimeSeries { get; set; } = 1_000;
+    }
+
+    /// <summary>
+    /// Throttling configuration
+    /// </summary>
+    public class ThrottlingConfig
+    {
+        /// <summary>
+        /// Maximum number of parallel time series operations
+        /// </summary>
+        /// <value>Maximum number of parallel operations</value>
+        public int TimeSeries { get; set; } = 20;
+    }
 
 #endregion
 }

@@ -315,7 +315,7 @@ namespace ExtractorUtils.Test
                         return toCreate;
                     };
                 _ensuredTimeSeries.Clear();
-                var ts = await cogClient.EnsureTimeSeries(
+                var ts = await cogClient.EnsureTimeSeriesAsync(
                     ids,
                     createFunction, 
                     2, 
