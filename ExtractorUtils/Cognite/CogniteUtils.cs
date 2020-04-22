@@ -2,7 +2,6 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -41,8 +40,7 @@ namespace ExtractorUtils
             IMetrics metrics = null)
         {
             var builder = clientBuilder
-                .SetAppId(appId)
-                .SetProject(config?.Project);
+                .SetAppId(appId);
 
             if (config?.Project?.TrimToNull() != null)
             {
