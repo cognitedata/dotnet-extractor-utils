@@ -45,13 +45,13 @@ namespace ExtractorUtils
         /// <param name="buildTimeSeries">Function that builds <see cref="TimeSeriesCreate"/> objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TimeSeries>> EnsureTimeSeriesAsync(
+        public async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
             CancellationToken token)
         {
-            _logger.LogInformation("Ensuring that {Number} time series exist in CDF", externalIds.Count());
-            return await _client.EnsureTimeSeriesAsync(
+            _logger.LogInformation("Getting or creating {Number} time series in CDF", externalIds.Count());
+            return await _client.GetOrCreateTimeSeriesAsync(
                 externalIds,
                 buildTimeSeries,
                 _config.CdfChunking.TimeSeries,
@@ -59,6 +59,17 @@ namespace ExtractorUtils
                 token);
         }
 
+        public async Task EnsureTimeSeriesExistsAsync(
+            IEnumerable<TimeSeriesCreate> timeSeries, 
+            CancellationToken token)
+        {
+            _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
+            await _client.EnsureTimeSeriesExistsAsync(
+                timeSeries,
+                _config.CdfChunking.TimeSeries,
+                _config.CdfThrottling.TimeSeries,
+                token);
+        }
     }
 
     /// <summary>
@@ -104,7 +115,7 @@ namespace ExtractorUtils
         }
 
         /// <summary>
-        /// Ensures the the time series with the provided <paramref name="externalIds"/> exist in CDF.
+        /// Get or create the time series with the provided <paramref name="externalIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
@@ -116,7 +127,7 @@ namespace ExtractorUtils
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IEnumerable<TimeSeries>> EnsureTimeSeriesAsync(
+        public static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
             this Client client,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
@@ -127,18 +138,47 @@ namespace ExtractorUtils
             var result = new List<TimeSeries>();
             var chunks = externalIds
                 .ChunkBy(chunkSize);
-            _logger.LogDebug("Ensuring time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
+            _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
-                        var existing = await EnsureTimeSeriesChunk(client, chunk, buildTimeSeries, 0, token);
+                        var existing = await GetOrCreateTimeSeriesChunk(client, chunk, buildTimeSeries, 0, token);
                         result.AddRange(existing);
                     });
             await generators.RunThrottled(throttleSize, token);
             return result;
         }
 
-        private static async Task<IEnumerable<TimeSeries>> EnsureTimeSeriesChunk(
+        /// <summary>
+        /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
+        /// Tries to create the time series and returns when all are created or reported as 
+        /// duplicates (already exist in CDF)
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="timeSeries">List of <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        public static async Task EnsureTimeSeriesExistsAsync(
+            this Client client,
+            IEnumerable<TimeSeriesCreate> timeSeries, 
+            int chunkSize, 
+            int throttleSize,
+            CancellationToken token)
+        {
+            var chunks = timeSeries
+                .ChunkBy(chunkSize);
+            _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeries.Count(), chunks.Count());
+            var generators = chunks
+                .Select<IEnumerable<TimeSeriesCreate>, Func<Task>>(
+                chunk => async () => {
+                    await EnsureTimeSeriesChunk(client, chunk, token);
+                });
+            await generators.RunThrottled(throttleSize, token);
+        }
+
+
+        private static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesChunk(
             Client client,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
@@ -152,11 +192,7 @@ namespace ExtractorUtils
                 _logger.LogDebug("Retrieved {Existing} times series from CDF", existingTs.Count());
                 return existingTs;
             }
-            catch (ResponseException e) {
-                if (e.Code != 400 || !e.Missing.Any())
-                {
-                    throw;
-                }
+            catch (ResponseException e) when (e.Code == 400 && e.Missing.Any()){
                 foreach (var ts in e.Missing)
                 {
                     if (ts.TryGetValue("externalId", out MultiValue value))
@@ -178,12 +214,8 @@ namespace ExtractorUtils
                 created.AddRange(newTs);
                 _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
             }
-            catch (ResponseException e) 
+            catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
             {
-                if (e.Code != 409 || !e.Duplicated.Any())
-                {
-                    throw;
-                }
                 if (backoff > 10) // ~3.5 min total backoff time
                 {
                     throw;
@@ -193,10 +225,48 @@ namespace ExtractorUtils
             }
             if (toGet.Any()) {
                 await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-                var ensured = await EnsureTimeSeriesChunk(client, toGet, buildTimeSeries, backoff + 1, token);
+                var ensured = await GetOrCreateTimeSeriesChunk(client, toGet, buildTimeSeries, backoff + 1, token);
                 created.AddRange(ensured);
             }
             return created;
+        }
+
+        private static async Task EnsureTimeSeriesChunk(
+            Client client,
+            IEnumerable<TimeSeriesCreate> timeSeries,
+            CancellationToken token)
+        {
+            var create = timeSeries;
+            while (!token.IsCancellationRequested && create.Any())
+            {
+                try
+                {
+                    var newTs = await client.TimeSeries.CreateAsync(create, token);
+                    _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
+                    return;
+                }
+                catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
+                {
+                    // Remove duplicates - already exists
+                    // also a case for legacyName...
+                    var duplicated = new HashSet<string>(e.Duplicated
+                        .Select(d => d.GetValue("externalId", null))
+                        .Where(mv => mv != null)
+                        .Select(mv => mv.ToString()));
+                    create = timeSeries.Where(ts => !duplicated.Contains(ts.ExternalId));
+                    await Task.Delay(TimeSpan.FromMilliseconds(100), token);
+                    _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumTimeSeries} time series", 
+                        e.Duplicated.Count(), create.Count());
+                    continue;
+                }
+#pragma warning disable CA1031 // Do not catch general exception types
+                catch (Exception e)
+                {
+                    _logger.LogWarning("CDF create timeseries failed: {Message} - Retrying in 1 second", e.Message);
+                }
+#pragma warning restore CA1031 // Do not catch general exception types
+                await Task.Delay(TimeSpan.FromSeconds(1), token);
+            }
         }
     }
 }
