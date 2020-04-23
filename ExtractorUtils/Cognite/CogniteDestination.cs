@@ -59,6 +59,14 @@ namespace ExtractorUtils
                 token);
         }
 
+        /// <summary>
+        /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
+        /// Tries to create the time series and returns when all are created or reported as 
+        /// duplicates (already exist in CDF)
+        /// </summary>
+        /// <param name="timeSeries">List of <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
         public async Task EnsureTimeSeriesExistsAsync(
             IEnumerable<TimeSeriesCreate> timeSeries, 
             CancellationToken token)
