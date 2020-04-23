@@ -294,6 +294,9 @@ namespace ExtractorUtils {
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int TimeSeries { get; set; } = 1_000;
+        public int DataPointTimeSeries { get; set; } = 10_000;
+        public int DataPoints { get; set; } = 100_000;
+
     }
 
     /// <summary>
@@ -306,6 +309,7 @@ namespace ExtractorUtils {
         /// </summary>
         /// <value>Maximum number of parallel operations</value>
         public int TimeSeries { get; set; } = 20;
+        public int DataPoints { get; set; } = 10;
     }
 
 #endregion

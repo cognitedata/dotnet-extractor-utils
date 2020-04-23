@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CogniteSdk;
+using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
+using Polly.Timeout;
+using Prometheus;
 
 namespace ExtractorUtils
 {
@@ -34,6 +37,11 @@ namespace ExtractorUtils
             CogniteClientExtensions.SetLogger(_logger);
         }
 
+        public async Task TestCogniteConfig(CancellationToken token)
+        {
+            await _client.TestCogniteConfig(_config, token);
+        }
+
         /// <summary>
         /// Ensures the the time series with the provided <paramref name="externalIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
@@ -59,6 +67,47 @@ namespace ExtractorUtils
                 token);
         }
 
+        public async Task InsertDataPointsAsync(
+            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
+                points.Values.Select(dp => dp.Count()).Sum(),
+                points.Keys.Count);
+            await _client.InsertDataPointsAsync(
+                points,
+                _config.CdfChunking.DataPointTimeSeries,
+                _config.CdfChunking.DataPoints,
+                _config.CdfThrottling.DataPoints,
+                token);
+        }
+
+    }
+    
+    public class DataPoint
+    {
+        private readonly long _timestamp;
+        private readonly double? _numericValue;
+        private readonly string _stringValue;
+        public long Timestamp => _timestamp;
+
+        public string StringValue => _stringValue;
+
+        public double? NumericValue => _numericValue;
+
+        public DataPoint(DateTime timestamp, double numericValue)
+        {
+            _timestamp = timestamp.ToUnixTimeMilliseconds();
+            _numericValue = numericValue;
+            _stringValue = null;
+        }
+
+        public DataPoint(DateTime timestamp, string stringValue)
+        {
+            _timestamp = timestamp.ToUnixTimeMilliseconds();
+            _numericValue = null;
+            _stringValue = stringValue;
+        }
     }
 
     /// <summary>
@@ -68,6 +117,7 @@ namespace ExtractorUtils
     {
         private static ILogger _logger = Logging.GetDefault();
 
+        private static readonly Counter _numberDataPoints = Metrics.CreateCounter("extractor_utils_cdf_datapoints", null);
         internal static void SetLogger(ILogger logger) {
             _logger = logger;
         }
@@ -136,6 +186,101 @@ namespace ExtractorUtils
                     });
             await generators.RunThrottled(throttleSize, token);
             return result;
+        }
+        
+        public static async Task InsertDataPointsAsync(
+            this Client client,
+            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            int keyChunkSize,
+            int valueChunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var chunks = points
+            .Select(p => (p.Key, p.Value))
+            .ChunkBy(valueChunkSize, keyChunkSize);
+
+            var generators = chunks
+                .Select<IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)>, Func<Task>>(
+                    chunk => async () =>  await InsertDataPointsChunk(client, chunk, token));
+            await generators.RunThrottled(throttleSize, token);
+        }
+
+        private static async Task InsertDataPointsChunk(
+            this Client client,
+            IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)> points,
+            CancellationToken token)
+        {
+            var request = new DataPointInsertionRequest();
+            var dataPointCount = 0;
+            foreach (var entry in points)
+            {
+                var item = new DataPointInsertionItem();
+                if (entry.id.Id.HasValue)
+                {
+                    item.Id = entry.id.Id.Value;
+                }
+                else
+                {
+                    item.ExternalId = entry.id.ToString();
+                }
+                if (!entry.dataPoints.Any())
+                {
+                    continue;
+                }
+                var stringPoints = entry.dataPoints
+                    .Where(dp => dp.StringValue != null)
+                    .Select(dp => new StringDatapoint
+                        {
+                            Timestamp = dp.Timestamp,
+                            Value = dp.StringValue
+                        });
+                var numericPoints = entry.dataPoints
+                    .Where(dp => dp.NumericValue.HasValue)
+                    .Select(dp => new NumericDatapoint
+                        {
+                            Timestamp = dp.Timestamp,
+                            Value = dp.NumericValue.Value
+                        });
+                if (numericPoints.Any() && stringPoints.Any())
+                {
+                    _logger.LogError("Attempting to upload both numeric and string data points to time series {Id}. Skipping", 
+                        entry.id.ToString());
+                    continue;
+                }
+                if (stringPoints.Any())
+                {
+                    var stringData = new StringDatapoints();
+                    stringData.Datapoints.AddRange(stringPoints);
+                    if (stringData.Datapoints.Count > 0)
+                    {
+                        item.StringDatapoints = stringData;
+                        request.Items.Add(item);
+                        dataPointCount += stringData.Datapoints.Count;
+                    }
+                }
+                else
+                {
+                    var doubleData = new NumericDatapoints();
+                    doubleData.Datapoints.AddRange(numericPoints);
+                    if (doubleData.Datapoints.Count > 0)
+                    {
+                        item.NumericDatapoints = doubleData;
+                        request.Items.Add(item);
+                        dataPointCount += doubleData.Datapoints.Count;
+                    }
+                }
+            }
+            try
+            {
+                await client.DataPoints.CreateAsync(request, token);
+                _numberDataPoints.Inc(dataPointCount);
+            }
+            catch (TimeoutRejectedException)
+            {
+                _logger.LogWarning("Uploading data points to CDF timed out. Consider reducing the chunking sizes in the config file");
+                throw;
+            }
         }
 
         private static async Task<IEnumerable<TimeSeries>> EnsureTimeSeriesChunk(
