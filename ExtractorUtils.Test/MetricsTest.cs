@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -11,7 +10,8 @@ using Moq.Protected;
 using Prometheus;
 using Xunit;
 
-namespace ExtractorUtils.Test {
+namespace ExtractorUtils.Test
+{
     public class MetricsTest {
         private static readonly Counter testCount = Metrics.CreateCounter("extractor_utils_test_count", "Counter used for unit testing.");
         private const string endpoint = @"http://localhost101:9091";
@@ -55,15 +55,9 @@ namespace ExtractorUtils.Test {
             File.WriteAllLines(path, lines);
 
             // Mock http client factory
-            var mockFactory = new Mock<IHttpClientFactory>();
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", 
-                                                  ItExpr.IsAny<HttpRequestMessage>(), 
-                                                  ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(MockSendAsync);
-            var client = new HttpClient(mockHttpMessageHandler.Object);
-            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(MockSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
             
             // Setup services
             var services = new ServiceCollection();
@@ -194,15 +188,9 @@ namespace ExtractorUtils.Test {
             File.WriteAllLines(path, lines);
 
             // Mock http client factory
-            var mockFactory = new Mock<IHttpClientFactory>();
-            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            mockHttpMessageHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", 
-                                                  ItExpr.IsAny<HttpRequestMessage>(), 
-                                                  ItExpr.IsAny<CancellationToken>())
-                .Returns<HttpRequestMessage, CancellationToken>(MockNoAssertSendAsync);
-            var client = new HttpClient(mockHttpMessageHandler.Object);
-            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(MockNoAssertSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
             
             // Setup services
             var services = new ServiceCollection();

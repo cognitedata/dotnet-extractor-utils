@@ -1,7 +1,7 @@
-using System.Reflection;
 using Xunit;
 
-namespace ExtractorUtils.Test {
+namespace ExtractorUtils.Test
+{
     public static class CommonUtilsTest {
 
         [Theory]
