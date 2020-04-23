@@ -225,7 +225,7 @@ namespace ExtractorUtils.Test
         [Fact]
         public async Task TestInvalidApiKeyClient()
         {
-            string path = "test-ensure-time-series-config.yml";
+            string path = "test-cognite-invalid-client-config.yml";
             string[] lines = {  "version: 2",
                                 "cognite:",
                                $"  project: {_project}",
@@ -280,12 +280,19 @@ namespace ExtractorUtils.Test
         /// <returns></returns>
         public async Task TestEnsureTimeSeries(params string[] ids)
         {
-            string path = "test-cognite-invalid-client-config.yml";
+            string path = "test-ensure-time-series-config.yml";
             string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
                                $"  api-key: {_apiKey}",
-                               $"  host: {_host}" };
+                               $"  host: {_host}",
+                                "  cdf-chunking:",
+                                "    time-series: 2",
+                                "  cdf-throttling:",
+                                "    time-series: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureTimeSeriesSendAsync);
@@ -296,10 +303,10 @@ namespace ExtractorUtils.Test
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider()) {
-                var config = provider.GetRequiredService<CogniteConfig>();
-                var cogClient = provider.GetRequiredService<Client>();
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 
                 Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> createFunction = 
                     (ids) => {
@@ -315,14 +322,22 @@ namespace ExtractorUtils.Test
                         return toCreate;
                     };
                 _ensuredTimeSeries.Clear();
-                var ts = await cogClient.EnsureTimeSeriesAsync(
+                var ts = await cogniteDestination.GetOrCreateTimeSeriesAsync(
                     ids,
-                    createFunction, 
-                    2, 
-                    2,
+                    createFunction,
                     CancellationToken.None
                 );
                 Assert.Equal(ids.Count(), ts.Where(t => ids.Contains(t.ExternalId)).Count());
+
+                _ensuredTimeSeries.Clear();
+                var newTs = createFunction(ids);
+                using (var source = new CancellationTokenSource(5_000))
+                {
+                    // a timeout would fail the test
+                    await cogniteDestination.EnsureTimeSeriesExistsAsync(newTs, source.Token);
+                }
+                Assert.Equal(ids.Count(), _ensuredTimeSeries
+                    .Where(kvp => ids.Contains(kvp.Key)).Count());
             }
 
             System.IO.File.Delete(path);
