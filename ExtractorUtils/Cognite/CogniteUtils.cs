@@ -17,8 +17,19 @@ namespace ExtractorUtils
     /// </summary>
     public static class CogniteUtils
     {
-        public const double NumericValueMin = -1e+100; // Cognite min double value
-        public const double NumericValueMax = 1e+100; // Cognite max double value
+        /// <summary>
+        /// Cognite min double value
+        /// </summary>
+        public const double NumericValueMin = -1e+100;
+        
+        /// <summary>
+        /// Cognite max double value
+        /// </summary>
+        public const double NumericValueMax = 1e+100;
+        
+        /// <summary>
+        /// Cognite max string length
+        /// </summary>
         public const int StringLengthMax = 255;
 
 
@@ -82,6 +93,11 @@ namespace ExtractorUtils
             return builder;
         }
 
+        /// <summary>
+        /// Trim values to accepted CDF limits and filter out invalid double values (NaN and Infinity) 
+        /// </summary>
+        /// <param name="points">Data points</param>
+        /// <returns></returns>
         public static IEnumerable<DataPoint> TrimValues(this IEnumerable<DataPoint> points)
         {
             foreach (var point in points)
