@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -16,6 +17,11 @@ namespace ExtractorUtils
     /// </summary>
     public static class CogniteUtils
     {
+        public const double NumericValueMin = -1e+100; // Cognite min double value
+        public const double NumericValueMax = 1e+100; // Cognite max double value
+        public const int StringLengthMax = 255;
+
+
         /// <summary>
         /// Configure a <see cref="Client.Builder"/> according to the <paramref name="config"/> object
         /// </summary>
@@ -74,6 +80,30 @@ namespace ExtractorUtils
             }
 
             return builder;
+        }
+
+        public static IEnumerable<DataPoint> TrimValues(this IEnumerable<DataPoint> points)
+        {
+            foreach (var point in points)
+            {
+                // reduce GC pressure by re-using object if ok
+                if (point.StringValue != null)
+                {
+                    yield return point.StringValue.Length < StringLengthMax ? point :
+                        new DataPoint(CogniteTime.FromMilliseconds(point.Timestamp), point.StringValue.Substring(0, StringLengthMax));
+                }
+                else if (point.NumericValue.HasValue)
+                {
+                    double value = point.NumericValue.Value;
+                    if (!double.IsNaN(value) && !double.IsInfinity(value))
+                    {
+                        value = Math.Max(NumericValueMin, value);
+                        value = Math.Min(NumericValueMax, value);
+                        yield return value == point.NumericValue.Value ? point : 
+                            new DataPoint(CogniteTime.FromMilliseconds(point.Timestamp), value);
+                    }
+                }
+            }
         }
     }
 

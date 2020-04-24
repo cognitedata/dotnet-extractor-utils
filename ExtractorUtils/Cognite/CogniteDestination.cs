@@ -248,14 +248,15 @@ namespace ExtractorUtils
                 {
                     continue;
                 }
-                var stringPoints = entry.dataPoints
+                var validPoints = entry.dataPoints.TrimValues();
+                var stringPoints = validPoints
                     .Where(dp => dp.StringValue != null)
                     .Select(dp => new StringDatapoint
                         {
                             Timestamp = dp.Timestamp,
                             Value = dp.StringValue
                         });
-                var numericPoints = entry.dataPoints
+                var numericPoints = validPoints
                     .Where(dp => dp.NumericValue.HasValue)
                     .Select(dp => new NumericDatapoint
                         {
