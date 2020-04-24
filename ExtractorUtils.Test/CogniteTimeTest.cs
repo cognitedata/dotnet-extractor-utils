@@ -11,7 +11,7 @@ namespace ExtractorUtils.Test
         public static void TestToFormattedString(
             long ms, string expected)
         {
-            var time = CogniteTime.FromMilliseconds(ms);
+            var time = CogniteTime.FromUnixTimeMilliseconds(ms);
             Assert.Equal(expected, time.ToISOString());
         }
 
@@ -30,23 +30,23 @@ namespace ExtractorUtils.Test
         [Fact]
         public static void TestMax()
         {
-            var t1 = CogniteTime.FromMilliseconds(1000);
-            var t2 = CogniteTime.FromMilliseconds(2000);
+            var t1 = CogniteTime.FromUnixTimeMilliseconds(1000);
+            var t2 = CogniteTime.FromUnixTimeMilliseconds(2000);
             Assert.Equal(t2, CogniteTime.Max(t1, t2));
         }
 
         [Fact]
         public static void TestMin()
         {
-            var t1 = CogniteTime.FromMilliseconds(1000);
-            var t2 = CogniteTime.FromMilliseconds(2000);
+            var t1 = CogniteTime.FromUnixTimeMilliseconds(1000);
+            var t2 = CogniteTime.FromUnixTimeMilliseconds(2000);
             Assert.Equal(t1, CogniteTime.Min(t1, t2));
         }
         [Fact]
         public static void TestMaxValue()
         {
             var msMax = DateTime.MaxValue.ToUnixTimeMilliseconds();
-            var dMax = CogniteTime.FromMilliseconds(msMax);
+            var dMax = CogniteTime.FromUnixTimeMilliseconds(msMax);
             Assert.Equal("9999-12-31 23:59:59.999", dMax.ToISOString());
             Assert.Equal(DateTime.MaxValue.Ticks / 10_000, dMax.Ticks / 10_000);
         }
@@ -54,13 +54,13 @@ namespace ExtractorUtils.Test
         [Fact]
         public static void TestFromMilliseconds()
         {
-            var d1 = CogniteTime.FromMilliseconds(0);
+            var d1 = CogniteTime.FromUnixTimeMilliseconds(0);
             Assert.Equal(CogniteTime.DateTimeEpoch, d1);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromMilliseconds(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromUnixTimeMilliseconds(-1));
 
             var outOfRangeValue = DateTime.MaxValue.ToUnixTimeMilliseconds() + 1;
-            Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromMilliseconds(outOfRangeValue));
+            Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromUnixTimeMilliseconds(outOfRangeValue));
         }
 
         [Fact]

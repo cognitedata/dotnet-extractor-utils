@@ -216,9 +216,18 @@ namespace ExtractorUtils
             int throttleSize,
             CancellationToken token)
         {
-            var chunks = points
-            .Select(p => (p.Key, p.Value))
-            .ChunkBy(valueChunkSize, keyChunkSize);
+            Dictionary<Identity, IEnumerable<DataPoint>> trimmedDict = new Dictionary<Identity, IEnumerable<DataPoint>>();
+            foreach (var key in points.Keys)
+            {
+                var validDps = points[key].TrimValues();
+                if (validDps.Any())
+                {
+                    trimmedDict.Add(key, validDps);
+                }
+            }
+            var chunks = trimmedDict
+                .Select(p => (p.Key, p.Value))
+                .ChunkBy(valueChunkSize, keyChunkSize);
 
             var generators = chunks
                 .Select<IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)>, Func<Task>>(
@@ -248,27 +257,20 @@ namespace ExtractorUtils
                 {
                     continue;
                 }
-                var validPoints = entry.dataPoints.TrimValues();
-                var stringPoints = validPoints
+                var stringPoints = entry.dataPoints
                     .Where(dp => dp.StringValue != null)
                     .Select(dp => new StringDatapoint
                         {
                             Timestamp = dp.Timestamp,
                             Value = dp.StringValue
                         });
-                var numericPoints = validPoints
+                var numericPoints = entry.dataPoints
                     .Where(dp => dp.NumericValue.HasValue)
                     .Select(dp => new NumericDatapoint
                         {
                             Timestamp = dp.Timestamp,
                             Value = dp.NumericValue.Value
                         });
-                if (numericPoints.Any() && stringPoints.Any())
-                {
-                    _logger.LogError("Attempting to upload both numeric and string data points to time series {Id}. Skipping", 
-                        entry.id.ToString());
-                    continue;
-                }
                 if (stringPoints.Any())
                 {
                     var stringData = new StringDatapoints();

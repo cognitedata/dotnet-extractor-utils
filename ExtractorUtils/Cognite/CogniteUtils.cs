@@ -90,7 +90,7 @@ namespace ExtractorUtils
                 if (point.StringValue != null)
                 {
                     yield return point.StringValue.Length < StringLengthMax ? point :
-                        new DataPoint(CogniteTime.FromMilliseconds(point.Timestamp), point.StringValue.Substring(0, StringLengthMax));
+                        new DataPoint(CogniteTime.FromUnixTimeMilliseconds(point.Timestamp), point.StringValue.Substring(0, StringLengthMax));
                 }
                 else if (point.NumericValue.HasValue)
                 {
@@ -100,7 +100,7 @@ namespace ExtractorUtils
                         value = Math.Max(NumericValueMin, value);
                         value = Math.Min(NumericValueMax, value);
                         yield return value == point.NumericValue.Value ? point : 
-                            new DataPoint(CogniteTime.FromMilliseconds(point.Timestamp), value);
+                            new DataPoint(CogniteTime.FromUnixTimeMilliseconds(point.Timestamp), value);
                     }
                 }
             }
