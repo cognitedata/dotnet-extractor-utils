@@ -22,7 +22,7 @@ namespace ExtractorUtils
         /// </summary>
         /// <param name="msSinceEpoch">number of milliseconds since Epoch</param>
         /// <returns>DateTime object correponding to the Unix time</returns>
-        public static DateTime FromMilliseconds(long msSinceEpoch)
+        public static DateTime FromUnixTimeMilliseconds(long msSinceEpoch)
         {
             if (msSinceEpoch < 0 || msSinceEpoch > maxTsValue)
             {

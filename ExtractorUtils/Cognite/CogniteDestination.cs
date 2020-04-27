@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CogniteSdk;
+using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
+using Polly.Timeout;
+using Prometheus;
 
 namespace ExtractorUtils
 {
@@ -32,6 +35,16 @@ namespace ExtractorUtils
             _logger = logger;
             _config = config;
             CogniteClientExtensions.SetLogger(_logger);
+        }
+
+        /// <summary>
+        /// Verifies that the currently configured Cognite client can access Cognite Data Fusion
+        /// </summary>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task TestCogniteConfig(CancellationToken token)
+        {
+            await _client.TestCogniteConfig(_config, token);
         }
 
         /// <summary>
@@ -78,6 +91,78 @@ namespace ExtractorUtils
                 _config.CdfThrottling.TimeSeries,
                 token);
         }
+
+        /// <summary>
+        /// Insert the provided data points into CDF. The data points are chunked
+        /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
+        /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
+        /// </summary>
+        /// <param name="points">Data points</param>
+        /// <param name="token">Cancellation token</param>
+        public async Task InsertDataPointsAsync(
+            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
+                points.Values.Select(dp => dp.Count()).Sum(),
+                points.Keys.Count);
+            await _client.InsertDataPointsAsync(
+                points,
+                _config.CdfChunking.DataPointTimeSeries,
+                _config.CdfChunking.DataPoints,
+                _config.CdfThrottling.DataPoints,
+                token);
+        }
+
+    }
+    
+    /// <summary>
+    /// Data point abstraction. Consists of a timestamp and a double or string value
+    /// </summary>
+    public class DataPoint
+    {
+        private readonly long _timestamp;
+        private readonly double? _numericValue;
+        private readonly string _stringValue;
+        
+        /// <summary>
+        /// Timestamp in Unix time milliseconds
+        /// </summary>
+        public long Timestamp => _timestamp;
+
+        /// <summary>
+        /// Optional string value
+        /// </summary>
+        public string StringValue => _stringValue;
+
+        /// <summary>
+        /// Optional double value
+        /// </summary>
+        public double? NumericValue => _numericValue;
+
+        /// <summary>
+        /// Creates a numeric data point
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="numericValue">double value</param>
+        public DataPoint(DateTime timestamp, double numericValue)
+        {
+            _timestamp = timestamp.ToUnixTimeMilliseconds();
+            _numericValue = numericValue;
+            _stringValue = null;
+        }
+
+        /// <summary>
+        /// Creates a string data point
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="stringValue">string value</param>
+        public DataPoint(DateTime timestamp, string stringValue)
+        {
+            _timestamp = timestamp.ToUnixTimeMilliseconds();
+            _numericValue = null;
+            _stringValue = stringValue;
+        }
     }
 
     /// <summary>
@@ -87,6 +172,7 @@ namespace ExtractorUtils
     {
         private static ILogger _logger = Logging.GetDefault();
 
+        private static readonly Counter _numberDataPoints = Metrics.CreateCounter("extractor_utils_cdf_datapoints", null);
         internal static void SetLogger(ILogger logger) {
             _logger = logger;
         }
@@ -155,6 +241,116 @@ namespace ExtractorUtils
                     });
             await generators.RunThrottled(throttleSize, token);
             return result;
+        }
+        
+        /// <summary>
+        /// Insert the provided data points into CDF. The data points are chunked
+        /// according to <paramref name="keyChunkSize"/> and <paramref name="valueChunkSize"/>.
+        /// The data points are trimmed according to the <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
+        /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="points">Data points</param>
+        /// <param name="keyChunkSize">Dictionary key chunk size</param>
+        /// <param name="valueChunkSize">Dictionary value chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        public static async Task InsertDataPointsAsync(
+            this Client client,
+            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            int keyChunkSize,
+            int valueChunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            Dictionary<Identity, IEnumerable<DataPoint>> trimmedDict = new Dictionary<Identity, IEnumerable<DataPoint>>();
+            foreach (var key in points.Keys)
+            {
+                var validDps = points[key].TrimValues();
+                if (validDps.Any())
+                {
+                    trimmedDict.Add(key, validDps);
+                }
+            }
+            var chunks = trimmedDict
+                .Select(p => (p.Key, p.Value))
+                .ChunkBy(valueChunkSize, keyChunkSize);
+
+            var generators = chunks
+                .Select<IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)>, Func<Task>>(
+                    chunk => async () =>  await InsertDataPointsChunk(client, chunk, token));
+            await generators.RunThrottled(throttleSize, token);
+        }
+
+        private static async Task InsertDataPointsChunk(
+            this Client client,
+            IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)> points,
+            CancellationToken token)
+        {
+            var request = new DataPointInsertionRequest();
+            var dataPointCount = 0;
+            foreach (var entry in points)
+            {
+                var item = new DataPointInsertionItem();
+                if (entry.id.Id.HasValue)
+                {
+                    item.Id = entry.id.Id.Value;
+                }
+                else
+                {
+                    item.ExternalId = entry.id.ToString();
+                }
+                if (!entry.dataPoints.Any())
+                {
+                    continue;
+                }
+                var stringPoints = entry.dataPoints
+                    .Where(dp => dp.StringValue != null)
+                    .Select(dp => new StringDatapoint
+                        {
+                            Timestamp = dp.Timestamp,
+                            Value = dp.StringValue
+                        });
+                var numericPoints = entry.dataPoints
+                    .Where(dp => dp.NumericValue.HasValue)
+                    .Select(dp => new NumericDatapoint
+                        {
+                            Timestamp = dp.Timestamp,
+                            Value = dp.NumericValue.Value
+                        });
+                if (stringPoints.Any())
+                {
+                    var stringData = new StringDatapoints();
+                    stringData.Datapoints.AddRange(stringPoints);
+                    if (stringData.Datapoints.Count > 0)
+                    {
+                        item.StringDatapoints = stringData;
+                        request.Items.Add(item);
+                        dataPointCount += stringData.Datapoints.Count;
+                    }
+                }
+                else
+                {
+                    var doubleData = new NumericDatapoints();
+                    doubleData.Datapoints.AddRange(numericPoints);
+                    if (doubleData.Datapoints.Count > 0)
+                    {
+                        item.NumericDatapoints = doubleData;
+                        request.Items.Add(item);
+                        dataPointCount += doubleData.Datapoints.Count;
+                    }
+                }
+            }
+            try
+            {
+                await client.DataPoints.CreateAsync(request, token);
+                _numberDataPoints.Inc(dataPointCount);
+            }
+            catch (TimeoutRejectedException)
+            {
+                _logger.LogWarning("Uploading data points to CDF timed out. Consider reducing the chunking sizes in the config file");
+                throw;
+            }
         }
 
         /// <summary>

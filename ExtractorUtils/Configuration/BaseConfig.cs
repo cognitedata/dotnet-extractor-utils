@@ -290,10 +290,23 @@ namespace ExtractorUtils {
     public class ChunkingConfig
     {
         /// <summary>
-        /// Maximum chunk size for time series operations
+        /// Maximum number of time series per time series request
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int TimeSeries { get; set; } = 1_000;
+        
+        /// <summary>
+        /// Maximum number of time series per data point request
+        /// </summary>
+        /// <value>Maximum chunk size</value>
+        public int DataPointTimeSeries { get; set; } = 10_000;
+        
+        /// <summary>
+        /// Maximum number of data points per data point update request
+        /// </summary>
+        /// <value>Maximum chunk size</value>
+        public int DataPoints { get; set; } = 100_000;
+
     }
 
     /// <summary>
@@ -306,6 +319,12 @@ namespace ExtractorUtils {
         /// </summary>
         /// <value>Maximum number of parallel operations</value>
         public int TimeSeries { get; set; } = 20;
+        
+        /// <summary>
+        /// Maximum number of parallel data points operations
+        /// </summary>
+        /// <value>Maximum number of parallel operations</value>
+        public int DataPoints { get; set; } = 10;
     }
 
 #endregion

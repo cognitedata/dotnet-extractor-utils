@@ -13,6 +13,7 @@ using Moq.Protected;
 using Xunit;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using Com.Cognite.V1.Timeseries.Proto;
 
 namespace ExtractorUtils.Test
 {
@@ -343,6 +344,66 @@ namespace ExtractorUtils.Test
             System.IO.File.Delete(path);
         }
 
+        private static Dictionary<long, List<DataPoint>> _createdDataPoints = new Dictionary<long, List<DataPoint>>();
+        
+        [Fact]
+        public async Task TestInsertDataPoints()
+        {
+            string path = "test-insert-data-points-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: {_apiKey}",
+                               $"  host: {_host}",
+                                "  cdf-chunking:",
+                                "    data-points: 4",
+                                "    data-point-time-series: 2",
+                                "  cdf-throttling:",
+                                "    data-points: 2" };
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertDataPointsAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            // Setup services
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddCogniteClient("testApp");
+            using (var provider = services.BuildServiceProvider()) {
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+
+                double[] doublePoints = { 0.0, 1.1, 2.2, double.NaN, 3.3, 4.4, double.NaN, 5.5, double.NegativeInfinity };
+                string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringLengthMax), new string('2', CogniteUtils.StringLengthMax + 1), "3"};
+                
+                var datapoints = new Dictionary<Identity, IEnumerable<DataPoint>>() {
+                    { new Identity(1), doublePoints.Select(d => new DataPoint(DateTime.UtcNow, d))},
+                    { new Identity(2), stringPoints.Select(s => new DataPoint(DateTime.UtcNow, s))},
+                    { new Identity(3), new DataPoint[] { } }
+                };
+                _createdDataPoints.Clear();
+                await cogniteDestination.InsertDataPointsAsync(
+                    datapoints,
+                    CancellationToken.None
+                );
+                Assert.False(_createdDataPoints.ContainsKey(3));
+                Assert.Equal(6, _createdDataPoints[1].Count());
+                Assert.Empty(_createdDataPoints[1]
+                    .Where(dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity));
+                Assert.Equal(5, _createdDataPoints[2].Count());
+                Assert.Empty(_createdDataPoints[2]
+                    .Where(dp => dp.StringValue == null || dp.StringValue.Length > CogniteUtils.StringLengthMax));
+
+            }
+
+            System.IO.File.Delete(path);
+        }
+
         private static Dictionary<string, int> _ensuredTimeSeries = new Dictionary<string, int>();
 
         private static async Task<HttpResponseMessage> mockEnsureTimeSeriesSendAsync(HttpRequestMessage message , CancellationToken token) {
@@ -448,5 +509,52 @@ namespace ExtractorUtils.Test
             return response;
         }
 
+        private static async Task<HttpResponseMessage> mockInsertDataPointsAsync(HttpRequestMessage message , CancellationToken token) {
+            var uri = message.RequestUri.ToString();
+            var responseBody = "{ }";
+            var statusCode = HttpStatusCode.OK;
+
+            Assert.Contains($"{_project}/timeseries/data", uri);
+
+            var bytes = await message.Content.ReadAsByteArrayAsync();
+            var data = DataPointInsertionRequest.Parser.ParseFrom(bytes);
+            Assert.True(data.Items.Count <= 2); // data-points-time-series chunk size
+            Assert.True(data.Items
+                .Select(i => i.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.NumericDatapoints ?
+                        i.NumericDatapoints.Datapoints.Count : i.StringDatapoints.Datapoints.Count)
+                .Sum() <= 4); // data-points chunk size
+            
+            foreach (var item in data.Items)
+            {
+                if (!_createdDataPoints.TryGetValue(item.Id, out List<DataPoint> dps))
+                {
+                    dps = new List<DataPoint>();
+                    _createdDataPoints.TryAdd(item.Id, dps);
+                }
+                if (item.NumericDatapoints != null)
+                {
+                    foreach (var dp in item.NumericDatapoints.Datapoints)
+                    {
+                        dps.Add(new DataPoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
+                    }
+                }
+                else if (item.StringDatapoints != null)
+                {
+                    foreach (var dp in item.StringDatapoints?.Datapoints)
+                    {
+                        dps.Add(new DataPoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
+                    }
+                }
+            }
+
+            var response = new HttpResponseMessage
+            {
+                StatusCode = statusCode,
+                Content = new StringContent(responseBody)               
+            };
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            response.Headers.Add("x-request-id", "1");
+            return response;
+        }
     }
 }
