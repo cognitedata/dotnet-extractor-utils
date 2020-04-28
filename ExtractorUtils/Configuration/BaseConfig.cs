@@ -231,12 +231,6 @@ namespace ExtractorUtils {
         public string Host { get; set; } = "https://api.cognitedata.com";
         
         /// <summary>
-        /// Prefix appended to the external Ids of API resources (optional)
-        /// </summary>
-        /// <value>Prefix</value>
-        public string ExternalIdPrefix { get; set; } = "";
-
-        /// <summary>
         /// Chunking sizes towards CDF 
         /// </summary>
         public ChunkingConfig CdfChunking { get; set; } = new ChunkingConfig();
