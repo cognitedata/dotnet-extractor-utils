@@ -139,6 +139,41 @@ namespace ExtractorUtils
 
     }
 
+    public class IdentityComparer : IEqualityComparer<Identity>
+    {
+        public bool Equals(Identity x, Identity y)
+        {
+            if (Object.ReferenceEquals(x, y)) return true;
+
+            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
+
+            if (x.Id.HasValue && y.Id.HasValue && x.Id.Value == y.Id.Value)
+            {
+                return true;
+            }
+            if (x.ExternalId.TrimToNull() != null && y.ExternalId.TrimToNull() != null && x.ExternalId == y.ExternalId)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public int GetHashCode(Identity obj)
+        {
+            if (Object.ReferenceEquals(obj, null)) return 0;
+
+            if (obj.Id.HasValue)
+            {
+                return obj.Id.Value.GetHashCode();
+            }
+            if (obj.ExternalId.TrimToNull() == null)
+            {
+                return 0;
+            }
+            return obj.ExternalId.GetHashCode();
+        }
+    }
+
     /// <summary>
     /// Extension utilities for the Cognite client
     /// </summary>
