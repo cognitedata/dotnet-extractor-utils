@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Cognite.Configuration;
+using Cognite.Logging;
+using Cognite.Metrics;
 
 namespace ExtractorUtils
 {

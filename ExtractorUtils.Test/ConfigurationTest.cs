@@ -3,6 +3,8 @@ using System;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using Cognite.Configuration;
+using Cognite.Logging;
+using Cognite.Metrics;
 using ExtractorUtils;
 
 namespace ExtractorUtils.Test
@@ -19,7 +21,7 @@ namespace ExtractorUtils.Test
         public string Foo { get; set; } = "";
     }
 
-    public class ConfigurationTest
+    public static class ConfigurationTest
     {
         [Fact]
         public static void ParseNormal() 
