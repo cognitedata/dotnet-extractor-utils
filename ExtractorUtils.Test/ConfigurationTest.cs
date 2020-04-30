@@ -2,6 +2,8 @@ using System.IO;
 using System;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using Cognite.Configuration;
+using ExtractorUtils;
 
 namespace ExtractorUtils.Test
 {

@@ -9,6 +9,7 @@ using Moq;
 using Moq.Protected;
 using Prometheus;
 using Xunit;
+using ExtractorUtils;
 
 namespace ExtractorUtils.Test
 {

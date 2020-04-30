@@ -1,14 +1,13 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.DependencyInjection;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Collections.Generic;
 
-namespace ExtractorUtils
+namespace Cognite.Configuration
 {
     /// <summary>
     /// Configuration utility class that uses YamlDotNet to read and deserialize YML documents to extractor config objects.
@@ -85,8 +84,7 @@ namespace ExtractorUtils
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid or
         /// in case of yaml parsing errors.</exception>
-        public static T TryReadConfigFromString<T>(string yaml,
-                                         params int[] acceptedConfigVersions) where T : BaseConfig
+        public static T TryReadConfigFromString<T>(string yaml, params int[] acceptedConfigVersions)
         {
             try 
             {
@@ -112,8 +110,7 @@ namespace ExtractorUtils
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error.</exception>
-        public static T TryReadConfigFromFile<T>(string path,
-                                         params int[] acceptedConfigVersions) where T : BaseConfig
+        public static T TryReadConfigFromFile<T>(string path, params int[] acceptedConfigVersions)
         {
             try 
             {
@@ -153,76 +150,13 @@ namespace ExtractorUtils
         private static int GetVersion(Dictionary<object, object> versionedConfig)
         {
             if (versionedConfig.TryGetValue("version", out dynamic version)) {
-                if(int.TryParse(version, out int intVersion)) {
+                if (int.TryParse(version, out int intVersion))
+                {
                     return intVersion;
                 }
                 throw new ConfigurationException("The value of the 'version' tag should be integer");
             }
             throw new ConfigurationException("The yaml configuration file should contain a 'version' tag");
-        }
-    }
-
-    /// <summary>
-    /// Extension utilities for configuration.
-    /// </summary>
-    public static class ConfigurationExtensions {
-        
-        /// <summary>
-        /// Read the config of type <typeparamref name="T"/> from the yaml file in <paramref name="path"/>
-        /// and adds it as a singleton to the service collection <paramref name="services"/>
-        /// Also adds <see cref="CogniteConfig"/>, <see cref="LoggerConfig"/> and <see cref="MetricsConfig"/> configuration
-        /// objects as singletons, if they are present in the configuration
-        /// </summary>
-        /// <param name="services">The service collection</param>
-        /// <param name="path">Path to the file</param>
-        /// <param name="acceptedConfigVersions">Accepted versions</param>
-        /// <typeparam name="T">A type that inherits from <see cref="BaseConfig"/></typeparam>
-        /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
-        /// the yaml file is not found or in case of yaml parsing error</exception>
-        public static void AddConfig<T>(this IServiceCollection services,
-                                        string path,
-                                        params int[] acceptedConfigVersions) where T : BaseConfig 
-        {
-            var config = Configuration.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
-            services.AddSingleton<T>(config);
-            if (config.Cognite != null)
-            {
-                services.AddSingleton<CogniteConfig>(config.Cognite);
-            }
-            if (config.Logger != null)
-            {
-                services.AddSingleton<LoggerConfig>(config.Logger);
-            }
-            if (config.Metrics != null)
-            {
-                services.AddSingleton<MetricsConfig>(config.Metrics);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Exception produced by the configuration utils 
-    /// </summary>
-    public class ConfigurationException : Exception
-    {
-        /// <summary>
-        /// Create a new configuration exception with the given <paramref name="message"/>
-        /// </summary>
-        /// <param name="message">Exception message</param>
-        /// <returns></returns>
-        public ConfigurationException(string message) : base(message)
-        {
-        }
-
-        /// <summary>
-        /// Create a new configuration exception with the given <paramref name="message"/>
-        /// and containing the given <paramref name="innerException"/>
-        /// </summary>
-        /// <param name="message">Exception message</param>
-        /// <param name="innerException">Inner exception</param>
-        /// <returns></returns>
-        public ConfigurationException(string message, Exception innerException) : base(message, innerException)
-        {
         }
     }
 
