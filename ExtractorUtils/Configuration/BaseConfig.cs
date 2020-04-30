@@ -29,32 +29,6 @@ namespace ExtractorUtils {
         public CogniteConfig Cognite { get; set; }
     }
 
-#if false
-    /// <summary>
-    /// Logging to Google Stackdriver configuration object.
-    /// </summary>
-    /// <remarks>
-    /// Logging utiltities to Stackdriver are experimental and log level cannot be set (all log messages are sent).
-    /// This requires credentials to Google Cloud Platform: <see cref="LogName"/>
-    /// </remarks>
-    /// 
-    public class StackdriverConfig
-    {
-        /// <summary>
-        /// Path to the credentials file
-        /// </summary>
-        /// <value>Path to a json file containing credentials</value>
-        public string Credentials { get; set; }
-        
-        /// <summary>
-        /// Log name
-        /// </summary>
-        /// <value>Log name</value>
-        public string LogName { get; set; }
-    }
-#endif
-
-
 #region Cognite configuration
     
     /// <summary>
