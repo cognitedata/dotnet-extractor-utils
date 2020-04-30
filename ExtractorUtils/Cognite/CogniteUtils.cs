@@ -138,6 +138,21 @@ namespace ExtractorUtils
         {
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public CogniteUtilsException()
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        public CogniteUtilsException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 
     /// <summary>

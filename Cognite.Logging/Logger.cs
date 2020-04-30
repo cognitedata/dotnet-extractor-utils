@@ -116,8 +116,8 @@ namespace Cognite.Logging {
         /// </summary>
         /// <param name="services">The service collection</param>
         public static void AddLogger(this IServiceCollection services) {
-            services.AddSingleton<Serilog.ILogger>(s => {
-                var config = s.GetService<LoggerConfig>();
+            services.AddSingleton<Serilog.ILogger>(p => {
+                var config = p.GetService<LoggerConfig>();
                 if (config == null) {
                     // No logging configuration
                     var defLog = Logging.GetSerilogDefault();

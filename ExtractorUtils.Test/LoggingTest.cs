@@ -60,7 +60,7 @@ namespace ExtractorUtils.Test
             }
 
             l1.LogInformation("Verifying that the log file exists and contains INFO logs");
-            var logfile = $@"logs/log{DateTime.Now.ToString("yyyyMMdd")}.txt";
+            var logfile = $@"logs/log{DateTime.Now:yyyyMMdd}.txt";
             Assert.True(File.Exists(logfile));
             using (StreamReader r = new StreamReader(logfile))
             {

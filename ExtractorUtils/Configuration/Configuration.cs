@@ -30,15 +30,15 @@ namespace ExtractorUtils
             services.AddSingleton<T>(config);
             if (config.Cognite != null)
             {
-                services.AddSingleton<CogniteConfig>(config.Cognite);
+                services.AddSingleton(config.Cognite);
             }
             if (config.Logger != null)
             {
-                services.AddSingleton<LoggerConfig>(config.Logger);
+                services.AddSingleton(config.Logger);
             }
             if (config.Metrics != null)
             {
-                services.AddSingleton<MetricsConfig>(config.Metrics);
+                services.AddSingleton(config.Metrics);
             }
         }
     }
