@@ -14,7 +14,7 @@ using Xunit;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using Com.Cognite.V1.Timeseries.Proto;
-using ExtractorUtils;
+using Cognite.Logging;
 
 namespace ExtractorUtils.Test
 {

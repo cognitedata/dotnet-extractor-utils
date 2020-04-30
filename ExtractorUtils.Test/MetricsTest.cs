@@ -9,6 +9,8 @@ using Moq;
 using Moq.Protected;
 using Prometheus;
 using Xunit;
+using Cognite.Logging;
+using Cognite.Metrics;
 using ExtractorUtils;
 
 namespace ExtractorUtils.Test

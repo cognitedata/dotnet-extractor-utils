@@ -9,20 +9,24 @@ using System.Collections.Generic;
 using Polly;
 using Polly.Extensions.Http;
 using System.Threading.Tasks;
+using Cognite.Utils;
 
-namespace ExtractorUtils {
+namespace Cognite.Metrics {
     /// <summary>
     /// Utility class for configuring <see href="https://prometheus.io/">Prometheus</see> for monitoring and metrics.
     /// A metrics server and multiple push gateway destinations can be configured according to <see cref="MetricsConfig"/>.
     /// </summary>
     public class MetricsService {
-        private IHttpClientFactory _clientFactory;
-        private MetricsConfig _config;
-        private ILogger<MetricsService> _logger;
-        private IList<MetricPusher> _pushers;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly MetricsConfig _config;
+        private readonly ILogger<MetricsService> _logger;
+        private readonly IList<MetricPusher> _pushers;
         private MetricServer _server;
 
         internal const string HttpClientName = "prometheus-httpclient";
+
+
+        public MetricServer Server { get => _server; set => _server = value; }
 
         /// <summary>
         /// Initialized the metrics service with the given <paramref name="config"/> object.
@@ -63,7 +67,7 @@ namespace ExtractorUtils {
             }
 
             if (_config.Server != null) {
-                _server = StartServer(_config.Server);
+                Server = StartServer(_config.Server);
             }
         }
 
@@ -76,9 +80,9 @@ namespace ExtractorUtils {
             {
                 await Task.WhenAll(_pushers.Select(p => p.StopAsync()));
             }
-            if (_server != null)
+            if (Server != null)
             {
-                await _server.StopAsync();
+                await Server.StopAsync();
             }
         }
 

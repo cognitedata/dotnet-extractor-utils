@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Timeout;
+using Cognite.Utils;
 
 namespace ExtractorUtils
 {

@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
+using Cognite.Logging;
 using ExtractorUtils;
 
 namespace ExtractorUtils.Test

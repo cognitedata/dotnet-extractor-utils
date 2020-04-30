@@ -1,17 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
-using Serilog.Sinks.GoogleCloudLogging;
 
-namespace ExtractorUtils {
+namespace Cognite.Logging {
 
     /// <summary>
     /// Utility class for configuring extractor loggers.
@@ -43,7 +40,6 @@ namespace ExtractorUtils {
         {
             var logToConsole = Enum.TryParse(config.Console?.Level, true, out LogEventLevel consoleLevel);
             var logToFile = Enum.TryParse(config.File?.Level, true, out LogEventLevel fileLevel);
-            var logToStackdriver = config.Stackdriver?.Credentials != null;
 
             var logConfig = new LoggerConfiguration();
             logConfig
@@ -72,29 +68,6 @@ namespace ExtractorUtils {
                     outputTemplate: fileLevel <= LogEventLevel.Debug ? _logTemplateWithContext : _logTemplate));
             }
 
-            if (logToStackdriver)
-            {
-                using (StreamReader r = new StreamReader(config.Stackdriver.Credentials))
-                {
-                    string json = r.ReadToEnd();
-                    var jsonObj = JsonSerializer.Deserialize<GcpCredentials>(json);
-
-                    var resourceLabels = new Dictionary<string, string>
-                    {
-                        { "email_id", jsonObj.ClientEmail },
-                        { "unique_id", jsonObj.ClientId }
-                    };
-
-                    var gcConfig = new GoogleCloudLoggingSinkOptions(
-                        jsonObj.ProjectId,
-                        jsonObj.ResourceType,
-                        config.Stackdriver.LogName,
-                        resourceLabels: resourceLabels,
-                        useJsonOutput: true,
-                        googleCredentialJson: json);
-                    logConfig.WriteTo.GoogleCloudLogging(gcConfig);
-                }
-            }
             return logConfig.CreateLogger();
         }
 
@@ -119,22 +92,6 @@ namespace ExtractorUtils {
                 .CreateLogger();
         }
 
-#pragma warning disable CA1812 // Internal class
-        private class GcpCredentials
-#pragma warning restore CA1812 // Internal class
-        {
-            [JsonPropertyName("project_id")]
-            public string ProjectId { get; set; }
-
-            [JsonPropertyName("type")]
-            public string ResourceType { get; set; }
-
-            [JsonPropertyName("client_email")]
-            public string ClientEmail { get; set; }
-
-            [JsonPropertyName("client_id")]
-            public string ClientId { get; set; }
-        }        
     }
 
     // Enricher that creates a property with UTC timestamp.

@@ -33,5 +33,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cognite.Config\Cognite.Configuration.csproj" />
+    <ProjectReference Include="..\Cognite.Utils\Cognite.Utils.csproj" />
+    <ProjectReference Include="..\Cognite.Metrics\Cognite.Metrics.csproj" />
+    <ProjectReference Include="..\Cognite.Logging\Cognite.Logging.csproj" />
   </ItemGroup>
 </Project>
