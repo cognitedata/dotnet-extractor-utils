@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Cognite.Configuration;
 using Cognite.Logging;
 using Cognite.Metrics;
 
@@ -8,13 +8,8 @@ namespace ExtractorUtils {
     /// Base configuration object for extractors.
     /// The config should have a version property, so that versioning and compatibility can be tracked by the extractor.
     /// </summary>
-    public class BaseConfig {
+    public class BaseConfig : VersionedConfig {
         
-        /// <summary>
-        /// Current version of this config object
-        /// </summary>
-        public int Version { get; set; }
-
         /// <summary>
         /// Logging configuration (optional)
         /// </summary>

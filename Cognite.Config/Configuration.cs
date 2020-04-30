@@ -84,13 +84,12 @@ namespace Cognite.Configuration
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid or
         /// in case of yaml parsing errors.</exception>
-        public static T TryReadConfigFromString<T>(string yaml, params int[] acceptedConfigVersions)
+        public static T TryReadConfigFromString<T>(string yaml, params int[] acceptedConfigVersions) where T : VersionedConfig
         {
             try 
             {
                 int configVersion = Configuration.GetVersionFromString(yaml);
                 CheckVersion(configVersion, acceptedConfigVersions);
-
                 return Configuration.ReadString<T>(yaml);
             }
             catch (YamlDotNet.Core.YamlException ye)
