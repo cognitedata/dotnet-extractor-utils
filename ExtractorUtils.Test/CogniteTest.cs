@@ -263,13 +263,13 @@ namespace ExtractorUtils.Test
 
         [Theory]
         [InlineData("id1", "id2")]
-        [InlineData("id1", "id2", "id3", "id4", "id5")]
+        [InlineData("id3", "id4", "id5", "id6", "id7")]
         [InlineData("missing1", "missing2")]
-        [InlineData("id1", "id2", "missing1", "id4", "missing2")]
+        [InlineData("id8", "id9", "missing3", "id10", "missing4")]
         [InlineData("duplicated1", "duplicated2")]
-        [InlineData("id1", "id2", "duplicated1", "id4", "duplicated2")]
-        [InlineData("id1", "missing1", "id2", "duplicated1", "missing2", "duplicated2")]
-        [InlineData("id1", "id2", "missing1", "duplicated1-2", "duplicated2-4", "duplicated3-3")]
+        [InlineData("id11", "id12", "duplicated3", "id13", "duplicated4")]
+        [InlineData("id14", "missing5", "id15", "duplicated5", "missing6", "duplicated6")]
+        [InlineData("id16", "id17", "missing7", "duplicated7-2", "duplicated8-4", "duplicated9-3")]
         /// <summary>
         /// External ids starting with 'id' exist in the mocked endpoint.
         /// External ids starting with 'missing' do not exist, but can be successfully created.
@@ -322,15 +322,17 @@ namespace ExtractorUtils.Test
                         }
                         return toCreate;
                     };
-                _ensuredTimeSeries.Clear();
                 var ts = await cogniteDestination.GetOrCreateTimeSeriesAsync(
                     ids,
                     createFunction,
                     CancellationToken.None
                 );
                 Assert.Equal(ids.Count(), ts.Where(t => ids.Contains(t.ExternalId)).Count());
+                foreach (var t in ts)
+                {
+                    _ensuredTimeSeries.Remove(t.ExternalId);
+                }
 
-                _ensuredTimeSeries.Clear();
                 var newTs = createFunction(ids);
                 using (var source = new CancellationTokenSource(5_000))
                 {
@@ -403,9 +405,9 @@ namespace ExtractorUtils.Test
 
                 _createdDataPoints.Clear();
                 datapoints = new Dictionary<Identity, IEnumerable<DataPoint>>() {
-                    { new Identity("missing1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, "1")}},
-                    { new Identity("numeric1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, 1)}},
-                    { new Identity("numeric2"), new DataPoint[] { new DataPoint(DateTime.UtcNow, 1)}},
+                    { new Identity("idMissing1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, "1")}},
+                    { new Identity("idNumeric1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, 1)}},
+                    { new Identity("idNumeric2"), new DataPoint[] { new DataPoint(DateTime.UtcNow, 1)}},
                     { new Identity(-1), doublePoints.Select(d => new DataPoint(DateTime.UtcNow, d)).Take(2)},
                     { new Identity("idMismatchedString1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, 1)}},
                     { new Identity("idString1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, "1")}},
@@ -415,12 +417,12 @@ namespace ExtractorUtils.Test
                     datapoints,
                     CancellationToken.None);
                 var comparer = new IdentityComparer();
-                Assert.Contains(new Identity("missing1"), errors.IdsNotFound, comparer);
+                Assert.Contains(new Identity("idMissing1"), errors.IdsNotFound, comparer);
                 Assert.Contains(new Identity(-1), errors.IdsNotFound, comparer);
                 Assert.Contains(new Identity("idMismatchedString1"), errors.IdsWithMismatchedData, comparer);
                 Assert.Contains(new Identity("idMismatched2"), errors.IdsWithMismatchedData, comparer);
-                Assert.Equal(1, _createdDataPoints["numeric1"].Count());
-                Assert.Equal(1, _createdDataPoints["numeric2"].Count());
+                Assert.Equal(1, _createdDataPoints["idNumeric1"].Count());
+                Assert.Equal(1, _createdDataPoints["idNumeric2"].Count());
                 Assert.Equal(1, _createdDataPoints["idString1"].Count());
             }
 
@@ -429,7 +431,9 @@ namespace ExtractorUtils.Test
 
         private static Dictionary<string, int> _ensuredTimeSeries = new Dictionary<string, int>();
 
-        private static async Task<HttpResponseMessage> mockEnsureTimeSeriesSendAsync(HttpRequestMessage message , CancellationToken token) {
+        private static async Task<HttpResponseMessage> mockEnsureTimeSeriesSendAsync(
+            HttpRequestMessage message, 
+            CancellationToken token) {
             var uri = message.RequestUri.ToString();
             var responseBody = "";
             var statusCode = HttpStatusCode.OK;
@@ -565,7 +569,7 @@ namespace ExtractorUtils.Test
 
             foreach (var item in data.Items)
             {
-                if (item.Id < 0 || item.ExternalId.StartsWith("missing"))
+                if (item.Id < 0 || item.ExternalId.StartsWith("idMissing"))
                 {
                     dynamic id = new ExpandoObject();
                     if (!string.IsNullOrEmpty(item.ExternalId)) id.externalId = item.ExternalId;
