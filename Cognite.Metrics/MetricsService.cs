@@ -17,16 +17,12 @@ namespace Cognite.Metrics {
     /// A metrics server and multiple push gateway destinations can be configured according to <see cref="MetricsConfig"/>.
     /// </summary>
     public class MetricsService {
+        internal const string HttpClientName = "prometheus-httpclient";
         private readonly IHttpClientFactory _clientFactory;
         private readonly MetricsConfig _config;
         private readonly ILogger<MetricsService> _logger;
         private readonly IList<MetricPusher> _pushers;
         private MetricServer _server;
-
-        internal const string HttpClientName = "prometheus-httpclient";
-
-
-        public MetricServer Server { get => _server; set => _server = value; }
 
         /// <summary>
         /// Initialized the metrics service with the given <paramref name="config"/> object.
@@ -67,7 +63,7 @@ namespace Cognite.Metrics {
             }
 
             if (_config.Server != null) {
-                Server = StartServer(_config.Server);
+                _server = StartServer(_config.Server);
             }
         }
 
@@ -80,9 +76,9 @@ namespace Cognite.Metrics {
             {
                 await Task.WhenAll(_pushers.Select(p => p.StopAsync()));
             }
-            if (Server != null)
+            if (_server != null)
             {
-                await Server.StopAsync();
+                await _server.StopAsync();
             }
         }
 
