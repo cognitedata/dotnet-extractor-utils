@@ -421,9 +421,9 @@ namespace ExtractorUtils.Test
                 Assert.Contains(new Identity(-1), errors.IdsNotFound, comparer);
                 Assert.Contains(new Identity("idMismatchedString1"), errors.IdsWithMismatchedData, comparer);
                 Assert.Contains(new Identity("idMismatched2"), errors.IdsWithMismatchedData, comparer);
-                Assert.Equal(1, _createdDataPoints["idNumeric1"].Count());
-                Assert.Equal(1, _createdDataPoints["idNumeric2"].Count());
-                Assert.Equal(1, _createdDataPoints["idString1"].Count());
+                Assert.Single(_createdDataPoints["idNumeric1"]);
+                Assert.Single(_createdDataPoints["idNumeric2"]);
+                Assert.Single(_createdDataPoints["idString1"]);
             }
 
             System.IO.File.Delete(path);

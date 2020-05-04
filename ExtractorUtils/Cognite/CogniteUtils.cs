@@ -139,8 +139,18 @@ namespace ExtractorUtils
 
     }
 
+    /// <summary>
+    /// Comparer for <see cref="Identity"/> objects
+    /// </summary>
     public class IdentityComparer : IEqualityComparer<Identity>
     {
+        /// <summary>
+        /// Determine if two <see cref="Identity"/> objects are equal:
+        /// They have the same Id or ExternalId
+        /// </summary>
+        /// <param name="x">Identity</param>
+        /// <param name="y">Identity</param>
+        /// <returns></returns>
         public bool Equals(Identity x, Identity y)
         {
             if (Object.ReferenceEquals(x, y)) return true;
@@ -158,6 +168,11 @@ namespace ExtractorUtils
             return false;
         }
 
+        /// <summary>
+        /// Get a hash code based on the identity Id or ExternalId
+        /// </summary>
+        /// <param name="obj">Identity</param>
+        /// <returns></returns>
         public int GetHashCode(Identity obj)
         {
             if (Object.ReferenceEquals(obj, null)) return 0;
