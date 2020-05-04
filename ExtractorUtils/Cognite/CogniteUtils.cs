@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Timeout;
+using Cognite.Utils;
 
 namespace ExtractorUtils
 {
@@ -137,6 +138,21 @@ namespace ExtractorUtils
         {
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public CogniteUtilsException()
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        public CogniteUtilsException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 
     /// <summary>

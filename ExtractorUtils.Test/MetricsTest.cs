@@ -9,6 +9,9 @@ using Moq;
 using Moq.Protected;
 using Prometheus;
 using Xunit;
+using Cognite.Logging;
+using Cognite.Metrics;
+using ExtractorUtils;
 
 namespace ExtractorUtils.Test
 {
@@ -55,13 +58,11 @@ namespace ExtractorUtils.Test
             File.WriteAllLines(path, lines);
 
             // Mock http client factory
-            var mocks = TestUtilities.GetMockedHttpClientFactory(MockSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
+            var (factory, handler) = TestUtilities.GetMockedHttpClientFactory(MockSendAsync);
             
             // Setup services
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddSingleton<IHttpClientFactory>(factory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
             services.AddMetrics();
@@ -75,7 +76,7 @@ namespace ExtractorUtils.Test
             }
 
             // Verify that the metrics are sent the prometheus endpoint at least once 
-            mockHttpMessageHandler.Protected()
+            handler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
                     Times.AtLeastOnce(), // push every second
@@ -109,7 +110,7 @@ namespace ExtractorUtils.Test
                 await metrics.Stop();
             }
 
-            var logfile = $@"metrics-logs/log{DateTime.Now.ToString("yyyyMMdd")}.txt";
+            var logfile = $@"metrics-logs/log{DateTime.Now:yyyyMMdd}.txt";
             Assert.True(File.Exists(logfile));
             using (StreamReader r = new StreamReader(logfile))
             {
@@ -149,7 +150,7 @@ namespace ExtractorUtils.Test
                 await metrics.Stop();
             }
 
-            var logfile = $@"pg-logs/log{DateTime.Now.ToString("yyyyMMdd")}.txt";
+            var logfile = $@"pg-logs/log{DateTime.Now:yyyyMMdd}.txt";
             Assert.True(File.Exists(logfile));
             using (StreamReader r = new StreamReader(logfile))
             {
@@ -188,13 +189,11 @@ namespace ExtractorUtils.Test
             File.WriteAllLines(path, lines);
 
             // Mock http client factory
-            var mocks = TestUtilities.GetMockedHttpClientFactory(MockNoAssertSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
+            var (factory, handler) = TestUtilities.GetMockedHttpClientFactory(MockNoAssertSendAsync);
             
             // Setup services
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddSingleton<IHttpClientFactory>(factory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
             services.AddMetrics();
@@ -208,14 +207,14 @@ namespace ExtractorUtils.Test
             }
 
             // Verify that the metrics are sent to both endpoints at least once 
-            mockHttpMessageHandler.Protected()
+            handler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
                     Times.AtLeastOnce(), // push every second
                     ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint}/metrics/job/{job}"),
                     ItExpr.IsAny<CancellationToken>());
 
-            mockHttpMessageHandler.Protected()
+            handler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
                     Times.AtLeastOnce(), // push every second

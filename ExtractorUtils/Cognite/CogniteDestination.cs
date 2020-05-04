@@ -8,6 +8,8 @@ using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Polly.Timeout;
 using Prometheus;
+using Cognite.Utils;
+using Cognite.Logging;
 
 namespace ExtractorUtils
 {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ExtractorUtils
+namespace Cognite.Utils
 {
     /// <summary>
     /// Various utility functions
     /// </summary>
-    public static class CommonUtils
+    public static class CogniteUtils
     {
         /// <summary>
         /// Trim this string object to null
