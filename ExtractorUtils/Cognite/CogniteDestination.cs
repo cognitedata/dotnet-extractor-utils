@@ -9,10 +9,10 @@ using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Polly.Timeout;
 using Prometheus;
-using Cognite.Utils;
-using Cognite.Logging;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Logging;
 
-namespace ExtractorUtils
+namespace Cognite.Extractor.Utils
 {
     /// <summary>
     /// Class with utility methods supporting extraction of data into CDF.
@@ -199,9 +199,9 @@ namespace ExtractorUtils
     /// </summary>
     public static class CogniteClientExtensions
     {
-        private static ILogger _logger = Logging.GetDefault();
+        private static ILogger _logger = LoggingUtils.GetDefault();
 
-        private static readonly Counter _numberDataPoints = Metrics.CreateCounter("extractor_utils_cdf_datapoints", null);
+        private static readonly Counter _numberDataPoints = Prometheus.Metrics.CreateCounter("extractor_utils_cdf_datapoints", null);
         internal static void SetLogger(ILogger logger) {
             _logger = logger;
         }

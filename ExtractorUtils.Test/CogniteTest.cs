@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
@@ -14,7 +13,10 @@ using Xunit;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using Com.Cognite.V1.Timeseries.Proto;
-using Cognite.Logging;
+using Cognite.Extractor.Utils;
+using Cognite.Extractor.Logging;
+using CogniteSdk;
+using DataPoint = Cognite.Extractor.Utils.DataPoint;
 
 namespace ExtractorUtils.Test
 {
@@ -612,7 +614,7 @@ namespace ExtractorUtils.Test
                     {
                         foreach (var dp in item.NumericDatapoints.Datapoints)
                         {
-                            dps.Add(new DataPoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
+                            dps.Add(new Cognite.Extractor.Utils.DataPoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
                         }
                     }
                     else if (item.StringDatapoints != null)

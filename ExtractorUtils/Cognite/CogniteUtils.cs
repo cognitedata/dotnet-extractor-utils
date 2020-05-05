@@ -9,9 +9,9 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Timeout;
-using Cognite.Utils;
+using Cognite.Extractor.Common;
 
-namespace ExtractorUtils
+namespace Cognite.Extractor.Utils
 {
     /// <summary>
     /// Utility class for configuring a <see href="https://github.com/cognitedata/cognite-sdk-dotnet">Cognite SDK</see> client

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using ExtractorUtils;
+using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test {
 

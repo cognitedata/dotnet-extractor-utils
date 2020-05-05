@@ -1,5 +1,6 @@
 
-namespace Cognite.Logging {
+namespace Cognite.Extractor.Logging 
+{
 
     /// <summary>
     /// Logging configuration object
@@ -9,7 +10,7 @@ namespace Cognite.Logging {
         /// <summary>
         /// Logging to console (optional)
         /// </summary>
-        /// <value>A <see cref="ConsoleConfig"/> config object</value>
+        /// <value>A <see cref="LogConfig"/> config object</value>
         public LogConfig Console { get; set; }
         
         /// <summary>

@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace ExtractorUtils
+namespace Cognite.Extractor.Utils
 {
     /// <summary>
     /// Authenticator that obtains bearer access tokens from a <see href="https://login.microsoftonline.com/">Microsoft</see> endpoint

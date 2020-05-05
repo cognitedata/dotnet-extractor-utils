@@ -2,16 +2,16 @@ using System.IO;
 using System;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
-using Cognite.Configuration;
-using Cognite.Logging;
-using Cognite.Metrics;
-using ExtractorUtils;
+using Cognite.Extractor.Utils;
+using Cognite.Extractor.Configuration;
+using Cognite.Extractor.Logging;
+using Cognite.Extractor.Metrics;
 
 namespace ExtractorUtils.Test
 {
-    #pragma warning disable CA1812
+#pragma warning disable CA1812
     class TestConfig
-    #pragma warning restore CA1812
+#pragma warning restore CA1812
     {
         public string Foo { get; set; } = "";
         public int Bar { get; set; }
@@ -27,7 +27,7 @@ namespace ExtractorUtils.Test
         public static void ParseNormal() 
         {
             string yaml = "foo: bar";
-            TestConfig x = Configuration.ReadString<TestConfig>(yaml);
+            TestConfig x = ConfigurationUtils.ReadString<TestConfig>(yaml);
             Assert.Equal("bar", x.Foo);
         }
 
@@ -37,7 +37,7 @@ namespace ExtractorUtils.Test
             string value = "23";
             Environment.SetEnvironmentVariable("TEST_CONFIG_REPLACE", value);
             string yaml = @"bar: ${TEST_CONFIG_REPLACE}";
-            TestConfig x = Configuration.ReadString<TestConfig>(yaml);
+            TestConfig x = ConfigurationUtils.ReadString<TestConfig>(yaml);
             Assert.Equal(23, x.Bar);
         }
 
@@ -47,7 +47,7 @@ namespace ExtractorUtils.Test
             string value = "foo and bar";
             Environment.SetEnvironmentVariable("TEST_CONFIG_REPLACE", value);
             string yaml = @"foo: ${TEST_CONFIG_REPLACE}";
-            TestConfig x = Configuration.ReadString<TestConfig>(yaml);
+            TestConfig x = ConfigurationUtils.ReadString<TestConfig>(yaml);
             Assert.Equal(value, x.Foo);
         }
 
@@ -57,7 +57,7 @@ namespace ExtractorUtils.Test
             string value = "foo and bar";
             Environment.SetEnvironmentVariable("TEST_CONFIG_REPLACE", value);
             string yaml = @"foo: '${TEST_CONFIG_REPLACE}'";
-            TestConfig x = Configuration.ReadString<TestConfig>(yaml);
+            TestConfig x = ConfigurationUtils.ReadString<TestConfig>(yaml);
             Assert.Equal(value, x.Foo);
         }
 
@@ -66,7 +66,7 @@ namespace ExtractorUtils.Test
         {
             Environment.SetEnvironmentVariable("TEST_CONFIG_SUBSTITUTE", "bar");
             string yaml = @"foo: 'more ${TEST_CONFIG_SUBSTITUTE} here'";
-            TestConfig x = Configuration.ReadString<TestConfig>(yaml);
+            TestConfig x = ConfigurationUtils.ReadString<TestConfig>(yaml);
             Assert.Equal("more bar here", x.Foo);
         }
 
@@ -75,7 +75,7 @@ namespace ExtractorUtils.Test
         {
             Environment.SetEnvironmentVariable("TEST_CONFIG_SUBSTITUTE", "bar: too");
             string yaml = @"foo: 'more ${TEST_CONFIG_SUBSTITUTE} here'";
-            TestConfig x = Configuration.ReadString<TestConfig>(yaml);
+            TestConfig x = ConfigurationUtils.ReadString<TestConfig>(yaml);
             Assert.Equal("more bar: too here", x.Foo);
         }
 
@@ -83,8 +83,8 @@ namespace ExtractorUtils.Test
         public static void TagMapping()
         {
             string yaml = $"!test{Environment.NewLine}foo: bar{Environment.NewLine}bar: 1";
-            Configuration.AddTagMapping<TestConfig>("!test");
-            TestConfig x = Configuration.ReadString<TestConfig>(yaml);
+            ConfigurationUtils.AddTagMapping<TestConfig>("!test");
+            TestConfig x = ConfigurationUtils.ReadString<TestConfig>(yaml);
             Assert.Equal("bar", x.Foo);
             Assert.Equal(1, x.Bar);
         }
@@ -93,7 +93,7 @@ namespace ExtractorUtils.Test
         public static void BaseConfig()
         {
             string yaml = "version: 2";
-            BaseConfig config = Configuration.ReadString<BaseConfig>(yaml);
+            BaseConfig config = ConfigurationUtils.ReadString<BaseConfig>(yaml);
             Assert.Equal(2, config.Version);
         }
 
@@ -102,7 +102,7 @@ namespace ExtractorUtils.Test
             string path = "test-file-config.yml";
             string[] lines = { "version: 1", "foo: bar" };
             File.WriteAllLines(path, lines);
-            var config = Configuration.Read<TestBaseConfig>(path);
+            var config = ConfigurationUtils.Read<TestBaseConfig>(path);
             Assert.Equal(1, config.Version);
             Assert.Equal("bar", config.Foo);
             File.Delete(path);
@@ -111,7 +111,7 @@ namespace ExtractorUtils.Test
         [Fact]
         public static void TestInvalidFile()
         {
-            var e = Assert.Throws<ConfigurationException>(() => Configuration.TryReadConfigFromFile<TestBaseConfig>("./invalid", 0));
+            var e = Assert.Throws<ConfigurationException>(() => ConfigurationUtils.TryReadConfigFromFile<TestBaseConfig>("./invalid", 0));
             Assert.IsType<FileNotFoundException>(e.InnerException);
         }
 
@@ -121,7 +121,7 @@ namespace ExtractorUtils.Test
         [InlineData("version: 0\ncognite: foo")]
         public static void TestInvalidString(string yaml)
         {
-            var e = Assert.Throws<ConfigurationException>(() => Configuration.TryReadConfigFromString<TestBaseConfig>(yaml, 0));
+            var e = Assert.Throws<ConfigurationException>(() => ConfigurationUtils.TryReadConfigFromString<TestBaseConfig>(yaml, 0));
             Assert.IsType<YamlDotNet.Core.YamlException>(e.InnerException);
         }
 
@@ -129,7 +129,7 @@ namespace ExtractorUtils.Test
         public static void TestValidString()
         {
             var yaml = "version: 0\ncognite: \n  project: project\nlogger:\n  console:\n    level: debug";
-            var conf = Configuration.TryReadConfigFromString<TestBaseConfig>(yaml, 0);
+            var conf = ConfigurationUtils.TryReadConfigFromString<TestBaseConfig>(yaml, 0);
             Assert.NotNull(conf.Cognite);
             Assert.NotNull(conf.Logger);
             Assert.NotNull(conf.Logger.Console);

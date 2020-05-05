@@ -9,14 +9,16 @@ using System.Collections.Generic;
 using Polly;
 using Polly.Extensions.Http;
 using System.Threading.Tasks;
-using Cognite.Utils;
+using Cognite.Extractor.Common;
 
-namespace Cognite.Metrics {
+namespace Cognite.Extractor.Metrics 
+{
     /// <summary>
     /// Utility class for configuring <see href="https://prometheus.io/">Prometheus</see> for monitoring and metrics.
     /// A metrics server and multiple push gateway destinations can be configured according to <see cref="MetricsConfig"/>.
     /// </summary>
-    public class MetricsService {
+    public class MetricsService 
+    {
         internal const string HttpClientName = "prometheus-httpclient";
         private readonly IHttpClientFactory _clientFactory;
         private readonly MetricsConfig _config;
