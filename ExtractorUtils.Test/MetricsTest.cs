@@ -9,13 +9,14 @@ using Moq;
 using Moq.Protected;
 using Prometheus;
 using Xunit;
-using Cognite.Logging;
-using Cognite.Metrics;
-using ExtractorUtils;
+using Cognite.Extractor.Logging;
+using Cognite.Extractor.Metrics;
+using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test
 {
-    public class MetricsTest {
+    public class MetricsTest 
+    {
         private static readonly Counter testCount = Metrics.CreateCounter("extractor_utils_test_count", "Counter used for unit testing.");
         private const string endpoint = @"http://localhost101:9091";
         private const string job = "unit-test-job";

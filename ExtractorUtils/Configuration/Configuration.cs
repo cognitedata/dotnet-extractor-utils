@@ -1,16 +1,16 @@
-using System;
 using Microsoft.Extensions.DependencyInjection;
-using Cognite.Configuration;
-using Cognite.Logging;
-using Cognite.Metrics;
+using Cognite.Extractor.Configuration;
+using Cognite.Extractor.Logging;
+using Cognite.Extractor.Metrics;
 
-namespace ExtractorUtils
+namespace Cognite.Extractor.Utils
 {
 
     /// <summary>
     /// Extension utilities for configuration.
     /// </summary>
-    public static class ConfigurationExtensions {
+    public static class ConfigurationExtensions 
+    {
         
         /// <summary>
         /// Read the config of type <typeparamref name="T"/> from the yaml file in <paramref name="path"/>
@@ -28,7 +28,7 @@ namespace ExtractorUtils
                                         string path,
                                         params int[] acceptedConfigVersions) where T : BaseConfig 
         {
-            var config = Configuration.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
+            var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
             if (config.Cognite != null)
             {

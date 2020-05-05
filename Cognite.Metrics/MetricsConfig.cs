@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Cognite.Metrics
+namespace Cognite.Extractor.Metrics
 {
 
     /// <summary>

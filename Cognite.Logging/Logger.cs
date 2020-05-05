@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -8,7 +6,8 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 
-namespace Cognite.Logging {
+namespace Cognite.Extractor.Logging
+{
 
     /// <summary>
     /// Utility class for configuring extractor loggers.
@@ -16,7 +15,8 @@ namespace Cognite.Logging {
     /// Loggers are created according to a <see cref="LoggerConfig"/> configuration object.
     /// Log messages contain UTC timestamps.
     /// </summary>
-    public static class Logging {
+    public static class LoggingUtils 
+    {
         
         private const string _logTemplate = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private const string _logTemplateWithContext = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";
@@ -120,11 +120,11 @@ namespace Cognite.Logging {
                 var config = p.GetService<LoggerConfig>();
                 if (config == null) {
                     // No logging configuration
-                    var defLog = Logging.GetSerilogDefault();
+                    var defLog = LoggingUtils.GetSerilogDefault();
                     defLog.Warning("No Logging configuration found. Using default logger");
                     return defLog;
                 }
-                return Logging.GetConfiguredLogger(config);
+                return LoggingUtils.GetConfiguredLogger(config);
             });
             services.AddLogging(loggingBuilder => {
                 loggingBuilder.Services.AddSingleton<ILoggerProvider, SerilogLoggerProvider>(s => 

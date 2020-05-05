@@ -1,22 +1,24 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Net.Http.Headers;
-using Prometheus;
-using System.Collections.Generic;
 using Polly;
 using Polly.Extensions.Http;
-using System.Threading.Tasks;
-using Cognite.Utils;
+using Prometheus;
+using Cognite.Extractor.Common;
 
-namespace Cognite.Metrics {
+namespace Cognite.Extractor.Metrics 
+{
     /// <summary>
     /// Utility class for configuring <see href="https://prometheus.io/">Prometheus</see> for monitoring and metrics.
     /// A metrics server and multiple push gateway destinations can be configured according to <see cref="MetricsConfig"/>.
     /// </summary>
-    public class MetricsService {
+    public class MetricsService 
+    {
         internal const string HttpClientName = "prometheus-httpclient";
         private readonly IHttpClientFactory _clientFactory;
         private readonly MetricsConfig _config;

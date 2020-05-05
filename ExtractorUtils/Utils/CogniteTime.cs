@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExtractorUtils
+namespace Cognite.Extractor.Utils
 {
     /// <summary>
     /// DateTime utility functions.

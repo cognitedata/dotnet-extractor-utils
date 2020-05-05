@@ -9,10 +9,10 @@ using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Polly.Timeout;
 using Prometheus;
-using Cognite.Utils;
-using Cognite.Logging;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Logging;
 
-namespace ExtractorUtils
+namespace Cognite.Extractor.Utils
 {
     /// <summary>
     /// Class with utility methods supporting extraction of data into CDF.
@@ -103,7 +103,7 @@ namespace ExtractorUtils
         /// <param name="points">Data points</param>
         /// <param name="token">Cancellation token</param>
         public async Task InsertDataPointsAsync(
-            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            IDictionary<Identity, IEnumerable<Datapoint>> points,
             CancellationToken token)
         {
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
@@ -127,7 +127,7 @@ namespace ExtractorUtils
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<InsertError> InsertDataPointsIgnoreErrorsAsync(
-            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            IDictionary<Identity, IEnumerable<Datapoint>> points,
             CancellationToken token)
         {
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
@@ -146,62 +146,13 @@ namespace ExtractorUtils
     }
     
     /// <summary>
-    /// Data point abstraction. Consists of a timestamp and a double or string value
-    /// </summary>
-    public class DataPoint
-    {
-        private readonly long _timestamp;
-        private readonly double? _numericValue;
-        private readonly string _stringValue;
-        
-        /// <summary>
-        /// Timestamp in Unix time milliseconds
-        /// </summary>
-        public long Timestamp => _timestamp;
-
-        /// <summary>
-        /// Optional string value
-        /// </summary>
-        public string StringValue => _stringValue;
-
-        /// <summary>
-        /// Optional double value
-        /// </summary>
-        public double? NumericValue => _numericValue;
-
-        /// <summary>
-        /// Creates a numeric data point
-        /// </summary>
-        /// <param name="timestamp">Timestamp</param>
-        /// <param name="numericValue">double value</param>
-        public DataPoint(DateTime timestamp, double numericValue)
-        {
-            _timestamp = timestamp.ToUnixTimeMilliseconds();
-            _numericValue = numericValue;
-            _stringValue = null;
-        }
-
-        /// <summary>
-        /// Creates a string data point
-        /// </summary>
-        /// <param name="timestamp">Timestamp</param>
-        /// <param name="stringValue">string value</param>
-        public DataPoint(DateTime timestamp, string stringValue)
-        {
-            _timestamp = timestamp.ToUnixTimeMilliseconds();
-            _numericValue = null;
-            _stringValue = stringValue;
-        }
-    }
-
-    /// <summary>
     /// Extension utility methods for <see cref="Client"/>
     /// </summary>
     public static class CogniteClientExtensions
     {
-        private static ILogger _logger = Logging.GetDefault();
+        private static ILogger _logger = LoggingUtils.GetDefault();
 
-        private static readonly Counter _numberDataPoints = Metrics.CreateCounter("extractor_utils_cdf_datapoints", null);
+        private static readonly Counter _numberDataPoints = Prometheus.Metrics.CreateCounter("extractor_utils_cdf_datapoints", null);
         internal static void SetLogger(ILogger logger) {
             _logger = logger;
         }
@@ -286,7 +237,7 @@ namespace ExtractorUtils
         /// <param name="token">Cancellation token</param>
         public static async Task InsertDataPointsAsync(
             this Client client,
-            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            IDictionary<Identity, IEnumerable<Datapoint>> points,
             int keyChunkSize,
             int valueChunkSize,
             int throttleSize,
@@ -298,7 +249,7 @@ namespace ExtractorUtils
                 .ChunkBy(valueChunkSize, keyChunkSize);
 
             var generators = chunks
-                .Select<IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)>, Func<Task>>(
+                .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
                     chunk => async () => await InsertDataPointsChunk(client, chunk, token));
             await generators.RunThrottled(throttleSize, token);
         }
@@ -318,7 +269,7 @@ namespace ExtractorUtils
         /// <returns></returns>
         public static async Task<InsertError> InsertDataPointsIgnoreErrorsAsync(
             this Client client,
-            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            IDictionary<Identity, IEnumerable<Datapoint>> points,
             int keyChunkSize,
             int valueChunkSize,
             int throttleSize,
@@ -331,7 +282,7 @@ namespace ExtractorUtils
 
             var errors = new List<InsertError>();
             var generators = chunks
-                .Select<IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)>, Func<Task>>(
+                .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
                     chunk => async () => { 
                         var error = await InsertDataPointsIgnoreErrorsChunk(client, chunk, token);
                         errors.Add(error);
@@ -345,10 +296,10 @@ namespace ExtractorUtils
             return errorsFound;
         }
 
-        private static Dictionary<Identity, IEnumerable<DataPoint>> GetTrimmedDataPoints(IDictionary<Identity, IEnumerable<DataPoint>> points)
+        private static Dictionary<Identity, IEnumerable<Datapoint>> GetTrimmedDataPoints(IDictionary<Identity, IEnumerable<Datapoint>> points)
         {
             var comparer = new IdentityComparer();
-            Dictionary<Identity, IEnumerable<DataPoint>> trimmedDict = new Dictionary<Identity, IEnumerable<DataPoint>>(comparer);
+            Dictionary<Identity, IEnumerable<Datapoint>> trimmedDict = new Dictionary<Identity, IEnumerable<Datapoint>>(comparer);
             foreach (var key in points.Keys)
             {
                 var validDps = points[key].TrimValues();
@@ -371,7 +322,7 @@ namespace ExtractorUtils
 
         private static async Task InsertDataPointsChunk(
             this Client client,
-            IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)> points,
+            IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)> points,
             CancellationToken token)
         {
             var request = new DataPointInsertionRequest();
@@ -442,7 +393,7 @@ namespace ExtractorUtils
 
         private static async Task<InsertError> InsertDataPointsIgnoreErrorsChunk(
             this Client client,
-            IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)> points,
+            IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)> points,
             CancellationToken token)
         {
             var comparer = new IdentityComparer();

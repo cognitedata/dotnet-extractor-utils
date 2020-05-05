@@ -3,8 +3,8 @@ using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
-using Cognite.Logging;
-using ExtractorUtils;
+using Cognite.Extractor.Logging;
+using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test
 {
@@ -18,7 +18,7 @@ namespace ExtractorUtils.Test
         [Fact]
         public static void TestLogging() {
             // To log messages before a logger configured, the default console logger can be used.
-            var l1 = Logging.GetDefault();
+            var l1 = LoggingUtils.GetDefault();
             Assert.NotNull(l1);
             l1.LogInformation("Testing logger injection");
 

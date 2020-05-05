@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognite.Logging", "Cognite.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognite.Metrics", "Cognite.Metrics\Cognite.Metrics.csproj", "{9B85245B-4F9C-4D6D-92FD-47A8B079E9B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognite.Utils", "Cognite.Utils\Cognite.Utils.csproj", "{F08B268D-791D-4FFE-AA3E-3B5A7CA9F4FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognite.Common", "Cognite.Common\Cognite.Common.csproj", "{F08B268D-791D-4FFE-AA3E-3B5A7CA9F4FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

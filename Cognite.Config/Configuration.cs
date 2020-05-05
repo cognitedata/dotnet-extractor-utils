@@ -1,20 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using System.Collections.Generic;
 
-namespace Cognite.Configuration
+namespace Cognite.Extractor.Configuration
 {
     /// <summary>
     /// Configuration utility class that uses YamlDotNet to read and deserialize YML documents to extractor config objects.
     /// The standard format for extractor config files uses hyphenated tag names (this-is-a-tag in yml is mapped to ThisIsATag object property).
     /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
     /// </summary>
-    public static class Configuration
+    public static class ConfigurationUtils
     {
         private static DeserializerBuilder builder = new DeserializerBuilder()
             .WithNamingConvention(HyphenatedNamingConvention.Instance)
@@ -57,7 +57,7 @@ namespace Cognite.Configuration
         /// not found or is not of the integer type.</exception>
         public static int GetVersionFromFile(string path)
         {
-            Dictionary<object, object> versionedConfig = Configuration.Read<dynamic>(path);
+            Dictionary<object, object> versionedConfig = ConfigurationUtils.Read<dynamic>(path);
             return GetVersion(versionedConfig);
         }
 
@@ -70,7 +70,7 @@ namespace Cognite.Configuration
         /// not found or is not of the integer type.</exception>
         public static int GetVersionFromString(string yaml)
         {
-            Dictionary<object, object> versionedConfig = Configuration.ReadString<dynamic>(yaml);
+            Dictionary<object, object> versionedConfig = ConfigurationUtils.ReadString<dynamic>(yaml);
             return GetVersion(versionedConfig);
         }
 
@@ -80,7 +80,7 @@ namespace Cognite.Configuration
         /// </summary>
         /// <param name="yaml">String containing a yaml configuration</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
-        /// <typeparam name="T">A type that inherits from <see cref="BaseConfig"/></typeparam>
+        /// <typeparam name="T">A type that inherits from <see cref="VersionedConfig"/></typeparam>
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid or
         /// in case of yaml parsing errors.</exception>
@@ -88,9 +88,9 @@ namespace Cognite.Configuration
         {
             try 
             {
-                int configVersion = Configuration.GetVersionFromString(yaml);
+                int configVersion = ConfigurationUtils.GetVersionFromString(yaml);
                 CheckVersion(configVersion, acceptedConfigVersions);
-                return Configuration.ReadString<T>(yaml);
+                return ConfigurationUtils.ReadString<T>(yaml);
             }
             catch (YamlDotNet.Core.YamlException ye)
             {
@@ -105,18 +105,18 @@ namespace Cognite.Configuration
         /// </summary>
         /// <param name="path">Path to the yml file</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
-        /// <typeparam name="T">A type that inherits from <see cref="BaseConfig"/></typeparam>
+        /// <typeparam name="T">A type that inherits from <see cref="VersionedConfig"/></typeparam>
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error.</exception>
-        public static T TryReadConfigFromFile<T>(string path, params int[] acceptedConfigVersions)
+        public static T TryReadConfigFromFile<T>(string path, params int[] acceptedConfigVersions) where T : VersionedConfig
         {
             try 
             {
-                int configVersion = Configuration.GetVersionFromFile(path);
+                int configVersion = ConfigurationUtils.GetVersionFromFile(path);
                 CheckVersion(configVersion, acceptedConfigVersions);
 
-                return Configuration.Read<T>(path);
+                return ConfigurationUtils.Read<T>(path);
             }
             catch (System.IO.FileNotFoundException fnfe)
             {

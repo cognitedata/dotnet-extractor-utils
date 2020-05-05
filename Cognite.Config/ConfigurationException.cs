@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cognite.Configuration
+namespace Cognite.Extractor.Configuration
 {
     /// <summary>
     /// Exception produced by the configuration utils 
@@ -26,10 +26,5 @@ namespace Cognite.Configuration
         public ConfigurationException(string message, Exception innerException) : base(message, innerException)
         {
         }
-
-        public ConfigurationException()
-        {
-        }
     }
-
 }

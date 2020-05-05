@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Cognite.Utils
+namespace Cognite.Extractor.Common
 {
     /// <summary>
     /// Various utility functions
