@@ -156,6 +156,56 @@ namespace ExtractorUtils
     }
 
     /// <summary>
+    /// Comparer for <see cref="Identity"/> objects
+    /// </summary>
+    public class IdentityComparer : IEqualityComparer<Identity>
+    {
+        /// <summary>
+        /// Determine if two <see cref="Identity"/> objects are equal:
+        /// They have the same Id or ExternalId
+        /// </summary>
+        /// <param name="x">Identity</param>
+        /// <param name="y">Identity</param>
+        /// <returns></returns>
+        public bool Equals(Identity x, Identity y)
+        {
+            if (Object.ReferenceEquals(x, y)) return true;
+
+            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
+
+            if (x.Id.HasValue && y.Id.HasValue && x.Id.Value == y.Id.Value)
+            {
+                return true;
+            }
+            if (x.ExternalId.TrimToNull() != null && y.ExternalId.TrimToNull() != null && x.ExternalId == y.ExternalId)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Get a hash code based on the identity Id or ExternalId
+        /// </summary>
+        /// <param name="obj">Identity</param>
+        /// <returns></returns>
+        public int GetHashCode(Identity obj)
+        {
+            if (Object.ReferenceEquals(obj, null)) return 0;
+
+            if (obj.Id.HasValue)
+            {
+                return obj.Id.Value.GetHashCode();
+            }
+            if (obj.ExternalId.TrimToNull() == null)
+            {
+                return 0;
+            }
+            return obj.ExternalId.GetHashCode();
+        }
+    }
+
+    /// <summary>
     /// Extension utilities for the Cognite client
     /// </summary>
     public static class CogniteExtensions

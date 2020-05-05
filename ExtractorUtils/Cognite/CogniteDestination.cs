@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CogniteSdk;
+using CogniteSdk.Resources;
 using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Polly.Timeout;
@@ -116,6 +117,32 @@ namespace ExtractorUtils
                 token);
         }
 
+        /// <summary>
+        /// Tries to insert the data points into CDF. If any time series are not
+        /// found, or if the time series is of wrong type (Inserting numeric data
+        /// into a string time series), the errors are ignored and the missing/mismatched 
+        /// ids are returned
+        /// </summary>
+        /// <param name="points">Data points</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task<InsertError> InsertDataPointsIgnoreErrorsAsync(
+            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
+                points.Values.Select(dp => dp.Count()).Sum(),
+                points.Keys.Count);
+            var errors = await _client.InsertDataPointsIgnoreErrorsAsync(
+                points,
+                _config.CdfChunking.DataPointTimeSeries,
+                _config.CdfChunking.DataPoints,
+                _config.CdfThrottling.DataPoints,
+                token);
+            _logger.LogDebug("Found {NumMissing} missing ids and {NumMismatched} mismatched time series", 
+                errors.IdsNotFound.Count(), errors.IdsWithMismatchedData.Count());
+            return errors;
+        }
     }
     
     /// <summary>
@@ -265,23 +292,81 @@ namespace ExtractorUtils
             int throttleSize,
             CancellationToken token)
         {
-            Dictionary<Identity, IEnumerable<DataPoint>> trimmedDict = new Dictionary<Identity, IEnumerable<DataPoint>>();
-            foreach (var key in points.Keys)
-            {
-                var validDps = points[key].TrimValues();
-                if (validDps.Any())
-                {
-                    trimmedDict.Add(key, validDps);
-                }
-            }
+            var trimmedDict = GetTrimmedDataPoints(points);
             var chunks = trimmedDict
                 .Select(p => (p.Key, p.Value))
                 .ChunkBy(valueChunkSize, keyChunkSize);
 
             var generators = chunks
                 .Select<IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)>, Func<Task>>(
-                    chunk => async () =>  await InsertDataPointsChunk(client, chunk, token));
+                    chunk => async () => await InsertDataPointsChunk(client, chunk, token));
             await generators.RunThrottled(throttleSize, token);
+        }
+
+        /// <summary>
+        /// Tries to insert the data points into CDF. If any time series are not
+        /// found, or if the time series is of wrong type (Inserting numeric data
+        /// into a string time series), the errors are ignored and the missing/mismatched 
+        /// ids are returned
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="points">Data points</param>
+        /// <param name="keyChunkSize">Dictionary key chunk size</param>
+        /// <param name="valueChunkSize">Dictionary value chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task<InsertError> InsertDataPointsIgnoreErrorsAsync(
+            this Client client,
+            IDictionary<Identity, IEnumerable<DataPoint>> points,
+            int keyChunkSize,
+            int valueChunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var trimmedDict = GetTrimmedDataPoints(points);
+            var chunks = trimmedDict
+                .Select(p => (p.Key, p.Value))
+                .ChunkBy(valueChunkSize, keyChunkSize);
+
+            var errors = new List<InsertError>();
+            var generators = chunks
+                .Select<IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)>, Func<Task>>(
+                    chunk => async () => { 
+                        var error = await InsertDataPointsIgnoreErrorsChunk(client, chunk, token);
+                        errors.Add(error);
+                    });
+            await generators.RunThrottled(throttleSize, token);
+            InsertError errorsFound = new InsertError(new Identity[]{}, new Identity[]{});
+            foreach (var err in errors)
+            {   
+                errorsFound = errorsFound.UnionWith(err);
+            }
+            return errorsFound;
+        }
+
+        private static Dictionary<Identity, IEnumerable<DataPoint>> GetTrimmedDataPoints(IDictionary<Identity, IEnumerable<DataPoint>> points)
+        {
+            var comparer = new IdentityComparer();
+            Dictionary<Identity, IEnumerable<DataPoint>> trimmedDict = new Dictionary<Identity, IEnumerable<DataPoint>>(comparer);
+            foreach (var key in points.Keys)
+            {
+                var validDps = points[key].TrimValues();
+                if (validDps.Any())
+                {
+                    if (trimmedDict.ContainsKey(key))
+                    {
+                        var existing = trimmedDict[key].ToList();
+                        existing.AddRange(validDps);
+                        trimmedDict[key] = existing;
+                    }
+                    else {
+                        trimmedDict.Add(key, validDps);
+                    }
+                }
+            }
+
+            return trimmedDict;
         }
 
         private static async Task InsertDataPointsChunk(
@@ -300,7 +385,7 @@ namespace ExtractorUtils
                 }
                 else
                 {
-                    item.ExternalId = entry.id.ToString();
+                    item.ExternalId = entry.id.ExternalId.ToString();
                 }
                 if (!entry.dataPoints.Any())
                 {
@@ -353,6 +438,73 @@ namespace ExtractorUtils
                 _logger.LogWarning("Uploading data points to CDF timed out. Consider reducing the chunking sizes in the config file");
                 throw;
             }
+        }
+
+        private static async Task<InsertError> InsertDataPointsIgnoreErrorsChunk(
+            this Client client,
+            IEnumerable<(Identity id, IEnumerable<DataPoint> dataPoints)> points,
+            CancellationToken token)
+        {
+            var comparer = new IdentityComparer();
+            var missing = new HashSet<Identity>(comparer);
+            var mismatched = new HashSet<Identity>(comparer);
+            try
+            {
+                await InsertDataPointsChunk(client, points, token);
+            }
+            catch (ResponseException e) when (e.Code == 400)
+            {
+                if (e.Missing != null && e.Missing.Any()) {
+                    foreach (var ts in e.Missing)
+                    {
+                        if (ts.TryGetValue("externalId", out MultiValue exIdValue))
+                        {
+                            missing.Add(new Identity(exIdValue.ToString()));
+                        }
+                        else if (ts.TryGetValue("id", out MultiValue idValue))
+                        {
+                            missing.Add(new Identity(((MultiValue.Long) idValue).Value));
+                        }
+                    }
+                }
+                else if (e.Message == "Expected string value for datapoint" || e.Message == "Expected numeric value for datapoint")
+                {
+                    // The error message does not specify which time series caused the error.
+                    // Need to fetch all time series in the chunk and check...
+                    var chunking = new ChunkingConfig();
+                    var timeseries = await client.TimeSeries.GetByIdsIgnoreErrors(points.Select(p => p.id), chunking.TimeSeries, 1, token);
+                    foreach (var entry in points)
+                    {
+                        var ts = timeseries
+                            .Where(t => entry.id.ExternalId == t.ExternalId || entry.id.Id == t.Id)
+                            .FirstOrDefault();
+                        if (ts != null) {
+                            if (ts.IsString && entry.dataPoints.Any(dp => dp.NumericValue.HasValue))
+                            {
+                                mismatched.Add(entry.id);
+                            }
+                            else if (!ts.IsString && entry.dataPoints.Any(dp => dp.StringValue != null))
+                            {
+                                mismatched.Add(entry.id);
+                            }
+                        }
+                    }
+                    if (!mismatched.Any())
+                    {
+                        _logger.LogError("Trying to insert data points of the wrong type, but cannot determine in which time series");
+                        throw;
+                    }
+                }
+                else {
+                    throw;
+                }
+                var toInsert = points
+                    .Where(p => !missing.Contains(p.id) && !mismatched.Contains(p.id));
+                var errors = await InsertDataPointsIgnoreErrorsChunk(client, toInsert, token);
+                missing.UnionWith(errors.IdsNotFound);
+                mismatched.UnionWith(errors.IdsWithMismatchedData);
+            }
+            return new InsertError(missing, mismatched);
         }
 
         /// <summary>
@@ -473,6 +625,111 @@ namespace ExtractorUtils
 #pragma warning restore CA1031 // Do not catch general exception types
                 await Task.Delay(TimeSpan.FromSeconds(1), token);
             }
+        }
+
+        /// <summary>
+        /// Get the time series with the provided <paramref name="ids"/>. Ignore any
+        /// unknown ids
+        /// </summary>
+        /// <param name="tsClient">A <see cref="Client.TimeSeries"/> client</param>
+        /// <param name="ids">List of <see cref="Identity"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<TimeSeries>> GetByIdsIgnoreErrors(
+            this TimeSeriesResource tsClient,
+            IEnumerable<Identity> ids, 
+            int chunkSize, 
+            int throttleSize,
+            CancellationToken token)
+        {
+            var result = new List<TimeSeries>();
+            var chunks = ids
+                .ChunkBy(chunkSize);
+            var generators = chunks
+                .Select<IEnumerable<Identity>, Func<Task>>(
+                chunk => async () => {
+                    var found = await GetByIdsIgnoreErrorsChunk(tsClient, chunk, token);
+                    result.AddRange(found);
+                });
+            await generators.RunThrottled(throttleSize, token);
+            return result;
+        }
+
+        private static async Task<IEnumerable<TimeSeries>> GetByIdsIgnoreErrorsChunk(
+            TimeSeriesResource tsClient,
+            IEnumerable<Identity> ids,
+            CancellationToken token)
+        {
+            // TODO: Remove once ignoreUnknownIds is available in the SDK
+            var comparer = new IdentityComparer();
+            var missing = new HashSet<Identity>(comparer);
+            try
+            {
+                var existingTs = await tsClient.RetrieveAsync(ids, token);
+                _logger.LogDebug("Retrieved {Existing} times series from CDF", existingTs.Count());
+                return existingTs;
+            }
+            catch (ResponseException e) when (e.Code == 400 && e.Missing.Any()){
+                foreach (var ts in e.Missing)
+                {
+                    if (ts.TryGetValue("externalId", out MultiValue exIdValue))
+                    {
+                        missing.Add(new Identity(exIdValue.ToString()));
+                    }
+                    else if (ts.TryGetValue("id", out MultiValue idValue))
+                    {
+                        missing.Add(new Identity(((MultiValue.Long) idValue).Value));
+                    }
+                }
+                var toGet = ids
+                    .Where(id => !missing.Contains(id));
+                return await GetByIdsIgnoreErrorsChunk(tsClient, toGet, token);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Class contaning errors resulting from insert operations 
+    /// </summary>
+    public sealed class InsertError
+    {
+        /// <summary>
+        /// Ids/External ids not found in CDF
+        /// </summary>
+        public readonly IEnumerable<Identity> IdsNotFound;
+        
+        /// <summary>
+        /// Ids with mismatched type in CDF
+        /// </summary>
+        public readonly IEnumerable<Identity> IdsWithMismatchedData;
+
+        /// <summary>
+        /// Creates an instance with the provided identifiers that were not
+        /// found or are mismatched
+        /// </summary>
+        /// <param name="idsNotFound">Ids not found</param>
+        /// <param name="idsWithMismatchedData">Mismatched ids</param>
+        public InsertError(IEnumerable<Identity> idsNotFound, IEnumerable<Identity> idsWithMismatchedData)
+        {
+            IdsNotFound = idsNotFound;
+            IdsWithMismatchedData = idsWithMismatchedData;
+        }
+
+        /// <summary>
+        /// Combines this InsertError object with the one provided and return
+        /// a new object
+        /// </summary>
+        /// <param name="other">Other InsertError</param>
+        /// <returns></returns>
+        public InsertError UnionWith(InsertError other) {
+            var comparer = new IdentityComparer();
+            var idsNotFound = new HashSet<Identity>(IdsNotFound, comparer);
+            idsNotFound.UnionWith(other.IdsNotFound);
+            var idsWithMismatchedData = new HashSet<Identity>(IdsWithMismatchedData, comparer);
+            idsWithMismatchedData.UnionWith(other.IdsWithMismatchedData);
+            return new InsertError(idsNotFound, idsWithMismatchedData);
         }
     }
 }

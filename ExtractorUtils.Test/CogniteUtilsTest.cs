@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using CogniteSdk;
 using Xunit;
 
 namespace ExtractorUtils.Test
@@ -49,5 +51,30 @@ namespace ExtractorUtils.Test
             Assert.True(_stringPoints.Select(v => v.StringValue).All(v => payloads.Any(p => v.StartsWith(p))));
         }
 
+        [Fact]
+        public static void TestIdentityComparer()
+        {
+            var comparer = new IdentityComparer();
+            var id1 = new Identity(1L);
+            var id2 = new Identity("ExternalId");
+            Assert.True(comparer.Equals(id1, id1)); // same object
+            Assert.False(comparer.Equals(id1, null));
+            Assert.False(comparer.Equals(null, id1));
+            Assert.False(comparer.Equals(id1, new Identity(null)));
+            Assert.False(comparer.Equals(id1, id2));
+            Assert.True(comparer.Equals(id1, new Identity(1L)));
+            Assert.True(comparer.Equals(id2, new Identity("ExternalId")));
+
+            var set = new HashSet<Identity>(comparer);
+            set.Add(id1);
+            set.Add(id2);
+
+            Assert.Contains(id1, set);
+            Assert.Contains(new Identity(1L), set);
+            Assert.Contains(id2, set);
+            Assert.Contains(new Identity("ExternalId"), set);
+            Assert.DoesNotContain(new Identity(2L), set);
+            Assert.DoesNotContain(new Identity("ExternalId2"), set);
+        }
     }
 }
