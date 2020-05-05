@@ -30,8 +30,20 @@ jobs:
     - name: Dotnet Pack Utils
       run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
 
-    - name: Dotnet Nuget Push
-      run: dotnet nuget push nuget-packages/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+    - name: Dotnet Nuget Push Config
+      run: dotnet nuget push nuget-packages/Cognite.Extractor.Configuration*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      continue-on-error: false
+
+    - name: Dotnet Nuget Push Logging
+      run: dotnet nuget push nuget-packages/Cognite.Extractor.Logging*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      continue-on-error: false
+
+    - name: Dotnet Nuget Push Metrics
+      run: dotnet nuget push nuget-packages/Cognite.Extractor.Metrics*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      continue-on-error: false
+
+    - name: Dotnet Nuget Push Utils
+      run: dotnet nuget push nuget-packages/Cognite.ExtractorUtils*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       continue-on-error: false
 
     - name: Create Release
