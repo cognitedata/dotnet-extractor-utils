@@ -99,7 +99,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="points">Data points</param>
         /// <returns></returns>
-        public static IEnumerable<DataPoint> TrimValues(this IEnumerable<DataPoint> points)
+        public static IEnumerable<Datapoint> TrimValues(this IEnumerable<Datapoint> points)
         {
             foreach (var point in points)
             {
@@ -107,7 +107,7 @@ namespace Cognite.Extractor.Utils
                 if (point.StringValue != null)
                 {
                     yield return point.StringValue.Length < StringLengthMax ? point :
-                        new DataPoint(CogniteTime.FromUnixTimeMilliseconds(point.Timestamp), point.StringValue.Substring(0, StringLengthMax));
+                        new Datapoint(CogniteTime.FromUnixTimeMilliseconds(point.Timestamp), point.StringValue.Substring(0, StringLengthMax));
                 }
                 else if (point.NumericValue.HasValue)
                 {
@@ -117,7 +117,7 @@ namespace Cognite.Extractor.Utils
                         value = Math.Max(NumericValueMin, value);
                         value = Math.Min(NumericValueMax, value);
                         yield return value == point.NumericValue.Value ? point : 
-                            new DataPoint(CogniteTime.FromUnixTimeMilliseconds(point.Timestamp), value);
+                            new Datapoint(CogniteTime.FromUnixTimeMilliseconds(point.Timestamp), value);
                     }
                 }
             }
@@ -281,6 +281,55 @@ namespace Cognite.Extractor.Utils
                 return client;
             });
             services.AddTransient<CogniteDestination>();
+        }
+    }
+
+        /// <summary>
+    /// Data point abstraction. Consists of a timestamp and a double or string value
+    /// </summary>
+    public class Datapoint
+    {
+        private readonly long _timestamp;
+        private readonly double? _numericValue;
+        private readonly string _stringValue;
+        
+        /// <summary>
+        /// Timestamp in Unix time milliseconds
+        /// </summary>
+        public long Timestamp => _timestamp;
+
+        /// <summary>
+        /// Optional string value
+        /// </summary>
+        public string StringValue => _stringValue;
+
+        /// <summary>
+        /// Optional double value
+        /// </summary>
+        public double? NumericValue => _numericValue;
+
+        /// <summary>
+        /// Creates a numeric data point
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="numericValue">double value</param>
+        public Datapoint(DateTime timestamp, double numericValue)
+        {
+            _timestamp = timestamp.ToUnixTimeMilliseconds();
+            _numericValue = numericValue;
+            _stringValue = null;
+        }
+
+        /// <summary>
+        /// Creates a string data point
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="stringValue">string value</param>
+        public Datapoint(DateTime timestamp, string stringValue)
+        {
+            _timestamp = timestamp.ToUnixTimeMilliseconds();
+            _numericValue = null;
+            _stringValue = stringValue;
         }
     }
 }

@@ -16,7 +16,6 @@ using Com.Cognite.V1.Timeseries.Proto;
 using Cognite.Extractor.Utils;
 using Cognite.Extractor.Logging;
 using CogniteSdk;
-using DataPoint = Cognite.Extractor.Utils.DataPoint;
 
 namespace ExtractorUtils.Test
 {
@@ -349,7 +348,7 @@ namespace ExtractorUtils.Test
             System.IO.File.Delete(path);
         }
 
-        private static Dictionary<string, List<DataPoint>> _createdDataPoints = new Dictionary<string, List<DataPoint>>();
+        private static Dictionary<string, List<Datapoint>> _createdDataPoints = new Dictionary<string, List<Datapoint>>();
         
         [Fact]
         public async Task TestInsertDataPoints()
@@ -386,12 +385,12 @@ namespace ExtractorUtils.Test
                 double[] doublePoints = { 0.0, 1.1, 2.2, double.NaN, 3.3, 4.4, double.NaN, 5.5, double.NegativeInfinity };
                 string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringLengthMax), new string('2', CogniteUtils.StringLengthMax + 1), "3"};
                 
-                var datapoints = new Dictionary<Identity, IEnumerable<DataPoint>>() {
-                    { new Identity("A"), new DataPoint[] { new DataPoint(DateTime.UtcNow, "1")}},
-                    { new Identity("A"), new DataPoint[] { new DataPoint(DateTime.UtcNow, "2")}},
-                    { new Identity(1), doublePoints.Select(d => new DataPoint(DateTime.UtcNow, d))},
-                    { new Identity(2), stringPoints.Select(s => new DataPoint(DateTime.UtcNow, s))},
-                    { new Identity(3), new DataPoint[] { } }
+                var datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
+                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
+                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "2")}},
+                    { new Identity(1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d))},
+                    { new Identity(2), stringPoints.Select(s => new Datapoint(DateTime.UtcNow, s))},
+                    { new Identity(3), new Datapoint[] { } }
                 };
                 _createdDataPoints.Clear();
                 await cogniteDestination.InsertDataPointsAsync(
@@ -407,14 +406,14 @@ namespace ExtractorUtils.Test
                     .Where(dp => dp.StringValue == null || dp.StringValue.Length > CogniteUtils.StringLengthMax));
 
                 _createdDataPoints.Clear();
-                datapoints = new Dictionary<Identity, IEnumerable<DataPoint>>() {
-                    { new Identity("idMissing1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, "1")}},
-                    { new Identity("idNumeric1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, 1)}},
-                    { new Identity("idNumeric2"), new DataPoint[] { new DataPoint(DateTime.UtcNow, 1)}},
-                    { new Identity(-1), doublePoints.Select(d => new DataPoint(DateTime.UtcNow, d)).Take(2)},
-                    { new Identity("idMismatchedString1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, 1)}},
-                    { new Identity("idString1"), new DataPoint[] { new DataPoint(DateTime.UtcNow, "1")}},
-                    { new Identity("idMismatched2"), new DataPoint[] { new DataPoint(DateTime.UtcNow, "1")}}
+                datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
+                    { new Identity("idMissing1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
+                    { new Identity("idNumeric1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}},
+                    { new Identity("idNumeric2"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}},
+                    { new Identity(-1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d)).Take(2)},
+                    { new Identity("idMismatchedString1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}},
+                    { new Identity("idString1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
+                    { new Identity("idMismatched2"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}}
                 };
                 var errors = await cogniteDestination.InsertDataPointsIgnoreErrorsAsync(
                     datapoints,
@@ -605,23 +604,23 @@ namespace ExtractorUtils.Test
                 foreach (var item in data.Items)
                 {
                     var sId = string.IsNullOrEmpty(item.ExternalId) ? item.Id + "" : item.ExternalId;
-                    if (!_createdDataPoints.TryGetValue(sId, out List<DataPoint> dps))
+                    if (!_createdDataPoints.TryGetValue(sId, out List<Datapoint> dps))
                     {
-                        dps = new List<DataPoint>();
+                        dps = new List<Datapoint>();
                         _createdDataPoints.TryAdd(sId, dps);
                     }
                     if (item.NumericDatapoints != null)
                     {
                         foreach (var dp in item.NumericDatapoints.Datapoints)
                         {
-                            dps.Add(new Cognite.Extractor.Utils.DataPoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
+                            dps.Add(new Datapoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
                         }
                     }
                     else if (item.StringDatapoints != null)
                     {
                         foreach (var dp in item.StringDatapoints?.Datapoints)
                         {
-                            dps.Add(new DataPoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
+                            dps.Add(new Datapoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
                         }
                     }
                 }

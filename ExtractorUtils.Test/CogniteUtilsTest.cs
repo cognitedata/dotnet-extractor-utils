@@ -4,32 +4,31 @@ using System.Linq;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Xunit;
-using DataPoint = Cognite.Extractor.Utils.DataPoint;
 
 namespace ExtractorUtils.Test
 {
     public class CogniteUtilsTest
     {
-        private static readonly DataPoint[] _points = {
-            new DataPoint(DateTime.UtcNow , 0),
-            new DataPoint(DateTime.UtcNow, 100),        // 1
-            new DataPoint(DateTime.UtcNow, -100),       // 2
-            new DataPoint(DateTime.UtcNow, -101),       // 3
-            new DataPoint(DateTime.UtcNow, 101),        // 4
-            new DataPoint(DateTime.UtcNow, -1e100),     // 5
-            new DataPoint(DateTime.UtcNow, 1e100),      // 6
-            new DataPoint(DateTime.UtcNow, -1e101),     // 7
-            new DataPoint(DateTime.UtcNow, 1e101),      // 8
-            new DataPoint(DateTime.UtcNow, double.NaN), // 9
-            new DataPoint(DateTime.UtcNow, double.PositiveInfinity), // 10
-            new DataPoint(DateTime.UtcNow, double.NegativeInfinity), // 11
+        private static readonly Datapoint[] _points = {
+            new Datapoint(DateTime.UtcNow , 0),
+            new Datapoint(DateTime.UtcNow, 100),        // 1
+            new Datapoint(DateTime.UtcNow, -100),       // 2
+            new Datapoint(DateTime.UtcNow, -101),       // 3
+            new Datapoint(DateTime.UtcNow, 101),        // 4
+            new Datapoint(DateTime.UtcNow, -1e100),     // 5
+            new Datapoint(DateTime.UtcNow, 1e100),      // 6
+            new Datapoint(DateTime.UtcNow, -1e101),     // 7
+            new Datapoint(DateTime.UtcNow, 1e101),      // 8
+            new Datapoint(DateTime.UtcNow, double.NaN), // 9
+            new Datapoint(DateTime.UtcNow, double.PositiveInfinity), // 10
+            new Datapoint(DateTime.UtcNow, double.NegativeInfinity), // 11
         };
 
-        private static readonly DataPoint[] _stringPoints = {
-            new DataPoint(DateTime.UtcNow, "Some String Value"),
-            new DataPoint(DateTime.UtcNow, String.Empty),
-            new DataPoint(DateTime.UtcNow, new string(Enumerable.Repeat('a', 255).ToArray())),
-            new DataPoint(DateTime.UtcNow, new string(Enumerable.Repeat('b', 256).ToArray())),
+        private static readonly Datapoint[] _stringPoints = {
+            new Datapoint(DateTime.UtcNow, "Some String Value"),
+            new Datapoint(DateTime.UtcNow, String.Empty),
+            new Datapoint(DateTime.UtcNow, new string(Enumerable.Repeat('a', 255).ToArray())),
+            new Datapoint(DateTime.UtcNow, new string(Enumerable.Repeat('b', 256).ToArray())),
         };
 
         [Fact]

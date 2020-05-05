@@ -18,7 +18,16 @@ jobs:
       with:
         dotnet-version: 3.1.101
 
-    - name: Dotnet Pack
+    - name: Dotnet Pack Config
+      run: dotnet pack Cognite.Config/Cognite.Configuration.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
+
+    - name: Dotnet Pack Logging
+      run: dotnet pack Cognite.Logging/Cognite.Logging.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
+
+    - name: Dotnet Pack Metrics
+      run: dotnet pack Cognite.Metrics/Cognite.Metrics.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
+
+    - name: Dotnet Pack Utils
       run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
 
     - name: Dotnet Nuget Push
