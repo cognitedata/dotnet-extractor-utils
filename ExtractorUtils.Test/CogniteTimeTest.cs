@@ -1,5 +1,5 @@
-using Xunit;
 using System;
+using Xunit;
 using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test

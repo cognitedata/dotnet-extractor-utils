@@ -15,7 +15,8 @@ namespace Cognite.Extractor.Logging
     /// Loggers are created according to a <see cref="LoggerConfig"/> configuration object.
     /// Log messages contain UTC timestamps.
     /// </summary>
-    public static class LoggingUtils {
+    public static class LoggingUtils 
+    {
         
         private const string _logTemplate = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private const string _logTemplateWithContext = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";

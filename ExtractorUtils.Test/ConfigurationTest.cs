@@ -1,11 +1,11 @@
-using System.IO;
 using System;
-using Xunit;
+using System.IO;
 using Microsoft.Extensions.DependencyInjection;
-using Cognite.Extractor.Utils;
+using Xunit;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
+using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test
 {

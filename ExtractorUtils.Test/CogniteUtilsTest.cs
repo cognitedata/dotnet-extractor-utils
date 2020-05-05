@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Xunit;
+using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test
 {

@@ -1,21 +1,21 @@
-using System.Dynamic;
-using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using CogniteSdk;
+using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
-using Xunit;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
-using Com.Cognite.V1.Timeseries.Proto;
-using Cognite.Extractor.Utils;
+using Xunit;
 using Cognite.Extractor.Logging;
-using CogniteSdk;
+using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test
 {

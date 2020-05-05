@@ -284,7 +284,7 @@ namespace Cognite.Extractor.Utils
         }
     }
 
-        /// <summary>
+    /// <summary>
     /// Data point abstraction. Consists of a timestamp and a double or string value
     /// </summary>
     public class Datapoint

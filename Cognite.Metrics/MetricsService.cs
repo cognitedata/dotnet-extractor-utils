@@ -1,14 +1,14 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Net.Http.Headers;
-using Prometheus;
-using System.Collections.Generic;
 using Polly;
 using Polly.Extensions.Http;
-using System.Threading.Tasks;
+using Prometheus;
 using Cognite.Extractor.Common;
 
 namespace Cognite.Extractor.Metrics 
