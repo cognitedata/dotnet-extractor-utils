@@ -23,29 +23,49 @@ namespace Cognite.Extractor.Configuration
             .Build();
 
         /// <summary>
-        /// Reads the provided string containing yml and deserializes it to an object of type T 
+        /// Reads the provided string containing yml and deserializes it to an object of type <typeparamref name="T"/>
         /// </summary>
         /// <param name="yaml">String containing yml</param>
         /// <typeparam name="T">Type to read to</typeparam>
-        /// <returns>Object of type T. YamlDotNet exceptions are returned in case of deserialization errors.</returns>
+        /// <returns>Object of type <typeparamref name="T"/></returns>
+        /// <exception cref="ConfigurationException">Thrown in case of yaml parsing errors, with an inner <see cref="YamlException"/></exception>
         public static T ReadString<T>(string yaml)
         {
-            return deserializer.Deserialize<T>(yaml);
+            try
+            {
+                return deserializer.Deserialize<T>(yaml);
+            }
+            catch (YamlDotNet.Core.YamlException ye)
+            {
+                throw new ConfigurationException($"Failed to load config string at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
+            }
         }
 
         /// <summary>
-        /// Reads the yml file found in the provided path and deserializes it to an object of type T 
+        /// Reads the yml file found in the provided path and deserializes it to an object of type <typeparamref name="T"/> 
         /// </summary>
         /// <param name="path">String containing the path to a yml file</param>
         /// <typeparam name="T">Type to read to</typeparam>
-        /// <returns>Object of type T. YamlDotNet exceptions are returned in case of deserialization errors.</returns>
+        /// <returns>Object of type <typeparamref name="T"/></returns>
+        /// <exception cref="ConfigurationException">Thrown in case of yaml parsing errors, with an inner <see cref="YamlException"/>.
+        /// Or in case the config file is not found, with an inner <see cref="FileNotFoundException"/></exception>
         public static T Read<T>(string path)
         {
-            using (var reader = File.OpenText(path))
+            try
             {
-                return deserializer.Deserialize<T>(reader);
+                using (var reader = File.OpenText(path))
+                {
+                    return deserializer.Deserialize<T>(reader);
+                }
             }
-
+            catch (System.IO.FileNotFoundException fnfe)
+            {
+                throw new ConfigurationException($"Config file not found: {path}", fnfe);
+            }
+            catch (YamlDotNet.Core.YamlException ye)
+            {
+                throw new ConfigurationException($"Failed to load config at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
+            }
         }
 
         /// <summary>
@@ -53,7 +73,7 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         /// <param name="path">Path to the config yml file</param>
         /// <returns>Version</returns>        
-        /// <exception cref="ConfigurationException">Thrown when the version tag is 
+        /// <exception cref="ConfigurationException">Thrown when the file is not found, version tag is 
         /// not found or is not of the integer type.</exception>
         public static int GetVersionFromFile(string path)
         {
@@ -86,16 +106,9 @@ namespace Cognite.Extractor.Configuration
         /// in case of yaml parsing errors.</exception>
         public static T TryReadConfigFromString<T>(string yaml, params int[] acceptedConfigVersions) where T : VersionedConfig
         {
-            try 
-            {
-                int configVersion = ConfigurationUtils.GetVersionFromString(yaml);
-                CheckVersion(configVersion, acceptedConfigVersions);
-                return ConfigurationUtils.ReadString<T>(yaml);
-            }
-            catch (YamlDotNet.Core.YamlException ye)
-            {
-                throw new ConfigurationException($"Failed to load config at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
-            }
+            int configVersion = ConfigurationUtils.GetVersionFromString(yaml);
+            CheckVersion(configVersion, acceptedConfigVersions);
+            return ConfigurationUtils.ReadString<T>(yaml);
         }
 
         /// <summary>
@@ -111,21 +124,10 @@ namespace Cognite.Extractor.Configuration
         /// the yaml file is not found or in case of yaml parsing error.</exception>
         public static T TryReadConfigFromFile<T>(string path, params int[] acceptedConfigVersions) where T : VersionedConfig
         {
-            try 
-            {
-                int configVersion = ConfigurationUtils.GetVersionFromFile(path);
-                CheckVersion(configVersion, acceptedConfigVersions);
+            int configVersion = ConfigurationUtils.GetVersionFromFile(path);
+            CheckVersion(configVersion, acceptedConfigVersions);
 
-                return ConfigurationUtils.Read<T>(path);
-            }
-            catch (System.IO.FileNotFoundException fnfe)
-            {
-                throw new ConfigurationException($"Config file not found: {path}", fnfe);
-            }
-            catch (YamlDotNet.Core.YamlException ye)
-            {
-                throw new ConfigurationException($"Failed to load config at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
-            }
+            return ConfigurationUtils.Read<T>(path);
         }
 
         /// <summary>
@@ -140,6 +142,10 @@ namespace Cognite.Extractor.Configuration
         }
 
         private static void CheckVersion(int version, params int[] acceptedConfigVersions) {
+            if (acceptedConfigVersions == null || acceptedConfigVersions.Length == 0)
+            {
+                return;
+            }
             var accept = new List<int>(acceptedConfigVersions);
             if (!accept.Contains(version)) {
                 throw new ConfigurationException($"Config version {version} is not supported by this extractor");
