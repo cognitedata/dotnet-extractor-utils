@@ -17,14 +17,14 @@ A library containing utilities for building extractors in .Net
 
 The Cognite Extractor Utils can be downloaded from [NuGet](https://www.nuget.org/packages/Cognite.ExtractorUtils). 
 
-To create a console application and add the **1.0.0-alpha-007** version of library:
+To create a console application and add the **1.0.0-alpha-010** version of library:
 
 Using .NET CLI:
 ```sh
 mkdir NewExtractor
 cd NewExtractor
 dotnet new console
-dotnet add package Cognite.ExtractorUtils -v 1.0.0-alpha-007
+dotnet add package Cognite.ExtractorUtils -v 1.0.0-alpha-010
 ```
 ## Quickstart
 
@@ -52,8 +52,11 @@ Set the ```COGNITE_PROJECT``` and ```COGNITE_API_KEY``` environment variables. S
 The easiest way to use the library utilities is through **dependency injection**. Open ```Program.cs``` and use the library as follows:
 
 ```c#
-using ExtractorUtils;
 using Microsoft.Extensions.DependencyInjection;
+using Cognite.Extractor.Configuration;
+using Cognite.Extractor.Logging;
+using Cognite.Extractor.Metrics;
+using Cognite.Extractor.Utils;
 
 // Then, in the Main() method:
 var services = new ServiceCollection();
@@ -64,6 +67,10 @@ services.AddCogniteClient("MyExtractor", true, true);
 
 // Create a service provider and resolve the required services
 using (var provider = services.BuildServiceProvider()) {
+    // Resolve a logger for this class
+    var logger = provider.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("Hello Extractor");
+
     // Resolve the metrics service and start it
     var metrics = provider.GetRequiredService<MetricsService>();
     metrics.Start();
