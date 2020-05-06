@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extractor.Common
 {
     /// <summary>
     /// Support for splitting sequences into sequences of sequences subject to various constraints, as well as running 
