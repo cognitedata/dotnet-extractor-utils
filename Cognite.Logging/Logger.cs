@@ -118,7 +118,7 @@ namespace Cognite.Extractor.Logging
         public static void AddLogger(this IServiceCollection services) {
             services.AddSingleton<Serilog.ILogger>(p => {
                 var config = p.GetService<LoggerConfig>();
-                if (config == null) {
+                if (config == null || (config.Console == null && config.File == null)) {
                     // No logging configuration
                     var defLog = LoggingUtils.GetSerilogDefault();
                     defLog.Warning("No Logging configuration found. Using default logger");

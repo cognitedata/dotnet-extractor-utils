@@ -29,6 +29,19 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>A <see cref="CogniteConfig"/> config object</value>
         public CogniteConfig Cognite { get; set; }
+
+        /// <summary>
+        /// Generate default configuration objects if the corresponding tags are not
+        /// present in the yaml config file/string
+        /// </summary>
+        public override void GenerateDefaults()
+        {
+            if (Cognite == null) Cognite = new CogniteConfig();
+            if (Cognite.CdfChunking == null) Cognite.CdfChunking = new ChunkingConfig(); // default chunking according to CDF limits
+            if (Cognite.CdfThrottling == null) Cognite.CdfThrottling = new ThrottlingConfig();
+            if (Metrics == null) Metrics = new MetricsConfig();
+            if (Logger == null) Logger = new LoggerConfig();
+        }
     }
 
 #region Cognite configuration
@@ -65,12 +78,12 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Chunking sizes towards CDF 
         /// </summary>
-        public ChunkingConfig CdfChunking { get; set; } = new ChunkingConfig();
+        public ChunkingConfig CdfChunking { get; set; }
         
         /// <summary>
         /// Throttling of requests to CDF
         /// </summary>
-        public ThrottlingConfig CdfThrottling { get; set; } = new ThrottlingConfig();
+        public ThrottlingConfig CdfThrottling { get; set; }
     }
 
     /// <summary>

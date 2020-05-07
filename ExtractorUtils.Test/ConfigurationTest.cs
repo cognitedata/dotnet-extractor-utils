@@ -18,7 +18,15 @@ namespace ExtractorUtils.Test
     }
 
     class TestBaseConfig : BaseConfig {
-        public string Foo { get; set; } = "";
+        public string Foo { get; set; }
+
+        public string Bar { get; set; }
+
+        public override void GenerateDefaults() {
+            base.GenerateDefaults();
+            if (Foo == null) Foo = "";
+            if (Bar == null) Bar = "default";
+        }
     }
 
     public static class ConfigurationTest
@@ -136,6 +144,34 @@ namespace ExtractorUtils.Test
         }
 
         [Fact]
+        public static void TestEmptyVersion()
+        {
+            var yaml = "version: 0";
+            Assert.Throws<ConfigurationException>(() => ConfigurationUtils.TryReadConfigFromString<VersionedConfig>(yaml, 1));
+            var conf = ConfigurationUtils.TryReadConfigFromString<TestBaseConfig>(yaml); // no version specified, accept any version
+            Assert.Equal(0, conf.Version);
+            var conf2 = ConfigurationUtils.TryReadConfigFromString<TestBaseConfig>(yaml, null); // null input, accept any version
+            Assert.Equal(0, conf2.Version);
+        }
+
+        [Fact]
+        public static void TestGenerateDefaults()
+        {
+            var yaml = "version: 0";
+            var conf = ConfigurationUtils.TryReadConfigFromString<TestBaseConfig>(yaml);
+            Assert.Null(conf.Cognite);
+            Assert.Null(conf.Logger);
+            Assert.Null(conf.Metrics);
+            Assert.Null(conf.Foo);
+            conf.GenerateDefaults();
+            Assert.NotNull(conf.Cognite);
+            Assert.NotNull(conf.Logger);
+            Assert.NotNull(conf.Metrics);
+            Assert.Equal("", conf.Foo);
+            AssemblyTraitAttribute.Equals("default", conf.Bar);
+        }
+
+        [Fact]
         public static void InjectConfiguration() {
             string path = "test-inject-config.yml";
             string[] lines = { "version: 2", "newfoo: bar" };
@@ -169,9 +205,10 @@ namespace ExtractorUtils.Test
                 var config = provider.GetRequiredService<TestBaseConfig>();
                 Assert.Equal(2, config.Version);
                 Assert.Equal("bar", config.Foo);
-                Assert.Null(provider.GetService<CogniteConfig>());
-                Assert.Null(provider.GetService<LoggerConfig>());
-                Assert.Null(provider.GetService<MetricsConfig>());
+                Assert.Equal("default", config.Bar);
+                Assert.NotNull(provider.GetService<CogniteConfig>());
+                Assert.NotNull(provider.GetService<LoggerConfig>());
+                Assert.NotNull(provider.GetService<MetricsConfig>());
             }
             File.Delete(path);
             File.Delete(path1);
