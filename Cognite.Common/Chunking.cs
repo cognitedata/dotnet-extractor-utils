@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -101,10 +102,21 @@ namespace Cognite.Extractor.Common
         /// <returns></returns>
         public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> input, int maxSize)
         {
-            return input
-                .Select((x, i) => new { Index = i, Value = x })
-                .GroupBy(x => x.Index / maxSize)
-                .Select(x => x.Select(v => v.Value));
+            var list = new List<T>(maxSize);
+            foreach (var thing in input)
+            {
+                list.Add(thing);
+                if (list.Count == maxSize)
+                {
+                    yield return list;
+                    list = new List<T>(maxSize);
+                }
+            }
+
+            if (list.Any())
+            {
+                yield return list;
+            }
         }
 
         private static List<T> Dequeue<T>(this Queue<T> queue, int numToDequeue)
