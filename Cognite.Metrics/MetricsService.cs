@@ -43,7 +43,7 @@ namespace Cognite.Extractor.Metrics
         /// Starts a Prometheus server for scrape and multiple push gateway destinations, based on the configuration. 
         /// </summary>
         public void Start() {
-            if (_config == null)
+            if (_config == null || (_config.PushGateways == null && _config.Server == null))
             {
                 _logger.LogWarning("Metrics disabled: metrics configuration missing");
                 return;
