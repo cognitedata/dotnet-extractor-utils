@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Cognite.Extractor.Common;
+using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test {
 
@@ -52,6 +53,34 @@ namespace ExtractorUtils.Test {
             );
             Assert.Equal(2, completed.Count);
             Assert.Equal(3, completed.Sum());
+        }
+
+        [Theory]
+        [InlineData(1, 1)]
+        [InlineData(10_000, 100_000)]
+        [InlineData(10_000, 123_456)]
+        [InlineData(999, 1_000_000)]
+        public static void TestEnumerableChunkBy(int chunkSize, int datapoints)
+        {
+            var left = datapoints % chunkSize;
+            var numChunks = datapoints/chunkSize + (left > 0 ? 1 : 0);
+            Datapoint[] dps = new Datapoint[datapoints];
+            for (int i = 0; i < datapoints; i++)
+            {
+                dps[i] = new Datapoint(DateTime.UtcNow, i * 0.01);
+            }
+
+            var chunks = dps.ChunkBy(chunkSize);
+            var count = chunks.Count();
+            var sum = chunks.Select(c => c.Count()).Sum();
+            var last = chunks.Last().Count();
+
+            Assert.Equal(numChunks, count);
+            Assert.Equal(datapoints, sum);
+            if (left > 0)
+            {
+                Assert.Equal(left, last);
+            }
         }
 
         [Theory]
