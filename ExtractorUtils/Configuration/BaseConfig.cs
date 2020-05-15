@@ -1,6 +1,7 @@
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
+using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils 
 {
@@ -39,6 +40,7 @@ namespace Cognite.Extractor.Utils
             if (Cognite == null) Cognite = new CogniteConfig();
             if (Cognite.CdfChunking == null) Cognite.CdfChunking = new ChunkingConfig(); // default chunking according to CDF limits
             if (Cognite.CdfThrottling == null) Cognite.CdfThrottling = new ThrottlingConfig();
+            if (Cognite.SdkLogging == null) Cognite.SdkLogging = new SdkLoggingConfig();
             if (Metrics == null) Metrics = new MetricsConfig();
             if (Logger == null) Logger = new LoggerConfig();
         }
@@ -84,6 +86,36 @@ namespace Cognite.Extractor.Utils
         /// Throttling of requests to CDF
         /// </summary>
         public ThrottlingConfig CdfThrottling { get; set; }
+
+        /// <summary>
+        /// Enables logging of Cognite Sdk operations. Enabled by default
+        /// </summary>
+        public SdkLoggingConfig SdkLogging { get; set; }
+    }
+
+    /// <summary>
+    /// Cognite Sdk logging configuration
+    /// </summary>
+    public class SdkLoggingConfig
+    {
+        /// <summary>
+        /// Disables Sdk logging 
+        /// </summary>
+        /// <value></value>
+        public bool Disable { get; set; } = false;
+        
+        /// <summary>
+        /// Cognite Sdk logs are diplayed using this level.
+        /// </summary>
+        /// <value>One of the <see cref="LogLevel"/> levels, case insensitive</value>
+        public LogLevel Level { get; set; } = LogLevel.Debug;
+
+        /// <summary>
+        /// Format of the log message.
+        /// Default is <c>"CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms"</c>
+        /// </summary>
+        /// <returns>String format</returns>
+        public string Format { get; set; } = "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms";
     }
 
     /// <summary>
