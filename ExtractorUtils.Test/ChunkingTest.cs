@@ -16,6 +16,7 @@ namespace ExtractorUtils.Test {
         {
             var completed = new List<int>();
             var token = CancellationToken.None;
+            var taskNum = 0;
             var generators = Enumerable.Range(1, 5).Select<int, Func<Task>>(
                 i => async () => {
                     Console.Out.WriteLine($"Starting {i}");
@@ -23,7 +24,9 @@ namespace ExtractorUtils.Test {
                     Console.Out.WriteLine($"Completed {i}");
                     completed.Add(i);
                 });
-            Task.WhenAll(generators.RunThrottled(2, token)).GetAwaiter().GetResult();
+
+            Action<Task> taskDone = (task) => { Console.Out.WriteLine($"Task completed {++taskNum}: {task.Id} - {task.Status}"); };
+            Task.WhenAll(generators.RunThrottled(2, taskDone, token)).GetAwaiter().GetResult();
             Assert.Equal(5, completed.Count);
             Assert.Equal(15, completed.Sum());
         }

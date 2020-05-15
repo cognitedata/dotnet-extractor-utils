@@ -132,13 +132,30 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Runs the generated tasks in parallell subject to the maximum parallelism.
         /// </summary>
-        /// <param name="generators"></param>
-        /// <param name="parallelism"></param>
-        /// <param name="token"></param>
+        /// <param name="generators">Tasks to perform</param>
+        /// <param name="parallelism">Number of tasks to run in parallel</param>
+        /// <param name="token">Cancellation token</param>
+        public static async Task RunThrottled(
+            this IEnumerable<Func<Task>> generators,
+            int parallelism,
+            CancellationToken token)
+        {
+            await RunThrottled(generators, parallelism, null, token);
+        }
+
+        /// <summary>
+        /// Runs the generated tasks in parallell subject to the maximum parallelism.
+        /// Call the <paramref name="taskCompletedCallback"/> action for each completed task
+        /// </summary>
+        /// <param name="generators">Tasks to perform</param>
+        /// <param name="parallelism">Number of tasks to run in parallel</param>
+        /// <param name="taskCompletedCallback">Action to call on task completion</param>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static async Task RunThrottled(
             this IEnumerable<Func<Task>> generators,
             int parallelism,
+            Action<Task> taskCompletedCallback,
             CancellationToken token)
         {
             List<Task> tasks = new List<Task>();
@@ -156,6 +173,10 @@ namespace Cognite.Extractor.Common
                     completedTasks++;
                     Debug.Assert(completedTasks <= totalTasks);
                     tasks.Remove(task);
+                    if (taskCompletedCallback != null)
+                    {
+                        taskCompletedCallback(task);
+                    }
                 }
 
                 Debug.Assert(tasks.Count < parallelism);
@@ -166,6 +187,5 @@ namespace Cognite.Extractor.Common
                 }
             }
         }
-
     }
 }

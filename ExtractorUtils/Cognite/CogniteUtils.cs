@@ -78,11 +78,10 @@ namespace Cognite.Extractor.Utils
                 builder = builder.SetTokenProvider(token => auth.GetToken(token));
             }
 
-            if (logger != null) {
-                // TODO: Make format and level properties in the configuration object
+            if (config?.SdkLogging != null && !config.SdkLogging.Disable && logger != null) {
                 builder = builder
-                    .SetLogLevel(LogLevel.Debug) // Log as debug
-                    .SetLogFormat("CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms")
+                    .SetLogLevel(config.SdkLogging.Level)
+                    .SetLogFormat(config.SdkLogging.Format)
                     .SetLogger(logger);
             }
 
