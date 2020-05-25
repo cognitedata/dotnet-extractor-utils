@@ -137,5 +137,30 @@ namespace Cognite.Extractor.Utils
                 errors.IdsNotFound.Count(), errors.IdsWithMismatchedData.Count());
             return errors;
         }
+
+        public async Task InsertRawRowsAsync<T>(
+            string database, 
+            string table, 
+            IDictionary<string, T> columns, 
+            CancellationToken token)
+        {
+            _logger.LogDebug("Uploading {Number} rows to CDF Raw. Database: {Db}. Table: {Table}", 
+                columns.Count,
+                database,
+                table);
+            await _client.Raw.InsertRowsAsync(
+                database,
+                table,
+                columns,
+                _config.CdfChunking.RawRows,
+                _config.CdfThrottling.Raw,
+                token);
+        }
+
+        public IRawUploadQueue<T> CreateUploadQueue<T>(string db, string table, TimeSpan interval, int maxQueueSize = 0)
+        {
+            return new RawUploadQueue<T>(db, table, this, interval, maxQueueSize, _logger);
+        }
+
     }
 }

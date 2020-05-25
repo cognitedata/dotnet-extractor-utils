@@ -178,6 +178,12 @@ namespace Cognite.Extractor.Utils
         /// <value>Maximum chunk size</value>
         public int DataPoints { get; set; } = 100_000;
 
+        /// <summary>
+        /// Maximum number of rows per Raw row insert request
+        /// </summary>
+        /// <value>Maximum chunk size</value>
+        public int RawRows { get; set; } = 10_000;
+
     }
 
     /// <summary>
@@ -186,16 +192,22 @@ namespace Cognite.Extractor.Utils
     public class ThrottlingConfig
     {
         /// <summary>
-        /// Maximum number of parallel time series operations
+        /// Maximum number of parallel requests per time series operations
         /// </summary>
         /// <value>Maximum number of parallel operations</value>
         public int TimeSeries { get; set; } = 20;
         
         /// <summary>
-        /// Maximum number of parallel data points operations
+        /// Maximum number of parallel requests per data points operations
         /// </summary>
         /// <value>Maximum number of parallel operations</value>
         public int DataPoints { get; set; } = 10;
+
+        /// <summary>
+        /// Maximum number of parallel requests per raw operation
+        /// </summary>
+        /// <value></value>
+        public int Raw { get; set; } = 10;
     }
 
 #endregion
