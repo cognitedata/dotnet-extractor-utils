@@ -157,7 +157,7 @@ namespace Cognite.Extractor.Utils
                 token);
         }
 
-        public IRawUploadQueue<T> CreateUploadQueue<T>(string db, string table, TimeSpan interval, int maxQueueSize = 0)
+        public IRawUploadQueue<T> CreateRawUploadQueue<T>(string db, string table, TimeSpan interval, int maxQueueSize = 0)
         {
             return new RawUploadQueue<T>(db, table, this, interval, maxQueueSize, _logger);
         }
