@@ -132,12 +132,19 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Started uploading {Type} rows to CDF Raw", typeof(T).Name);
             _uploadTask = Task.Run(async () =>
             {
-                while (!_tokenSource.IsCancellationRequested)
+                try {
+                    while (!_tokenSource.IsCancellationRequested)
+                    {
+                        _pushEvent.Wait(_tokenSource.Token);
+                        await OnTimedEvent(_tokenSource.Token);
+                        _pushEvent.Reset();
+                        _timer.Start();
+                    }
+                }
+                catch (OperationCanceledException)
                 {
-                    _pushEvent.Wait(_tokenSource.Token);
-                    await OnTimedEvent(_tokenSource.Token);
-                    _pushEvent.Reset();
-                    _timer.Start();
+                    // ignore cancel exceptions, but throw any other exception
+                    _logger.LogDebug("Upload queue {Type} cancelled with {QueueSize} items left", typeof(T).Name, _items.Count);
                 }
             });
             await _uploadTask;
@@ -191,12 +198,8 @@ namespace Cognite.Extractor.Utils
                         if (!_tokenSource.IsCancellationRequested)
                         {
                             _tokenSource.Cancel();
-                            _uploadTask.GetAwaiter().GetResult();
                         }
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        _logger.LogDebug("Upload queue {Type} cancelled with {QueueSize} items left", typeof(T).Name, _items.Count);
+                        _uploadTask.GetAwaiter().GetResult();
                     }
                     finally
                     {

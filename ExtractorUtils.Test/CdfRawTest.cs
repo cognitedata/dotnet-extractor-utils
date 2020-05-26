@@ -110,10 +110,10 @@ namespace ExtractorUtils.Test
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
             services.AddCogniteClient("testApp");
+            var index = 0;
             using (var source = new CancellationTokenSource())
             using (var provider = services.BuildServiceProvider()) {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
-                var index = 0;
                 // queue with 1 sec upload interval
                 using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromSeconds(1)))
                 {
@@ -153,9 +153,12 @@ namespace ExtractorUtils.Test
                     });
                     var uploadTask = queue.Start(source.Token);
 
-                    // wait for either the enqueue task to finish or the upload task to fail
-                    var t = Task.WhenAny(uploadTask, enqueueTask);
-                    await t;
+                    await enqueueTask;
+
+                    // test cancelling the token;
+                    source.Cancel();
+                    await uploadTask;
+                    Assert.True(uploadTask.IsCompleted);
                 }
                 
                 // Verify that the endpoint was called at most 3 more times (once per max size and once disposing)
@@ -169,7 +172,7 @@ namespace ExtractorUtils.Test
             }
 
             // verify all rows were sent to CDF
-            for (int i = 0; i < 13; ++i)
+            for (int i = 0; i < index; ++i)
             {
                 Assert.True(rows.TryGetValue($"r{i}", out TestDto dto));
                 Assert.Equal(i, dto.Number);
