@@ -113,9 +113,10 @@ namespace ExtractorUtils.Test
             using (var source = new CancellationTokenSource())
             using (var provider = services.BuildServiceProvider()) {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var index = 0;
+                // queue with 1 sec upload interval
                 using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromSeconds(1)))
                 {
-                    var index = 0;
                     var enqueueTask = Task.Run(async () => {
                         while (index < 13)
                         {
@@ -129,23 +130,50 @@ namespace ExtractorUtils.Test
                     // wait for either the enqueue task to finish or the upload task to fail
                     var t = Task.WhenAny(uploadTask, enqueueTask);
                     await t;
-                } // disposing the queue will upload any rows left and stop the upload loop 
+                } // disposing the queue will upload any rows left and stop the upload loop
+
+                // Verify that the endpoint was called at most 3 times (once per upload interval and once disposing)
+                mockHttpMessageHandler.Protected()
+                    .Verify<Task<HttpResponseMessage>>(
+                        "SendAsync", 
+                        Times.AtMost(3),
+                        ItExpr.IsAny<HttpRequestMessage>(),
+                        ItExpr.IsAny<CancellationToken>());
+
+                // queue with maximum size
+                using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromMinutes(10), 5))
+                {
+                    var enqueueTask = Task.Run(async () => {
+                        while (index < 23)
+                        {
+                            queue.EnqueueRow($"r{index}", new TestDto {Name = "Test", Number = index});
+                            await Task.Delay(100, source.Token);
+                            index++;
+                        }
+                    });
+                    var uploadTask = queue.Start(source.Token);
+
+                    // wait for either the enqueue task to finish or the upload task to fail
+                    var t = Task.WhenAny(uploadTask, enqueueTask);
+                    await t;
+                }
+                
+                // Verify that the endpoint was called at most 3 more times (once per max size and once disposing)
+                mockHttpMessageHandler.Protected()
+                    .Verify<Task<HttpResponseMessage>>(
+                        "SendAsync", 
+                        Times.AtMost(6),
+                        ItExpr.IsAny<HttpRequestMessage>(),
+                        ItExpr.IsAny<CancellationToken>());
+
             }
 
+            // verify all rows were sent to CDF
             for (int i = 0; i < 13; ++i)
             {
                 Assert.True(rows.TryGetValue($"r{i}", out TestDto dto));
                 Assert.Equal(i, dto.Number);
             }
-
-            // Verify that the endpoint was called 2 times (once per upload interval)
-            mockHttpMessageHandler.Protected()
-                .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
-                    Times.Exactly(2),
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>());
-
 
             System.IO.File.Delete(path);
         }
