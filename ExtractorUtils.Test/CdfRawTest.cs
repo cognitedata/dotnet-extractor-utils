@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -86,6 +87,69 @@ namespace ExtractorUtils.Test
             System.IO.File.Delete(path);
         }
 
+        [Fact]
+        public async Task TestUploadQueue()
+        {
+            string path = "test-raw-queue-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: {_apiKey}",
+                               $"  host: {_host}" };
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertRowsAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddCogniteClient("testApp");
+            using (var source = new CancellationTokenSource())
+            using (var provider = services.BuildServiceProvider()) {
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromSeconds(1)))
+                {
+                    var index = 0;
+                    var enqueueTask = Task.Run(async () => {
+                        while (index < 13)
+                        {
+                            queue.EnqueueRow($"r{index}", new TestDto {Name = "Test", Number = index});
+                            await Task.Delay(100, source.Token);
+                            index++;
+                        }
+                    });
+                    var uploadTask = queue.Start(source.Token);
+
+                    // wait for either the enqueue task to finish or the upload task to fail
+                    var t = Task.WhenAny(uploadTask, enqueueTask);
+                    await t;
+                } // disposing the queue will upload any rows left and stop the upload loop 
+            }
+
+            for (int i = 0; i < 13; ++i)
+            {
+                Assert.True(rows.TryGetValue($"r{i}", out TestDto dto));
+                Assert.Equal(i, dto.Number);
+            }
+
+            // Verify that the endpoint was called 2 times (once per upload interval)
+            mockHttpMessageHandler.Protected()
+                .Verify<Task<HttpResponseMessage>>(
+                    "SendAsync", 
+                    Times.Exactly(2),
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>());
+
+
+            System.IO.File.Delete(path);
+        }
+
         private class TestDto
         {
             public string Name { get; set; }
@@ -107,7 +171,7 @@ namespace ExtractorUtils.Test
         private static async Task<HttpResponseMessage> mockInsertRowsAsync(HttpRequestMessage message , CancellationToken token) {
             var uri = message.RequestUri.ToString();
 
-            Assert.Contains($"projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows", uri);
+            Assert.Contains($"{_host}/api/v1/projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows", uri);
             Assert.Contains("ensureParent=true", message.RequestUri.Query);
 
             var responseBody = "{ }";

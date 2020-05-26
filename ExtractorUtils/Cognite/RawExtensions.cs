@@ -114,7 +114,7 @@ namespace Cognite.Extractor.Utils
             _destination = destination;
             _items = new ConcurrentQueue<(string key, T column)>();
             _logger = logger;
-            _pushEvent = new ManualResetEventSlim(true);
+            _pushEvent = new ManualResetEventSlim(false);
             _queueSize.WithLabels(typeof(T).Name).Set(0);
 
             _timer = new System.Timers.Timer {
@@ -129,6 +129,7 @@ namespace Cognite.Extractor.Utils
         {
             _tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
             _timer.Start();
+            _logger.LogDebug("Started uploading {Type} rows to CDF Raw", typeof(T).Name);
             _uploadTask = Task.Run(async () =>
             {
                 while (!_tokenSource.IsCancellationRequested)
@@ -149,7 +150,7 @@ namespace Cognite.Extractor.Utils
             {
                 return;
             }
-            _logger.LogDebug("Dequeued {Number} {Type} rows to upload to CDF Raw", rows.Count, typeof(T).Name);
+            _logger.LogTrace("Dequeued {Number} {Type} rows to upload to CDF Raw", rows.Count, typeof(T).Name);
             await _destination.InsertRawRowsAsync(_db, _table, rows, token);
             _numberRows.WithLabels(typeof(T).Name).Inc(rows.Count);
         }
