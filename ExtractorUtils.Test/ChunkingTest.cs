@@ -12,7 +12,7 @@ namespace ExtractorUtils.Test {
     public static class ChunkingTest {
 
         [Fact]
-        public static void RunThrottledOK()
+        public static async Task RunThrottledOK()
         {
             var completed = new List<int>();
             var token = CancellationToken.None;
@@ -26,13 +26,13 @@ namespace ExtractorUtils.Test {
                 });
 
             Action<Task> taskDone = (task) => { Console.Out.WriteLine($"Task completed {++taskNum}: {task.Id} - {task.Status}"); };
-            Task.WhenAll(generators.RunThrottled(2, taskDone, token)).GetAwaiter().GetResult();
+            await generators.RunThrottled(2, taskDone, token);
             Assert.Equal(5, completed.Count);
             Assert.Equal(15, completed.Sum());
         }
 
         [Fact]
-        public static void RunThrottledException()
+        public static async Task RunThrottledException()
         {
             var completed = new List<int>();
             var token = CancellationToken.None;
@@ -48,10 +48,10 @@ namespace ExtractorUtils.Test {
                     completed.Add(i);
                 });
 
-            Assert.Throws<Exception>(
-                delegate {
-                    Task.WhenAll(generators.RunThrottled(2, token)).GetAwaiter().GetResult();
-                    Thread.Sleep(2000);
+            await Assert.ThrowsAsync<Exception>(
+                async () => {
+                    await generators.RunThrottled(2, token);
+                    await Task.Delay(2000);
                 }
             );
             Assert.Equal(2, completed.Count);
