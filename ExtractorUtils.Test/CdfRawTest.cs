@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
 using Xunit;
@@ -109,11 +110,12 @@ namespace ExtractorUtils.Test
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
-            services.AddCogniteClient("testApp");
+            services.AddCogniteClient("testApp", true, false);
             var index = 0;
             using (var source = new CancellationTokenSource())
             using (var provider = services.BuildServiceProvider()) {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var logger = provider.GetRequiredService<ILogger<CdfRawTest>>();
                 // queue with 1 sec upload interval
                 using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromSeconds(1)))
                 {
@@ -130,6 +132,7 @@ namespace ExtractorUtils.Test
                     // wait for either the enqueue task to finish or the upload task to fail
                     var t = Task.WhenAny(uploadTask, enqueueTask);
                     await t;
+                    logger.LogInformation("Enqueueing task completed. Disposing of the upload queue");
                 } // disposing the queue will upload any rows left and stop the upload loop
 
                 // Verify that the endpoint was called at most 3 times (once per upload interval and once disposing)
@@ -159,6 +162,7 @@ namespace ExtractorUtils.Test
                     source.Cancel();
                     await uploadTask;
                     Assert.True(uploadTask.IsCompleted);
+                    logger.LogInformation("Enqueueing task cancelled. Disposing of the upload queue");
                 }
                 
                 // Verify that the endpoint was called at most 3 more times (once per max size and once disposing)
