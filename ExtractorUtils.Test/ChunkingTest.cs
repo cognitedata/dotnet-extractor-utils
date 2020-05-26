@@ -54,8 +54,11 @@ namespace ExtractorUtils.Test {
                     await Task.Delay(2000);
                 }
             );
-            Assert.Equal(2, completed.Count);
-            Assert.Equal(3, completed.Sum());
+            Assert.Contains(1, completed);
+            // may or may not contain 2
+            Assert.DoesNotContain(3, completed);
+            // may or may not contain 4
+            Assert.DoesNotContain(5, completed);
         }
 
         [Theory]
