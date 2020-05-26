@@ -19,14 +19,15 @@ namespace Cognite.Extractor.Utils
     public static class RawExtensions
     {
         /// <summary>
-        /// Insert the rows <paramref name="columns"/> in CDF Raw. The rows are a dictionary of 
-        /// keys and DTOs (data type objects). The DTOs are serialized to JSON before it is sent to
-        /// Raw.
+        /// Insert the provided <paramref name="rows"/> into CDF Raw. The rows are a dictionary of 
+        /// keys and DTOs (data type objects). The DTOs  of type <typeparamref name="T"/> are serialized to JSON 
+        /// before they are sent to Raw. If the <paramref name="database"/> or <paramref name="table"/> do not
+        /// exist, they are created
         /// </summary>
         /// <param name="raw">Raw client</param>
-        /// <param name="database">Raw database</param>
-        /// <param name="table">Raw table</param>
-        /// <param name="columns">Columns</param>
+        /// <param name="database">Raw database name</param>
+        /// <param name="table">Raw table name</param>
+        /// <param name="rows">Rows of keys and columns</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancelation token</param>
@@ -35,12 +36,12 @@ namespace Cognite.Extractor.Utils
             this RawResource raw,
             string database, 
             string table, 
-            IDictionary<string, T> columns, 
+            IDictionary<string, T> rows, 
             int chunkSize, 
             int throttleSize,
             CancellationToken token)
         {
-            var chunks = columns
+            var chunks = rows
                 .Select(kvp =>  new RawRowCreateJson() { Key = kvp.Key, Columns = DtoToJson(kvp.Value) })
                 .ChunkBy(chunkSize);
             var generators = chunks.
