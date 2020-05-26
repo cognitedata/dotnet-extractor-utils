@@ -19,10 +19,6 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class RawExtensions
     {
-        private static ILogger _logger = LoggingUtils.GetDefault();
-        internal static void SetLogger(ILogger logger) {
-            _logger = logger;
-        }
 
         /// <summary>
         /// Insert the provided <paramref name="rows"/> into CDF Raw. The rows are a dictionary of 
@@ -50,13 +46,11 @@ namespace Cognite.Extractor.Utils
             var chunks = rows
                 .Select(kvp =>  new RawRowCreateJson() { Key = kvp.Key, Columns = DtoToJson(kvp.Value) })
                 .ChunkBy(chunkSize);
-                _logger.LogDebug("Chunked rows");
             var generators = chunks.
                 Select<IEnumerable<RawRowCreateJson>, Func<Task>>(
                     chunk => async () => await raw.CreateRowsJsonAsync(database, table, chunk, true, token)
                 );
-            _logger.LogDebug("Created generators");
-            await generators.RunThrottled(throttleSize, (_) => _logger.LogDebug("Completed on run"), token);
+            await generators.RunThrottled(throttleSize, token);
         }
 
         internal static JsonElement DtoToJson<T>(T dto)

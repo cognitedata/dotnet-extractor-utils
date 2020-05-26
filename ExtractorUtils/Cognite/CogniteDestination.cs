@@ -32,7 +32,6 @@ namespace Cognite.Extractor.Utils
             _logger = logger;
             _config = config;
             CogniteClientExtensions.SetLogger(_logger);
-            RawExtensions.SetLogger(_logger);
         }
 
         /// <summary>
