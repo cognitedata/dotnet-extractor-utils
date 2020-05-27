@@ -137,5 +137,55 @@ namespace Cognite.Extractor.Utils
                 errors.IdsNotFound.Count(), errors.IdsWithMismatchedData.Count());
             return errors;
         }
+
+        /// <summary>
+        /// Insert the provided <paramref name="rows"/> into CDF Raw. The rows are a dictionary of 
+        /// keys and DTOs (data type objects). The DTOs  of type <typeparamref name="T"/> are serialized to JSON 
+        /// before they are sent to Raw. If the <paramref name="database"/> or <paramref name="table"/> do not
+        /// exist, they are created
+        /// </summary>
+        /// <param name="database">Raw database name</param>
+        /// <param name="table">Raw table name</param>
+        /// <param name="rows">Rows of keys and columns</param>
+        /// <param name="token">Cancellation token</param>
+        /// <typeparam name="T">DTO type</typeparam>
+        /// <returns>Task</returns>
+        public async Task InsertRawRowsAsync<T>(
+            string database, 
+            string table, 
+            IDictionary<string, T> rows, 
+            CancellationToken token)
+        {
+            _logger.LogDebug("Uploading {Number} rows to CDF Raw. Database: {Db}. Table: {Table}", 
+                rows.Count,
+                database,
+                table);
+            await _client.Raw.InsertRowsAsync(
+                database,
+                table,
+                rows,
+                _config.CdfChunking.RawRows,
+                _config.CdfThrottling.Raw,
+                token);
+        }
+
+        /// <summary>
+        /// Creates a Raw upload queue. It can be used to queue DTOs (data type objects) of type <typeparamref name="T"/>
+        /// before sending them to CDF Raw. The items are dequeued and uploaded every <paramref name="interval"/>. If <paramref name="maxQueueSize"/> is
+        /// greater than zero, the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
+        /// To start the upload loop, use the <see cref="IRawUploadQueue{T}.Start(CancellationToken)"/> method. To stop it, dispose of the queue or
+        /// cancel the token
+        /// </summary>
+        /// <param name="database">Raw database name</param>
+        /// <param name="table">Raw table name</param>
+        /// <param name="interval">Upload interval</param>
+        /// <param name="maxQueueSize">Maximum queue size</param>
+        /// <typeparam name="T">Type of the DTO</typeparam>
+        /// <returns>An upload queue object</returns>
+        public IRawUploadQueue<T> CreateRawUploadQueue<T>(string database, string table, TimeSpan interval, int maxQueueSize = 0)
+        {
+            return new RawUploadQueue<T>(database, table, this, interval, maxQueueSize, _logger);
+        }
+
     }
 }
