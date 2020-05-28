@@ -16,9 +16,15 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public class CogniteDestination
     {
-        private Client _client;
-        private ILogger<CogniteDestination> _logger;
-        private CogniteConfig _config;
+        private readonly Client _client;
+        private readonly ILogger<CogniteDestination> _logger;
+        private readonly CogniteConfig _config;
+
+        /// <summary>
+        /// The configured Cognite client used by this destination. Can be used to
+        /// access the full Cognite API
+        /// </summary>
+        public Client CogniteClient => _client;
 
         /// <summary>
         /// Initializes the Cognite destination with the provided parameters
