@@ -181,6 +181,7 @@ namespace Cognite.Extractor.Utils
             while (_items.TryDequeue(out (string key, T column) row))
             {
                 dict.Add(row.key, row.column);
+                _queueSize.WithLabels(typeof(T).Name).Dec();
             }
             return dict;
         }
