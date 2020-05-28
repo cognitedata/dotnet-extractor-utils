@@ -17,14 +17,14 @@ A library containing utilities for building extractors in .Net
 
 The Cognite Extractor Utils can be downloaded from [NuGet](https://www.nuget.org/packages/Cognite.ExtractorUtils). 
 
-To create a console application and add the **1.0.0-alpha-010** version of library:
+To create a console application and add the **1.0.0-alpha-011** version of library:
 
 Using .NET CLI:
 ```sh
 mkdir NewExtractor
 cd NewExtractor
 dotnet new console
-dotnet add package Cognite.ExtractorUtils -v 1.0.0-alpha-010
+dotnet add package Cognite.ExtractorUtils -v 1.0.0-alpha-011
 ```
 ## Quickstart
 
@@ -91,6 +91,60 @@ using (var provider = services.BuildServiceProvider()) {
     // Stops the metrics service
     await metrics.Stop();
 }
+```
+
+## Inserting data points:
+```c#
+// Create a dictonary of time series identities and datapoint objects
+datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
+    { new Identity("externalId1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "A")}},
+    { new Identity("externalId2"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1), 
+                                                     new Datapoint(DateTime.UtcNow, 2)}},
+    { new Identity(12345789), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}}}
+};
+
+// Insert the data points, ignoring and returning any errors.
+var errors = await destination.InsertDataPointsIgnoreErrorsAsync(
+    datapoints,
+    cancellationToken);
+if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any())
+{
+    logger.LogError("Ids not found: {NfIds}. Time series with mismatched type: {MmIds}",
+        errors.IdsNotFound, errors.IdsWithMismatchedData);
+}
+```
+
+## Using Raw upload queues:
+```c#
+// Data type object representing raw columns
+private class ColumnsDto
+{
+    public string Name { get; set; }
+    public int Number { get; set; }
+}
+
+// Creates an queue that uploads rows to Raw every 5 seconds (or when the queue size reaches 1.000)
+using (var queue = destination.CreateRawUploadQueue<ColumnsDto>("myDb", "myTable", TimeSpan.FromSeconds(5), 1_000))
+{
+    // Task to generate rows at regular intervals
+    var enqueueTask = Task.Run(async () => {
+        while (index < 2_000)
+        {
+            queue.EnqueueRow($"r{index}", new ColumnsDto {Name = "Test", Number = index});
+            await Task.Delay(50, cancellationToken);
+            index++;
+        }
+    });
+    
+    // Task to start the upload queue
+    var uploadTask = queue.Start(cancellationToken);
+
+    // wait for either the enqueue task to finish or the upload task to fail
+    var t = Task.WhenAny(uploadTask, enqueueTask);
+    await t;
+    logger.LogInformation("Enqueueing task completed. Disposing of the upload queue");
+} // disposing the queue will upload any rows left and stop the upload loop
+
 ```
 
 # Code of Conduct
