@@ -186,22 +186,22 @@ namespace ExtractorUtils.Test
             services.AddCogniteClient("testApp", true, true);
             using (var provider = services.BuildServiceProvider()) {
                 var config = provider.GetRequiredService<CogniteConfig>();
-                var cogClient = provider.GetRequiredService<Client>();
-                var ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogClient.TestCogniteConfig(null, CancellationToken.None));
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.TestCogniteConfig(null, CancellationToken.None));
                 Assert.Contains("configuration missing", ex.Message);
 
                 config.Project = null;
-                ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogClient.TestCogniteConfig(config, CancellationToken.None));
+                ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.TestCogniteConfig(config, CancellationToken.None));
                 Assert.Contains("project is not configured", ex.Message);
 
                 config.Project = "Bogus";
-                ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogClient.TestCogniteConfig(config, CancellationToken.None));
+                ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.TestCogniteConfig(config, CancellationToken.None));
                 Assert.Contains("not associated with project Bogus", ex.Message);
                 config.Project = _project;
 
-                await cogClient.TestCogniteConfig(config, CancellationToken.None);
+                await cogniteDestination.TestCogniteConfig(CancellationToken.None);
 
-                var loginStatus = await cogClient.Login.StatusAsync(CancellationToken.None);
+                var loginStatus = await cogniteDestination.CogniteClient.Login.StatusAsync(CancellationToken.None);
                 Assert.True(loginStatus.LoggedIn);
                 Assert.Equal("testuser", loginStatus.User);
                 Assert.Equal(_project, loginStatus.Project);
@@ -210,7 +210,7 @@ namespace ExtractorUtils.Test
                 {
                     Limit = 1
                 };
-                var ts = await cogClient.TimeSeries.ListAsync(options);
+                var ts = await cogniteDestination.CogniteClient.TimeSeries.ListAsync(options);
                 Assert.Empty(ts.Items);
             }
 
