@@ -96,7 +96,8 @@ namespace Cognite.Extractor.Configuration
 
         /// <summary>
         /// Try to read a configuration object of type <typeparamref name="T"/> from the provided <paramref name="yaml"/>
-        /// string. Matching the configuration object version with the versions provided in <paramref name="acceptedConfigVersions"/>
+        /// string. Matching the configuration object version with the versions provided in <paramref name="acceptedConfigVersions"/>.
+        /// Also calls GenerateDefaults() on the retrieved configuration object after reading.
         /// </summary>
         /// <param name="yaml">String containing a yaml configuration</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
@@ -108,13 +109,17 @@ namespace Cognite.Extractor.Configuration
         {
             int configVersion = ConfigurationUtils.GetVersionFromString(yaml);
             CheckVersion(configVersion, acceptedConfigVersions);
-            return ConfigurationUtils.ReadString<T>(yaml);
+
+            var config = ConfigurationUtils.ReadString<T>(yaml);
+            config.GenerateDefaults();
+            return config;
         }
 
         /// <summary>
         /// Try to read a configuration object of type <typeparamref name="T"/> from the yaml file located in
         /// the provided <paramref name="path"/>. Matching the configuration object version with the versions 
-        /// provided in <paramref name="acceptedConfigVersions"/>
+        /// provided in <paramref name="acceptedConfigVersions"/>.
+        /// Also calls GenerateDefaults() on the retrieved configuration object after reading.
         /// </summary>
         /// <param name="path">Path to the yml file</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
@@ -127,7 +132,9 @@ namespace Cognite.Extractor.Configuration
             int configVersion = ConfigurationUtils.GetVersionFromFile(path);
             CheckVersion(configVersion, acceptedConfigVersions);
 
-            return ConfigurationUtils.Read<T>(path);
+            var config = ConfigurationUtils.Read<T>(path);
+            config.GenerateDefaults();
+            return config;
         }
 
         /// <summary>
