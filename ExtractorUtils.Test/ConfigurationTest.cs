@@ -158,7 +158,7 @@ namespace ExtractorUtils.Test
         public static void TestGenerateDefaults()
         {
             var yaml = "version: 0";
-            var conf = ConfigurationUtils.TryReadConfigFromString<TestBaseConfig>(yaml);
+            var conf = ConfigurationUtils.ReadString<TestBaseConfig>(yaml);
             Assert.Null(conf.Cognite);
             Assert.Null(conf.Logger);
             Assert.Null(conf.Metrics);
