@@ -74,6 +74,30 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.TimeSeries,
                 token);
         }
+        /// <summary>
+        /// Ensures the the time series with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
+        /// the missing time series objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF 
+        /// </summary>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildTimeSeries">Async function that builds <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Getting or creating {Number} time series in CDF", externalIds.Count());
+            return await _client.GetOrCreateTimeSeriesAsync(
+                externalIds,
+                buildTimeSeries,
+                _config.CdfChunking.TimeSeries,
+                _config.CdfThrottling.TimeSeries,
+                token);
+        }
 
         /// <summary>
         /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
