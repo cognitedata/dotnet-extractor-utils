@@ -390,13 +390,15 @@ namespace ExtractorUtils.Test
                     { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "2")}},
                     { new Identity(1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d))},
                     { new Identity(2), stringPoints.Select(s => new Datapoint(DateTime.UtcNow, s))},
-                    { new Identity(3), new Datapoint[] { } }
+                    { new Identity(3), new Datapoint[] { } },
+                    { new Identity(4), new Datapoint[] { new Datapoint(CogniteTime.DateTimeEpoch, 1), new Datapoint(DateTime.MaxValue, 1)}}
                 };
                 _createdDataPoints.Clear();
                 await cogniteDestination.InsertDataPointsAsync(
                     datapoints,
                     CancellationToken.None);
-                Assert.False(_createdDataPoints.ContainsKey(3 + ""));
+                Assert.False(_createdDataPoints.ContainsKey(3 + "")); // No data points
+                Assert.False(_createdDataPoints.ContainsKey(4 + "")); // Invalid timestamps
                 Assert.Equal(6, _createdDataPoints[1 + ""].Count());
                 Assert.Equal(2, _createdDataPoints["A"].Count());
                 Assert.Empty(_createdDataPoints[1 + ""]
