@@ -281,11 +281,21 @@ namespace Cognite.Extractor.Utils
         /// Cognite API (enabled in debug mode)</param>
         /// <param name="setMetrics">If true, a <see cref="IMetrics"/> metrics collector is created and used by the client
         /// to report metrics on the number and duration of API requests</param>
-        public static void AddCogniteClient(this IServiceCollection services, string appId, bool setLogger = false, bool setMetrics = false)
+        /// <param name="setHttpClient">Default true. If false <see cref="Client.Builder"/> is not added to the
+        /// <see cref="ServiceCollection"/>. If this is false it must be added before this method is called.</param>
+        public static void AddCogniteClient(this IServiceCollection services,
+                                            string appId,
+                                            bool setLogger = false,
+                                            bool setMetrics = false,
+                                            bool setHttpClient = true)
         {
-            services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
-                .AddPolicyHandler((provider, message) => { return GetRetryPolicy(provider.GetRequiredService<ILogger<Client>>()); })
-                .AddPolicyHandler(GetTimeoutPolicy());
+            if (setHttpClient)
+            {
+                services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
+                    .AddPolicyHandler((provider, message) => { return GetRetryPolicy(provider.GetRequiredService<ILogger<Client>>()); })
+                    .AddPolicyHandler(GetTimeoutPolicy());
+            }
+
             services.AddHttpClient<Authenticator>();
             services.AddSingleton<IMetrics, CdfMetricCollector>();
             services.AddTransient(provider => {
