@@ -70,10 +70,38 @@ namespace Cognite.Extractor.Utils
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
+        public static Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
             this Client client,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            Task<IEnumerable<TimeSeriesCreate>> asyncBuildTimeSeries(IEnumerable<string> ids)
+            {
+                return Task.FromResult(buildTimeSeries(ids));
+            }
+            return client.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries, chunkSize, throttleSize, token);
+        }
+
+        /// <summary>
+        /// Get or create the time series with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
+        /// the missing time series objects and upload them to CDF using the chunking of items and throttling
+        /// passed as parameters
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildTimeSeries">Async function that builds <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
+            this Client client,
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             int chunkSize,
             int throttleSize,
             CancellationToken token)
@@ -394,7 +422,7 @@ namespace Cognite.Extractor.Utils
         private static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesChunk(
             Client client,
             IEnumerable<string> externalIds,
-            Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
+            Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             int backoff,
             CancellationToken token)
         {
@@ -423,7 +451,7 @@ namespace Cognite.Extractor.Utils
 
             try
             {
-                var newTs = await client.TimeSeries.CreateAsync(buildTimeSeries(missing), token);
+                var newTs = await client.TimeSeries.CreateAsync(await buildTimeSeries(missing), token);
                 created.AddRange(newTs);
                 _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
             }
