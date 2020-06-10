@@ -50,6 +50,7 @@ namespace Cognite.Extractor.Utils
             await _client.TestCogniteConfig(_config, token);
         }
 
+        #region timeseries
         /// <summary>
         /// Ensures the the time series with the provided <paramref name="externalIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
@@ -118,7 +119,80 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.TimeSeries,
                 token);
         }
+        #endregion
 
+        #region assets
+        /// <summary>
+        /// Ensures the the assets with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildAssets"/> function to construct
+        /// the missing asset objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF 
+        /// </summary>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildAssets">Function that builds <see cref="AssetCreate"/> objects</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
+            return await _client.GetOrCreateAssetsAsync(
+                externalIds,
+                buildAssets,
+                _config.CdfChunking.Assets,
+                _config.CdfThrottling.Assets,
+                token);
+        }
+        /// <summary>
+        /// Ensures the the assets with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildAssets"/> function to construct
+        /// the missing asset objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF 
+        /// </summary>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildAssets">Async function that builds <see cref="AssetCreate"/> objects</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
+            return await _client.GetOrCreateAssetsAsync(
+                externalIds,
+                buildAssets,
+                _config.CdfChunking.Assets,
+                _config.CdfThrottling.Assets,
+                token);
+        }
+
+        /// <summary>
+        /// Ensures that all assets in <paramref name="assets"/> exist in CDF.
+        /// Tries to create the assets and returns when all are created or reported as 
+        /// duplicates (already exist in CDF)
+        /// </summary>
+        /// <param name="assets">List of <see cref="AssetCreate"/> objects</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task EnsureAssetsExistsAsync(
+            IEnumerable<AssetCreate> assets,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Ensuring that {Number} assets exist in CDF", assets.Count());
+            await _client.EnsureAssetsExistsAsync(
+                assets,
+                _config.CdfChunking.Assets,
+                _config.CdfThrottling.Assets,
+                token);
+        }
+        #endregion
+
+        #region datapoints
         /// <summary>
         /// Insert the provided data points into CDF. The data points are chunked
         /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
@@ -167,7 +241,9 @@ namespace Cognite.Extractor.Utils
                 errors.IdsNotFound.Count(), errors.IdsWithMismatchedData.Count());
             return errors;
         }
+        #endregion
 
+        #region raw
         /// <summary>
         /// Insert the provided <paramref name="rows"/> into CDF Raw. The rows are a dictionary of 
         /// keys and DTOs (data type objects). The DTOs  of type <typeparamref name="T"/> are serialized to JSON 
@@ -216,6 +292,6 @@ namespace Cognite.Extractor.Utils
         {
             return new RawUploadQueue<T>(database, table, this, interval, maxQueueSize, _logger);
         }
-
+        #endregion
     }
 }

@@ -165,6 +165,12 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int TimeSeries { get; set; } = 1_000;
+
+        /// <summary>
+        /// Maximum number of assets per asset request
+        /// </summary>
+        /// <value>Maximum chunk size</value>
+        public int Assets { get; set; } = 1_000;
         
         /// <summary>
         /// Maximum number of time series per data point request
@@ -192,11 +198,17 @@ namespace Cognite.Extractor.Utils
     public class ThrottlingConfig
     {
         /// <summary>
-        /// Maximum number of parallel requests per time series operations
+        /// Maximum number of parallel requests per time series operation
         /// </summary>
         /// <value>Maximum number of parallel operations</value>
         public int TimeSeries { get; set; } = 20;
-        
+
+        /// <summary>
+        /// Maximum number of parallel requests per assets operation
+        /// </summary>
+        /// <value>Maximum number of parallel operations</value>
+        public int Assets { get; set; } = 20;
+
         /// <summary>
         /// Maximum number of parallel requests per data points operations
         /// </summary>

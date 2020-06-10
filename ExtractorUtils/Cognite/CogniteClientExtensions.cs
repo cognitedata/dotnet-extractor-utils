@@ -60,80 +60,7 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
             }
         }
-
-        /// <summary>
-        /// Get or create the time series with the provided <paramref name="externalIds"/> exist in CDF.
-        /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
-        /// the missing time series objects and upload them to CDF using the chunking of items and throttling
-        /// passed as parameters
-        /// </summary>
-        /// <param name="client">Cognite client</param>
-        /// <param name="externalIds">External Ids</param>
-        /// <param name="buildTimeSeries">Function that builds <see cref="TimeSeriesCreate"/> objects</param>
-        /// <param name="chunkSize">Chunk size</param>
-        /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
-        public static Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
-            this Client client,
-            IEnumerable<string> externalIds,
-            Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
-            int chunkSize,
-            int throttleSize,
-            CancellationToken token)
-        {
-            Task<IEnumerable<TimeSeriesCreate>> asyncBuildTimeSeries(IEnumerable<string> ids)
-            {
-                return Task.FromResult(buildTimeSeries(ids));
-            }
-            return client.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries, chunkSize, throttleSize, token);
-        }
-
-        /// <summary>
-        /// Get or create the time series with the provided <paramref name="externalIds"/> exist in CDF.
-        /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
-        /// the missing time series objects and upload them to CDF using the chunking of items and throttling
-        /// passed as parameters
-        /// </summary>
-        /// <param name="client">Cognite client</param>
-        /// <param name="externalIds">External Ids</param>
-        /// <param name="buildTimeSeries">Async function that builds <see cref="TimeSeriesCreate"/> objects</param>
-        /// <param name="chunkSize">Chunk size</param>
-        /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
-        public static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
-            this Client client,
-            IEnumerable<string> externalIds,
-            Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
-            int chunkSize,
-            int throttleSize,
-            CancellationToken token)
-        {
-            var result = new List<TimeSeries>();
-            var chunks = externalIds
-                .ChunkBy(chunkSize)
-                .ToList();
-            _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
-            var generators = chunks
-                .Select<IEnumerable<string>, Func<Task>>(
-                    chunk => async () => {
-                        var existing = await GetOrCreateTimeSeriesChunk(client, chunk, buildTimeSeries, 0, token);
-                        result.AddRange(existing);
-                    });
-            
-            int taskNum = 0;
-            await generators.RunThrottled(
-                throttleSize,
-                (_) => { 
-                    if (chunks.Count > 1) 
-                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
-                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count); 
-                },
-                token);
-            return result;
-        }
-        
+        #region datapoints
         /// <summary>
         /// Insert the provided data points into CDF. The data points are chunked
         /// according to <paramref name="keyChunkSize"/> and <paramref name="valueChunkSize"/>.
@@ -351,7 +278,7 @@ namespace Cognite.Extractor.Utils
                     // The error message does not specify which time series caused the error.
                     // Need to fetch all time series in the chunk and check...
                     var chunking = new ChunkingConfig();
-                    var timeseries = await client.TimeSeries.GetByIdsIgnoreErrors(points.Select(p => p.id), chunking.TimeSeries, 1, token);
+                    var timeseries = await client.TimeSeries.GetTimeSeriesByIdsIgnoreErrors(points.Select(p => p.id), chunking.TimeSeries, 1, token);
                     foreach (var entry in points)
                     {
                         var ts = timeseries
@@ -400,7 +327,81 @@ namespace Cognite.Extractor.Utils
                 }
             }
         }
+        #endregion
 
+        #region timeseries
+        /// <summary>
+        /// Get or create the time series with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
+        /// the missing time series objects and upload them to CDF using the chunking of items and throttling
+        /// passed as parameters
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildTimeSeries">Function that builds <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
+            this Client client,
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            Task<IEnumerable<TimeSeriesCreate>> asyncBuildTimeSeries(IEnumerable<string> ids)
+            {
+                return Task.FromResult(buildTimeSeries(ids));
+            }
+            return client.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries, chunkSize, throttleSize, token);
+        }
+
+        /// <summary>
+        /// Get or create the time series with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
+        /// the missing time series objects and upload them to CDF using the chunking of items and throttling
+        /// passed as parameters
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildTimeSeries">Async function that builds <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
+            this Client client,
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var result = new List<TimeSeries>();
+            var chunks = externalIds
+                .ChunkBy(chunkSize)
+                .ToList();
+            _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
+            var generators = chunks
+                .Select<IEnumerable<string>, Func<Task>>(
+                    chunk => async () => {
+                        var existing = await GetOrCreateTimeSeriesChunk(client, chunk, buildTimeSeries, 0, token);
+                        result.AddRange(existing);
+                    });
+
+            int taskNum = 0;
+            await generators.RunThrottled(
+                throttleSize,
+                (_) => {
+                    if (chunks.Count > 1)
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
+                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count);
+                },
+                token);
+            return result;
+        }
         /// <summary>
         /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
         /// Tries to create the time series and returns when all are created or reported as 
@@ -436,6 +437,36 @@ namespace Cognite.Extractor.Utils
                             nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count()); 
                 },
                 token);
+        }
+
+        /// <summary>
+        /// Get the time series with the provided <paramref name="ids"/>. Ignore any
+        /// unknown ids
+        /// </summary>
+        /// <param name="tsClient">A <see cref="Client.TimeSeries"/> client</param>
+        /// <param name="ids">List of <see cref="Identity"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<TimeSeries>> GetTimeSeriesByIdsIgnoreErrors(
+            this TimeSeriesResource tsClient,
+            IEnumerable<Identity> ids,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var result = new List<TimeSeries>();
+            var chunks = ids
+                .ChunkBy(chunkSize);
+            var generators = chunks
+                .Select<IEnumerable<Identity>, Func<Task>>(
+                chunk => async () => {
+                    var found = await GetTimeSeriesByIdsIgnoreErrorsChunk(tsClient, chunk, token);
+                    result.AddRange(found);
+                });
+            await generators.RunThrottled(throttleSize, token);
+            return result;
         }
 
         private static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesChunk(
@@ -529,37 +560,7 @@ namespace Cognite.Extractor.Utils
             }
         }
 
-        /// <summary>
-        /// Get the time series with the provided <paramref name="ids"/>. Ignore any
-        /// unknown ids
-        /// </summary>
-        /// <param name="tsClient">A <see cref="Client.TimeSeries"/> client</param>
-        /// <param name="ids">List of <see cref="Identity"/> objects</param>
-        /// <param name="chunkSize">Chunk size</param>
-        /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
-        public static async Task<IEnumerable<TimeSeries>> GetByIdsIgnoreErrors(
-            this TimeSeriesResource tsClient,
-            IEnumerable<Identity> ids, 
-            int chunkSize, 
-            int throttleSize,
-            CancellationToken token)
-        {
-            var result = new List<TimeSeries>();
-            var chunks = ids
-                .ChunkBy(chunkSize);
-            var generators = chunks
-                .Select<IEnumerable<Identity>, Func<Task>>(
-                chunk => async () => {
-                    var found = await GetByIdsIgnoreErrorsChunk(tsClient, chunk, token);
-                    result.AddRange(found);
-                });
-            await generators.RunThrottled(throttleSize, token);
-            return result;
-        }
-
-        private static async Task<IEnumerable<TimeSeries>> GetByIdsIgnoreErrorsChunk(
+        private static async Task<IEnumerable<TimeSeries>> GetTimeSeriesByIdsIgnoreErrorsChunk(
             TimeSeriesResource tsClient,
             IEnumerable<Identity> ids,
             CancellationToken token)
@@ -577,8 +578,211 @@ namespace Cognite.Extractor.Utils
                 ExtractMissingFromResponseException(missing, e);
                 var toGet = ids
                     .Where(id => !missing.Contains(id));
-                return await GetByIdsIgnoreErrorsChunk(tsClient, toGet, token);
+                return await GetTimeSeriesByIdsIgnoreErrorsChunk(tsClient, toGet, token);
             }
         }
+        #endregion
+
+        #region assets
+        /// <summary>
+        /// Get or create the assets with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildAssets"/> function to construct
+        /// the missing asset objects and upload them to CDF using the chunking of items and throttling
+        /// passed as parameters
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildAssets">Async function that builds <see cref="AssetCreate"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
+            this Client client,
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            Task<IEnumerable<AssetCreate>> asyncBuildAssets(IEnumerable<string> ids)
+            {
+                return Task.FromResult(buildAssets(ids));
+            }
+            return client.GetOrCreateAssetsAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, token);
+        }
+        /// <summary>
+        /// Get or create the assets with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildAssets"/> function to construct
+        /// the missing asset objects and upload them to CDF using the chunking of items and throttling
+        /// passed as parameters
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildAssets">Async function that builds <see cref="AssetCreate"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
+            this Client client,
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var result = new List<Asset>();
+            var chunks = externalIds
+                .ChunkBy(chunkSize)
+                .ToList();
+            _logger.LogDebug("Getting or creating assets. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
+            var generators = chunks
+                .Select<IEnumerable<string>, Func<Task>>(
+                    chunk => async () => {
+                        var existing = await GetOrCreateAssetsChunk(client, chunk, buildAssets, 0, token);
+                        result.AddRange(existing);
+                    });
+
+            int taskNum = 0;
+            await generators.RunThrottled(
+                throttleSize,
+                (_) => {
+                    if (chunks.Count > 1)
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
+                            nameof(GetOrCreateAssetsAsync), ++taskNum, chunks.Count);
+                },
+                token);
+            return result;
+        }
+        /// <summary>
+        /// Ensures that all assets in <paramref name="assets"/> exist in CDF.
+        /// Tries to create the assets and returns when all are created or reported as 
+        /// duplicates (already exist in CDF)
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="assets">List of <see cref="AssetCreate"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        public static async Task EnsureAssetsExistsAsync(
+            this Client client,
+            IEnumerable<AssetCreate> assets,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var chunks = assets
+                .ChunkBy(chunkSize);
+            _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assets.Count(), chunks.Count());
+            var generators = chunks
+                .Select<IEnumerable<AssetCreate>, Func<Task>>(
+                chunk => async () => {
+                    await EnsureAssetsChunk(client, chunk, token);
+                });
+
+            int taskNum = 0;
+            await generators.RunThrottled(
+                throttleSize,
+                (_) => {
+                    if (chunks.Count() > 1)
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
+                            nameof(GetOrCreateAssetsAsync), ++taskNum, chunks.Count());
+                },
+                token);
+        }
+
+        private static async Task<IEnumerable<Asset>> GetOrCreateAssetsChunk(
+            Client client,
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
+            int backoff,
+            CancellationToken token)
+        {
+            var missing = new HashSet<string>();
+            try
+            {
+                var existingAssets = await client.Assets.RetrieveAsync(externalIds.Select(id => new Identity(id)), token);
+                _logger.LogDebug("Retrieved {Existing} assets from CDF", existingAssets.Count());
+                return existingAssets;
+            }
+            catch (ResponseException e) when (e.Code == 400 && e.Missing.Any())
+            {
+                foreach (var ts in e.Missing)
+                {
+                    if (ts.TryGetValue("externalId", out MultiValue value))
+                    {
+                        missing.Add(value.ToString());
+                    }
+                }
+            }
+
+            _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
+            var toGet = new HashSet<string>(externalIds
+                .Where(e => !missing.Contains(e)));
+            var created = new List<Asset>();
+
+            try
+            {
+                var newTs = await client.Assets.CreateAsync(await buildAssets(missing), token);
+                created.AddRange(newTs);
+                _logger.LogDebug("Created {New} new assets in CDF", newTs.Count());
+            }
+            catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
+            {
+                if (backoff > 10) // ~3.5 min total backoff time
+                {
+                    throw;
+                }
+                _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumAssets} assets", e.Duplicated.Count(), missing.Count);
+                toGet.UnionWith(missing);
+            }
+            if (toGet.Any())
+            {
+                await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
+                var ensured = await GetOrCreateAssetsChunk(client, toGet, buildAssets, backoff + 1, token);
+                created.AddRange(ensured);
+            }
+            return created;
+        }
+
+        private static async Task EnsureAssetsChunk(
+            Client client,
+            IEnumerable<AssetCreate> assets,
+            CancellationToken token)
+        {
+            var create = assets;
+            while (!token.IsCancellationRequested && create.Any())
+            {
+                try
+                {
+                    var newTs = await client.Assets.CreateAsync(create, token);
+                    _logger.LogDebug("Created {New} new assets in CDF", newTs.Count());
+                    return;
+                }
+                catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
+                {
+                    // Remove duplicates - already exists
+                    // also a case for legacyName...
+                    var duplicated = new HashSet<string>(e.Duplicated
+                        .Select(d => d.GetValue("externalId", null))
+                        .Where(mv => mv != null)
+                        .Select(mv => mv.ToString()));
+                    create = assets.Where(ts => !duplicated.Contains(ts.ExternalId));
+                    await Task.Delay(TimeSpan.FromMilliseconds(100), token);
+                    _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumAssets} assets",
+                        e.Duplicated.Count(), create.Count());
+                    continue;
+                }
+#pragma warning disable CA1031 // Do not catch general exception types
+                catch (Exception e)
+                {
+                    _logger.LogWarning("CDF create assets failed: {Message} - Retrying in 1 second", e.Message);
+                }
+#pragma warning restore CA1031 // Do not catch general exception types
+                await Task.Delay(TimeSpan.FromSeconds(1), token);
+            }
+        }
+        #endregion
     }
 }
