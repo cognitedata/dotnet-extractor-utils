@@ -21,7 +21,11 @@ namespace Cognite.Extractor.Utils
     {
         private static ILogger _logger = LoggingUtils.GetDefault();
 
-        private static readonly Counter _numberDataPoints = Prometheus.Metrics.CreateCounter("extractor_utils_cdf_datapoints", null);
+        private static readonly Counter _numberDataPoints = Prometheus.Metrics.CreateCounter(
+            "extractor_utils_cdf_datapoints", "Number of data points uploaded to CDF");
+        private static readonly Counter _invalidTimeDataPoints = Prometheus.Metrics.CreateCounter(
+            "extractor_utils_cdf_invalid_data_points", "Number of skipped data points with timestamps not supported by CDF");
+
         internal static void SetLogger(ILogger logger) {
             _logger = logger;
         }
@@ -108,7 +112,8 @@ namespace Cognite.Extractor.Utils
         {
             var result = new List<TimeSeries>();
             var chunks = externalIds
-                .ChunkBy(chunkSize);
+                .ChunkBy(chunkSize)
+                .ToList();
             _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
@@ -121,9 +126,9 @@ namespace Cognite.Extractor.Utils
             await generators.RunThrottled(
                 throttleSize,
                 (_) => { 
-                    if (chunks.Count() > 1) 
+                    if (chunks.Count > 1) 
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
-                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count()); 
+                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count); 
                 },
                 token);
             return result;
@@ -152,7 +157,8 @@ namespace Cognite.Extractor.Utils
             var trimmedDict = GetTrimmedDataPoints(points);
             var chunks = trimmedDict
                 .Select(p => (p.Key, p.Value))
-                .ChunkBy(valueChunkSize, keyChunkSize);
+                .ChunkBy(valueChunkSize, keyChunkSize)
+                .ToList();
 
             var generators = chunks
                 .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
@@ -162,9 +168,9 @@ namespace Cognite.Extractor.Utils
             await generators.RunThrottled(
                 throttleSize, 
                 (_) => { 
-                    if (chunks.Count() > 1) 
+                    if (chunks.Count > 1) 
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
-                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count()); 
+                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count); 
                 },
                 token);
         }
@@ -193,7 +199,8 @@ namespace Cognite.Extractor.Utils
             var trimmedDict = GetTrimmedDataPoints(points);
             var chunks = trimmedDict
                 .Select(p => (p.Key, p.Value))
-                .ChunkBy(valueChunkSize, keyChunkSize);
+                .ChunkBy(valueChunkSize, keyChunkSize)
+                .ToList();
 
             var errors = new List<InsertError>();
             var generators = chunks
@@ -206,9 +213,9 @@ namespace Cognite.Extractor.Utils
             await generators.RunThrottled(
                 throttleSize, 
                 (_) => { 
-                    if (chunks.Count() > 1) 
+                    if (chunks.Count > 1) 
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
-                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count()); 
+                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count); 
                 },
                 token);
             InsertError errorsFound = new InsertError(new Identity[]{}, new Identity[]{});
@@ -225,7 +232,14 @@ namespace Cognite.Extractor.Utils
             Dictionary<Identity, IEnumerable<Datapoint>> trimmedDict = new Dictionary<Identity, IEnumerable<Datapoint>>(comparer);
             foreach (var key in points.Keys)
             {
-                var validDps = points[key].TrimValues();
+                var trimmedDps = points[key].TrimValues().ToList();
+                var validDps = trimmedDps.RemoveOutOfRangeTimestamps().ToList();
+                var difference = trimmedDps.Count - validDps.Count;
+                if (difference > 0)
+                {
+                    _invalidTimeDataPoints.Inc(difference);
+                    _logger.LogWarning("Time series {Name}: Discarding {Num} data points outside valid CDF timestamp range", key.ToString(), difference);
+                }
                 if (validDps.Any())
                 {
                     if (trimmedDict.ContainsKey(key))
@@ -328,18 +342,9 @@ namespace Cognite.Extractor.Utils
             }
             catch (ResponseException e) when (e.Code == 400)
             {
-                if (e.Missing != null && e.Missing.Any()) {
-                    foreach (var ts in e.Missing)
-                    {
-                        if (ts.TryGetValue("externalId", out MultiValue exIdValue))
-                        {
-                            missing.Add(new Identity(exIdValue.ToString()));
-                        }
-                        else if (ts.TryGetValue("id", out MultiValue idValue))
-                        {
-                            missing.Add(new Identity(((MultiValue.Long) idValue).Value));
-                        }
-                    }
+                if (e.Missing != null && e.Missing.Any())
+                {
+                    ExtractMissingFromResponseException(missing, e);
                 }
                 else if (e.Message == "Expected string value for datapoint" || e.Message == "Expected numeric value for datapoint")
                 {
@@ -381,6 +386,21 @@ namespace Cognite.Extractor.Utils
             return new InsertError(missing, mismatched);
         }
 
+        private static void ExtractMissingFromResponseException(HashSet<Identity> missing, ResponseException e)
+        {
+            foreach (var ts in e.Missing)
+            {
+                if (ts.TryGetValue("externalId", out MultiValue exIdValue))
+                {
+                    missing.Add(new Identity(exIdValue.ToString()));
+                }
+                else if (ts.TryGetValue("id", out MultiValue idValue))
+                {
+                    missing.Add(new Identity(((MultiValue.Long)idValue).Value));
+                }
+            }
+        }
+
         /// <summary>
         /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
         /// Tries to create the time series and returns when all are created or reported as 
@@ -417,7 +437,6 @@ namespace Cognite.Extractor.Utils
                 },
                 token);
         }
-
 
         private static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesChunk(
             Client client,
@@ -554,18 +573,8 @@ namespace Cognite.Extractor.Utils
                 _logger.LogDebug("Retrieved {Existing} times series from CDF", existingTs.Count());
                 return existingTs;
             }
-            catch (ResponseException e) when (e.Code == 400 && e.Missing.Any()){
-                foreach (var ts in e.Missing)
-                {
-                    if (ts.TryGetValue("externalId", out MultiValue exIdValue))
-                    {
-                        missing.Add(new Identity(exIdValue.ToString()));
-                    }
-                    else if (ts.TryGetValue("id", out MultiValue idValue))
-                    {
-                        missing.Add(new Identity(((MultiValue.Long) idValue).Value));
-                    }
-                }
+            catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any()){
+                ExtractMissingFromResponseException(missing, e);
                 var toGet = ids
                     .Where(id => !missing.Contains(id));
                 return await GetByIdsIgnoreErrorsChunk(tsClient, toGet, token);

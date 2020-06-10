@@ -31,6 +31,13 @@ namespace ExtractorUtils.Test
             new Datapoint(DateTime.UtcNow, new string(Enumerable.Repeat('b', 256).ToArray())),
         };
 
+        private static readonly Datapoint[] _points_timestamp = {
+            new Datapoint(CogniteTime.DateTimeEpoch , 0),
+            new Datapoint(CogniteTime.FromUnixTimeMilliseconds(CogniteUtils.TimestampMin), 1),
+            new Datapoint(CogniteTime.FromUnixTimeMilliseconds(CogniteUtils.TimestampMax), 2),
+            new Datapoint(new DateTime(2051, 1, 1, 12, 0, 0, DateTimeKind.Utc), 3)
+        };
+
         [Fact]
         public static void TestTrimDoubles()
         {
@@ -50,6 +57,15 @@ namespace ExtractorUtils.Test
             Assert.True(values.All(p => p.StringValue.Length <= CogniteUtils.StringLengthMax));
             var payloads = values.Select(v => v.StringValue).ToList();
             Assert.True(_stringPoints.Select(v => v.StringValue).All(v => payloads.Any(p => v.StartsWith(p))));
+        }
+
+        [Fact]
+        public static void TestRemoveOutOfRangeTimestamps()
+        {
+            var values = _points_timestamp.RemoveOutOfRangeTimestamps();
+            Assert.Equal(_points_timestamp.Count() - 2, values.Count());
+            Assert.Contains(_points_timestamp[1], values);
+            Assert.Contains(_points_timestamp[2], values);
         }
 
         [Fact]
