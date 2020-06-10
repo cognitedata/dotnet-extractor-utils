@@ -10,6 +10,7 @@ using Polly;
 using Polly.Extensions.Http;
 using Polly.Timeout;
 using Cognite.Extractor.Common;
+using System.Linq;
 
 namespace Cognite.Extractor.Utils
 {
@@ -33,6 +34,15 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public const int StringLengthMax = 255;
 
+        /// <summary>
+        /// Cognite min timestamp (1971)
+        /// </summary>
+        public const long TimestampMin = 31536000000L;
+
+        /// <summary>
+        /// Cognite max timestamp (2050)
+        /// </summary>
+        public const long TimestampMax = 2556144000000L;
 
         /// <summary>
         /// Configure a <see cref="Client.Builder"/> according to the <paramref name="config"/> object
@@ -120,6 +130,17 @@ namespace Cognite.Extractor.Utils
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Remove data points from <paramref name="points"/> that contain timestamps outside the
+        /// supported range in Cognite: from 1971 to 2050.
+        /// </summary>
+        /// <param name="points"></param>
+        /// <returns></returns>
+        public static IEnumerable<Datapoint> RemoveOutOfRangeTimestamps(this IEnumerable<Datapoint> points)
+        {
+            return points.Where(p => p.Timestamp >= TimestampMin && p.Timestamp <= TimestampMax);
         }
     }
 
