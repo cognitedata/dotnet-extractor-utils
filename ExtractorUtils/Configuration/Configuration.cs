@@ -30,7 +30,6 @@ namespace Cognite.Extractor.Utils
         {
             var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
-            config.GenerateDefaults();
             services.AddSingleton(config.Cognite);
             services.AddSingleton(config.Logger);
             services.AddSingleton(config.Metrics);
