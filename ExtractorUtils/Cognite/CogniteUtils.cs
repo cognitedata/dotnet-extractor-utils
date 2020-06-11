@@ -102,6 +102,25 @@ namespace Cognite.Extractor.Utils
 
             return builder;
         }
+        /// <summary>
+        /// Write missing identities to the provided identity set.
+        /// </summary>
+        /// <param name="missing">Set to add missing ids to</param>
+        /// <param name="e">Error containing missing ids</param>
+        public static void ExtractMissingFromResponseException(HashSet<Identity> missing, ResponseException e)
+        {
+            foreach (var ts in e.Missing)
+            {
+                if (ts.TryGetValue("externalId", out MultiValue exIdValue))
+                {
+                    missing.Add(new Identity(exIdValue.ToString()));
+                }
+                else if (ts.TryGetValue("id", out MultiValue idValue))
+                {
+                    missing.Add(new Identity(((MultiValue.Long)idValue).Value));
+                }
+            }
+        }
 
         /// <summary>
         /// Trim values to accepted CDF limits and filter out invalid double values (NaN and Infinity) 

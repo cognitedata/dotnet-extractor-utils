@@ -37,7 +37,9 @@ namespace Cognite.Extractor.Utils
             _client = client;
             _logger = logger;
             _config = config;
-            CogniteClientExtensions.SetLogger(_logger);
+            AssetExtensions.SetLogger(_logger);
+            DatapointExtensions.SetLogger(_logger);
+            TimeSeriesExtensions.SetLogger(_logger);
         }
 
         /// <summary>
