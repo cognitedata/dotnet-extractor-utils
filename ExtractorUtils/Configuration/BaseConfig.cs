@@ -38,6 +38,7 @@ namespace Cognite.Extractor.Utils
         public override void GenerateDefaults()
         {
             if (Cognite == null) Cognite = new CogniteConfig();
+            if (Cognite.CdfRetries == null) Cognite.CdfRetries = new RetryConfig();
             if (Cognite.CdfChunking == null) Cognite.CdfChunking = new ChunkingConfig(); // default chunking according to CDF limits
             if (Cognite.CdfThrottling == null) Cognite.CdfThrottling = new ThrottlingConfig();
             if (Cognite.SdkLogging == null) Cognite.SdkLogging = new SdkLoggingConfig();
@@ -77,6 +78,11 @@ namespace Cognite.Extractor.Utils
         /// <value>Absolute Uri for the host. Default: https://api.cognitedata.com</value>
         public string Host { get; set; } = "https://api.cognitedata.com";
         
+        /// <summary>
+        /// Configuration for retries of failed requests to CDF.
+        /// </summary>
+        public RetryConfig CdfRetries { get; set; }
+
         /// <summary>
         /// Chunking sizes towards CDF 
         /// </summary>
@@ -220,6 +226,25 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value></value>
         public int Raw { get; set; } = 10;
+    }
+    /// <summary>
+    /// Configure automatic retries on requests to CDF.
+    /// </summary>
+    public class RetryConfig
+    {
+        /// <summary>
+        /// Timeout in milliseconds for each individual try
+        /// </summary>
+        public int Timeout { get; set; } = 80_000;
+        /// <summary>
+        /// Maximum number of retries. Less than 0 retries forever.
+        /// </summary>
+        public int MaxRetries { get; set; } = 5;
+        /// <summary>
+        /// Max delay in ms between each retry. Base delay is calculated according to 125*2^retry ms.
+        /// If less than 0, there is no maximum.
+        /// </summary>
+        public int MaxDelay { get; set; } = 5_000;
     }
 
 #endregion

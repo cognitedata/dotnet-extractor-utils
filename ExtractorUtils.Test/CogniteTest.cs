@@ -303,7 +303,10 @@ namespace ExtractorUtils.Test
                                 "  cdf-chunking:",
                                 "    assets: 2",
                                 "  cdf-throttling:",
-                                "    assets: 2" };
+                                "    assets: 2",
+                                "  cdf-retries:",
+                                "    max-retries: 2",
+                                "    timeout: 10000" };
             System.IO.File.WriteAllLines(path, lines);
 
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureAssetsSendAsync);

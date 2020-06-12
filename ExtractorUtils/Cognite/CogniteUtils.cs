@@ -249,46 +249,63 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class CogniteExtensions
     {
-        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger logger)
+        private static Action<DelegateResult<HttpResponseMessage>, TimeSpan> GetRetryHandler(ILogger logger)
         {
-            int numRetries = 5;
-            return Policy
-                .HandleResult<HttpResponseMessage>(msg => 
+            return (ex, ts) =>
+            {
+                if (ex.Result != null)
+                {
+                    logger.LogDebug("Failed request with status code: {Code}. Retrying in {Time} ms. {Message}",
+                        (int)ex.Result.StatusCode, ts.TotalMilliseconds, ex.Result.ReasonPhrase);
+                    logger.LogDebug("Failed request: {Method} {Uri}",
+                        ex.Result.RequestMessage.Method,
+                        ex.Result.RequestMessage.RequestUri);
+                }
+                else if (ex.Exception != null)
+                {
+                    logger.LogDebug("Request timed out or failed with message: {Message} Retrying in {Time} ms.",
+                        ex.Exception.Message, ts.TotalMilliseconds);
+                    var inner = ex.Exception.InnerException;
+                    while (inner != null)
+                    {
+                        logger.LogDebug("Inner exception: {Message}", inner.Message);
+                        inner = inner.InnerException;
+                    }
+                }
+            };
+        }
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger logger, RetryConfig config)
+        {
+            int numRetries = config == null ? 5 : config.MaxRetries;
+            int maxDelay = config == null ? 5_000 : config.MaxDelay;
+            if (maxDelay < 0) maxDelay = int.MaxValue;
+            var builder = Policy
+                .HandleResult<HttpResponseMessage>(msg =>
                     msg.StatusCode == HttpStatusCode.Unauthorized
                     || (int)msg.StatusCode == 429) //  HttpStatusCode.TooManyRequests not in .Net Framework, is in .Net Core 3.0
                 .OrTransientHttpError()
-                .Or<TimeoutRejectedException>()
-                .WaitAndRetryAsync(
+                .Or<TimeoutRejectedException>();
+            if (numRetries < 0)
+            {
+                return builder.WaitAndRetryForeverAsync(
+                    retry => TimeSpan.FromMilliseconds(Math.Min(125 * Math.Pow(2, retry - 1), maxDelay)),
+                    GetRetryHandler(logger));
+            }
+            else
+            {
+                return builder.WaitAndRetryAsync(
                     // retry interval 0.125, 0.25, 0.5, 1, 2, ..., i.e. max 0.125 * 2^numRetries
                     numRetries,
-                    retry => TimeSpan.FromMilliseconds(125 * Math.Pow(2, Math.Min(retry - 1, numRetries))),
-                    (ex, ts) =>
-                    {
-                        if (ex.Result != null)
-                        {
-                            logger.LogDebug("Failed request with status code: {Code}. Retrying in {Time} ms. {Message}",
-                                (int) ex.Result.StatusCode, ts.TotalMilliseconds, ex.Result.ReasonPhrase);
-                            logger.LogDebug("Failed request: {Method} {Uri}",
-                                ex.Result.RequestMessage.Method,
-                                ex.Result.RequestMessage.RequestUri);
-                        }
-                        else if (ex.Exception != null)
-                        {
-                            logger.LogDebug("Request timed out or failed with message: {Message} Retrying in {Time} ms.",
-                                ex.Exception.Message, ts.TotalMilliseconds);
-                            var inner = ex.Exception.InnerException;
-                            while (inner != null)
-                            {
-                                logger.LogDebug("Inner exception: {Message}", inner.Message);
-                                inner = inner.InnerException;
-                            }
-                        }
-                    });
+                    retry => TimeSpan.FromMilliseconds(Math.Min(125 * Math.Pow(2, Math.Min(retry - 1, numRetries)), maxDelay)),
+                    GetRetryHandler(logger));
+            }
+                
         }
 
-        static IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy()
+        static IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy(RetryConfig config)
         {
-            return Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(80)); // timeout for each individual try
+            return Policy.TimeoutAsync<HttpResponseMessage>(
+                TimeSpan.FromMilliseconds(config == null ? 80_000 : config.Timeout)); // timeout for each individual try
         }
 
         /// <summary>
@@ -311,8 +328,9 @@ namespace Cognite.Extractor.Utils
             if (setHttpClient)
             {
                 services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
-                    .AddPolicyHandler((provider, message) => { return GetRetryPolicy(provider.GetRequiredService<ILogger<Client>>()); })
-                    .AddPolicyHandler(GetTimeoutPolicy());
+                    .AddPolicyHandler((provider, message) =>
+                        GetRetryPolicy(provider.GetRequiredService<ILogger<Client>>(), provider.GetService<CogniteConfig>()?.CdfRetries))
+                    .AddPolicyHandler((provider, message) => GetTimeoutPolicy(provider.GetService<CogniteConfig>()?.CdfRetries));
             }
 
             services.AddHttpClient<Authenticator>();
