@@ -233,7 +233,7 @@ namespace Cognite.Extractor.Utils
     public class RetryConfig
     {
         /// <summary>
-        /// Timeout in milliseconds for each individual try
+        /// Timeout in milliseconds for each individual try. Less than or equal to zero for no timeout.
         /// </summary>
         public int Timeout { get; set; } = 80_000;
         /// <summary>

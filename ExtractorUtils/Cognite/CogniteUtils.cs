@@ -304,8 +304,11 @@ namespace Cognite.Extractor.Utils
 
         static IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy(RetryConfig config)
         {
-            return Policy.TimeoutAsync<HttpResponseMessage>(
-                TimeSpan.FromMilliseconds(config == null ? 80_000 : config.Timeout)); // timeout for each individual try
+            TimeSpan timeout;
+            if (config == null) timeout = TimeSpan.FromMilliseconds(80_000);
+            else if (config.Timeout <= 0) timeout = TimeSpan.MaxValue;
+            else timeout = TimeSpan.FromMilliseconds(config.Timeout);
+            return Policy.TimeoutAsync<HttpResponseMessage>(timeout); // timeout for each individual try
         }
 
         /// <summary>
