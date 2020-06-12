@@ -16,6 +16,8 @@ using Newtonsoft.Json;
 using Xunit;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
+using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace ExtractorUtils.Test
 {
@@ -185,6 +187,69 @@ namespace ExtractorUtils.Test
 
             System.IO.File.Delete(path);
         }
+        [Fact]
+        public async Task TestClientRetry()
+        {
+            string path = "test-cognite-retry-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: {_apiKey}",
+                               $"  host: {_host}",
+                                "  cdf-retries:",
+                                "    max-retries: 3",
+                                "    timeout: 10000" };
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockCogniteSendRetryAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+            _sendRetries = 0;
+            // Setup services
+            var services = new ServiceCollection();
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            IAsyncPolicy<HttpResponseMessage> retryPolicy;
+            IAsyncPolicy<HttpResponseMessage> timeoutPolicy;
+            using (var provider = services.BuildServiceProvider())
+            {
+                var logger = provider.GetRequiredService<ILogger<CogniteDestination>>();
+                var config = provider.GetRequiredService<BaseConfig>().Cognite.CdfRetries;
+                retryPolicy = (IAsyncPolicy<HttpResponseMessage>)typeof(CogniteExtensions).GetMethod("GetRetryPolicy",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(null, new object[] {
+                        logger,
+                        config
+                    });
+
+                timeoutPolicy = (IAsyncPolicy<HttpResponseMessage>)typeof(CogniteExtensions).GetMethod("GetTimeoutPolicy",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(null, new object[] {
+                        config
+                    }) as IAsyncPolicy<HttpResponseMessage>;
+            }
+
+            services.AddHttpClient<Client.Builder>()
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpMessageHandlerStub(mockCogniteSendRetryAsync))
+                .AddPolicyHandler(retryPolicy)
+                .AddPolicyHandler(timeoutPolicy);
+
+            services.AddCogniteClient("testApp", true, true, false);
+            using (var provider = services.BuildServiceProvider())
+            {
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+
+                var loginStatus = await cogniteDestination.CogniteClient.Login.StatusAsync();
+                Assert.True(loginStatus.LoggedIn);
+                Assert.Equal("testuser", loginStatus.User);
+                Assert.Equal(_project, loginStatus.Project);
+                Assert.Equal(3, _sendRetries);
+            }
+
+        }
 
         [Theory]
         [InlineData("id1", "id2")]
@@ -303,10 +368,7 @@ namespace ExtractorUtils.Test
                                 "  cdf-chunking:",
                                 "    assets: 2",
                                 "  cdf-throttling:",
-                                "    assets: 2",
-                                "  cdf-retries:",
-                                "    max-retries: 2",
-                                "    timeout: 10000" };
+                                "    assets: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureAssetsSendAsync);
@@ -847,6 +909,59 @@ namespace ExtractorUtils.Test
             };
 
             return Task.FromResult(response);
+        }
+
+        private static int _sendRetries = 0;
+
+        private static Task<HttpResponseMessage> mockCogniteSendRetryAsync(HttpRequestMessage message, CancellationToken token)
+        {
+            Assert.Equal($"{_host}/login/status", message.RequestUri.ToString());
+            Assert.Equal(HttpMethod.Get, message.Method);
+            if (_sendRetries++ < 2)
+            {
+                var errReply = "{" + Environment.NewLine +
+                    "  \"error\": {" + Environment.NewLine +
+                    "    \"code\": 500," + Environment.NewLine +
+                    "    \"message\": \"Internal server error\"" + Environment.NewLine +
+                    "  }" + Environment.NewLine +
+                    "}";
+                var response = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Content = new StringContent(errReply)
+                };
+                return Task.FromResult(response);
+            }
+            message.Headers.TryGetValues("api-key", out IEnumerable<string> keys);
+            var loggedIn = keys.Contains(_apiKey) ? "true" : "false";
+            var reply = "{" + Environment.NewLine +
+                    "  \"data\": {" + Environment.NewLine +
+                   $"    \"user\": \"testuser\",{Environment.NewLine}" +
+                   $"    \"loggedIn\": {loggedIn},{Environment.NewLine}" +
+                   $"    \"project\": \"{_project}\"" + Environment.NewLine +
+                    "  }" + Environment.NewLine +
+                    "}";
+
+            return Task.FromResult(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(reply)
+            });
+
+        }
+        public class HttpMessageHandlerStub : HttpMessageHandler
+        {
+            private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _sendAsync;
+
+            public HttpMessageHandlerStub(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> sendAsync)
+            {
+                _sendAsync = sendAsync;
+            }
+
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                return await _sendAsync(request, cancellationToken);
+            }
         }
 
         #endregion

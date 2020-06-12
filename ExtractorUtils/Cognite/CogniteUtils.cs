@@ -258,8 +258,8 @@ namespace Cognite.Extractor.Utils
                     logger.LogDebug("Failed request with status code: {Code}. Retrying in {Time} ms. {Message}",
                         (int)ex.Result.StatusCode, ts.TotalMilliseconds, ex.Result.ReasonPhrase);
                     logger.LogDebug("Failed request: {Method} {Uri}",
-                        ex.Result.RequestMessage.Method,
-                        ex.Result.RequestMessage.RequestUri);
+                        ex.Result.RequestMessage?.Method,
+                        ex.Result.RequestMessage?.RequestUri);
                 }
                 else if (ex.Exception != null)
                 {
