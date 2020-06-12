@@ -77,5 +77,12 @@ namespace ExtractorUtils.Test
             Assert.Throws<ArgumentException>(() => CogniteTime.NanosecondsSinceEpoch(invalid2));
         }
 
+        [Fact]
+        public static void TestTimeRange()
+        {
+            Assert.Equal(new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch), TimeRange.Empty);
+            Assert.True(new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch) == TimeRange.Empty);
+        }
+
     }
 }

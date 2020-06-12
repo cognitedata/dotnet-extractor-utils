@@ -20,6 +20,7 @@ namespace Cognite.Extractor.Utils
     public static class DatapointExtensions
     {
         private static ILogger _logger = LoggingUtils.GetDefault();
+        private const int _maxNumOfVerifyRequests = 10;
 
         internal static void SetLogger(ILogger logger)
         {
@@ -283,6 +284,147 @@ namespace Cognite.Extractor.Utils
                 mismatched.UnionWith(errors.IdsWithMismatchedData);
             }
             return new InsertError(missing, mismatched);
+        }
+
+        public static async Task DeleteDataPointsIgnoreErrorsAsync(
+            this Client client,
+            IDictionary<Identity, IEnumerable<TimeRange>> ranges,
+            int deleteChunkSize,
+            int listChunkSize,
+            int deleteThrottleSize,
+            int listThrottleSize,
+            CancellationToken token)
+        {
+            var toDelete = new List<IdentityWithRange>();
+            foreach(var kvp in ranges)
+            {
+                _logger.LogTrace("Deleting data points from time series {Name}. Ranges: {Ranges}", 
+                    kvp.Key.ToString(), string.Join(", ", kvp.Value.Select(v => v.ToString())));
+                toDelete.AddRange(kvp.Value.Select(r =>
+                    new IdentityWithRange
+                    {
+                        ExternalId = kvp.Key.ExternalId,
+                        Id = kvp.Key.Id,
+                        InclusiveBegin = r.First.ToUnixTimeMilliseconds(),
+                        ExclusiveEnd = r.Last.ToUnixTimeMilliseconds() + 1 // exclusive
+                    })
+                );
+            }
+
+            var chunks = toDelete
+                .ChunkBy(deleteChunkSize)
+                .ToList(); // Maximum number of items in the /timeseries/data/delete endpoint.
+
+            var missing = new HashSet<Identity>(new IdentityComparer());
+            var generators = chunks
+                .Select<IEnumerable<IdentityWithRange>, Func<Task>>(
+                    c => async () =>
+                    {
+                        var errors = await DeleteDataPointsIgnoreErrorsChunk(client, c, token);
+                        missing.UnionWith(errors);
+                    });
+
+            var taskNum = 0;
+            await generators.RunThrottled(
+                deleteThrottleSize,
+                (_) => { 
+                    if (chunks.Count > 1) 
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
+                            nameof(DeleteDataPointsIgnoreErrorsAsync), ++taskNum, chunks.Count); 
+                },
+                token);
+            _logger.LogDebug("Deletion completed. Verifying that data points were removed from CDF");
+
+            var query = new List<DataPointsQueryItem>();
+            foreach (var kvp in ranges)
+            {
+                var queries = kvp.Value.Select(r =>
+                {
+                    return new DataPointsQueryItem()
+                    {
+                        ExternalId = kvp.Key.ToString(),
+                        Start = $"{r.First.ToUnixTimeMilliseconds()}",
+                        End = $"{r.Last.ToUnixTimeMilliseconds() + 1}",
+                        Limit = 1
+                    };
+                });
+                query.AddRange(queries);
+            }
+
+            var queryChunks = query
+                .ChunkBy(listChunkSize); // Maximum number of items in the /timeseries/data/list endpoint.
+
+            var verifyGenerators = queryChunks
+                .Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
+                    c => async () =>
+                    {
+                        await VerifyDataPointsDeletion(client, c, token);
+                    });
+
+            taskNum = 0;
+            await verifyGenerators.RunThrottled(
+                listThrottleSize,
+                (_) => { _logger.LogDebug("Verifying data points deletion: {Num}/{Total}", ++taskNum, queryChunks.Count()); },
+                token);
+
+            _logger.LogDebug("Deletion tasks completed");
+        }
+
+        private static async Task<HashSet<Identity>> DeleteDataPointsIgnoreErrorsChunk(
+            Client client,
+            IEnumerable<IdentityWithRange> chunks,
+            CancellationToken token)
+        {
+            var missing = new HashSet<Identity>(new IdentityComparer());
+            var deleteQuery = new DataPointsDelete()
+            {
+                Items = chunks
+            };
+            try{
+                await client.DataPoints.DeleteAsync(deleteQuery, token);
+            }
+            catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
+            {
+                CogniteUtils.ExtractMissingFromResponseException(missing, e);
+                var remaining = chunks.Where(i => !missing.Contains(new Identity(i.ExternalId){ Id = i.Id }));
+                var errors = await DeleteDataPointsIgnoreErrorsChunk(client, remaining, token);
+                missing.UnionWith(errors);
+            }
+            return missing;
+        }
+
+        private static async Task VerifyDataPointsDeletion(
+            Client client,
+            IEnumerable<DataPointsQueryItem> query, 
+            CancellationToken token)
+        {
+            int count = 1;
+            var dataPointsQuery = new DataPointsQuery()
+            {
+                Items = query
+            };
+
+            int tries = 0;
+            while (count > 0 && tries < _maxNumOfVerifyRequests)
+            {
+                var result = await client.DataPoints.ListAsync(dataPointsQuery, token);
+                count = 0;
+                foreach (var item in result.Items)
+                {
+                    count += item.NumericDatapoints?.Datapoints.Count ?? 0;
+                    count += item.StringDatapoints?.Datapoints.Count ?? 0;
+                }
+                if (count > 0)
+                {
+                    tries++;
+                    _logger.LogDebug("Could not verify the deletion of data points in {Count}/{Total} time series. Retrying in 500ms", count, query.Count());
+                    await Task.Delay(500);
+                }
+            }
+            if (tries == _maxNumOfVerifyRequests && count > 0)
+            {
+                _logger.LogWarning("Failed to verify the deletion of data points after {NumAttempts} attempts. Ids: {Ids}", _maxNumOfVerifyRequests, query.Select(q => q.ExternalId.ToString()));
+            }
         }
     }
 }
