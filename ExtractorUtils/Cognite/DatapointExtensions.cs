@@ -286,7 +286,7 @@ namespace Cognite.Extractor.Utils
             return new InsertError(missing, mismatched);
         }
 
-        public static async Task DeleteDataPointsIgnoreErrorsAsync(
+        public static async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
             this Client client,
             IDictionary<Identity, IEnumerable<TimeRange>> ranges,
             int deleteChunkSize,
@@ -342,7 +342,8 @@ namespace Cognite.Extractor.Utils
                 {
                     return new DataPointsQueryItem()
                     {
-                        ExternalId = kvp.Key.ToString(),
+                        ExternalId = kvp.Key.ExternalId,
+                        Id = kvp.Key.Id,
                         Start = $"{r.First.ToUnixTimeMilliseconds()}",
                         End = $"{r.Last.ToUnixTimeMilliseconds() + 1}",
                         Limit = 1
@@ -354,11 +355,13 @@ namespace Cognite.Extractor.Utils
             var queryChunks = query
                 .ChunkBy(listChunkSize); // Maximum number of items in the /timeseries/data/list endpoint.
 
+            var notVerified = new HashSet<Identity>(new IdentityComparer());
             var verifyGenerators = queryChunks
                 .Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
                     c => async () =>
                     {
-                        await VerifyDataPointsDeletion(client, c, token);
+                        var errors = await VerifyDataPointsDeletion(client, c, token);
+                        notVerified.UnionWith(errors);
                     });
 
             taskNum = 0;
@@ -368,6 +371,7 @@ namespace Cognite.Extractor.Utils
                 token);
 
             _logger.LogDebug("Deletion tasks completed");
+            return new DeleteError(missing, notVerified);
         }
 
         private static async Task<HashSet<Identity>> DeleteDataPointsIgnoreErrorsChunk(
@@ -386,14 +390,14 @@ namespace Cognite.Extractor.Utils
             catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
             {
                 CogniteUtils.ExtractMissingFromResponseException(missing, e);
-                var remaining = chunks.Where(i => !missing.Contains(new Identity(i.ExternalId){ Id = i.Id }));
+                var remaining = chunks.Where(i => !missing.Contains(i.Id.HasValue ? new Identity(i.Id.Value) : new Identity(i.ExternalId)));
                 var errors = await DeleteDataPointsIgnoreErrorsChunk(client, remaining, token);
                 missing.UnionWith(errors);
             }
             return missing;
         }
 
-        private static async Task VerifyDataPointsDeletion(
+        private static async Task<HashSet<Identity>> VerifyDataPointsDeletion(
             Client client,
             IEnumerable<DataPointsQueryItem> query, 
             CancellationToken token)
@@ -405,17 +409,30 @@ namespace Cognite.Extractor.Utils
             };
 
             int tries = 0;
+            var notVerified = new HashSet<Identity>(new IdentityComparer());
             while (count > 0 && tries < _maxNumOfVerifyRequests)
             {
-                var result = await client.DataPoints.ListAsync(dataPointsQuery, token);
+                notVerified.Clear();
+                var results = await client.DataPoints.ListAsync(dataPointsQuery, token);
                 count = 0;
-                foreach (var item in result.Items)
+                var queries = dataPointsQuery.Items.ToList();
+                var remaining = new List<DataPointsQueryItem>(); 
+                for (int i = 0; i < results.Items.Count; ++i)
                 {
-                    count += item.NumericDatapoints?.Datapoints.Count ?? 0;
-                    count += item.StringDatapoints?.Datapoints.Count ?? 0;
+                    // The query and response have items in the same order
+                    var q = queries[i];
+                    var itemCount = results.Items[i].NumericDatapoints?.Datapoints.Count ?? 0 + results.Items[i].StringDatapoints?.Datapoints.Count ?? 0;
+                    if (itemCount > 0)
+                    {
+                        var id = q.Id.HasValue ? new Identity(q.Id.Value) : new Identity(q.ExternalId);
+                        notVerified.Add(id);
+                        remaining.Add(q);
+                    }
+                    count += itemCount;
                 }
                 if (count > 0)
                 {
+                    dataPointsQuery.Items = remaining;
                     tries++;
                     _logger.LogDebug("Could not verify the deletion of data points in {Count}/{Total} time series. Retrying in 500ms", count, query.Count());
                     await Task.Delay(500);
@@ -423,8 +440,15 @@ namespace Cognite.Extractor.Utils
             }
             if (tries == _maxNumOfVerifyRequests && count > 0)
             {
-                _logger.LogWarning("Failed to verify the deletion of data points after {NumAttempts} attempts. Ids: {Ids}", _maxNumOfVerifyRequests, query.Select(q => q.ExternalId.ToString()));
+                _logger.LogWarning("Failed to verify the deletion of data points after {NumAttempts} attempts. Ids: {Ids}", 
+                    _maxNumOfVerifyRequests, 
+                    dataPointsQuery.Items.Select(q => q.Id.HasValue ? q.Id.ToString() : q.ExternalId.ToString()));
             }
+            else
+            {
+                notVerified.Clear();
+            }
+            return notVerified;
         }
     }
 }

@@ -243,6 +243,24 @@ namespace Cognite.Extractor.Utils
                 errors.IdsNotFound.Count(), errors.IdsWithMismatchedData.Count());
             return errors;
         }
+
+        public async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
+            IDictionary<Identity, IEnumerable<TimeRange>> ranges,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Deleting data points in CDF for {NumberTs} time series", 
+                ranges.Keys.Count);
+            var errors = await _client.DeleteDataPointsIgnoreErrorsAsync(
+                ranges,
+                _config.CdfChunking.DataPointDelete,
+                _config.CdfChunking.DataPointList,
+                _config.CdfThrottling.DataPoints,
+                _config.CdfThrottling.DataPoints,
+                token);
+            _logger.LogDebug("During deletion, {NumMissing} ids where not found and {NumNotConfirmed} range deletions could not be confirmed", 
+                errors.IdsNotFound.Count(), errors.IdsDeleteNotConfirmed.Count());
+            return errors;
+        }
         #endregion
 
         #region raw
