@@ -185,6 +185,18 @@ namespace Cognite.Extractor.Utils
         public int DataPointTimeSeries { get; set; } = 10_000;
         
         /// <summary>
+        /// Maximum number of ranges per data point delete request
+        /// </summary>
+        /// <value>Maximum chunk size</value>
+        public int DataPointDelete { get; set; } = 10_000;
+
+        /// <summary>
+        /// Maximum number of time series per data point list request
+        /// </summary>
+        /// <value>Maximum chunk size</value>
+        public int DataPointList { get; set; } = 100;
+        
+        /// <summary>
         /// Maximum number of data points per data point update request
         /// </summary>
         /// <value>Maximum chunk size</value>

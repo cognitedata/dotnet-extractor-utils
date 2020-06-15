@@ -77,5 +77,67 @@ namespace ExtractorUtils.Test
             Assert.Throws<ArgumentException>(() => CogniteTime.NanosecondsSinceEpoch(invalid2));
         }
 
+        [Fact]
+        public static void TestTimeRangeEquality()
+        {
+            Assert.Equal(new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch), TimeRange.Empty);
+            Assert.True(new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch) == TimeRange.Empty);
+            Assert.Equal((new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch)).GetHashCode(), TimeRange.Empty.GetHashCode());
+
+            TimeRange r1 = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
+            TimeRange r2 = new TimeRange(new DateTime(2005, 01, 01), new DateTime(2010, 01, 01));
+
+            Assert.NotEqual(r1, r2);
+            Assert.True(r1 != r2);
+            Assert.NotEqual(r1.GetHashCode(), r2.GetHashCode());
+
+            r2 = r2.Extend(r1);
+            Assert.Equal(r1, r2);
+            Assert.Equal(r1.GetHashCode(), r2.GetHashCode());
+        }
+
+        [Fact]
+        public static void TestTimeRangeContains()
+        {
+            TimeRange r1 = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
+            DateTime d1 = new DateTime(1990, 01, 01);
+            DateTime d2 = new DateTime(2005, 01, 01);
+            DateTime d3 = new DateTime(2020, 01, 01);
+
+            Assert.False(r1.Contains(d1));
+            Assert.True(r1.Contains(d2));
+            Assert.False(r1.Contains(d3));
+
+            Assert.True(r1.Before(d1));
+            Assert.False(r1.Before(d2));
+            Assert.False(r1.Before(d3));
+
+            Assert.False(r1.After(d1));
+            Assert.False(r1.After(d2));
+            Assert.True(r1.After(d3));
+        }
+
+        [Fact]
+        public static void TestTimeRangeExtend()
+        {
+            TimeRange r1 = TimeRange.Empty;
+            Assert.True(r1.IsEmpty);
+            DateTime d1 = new DateTime(1990, 01, 01);
+            DateTime d2 = new DateTime(2005, 01, 01);
+            DateTime d3 = new DateTime(2010, 01, 01);
+            DateTime d4 = new DateTime(2020, 01, 01);
+
+            var r2 = r1.Extend(d2, d3);
+            Assert.False(r2.IsEmpty);
+
+            var r3 = new TimeRange(d3, d2);
+            Assert.True(r3.IsEmpty);
+
+            var r4 = r3.Extend(r2);
+            Assert.Equal(r4, r2);
+
+            var r5 = r4.Extend(d1, d4);
+            Assert.Equal(new TimeRange(d1, d4), r5);
+        }
     }
 }

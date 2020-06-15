@@ -20,6 +20,7 @@ namespace Cognite.Extractor.Utils
     public static class DatapointExtensions
     {
         private static ILogger _logger = LoggingUtils.GetDefault();
+        private const int _maxNumOfVerifyRequests = 10;
 
         internal static void SetLogger(ILogger logger)
         {
@@ -283,6 +284,185 @@ namespace Cognite.Extractor.Utils
                 mismatched.UnionWith(errors.IdsWithMismatchedData);
             }
             return new InsertError(missing, mismatched);
+        }
+
+        /// <summary>
+        /// Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
+        /// and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
+        /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 
+        /// confirm the deletion does not mean that the operation failed in CDF
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="ranges">Ranges to delete</param>
+        /// <param name="deleteChunkSize">Chunk size for delete operations</param>
+        /// <param name="listChunkSize">Chunk size for list operations</param>
+        /// <param name="deleteThrottleSize">Throttle size for delete operations</param>
+        /// <param name="listThrottleSize">Throttle size for list operations</param>
+        /// <param name="token">Cancelation token</param>
+        /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
+        public static async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
+            this Client client,
+            IDictionary<Identity, IEnumerable<TimeRange>> ranges,
+            int deleteChunkSize,
+            int listChunkSize,
+            int deleteThrottleSize,
+            int listThrottleSize,
+            CancellationToken token)
+        {
+            var toDelete = new List<IdentityWithRange>();
+            foreach(var kvp in ranges)
+            {
+                _logger.LogTrace("Deleting data points from time series {Name}. Ranges: {Ranges}", 
+                    kvp.Key.ToString(), string.Join(", ", kvp.Value.Select(v => v.ToString())));
+                toDelete.AddRange(kvp.Value.Select(r =>
+                    new IdentityWithRange
+                    {
+                        ExternalId = kvp.Key.ExternalId,
+                        Id = kvp.Key.Id,
+                        InclusiveBegin = r.First.ToUnixTimeMilliseconds(),
+                        ExclusiveEnd = r.Last.ToUnixTimeMilliseconds() + 1 // exclusive
+                    })
+                );
+            }
+
+            var chunks = toDelete
+                .ChunkBy(deleteChunkSize)
+                .ToList(); // Maximum number of items in the /timeseries/data/delete endpoint.
+
+            var missing = new HashSet<Identity>(new IdentityComparer());
+            var generators = chunks
+                .Select<IEnumerable<IdentityWithRange>, Func<Task>>(
+                    c => async () =>
+                    {
+                        var errors = await DeleteDataPointsIgnoreErrorsChunk(client, c, token);
+                        missing.UnionWith(errors);
+                    });
+
+            var taskNum = 0;
+            await generators.RunThrottled(
+                deleteThrottleSize,
+                (_) => { 
+                    if (chunks.Count > 1) 
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
+                            nameof(DeleteDataPointsIgnoreErrorsAsync), ++taskNum, chunks.Count); 
+                },
+                token);
+            _logger.LogDebug("Deletion completed. Verifying that data points were removed from CDF");
+
+            var query = new List<DataPointsQueryItem>();
+            foreach (var kvp in ranges)
+            {
+                var queries = kvp.Value.Select(r =>
+                {
+                    return new DataPointsQueryItem()
+                    {
+                        ExternalId = kvp.Key.ExternalId,
+                        Id = kvp.Key.Id,
+                        Start = $"{r.First.ToUnixTimeMilliseconds()}",
+                        End = $"{r.Last.ToUnixTimeMilliseconds() + 1}",
+                        Limit = 1
+                    };
+                });
+                query.AddRange(queries);
+            }
+
+            var queryChunks = query
+                .ChunkBy(listChunkSize); // Maximum number of items in the /timeseries/data/list endpoint.
+
+            var notVerified = new HashSet<Identity>(new IdentityComparer());
+            var verifyGenerators = queryChunks
+                .Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
+                    c => async () =>
+                    {
+                        var errors = await VerifyDataPointsDeletion(client, c, token);
+                        notVerified.UnionWith(errors);
+                    });
+
+            taskNum = 0;
+            await verifyGenerators.RunThrottled(
+                listThrottleSize,
+                (_) => { _logger.LogDebug("Verifying data points deletion: {Num}/{Total}", ++taskNum, queryChunks.Count()); },
+                token);
+
+            _logger.LogDebug("Deletion tasks completed");
+            return new DeleteError(missing, notVerified);
+        }
+
+        private static async Task<HashSet<Identity>> DeleteDataPointsIgnoreErrorsChunk(
+            Client client,
+            IEnumerable<IdentityWithRange> chunks,
+            CancellationToken token)
+        {
+            var missing = new HashSet<Identity>(new IdentityComparer());
+            var deleteQuery = new DataPointsDelete()
+            {
+                Items = chunks
+            };
+            try{
+                await client.DataPoints.DeleteAsync(deleteQuery, token);
+            }
+            catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
+            {
+                CogniteUtils.ExtractMissingFromResponseException(missing, e);
+                var remaining = chunks.Where(i => !missing.Contains(i.Id.HasValue ? new Identity(i.Id.Value) : new Identity(i.ExternalId)));
+                var errors = await DeleteDataPointsIgnoreErrorsChunk(client, remaining, token);
+                missing.UnionWith(errors);
+            }
+            return missing;
+        }
+
+        private static async Task<HashSet<Identity>> VerifyDataPointsDeletion(
+            Client client,
+            IEnumerable<DataPointsQueryItem> query, 
+            CancellationToken token)
+        {
+            int count = 1;
+            var dataPointsQuery = new DataPointsQuery()
+            {
+                Items = query
+            };
+
+            int tries = 0;
+            var notVerified = new HashSet<Identity>(new IdentityComparer());
+            while (count > 0 && tries < _maxNumOfVerifyRequests)
+            {
+                notVerified.Clear();
+                var results = await client.DataPoints.ListAsync(dataPointsQuery, token);
+                count = 0;
+                var queries = dataPointsQuery.Items.ToList();
+                var remaining = new List<DataPointsQueryItem>(); 
+                for (int i = 0; i < results.Items.Count; ++i)
+                {
+                    // The query and response have items in the same order
+                    var q = queries[i];
+                    var itemCount = results.Items[i].NumericDatapoints?.Datapoints.Count ?? 0 + results.Items[i].StringDatapoints?.Datapoints.Count ?? 0;
+                    if (itemCount > 0)
+                    {
+                        var id = q.Id.HasValue ? new Identity(q.Id.Value) : new Identity(q.ExternalId);
+                        notVerified.Add(id);
+                        remaining.Add(q);
+                    }
+                    count += itemCount;
+                }
+                if (count > 0)
+                {
+                    dataPointsQuery.Items = remaining;
+                    tries++;
+                    _logger.LogDebug("Could not verify the deletion of data points in {Count}/{Total} time series. Retrying in 500ms", count, query.Count());
+                    await Task.Delay(500);
+                }
+            }
+            if (tries == _maxNumOfVerifyRequests && count > 0)
+            {
+                _logger.LogWarning("Failed to verify the deletion of data points after {NumAttempts} attempts. Ids: {Ids}", 
+                    _maxNumOfVerifyRequests, 
+                    dataPointsQuery.Items.Select(q => q.Id.HasValue ? q.Id.ToString() : q.ExternalId.ToString()));
+            }
+            else
+            {
+                notVerified.Clear();
+            }
+            return notVerified;
         }
     }
 }

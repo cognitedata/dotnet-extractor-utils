@@ -286,7 +286,7 @@ namespace ExtractorUtils.Test
                                 "    time-series: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureTimeSeriesSendAsync);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(MockEnsureTimeSeriesSendAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;
 
@@ -421,194 +421,10 @@ namespace ExtractorUtils.Test
             System.IO.File.Delete(path);
         }
 
-        [Fact]
-        public async Task TestInsertDataPoints()
-        {
-            string path = "test-insert-data-points-config.yml";
-            string[] lines = {  "version: 2",
-                                "logger:",
-                                "  console:",
-                                "    level: verbose",
-                                "cognite:",
-                               $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
-                               $"  host: {_host}",
-                                "  cdf-chunking:",
-                                "    data-points: 4",
-                                "    data-point-time-series: 2",
-                                "  cdf-throttling:",
-                                "    data-points: 2" };
-            System.IO.File.WriteAllLines(path, lines);
-
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertDataPointsAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
-            // Setup services
-            var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
-            services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
-            services.AddCogniteClient("testApp");
-            using (var provider = services.BuildServiceProvider()) {
-                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
-
-                double[] doublePoints = { 0.0, 1.1, 2.2, double.NaN, 3.3, 4.4, double.NaN, 5.5, double.NegativeInfinity };
-                string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringLengthMax), new string('2', CogniteUtils.StringLengthMax + 1), "3"};
-                
-                var datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
-                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
-                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "2")}},
-                    { new Identity(1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d))},
-                    { new Identity(2), stringPoints.Select(s => new Datapoint(DateTime.UtcNow, s))},
-                    { new Identity(3), new Datapoint[] { } },
-                    { new Identity(4), new Datapoint[] { new Datapoint(CogniteTime.DateTimeEpoch, 1), new Datapoint(DateTime.MaxValue, 1)}}
-                };
-                _createdDataPoints.Clear();
-                await cogniteDestination.InsertDataPointsAsync(
-                    datapoints,
-                    CancellationToken.None);
-                Assert.False(_createdDataPoints.ContainsKey(3 + "")); // No data points
-                Assert.False(_createdDataPoints.ContainsKey(4 + "")); // Invalid timestamps
-                Assert.Equal(6, _createdDataPoints[1 + ""].Count());
-                Assert.Equal(2, _createdDataPoints["A"].Count());
-                Assert.Empty(_createdDataPoints[1 + ""]
-                    .Where(dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity));
-                Assert.Equal(5, _createdDataPoints[2 + ""].Count());
-                Assert.Empty(_createdDataPoints[2 + ""]
-                    .Where(dp => dp.StringValue == null || dp.StringValue.Length > CogniteUtils.StringLengthMax));
-
-                _createdDataPoints.Clear();
-                datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
-                    { new Identity("idMissing1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
-                    { new Identity("idNumeric1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}},
-                    { new Identity("idNumeric2"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}},
-                    { new Identity(-1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d)).Take(2)},
-                    { new Identity("idMismatchedString1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}},
-                    { new Identity("idString1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
-                    { new Identity("idMismatched2"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}}
-                };
-                var errors = await cogniteDestination.InsertDataPointsIgnoreErrorsAsync(
-                    datapoints,
-                    CancellationToken.None);
-                var comparer = new IdentityComparer();
-                Assert.Contains(new Identity("idMissing1"), errors.IdsNotFound, comparer);
-                Assert.Contains(new Identity(-1), errors.IdsNotFound, comparer);
-                Assert.Contains(new Identity("idMismatchedString1"), errors.IdsWithMismatchedData, comparer);
-                Assert.Contains(new Identity("idMismatched2"), errors.IdsWithMismatchedData, comparer);
-                Assert.Single(_createdDataPoints["idNumeric1"]);
-                Assert.Single(_createdDataPoints["idNumeric2"]);
-                Assert.Single(_createdDataPoints["idString1"]);
-            }
-
-            System.IO.File.Delete(path);
-        }
-
-
-
         #region mock
-        private static Dictionary<string, List<Datapoint>> _createdDataPoints = new Dictionary<string, List<Datapoint>>();
-
-        private static async Task<HttpResponseMessage> mockInsertDataPointsAsync(HttpRequestMessage message , CancellationToken token) {
-            var uri = message.RequestUri.ToString();
-
-            if (uri.Contains("/timeseries/byids"))
-            {
-                return await mockEnsureTimeSeriesSendAsync(message, token);
-            }
-            Assert.Contains($"{_project}/timeseries/data", uri);
-
-            var responseBody = "{ }";
-            var statusCode = HttpStatusCode.OK;
-            var bytes = await message.Content.ReadAsByteArrayAsync();
-            var data = DataPointInsertionRequest.Parser.ParseFrom(bytes);
-            Assert.True(data.Items.Count <= 2); // data-points-time-series chunk size
-            Assert.True(data.Items
-                .Select(i => i.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.NumericDatapoints ?
-                        i.NumericDatapoints.Datapoints.Count : i.StringDatapoints.Datapoints.Count)
-                .Sum() <= 4); // data-points chunk size
-            
-            dynamic missingResponse = new ExpandoObject();
-            missingResponse.error = new ExpandoObject();
-            missingResponse.error.missing = new List<ExpandoObject>();
-            missingResponse.error.code = 400;
-            missingResponse.error.message = "Time series ids not found";
-
-            dynamic mismatchedResponse = new ExpandoObject();
-            mismatchedResponse.error = new ExpandoObject();
-            mismatchedResponse.error.code = 400;
-            mismatchedResponse.error.message = "";
-
-            foreach (var item in data.Items)
-            {
-                if (item.Id < 0 || item.ExternalId.StartsWith("idMissing"))
-                {
-                    dynamic id = new ExpandoObject();
-                    if (!string.IsNullOrEmpty(item.ExternalId)) id.externalId = item.ExternalId;
-                    else id.id = item.Id;
-                    missingResponse.error.missing.Add(id);
-                }
-                else if (item.ExternalId.StartsWith("idMismatched"))
-                {
-                    if (item.NumericDatapoints != null)
-                    {
-                        mismatchedResponse.error.message = "Expected string value for datapoint";
-                    }
-                    else {
-                        mismatchedResponse.error.message = "Expected numeric value for datapoint";
-                    }
-                    break;
-                }
-            }
-            if (!string.IsNullOrEmpty(mismatchedResponse.error.message))
-            {
-                statusCode = HttpStatusCode.BadRequest;
-                responseBody = JsonConvert.SerializeObject(mismatchedResponse);
-            }
-            else if (missingResponse.error.missing.Count > 0) {
-                statusCode = HttpStatusCode.BadRequest;
-                responseBody = JsonConvert.SerializeObject(missingResponse);
-            }
-            else 
-            {
-                foreach (var item in data.Items)
-                {
-                    var sId = string.IsNullOrEmpty(item.ExternalId) ? item.Id + "" : item.ExternalId;
-                    if (!_createdDataPoints.TryGetValue(sId, out List<Datapoint> dps))
-                    {
-                        dps = new List<Datapoint>();
-                        _createdDataPoints.TryAdd(sId, dps);
-                    }
-                    if (item.NumericDatapoints != null)
-                    {
-                        foreach (var dp in item.NumericDatapoints.Datapoints)
-                        {
-                            dps.Add(new Datapoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
-                        }
-                    }
-                    else if (item.StringDatapoints != null)
-                    {
-                        foreach (var dp in item.StringDatapoints?.Datapoints)
-                        {
-                            dps.Add(new Datapoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
-                        }
-                    }
-                }
-            }
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(responseBody)               
-            };
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            response.Headers.Add("x-request-id", "1");
-            return response;
-        }
-
         private static Dictionary<string, int> _ensuredTimeSeries = new Dictionary<string, int>();
 
-        private static async Task<HttpResponseMessage> mockEnsureTimeSeriesSendAsync(
+        internal static async Task<HttpResponseMessage> MockEnsureTimeSeriesSendAsync(
             HttpRequestMessage message,
             CancellationToken token)
         {
@@ -619,7 +435,6 @@ namespace ExtractorUtils.Test
             var content = await message.Content.ReadAsStringAsync();
             var ids = JsonConvert.DeserializeObject<dynamic>(content);
             IEnumerable<dynamic> items = ids.items;
-
 
             if (uri.Contains("/timeseries/byids"))
             {
