@@ -82,15 +82,18 @@ namespace ExtractorUtils.Test
         {
             Assert.Equal(new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch), TimeRange.Empty);
             Assert.True(new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch) == TimeRange.Empty);
+            Assert.Equal((new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch)).GetHashCode(), TimeRange.Empty.GetHashCode());
 
             TimeRange r1 = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
             TimeRange r2 = new TimeRange(new DateTime(2005, 01, 01), new DateTime(2010, 01, 01));
 
             Assert.NotEqual(r1, r2);
             Assert.True(r1 != r2);
+            Assert.NotEqual(r1.GetHashCode(), r2.GetHashCode());
 
             r2 = r2.Extend(r1);
             Assert.Equal(r1, r2);
+            Assert.Equal(r1.GetHashCode(), r2.GetHashCode());
         }
 
         [Fact]

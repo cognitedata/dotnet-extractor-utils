@@ -133,6 +133,16 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
+        /// Returns the computed hash code for this time range using its (First, Last) tuple
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            var tuple = (First, Last);
+            return tuple.GetHashCode();
+        }
+
+        /// <summary>
         /// Returns true if the provided time ranges are equal
         /// </summary>
         /// <param name="x">time range</param>

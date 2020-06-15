@@ -244,6 +244,15 @@ namespace Cognite.Extractor.Utils
             return errors;
         }
 
+        /// <summary>
+        /// Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
+        /// and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
+        /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 
+        /// confirm the deletion does not mean that the operation failed in CDF
+        /// </summary>
+        /// <param name="ranges">Ranges to delete</param>
+        /// <param name="token">Cancelation token</param>
+        /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
         public async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
             IDictionary<Identity, IEnumerable<TimeRange>> ranges,
             CancellationToken token)
