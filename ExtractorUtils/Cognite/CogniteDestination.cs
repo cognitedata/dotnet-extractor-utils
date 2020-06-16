@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Common;
 using CogniteSdk;
 using Microsoft.Extensions.Logging;
 
@@ -14,7 +16,7 @@ namespace Cognite.Extractor.Utils
     /// <see cref="CogniteConfig"/> object to determine chunking of data and throttling of
     /// requests against the client
     /// </summary>
-    public class CogniteDestination
+    public class CogniteDestination : IRawDestination
     {
         private readonly Client _client;
         private readonly ILogger<CogniteDestination> _logger;
@@ -40,6 +42,7 @@ namespace Cognite.Extractor.Utils
             AssetExtensions.SetLogger(_logger);
             DatapointExtensions.SetLogger(_logger);
             TimeSeriesExtensions.SetLogger(_logger);
+            RawExtensions.SetLogger(_logger);
         }
 
         /// <summary>
@@ -254,7 +257,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancelation token</param>
         /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
         public async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
-            IDictionary<Identity, IEnumerable<TimeRange>> ranges,
+            IDictionary<Identity, IEnumerable<Common.TimeRange>> ranges,
             CancellationToken token)
         {
             _logger.LogDebug("Deleting data points in CDF for {NumberTs} time series", 
@@ -320,6 +323,36 @@ namespace Cognite.Extractor.Utils
         public IRawUploadQueue<T> CreateRawUploadQueue<T>(string database, string table, TimeSpan interval, int maxQueueSize = 0)
         {
             return new RawUploadQueue<T>(database, table, this, interval, maxQueueSize, _logger);
+        }
+
+        /// <summary>
+        /// Returns all rows from the given database and table
+        /// </summary>
+        /// <param name="dbName">Database to read from</param>
+        /// <param name="tableName">Table to read from</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>All rows</returns>
+        public Task<IDictionary<string, IDictionary<string, JsonElement>>> GetRowsAsync(
+            string dbName,
+            string tableName,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Fetching all rows from database {db}, table {table}", dbName, tableName);
+            return _client.Raw.GetRowsAsync(dbName, tableName, _config.CdfChunking.RawRows, token);
+        }
+
+        /// <summary>
+        /// Delete the given rows from raw database
+        /// </summary>
+        /// <param name="dbName">Database to delete from</param>
+        /// <param name="tableName">Table to delete from</param>
+        /// <param name="rowKeys">Keys for rows to delete</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public Task DeleteRowsAsync(string dbName, string tableName, IEnumerable<string> rowKeys, CancellationToken token)
+        {
+            _logger.LogDebug("Deleting {count} rows from database {db}, table {table}", rowKeys.Count(), dbName, tableName);
+            return _client.Raw.DeleteRowsAsync(dbName, tableName, rowKeys, _config.CdfChunking.RawRows, _config.CdfThrottling.Raw, token);
         }
         #endregion
 

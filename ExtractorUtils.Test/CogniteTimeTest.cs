@@ -1,6 +1,6 @@
 using System;
 using Xunit;
-using Cognite.Extractor.Utils;
+using Cognite.Extractor.Common;
 
 namespace ExtractorUtils.Test
 {
@@ -138,6 +138,28 @@ namespace ExtractorUtils.Test
 
             var r5 = r4.Extend(d1, d4);
             Assert.Equal(new TimeRange(d1, d4), r5);
+        }
+        [Fact]
+        public static void TestTimeRangeContract()
+        {
+            TimeRange r1 = TimeRange.Complete;
+            Assert.Equal(CogniteTime.DateTimeEpoch, r1.First);
+            Assert.Equal(DateTime.MaxValue, r1.Last);
+
+            DateTime d1 = new DateTime(1990, 01, 01);
+            DateTime d2 = new DateTime(2000, 01, 01);
+            DateTime d3 = new DateTime(2010, 01, 01);
+            DateTime d4 = new DateTime(2020, 01, 01);
+
+            var r2 = r1.Contract(d1, d4);
+            Assert.Equal(new TimeRange(d1, d4), r2);
+
+            var r3 = r2.Contract(d3, d2);
+            Assert.True(r3.IsEmpty);
+            Assert.Equal(new TimeRange(d3, d2), r3);
+
+            var r4 = r2.Contract(new TimeRange(d2, d3));
+            Assert.Equal(new TimeRange(d2, d3), r4);
         }
     }
 }

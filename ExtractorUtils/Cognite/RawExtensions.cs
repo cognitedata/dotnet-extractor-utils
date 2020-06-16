@@ -19,7 +19,12 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class RawExtensions
     {
+        private static ILogger _logger = LoggingUtils.GetDefault();
 
+        internal static void SetLogger(ILogger logger)
+        {
+            _logger = logger;
+        }
         /// <summary>
         /// Insert the provided <paramref name="rows"/> into CDF Raw. The rows are a dictionary of 
         /// keys and DTOs (data type objects). The DTOs  of type <typeparamref name="T"/> are serialized to JSON 
@@ -58,6 +63,90 @@ namespace Cognite.Extractor.Utils
             var bytes = JsonSerializer.SerializeToUtf8Bytes(dto);
             var document = JsonDocument.Parse(bytes);
             return document.RootElement;
+        }
+
+        /// <summary>
+        /// Returns all rows from the given database and table. <paramref name="chunkSize"/> items are fetched with each request.
+        /// </summary>
+        /// <param name="raw">Raw client</param>
+        /// <param name="dbName">Database to read from</param>
+        /// <param name="tableName">Table to read from</param>
+        /// <param name="chunkSize">Max number of items per request</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>All rows</returns>
+        public static async Task<IDictionary<string, IDictionary<string, JsonElement>>> GetRowsAsync(
+            this RawResource raw,
+            string dbName,
+            string tableName,
+            int chunkSize,
+            CancellationToken token)
+        {
+            // This might be able to be improved with the ability to pre-fetch cursors for parallel read. Missing from the SDK.
+            var result = new Dictionary<string, IDictionary<string, JsonElement>>();
+            string cursor = null;
+            do
+            {
+                var query = new RawRowQuery
+                {
+                    Limit = chunkSize
+                };
+                if (cursor != null)
+                {
+                    query.Cursor = cursor;
+                }
+                var rows = await raw.ListRowsAsync(dbName, tableName, query, token);
+                foreach (var row in rows.Items)
+                {
+                    result[row.Key] = row.Columns;
+                }
+                cursor = rows.NextCursor;
+                _logger.LogDebug("Read: {count} rows from raw table: {raw}, database: {db}", rows.Items.Count(), tableName, dbName);
+            } while (cursor != null);
+            return result;
+        }
+
+        /// <summary>
+        /// Delete the given rows from raw database and table.
+        /// Will succeed even if database or table does not exist.
+        /// </summary>
+        /// <param name="raw">Raw client</param>
+        /// <param name="dbName">Database to delete from</param>
+        /// <param name="tableName">Table to delete from</param>
+        /// <param name="rowKeys">Keys for rows to delete</param>
+        /// <param name="chunkSize">Number of deleted rows per request</param>
+        /// <param name="throttleSize">Nax number of parallel threads</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task DeleteRowsAsync(
+            this RawResource raw,
+            string dbName,
+            string tableName,
+            IEnumerable<string> rowKeys,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var chunks = rowKeys
+                .Select(key => new RawRowDelete { Key = key })
+                .ChunkBy(chunkSize);
+            var generators = chunks
+                .Select<IEnumerable<RawRowDelete>, Func<Task>>(
+                    chunk => async () => await raw.DeleteRowsAsync(dbName, tableName, chunk, token)
+                );
+            try
+            {
+                await generators.RunThrottled(throttleSize, token);
+            }
+            catch (ResponseException ex)
+            {
+                // In order to ignore missing tables/databases
+                if (ex.Code == 404)
+                {
+                    _logger.LogDebug(ex.Message);
+                    return;
+                }
+                throw;
+            }
         }
     }
 

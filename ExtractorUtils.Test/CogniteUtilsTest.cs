@@ -4,6 +4,7 @@ using System.Linq;
 using CogniteSdk;
 using Xunit;
 using Cognite.Extractor.Utils;
+using Cognite.Extractor.Common;
 
 namespace ExtractorUtils.Test
 {

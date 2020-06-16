@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TimeRange = Cognite.Extractor.Common.TimeRange;
 
 namespace Cognite.Extractor.Utils
 {
@@ -304,7 +305,7 @@ namespace Cognite.Extractor.Utils
         /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
         public static async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
             this Client client,
-            IDictionary<Identity, IEnumerable<TimeRange>> ranges,
+            IDictionary<Identity, IEnumerable<Common.TimeRange>> ranges,
             int deleteChunkSize,
             int listChunkSize,
             int deleteThrottleSize,
