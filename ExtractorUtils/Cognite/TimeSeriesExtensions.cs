@@ -2,8 +2,10 @@
 using Cognite.Extractor.Logging;
 using CogniteSdk;
 using CogniteSdk.Resources;
+using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
