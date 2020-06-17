@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
@@ -18,7 +19,7 @@ using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using Xunit;
-using TimeRange = Cognite.Extractor.Utils.TimeRange;
+using TimeRange = Cognite.Extractor.Common.TimeRange;
 
 namespace ExtractorUtils.Test
 {

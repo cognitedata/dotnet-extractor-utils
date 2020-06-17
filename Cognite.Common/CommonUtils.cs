@@ -5,7 +5,7 @@ namespace Cognite.Extractor.Common
     /// <summary>
     /// Various utility functions
     /// </summary>
-    public static class CogniteUtils
+    public static class CommonUtils
     {
         /// <summary>
         /// Trim this string object to null

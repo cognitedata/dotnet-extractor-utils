@@ -33,6 +33,7 @@ namespace Cognite.Extractor.Utils
             services.AddSingleton(config.Cognite);
             services.AddSingleton(config.Logger);
             services.AddSingleton(config.Metrics);
+            services.AddSingleton(config.StateStore);
         }
     }
 

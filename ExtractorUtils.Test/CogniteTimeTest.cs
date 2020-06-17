@@ -1,6 +1,6 @@
 using System;
 using Xunit;
-using Cognite.Extractor.Utils;
+using Cognite.Extractor.Common;
 
 namespace ExtractorUtils.Test
 {
@@ -138,6 +138,41 @@ namespace ExtractorUtils.Test
 
             var r5 = r4.Extend(d1, d4);
             Assert.Equal(new TimeRange(d1, d4), r5);
+        }
+        [Fact]
+        public static void TestTimeRangeContract()
+        {
+            TimeRange r1 = TimeRange.Complete;
+            Assert.Equal(CogniteTime.DateTimeEpoch, r1.First);
+            Assert.Equal(DateTime.MaxValue, r1.Last);
+
+            DateTime d1 = new DateTime(1990, 01, 01);
+            DateTime d2 = new DateTime(2000, 01, 01);
+            DateTime d3 = new DateTime(2010, 01, 01);
+            DateTime d4 = new DateTime(2020, 01, 01);
+
+            var r2 = r1.Contract(d1, d4);
+            Assert.Equal(new TimeRange(d1, d4), r2);
+
+            var r3 = r2.Contract(d3, d2);
+            Assert.True(r3.IsEmpty);
+            Assert.Equal(new TimeRange(d3, d2), r3);
+
+            var r4 = r2.Contract(new TimeRange(d2, d3));
+            Assert.Equal(new TimeRange(d2, d3), r4);
+        }
+        [Fact]
+        public static void TestSmallExtendContract()
+        {
+            var r1 = new TimeRange(DateTime.UtcNow, DateTime.UtcNow);
+            Assert.Equal(r1, r1);
+            var r2 = r1.Extend(r1.First - TimeSpan.FromTicks(1), r1.Last + TimeSpan.FromTicks(1));
+            Assert.NotEqual(r1, r2);
+            var r3 = new TimeRange(r1.First - TimeSpan.FromTicks(1), r1.Last + TimeSpan.FromTicks(1));
+            Assert.Equal(r3, r2);
+
+            var r4 = r2.Contract(r1);
+            Assert.Equal(r1, r4);
         }
     }
 }

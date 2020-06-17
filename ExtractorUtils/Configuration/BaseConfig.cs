@@ -1,6 +1,7 @@
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
+using Cognite.Extractor.StateStorage;
 using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils 
@@ -32,6 +33,10 @@ namespace Cognite.Extractor.Utils
         public CogniteConfig Cognite { get; set; }
 
         /// <summary>
+        /// Configuration for extraction state storage (optional)
+        /// </summary>
+        public StateStoreConfig StateStore { get; set; }
+        /// <summary>
         /// Generate default configuration objects if the corresponding tags are not
         /// present in the yaml config file/string
         /// </summary>
@@ -44,6 +49,7 @@ namespace Cognite.Extractor.Utils
             if (Cognite.SdkLogging == null) Cognite.SdkLogging = new SdkLoggingConfig();
             if (Metrics == null) Metrics = new MetricsConfig();
             if (Logger == null) Logger = new LoggerConfig();
+            if (StateStore == null) StateStore = new StateStoreConfig();
         }
     }
 
