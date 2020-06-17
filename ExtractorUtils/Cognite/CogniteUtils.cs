@@ -11,6 +11,7 @@ using Polly.Extensions.Http;
 using Polly.Timeout;
 using Cognite.Extractor.Common;
 using System.Linq;
+using Cognite.Common;
 
 namespace Cognite.Extractor.Utils
 {
@@ -351,6 +352,7 @@ namespace Cognite.Extractor.Utils
                 return client;
             });
             services.AddTransient<CogniteDestination>();
+            services.AddTransient<IRawDestination, CogniteDestination>();
         }
     }
 

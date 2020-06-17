@@ -8,7 +8,6 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using CogniteSdk;
-using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;

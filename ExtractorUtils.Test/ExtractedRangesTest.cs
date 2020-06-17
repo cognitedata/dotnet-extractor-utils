@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using TimeRange = Cognite.Extractor.Utils.TimeRange;
+using TimeRange = Cognite.Extractor.Common.TimeRange;
 using System.Text.Json.Serialization;
 using System.Net.Http.Headers;
 using Com.Cognite.V1.Timeseries.Proto;
@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Cognite.Extractor.Logging;
 using System.Linq;
 using CogniteSdk;
+using Cognite.Extractor.Common;
 
 namespace ExtractorUtils.Test
 {

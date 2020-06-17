@@ -19,5 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExtractorUtils\ExtractorUtils.csproj" />
+    <ProjectReference Include="..\Cognite.StateStorage\Cognite.StateStorage.csproj" />
   </ItemGroup>
 </Project>
