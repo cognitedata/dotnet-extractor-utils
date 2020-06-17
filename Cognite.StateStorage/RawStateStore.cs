@@ -36,8 +36,6 @@ namespace Cognite.Extractor.StateStorage
             where T : BaseStorableState
             where K : IExtractionState
         {
-            if (string.IsNullOrEmpty(_config?.Location)) return;
-
             try
             {
                 _logger.LogDebug("Attempting to restore {TotalNum} extration states from raw table {table}", extractionStates.Count(), tableName);
@@ -70,7 +68,7 @@ namespace Cognite.Extractor.StateStorage
         public Task RestoreExtractionState<K>(
             IDictionary<string, K> extractionStates,
             string tableName,
-            CancellationToken token) where K : BaseExtractionState
+            CancellationToken token) where K : HistoryExtractionState
         {
             return RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
             {
@@ -83,8 +81,6 @@ namespace Cognite.Extractor.StateStorage
             where T : BaseStorableState
             where K : IExtractionState
         {
-            if (string.IsNullOrEmpty(_config?.Location)) return;
-
             var storageTime = DateTime.UtcNow;
 
             var statesToStore = extractionStates.Where(state =>
@@ -119,7 +115,7 @@ namespace Cognite.Extractor.StateStorage
             }
         }
 
-        public Task StoreExtractionState<K>(IEnumerable<K> extractionStates, string tableName, CancellationToken token) where K : BaseExtractionState
+        public Task StoreExtractionState<K>(IEnumerable<K> extractionStates, string tableName, CancellationToken token) where K : HistoryExtractionState
         {
             return StoreExtractionState(extractionStates, tableName, state =>
                 new BaseExtractionStatePoco
@@ -132,8 +128,6 @@ namespace Cognite.Extractor.StateStorage
 
         public async Task DeleteExtractionState(IEnumerable<IExtractionState> extractionStates, string tableName, CancellationToken token)
         {
-            if (string.IsNullOrEmpty(_config.Location)) return;
-
             HashSet<string> idsToDelete = new HashSet<string>(extractionStates.Select(s => s.Id));
             if (!idsToDelete.Any()) return;
 

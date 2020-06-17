@@ -30,6 +30,6 @@
         /// <summary>
         /// Which type of database to use. One of "None", "LiteDb", "Raw".
         /// </summary>
-        public StorageType Database { get; set; } = StorageType.LiteDb;
+        public StorageType Database { get; set; } = StorageType.None;
     }
 }

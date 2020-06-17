@@ -173,17 +173,19 @@ namespace Cognite.Extractor.StateStorage
         /// Configure service collection to include a state store
         /// </summary>
         /// <param name="services">Servicecollection to add to</param>
-        /// <param name="config">Configuration for state storage to use</param>
-        public static void AddStateStore(this IServiceCollection services, StateStoreConfig config)
+        /// <param name="bannedTypes">List of state-storage types excluded from use.</param>
+        public static void AddStateStore(this IServiceCollection services, params StateStoreConfig.StorageType[] bannedTypes)
         {
             services.AddSingleton<IExtractionStateStore>(provider =>
             {
-                if (config.Database == StateStoreConfig.StorageType.LiteDb)
+                var config = provider.GetRequiredService<StateStoreConfig>();
+                if (string.IsNullOrWhiteSpace(config.Location)) return null;
+                if (config.Database == StateStoreConfig.StorageType.LiteDb && !bannedTypes.Contains(StateStoreConfig.StorageType.LiteDb))
                 {
                     var logger = provider.GetRequiredService<ILogger<LiteDBStateStore>>();
                     return new LiteDBStateStore(config, logger);
                 }
-                else if (config.Database == StateStoreConfig.StorageType.Raw)
+                else if (config.Database == StateStoreConfig.StorageType.Raw && !bannedTypes.Contains(StateStoreConfig.StorageType.Raw))
                 {
                     var logger = provider.GetRequiredService<ILogger<RawStateStore>>();
                     var destination = provider.GetRequiredService<IRawDestination>();

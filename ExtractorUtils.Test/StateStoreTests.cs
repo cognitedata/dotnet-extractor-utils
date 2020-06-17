@@ -40,11 +40,6 @@ namespace ExtractorUtils.Test
             }
         };
 
-        private void WipeStateStore(StateStoreConfig config)
-        {
-            File.Delete(config.Location);
-        }
-
         [Theory]
         [InlineData(StateStoreConfig.StorageType.LiteDb)]
         [InlineData(StateStoreConfig.StorageType.Raw)]
@@ -62,7 +57,10 @@ namespace ExtractorUtils.Test
                                 "  cdf-chunking:",
                                 "    raw-rows: 4",
                                 "  cdf-throttling:",
-                                "    raw: 2" };
+                                "    raw: 2",
+                                "state-store:",
+                                $"  location: {(type == StateStoreConfig.StorageType.LiteDb ? "test.db" : _dbName)}",
+                                $"  database: {type}"};
             File.WriteAllLines(path, lines);
 
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockRawRequestAsync);
@@ -76,23 +74,18 @@ namespace ExtractorUtils.Test
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
             services.AddCogniteClient("testApp");
+            services.AddStateStore();
+            File.Delete("test.db");
 
-            var config = new StateStoreConfig
-            {
-                Location = type == StateStoreConfig.StorageType.LiteDb ? "test.db" : _dbName,
-                Database = type
-            };
-            services.AddStateStore(config);
-            WipeStateStore(config);
             using var provider = services.BuildServiceProvider();
             var stateStore = provider.GetRequiredService<IExtractionStateStore>();
 
             var now = DateTime.UtcNow;
 
-            var state1 = new BaseExtractionState("test0", true, true);
-            var state2 = new BaseExtractionState("test1", true, false);
-            var state3 = new BaseExtractionState("test2", false, true);
-            var state4 = new BaseExtractionState("test3", false, false);
+            var state1 = new HistoryExtractionState("test0", true, true);
+            var state2 = new HistoryExtractionState("test1", true, false);
+            var state3 = new HistoryExtractionState("test2", false, true);
+            var state4 = new HistoryExtractionState("test3", false, false);
 
             var states = new[] { state1, state2, state3, state4 };
 
@@ -150,10 +143,10 @@ namespace ExtractorUtils.Test
 
             await stateStore.StoreExtractionState(states, _tableName, CancellationToken.None);
 
-            state1 = new BaseExtractionState("test0", true, true);
-            state2 = new BaseExtractionState("test1", true, false);
-            state3 = new BaseExtractionState("test2", false, true);
-            state4 = new BaseExtractionState("test3", false, false);
+            state1 = new HistoryExtractionState("test0", true, true);
+            state2 = new HistoryExtractionState("test1", true, false);
+            state3 = new HistoryExtractionState("test2", false, true);
+            state4 = new HistoryExtractionState("test3", false, false);
 
             states = new[] { state1, state2, state3, state4 };
 
@@ -177,10 +170,10 @@ namespace ExtractorUtils.Test
 
             await stateStore.DeleteExtractionState(states, _tableName, CancellationToken.None);
 
-            state1 = new BaseExtractionState("test0", true, true);
-            state2 = new BaseExtractionState("test1", true, false);
-            state3 = new BaseExtractionState("test2", false, true);
-            state4 = new BaseExtractionState("test3", false, false);
+            state1 = new HistoryExtractionState("test0", true, true);
+            state2 = new HistoryExtractionState("test1", true, false);
+            state3 = new HistoryExtractionState("test2", false, true);
+            state4 = new HistoryExtractionState("test3", false, false);
 
             states = new[] { state1, state2, state3, state4 };
 
@@ -232,11 +225,11 @@ namespace ExtractorUtils.Test
                 Location = "lite-test.db",
                 Database = StateStoreConfig.StorageType.LiteDb
             };
-            WipeStateStore(config);
+            File.Delete("lite-test.db");
             var logger = provider.GetRequiredService<ILogger<LiteDBStateStore>>();
             var stateStore = new LiteDBStateStore(config, logger);
 
-            var state = new BaseExtractionState("test-state-1", true, true);
+            var state = new HistoryExtractionState("test-state-1", true, true);
             state.FinalizeRangeInit();
 
             await stateStore.StoreExtractionState(new[] { state }, "customstates", state =>

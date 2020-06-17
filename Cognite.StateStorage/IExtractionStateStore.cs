@@ -14,7 +14,7 @@ namespace Cognite.Extractor.StateStorage
         /// Store information from states into state store
         /// </summary>
         /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> extracted from state store</typeparam>
-        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
+        /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to store</param>
         /// <param name="tableName">Collection to store into</param>
         /// <param name="buildStorableState">Method to create a storable state from extraction state</param>
@@ -34,13 +34,13 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="token"></param>
         /// <returns></returns>
         Task StoreExtractionState<K>(IEnumerable<K> extractionStates, string tableName, CancellationToken token)
-            where K : BaseExtractionState;
+            where K : HistoryExtractionState;
 
         /// <summary>
         /// Generic method to restore state with a custom type.
         /// </summary>
         /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> inserted into state store</typeparam>
-        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
+        /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to store</param>
         /// <param name="tableName">Collection to store into</param>
         /// <param name="restoreStorableState">Action for pair of stored object and state, to restore the state with information from the poco</param>
@@ -63,7 +63,7 @@ namespace Cognite.Extractor.StateStorage
             IDictionary<string, K> extractionStates,
             string tableName,
             CancellationToken token)
-            where K : BaseExtractionState;
+            where K : HistoryExtractionState;
 
         /// <summary>
         /// Deletes states from state store table given by <paramref name="tableName"/>

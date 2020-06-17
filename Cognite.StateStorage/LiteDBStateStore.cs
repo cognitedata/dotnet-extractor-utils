@@ -53,7 +53,7 @@ namespace Cognite.Extractor.StateStorage
         /// Store information from states into state store
         /// </summary>
         /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> extracted from state store</typeparam>
-        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
+        /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to store</param>
         /// <param name="tableName">Collection to store into</param>
         /// <param name="buildStorableState">Method to create a storable state from extraction state</param>
@@ -67,8 +67,6 @@ namespace Cognite.Extractor.StateStorage
             where T : BaseStorableState
             where K : IExtractionState
         {
-            if (string.IsNullOrEmpty(_config?.Location)) return;
-
             var storageTime = DateTime.UtcNow;
 
             var statesToStore = extractionStates.Where(state =>
@@ -106,7 +104,7 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="token"></param>
         /// <returns></returns>
         public Task StoreExtractionState<K>(IEnumerable<K> extractionStates, string tableName, CancellationToken token)
-            where K : BaseExtractionState
+            where K : HistoryExtractionState
         {
             return StoreExtractionState(extractionStates, tableName, state =>
                 new BaseExtractionStatePoco
@@ -121,7 +119,7 @@ namespace Cognite.Extractor.StateStorage
         /// Generic method to restore state with a custom type.
         /// </summary>
         /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> inserted into state store</typeparam>
-        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
+        /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to store</param>
         /// <param name="tableName">Collection to store into</param>
         /// <param name="restoreStorableState">Action for pair of stored object and state, to restore the state with information from the poco</param>
@@ -133,8 +131,6 @@ namespace Cognite.Extractor.StateStorage
             Action<K, T> restoreStorableState,
             CancellationToken token) where T : BaseStorableState where K : IExtractionState
         {
-            if (string.IsNullOrEmpty(_config?.Location)) return;
-
             try
             {
                 _logger.LogDebug("Attempting to restore {TotalNum} extration states from litedb store {store}", extractionStates.Count(), tableName);
@@ -167,7 +163,7 @@ namespace Cognite.Extractor.StateStorage
         /// <summary>
         /// Restore first and last timestamp from state store.
         /// </summary>
-        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
+        /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to restore</param>
         /// <param name="tableName">Table to restore from</param>
         /// <param name="token"></param>
@@ -175,7 +171,7 @@ namespace Cognite.Extractor.StateStorage
         public Task RestoreExtractionState<K>(
             IDictionary<string, K> extractionStates,
             string tableName,
-            CancellationToken token) where K : BaseExtractionState
+            CancellationToken token) where K : HistoryExtractionState
         {
             return RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
             {
@@ -192,8 +188,6 @@ namespace Cognite.Extractor.StateStorage
         /// <returns></returns>
         public async Task DeleteExtractionState(IEnumerable<IExtractionState> extractionStates, string tableName, CancellationToken token)
         {
-            if (string.IsNullOrEmpty(_config.Location)) return;
-
             HashSet<string> idsToDelete = new HashSet<string>(extractionStates.Select(s => s.Id));
             if (!idsToDelete.Any()) return;
 
