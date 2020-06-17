@@ -377,9 +377,8 @@ namespace Cognite.Extractor.Utils
             bool latest = true
             )
         {
-            // TODO: Replace with TimeRange.Complete once StateStorage is merged
             return _client.DataPoints.GetExtractedRanges(
-                ids.Select(id => (id, new TimeRange(CogniteTime.DateTimeEpoch, DateTime.MaxValue))).ToList(),
+                ids.Select(id => (id, TimeRange.Complete)).ToList(),
                 _config.CdfChunking.DataPointList,
                 _config.CdfChunking.DataPointLatest,
                 _config.CdfThrottling.Ranges,
