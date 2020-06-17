@@ -138,6 +138,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             var found = await client.Assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+            _logger.LogDebug("Retrieved {Existing} assets from CDF", found.Count());
 
             var existingAssets = found.ToList();
             var missing = externalIds.Except(existingAssets.Select(asset => asset.ExternalId)).ToList();
