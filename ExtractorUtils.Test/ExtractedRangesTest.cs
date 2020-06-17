@@ -39,8 +39,11 @@ namespace ExtractorUtils.Test
                                 "  cdf-chunking:",
                                 "    data-points: 4",
                                 "    data-point-time-series: 2",
+                                "    data-point-latest: 2",
+                                "    data-point-list: 2",
                                 "  cdf-throttling:",
-                                "    data-points: 2" };
+                                "    data-points: 2",
+                                "    ranges: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
             var mocks = TestUtilities.GetMockedHttpClientFactory(MockGetFirstLatestAsync);
@@ -60,9 +63,9 @@ namespace ExtractorUtils.Test
 
 
             _mockedRanges["test1"] = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
-            _mockedRanges["test2"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2020, 01, 01));
+            _mockedRanges["test2"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2050, 01, 01));
             _mockedRanges["test3"] = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
-            _mockedRanges["test4"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2020, 01, 01));
+            _mockedRanges["test4"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2050, 01, 01));
 
             var ids = new[] { "test1", "test2", "test3", "test4", "test5" }.Select(Identity.Create).ToArray();
 
@@ -73,6 +76,17 @@ namespace ExtractorUtils.Test
             Assert.Equal(_mockedRanges["test3"], ranges[ids[2]]);
             Assert.Equal(_mockedRanges["test4"], ranges[ids[3]]);
             Assert.Equal(TimeRange.Empty, ranges[ids[4]]);
+
+            var limit = new DateTime(2020, 01, 01);
+
+            var ranges2 = await cogniteDestination.GetExtractedRanges(ids.Select(id => (id, new TimeRange(CogniteTime.DateTimeEpoch, limit))),
+                CancellationToken.None);
+
+            Assert.Equal(_mockedRanges["test1"], ranges2[ids[0]]);
+            Assert.Equal(new TimeRange(new DateTime(2010, 01, 01), limit), ranges2[ids[1]]);
+            Assert.Equal(_mockedRanges["test3"], ranges2[ids[2]]);
+            Assert.Equal(new TimeRange(new DateTime(2010, 01, 01), limit), ranges2[ids[3]]);
+            Assert.Equal(TimeRange.Empty, ranges2[ids[4]]);
         }
 
         private class MockIdentityWithBefore
@@ -145,9 +159,14 @@ namespace ExtractorUtils.Test
                 {
                     if (_mockedRanges.TryGetValue(item.ExternalId, out TimeRange tr))
                     {
+                        var ts = tr.Last.ToUnixTimeMilliseconds();
+                        if (long.TryParse(item.Before, out long before) && before < ts)
+                        {
+                            ts = before;
+                        }
                         ret.Add(new MockDataPointsItem
                         {
-                            DataPoints = new[] { new MockDataPoint { Timestamp = tr.Last.ToUnixTimeMilliseconds(), Value = 0 } },
+                            DataPoints = new[] { new MockDataPoint { Timestamp = ts, Value = 0 } },
                             ExternalId = item.ExternalId,
                             IsString = false
                         });
@@ -180,6 +199,11 @@ namespace ExtractorUtils.Test
                 {
                     if (_mockedRanges.TryGetValue(item.ExternalId, out TimeRange tr))
                     {
+                        var ts = tr.First.ToUnixTimeMilliseconds();
+                        if (long.TryParse(item.Start, out long start) && start > ts)
+                        {
+                            ts = start;
+                        }
                         var dpItem = new DataPointListItem
                         {
                             ExternalId = item.ExternalId
@@ -187,12 +211,12 @@ namespace ExtractorUtils.Test
                         if (cnt++ % 2 == 0)
                         {
                             dpItem.NumericDatapoints = new NumericDatapoints();
-                            dpItem.NumericDatapoints.Datapoints.Add(new NumericDatapoint { Value = 0, Timestamp = tr.First.ToUnixTimeMilliseconds() });
+                            dpItem.NumericDatapoints.Datapoints.Add(new NumericDatapoint { Value = 0, Timestamp = ts });
                         }
                         else
                         {
                             dpItem.StringDatapoints = new StringDatapoints();
-                            dpItem.StringDatapoints.Datapoints.Add(new StringDatapoint { Value = "0", Timestamp = tr.First.ToUnixTimeMilliseconds() });
+                            dpItem.StringDatapoints.Datapoints.Add(new StringDatapoint { Value = "0", Timestamp = ts });
                         }
                         dpList.Items.Add(dpItem);
                     }
