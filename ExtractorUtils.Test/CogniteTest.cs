@@ -18,6 +18,7 @@ using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using Microsoft.Extensions.Logging;
 using Polly;
+using System.Collections.Concurrent;
 
 namespace ExtractorUtils.Test
 {
@@ -320,7 +321,7 @@ namespace ExtractorUtils.Test
                 Assert.Equal(ids.Count(), ts.Where(t => ids.Contains(t.ExternalId)).Count());
                 foreach (var t in ts)
                 {
-                    _ensuredTimeSeries.Remove(t.ExternalId);
+                    _ensuredTimeSeries.Remove(t.ExternalId, out _);
                 }
 
                 var newTs = createFunction(ids);
@@ -405,7 +406,7 @@ namespace ExtractorUtils.Test
                 Assert.Equal(ids.Count(), ts.Where(t => ids.Contains(t.ExternalId)).Count());
                 foreach (var t in ts)
                 {
-                    _ensuredAssets.Remove(t.ExternalId);
+                    _ensuredAssets.Remove(t.ExternalId, out _);
                 }
 
                 var newAssets = createFunction(ids);
@@ -422,7 +423,7 @@ namespace ExtractorUtils.Test
         }
 
         #region mock
-        private static Dictionary<string, int> _ensuredTimeSeries = new Dictionary<string, int>();
+        private static ConcurrentDictionary<string, int> _ensuredTimeSeries = new ConcurrentDictionary<string, int>();
 
         internal static async Task<HttpResponseMessage> MockEnsureTimeSeriesSendAsync(
             HttpRequestMessage message,
@@ -438,11 +439,7 @@ namespace ExtractorUtils.Test
 
             if (uri.Contains("/timeseries/byids"))
             {
-                dynamic missingData = new ExpandoObject();
-                missingData.error = new ExpandoObject();
-                missingData.error.code = 400;
-                missingData.error.message = "Ids not found";
-                missingData.error.missing = new List<ExpandoObject>();
+                Assert.True((bool)ids.ignoreUnknownIds);
 
                 dynamic result = new ExpandoObject();
                 result.items = new List<ExpandoObject>();
@@ -451,13 +448,7 @@ namespace ExtractorUtils.Test
                 {
                     string id = item.externalId;
                     var ensured = _ensuredTimeSeries.TryGetValue(id, out int countdown) && countdown <= 0;
-                    if (!ensured && !id.StartsWith("id"))
-                    {
-                        dynamic missingId = new ExpandoObject();
-                        missingId.externalId = id;
-                        missingData.error.missing.Add(missingId);
-                    }
-                    else
+                    if (ensured || id.StartsWith("id"))
                     {
                         dynamic tsData = new ExpandoObject();
                         tsData.externalId = id;
@@ -467,15 +458,8 @@ namespace ExtractorUtils.Test
                     }
 
                 }
-                if (missingData.error.missing.Count > 0)
-                {
-                    responseBody = JsonConvert.SerializeObject(missingData);
-                    statusCode = HttpStatusCode.BadRequest;
-                }
-                else
-                {
-                    responseBody = JsonConvert.SerializeObject(result);
-                }
+
+                responseBody = JsonConvert.SerializeObject(result);
             }
             else
             {
@@ -533,7 +517,7 @@ namespace ExtractorUtils.Test
             return response;
         }
 
-        private static Dictionary<string, int> _ensuredAssets = new Dictionary<string, int>();
+        private static ConcurrentDictionary<string, int> _ensuredAssets = new ConcurrentDictionary<string, int>();
 
         private static async Task<HttpResponseMessage> mockEnsureAssetsSendAsync(
             HttpRequestMessage message,
@@ -550,11 +534,7 @@ namespace ExtractorUtils.Test
 
             if (uri.Contains("/assets/byids"))
             {
-                dynamic missingData = new ExpandoObject();
-                missingData.error = new ExpandoObject();
-                missingData.error.code = 400;
-                missingData.error.message = "Ids not found";
-                missingData.error.missing = new List<ExpandoObject>();
+                Assert.True((bool)ids.ignoreUnknownIds);
 
                 dynamic result = new ExpandoObject();
                 result.items = new List<ExpandoObject>();
@@ -563,30 +543,15 @@ namespace ExtractorUtils.Test
                 {
                     string id = item.externalId;
                     var ensured = _ensuredAssets.TryGetValue(id, out int countdown) && countdown <= 0;
-                    if (!ensured && !id.StartsWith("id"))
-                    {
-                        dynamic missingId = new ExpandoObject();
-                        missingId.externalId = id;
-                        missingData.error.missing.Add(missingId);
-                    }
-                    else
+                    if (ensured || id.StartsWith("id"))
                     {
                         dynamic assetData = new ExpandoObject();
                         assetData.externalId = id;
                         result.items.Add(assetData);
                         _ensuredAssets.TryAdd(id, 0);
                     }
-
                 }
-                if (missingData.error.missing.Count > 0)
-                {
-                    responseBody = JsonConvert.SerializeObject(missingData);
-                    statusCode = HttpStatusCode.BadRequest;
-                }
-                else
-                {
-                    responseBody = JsonConvert.SerializeObject(result);
-                }
+                responseBody = JsonConvert.SerializeObject(result);
             }
             else
             {

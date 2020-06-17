@@ -137,34 +137,24 @@ namespace Cognite.Extractor.Utils
             int backoff,
             CancellationToken token)
         {
-            var missing = new HashSet<string>();
-            try
+            var found = await client.Assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+            _logger.LogDebug("Retrieved {Existing} assets from CDF", found.Count());
+
+            var existingAssets = found.ToList();
+            var missing = externalIds.Except(existingAssets.Select(asset => asset.ExternalId)).ToList();
+
+            if (!missing.Any())
             {
-                var existingAssets = await client.Assets.RetrieveAsync(externalIds.Select(id => new Identity(id)), token);
-                _logger.LogDebug("Retrieved {Existing} assets from CDF", existingAssets.Count());
                 return existingAssets;
-            }
-            catch (ResponseException e) when (e.Code == 400 && e.Missing.Any())
-            {
-                foreach (var ts in e.Missing)
-                {
-                    if (ts.TryGetValue("externalId", out MultiValue value))
-                    {
-                        missing.Add(value.ToString());
-                    }
-                }
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
-            var toGet = new HashSet<string>(externalIds
-                .Where(e => !missing.Contains(e)));
-            var created = new List<Asset>();
-
             try
             {
-                var newTs = await client.Assets.CreateAsync(await buildAssets(missing), token);
-                created.AddRange(newTs);
-                _logger.LogDebug("Created {New} new assets in CDF", newTs.Count());
+                var newAssets = await client.Assets.CreateAsync(await buildAssets(missing), token);
+                existingAssets.AddRange(newAssets);
+                _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
+                return existingAssets;
             }
             catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
             {
@@ -173,15 +163,13 @@ namespace Cognite.Extractor.Utils
                     throw;
                 }
                 _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumAssets} assets", e.Duplicated.Count(), missing.Count);
-                toGet.UnionWith(missing);
             }
-            if (toGet.Any())
-            {
-                await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-                var ensured = await GetOrCreateAssetsChunk(client, toGet, buildAssets, backoff + 1, token);
-                created.AddRange(ensured);
-            }
-            return created;
+
+            await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
+            var ensured = await GetOrCreateAssetsChunk(client, missing, buildAssets, backoff + 1, token);
+            existingAssets.AddRange(ensured);
+
+            return existingAssets;
         }
 
         private static async Task EnsureAssetsChunk(

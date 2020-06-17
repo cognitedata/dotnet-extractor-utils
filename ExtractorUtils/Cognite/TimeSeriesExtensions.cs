@@ -155,7 +155,7 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<Identity>, Func<Task>>(
                 chunk => async () => {
-                    var found = await GetTimeSeriesByIdsIgnoreErrorsChunk(tsClient, chunk, token);
+                    var found = await tsClient.RetrieveAsync(chunk, true, token);
                     result.AddRange(found);
                 });
             await generators.RunThrottled(throttleSize, token);
@@ -169,35 +169,24 @@ namespace Cognite.Extractor.Utils
             int backoff,
             CancellationToken token)
         {
-            var missing = new HashSet<string>();
-            try
-            {
-                var existingTs = await client.TimeSeries.RetrieveAsync(externalIds.Select(id => new Identity(id)), token);
-                _logger.LogDebug("Retrieved {Existing} times series from CDF", existingTs.Count());
-                return existingTs;
-            }
-            catch (ResponseException e) when (e.Code == 400 && e.Missing.Any())
-            {
-                foreach (var ts in e.Missing)
-                {
-                    if (ts.TryGetValue("externalId", out MultiValue value))
-                    {
-                        missing.Add(value.ToString());
-                    }
-                }
+            var found = await client.TimeSeries.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token);
+            _logger.LogDebug("Retrieved {Existing} times series from CDF", found.Count());
 
+            var existingTimeSeries = found.ToList();
+            var missing = externalIds.Except(existingTimeSeries.Select(ts => ts.ExternalId)).ToList();
+
+            if (!missing.Any())
+            {
+                return existingTimeSeries;
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} time series. Attempting to create the missing ones", missing.Count, externalIds.Count());
-            var toGet = new HashSet<string>(externalIds
-                .Where(e => !missing.Contains(e)));
-            var created = new List<TimeSeries>();
-
             try
             {
                 var newTs = await client.TimeSeries.CreateAsync(await buildTimeSeries(missing), token);
-                created.AddRange(newTs);
+                existingTimeSeries.AddRange(newTs);
                 _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
+                return existingTimeSeries;
             }
             catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
             {
@@ -206,15 +195,13 @@ namespace Cognite.Extractor.Utils
                     throw;
                 }
                 _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumTimeSeries} time series", e.Duplicated.Count(), missing.Count);
-                toGet.UnionWith(missing);
             }
-            if (toGet.Any())
-            {
-                await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-                var ensured = await GetOrCreateTimeSeriesChunk(client, toGet, buildTimeSeries, backoff + 1, token);
-                created.AddRange(ensured);
-            }
-            return created;
+
+            await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
+            var ensured = await GetOrCreateTimeSeriesChunk(client, missing, buildTimeSeries, backoff + 1, token);
+            existingTimeSeries.AddRange(ensured);
+
+            return existingTimeSeries;
         }
 
         private static async Task EnsureTimeSeriesChunk(
@@ -252,29 +239,6 @@ namespace Cognite.Extractor.Utils
                 }
 #pragma warning restore CA1031 // Do not catch general exception types
                 await Task.Delay(TimeSpan.FromSeconds(1), token);
-            }
-        }
-
-        private static async Task<IEnumerable<TimeSeries>> GetTimeSeriesByIdsIgnoreErrorsChunk(
-            TimeSeriesResource tsClient,
-            IEnumerable<Identity> ids,
-            CancellationToken token)
-        {
-            // TODO: Remove once ignoreUnknownIds is available in the SDK
-            var comparer = new IdentityComparer();
-            var missing = new HashSet<Identity>(comparer);
-            try
-            {
-                var existingTs = await tsClient.RetrieveAsync(ids, token);
-                _logger.LogDebug("Retrieved {Existing} times series from CDF", existingTs.Count());
-                return existingTs;
-            }
-            catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
-            {
-                CogniteUtils.ExtractMissingFromResponseException(missing, e);
-                var toGet = ids
-                    .Where(id => !missing.Contains(id));
-                return await GetTimeSeriesByIdsIgnoreErrorsChunk(tsClient, toGet, token);
             }
         }
     }
