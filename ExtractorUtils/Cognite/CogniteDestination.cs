@@ -322,5 +322,66 @@ namespace Cognite.Extractor.Utils
             return new RawUploadQueue<T>(database, table, this, interval, maxQueueSize, _logger);
         }
         #endregion
+
+        #region ranges
+
+        /// <summary>
+        /// Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+        /// Note that end limits closer to actual endpoints in CDF is considerably faster.
+        /// </summary>
+        /// <param name="ids">ExternalIds and start/end of region to look for datapoints.
+        /// Use TimeRange.Complete for first after epoch, and last before now.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <param name="earliest">If true, fetch earliest timestamps, default true</param>
+        /// <param name="latest">If true, fetch latest timestamps, default true</param>
+        /// <returns></returns>
+        public Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
+            IEnumerable<Identity> ids,
+            CancellationToken token,
+            bool earliest = true,
+            bool latest = true
+            )
+        {
+            // TODO: Replace with TimeRange.Complete once StateStorage is merged
+            return _client.DataPoints.GetExtractedRanges(
+                ids.Select(id => (id, new TimeRange(CogniteTime.DateTimeEpoch, DateTime.MaxValue))).ToList(),
+                _config.CdfChunking.DataPointList,
+                _config.CdfChunking.DataPointLatest,
+                _config.CdfThrottling.Ranges,
+                latest,
+                earliest,
+                token);
+        }
+
+
+        /// <summary>
+        /// Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+        /// Note that end limits closer to actual endpoints in CDF is considerably faster.
+        /// </summary>
+        /// <param name="ids">ExternalIds and start/end of region to look for datapoints.
+        /// Use TimeRange.Complete for first after epoch, and last before now.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <param name="earliest">If true, fetch earliest timestamps, default true</param>
+        /// <param name="latest">If true, fetch latest timestamps, default true</param>
+        /// <returns></returns>
+        public Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
+            IEnumerable<(Identity id, TimeRange limit)> ids,
+            CancellationToken token,
+            bool earliest = true,
+            bool latest = true
+            )
+        {
+            return _client.DataPoints.GetExtractedRanges(
+                ids,
+                _config.CdfChunking.DataPointList,
+                _config.CdfChunking.DataPointLatest,
+                _config.CdfThrottling.Ranges,
+                latest,
+                earliest,
+                token);
+        }
+
+
+        #endregion
     }
 }

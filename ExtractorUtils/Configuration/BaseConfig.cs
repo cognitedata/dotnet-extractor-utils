@@ -207,7 +207,10 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int RawRows { get; set; } = 10_000;
-
+        /// <summary>
+        /// Maximum number of timeseries to check for each request to get latest datapoint
+        /// </summary>
+        public int DataPointLatest { get; set; } = 100;
     }
 
     /// <summary>
@@ -238,6 +241,11 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value></value>
         public int Raw { get; set; } = 10;
+
+        /// <summary>
+        /// Maximum number of parallel requests per get extracted ranges operation
+        /// </summary>
+        public int Ranges { get; set; } = 20;
     }
     /// <summary>
     /// Configure automatic retries on requests to CDF.

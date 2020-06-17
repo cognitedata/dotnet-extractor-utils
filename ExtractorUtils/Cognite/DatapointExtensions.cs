@@ -2,11 +2,13 @@
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
+using CogniteSdk.Resources;
 using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Polly.Timeout;
 using Prometheus;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -463,6 +465,221 @@ namespace Cognite.Extractor.Utils
                 notVerified.Clear();
             }
             return notVerified;
+        }
+        /// <summary>
+        /// Get the last timestamp for each time series given in <paramref name="ids"/> before each given timestamp.
+        /// Ignores timeseries not in CDF. The return dictionary contains only ids that exist in CDF.
+        /// Note that end limits closer to actual endpoints in CDF is considerably faster.
+        /// </summary>
+        /// <param name="dataPoints">DataPointsResource to use</param>
+        /// <param name="ids">ExternalIds and last timestamp. Let last timestamp be DateTime.MaxValue to use default ("now").</param>
+        /// <param name="chunkSize">Number of timeseries per request</param>
+        /// <param name="throttleSize">Maximum number of parallel requests</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Dictionary from externalId to last timestamp, only contains existing timeseries</returns>
+        public static async Task<IDictionary<Identity, DateTime>> GetLatestTimestamps(
+            this DataPointsResource dataPoints,
+            IEnumerable<(Identity id, DateTime before)> ids,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var comparer = new IdentityComparer();
+            var ret = new ConcurrentDictionary<Identity, DateTime>(comparer);
+            var idSet = new HashSet<Identity>(ids.Select(id => id.id), comparer);
+
+            var chunks = ids
+                .Select((pair) =>
+                {
+                    var id = pair.id;
+                    IdentityWithBefore idt = id.ExternalId == null ? IdentityWithBefore.Create(id.Id.Value) : IdentityWithBefore.Create(id.ExternalId);
+                    if (pair.before != DateTime.MaxValue)
+                    {
+                        idt.Before = pair.before.ToUnixTimeMilliseconds().ToString();
+                    }
+                    return idt;
+                })
+                .ChunkBy(chunkSize);
+
+            var generators = chunks.Select<IEnumerable<IdentityWithBefore>, Func<Task>>(
+                chunk => async () =>
+                {
+                    var dps = await dataPoints.LatestAsync(
+                        new DataPointsLatestQuery
+                        {
+                            IgnoreUnknownIds = true,
+                            Items = chunk
+                        }, token);
+                    foreach (var dp in dps)
+                    {
+                        if (dp.DataPoints.Any())
+                        {
+                            Identity id;
+                            if (dp.ExternalId != null)
+                            {
+                                id = new Identity(dp.ExternalId);
+                                if (!idSet.Contains(id))
+                                {
+                                    id = new Identity(dp.Id);
+                                }
+                            }
+                            else
+                            {
+                                id = new Identity(dp.Id);
+                            }
+                            ret[id] = CogniteTime.FromUnixTimeMilliseconds(dp.DataPoints.First().Timestamp);
+                        }
+                    }
+                });
+            await generators.RunThrottled(throttleSize, token);
+            return ret;
+        }
+
+        /// <summary>
+        /// Get the first timestamp for each time series given in <paramref name="ids"/> after each given timestamp.
+        /// Ignores timeseries not in CDF. The return dictionary contains only ids that exist in CDF.
+        /// </summary>
+        /// <param name="dataPoints">DataPointsResource to use</param>
+        /// <param name="ids">ExternalIds and last timestamp. Let last timestamp be Epoch to use default.</param>
+        /// <param name="chunkSize">Number of timeseries per request</param>
+        /// <param name="throttleSize">Maximum number of parallel requests</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Dictionary from externalId to first timestamp, only contains existing timeseries</returns>
+        public static async Task<IDictionary<Identity, DateTime>> GetEarliestTimestamps(
+            this DataPointsResource dataPoints,
+            IEnumerable<(Identity id, DateTime after)> ids,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var comparer = new IdentityComparer();
+            var ret = new ConcurrentDictionary<Identity, DateTime>(comparer);
+
+            var idSet = new HashSet<Identity>(ids.Select(id => id.id), comparer);
+
+            var chunks = ids
+                .Select((pair) =>
+                {
+                    var query = new DataPointsQueryItem();
+                    if (pair.id.Id.HasValue)
+                    {
+                        query.Id = pair.id.Id.Value;
+                    }
+                    else
+                    {
+                        query.ExternalId = pair.id.ExternalId;
+                    }
+                    if (pair.after > CogniteTime.DateTimeEpoch)
+                    {
+                        query.Start = pair.after.ToUnixTimeMilliseconds().ToString();
+                    }
+                    return query;
+                })
+                .ChunkBy(chunkSize);
+
+            var generators = chunks.Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
+                chunk => async () =>
+                {
+                    var dps = await dataPoints.ListAsync(
+                        new DataPointsQuery
+                        {
+                            IgnoreUnknownIds = true,
+                            Items = chunk,
+                            Limit = 1
+                        }, token);
+                    foreach (var dp in dps.Items)
+                    {
+                        Identity id;
+                        if (dp.ExternalId != null)
+                        {
+                            id = new Identity(dp.ExternalId);
+                            if (!idSet.Contains(id))
+                            {
+                                id = new Identity(dp.Id);
+                            }
+                        }
+                        else
+                        {
+                            id = new Identity(dp.Id);
+                        }
+                        if (dp.DatapointTypeCase == DataPointListItem.DatapointTypeOneofCase.NumericDatapoints
+                            && dp.NumericDatapoints.Datapoints.Any())
+                        {
+                            ret[id] = CogniteTime.FromUnixTimeMilliseconds(dp.NumericDatapoints.Datapoints.First().Timestamp);
+                        }
+                        else if (dp.DatapointTypeCase == DataPointListItem.DatapointTypeOneofCase.StringDatapoints
+                            && dp.StringDatapoints.Datapoints.Any())
+                        {
+                            ret[id] = CogniteTime.FromUnixTimeMilliseconds(dp.StringDatapoints.Datapoints.First().Timestamp);
+                        }
+                    }
+                });
+            await generators.RunThrottled(throttleSize, token);
+            return ret;
+        }
+        /// <summary>
+        /// Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+        /// Note that end limits closer to actual endpoints in CDF is considerably faster.
+        /// </summary>
+        /// <param name="dataPoints">DataPointsResource to use</param>
+        /// <param name="ids">ExternalIds and start/end of region to look for datapoints.
+        /// Use TimeRange.Complete for first after epoch, and last before now.</param>
+        /// <param name="chunkSizeEarliest">Number of timeseries to read for each earliest request</param>
+        /// <param name="chunkSizeLatest">Number of timeseries to read for each latest request</param>
+        /// <param name="throttleSize">Max number of parallel requests</param>
+        /// <param name="latest">If true, fetch latest timestamps</param>
+        /// <param name="earliest">If true, fetch earliest timestamps</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
+            this DataPointsResource dataPoints,
+            IEnumerable<(Identity id, TimeRange limit)> ids,
+            int chunkSizeEarliest,
+            int chunkSizeLatest,
+            int throttleSize,
+            bool latest,
+            bool earliest,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Getting extracted ranges for {num} timeseries", ids.Count());
+            var comparer = new IdentityComparer();
+
+            var ranges = ids.ToDictionary(pair => pair.id, pair => TimeRange.Empty, comparer);
+            var tasks = new List<Task<IDictionary<Identity, DateTime>>>();
+            if (latest)
+            {
+                tasks.Add(dataPoints.GetLatestTimestamps(ids.Select(pair => (pair.id, pair.limit?.Last ?? DateTime.MaxValue)),
+                    chunkSizeLatest, throttleSize, token));
+            }
+            if (earliest)
+            {
+                tasks.Add(dataPoints.GetEarliestTimestamps(ids.Select(pair => (pair.id, pair.limit?.First ?? CogniteTime.DateTimeEpoch)),
+                    chunkSizeEarliest, throttleSize, token));
+            }
+            var results = await Task.WhenAll(tasks);
+            if (latest)
+            {
+                var latestResult = results[0];
+                foreach (var id in ids)
+                {
+                    if (latestResult.TryGetValue(id.id, out DateTime ts))
+                    {
+                        ranges[id.id] = new TimeRange(CogniteTime.DateTimeEpoch, ts);
+                    }
+                }
+            }
+            if (earliest)
+            {
+                var earliestResult = results[latest ? 1 : 0];
+                foreach (var id in ids)
+                {
+                    if (earliestResult.TryGetValue(id.id, out DateTime ts))
+                    {
+                        ranges[id.id] = new TimeRange(ts, ranges[id.id].Last);
+                    }
+                }
+            }
+            return ranges;
         }
     }
 }
