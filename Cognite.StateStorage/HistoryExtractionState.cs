@@ -170,7 +170,7 @@ namespace Cognite.Extractor.StateStorage
         /// </summary>
         /// <param name="first">Earliest timestamp in successful push to destination(s)</param>
         /// <param name="last">Latest timestamp in successful push to destination(s)</param>
-        public virtual void UpdateDestinationRange(DateTime first, DateTime last)
+        public override void UpdateDestinationRange(DateTime first, DateTime last)
         {
             if (!Initialized) throw new InvalidOperationException("Extracted state must not be updated before it is initialized");
             lock (_mutex)

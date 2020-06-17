@@ -5,8 +5,10 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Common;
+using Cognite.Extractor.Common;
 using CogniteSdk;
 using Microsoft.Extensions.Logging;
+using TimeRange = Cognite.Extractor.Common.TimeRange;
 
 namespace Cognite.Extractor.Utils
 {

@@ -67,5 +67,19 @@ namespace Cognite.Extractor.StateStorage
                 Initialized = true;
             }
         }
+
+        /// <summary>
+        /// Update the state with first and last points successfully pushed to destination(s).
+        /// </summary>
+        /// <param name="first">Earliest timestamp in successful push to destination(s)</param>
+        /// <param name="last">Latest timestamp in successful push to destination(s)</param>
+        public virtual void UpdateDestinationRange(DateTime first, DateTime last)
+        {
+            if (!Initialized) throw new InvalidOperationException("Extracted state not initialized");
+            lock (_mutex)
+            {
+                DestinationExtractedRange = DestinationExtractedRange.Extend(first, last);
+            }
+        }
     }
 }

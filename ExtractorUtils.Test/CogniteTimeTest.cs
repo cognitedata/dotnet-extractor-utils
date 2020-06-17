@@ -161,5 +161,18 @@ namespace ExtractorUtils.Test
             var r4 = r2.Contract(new TimeRange(d2, d3));
             Assert.Equal(new TimeRange(d2, d3), r4);
         }
+        [Fact]
+        public static void TestSmallExtendContract()
+        {
+            var r1 = new TimeRange(DateTime.UtcNow, DateTime.UtcNow);
+            Assert.Equal(r1, r1);
+            var r2 = r1.Extend(r1.First - TimeSpan.FromTicks(1), r1.Last + TimeSpan.FromTicks(1));
+            Assert.NotEqual(r1, r2);
+            var r3 = new TimeRange(r1.First - TimeSpan.FromTicks(1), r1.Last + TimeSpan.FromTicks(1));
+            Assert.Equal(r3, r2);
+
+            var r4 = r2.Contract(r1);
+            Assert.Equal(r1, r4);
+        }
     }
 }

@@ -68,7 +68,7 @@ namespace Cognite.Extractor.StateStorage
         public Task RestoreExtractionState<K>(
             IDictionary<string, K> extractionStates,
             string tableName,
-            CancellationToken token) where K : HistoryExtractionState
+            CancellationToken token) where K : BaseExtractionState
         {
             return RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
             {
@@ -115,7 +115,7 @@ namespace Cognite.Extractor.StateStorage
             }
         }
 
-        public Task StoreExtractionState<K>(IEnumerable<K> extractionStates, string tableName, CancellationToken token) where K : HistoryExtractionState
+        public Task StoreExtractionState<K>(IEnumerable<K> extractionStates, string tableName, CancellationToken token) where K : BaseExtractionState
         {
             return StoreExtractionState(extractionStates, tableName, state =>
                 new BaseExtractionStatePoco
