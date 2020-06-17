@@ -550,11 +550,7 @@ namespace ExtractorUtils.Test
 
             if (uri.Contains("/assets/byids"))
             {
-                dynamic missingData = new ExpandoObject();
-                missingData.error = new ExpandoObject();
-                missingData.error.code = 400;
-                missingData.error.message = "Ids not found";
-                missingData.error.missing = new List<ExpandoObject>();
+                Assert.True((bool)ids.ignoreUnknownIds);
 
                 dynamic result = new ExpandoObject();
                 result.items = new List<ExpandoObject>();
@@ -563,30 +559,15 @@ namespace ExtractorUtils.Test
                 {
                     string id = item.externalId;
                     var ensured = _ensuredAssets.TryGetValue(id, out int countdown) && countdown <= 0;
-                    if (!ensured && !id.StartsWith("id"))
-                    {
-                        dynamic missingId = new ExpandoObject();
-                        missingId.externalId = id;
-                        missingData.error.missing.Add(missingId);
-                    }
-                    else
+                    if (ensured || id.StartsWith("id"))
                     {
                         dynamic assetData = new ExpandoObject();
                         assetData.externalId = id;
                         result.items.Add(assetData);
                         _ensuredAssets.TryAdd(id, 0);
                     }
-
                 }
-                if (missingData.error.missing.Count > 0)
-                {
-                    responseBody = JsonConvert.SerializeObject(missingData);
-                    statusCode = HttpStatusCode.BadRequest;
-                }
-                else
-                {
-                    responseBody = JsonConvert.SerializeObject(result);
-                }
+                responseBody = JsonConvert.SerializeObject(result);
             }
             else
             {

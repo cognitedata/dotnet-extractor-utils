@@ -172,7 +172,7 @@ namespace Cognite.Extractor.Utils
             var missing = new HashSet<string>();
             try
             {
-                var existingTs = await client.TimeSeries.RetrieveAsync(externalIds.Select(id => new Identity(id)), token);
+                var existingTs = await client.TimeSeries.RetrieveAsync(externalIds.Select(id => new Identity(id)), false, token);
                 _logger.LogDebug("Retrieved {Existing} times series from CDF", existingTs.Count());
                 return existingTs;
             }
@@ -265,7 +265,7 @@ namespace Cognite.Extractor.Utils
             var missing = new HashSet<Identity>(comparer);
             try
             {
-                var existingTs = await tsClient.RetrieveAsync(ids, token);
+                var existingTs = await tsClient.RetrieveAsync(ids, false, token);
                 _logger.LogDebug("Retrieved {Existing} times series from CDF", existingTs.Count());
                 return existingTs;
             }
