@@ -104,7 +104,7 @@ namespace Cognite.Extractor.StateStorage
                 StateStoreMetrics.StateStoreCount.Inc();
                 StateStoreMetrics.StateStoreStates.Inc(pocosToStore.Count);
 
-                _logger.LogDebug("Saved {Stored} out of {TotalNumber} extraction states to litedb store {store}.",
+                _logger.LogDebug("Saved {Stored} out of {TotalNumber} extraction states to raw table {store}.",
                     pocosToStore.Count, extractionStates.Count(), tableName);
                 _lastTimeStored = storageTime;
 
@@ -137,7 +137,7 @@ namespace Cognite.Extractor.StateStorage
                 await _destination.DeleteRowsAsync(_dbName, tableName, idsToDelete, token);
                 _logger.LogDebug("Removed {NumDeleted} entries from store {store}", idsToDelete.Count, tableName);
             }
-            catch (LiteException e)
+            catch (Exception e)
             {
                 _logger.LogWarning(e, "Failed to delete extraction state from store {store}: {Message}", e.Message, tableName);
             }
