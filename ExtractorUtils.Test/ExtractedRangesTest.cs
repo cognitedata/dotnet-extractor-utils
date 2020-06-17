@@ -15,6 +15,8 @@ using System.IO;
 using Google.Protobuf;
 using Microsoft.Extensions.DependencyInjection;
 using Cognite.Extractor.Logging;
+using System.Linq;
+using CogniteSdk;
 
 namespace ExtractorUtils.Test
 {
@@ -62,13 +64,15 @@ namespace ExtractorUtils.Test
             _mockedRanges["test3"] = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
             _mockedRanges["test4"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2020, 01, 01));
 
-            var ranges = await cogniteDestination.GetExtractedRanges(new[] { "test1", "test2", "test3", "test4", "test5" }, CancellationToken.None);
+            var ids = new[] { "test1", "test2", "test3", "test4", "test5" }.Select(Identity.Create).ToArray();
 
-            Assert.Equal(_mockedRanges["test1"], ranges["test1"]);
-            Assert.Equal(_mockedRanges["test2"], ranges["test2"]);
-            Assert.Equal(_mockedRanges["test3"], ranges["test3"]);
-            Assert.Equal(_mockedRanges["test4"], ranges["test4"]);
-            Assert.Equal(TimeRange.Empty, ranges["test5"]);
+            var ranges = await cogniteDestination.GetExtractedRanges(ids, CancellationToken.None);
+
+            Assert.Equal(_mockedRanges["test1"], ranges[ids[0]]);
+            Assert.Equal(_mockedRanges["test2"], ranges[ids[1]]);
+            Assert.Equal(_mockedRanges["test3"], ranges[ids[2]]);
+            Assert.Equal(_mockedRanges["test4"], ranges[ids[3]]);
+            Assert.Equal(TimeRange.Empty, ranges[ids[4]]);
         }
 
         private class MockIdentityWithBefore

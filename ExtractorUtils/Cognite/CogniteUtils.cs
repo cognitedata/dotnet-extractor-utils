@@ -236,7 +236,7 @@ namespace Cognite.Extractor.Utils
             {
                 return obj.Id.Value.GetHashCode();
             }
-            if (obj.ExternalId.TrimToNull() == null)
+            if (string.IsNullOrWhiteSpace(obj.ExternalId))
             {
                 return 0;
             }

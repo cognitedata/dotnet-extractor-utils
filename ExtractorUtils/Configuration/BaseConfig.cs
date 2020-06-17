@@ -210,11 +210,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Maximum number of timeseries to check for each request to get latest datapoint
         /// </summary>
-        public int Latest { get; set; } = 1_000;
-        /// <summary>
-        /// Maximum number of timeseries to check for each request to get earliest datapoint
-        /// </summary>
-        public int Earliest { get; set; } = 10_000;
+        public int DataPointLatest { get; set; } = 100;
     }
 
     /// <summary>

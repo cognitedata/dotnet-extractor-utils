@@ -335,8 +335,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="earliest">If true, fetch earliest timestamps, default true</param>
         /// <param name="latest">If true, fetch latest timestamps, default true</param>
         /// <returns></returns>
-        public Task<IDictionary<string, TimeRange>> GetExtractedRanges(
-            IEnumerable<string> ids,
+        public Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
+            IEnumerable<Identity> ids,
             CancellationToken token,
             bool earliest = true,
             bool latest = true
@@ -345,8 +345,8 @@ namespace Cognite.Extractor.Utils
             // TODO: Replace with TimeRange.Complete once StateStorage is merged
             return _client.DataPoints.GetExtractedRanges(
                 ids.Select(id => (id, new TimeRange(CogniteTime.DateTimeEpoch, DateTime.MaxValue))).ToList(),
-                _config.CdfChunking.Earliest,
-                _config.CdfChunking.Latest,
+                _config.CdfChunking.DataPointList,
+                _config.CdfChunking.DataPointLatest,
                 _config.CdfThrottling.Ranges,
                 latest,
                 earliest,
@@ -364,8 +364,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="earliest">If true, fetch earliest timestamps, default true</param>
         /// <param name="latest">If true, fetch latest timestamps, default true</param>
         /// <returns></returns>
-        public Task<IDictionary<string, TimeRange>> GetExtractedRanges(
-            IEnumerable<(string id, TimeRange limit)> ids,
+        public Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
+            IEnumerable<(Identity id, TimeRange limit)> ids,
             CancellationToken token,
             bool earliest = true,
             bool latest = true
@@ -373,8 +373,8 @@ namespace Cognite.Extractor.Utils
         {
             return _client.DataPoints.GetExtractedRanges(
                 ids,
-                _config.CdfChunking.Earliest,
-                _config.CdfChunking.Latest,
+                _config.CdfChunking.DataPointList,
+                _config.CdfChunking.DataPointLatest,
                 _config.CdfThrottling.Ranges,
                 latest,
                 earliest,

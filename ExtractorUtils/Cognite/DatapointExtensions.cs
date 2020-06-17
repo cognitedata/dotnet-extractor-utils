@@ -477,19 +477,22 @@ namespace Cognite.Extractor.Utils
         /// <param name="throttleSize">Maximum number of parallel requests</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Dictionary from externalId to last timestamp, only contains existing timeseries</returns>
-        public static async Task<IDictionary<string, DateTime>> GetLatestTimestamps(
+        public static async Task<IDictionary<Identity, DateTime>> GetLatestTimestamps(
             this DataPointsResource dataPoints,
-            IEnumerable<(string id, DateTime before)> ids,
+            IEnumerable<(Identity id, DateTime before)> ids,
             int chunkSize,
             int throttleSize,
             CancellationToken token)
         {
-            var ret = new ConcurrentDictionary<string, DateTime>();
+            var comparer = new IdentityComparer();
+            var ret = new ConcurrentDictionary<Identity, DateTime>(comparer);
+            var idSet = new HashSet<Identity>(ids.Select(id => id.id), comparer);
 
             var chunks = ids
                 .Select((pair) =>
                 {
-                    var idt = IdentityWithBefore.Create(pair.id);
+                    var id = pair.id;
+                    IdentityWithBefore idt = id.ExternalId == null ? IdentityWithBefore.Create(id.Id.Value) : IdentityWithBefore.Create(id.ExternalId);
                     if (pair.before != DateTime.MaxValue)
                     {
                         idt.Before = pair.before.ToUnixTimeMilliseconds().ToString();
@@ -511,7 +514,20 @@ namespace Cognite.Extractor.Utils
                     {
                         if (dp.DataPoints.Any())
                         {
-                            ret[dp.ExternalId] = CogniteTime.FromUnixTimeMilliseconds(dp.DataPoints.First().Timestamp);
+                            Identity id;
+                            if (dp.ExternalId != null)
+                            {
+                                id = new Identity(dp.ExternalId);
+                                if (!idSet.Contains(id))
+                                {
+                                    id = new Identity(dp.Id);
+                                }
+                            }
+                            else
+                            {
+                                id = new Identity(dp.Id);
+                            }
+                            ret[id] = CogniteTime.FromUnixTimeMilliseconds(dp.DataPoints.First().Timestamp);
                         }
                     }
                 });
@@ -529,22 +545,30 @@ namespace Cognite.Extractor.Utils
         /// <param name="throttleSize">Maximum number of parallel requests</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Dictionary from externalId to first timestamp, only contains existing timeseries</returns>
-        public static async Task<IDictionary<string, DateTime>> GetEarliestTimestamps(
+        public static async Task<IDictionary<Identity, DateTime>> GetEarliestTimestamps(
             this DataPointsResource dataPoints,
-            IEnumerable<(string id, DateTime after)> ids,
+            IEnumerable<(Identity id, DateTime after)> ids,
             int chunkSize,
             int throttleSize,
             CancellationToken token)
         {
-            var ret = new ConcurrentDictionary<string, DateTime>();
+            var comparer = new IdentityComparer();
+            var ret = new ConcurrentDictionary<Identity, DateTime>(comparer);
+
+            var idSet = new HashSet<Identity>(ids.Select(id => id.id), comparer);
 
             var chunks = ids
                 .Select((pair) =>
                 {
-                    var query = new DataPointsQueryItem
+                    var query = new DataPointsQueryItem();
+                    if (pair.id.Id.HasValue)
                     {
-                        ExternalId = pair.id
-                    };
+                        query.Id = pair.id.Id.Value;
+                    }
+                    else
+                    {
+                        query.ExternalId = pair.id.ExternalId;
+                    }
                     if (pair.after > CogniteTime.DateTimeEpoch)
                     {
                         query.Start = pair.after.ToUnixTimeMilliseconds().ToString();
@@ -565,15 +589,28 @@ namespace Cognite.Extractor.Utils
                         }, token);
                     foreach (var dp in dps.Items)
                     {
+                        Identity id;
+                        if (dp.ExternalId != null)
+                        {
+                            id = new Identity(dp.ExternalId);
+                            if (!idSet.Contains(id))
+                            {
+                                id = new Identity(dp.Id);
+                            }
+                        }
+                        else
+                        {
+                            id = new Identity(dp.Id);
+                        }
                         if (dp.DatapointTypeCase == DataPointListItem.DatapointTypeOneofCase.NumericDatapoints
                             && dp.NumericDatapoints.Datapoints.Any())
                         {
-                            ret[dp.ExternalId] = CogniteTime.FromUnixTimeMilliseconds(dp.NumericDatapoints.Datapoints.First().Timestamp);
+                            ret[id] = CogniteTime.FromUnixTimeMilliseconds(dp.NumericDatapoints.Datapoints.First().Timestamp);
                         }
                         else if (dp.DatapointTypeCase == DataPointListItem.DatapointTypeOneofCase.StringDatapoints
                             && dp.StringDatapoints.Datapoints.Any())
                         {
-                            ret[dp.ExternalId] = CogniteTime.FromUnixTimeMilliseconds(dp.StringDatapoints.Datapoints.First().Timestamp);
+                            ret[id] = CogniteTime.FromUnixTimeMilliseconds(dp.StringDatapoints.Datapoints.First().Timestamp);
                         }
                     }
                 });
@@ -594,9 +631,9 @@ namespace Cognite.Extractor.Utils
         /// <param name="earliest">If true, fetch earliest timestamps</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IDictionary<string, TimeRange>> GetExtractedRanges(
+        public static async Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
             this DataPointsResource dataPoints,
-            IEnumerable<(string id, TimeRange limit)> ids,
+            IEnumerable<(Identity id, TimeRange limit)> ids,
             int chunkSizeEarliest,
             int chunkSizeLatest,
             int throttleSize,
@@ -605,9 +642,10 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogDebug("Getting extracted ranges for {num} timeseries", ids.Count());
+            var comparer = new IdentityComparer();
 
-            var ranges = ids.ToDictionary(pair => pair.id, pair => TimeRange.Empty);
-            var tasks = new List<Task<IDictionary<string, DateTime>>>();
+            var ranges = ids.ToDictionary(pair => pair.id, pair => TimeRange.Empty, comparer);
+            var tasks = new List<Task<IDictionary<Identity, DateTime>>>();
             if (latest)
             {
                 tasks.Add(dataPoints.GetLatestTimestamps(ids.Select(pair => (pair.id, pair.limit?.Last ?? DateTime.MaxValue)),
