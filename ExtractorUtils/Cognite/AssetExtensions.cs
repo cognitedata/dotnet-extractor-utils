@@ -125,7 +125,7 @@ namespace Cognite.Extractor.Utils
                 (_) => {
                     if (chunks.Count() > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(GetOrCreateAssetsAsync), ++taskNum, chunks.Count());
+                            nameof(EnsureAssetsExistsAsync), ++taskNum, chunks.Count());
                 },
                 token);
         }
