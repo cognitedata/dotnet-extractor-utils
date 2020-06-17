@@ -189,6 +189,110 @@ namespace ExtractorUtils.Test
             await stateStore.DeleteExtractionState(states, "othertable", CancellationToken.None);
         }
 
+        [Theory]
+        [InlineData(StateStoreConfig.StorageType.LiteDb)]
+        [InlineData(StateStoreConfig.StorageType.Raw)]
+        public async Task TestBaseStateStorage(StateStoreConfig.StorageType type)
+        {
+            string path = "test-state-storage-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: {_apiKey}",
+                               $"  host: {_host}",
+                                "  cdf-chunking:",
+                                "    raw-rows: 4",
+                                "  cdf-throttling:",
+                                "    raw: 2",
+                                "state-store:",
+                                $"  location: {(type == StateStoreConfig.StorageType.LiteDb ? "test.db" : _dbName)}",
+                                $"  database: {type}"};
+            File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockRawRequestAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            // Setup services
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddSingleton(loggerConf);
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddCogniteClient("testApp");
+            services.AddStateStore();
+            File.Delete("test.db");
+
+            using var provider = services.BuildServiceProvider();
+            var stateStore = provider.GetRequiredService<IExtractionStateStore>();
+
+            var now = DateTime.UtcNow;
+
+            var state1 = new BaseExtractionState("test0");
+            var state2 = new BaseExtractionState("test1");
+            var state3 = new BaseExtractionState("test2");
+            var state4 = new BaseExtractionState("test3");
+
+            var states = new[] { state1, state2, state3, state4 };
+
+            foreach (var state in states) {
+                state.InitExtractedRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
+                Assert.Throws<InvalidOperationException>(() => state.InitExtractedRange(new DateTime(1990, 01, 01), new DateTime(2020, 01, 01)));
+                state.UpdateDestinationRange(new DateTime(2005, 01, 01), new DateTime(2020, 01, 01));
+                Assert.Equal(new DateTime(2000, 01, 01), state.DestinationExtractedRange.First);
+                Assert.Equal(new DateTime(2020, 01, 01), state.DestinationExtractedRange.Last);
+            }
+
+            foreach (var state in states)
+            {
+                Assert.NotNull(state.LastTimeModified);
+                Assert.True(state.LastTimeModified > now);
+            }
+
+            await stateStore.StoreExtractionState(states, _tableName, CancellationToken.None);
+
+            state1 = new BaseExtractionState("test0");
+            state2 = new BaseExtractionState("test1");
+            state3 = new BaseExtractionState("test2");
+            state4 = new BaseExtractionState("test3");
+
+            states = new[] { state1, state2, state3, state4 };
+
+            var stateDict = states.ToDictionary(state => state.Id);
+
+            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+
+            foreach (var state in states)
+            {
+                Assert.Throws<InvalidOperationException>(() => state.InitExtractedRange(new DateTime(1990, 01, 01), new DateTime(2020, 01, 01)));
+                state.UpdateDestinationRange(new DateTime(2005, 01, 01), new DateTime(2020, 01, 01));
+                Assert.Equal(new DateTime(2000, 01, 01), state.DestinationExtractedRange.First);
+                Assert.Equal(new DateTime(2020, 01, 01), state.DestinationExtractedRange.Last);
+            }
+
+            await stateStore.DeleteExtractionState(states, _tableName, CancellationToken.None);
+
+            state1 = new BaseExtractionState("test0");
+            state2 = new BaseExtractionState("test1");
+            state3 = new BaseExtractionState("test2");
+            state4 = new BaseExtractionState("test3");
+
+            states = new[] { state1, state2, state3, state4 };
+
+            stateDict = states.ToDictionary(state => state.Id);
+
+            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+
+            foreach (var state in states)
+            {
+                Assert.Equal(TimeRange.Empty, state.DestinationExtractedRange);
+            }
+            await stateStore.DeleteExtractionState(states, "othertable", CancellationToken.None);
+        }
+
         private class ExpandedStatePoco : BaseExtractionStatePoco
         {
             public string TestAuto { get; set; }
