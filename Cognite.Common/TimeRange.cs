@@ -81,18 +81,19 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Return a new TimeRange extended by the given timestamps.
         /// New TimeRange is the earliest start point and the latest end point.
+        /// Letting first or last be null will keep the existing value for that end of the range.
         /// </summary>
         /// <param name="first">First point in extending range</param>
         /// <param name="last">Last point in extending range</param>
         /// <returns></returns>
-        public TimeRange Extend(DateTime first, DateTime last)
+        public TimeRange Extend(DateTime? first, DateTime? last)
         {
-            if (first >= First)
+            if (!first.HasValue || first >= First)
                 first = First;
-            if (last <= Last)
+            if (!last.HasValue || last <= Last)
                 last = Last;
             if (first != First || last != Last)
-                return new TimeRange(first, last);
+                return new TimeRange(first.Value, last.Value);
             return this;
         }
         /// <summary>
@@ -108,18 +109,19 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Return a new TimeRange contracted by the given timestamps.
         /// New TimeRange is the latest start point and earliest end point.
+        /// Letting first or last be null will keep the existing value for that end of the range.
         /// </summary>
         /// <param name="first">First point in contracting range</param>
         /// <param name="last">Last point in contracting range</param>
         /// <returns></returns>
-        public TimeRange Contract(DateTime first, DateTime last)
+        public TimeRange Contract(DateTime? first, DateTime? last)
         {
-            if (first <= First)
+            if (!first.HasValue || first <= First)
                 first = First;
-            if (last >= Last)
+            if (!last.HasValue || last >= Last)
                 last = Last;
             if (first != First || last != Last)
-                return new TimeRange(first, last);
+                return new TimeRange(first.Value, last.Value);
             return this;
         }
         /// <summary>
