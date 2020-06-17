@@ -383,5 +383,79 @@ namespace Cognite.Extractor.Utils
 
 
         #endregion
+
+        #region events
+        /// <summary>
+        /// Ensures the the events with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildEvents"/> function to construct
+        /// the missing event objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF 
+        /// </summary>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildEvents">Function that builds <see cref="EventCreate"/> objects</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Event>> GetOrCreateEventsAsync(
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Getting or creating {Number} events in CDF", externalIds.Count());
+            return await _client.Events.GetOrCreateEventsAsync(
+                externalIds,
+                buildEvents,
+                _config.CdfChunking.Events,
+                _config.CdfThrottling.Events,
+                token);
+        }
+        /// <summary>
+        /// Ensures the the events with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildEvents"/> function to construct
+        /// the missing event objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF 
+        /// </summary>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildEvents">Async function that builds <see cref="EventCreate"/> objects</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Event>> GetOrCreateEventsAsync(
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Getting or creating {Number} events in CDF", externalIds.Count());
+            return await _client.Events.GetOrCreateEventsAsync(
+                externalIds,
+                buildEvents,
+                _config.CdfChunking.Events,
+                _config.CdfThrottling.Events,
+                token);
+        }
+
+        /// <summary>
+        /// Ensures that all events in <paramref name="events"/> exist in CDF.
+        /// Tries to create the events and returns when all are created or reported as 
+        /// duplicates (already exist in CDF)
+        /// </summary>
+        /// <param name="events">List of <see cref="EventCreate"/> objects</param>
+        /// <param name="failOnError">Throw if an error other than duplicate events in CDF occurs.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public async Task EnsureEventsExistsAsync(
+            IEnumerable<EventCreate> events,
+            bool failOnError,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Ensuring that {Number} events exist in CDF", events.Count());
+            await _client.Events.EnsureEventsExistsAsync(
+                events,
+                _config.CdfChunking.Events,
+                _config.CdfThrottling.Events,
+                failOnError,
+                token);
+        }
+        #endregion
     }
 }
