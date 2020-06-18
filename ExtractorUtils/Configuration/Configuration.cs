@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
+using Cognite.Extractor.StateStorage;
 
 namespace Cognite.Extractor.Utils
 {
@@ -21,19 +22,18 @@ namespace Cognite.Extractor.Utils
         /// <param name="services">The service collection</param>
         /// <param name="path">Path to the file</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
-        /// <typeparam name="T">A type that inherits from <see cref="BaseConfig"/></typeparam>
+        /// <typeparam name="T">A type that inherits from <see cref="VersionedConfig"/></typeparam>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error</exception>
-        public static void AddConfig<T>(this IServiceCollection services,
+        /// <returns>An instance of the configuration object</returns>
+        public static T AddConfig<T>(this IServiceCollection services,
                                         string path,
-                                        params int[] acceptedConfigVersions) where T : BaseConfig 
+                                        params int[] acceptedConfigVersions) where T : VersionedConfig 
         {
             var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
-            services.AddSingleton(config.Cognite);
-            services.AddSingleton(config.Logger);
-            services.AddSingleton(config.Metrics);
-            services.AddSingleton(config.StateStore);
+            services.AddConfig<T>(config, typeof(CogniteConfig), typeof(LoggerConfig), typeof(MetricsConfig), typeof(StateStoreConfig));
+            return config;
         }
     }
 
