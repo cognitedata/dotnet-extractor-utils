@@ -1,6 +1,9 @@
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
@@ -169,6 +172,34 @@ namespace Cognite.Extractor.Configuration
                 throw new ConfigurationException("The value of the 'version' tag should be integer");
             }
             throw new ConfigurationException("The yaml configuration file should contain a 'version' tag");
+        }
+        /// <summary>
+        /// Attempt to add the list of config-object types to the <see cref="ServiceCollection"/>, it looks at
+        /// the public properties of <typeparamref name="T"/>.
+        /// Applies to subtypes of the types given in <paramref name="types"/>. Having multiple candidates
+        /// for a type can be unpredictable.
+        /// </summary>
+        /// <typeparam name="T">Configuration object type</typeparam>
+        /// <param name="services">Services to add to</param>
+        /// <param name="config">Configuration object to add from</param>
+        /// <param name="types">List of types that should be added</param>
+        public static void AddConfig<T>(this IServiceCollection services, T config, params Type[] types)
+        {
+            if (!types.Any()) return;
+            foreach (var prop in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                if (!prop.CanRead) continue;
+                foreach (var type in types)
+                {
+                    if (type.IsAssignableFrom(prop.PropertyType))
+                    {
+                        var value = prop.GetValue(config);
+                        if (value is null) break;
+                        services.AddSingleton(type, value);
+                        break;
+                    }
+                }
+            }
         }
     }
 

@@ -6,6 +6,7 @@ using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
+using Cognite.Extractor.StateStorage;
 
 namespace ExtractorUtils.Test
 {
@@ -214,6 +215,65 @@ namespace ExtractorUtils.Test
             File.Delete(path1);
             File.Delete(path2);
             File.Delete(path3);
+        }
+
+        public class ExtendedCogniteConfig : CogniteConfig
+        {
+            public int DataSetId { get; set; }
+        }
+
+        public class CustomConfig
+        {
+            public string SomeValue { get; set; }
+        }
+
+        public class ExtendedConfig : VersionedConfig
+        {
+            public LoggerConfig Logger { get; set; }
+
+            public ExtendedCogniteConfig Cognite { get; set; }
+
+            public StateStoreConfig StateStore { get; set; }
+
+            public CustomConfig CustomConfig { get; set; }
+            public override void GenerateDefaults()
+            {
+                Logger = new LoggerConfig();
+            }
+        }
+
+        [Fact]
+        public static void TestExtendedConfiguration()
+        {
+            string path = "test-custom-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                                "  data-set-id: 123",
+                                "custom-config:",
+                                "  some-value: value" };
+            var services = new ServiceCollection();
+
+            File.WriteAllLines(path, lines);
+
+            var config = services.AddConfig<ExtendedConfig>(path, 2);
+            services.AddConfig(config, typeof(CustomConfig));
+            using var provider = services.BuildServiceProvider();
+
+            var cogniteConfig = provider.GetRequiredService<CogniteConfig>();
+            var loggerConfig = provider.GetRequiredService<LoggerConfig>();
+            var customConfig = provider.GetRequiredService<CustomConfig>();
+
+            Assert.NotNull(cogniteConfig);
+            Assert.NotNull(loggerConfig);
+            Assert.NotNull(customConfig);
+            Assert.Equal(123, (cogniteConfig as ExtendedCogniteConfig).DataSetId);
+            Assert.Equal("value", customConfig.SomeValue);
+
+            File.Delete(path);
+
         }
     }
 }
