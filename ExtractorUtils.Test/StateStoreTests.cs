@@ -291,6 +291,76 @@ namespace ExtractorUtils.Test
             await stateStore.DeleteExtractionState(states, "othertable", CancellationToken.None);
         }
 
+        [Theory]
+        [InlineData(StateStoreConfig.StorageType.LiteDb)]
+        [InlineData(StateStoreConfig.StorageType.Raw)]
+        public async Task TestDuplicateIds(StateStoreConfig.StorageType type)
+        {
+            // In response to an issue causing duplicate ids if storing multiple times in litedb
+            string path = "test-store-duplicates-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: {_apiKey}",
+                               $"  host: {_host}",
+                                "  cdf-chunking:",
+                                "    raw-rows: 4",
+                                "  cdf-throttling:",
+                                "    raw: 2",
+                                "state-store:",
+                                $"  location: {(type == StateStoreConfig.StorageType.LiteDb ? "test.db" : _dbName)}",
+                                $"  database: {type}"};
+            File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockRawRequestAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            // Setup services
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddSingleton(loggerConf);
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddCogniteClient("testApp");
+            services.AddStateStore();
+            File.Delete("test.db");
+
+            var state = new BaseExtractionState("test");
+
+            using var provider = services.BuildServiceProvider();
+            var stateStore = provider.GetRequiredService<IExtractionStateStore>();
+
+            state.InitExtractedRange(new DateTime(2020, 01, 01), new DateTime(2020, 01, 01));
+            state.UpdateDestinationRange(new DateTime(2019, 01, 01), new DateTime(2021, 01, 01));
+
+            await stateStore.StoreExtractionState(new[] { state }, _tableName, CancellationToken.None);
+
+            state.UpdateDestinationRange(new DateTime(2015, 01, 01), new DateTime(2025, 01, 01));
+
+            await stateStore.StoreExtractionState(new[] { state }, _tableName, CancellationToken.None);
+
+            int count = 0;
+
+            state = new BaseExtractionState("test");
+
+            await stateStore.RestoreExtractionState<BaseExtractionStatePoco, BaseExtractionState>(
+                new Dictionary<string, BaseExtractionState> { { "test", state } }, _tableName,
+                (state, poco) => {
+                    count++;
+                    state.InitExtractedRange(poco.FirstTimestamp, poco.LastTimestamp);
+                },
+                CancellationToken.None);
+
+            Assert.Equal(1, count);
+            Assert.Equal(new DateTime(2015, 01, 01), state.DestinationExtractedRange.First);
+            Assert.Equal(new DateTime(2025, 01, 01), state.DestinationExtractedRange.Last);
+
+        }
+
         private class ExpandedStatePoco : BaseExtractionStatePoco
         {
             public string TestAuto { get; set; }
@@ -510,7 +580,7 @@ namespace ExtractorUtils.Test
 
                 foreach (var item in items.items)
                 {
-                    rows.Add(item.key, item.columns);
+                    rows[item.key] = item.columns;
                 }
 
                 var response = new HttpResponseMessage
