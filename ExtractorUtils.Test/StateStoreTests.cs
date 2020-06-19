@@ -429,14 +429,16 @@ namespace ExtractorUtils.Test
 
             var retState = ret.First();
 
-            Assert.True(retState.ContainsKey("id"));
+            Assert.False(retState.ContainsKey("id"));
+
+            Assert.True(retState.ContainsKey("_id"));
             Assert.True(retState.ContainsKey("first"));
             Assert.True(retState.ContainsKey("last"));
             Assert.True(retState.ContainsKey("test-auto"));
             Assert.True(retState.ContainsKey("testy-prop"));
             Assert.True(retState.ContainsKey("TestyProp"));
             Assert.True(retState.ContainsKey("magic-property"));
-            Assert.Equal("test-state-1", retState["id"]);
+            Assert.Equal("test-state-1", retState["_id"]);
             Assert.Equal("testauto", retState["test-auto"]);
             Assert.Equal("testprop1", retState["testy-prop"]);
             Assert.Equal("testprop2", retState["TestyProp"]);
@@ -469,7 +471,7 @@ namespace ExtractorUtils.Test
             var json = JsonSerializer.Serialize(raw);
 
             Assert.Equal("{\"test-auto\":\"testauto\",\"testy-prop\":\"testprop1\",\"TestyProp\":\"testprop2\","
-                + "\"magic-property\":{\"nested-prop\":\"nested\"},\"array\":[\"test\",\"test2\"],\"first\":0,\"last\":0,\"id\":\"testid\"}",
+                + "\"magic-property\":{\"nested-prop\":\"nested\"},\"array\":[\"test\",\"test2\"],\"first\":0,\"last\":0,\"_id\":\"testid\"}",
                 json);
 
             var recreated = StateStoreUtils.DeserializeViaBson<ExpandedStatePoco>(
