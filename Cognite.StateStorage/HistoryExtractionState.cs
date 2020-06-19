@@ -47,7 +47,6 @@ namespace Cognite.Extractor.StateStorage
             SourceExtractedRange = TimeRange.Empty;
             DestinationExtractedRange = TimeRange.Complete;
             LastTimeModified = null;
-            Initialized = false;
             IsBackfilling = backfill;
             IsFrontfilling = frontfill;
         }
@@ -59,7 +58,6 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="last"></param>
         public override void InitExtractedRange(DateTime first, DateTime last)
         {
-            if (Initialized) throw new InvalidOperationException("Extracted state is already initialized");
             lock (_mutex)
             {
                 DestinationExtractedRange = DestinationExtractedRange.Contract(first, last);
@@ -71,7 +69,6 @@ namespace Cognite.Extractor.StateStorage
         /// </summary>
         public virtual void FinalizeRangeInit()
         {
-            if (Initialized) throw new InvalidOperationException("Extracted state is already initialized");
             lock (_mutex)
             {
                 if (DestinationExtractedRange == TimeRange.Complete)
@@ -93,7 +90,6 @@ namespace Cognite.Extractor.StateStorage
                 {
                     IsBackfilling = false;
                 }
-                Initialized = true;
             }
         }
         /// <summary>
@@ -103,7 +99,6 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="final">True if this is the end of history</param>
         public virtual void UpdateFromBackfill(DateTime first, bool final)
         {
-            if (!Initialized) throw new InvalidOperationException("Extracted state must not be updated before it is initialized");
             lock (_mutex)
             {
                 if (first < SourceExtractedRange.First)
@@ -122,7 +117,6 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="final">True if this is the end of history</param>
         public virtual void UpdateFromFrontfill(DateTime last, bool final)
         {
-            if (!Initialized) throw new InvalidOperationException("Extracted state must not be updated before it is initialized");
             lock (_mutex)
             {
                 if (last > SourceExtractedRange.Last)
@@ -142,7 +136,6 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="last">Last timestamp in streamed chunk</param>
         public virtual void UpdateFromStream(DateTime first, DateTime last)
         {
-            if (!Initialized) throw new InvalidOperationException("Extracted state must not be updated before it is initialized");
             if (IsFrontfilling && IsBackfilling) return;
             lock (_mutex)
             {
@@ -172,7 +165,6 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="last">Latest timestamp in successful push to destination(s)</param>
         public override void UpdateDestinationRange(DateTime first, DateTime last)
         {
-            if (!Initialized) throw new InvalidOperationException("Extracted state must not be updated before it is initialized");
             lock (_mutex)
             {
                 // If points are pushed outside of the source range, we must getting points from some other source.

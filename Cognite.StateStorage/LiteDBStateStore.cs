@@ -177,12 +177,14 @@ namespace Cognite.Extractor.StateStorage
             CancellationToken token) where K : BaseExtractionState
         {
             var mapped = new HashSet<string>();
+
             await RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
             {
                 if (!(poco is BaseExtractionStatePoco statePoco)) return;
                 state.InitExtractedRange(statePoco.FirstTimestamp, statePoco.LastTimestamp);
                 mapped.Add(state.Id);
             }, token);
+
             if (initializeMissing)
             {
                 foreach (var state in extractionStates.Where(state => !mapped.Contains(state.Key)))

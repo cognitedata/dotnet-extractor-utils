@@ -15,11 +15,6 @@ namespace Cognite.Extractor.StateStorage
         /// </summary>
         protected readonly object _mutex = new object();
         /// <summary>
-        /// True if this state has been properly initialized.
-        /// If false, methods to update from source system will fail.
-        /// </summary>
-        public bool Initialized { get; protected set; }
-        /// <summary>
         /// Unique id for extracted object
         /// </summary>
         public string Id { get; }
@@ -59,11 +54,10 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="last"></param>
         public virtual void InitExtractedRange(DateTime first, DateTime last)
         {
-            if (Initialized) throw new InvalidOperationException("Extracted state is already initialized");
             lock (_mutex)
             {
                 DestinationExtractedRange = new TimeRange(first, last);
-                Initialized = true;
+                LastTimeModified = null;
             }
         }
 
@@ -74,7 +68,6 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="last">Latest timestamp in successful push to destination(s)</param>
         public virtual void UpdateDestinationRange(DateTime first, DateTime last)
         {
-            if (!Initialized) throw new InvalidOperationException("Extracted state not initialized");
             lock (_mutex)
             {
                 DestinationExtractedRange = DestinationExtractedRange.Extend(first, last);
