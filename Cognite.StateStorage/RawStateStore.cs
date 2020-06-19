@@ -1,7 +1,9 @@
 ﻿using Cognite.Common;
+using Cognite.Extractor.Common;
 using LiteDB;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,12 +17,11 @@ namespace Cognite.Extractor.StateStorage
         private readonly IRawDestination _destination;
         private readonly StateStoreConfig _config;
         private readonly string _dbName;
-        private DateTime _lastTimeStored;
+        private ConcurrentDictionary<string, DateTime> _lastTimeStored = new ConcurrentDictionary<string, DateTime>();
         public BsonMapper Mapper { get; }
 
         public RawStateStore(StateStoreConfig config, IRawDestination destination, ILogger logger)
         {
-            _lastTimeStored = DateTime.UtcNow;
             _destination = destination;
             _config = config;
             _logger = logger;
@@ -65,26 +66,40 @@ namespace Cognite.Extractor.StateStorage
             }
         }
 
-        public Task RestoreExtractionState<K>(
+        public async Task RestoreExtractionState<K>(
             IDictionary<string, K> extractionStates,
             string tableName,
+            bool initializeMissing,
             CancellationToken token) where K : BaseExtractionState
         {
-            return RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
+            var mapped = new HashSet<string>();
+
+            await RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
             {
                 if (!(poco is BaseExtractionStatePoco statePoco)) return;
                 state.InitExtractedRange(statePoco.FirstTimestamp, statePoco.LastTimestamp);
+                mapped.Add(state.Id);
             }, token);
+
+            if (initializeMissing)
+            {
+                foreach (var state in extractionStates.Where(state => !mapped.Contains(state.Key)))
+                {
+                    state.Value.InitExtractedRange(TimeRange.Empty.First, TimeRange.Empty.Last);
+                }
+            }
         }
 
         public async Task StoreExtractionState<T, K>(IEnumerable<K> extractionStates, string tableName, Func<K, T> buildStorableState, CancellationToken token)
             where T : BaseStorableState
             where K : IExtractionState
         {
+            if (!_lastTimeStored.ContainsKey(tableName)) _lastTimeStored[tableName] = CogniteTime.DateTimeEpoch;
+            var lastTimeStored = _lastTimeStored[tableName];
             var storageTime = DateTime.UtcNow;
 
             var statesToStore = extractionStates.Where(state =>
-                state.LastTimeModified.HasValue && state.LastTimeModified > _lastTimeStored && state.LastTimeModified < storageTime).ToList();
+                state.LastTimeModified.HasValue && state.LastTimeModified > lastTimeStored && state.LastTimeModified < storageTime).ToList();
 
             var pocosToStore = statesToStore.Select(buildStorableState).ToList();
 
@@ -94,11 +109,11 @@ namespace Cognite.Extractor.StateStorage
             {
 
                 var dicts = pocosToStore.Select(poco => StateStoreUtils.BsonToDict(Mapper.ToDocument(poco)))
-                    .ToDictionary(raw => (string)raw["id"], raw => raw);
+                    .ToDictionary(raw => (string)raw["_id"], raw => raw);
                 // No reason to store the row key.
                 foreach (var dict in dicts.Values)
                 {
-                    dict.Remove("id");
+                    dict.Remove("_id");
                 }
                 await _destination.InsertRawRowsAsync(_dbName, tableName, dicts, token);
                 StateStoreMetrics.StateStoreCount.Inc();
@@ -106,7 +121,7 @@ namespace Cognite.Extractor.StateStorage
 
                 _logger.LogDebug("Saved {Stored} out of {TotalNumber} extraction states to raw table {store}.",
                     pocosToStore.Count, extractionStates.Count(), tableName);
-                _lastTimeStored = storageTime;
+                _lastTimeStored[tableName] = storageTime;
 
             }
             catch (Exception ex)
