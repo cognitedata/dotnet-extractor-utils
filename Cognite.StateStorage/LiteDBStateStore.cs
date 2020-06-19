@@ -7,6 +7,7 @@ using System.Threading;
 using System.Linq;
 using Prometheus;
 using Cognite.Extractor.Common;
+using System.Collections.Concurrent;
 
 namespace Cognite.Extractor.StateStorage
 {
@@ -19,7 +20,8 @@ namespace Cognite.Extractor.StateStorage
     {
         private readonly StateStoreConfig _config;
         private readonly ILogger _logger;
-        private DateTime _lastTimeStored;
+        private ConcurrentDictionary<string, DateTime> _lastTimeStored = new ConcurrentDictionary<string, DateTime>();
+
         /// <summary>
         /// BsonMapper used to convert objects into bson. Can be modified to add functionality.
         /// </summary>
@@ -37,7 +39,6 @@ namespace Cognite.Extractor.StateStorage
         {
             _config = config;
             _logger = logger;
-            _lastTimeStored = DateTime.UtcNow;
             Mapper = StateStoreUtils.BuildMapper();
         }
         /// <summary>
@@ -68,10 +69,13 @@ namespace Cognite.Extractor.StateStorage
             where T : BaseStorableState
             where K : IExtractionState
         {
+            if (!_lastTimeStored.ContainsKey(tableName)) _lastTimeStored[tableName] = CogniteTime.DateTimeEpoch;
+            var lastTimeStored = _lastTimeStored[tableName];
+
             var storageTime = DateTime.UtcNow;
 
             var statesToStore = extractionStates.Where(state =>
-                state.LastTimeModified.HasValue && state.LastTimeModified > _lastTimeStored && state.LastTimeModified < storageTime).ToList();
+                state.LastTimeModified.HasValue && state.LastTimeModified > lastTimeStored && state.LastTimeModified < storageTime).ToList();
 
             var pocosToStore = statesToStore.Select(buildStorableState).ToList();
 
@@ -89,7 +93,7 @@ namespace Cognite.Extractor.StateStorage
                 }
                 _logger.LogDebug("Saved {Stored} out of {TotalNumber} extraction states to litedb store {store}.",
                     pocosToStore.Count, extractionStates.Count(), tableName);
-                _lastTimeStored = storageTime;
+                _lastTimeStored[tableName] = storageTime;
             }
             catch (LiteException e)
             {
