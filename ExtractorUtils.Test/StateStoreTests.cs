@@ -152,7 +152,7 @@ namespace ExtractorUtils.Test
 
             var stateDict = states.ToDictionary(state => state.Id);
 
-            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+            await stateStore.RestoreExtractionState(stateDict, _tableName, true, CancellationToken.None);
 
             foreach (var state in states) state.FinalizeRangeInit();
 
@@ -179,7 +179,7 @@ namespace ExtractorUtils.Test
 
             stateDict = states.ToDictionary(state => state.Id);
 
-            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+            await stateStore.RestoreExtractionState(stateDict, _tableName, false, CancellationToken.None);
 
             foreach (var state in states)
             {
@@ -240,7 +240,6 @@ namespace ExtractorUtils.Test
 
             foreach (var state in states) {
                 state.InitExtractedRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
-                Assert.Throws<InvalidOperationException>(() => state.InitExtractedRange(new DateTime(1990, 01, 01), new DateTime(2020, 01, 01)));
                 state.UpdateDestinationRange(new DateTime(2005, 01, 01), new DateTime(2020, 01, 01));
                 Assert.Equal(new DateTime(2000, 01, 01), state.DestinationExtractedRange.First);
                 Assert.Equal(new DateTime(2020, 01, 01), state.DestinationExtractedRange.Last);
@@ -263,11 +262,10 @@ namespace ExtractorUtils.Test
 
             var stateDict = states.ToDictionary(state => state.Id);
 
-            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+            await stateStore.RestoreExtractionState(stateDict, _tableName, true, CancellationToken.None);
 
             foreach (var state in states)
             {
-                Assert.Throws<InvalidOperationException>(() => state.InitExtractedRange(new DateTime(1990, 01, 01), new DateTime(2020, 01, 01)));
                 state.UpdateDestinationRange(new DateTime(2005, 01, 01), new DateTime(2020, 01, 01));
                 Assert.Equal(new DateTime(2000, 01, 01), state.DestinationExtractedRange.First);
                 Assert.Equal(new DateTime(2020, 01, 01), state.DestinationExtractedRange.Last);
@@ -284,7 +282,7 @@ namespace ExtractorUtils.Test
 
             stateDict = states.ToDictionary(state => state.Id);
 
-            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+            await stateStore.RestoreExtractionState(stateDict, _tableName, false, CancellationToken.None);
 
             foreach (var state in states)
             {

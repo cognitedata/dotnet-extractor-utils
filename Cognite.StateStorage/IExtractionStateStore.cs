@@ -57,11 +57,13 @@ namespace Cognite.Extractor.StateStorage
         /// </summary>
         /// <param name="extractionStates">States to restore</param>
         /// <param name="tableName">Table to restore from</param>
+        /// <param name="initializeMissing">If true, initialize states missing from store to empty.</param>
         /// <param name="token"></param>
         /// <returns></returns>
         Task RestoreExtractionState<K>(
             IDictionary<string, K> extractionStates,
             string tableName,
+            bool initializeMissing,
             CancellationToken token)
             where K : BaseExtractionState;
 

@@ -1,4 +1,5 @@
 ﻿using Cognite.Common;
+using Cognite.Extractor.Common;
 using LiteDB;
 using Microsoft.Extensions.Logging;
 using System;
@@ -65,16 +66,28 @@ namespace Cognite.Extractor.StateStorage
             }
         }
 
-        public Task RestoreExtractionState<K>(
+        public async Task RestoreExtractionState<K>(
             IDictionary<string, K> extractionStates,
             string tableName,
+            bool initializeMissing,
             CancellationToken token) where K : BaseExtractionState
         {
-            return RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
+            var mapped = new HashSet<string>();
+
+            await RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
             {
                 if (!(poco is BaseExtractionStatePoco statePoco)) return;
                 state.InitExtractedRange(statePoco.FirstTimestamp, statePoco.LastTimestamp);
+                mapped.Add(state.Id);
             }, token);
+
+            if (initializeMissing)
+            {
+                foreach (var state in extractionStates.Where(state => !mapped.Contains(state.Key)))
+                {
+                    state.Value.InitExtractedRange(TimeRange.Empty.First, TimeRange.Empty.Last);
+                }
+            }
         }
 
         public async Task StoreExtractionState<T, K>(IEnumerable<K> extractionStates, string tableName, Func<K, T> buildStorableState, CancellationToken token)
