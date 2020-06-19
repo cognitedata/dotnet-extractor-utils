@@ -107,11 +107,11 @@ namespace Cognite.Extractor.StateStorage
             {
 
                 var dicts = pocosToStore.Select(poco => StateStoreUtils.BsonToDict(Mapper.ToDocument(poco)))
-                    .ToDictionary(raw => (string)raw["id"], raw => raw);
+                    .ToDictionary(raw => (string)raw["_id"], raw => raw);
                 // No reason to store the row key.
                 foreach (var dict in dicts.Values)
                 {
-                    dict.Remove("id");
+                    dict.Remove("_id");
                 }
                 await _destination.InsertRawRowsAsync(_dbName, tableName, dicts, token);
                 StateStoreMetrics.StateStoreCount.Inc();
