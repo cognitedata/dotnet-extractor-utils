@@ -54,7 +54,6 @@ namespace Cognite.Extractor.StateStorage
 
         /// <summary>
         /// Called when initializing extracted range from destinations and state storage.
-        /// This will always contract the believed range.
         /// </summary>
         /// <param name="first"></param>
         /// <param name="last"></param>

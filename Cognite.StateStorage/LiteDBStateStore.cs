@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using Prometheus;
+using Cognite.Extractor.Common;
 
 namespace Cognite.Extractor.StateStorage
 {
@@ -166,18 +167,29 @@ namespace Cognite.Extractor.StateStorage
         /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to restore</param>
         /// <param name="tableName">Table to restore from</param>
+        /// <param name="initializeMissing">Initialize states missing from store to empty</param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public Task RestoreExtractionState<K>(
+        public async Task RestoreExtractionState<K>(
             IDictionary<string, K> extractionStates,
             string tableName,
+            bool initializeMissing,
             CancellationToken token) where K : BaseExtractionState
         {
-            return RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
+            var mapped = new HashSet<string>();
+            await RestoreExtractionState<BaseExtractionStatePoco, K>(extractionStates, tableName, (state, poco) =>
             {
                 if (!(poco is BaseExtractionStatePoco statePoco)) return;
                 state.InitExtractedRange(statePoco.FirstTimestamp, statePoco.LastTimestamp);
+                mapped.Add(state.Id);
             }, token);
+            if (initializeMissing)
+            {
+                foreach (var state in extractionStates.Where(state => !mapped.Contains(state.Key)))
+                {
+                    state.Value.InitExtractedRange(TimeRange.Empty.First, TimeRange.Empty.Last);
+                }
+            }
         }
         /// <summary>
         /// Delete states from state store

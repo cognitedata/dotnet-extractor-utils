@@ -152,7 +152,7 @@ namespace ExtractorUtils.Test
 
             var stateDict = states.ToDictionary(state => state.Id);
 
-            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+            await stateStore.RestoreExtractionState(stateDict, _tableName, true, CancellationToken.None);
 
             foreach (var state in states) state.FinalizeRangeInit();
 
@@ -179,7 +179,7 @@ namespace ExtractorUtils.Test
 
             stateDict = states.ToDictionary(state => state.Id);
 
-            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+            await stateStore.RestoreExtractionState(stateDict, _tableName, false, CancellationToken.None);
 
             foreach (var state in states)
             {
@@ -263,7 +263,7 @@ namespace ExtractorUtils.Test
 
             var stateDict = states.ToDictionary(state => state.Id);
 
-            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+            await stateStore.RestoreExtractionState(stateDict, _tableName, true, CancellationToken.None);
 
             foreach (var state in states)
             {
@@ -284,7 +284,7 @@ namespace ExtractorUtils.Test
 
             stateDict = states.ToDictionary(state => state.Id);
 
-            await stateStore.RestoreExtractionState(stateDict, _tableName, CancellationToken.None);
+            await stateStore.RestoreExtractionState(stateDict, _tableName, false, CancellationToken.None);
 
             foreach (var state in states)
             {
