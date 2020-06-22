@@ -17,14 +17,14 @@ A library containing utilities for building extractors in .Net
 
 The Cognite Extractor Utils can be downloaded from [NuGet](https://www.nuget.org/packages/Cognite.ExtractorUtils). 
 
-To create a console application and add the **1.0.0-alpha-011** version of library:
+To create a console application and add the **1.0.0-alpha-017** version of library:
 
 Using .NET CLI:
 ```sh
 mkdir NewExtractor
 cd NewExtractor
 dotnet new console
-dotnet add package Cognite.ExtractorUtils -v 1.0.0-alpha-011
+dotnet add package Cognite.ExtractorUtils -v 1.0.0-alpha-017
 ```
 ## Quickstart
 
@@ -145,6 +145,35 @@ using (var queue = destination.CreateRawUploadQueue<ColumnsDto>("myDb", "myTable
     logger.LogInformation("Enqueueing task completed. Disposing of the upload queue");
 } // disposing the queue will upload any rows left and stop the upload loop
 
+```
+
+## Using the State Store
+```c#
+services.AddStateStore();
+
+using (var provider = services.BuildServiceProvider()) {
+    var stateStore = provider.GetRequiredService<IExtractionStateStore>();
+    var destination = provider.GetRequiredService<CogniteDestination>();
+    
+    // Create a state for a node
+    var myState = new BaseExtractionState("myState");
+    var states = new [] { myState };
+    var stateDict = states.ToDictionary(state => state.Id);
+    
+    await stateStore.RestoreExtarctionState(stateDict, "someTableorcollection", cancellationToken)
+   
+    // After uploading points cdf, update the ranges in your state
+    var now = DateTime.UtcNow;
+    var datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
+        { new Identity("myState"), new Datapoint[] { new Datapoint(now - TimeSpan.FromHours(2), "B"), new Datapoint(now, "A")}}}
+
+    await destination.InsertDataPointsIgnoreErrorsAsync(datapoints, cancellationToken);
+    
+    myState.UpdateDestinationRanges(now - TimeSpan.FromHours(2), now);
+    
+    await stateStore.StoreExtractionState(states, "someTableorcollection", cancellationToken);
+    // If the extractor stops here, the state is saved and can be restored after restart.
+}
 ```
 
 # Code of Conduct
