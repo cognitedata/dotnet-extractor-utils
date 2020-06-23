@@ -1,0 +1,118 @@
+﻿# Sample configuration for BaseConfig.
+# This can be modified and included as part of an extractor built on the utils.
+# The values here are defaults and can be left out, except if specified otherwise.
+
+# Version of the config file, accepted versions are specified in each version of the extractor
+# Needs to be set
+version:
+
+# Configuration for the pusher to CDF.
+cognite:
+    # The project to connect to in the API
+    project:
+    # Cognite api key
+    api-key:
+    # Cognite service url
+    host: "https://api.cognitedata.com"
+    # Config for authentication if a bearer access token has to be used for authentication.
+    # Leave empty to disable.
+    idp-authentication:
+        # Application Id
+        client-id:
+        # Directory tenant
+        tenant:
+        # Client secret
+        secret:
+        # Resource scope
+        scope:
+        # Minimum time-to-live in seconds for the token (optional)
+        min-ttl: 30
+    # Configure automatic retries on requests to CDF. Can be left out to keep default values.
+    cdf-retries:
+        # Timeout in ms for each individual try
+        timeout: 80000
+        # Maximum number of retries, less than 0 retries forever
+        max-retries: 5
+        # Max delay in ms between each try. Base delay is calculated according to 125*2^retry ms.
+        # If less than 0, there is no maximum. (0 means that there is never any delay)
+        max-delay: 5000
+    # Configure chunking of data on requests to CDF. Note that increasing these may cause requests to fail due to limits in CDF.
+    cdf-chunking:
+        # Maximum number of timeseries per get/create timeseries request
+        time-series: 1000
+        # Maximum number of assets per get/create asset request
+        assets: 1000
+        # Maximum number of timeseries per datapoint create request
+        data-point-time-series: 10000
+        # Maximum number of datapoints per datapoint create request
+        data-points: 100000
+        # Maximum number of ranges per delete datapoints request
+        data-point-delete: 10000
+        # Maximum number of timeseries per datapoint read request, used when getting the first point in a timeseries
+        data-point-list: 100
+        # Maximum number of timeseries per datapoint read latest request, used when getting last point in a timeseries
+        data-point-latest: 100
+        # Maximum number of rows per request to cdf raw. Used with raw state-store.
+        raw-rows: 10000
+        # Maximum number of events per get/create events request
+        events: 1000
+    # Configure how requests to CDF should be throttled
+    cdf-throttling:
+        # Maximum number of parallel requests per timeseries operation
+        time-series: 20
+        # Maximum number of parallel requests per assets operation
+        assets: 20
+        # Maximum number of parallel requests per datapoints operation
+        data-points: 10
+        # Maximum number of parallel requests per raw operation
+        raw: 10
+        # Maximum number of parallel requests per get first/last datapoint operation
+        ranges: 20
+        # Maximum number of parallel requests per events operation
+        events: 20
+    # Configure if the SDK should do logging of requests
+    sdk-logging:
+        # True to disable logging from the SDK
+        disable: false
+        # Minimum level of logging, one of trace, debug, information, warning, error, critical, none
+        level: debug
+        # Format of the log message
+        format: "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms"
+
+
+# Store state in a local database or in CDF raw to speed up starting, by not having to read state from destinations
+state-store:
+    # Path to .db file used by the state storage, or name of table in raw. Default is none, so this needs to be specified.
+    location: "buffer.db"
+    # Which type of database to use. One of "None", "Raw", "LiteDb"
+    database: "None"
+
+# Configure logger to console or file
+logger:
+    # Writes log events at this level to the Console. One of verbose, debug, information, warning, error, fatal.
+    # If not present, or if the level is invalid, Console is not used.
+    console:
+        level:
+    # Writes log events at this level to a file. Logs will roll over to new files daily.
+    # If not present, or if the level is invalid, logging to file is disabled.
+    file:
+        level:
+        # Path for logging output. If not present, logging to file is disabled.
+        path: # "logs/log.txt"
+        # Maximum number of logs files that are kept in the log folder.
+        retention-limit: 31
+        # Rolling interval for log files. Either "day" or "hour".
+        rolling-interval: "day"
+
+# Configure destinations for prometheus metrics
+metrics:
+    # Start a metrics server in the extractor for Prometheus scrape
+    server:
+        host:
+        port: 0
+    # Multiple Prometheus PushGateway destinations:
+    push-gateways:
+        - host:
+          job:
+          username:
+          password: 

@@ -43,10 +43,6 @@ namespace Cognite.Extractor.Utils
         public override void GenerateDefaults()
         {
             if (Cognite == null) Cognite = new CogniteConfig();
-            if (Cognite.CdfRetries == null) Cognite.CdfRetries = new RetryConfig();
-            if (Cognite.CdfChunking == null) Cognite.CdfChunking = new ChunkingConfig(); // default chunking according to CDF limits
-            if (Cognite.CdfThrottling == null) Cognite.CdfThrottling = new ThrottlingConfig();
-            if (Cognite.SdkLogging == null) Cognite.SdkLogging = new SdkLoggingConfig();
             if (Metrics == null) Metrics = new MetricsConfig();
             if (Logger == null) Logger = new LoggerConfig();
             if (StateStore == null) StateStore = new StateStoreConfig();
@@ -87,20 +83,24 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Configuration for retries of failed requests to CDF.
         /// </summary>
-        public RetryConfig CdfRetries { get; set; }
+        public RetryConfig CdfRetries { get => _cdfRetries; set { _cdfRetries = value ?? _cdfRetries; } }
+        private RetryConfig _cdfRetries = new RetryConfig();
 
         /// <summary>
         /// Chunking sizes towards CDF 
         /// </summary>
-        public ChunkingConfig CdfChunking { get; set; }
+        public ChunkingConfig CdfChunking { get => _cdfChunking; set { _cdfChunking = value ?? _cdfChunking; } }
+        private ChunkingConfig _cdfChunking = new ChunkingConfig();
         
         /// <summary>
         /// Throttling of requests to CDF
         /// </summary>
-        public ThrottlingConfig CdfThrottling { get; set; }
+        public ThrottlingConfig CdfThrottling { get => _cdfThrottling; set { _cdfThrottling = value ?? _cdfThrottling; } }
+        private ThrottlingConfig _cdfThrottling = new ThrottlingConfig();
 
         /// <summary>
-        /// Enables logging of Cognite Sdk operations. Enabled by default
+        /// Enables logging of Cognite Sdk operations. Enabled by default.
+        /// Leaving this empty also disables.
         /// </summary>
         public SdkLoggingConfig SdkLogging { get; set; }
     }
@@ -161,7 +161,7 @@ namespace Cognite.Extractor.Utils
         public string Scope { get; set; }
 
         /// <summary>
-        /// Minimum time-to-live for the token (optional)
+        /// Minimum time-to-live for the token in seconds (optional)
         /// </summary>
         /// <value>Minimum TTL</value>
         public int MinTtl { get; set; } = 30;
