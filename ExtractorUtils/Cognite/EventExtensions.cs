@@ -30,15 +30,15 @@ namespace Cognite.Extractor.Utils
         /// the missing event objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="resource">Cognite events resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Async function that builds <see cref="EventCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static Task<IEnumerable<Event>> GetOrCreateEventsAsync(
-            this EventsResource client,
+        public static Task<IEnumerable<Event>> GetOrCreateAsync(
+            this EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
             int chunkSize,
@@ -49,7 +49,7 @@ namespace Cognite.Extractor.Utils
             {
                 return Task.FromResult(buildEvents(ids));
             }
-            return client.GetOrCreateEventsAsync(externalIds, asyncBuildEvents, chunkSize, throttleSize, token);
+            return resource.GetOrCreateAsync(externalIds, asyncBuildEvents, chunkSize, throttleSize, token);
         }
         /// <summary>
         /// Get or create the events with the provided <paramref name="externalIds"/> exist in CDF.
@@ -57,15 +57,15 @@ namespace Cognite.Extractor.Utils
         /// the missing event objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="resource">Cognite events resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Async function that builds <see cref="EventCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IEnumerable<Event>> GetOrCreateEventsAsync(
-            this EventsResource client,
+        public static async Task<IEnumerable<Event>> GetOrCreateAsync(
+            this EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
             int chunkSize,
@@ -81,7 +81,7 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
-                        var existing = await GetOrCreateEventsChunk(client, chunk, buildEvents, 0, token);
+                        var existing = await GetOrCreateChunk(resource, chunk, buildEvents, 0, token);
                         lock (mutex)
                         {
                             result.AddRange(existing);
@@ -94,20 +94,20 @@ namespace Cognite.Extractor.Utils
                 (_) => {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(GetOrCreateEventsAsync), ++taskNum, chunks.Count);
+                            nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
                 },
                 token);
             return result;
         }
 
-        private static async Task<IEnumerable<Event>> GetOrCreateEventsChunk(
-            EventsResource client,
+        private static async Task<IEnumerable<Event>> GetOrCreateChunk(
+            EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
             int backoff,
             CancellationToken token)
         {
-            var found = await client.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+            var found = await resource.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
             _logger.LogDebug("Retrieved {Existing} events from CDF", found.Count());
 
             var existingEvents = found.ToList();
@@ -121,7 +121,7 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Could not fetch {Missing} out of {Found} events. Attempting to create the missing ones", missing.Count, externalIds.Count());
             try
             {
-                var newEvents = await client.CreateAsync(await buildEvents(missing), token);
+                var newEvents = await resource.CreateAsync(await buildEvents(missing), token);
                 existingEvents.AddRange(newEvents);
                 _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
                 return existingEvents;
@@ -136,7 +136,7 @@ namespace Cognite.Extractor.Utils
             }
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var ensured = await GetOrCreateEventsChunk(client, missing, buildEvents, backoff + 1, token);
+            var ensured = await GetOrCreateChunk(resource, missing, buildEvents, backoff + 1, token);
             existingEvents.AddRange(ensured);
 
             return existingEvents;
@@ -146,14 +146,14 @@ namespace Cognite.Extractor.Utils
         /// Tries to create the events and returns when all are created or reported as 
         /// duplicates (already exist in CDF)
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="resource">Cognite events resource</param>
         /// <param name="events">List of <see cref="EventCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="failOnError">Fail if an error other than detected duplicates occurs</param>
         /// <param name="token">Cancellation token</param>
-        public static async Task EnsureEventsExistsAsync(
-            this EventsResource client,
+        public static async Task EnsureExistsAsync(
+            this EventsResource resource,
             IEnumerable<EventCreate> events,
             int chunkSize,
             int throttleSize,
@@ -166,7 +166,7 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
                 chunk => async () => {
-                    await EnsureEventsChunk(client, chunk, failOnError, token);
+                    await EnsureChunk(resource, chunk, failOnError, token);
                 });
 
             int taskNum = 0;
@@ -175,13 +175,13 @@ namespace Cognite.Extractor.Utils
                 (_) => {
                     if (chunks.Count() > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(EnsureEventsExistsAsync), ++taskNum, chunks.Count());
+                            nameof(EnsureExistsAsync), ++taskNum, chunks.Count());
                 },
                 token);
         }
 
-        private static async Task EnsureEventsChunk(
-            EventsResource client,
+        private static async Task EnsureChunk(
+            EventsResource resource,
             IEnumerable<EventCreate> events,
             bool failOnError,
             CancellationToken token)
@@ -191,7 +191,7 @@ namespace Cognite.Extractor.Utils
             {
                 try
                 {
-                    var newTs = await client.CreateAsync(create, token);
+                    var newTs = await resource.CreateAsync(create, token);
                     _logger.LogDebug("Created {New} new events in CDF", newTs.Count());
                     return;
                 }

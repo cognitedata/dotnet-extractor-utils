@@ -1,6 +1,7 @@
 ﻿using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
 using CogniteSdk;
+using CogniteSdk.Resources;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Cognite.Extractor.Utils
         /// the missing asset objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="assets">Cognite assets resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Async function that builds <see cref="AssetCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
@@ -36,7 +37,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
-            this Client client,
+            this AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
             int chunkSize,
@@ -47,7 +48,7 @@ namespace Cognite.Extractor.Utils
             {
                 return Task.FromResult(buildAssets(ids));
             }
-            return client.GetOrCreateAssetsAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, token);
+            return assets.GetOrCreateAssetsAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, token);
         }
         /// <summary>
         /// Get or create the assets with the provided <paramref name="externalIds"/> exist in CDF.
@@ -55,7 +56,7 @@ namespace Cognite.Extractor.Utils
         /// the missing asset objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="assets">Cognite assets resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Async function that builds <see cref="AssetCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
@@ -63,7 +64,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
-            this Client client,
+            this AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
             int chunkSize,
@@ -80,7 +81,7 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
-                        var existing = await GetOrCreateAssetsChunk(client, chunk, buildAssets, 0, token);
+                        var existing = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, 0, token);
                         lock (mutex)
                         {
                             result.AddRange(existing);
@@ -99,29 +100,29 @@ namespace Cognite.Extractor.Utils
             return result;
         }
         /// <summary>
-        /// Ensures that all assets in <paramref name="assets"/> exist in CDF.
+        /// Ensures that all assets in <paramref name="assetsToEnsure"/> exist in CDF.
         /// Tries to create the assets and returns when all are created or reported as 
         /// duplicates (already exist in CDF)
         /// </summary>
-        /// <param name="client">Cognite client</param>
-        /// <param name="assets">List of <see cref="AssetCreate"/> objects</param>
+        /// <param name="assets">Cognite assets resource</param>
+        /// <param name="assetsToEnsure">List of <see cref="AssetCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         public static async Task EnsureAssetsExistsAsync(
-            this Client client,
-            IEnumerable<AssetCreate> assets,
+            this AssetsResource assets,
+            IEnumerable<AssetCreate> assetsToEnsure,
             int chunkSize,
             int throttleSize,
             CancellationToken token)
         {
-            var chunks = assets
+            var chunks = assetsToEnsure
                 .ChunkBy(chunkSize);
-            _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assets.Count(), chunks.Count());
+            _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assetsToEnsure.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<AssetCreate>, Func<Task>>(
                 chunk => async () => {
-                    await EnsureAssetsChunk(client, chunk, token);
+                    await EnsureAssetsChunk(assets, chunk, token);
                 });
 
             int taskNum = 0;
@@ -136,13 +137,13 @@ namespace Cognite.Extractor.Utils
         }
 
         private static async Task<IEnumerable<Asset>> GetOrCreateAssetsChunk(
-            Client client,
+            AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
             int backoff,
             CancellationToken token)
         {
-            var found = await client.Assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+            var found = await assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
             _logger.LogDebug("Retrieved {Existing} assets from CDF", found.Count());
 
             var existingAssets = found.ToList();
@@ -156,7 +157,7 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
             try
             {
-                var newAssets = await client.Assets.CreateAsync(await buildAssets(missing), token);
+                var newAssets = await assets.CreateAsync(await buildAssets(missing), token);
                 existingAssets.AddRange(newAssets);
                 _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
                 return existingAssets;
@@ -171,23 +172,23 @@ namespace Cognite.Extractor.Utils
             }
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var ensured = await GetOrCreateAssetsChunk(client, missing, buildAssets, backoff + 1, token);
+            var ensured = await GetOrCreateAssetsChunk(assets, missing, buildAssets, backoff + 1, token);
             existingAssets.AddRange(ensured);
 
             return existingAssets;
         }
 
         private static async Task EnsureAssetsChunk(
-            Client client,
-            IEnumerable<AssetCreate> assets,
+            AssetsResource assets,
+            IEnumerable<AssetCreate> assetsToEnsure,
             CancellationToken token)
         {
-            var create = assets;
+            var create = assetsToEnsure;
             while (!token.IsCancellationRequested && create.Any())
             {
                 try
                 {
-                    var newTs = await client.Assets.CreateAsync(create, token);
+                    var newTs = await assets.CreateAsync(create, token);
                     _logger.LogDebug("Created {New} new assets in CDF", newTs.Count());
                     return;
                 }
@@ -199,7 +200,7 @@ namespace Cognite.Extractor.Utils
                         .Select(d => d.GetValue("externalId", null))
                         .Where(mv => mv != null)
                         .Select(mv => mv.ToString()));
-                    create = assets.Where(ts => !duplicated.Contains(ts.ExternalId));
+                    create = assetsToEnsure.Where(ts => !duplicated.Contains(ts.ExternalId));
                     await Task.Delay(TimeSpan.FromMilliseconds(100), token);
                     _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumAssets} assets",
                         e.Duplicated.Count(), create.Count());

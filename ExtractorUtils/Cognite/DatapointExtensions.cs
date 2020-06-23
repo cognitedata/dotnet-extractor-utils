@@ -1,6 +1,5 @@
 ﻿using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
-using Cognite.Extractor.Utils;
 using CogniteSdk;
 using CogniteSdk.Resources;
 using Com.Cognite.V1.Timeseries.Proto;
@@ -40,14 +39,14 @@ namespace Cognite.Extractor.Utils
         /// The data points are trimmed according to the <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
         /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="dataPoints">Cognite client</param>
         /// <param name="points">Data points</param>
         /// <param name="keyChunkSize">Dictionary key chunk size</param>
         /// <param name="valueChunkSize">Dictionary value chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         public static async Task InsertDataPointsAsync(
-            this Client client,
+            this DataPointsResource dataPoints,
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             int keyChunkSize,
             int valueChunkSize,
@@ -62,7 +61,7 @@ namespace Cognite.Extractor.Utils
 
             var generators = chunks
                 .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
-                    chunk => async () => await InsertDataPointsChunk(client, chunk, token));
+                    chunk => async () => await InsertDataPointsChunk(dataPoints, chunk, token));
 
             int taskNum = 0;
             await generators.RunThrottled(
@@ -164,7 +163,7 @@ namespace Cognite.Extractor.Utils
         }
 
         private static async Task InsertDataPointsChunk(
-            this Client client,
+            this DataPointsResource dataPoints,
             IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)> points,
             CancellationToken token)
         {
@@ -224,7 +223,7 @@ namespace Cognite.Extractor.Utils
             }
             try
             {
-                await client.DataPoints.CreateAsync(request, token);
+                await dataPoints.CreateAsync(request, token);
                 _numberDataPoints.Inc(dataPointCount);
             }
             catch (TimeoutRejectedException)
@@ -244,7 +243,7 @@ namespace Cognite.Extractor.Utils
             var mismatched = new HashSet<Identity>(comparer);
             try
             {
-                await InsertDataPointsChunk(client, points, token);
+                await InsertDataPointsChunk(client.DataPoints, points, token);
             }
             catch (ResponseException e) when (e.Code == 400)
             {
@@ -300,7 +299,7 @@ namespace Cognite.Extractor.Utils
         /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 
         /// confirm the deletion does not mean that the operation failed in CDF
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="dataPoints">Cognite datapoints resource</param>
         /// <param name="ranges">Ranges to delete</param>
         /// <param name="deleteChunkSize">Chunk size for delete operations</param>
         /// <param name="listChunkSize">Chunk size for list operations</param>
@@ -309,7 +308,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancelation token</param>
         /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
         public static async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
-            this Client client,
+            this DataPointsResource dataPoints,
             IDictionary<Identity, IEnumerable<Common.TimeRange>> ranges,
             int deleteChunkSize,
             int listChunkSize,
@@ -344,7 +343,7 @@ namespace Cognite.Extractor.Utils
                 .Select<IEnumerable<IdentityWithRange>, Func<Task>>(
                     c => async () =>
                     {
-                        var errors = await DeleteDataPointsIgnoreErrorsChunk(client, c, token);
+                        var errors = await DeleteDataPointsIgnoreErrorsChunk(dataPoints, c, token);
                         lock (mutex)
                         {
                             missing.UnionWith(errors);
@@ -387,7 +386,7 @@ namespace Cognite.Extractor.Utils
                 .Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
                     c => async () =>
                     {
-                        var errors = await VerifyDataPointsDeletion(client, c, token);
+                        var errors = await VerifyDataPointsDeletion(dataPoints, c, token);
                         lock (mutex)
                         {
                             notVerified.UnionWith(errors);
@@ -405,7 +404,7 @@ namespace Cognite.Extractor.Utils
         }
 
         private static async Task<HashSet<Identity>> DeleteDataPointsIgnoreErrorsChunk(
-            Client client,
+            DataPointsResource dataPoints,
             IEnumerable<IdentityWithRange> chunks,
             CancellationToken token)
         {
@@ -415,20 +414,20 @@ namespace Cognite.Extractor.Utils
                 Items = chunks
             };
             try{
-                await client.DataPoints.DeleteAsync(deleteQuery, token);
+                await dataPoints.DeleteAsync(deleteQuery, token);
             }
             catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
             {
                 CogniteUtils.ExtractMissingFromResponseException(missing, e);
                 var remaining = chunks.Where(i => !missing.Contains(i.Id.HasValue ? new Identity(i.Id.Value) : new Identity(i.ExternalId)));
-                var errors = await DeleteDataPointsIgnoreErrorsChunk(client, remaining, token);
+                var errors = await DeleteDataPointsIgnoreErrorsChunk(dataPoints, remaining, token);
                 missing.UnionWith(errors);
             }
             return missing;
         }
 
         private static async Task<HashSet<Identity>> VerifyDataPointsDeletion(
-            Client client,
+            DataPointsResource dataPoints,
             IEnumerable<DataPointsQueryItem> query, 
             CancellationToken token)
         {
@@ -443,7 +442,7 @@ namespace Cognite.Extractor.Utils
             while (count > 0 && tries < _maxNumOfVerifyRequests)
             {
                 notVerified.Clear();
-                var results = await client.DataPoints.ListAsync(dataPointsQuery, token);
+                var results = await dataPoints.ListAsync(dataPointsQuery, token);
                 count = 0;
                 var queries = dataPointsQuery.Items.ToList();
                 var remaining = new List<DataPointsQueryItem>(); 

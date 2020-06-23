@@ -76,7 +76,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", externalIds.Count());
-            return await _client.GetOrCreateTimeSeriesAsync(
+            return await _client.TimeSeries.GetOrCreateTimeSeriesAsync(
                 externalIds,
                 buildTimeSeries,
                 _config.CdfChunking.TimeSeries,
@@ -100,7 +100,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", externalIds.Count());
-            return await _client.GetOrCreateTimeSeriesAsync(
+            return await _client.TimeSeries.GetOrCreateTimeSeriesAsync(
                 externalIds,
                 buildTimeSeries,
                 _config.CdfChunking.TimeSeries,
@@ -121,7 +121,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
-            await _client.EnsureTimeSeriesExistsAsync(
+            await _client.TimeSeries.EnsureTimeSeriesExistsAsync(
                 timeSeries,
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
@@ -147,7 +147,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
-            return await _client.GetOrCreateAssetsAsync(
+            return await _client.Assets.GetOrCreateAssetsAsync(
                 externalIds,
                 buildAssets,
                 _config.CdfChunking.Assets,
@@ -171,7 +171,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
-            return await _client.GetOrCreateAssetsAsync(
+            return await _client.Assets.GetOrCreateAssetsAsync(
                 externalIds,
                 buildAssets,
                 _config.CdfChunking.Assets,
@@ -192,7 +192,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} assets exist in CDF", assets.Count());
-            await _client.EnsureAssetsExistsAsync(
+            await _client.Assets.EnsureAssetsExistsAsync(
                 assets,
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
@@ -215,7 +215,7 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
-            await _client.InsertDataPointsAsync(
+            await _client.DataPoints.InsertDataPointsAsync(
                 points,
                 _config.CdfChunking.DataPointTimeSeries,
                 _config.CdfChunking.DataPoints,
@@ -265,7 +265,7 @@ namespace Cognite.Extractor.Utils
         {
             _logger.LogDebug("Deleting data points in CDF for {NumberTs} time series", 
                 ranges.Keys.Count);
-            var errors = await _client.DeleteDataPointsIgnoreErrorsAsync(
+            var errors = await _client.DataPoints.DeleteDataPointsIgnoreErrorsAsync(
                 ranges,
                 _config.CdfChunking.DataPointDelete,
                 _config.CdfChunking.DataPointList,
