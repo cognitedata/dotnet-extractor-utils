@@ -31,7 +31,7 @@ namespace Cognite.Extractor.Utils
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="timeSeries">Cognite timeseries resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Function that builds <see cref="TimeSeriesCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
@@ -39,7 +39,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
-            this Client client,
+            this TimeSeriesResource timeSeries,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
             int chunkSize,
@@ -50,7 +50,7 @@ namespace Cognite.Extractor.Utils
             {
                 return Task.FromResult(buildTimeSeries(ids));
             }
-            return client.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries, chunkSize, throttleSize, token);
+            return timeSeries.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries, chunkSize, throttleSize, token);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Cognite.Extractor.Utils
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// </summary>
-        /// <param name="client">Cognite client</param>
+        /// <param name="timeSeries">Cognite client</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Async function that builds <see cref="TimeSeriesCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
@@ -67,7 +67,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
-            this Client client,
+            this TimeSeriesResource timeSeries,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             int chunkSize,
@@ -84,7 +84,7 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
-                        var existing = await GetOrCreateTimeSeriesChunk(client, chunk, buildTimeSeries, 0, token);
+                        var existing = await GetOrCreateTimeSeriesChunk(timeSeries, chunk, buildTimeSeries, 0, token);
                         lock (mutex)
                         {
                             result.AddRange(existing);
@@ -103,29 +103,29 @@ namespace Cognite.Extractor.Utils
             return result;
         }
         /// <summary>
-        /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
+        /// Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
         /// Tries to create the time series and returns when all are created or reported as 
         /// duplicates (already exist in CDF)
         /// </summary>
-        /// <param name="client">Cognite client</param>
-        /// <param name="timeSeries">List of <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="timeSeries">Cognite client</param>
+        /// <param name="timeSeriesToEnsure">List of <see cref="TimeSeriesCreate"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         public static async Task EnsureTimeSeriesExistsAsync(
-            this Client client,
-            IEnumerable<TimeSeriesCreate> timeSeries,
+            this TimeSeriesResource timeSeries,
+            IEnumerable<TimeSeriesCreate> timeSeriesToEnsure,
             int chunkSize,
             int throttleSize,
             CancellationToken token)
         {
-            var chunks = timeSeries
+            var chunks = timeSeriesToEnsure
                 .ChunkBy(chunkSize);
-            _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeries.Count(), chunks.Count());
+            _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeriesToEnsure.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<TimeSeriesCreate>, Func<Task>>(
                 chunk => async () => {
-                    await EnsureTimeSeriesChunk(client, chunk, token);
+                    await EnsureTimeSeriesChunk(timeSeries, chunk, token);
                 });
 
             int taskNum = 0;
@@ -143,14 +143,14 @@ namespace Cognite.Extractor.Utils
         /// Get the time series with the provided <paramref name="ids"/>. Ignore any
         /// unknown ids
         /// </summary>
-        /// <param name="tsClient">A <see cref="Client.TimeSeries"/> client</param>
+        /// <param name="timeSeries">A <see cref="Client.TimeSeries"/> client</param>
         /// <param name="ids">List of <see cref="Identity"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static async Task<IEnumerable<TimeSeries>> GetTimeSeriesByIdsIgnoreErrors(
-            this TimeSeriesResource tsClient,
+            this TimeSeriesResource timeSeries,
             IEnumerable<Identity> ids,
             int chunkSize,
             int throttleSize,
@@ -164,7 +164,7 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<Identity>, Func<Task>>(
                 chunk => async () => {
-                    var found = await tsClient.RetrieveAsync(chunk, true, token);
+                    var found = await timeSeries.RetrieveAsync(chunk, true, token);
                     lock (mutex)
                     {
                         result.AddRange(found);
@@ -175,13 +175,13 @@ namespace Cognite.Extractor.Utils
         }
 
         private static async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesChunk(
-            Client client,
+            TimeSeriesResource client,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             int backoff,
             CancellationToken token)
         {
-            var found = await client.TimeSeries.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token);
+            var found = await client.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token);
             _logger.LogDebug("Retrieved {Existing} times series from CDF", found.Count());
 
             var existingTimeSeries = found.ToList();
@@ -195,7 +195,7 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Could not fetch {Missing} out of {Found} time series. Attempting to create the missing ones", missing.Count, externalIds.Count());
             try
             {
-                var newTs = await client.TimeSeries.CreateAsync(await buildTimeSeries(missing), token);
+                var newTs = await client.CreateAsync(await buildTimeSeries(missing), token);
                 existingTimeSeries.AddRange(newTs);
                 _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
                 return existingTimeSeries;
@@ -217,16 +217,16 @@ namespace Cognite.Extractor.Utils
         }
 
         private static async Task EnsureTimeSeriesChunk(
-            Client client,
-            IEnumerable<TimeSeriesCreate> timeSeries,
+            this TimeSeriesResource timeSeries,
+            IEnumerable<TimeSeriesCreate> timeSeriesToEnsure,
             CancellationToken token)
         {
-            var create = timeSeries;
+            var create = timeSeriesToEnsure;
             while (!token.IsCancellationRequested && create.Any())
             {
                 try
                 {
-                    var newTs = await client.TimeSeries.CreateAsync(create, token);
+                    var newTs = await timeSeries.CreateAsync(create, token);
                     _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
                     return;
                 }
@@ -238,7 +238,7 @@ namespace Cognite.Extractor.Utils
                         .Select(d => d.GetValue("externalId", null))
                         .Where(mv => mv != null)
                         .Select(mv => mv.ToString()));
-                    create = timeSeries.Where(ts => !duplicated.Contains(ts.ExternalId));
+                    create = timeSeriesToEnsure.Where(ts => !duplicated.Contains(ts.ExternalId));
                     await Task.Delay(TimeSpan.FromMilliseconds(100), token);
                     _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumTimeSeries} time series",
                         e.Duplicated.Count(), create.Count());
