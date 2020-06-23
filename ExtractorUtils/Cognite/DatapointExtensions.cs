@@ -103,11 +103,16 @@ namespace Cognite.Extractor.Utils
                 .ToList();
 
             var errors = new List<InsertError>();
+            object mutex = new object();
+
             var generators = chunks
                 .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
                     chunk => async () => {
                         var error = await InsertDataPointsIgnoreErrorsChunk(client, chunk, token);
-                        errors.Add(error);
+                        lock (mutex)
+                        {
+                            errors.Add(error);
+                        }
                     });
             int taskNum = 0;
             await generators.RunThrottled(
@@ -333,12 +338,17 @@ namespace Cognite.Extractor.Utils
                 .ToList(); // Maximum number of items in the /timeseries/data/delete endpoint.
 
             var missing = new HashSet<Identity>(new IdentityComparer());
+            var mutex = new object();
+
             var generators = chunks
                 .Select<IEnumerable<IdentityWithRange>, Func<Task>>(
                     c => async () =>
                     {
                         var errors = await DeleteDataPointsIgnoreErrorsChunk(client, c, token);
-                        missing.UnionWith(errors);
+                        lock (mutex)
+                        {
+                            missing.UnionWith(errors);
+                        }
                     });
 
             var taskNum = 0;
@@ -378,7 +388,10 @@ namespace Cognite.Extractor.Utils
                     c => async () =>
                     {
                         var errors = await VerifyDataPointsDeletion(client, c, token);
-                        notVerified.UnionWith(errors);
+                        lock (mutex)
+                        {
+                            notVerified.UnionWith(errors);
+                        }
                     });
 
             taskNum = 0;
@@ -643,6 +656,9 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogDebug("Getting extracted ranges for {num} timeseries", ids.Count());
+
+            if (latest && earliest) throttleSize = Math.Max(1, throttleSize / 2);
+
             var comparer = new IdentityComparer();
 
             var ranges = ids.ToDictionary(pair => pair.id, pair => TimeRange.Empty, comparer);
