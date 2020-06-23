@@ -45,6 +45,7 @@ namespace Cognite.Extractor.Utils
             DatapointExtensions.SetLogger(_logger);
             TimeSeriesExtensions.SetLogger(_logger);
             RawExtensions.SetLogger(_logger);
+            EventExtensions.SetLogger(_logger);
         }
 
         /// <summary>

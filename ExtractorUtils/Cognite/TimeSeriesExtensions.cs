@@ -75,6 +75,8 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             var result = new List<TimeSeries>();
+            object mutex = new object();
+
             var chunks = externalIds
                 .ChunkBy(chunkSize)
                 .ToList();
@@ -83,7 +85,10 @@ namespace Cognite.Extractor.Utils
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
                         var existing = await GetOrCreateTimeSeriesChunk(client, chunk, buildTimeSeries, 0, token);
-                        result.AddRange(existing);
+                        lock (mutex)
+                        {
+                            result.AddRange(existing);
+                        }
                     });
 
             int taskNum = 0;
@@ -152,13 +157,18 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             var result = new List<TimeSeries>();
+            object mutex = new object();
+
             var chunks = ids
                 .ChunkBy(chunkSize);
             var generators = chunks
                 .Select<IEnumerable<Identity>, Func<Task>>(
                 chunk => async () => {
                     var found = await tsClient.RetrieveAsync(chunk, true, token);
-                    result.AddRange(found);
+                    lock (mutex)
+                    {
+                        result.AddRange(found);
+                    }
                 });
             await generators.RunThrottled(throttleSize, token);
             return result;

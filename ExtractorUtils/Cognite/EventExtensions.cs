@@ -73,6 +73,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             var result = new List<Event>();
+            object mutex = new object();
             var chunks = externalIds
                 .ChunkBy(chunkSize)
                 .ToList();
@@ -81,7 +82,10 @@ namespace Cognite.Extractor.Utils
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
                         var existing = await GetOrCreateEventsChunk(client, chunk, buildEvents, 0, token);
-                        result.AddRange(existing);
+                        lock (mutex)
+                        {
+                            result.AddRange(existing);
+                        }
                     });
 
             int taskNum = 0;
