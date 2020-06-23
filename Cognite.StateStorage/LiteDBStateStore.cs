@@ -8,6 +8,7 @@ using System.Linq;
 using Prometheus;
 using Cognite.Extractor.Common;
 using System.Collections.Concurrent;
+using System.IO;
 
 namespace Cognite.Extractor.StateStorage
 {
@@ -163,6 +164,10 @@ namespace Cognite.Extractor.StateStorage
             catch (LiteException e)
             {
                 _logger.LogWarning(e, "Failed to restore extraction state from litedb store {store}: {Message}", tableName, e.Message);
+            }
+            catch (FileNotFoundException e)
+            {
+                _logger.LogWarning(e, "Failed to restore extraction state, store does not exist {store}: {Message}", tableName, e.Message);
             }
         }
         /// <summary>

@@ -89,6 +89,11 @@ namespace ExtractorUtils.Test
 
             var states = new[] { state1, state2, state3, state4 };
 
+            var stateDict = states.ToDictionary(state => state.Id);
+
+            // Does nothing, but shouldn't throw or cause issues
+            await stateStore.RestoreExtractionState(stateDict, _tableName, false, CancellationToken.None);
+
             foreach (var state in states) state.FinalizeRangeInit();
             Assert.Equal(now, state1.SourceExtractedRange.First, TimeSpan.FromMilliseconds(500));
             Assert.Equal(CogniteTime.DateTimeEpoch, state2.SourceExtractedRange.Last);
@@ -150,7 +155,7 @@ namespace ExtractorUtils.Test
 
             states = new[] { state1, state2, state3, state4 };
 
-            var stateDict = states.ToDictionary(state => state.Id);
+            stateDict = states.ToDictionary(state => state.Id);
 
             await stateStore.RestoreExtractionState(stateDict, _tableName, true, CancellationToken.None);
 
@@ -215,6 +220,7 @@ namespace ExtractorUtils.Test
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockRawRequestAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;
+            rows.Clear();
 
             // Setup services
             var services = new ServiceCollection();
