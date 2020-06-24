@@ -81,7 +81,7 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
-                        var existing = await GetOrCreateChunk(resource, chunk, buildEvents, 0, token);
+                        var existing = await GetOrCreateEventsChunk(resource, chunk, buildEvents, 0, token);
                         lock (mutex)
                         {
                             result.AddRange(existing);
@@ -100,7 +100,7 @@ namespace Cognite.Extractor.Utils
             return result;
         }
 
-        private static async Task<IEnumerable<Event>> GetOrCreateChunk(
+        private static async Task<IEnumerable<Event>> GetOrCreateEventsChunk(
             EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
@@ -136,7 +136,7 @@ namespace Cognite.Extractor.Utils
             }
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var ensured = await GetOrCreateChunk(resource, missing, buildEvents, backoff + 1, token);
+            var ensured = await GetOrCreateEventsChunk(resource, missing, buildEvents, backoff + 1, token);
             existingEvents.AddRange(ensured);
 
             return existingEvents;

@@ -36,7 +36,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
+        public static Task<IEnumerable<Asset>> GetOrCreateAsync(
             this AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
@@ -48,7 +48,7 @@ namespace Cognite.Extractor.Utils
             {
                 return Task.FromResult(buildAssets(ids));
             }
-            return assets.GetOrCreateAssetsAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, token);
+            return assets.GetOrCreateAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, token);
         }
         /// <summary>
         /// Get or create the assets with the provided <paramref name="externalIds"/> exist in CDF.
@@ -63,7 +63,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
+        public static async Task<IEnumerable<Asset>> GetOrCreateAsync(
             this AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
@@ -94,7 +94,7 @@ namespace Cognite.Extractor.Utils
                 (_) => {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(GetOrCreateAssetsAsync), ++taskNum, chunks.Count);
+                            nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
                 },
                 token);
             return result;
@@ -109,7 +109,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
-        public static async Task EnsureAssetsExistsAsync(
+        public static async Task EnsureExistsAsync(
             this AssetsResource assets,
             IEnumerable<AssetCreate> assetsToEnsure,
             int chunkSize,
@@ -131,7 +131,7 @@ namespace Cognite.Extractor.Utils
                 (_) => {
                     if (chunks.Count() > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(EnsureAssetsExistsAsync), ++taskNum, chunks.Count());
+                            nameof(EnsureExistsAsync), ++taskNum, chunks.Count());
                 },
                 token);
         }
