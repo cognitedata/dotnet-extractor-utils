@@ -147,7 +147,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
-            return await _client.Assets.GetOrCreateAssetsAsync(
+            return await _client.Assets.GetOrCreateAsync(
                 externalIds,
                 buildAssets,
                 _config.CdfChunking.Assets,
@@ -171,7 +171,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
-            return await _client.Assets.GetOrCreateAssetsAsync(
+            return await _client.Assets.GetOrCreateAsync(
                 externalIds,
                 buildAssets,
                 _config.CdfChunking.Assets,
@@ -192,7 +192,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} assets exist in CDF", assets.Count());
-            await _client.Assets.EnsureAssetsExistsAsync(
+            await _client.Assets.EnsureExistsAsync(
                 assets,
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
@@ -215,7 +215,7 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
-            await _client.DataPoints.InsertDataPointsAsync(
+            await _client.DataPoints.InsertAsync(
                 points,
                 _config.CdfChunking.DataPointTimeSeries,
                 _config.CdfChunking.DataPoints,
@@ -265,7 +265,7 @@ namespace Cognite.Extractor.Utils
         {
             _logger.LogDebug("Deleting data points in CDF for {NumberTs} time series", 
                 ranges.Keys.Count);
-            var errors = await _client.DataPoints.DeleteDataPointsIgnoreErrorsAsync(
+            var errors = await _client.DataPoints.DeleteIgnoreErrorsAsync(
                 ranges,
                 _config.CdfChunking.DataPointDelete,
                 _config.CdfChunking.DataPointList,
@@ -437,7 +437,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} events in CDF", externalIds.Count());
-            return await _client.Events.GetOrCreateEventsAsync(
+            return await _client.Events.GetOrCreateAsync(
                 externalIds,
                 buildEvents,
                 _config.CdfChunking.Events,
@@ -461,7 +461,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} events in CDF", externalIds.Count());
-            return await _client.Events.GetOrCreateEventsAsync(
+            return await _client.Events.GetOrCreateAsync(
                 externalIds,
                 buildEvents,
                 _config.CdfChunking.Events,
@@ -484,7 +484,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} events exist in CDF", events.Count());
-            await _client.Events.EnsureEventsExistsAsync(
+            await _client.Events.EnsureExistsAsync(
                 events,
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,

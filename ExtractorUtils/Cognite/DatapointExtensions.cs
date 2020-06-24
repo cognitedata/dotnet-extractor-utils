@@ -45,7 +45,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="valueChunkSize">Dictionary value chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
-        public static async Task InsertDataPointsAsync(
+        public static async Task InsertAsync(
             this DataPointsResource dataPoints,
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             int keyChunkSize,
@@ -69,7 +69,7 @@ namespace Cognite.Extractor.Utils
                 (_) => {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(InsertDataPointsAsync), ++taskNum, chunks.Count);
+                            nameof(InsertAsync), ++taskNum, chunks.Count);
                 },
                 token);
         }
@@ -307,7 +307,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="listThrottleSize">Throttle size for list operations</param>
         /// <param name="token">Cancelation token</param>
         /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
-        public static async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
+        public static async Task<DeleteError> DeleteIgnoreErrorsAsync(
             this DataPointsResource dataPoints,
             IDictionary<Identity, IEnumerable<Common.TimeRange>> ranges,
             int deleteChunkSize,
@@ -356,7 +356,7 @@ namespace Cognite.Extractor.Utils
                 (_) => { 
                     if (chunks.Count > 1) 
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
-                            nameof(DeleteDataPointsIgnoreErrorsAsync), ++taskNum, chunks.Count); 
+                            nameof(DeleteIgnoreErrorsAsync), ++taskNum, chunks.Count); 
                 },
                 token);
             _logger.LogDebug("Deletion completed. Verifying that data points were removed from CDF");
