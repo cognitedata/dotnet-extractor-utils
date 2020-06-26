@@ -38,6 +38,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancelation token</param>
+        /// <param name="options">Optional JSON options parameter, to be used when converting dto to JsonElement</param>
         /// <typeparam name="T">DTO type</typeparam>
         public static async Task InsertRowsAsync<T>(
             this RawResource raw,
@@ -46,10 +47,11 @@ namespace Cognite.Extractor.Utils
             IDictionary<string, T> rows, 
             int chunkSize, 
             int throttleSize,
-            CancellationToken token)
+            CancellationToken token,
+            JsonSerializerOptions options = null)
         {
             var chunks = rows
-                .Select(kvp =>  new RawRowCreateJson() { Key = kvp.Key, Columns = DtoToJson(kvp.Value) })
+                .Select(kvp =>  new RawRowCreateJson() { Key = kvp.Key, Columns = DtoToJson(kvp.Value, options) })
                 .ChunkBy(chunkSize);
             var generators = chunks.
                 Select<IEnumerable<RawRowCreateJson>, Func<Task>>(
@@ -58,9 +60,10 @@ namespace Cognite.Extractor.Utils
             await generators.RunThrottled(throttleSize, token);
         }
 
-        internal static JsonElement DtoToJson<T>(T dto)
+        internal static JsonElement DtoToJson<T>(T dto, JsonSerializerOptions options)
         {
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(dto);
+            if (dto is JsonElement) return (JsonElement)(object)dto;
+            var bytes = JsonSerializer.SerializeToUtf8Bytes(dto, options);
             var document = JsonDocument.Parse(bytes);
             return document.RootElement;
         }

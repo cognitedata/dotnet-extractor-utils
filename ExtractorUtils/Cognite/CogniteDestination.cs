@@ -290,6 +290,40 @@ namespace Cognite.Extractor.Utils
         /// <param name="database">Raw database name</param>
         /// <param name="table">Raw table name</param>
         /// <param name="rows">Rows of keys and columns</param>
+        /// <param name="options">Optional JSON options parameter, to be used when converting dto to JsonElement</param>
+        /// <param name="token">Cancellation token</param>
+        /// <typeparam name="T">DTO type</typeparam>
+        /// <returns>Task</returns>
+        public async Task InsertRawRowsAsync<T>(
+            string database,
+            string table,
+            IDictionary<string, T> rows,
+            JsonSerializerOptions options,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Uploading {Number} rows to CDF Raw. Database: {Db}. Table: {Table}",
+                rows.Count,
+                database,
+                table);
+            await _client.Raw.InsertRowsAsync(
+                database,
+                table,
+                rows,
+                _config.CdfChunking.RawRows,
+                _config.CdfThrottling.Raw,
+                token,
+                options);
+        }
+
+        /// <summary>
+        /// Insert the provided <paramref name="rows"/> into CDF Raw. The rows are a dictionary of 
+        /// keys and DTOs (data type objects). The DTOs  of type <typeparamref name="T"/> are serialized to JSON 
+        /// before they are sent to Raw. If the <paramref name="database"/> or <paramref name="table"/> do not
+        /// exist, they are created
+        /// </summary>
+        /// <param name="database">Raw database name</param>
+        /// <param name="table">Raw table name</param>
+        /// <param name="rows">Rows of keys and columns</param>
         /// <param name="token">Cancellation token</param>
         /// <typeparam name="T">DTO type</typeparam>
         /// <returns>Task</returns>
