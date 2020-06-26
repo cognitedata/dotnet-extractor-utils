@@ -245,8 +245,10 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.DataPoints,
                 _config.CdfThrottling.DataPoints,
                 token);
-            _logger.LogDebug("Found {NumMissing} missing ids and {NumMismatched} mismatched time series", 
+            if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any()) {
+                    _logger.LogDebug("Found {NumMissing} missing ids and {NumMismatched} mismatched time series", 
                 errors.IdsNotFound.Count(), errors.IdsWithMismatchedData.Count());
+			}
             return errors;
         }
 
