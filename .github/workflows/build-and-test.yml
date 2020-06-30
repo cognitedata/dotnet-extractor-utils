@@ -27,3 +27,12 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+    - name: Test create docs
+      run: sh ./build-docs.sh
+    - name: Test deploy docs
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: docfx_project/_site
+        # COMMIT_MESSAGE: Release  ${{ github.ref }}
