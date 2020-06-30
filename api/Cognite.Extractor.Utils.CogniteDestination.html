@@ -1,0 +1,1551 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class CogniteDestination
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class CogniteDestination
+   ">
+    <meta name="generator" content="docfx 2.51.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Utils.CogniteDestination">
+  
+  
+  <h1 id="Cognite_Extractor_Utils_CogniteDestination" data-uid="Cognite.Extractor.Utils.CogniteDestination" class="text-break">Class CogniteDestination
+  </h1>
+  <div class="markdown level0 summary"><p>Class with utility methods supporting extraction of data into CDF.
+These methods complement the ones offered by the <see cref="!:Client"></see> and use a
+<a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of data and throttling of
+requests against the client</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">CogniteDestination</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Cognite.Common.IRawDestination.html">IRawDestination</a></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.Extractor.Utils.html">Cognite.Extractor.Utils</a></h6>
+  <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
+  <h5 id="Cognite_Extractor_Utils_CogniteDestination_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class CogniteDestination : object, IRawDestination</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination__ctor_Client_ILogger_Cognite_Extractor_Utils_CogniteDestination__Cognite_Extractor_Utils_CogniteConfig_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.%23ctor(Client%2CILogger%7BCognite.Extractor.Utils.CogniteDestination%7D%2CCognite.Extractor.Utils.CogniteConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L39">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination__ctor_" data-uid="Cognite.Extractor.Utils.CogniteDestination.#ctor*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination__ctor_Client_ILogger_Cognite_Extractor_Utils_CogniteDestination__Cognite_Extractor_Utils_CogniteConfig_" data-uid="Cognite.Extractor.Utils.CogniteDestination.#ctor(Client,ILogger{Cognite.Extractor.Utils.CogniteDestination},Cognite.Extractor.Utils.CogniteConfig)">CogniteDestination(Client, ILogger&lt;CogniteDestination&gt;, CogniteConfig)</h4>
+  <div class="markdown level1 summary"><p>Initializes the Cognite destination with the provided parameters</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CogniteDestination(Client client, ILogger&lt;CogniteDestination&gt; logger, CogniteConfig config)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Client</span></td>
+        <td><span class="parametername">client</span></td>
+        <td><p><see cref="!:Client"></see> object</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">ILogger</span>&lt;<a class="xref" href="Cognite.Extractor.Utils.CogniteDestination.html">CogniteDestination</a>&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>Logger</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a></td>
+        <td><span class="parametername">config</span></td>
+        <td><p>Configuration object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_CogniteClient.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.CogniteClient%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L31">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_CogniteClient_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CogniteClient*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_CogniteClient" data-uid="Cognite.Extractor.Utils.CogniteDestination.CogniteClient">CogniteClient</h4>
+  <div class="markdown level1 summary"><p>The configured Cognite client used by this destination. Can be used to
+access the full Cognite API</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Client CogniteClient { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Client</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue__1_System_String_System_String_TimeSpan_System_Int32_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue%60%601(System.String%2CSystem.String%2CTimeSpan%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L362">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue__1_System_String_System_String_TimeSpan_System_Int32_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue``1(System.String,System.String,TimeSpan,System.Int32)">CreateRawUploadQueue&lt;T&gt;(String, String, TimeSpan, Int32)</h4>
+  <div class="markdown level1 summary"><p>Creates a Raw upload queue. It can be used to queue DTOs (data type objects) of type <code data-dev-comment-type="typeparamref" class="typeparamref">T</code>
+before sending them to CDF Raw. The items are dequeued and uploaded every <code data-dev-comment-type="paramref" class="paramref">interval</code>. If <code data-dev-comment-type="paramref" class="paramref">maxQueueSize</code> is
+greater than zero, the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
+To start the upload loop, use the <a class="xref" href="Cognite.Extractor.Utils.IRawUploadQueue-1.html#Cognite_Extractor_Utils_IRawUploadQueue_1_Start_CancellationToken_">Start(CancellationToken)</a> method. To stop it, dispose of the queue or
+cancel the token</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IRawUploadQueue&lt;T&gt; CreateRawUploadQueue&lt;T&gt;(string database, string table, TimeSpan interval, int maxQueueSize = 0)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">database</span></td>
+        <td><p>Raw database name</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">table</span></td>
+        <td><p>Raw table name</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TimeSpan</span></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>Upload interval</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">maxQueueSize</span></td>
+        <td><p>Maximum queue size</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Utils.IRawUploadQueue-1.html">IRawUploadQueue</a>&lt;T&gt;</td>
+        <td><p>An upload queue object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>Type of the DTO</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Common_TimeRange___CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary%7BIdentity%2CIEnumerable%7BCognite.Extractor.Common.TimeRange%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L264">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Common_TimeRange___CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary{Identity,IEnumerable{Cognite.Extractor.Common.TimeRange}},CancellationToken)">DeleteDataPointsIgnoreErrorsAsync(IDictionary&lt;Identity, IEnumerable&lt;TimeRange&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Deletes ranges of data points in CDF. The <code data-dev-comment-type="paramref" class="paramref">ranges</code> parameter contains the first (inclusive)
+and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
+the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to
+confirm the deletion does not mean that the operation failed in CDF</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;DeleteError&gt; DeleteDataPointsIgnoreErrorsAsync(IDictionary&lt;Identity, IEnumerable&lt;TimeRange&gt;&gt; ranges, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IDictionary</span>&lt;<span class="xref">Identity</span>, <span class="xref">IEnumerable</span>&lt;<a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
+        <td><span class="parametername">ranges</span></td>
+        <td><p>Ranges to delete</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancelation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extractor.Utils.DeleteError.html">DeleteError</a>&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extractor.Utils.DeleteError.html">DeleteError</a> object with any missing ids or ids with unconfirmed deletes</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_DeleteRowsAsync_System_String_System_String_IEnumerable_System_String__CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.DeleteRowsAsync(System.String%2CSystem.String%2CIEnumerable%7BSystem.String%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L391">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_DeleteRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.DeleteRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_DeleteRowsAsync_System_String_System_String_IEnumerable_System_String__CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.DeleteRowsAsync(System.String,System.String,IEnumerable{System.String},CancellationToken)">DeleteRowsAsync(String, String, IEnumerable&lt;String&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Delete the given rows from raw database</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task DeleteRowsAsync(string dbName, string tableName, IEnumerable&lt;string&gt; rowKeys, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">dbName</span></td>
+        <td><p>Database to delete from</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">tableName</span></td>
+        <td><p>Table to delete from</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">rowKeys</span></td>
+        <td><p>Keys for rows to delete</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_IEnumerable_AssetCreate__CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable%7BAssetCreate%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L190">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_IEnumerable_AssetCreate__CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable{AssetCreate},CancellationToken)">EnsureAssetsExistsAsync(IEnumerable&lt;AssetCreate&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures that all assets in <code data-dev-comment-type="paramref" class="paramref">assets</code> exist in CDF.
+Tries to create the assets and returns when all are created or reported as
+duplicates (already exist in CDF)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task EnsureAssetsExistsAsync(IEnumerable&lt;AssetCreate&gt; assets, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">AssetCreate</span>&gt;</td>
+        <td><span class="parametername">assets</span></td>
+        <td><p>List of <see cref="!:AssetCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_IEnumerable_EventCreate__System_Boolean_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable%7BEventCreate%7D%2CSystem.Boolean%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L517">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_IEnumerable_EventCreate__System_Boolean_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable{EventCreate},System.Boolean,CancellationToken)">EnsureEventsExistsAsync(IEnumerable&lt;EventCreate&gt;, Boolean, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures that all events in <code data-dev-comment-type="paramref" class="paramref">events</code> exist in CDF.
+Tries to create the events and returns when all are created or reported as
+duplicates (already exist in CDF)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task EnsureEventsExistsAsync(IEnumerable&lt;EventCreate&gt; events, bool failOnError, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">EventCreate</span>&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td><p>List of <see cref="!:EventCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">failOnError</span></td>
+        <td><p>Throw if an error other than duplicate events in CDF occurs.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_IEnumerable_TimeSeriesCreate__CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable%7BTimeSeriesCreate%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L119">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_IEnumerable_TimeSeriesCreate__CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable{TimeSeriesCreate},CancellationToken)">EnsureTimeSeriesExistsAsync(IEnumerable&lt;TimeSeriesCreate&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures that all time series in <code data-dev-comment-type="paramref" class="paramref">timeSeries</code> exist in CDF.
+Tries to create the time series and returns when all are created or reported as
+duplicates (already exist in CDF)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task EnsureTimeSeriesExistsAsync(IEnumerable&lt;TimeSeriesCreate&gt; timeSeries, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">TimeSeriesCreate</span>&gt;</td>
+        <td><span class="parametername">timeSeries</span></td>
+        <td><p>List of <see cref="!:TimeSeriesCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_IEnumerable_Identity__CancellationToken_System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(IEnumerable%7BIdentity%7D%2CCancellationToken%2CSystem.Boolean%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L410">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_IEnumerable_Identity__CancellationToken_System_Boolean_System_Boolean_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(IEnumerable{Identity},CancellationToken,System.Boolean,System.Boolean)">GetExtractedRanges(IEnumerable&lt;Identity&gt;, CancellationToken, Boolean, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+Note that end limits closer to actual endpoints in CDF is considerably faster.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IDictionary&lt;Identity, TimeRange&gt;&gt; GetExtractedRanges(IEnumerable&lt;Identity&gt; ids, CancellationToken token, bool earliest = true, bool latest = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">Identity</span>&gt;</td>
+        <td><span class="parametername">ids</span></td>
+        <td><p>ExternalIds and start/end of region to look for datapoints.
+Use TimeRange.Complete for first after epoch, and last before now.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">earliest</span></td>
+        <td><p>If true, fetch earliest timestamps, default true</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">latest</span></td>
+        <td><p>If true, fetch latest timestamps, default true</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IDictionary</span>&lt;<span class="xref">Identity</span>, <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_IEnumerable_System_ValueTuple_Identity_Cognite_Extractor_Common_TimeRange___CancellationToken_System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(IEnumerable%7BSystem.ValueTuple%7BIdentity%2CCognite.Extractor.Common.TimeRange%7D%7D%2CCancellationToken%2CSystem.Boolean%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L438">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_IEnumerable_System_ValueTuple_Identity_Cognite_Extractor_Common_TimeRange___CancellationToken_System_Boolean_System_Boolean_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(IEnumerable{System.ValueTuple{Identity,Cognite.Extractor.Common.TimeRange}},CancellationToken,System.Boolean,System.Boolean)">GetExtractedRanges(IEnumerable&lt;(Identity id, TimeRange limit)&gt;, CancellationToken, Boolean, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+Note that end limits closer to actual endpoints in CDF is considerably faster.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IDictionary&lt;Identity, TimeRange&gt;&gt; GetExtractedRanges(IEnumerable&lt;(Identity id, TimeRange limit)&gt; ids, CancellationToken token, bool earliest = true, bool latest = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.ValueTuple</span>&lt;<span class="xref">Identity</span>, <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
+        <td><span class="parametername">ids</span></td>
+        <td><p>ExternalIds and start/end of region to look for datapoints.
+Use TimeRange.Complete for first after epoch, and last before now.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">earliest</span></td>
+        <td><p>If true, fetch earliest timestamps, default true</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">latest</span></td>
+        <td><p>If true, fetch latest timestamps, default true</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IDictionary</span>&lt;<span class="xref">Identity</span>, <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_AssetCreate___CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CIEnumerable%7BAssetCreate%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L144">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_AssetCreate___CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{AssetCreate}},CancellationToken)">GetOrCreateAssetsAsync(IEnumerable&lt;String&gt;, Func&lt;IEnumerable&lt;String&gt;, IEnumerable&lt;AssetCreate&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the assets with the provided <code data-dev-comment-type="paramref" class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code data-dev-comment-type="paramref" class="paramref">buildAssets</code> function to construct
+the missing asset objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;Asset&gt;&gt; GetOrCreateAssetsAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;AssetCreate&gt;&gt; buildAssets, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">Func</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;, <span class="xref">IEnumerable</span>&lt;<span class="xref">AssetCreate</span>&gt;&gt;</td>
+        <td><span class="parametername">buildAssets</span></td>
+        <td><p>Function that builds <see cref="!:AssetCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">Asset</span>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_AssetCreate____CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CTask%7BIEnumerable%7BAssetCreate%7D%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L168">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_AssetCreate____CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{AssetCreate}}},CancellationToken)">GetOrCreateAssetsAsync(IEnumerable&lt;String&gt;, Func&lt;IEnumerable&lt;String&gt;, Task&lt;IEnumerable&lt;AssetCreate&gt;&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the assets with the provided <code data-dev-comment-type="paramref" class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code data-dev-comment-type="paramref" class="paramref">buildAssets</code> function to construct
+the missing asset objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;Asset&gt;&gt; GetOrCreateAssetsAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;AssetCreate&gt;&gt;&gt; buildAssets, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">Func</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;, <span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">AssetCreate</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildAssets</span></td>
+        <td><p>Async function that builds <see cref="!:AssetCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">Asset</span>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_EventCreate___CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CIEnumerable%7BEventCreate%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L470">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_EventCreate___CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{EventCreate}},CancellationToken)">GetOrCreateEventsAsync(IEnumerable&lt;String&gt;, Func&lt;IEnumerable&lt;String&gt;, IEnumerable&lt;EventCreate&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the events with the provided <code data-dev-comment-type="paramref" class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code data-dev-comment-type="paramref" class="paramref">buildEvents</code> function to construct
+the missing event objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;Event&gt;&gt; GetOrCreateEventsAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;EventCreate&gt;&gt; buildEvents, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">Func</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;, <span class="xref">IEnumerable</span>&lt;<span class="xref">EventCreate</span>&gt;&gt;</td>
+        <td><span class="parametername">buildEvents</span></td>
+        <td><p>Function that builds <see cref="!:EventCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">Event</span>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_EventCreate____CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CTask%7BIEnumerable%7BEventCreate%7D%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L494">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_EventCreate____CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{EventCreate}}},CancellationToken)">GetOrCreateEventsAsync(IEnumerable&lt;String&gt;, Func&lt;IEnumerable&lt;String&gt;, Task&lt;IEnumerable&lt;EventCreate&gt;&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the events with the provided <code data-dev-comment-type="paramref" class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code data-dev-comment-type="paramref" class="paramref">buildEvents</code> function to construct
+the missing event objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;Event&gt;&gt; GetOrCreateEventsAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;EventCreate&gt;&gt;&gt; buildEvents, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">Func</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;, <span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">EventCreate</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildEvents</span></td>
+        <td><p>Async function that builds <see cref="!:EventCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">Event</span>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_TimeSeriesCreate___CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CIEnumerable%7BTimeSeriesCreate%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L73">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_TimeSeriesCreate___CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{TimeSeriesCreate}},CancellationToken)">GetOrCreateTimeSeriesAsync(IEnumerable&lt;String&gt;, Func&lt;IEnumerable&lt;String&gt;, IEnumerable&lt;TimeSeriesCreate&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the time series with the provided <code data-dev-comment-type="paramref" class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code data-dev-comment-type="paramref" class="paramref">buildTimeSeries</code> function to construct
+the missing time series objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;TimeSeries&gt;&gt; GetOrCreateTimeSeriesAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;TimeSeriesCreate&gt;&gt; buildTimeSeries, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">Func</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;, <span class="xref">IEnumerable</span>&lt;<span class="xref">TimeSeriesCreate</span>&gt;&gt;</td>
+        <td><span class="parametername">buildTimeSeries</span></td>
+        <td><p>Function that builds <see cref="!:TimeSeriesCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">TimeSeries</span>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_TimeSeriesCreate____CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CTask%7BIEnumerable%7BTimeSeriesCreate%7D%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L97">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_TimeSeriesCreate____CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{TimeSeriesCreate}}},CancellationToken)">GetOrCreateTimeSeriesAsync(IEnumerable&lt;String&gt;, Func&lt;IEnumerable&lt;String&gt;, Task&lt;IEnumerable&lt;TimeSeriesCreate&gt;&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the time series with the provided <code data-dev-comment-type="paramref" class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code data-dev-comment-type="paramref" class="paramref">buildTimeSeries</code> function to construct
+the missing time series objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;TimeSeries&gt;&gt; GetOrCreateTimeSeriesAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;TimeSeriesCreate&gt;&gt;&gt; buildTimeSeries, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">Func</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;, <span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">TimeSeriesCreate</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildTimeSeries</span></td>
+        <td><p>Async function that builds <see cref="!:TimeSeriesCreate"></see> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">TimeSeries</span>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_System_String_System_String_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String%2CSystem.String%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L374">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_System_String_System_String_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String,System.String,CancellationToken)">GetRowsAsync(String, String, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Returns all rows from the given database and table</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IDictionary&lt;string, IDictionary&lt;string, JsonElement&gt;&gt;&gt; GetRowsAsync(string dbName, string tableName, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">dbName</span></td>
+        <td><p>Database to read from</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">tableName</span></td>
+        <td><p>Table to read from</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">IDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">JsonElement</span>&gt;&gt;&gt;</td>
+        <td><p>All rows</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Utils_Datapoint___CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(IDictionary%7BIdentity%2CIEnumerable%7BCognite.Extractor.Utils.Datapoint%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L211">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Utils_Datapoint___CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(IDictionary{Identity,IEnumerable{Cognite.Extractor.Utils.Datapoint}},CancellationToken)">InsertDataPointsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert the provided data points into CDF. The data points are chunked
+according to <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html#Cognite_Extractor_Utils_CogniteConfig_CdfChunking">CdfChunking</a> and trimmed according to the <a href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</a>.
+The <code data-dev-comment-type="paramref" class="paramref">points</code> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task InsertDataPointsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt; points, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IDictionary</span>&lt;<span class="xref">Identity</span>, <span class="xref">IEnumerable</span>&lt;<a class="xref" href="Cognite.Extractor.Utils.Datapoint.html">Datapoint</a>&gt;&gt;</td>
+        <td><span class="parametername">points</span></td>
+        <td><p>Data points</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsIgnoreErrorsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Utils_Datapoint___CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsIgnoreErrorsAsync(IDictionary%7BIdentity%2CIEnumerable%7BCognite.Extractor.Utils.Datapoint%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L235">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsIgnoreErrorsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsIgnoreErrorsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsIgnoreErrorsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Utils_Datapoint___CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsIgnoreErrorsAsync(IDictionary{Identity,IEnumerable{Cognite.Extractor.Utils.Datapoint}},CancellationToken)">InsertDataPointsIgnoreErrorsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Tries to insert the data points into CDF. If any time series are not
+found, or if the time series is of wrong type (Inserting numeric data
+into a string time series), the errors are ignored and the missing/mismatched
+ids are returned</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;InsertError&gt; InsertDataPointsIgnoreErrorsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt; points, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IDictionary</span>&lt;<span class="xref">Identity</span>, <span class="xref">IEnumerable</span>&lt;<a class="xref" href="Cognite.Extractor.Utils.Datapoint.html">Datapoint</a>&gt;&gt;</td>
+        <td><span class="parametername">points</span></td>
+        <td><p>Data points</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extractor.Utils.InsertError.html">InsertError</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync%60%601(System.String%2CSystem.String%2CIDictionary%7BSystem.String%2C%60%600%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L330">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},CancellationToken)">InsertRawRowsAsync&lt;T&gt;(String, String, IDictionary&lt;String, T&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert the provided <code data-dev-comment-type="paramref" class="paramref">rows</code> into CDF Raw. The rows are a dictionary of
+keys and DTOs (data type objects). The DTOs  of type <code data-dev-comment-type="typeparamref" class="typeparamref">T</code> are serialized to JSON
+before they are sent to Raw. If the <code data-dev-comment-type="paramref" class="paramref">database</code> or <code data-dev-comment-type="paramref" class="paramref">table</code> do not
+exist, they are created</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task InsertRawRowsAsync&lt;T&gt;(string database, string table, IDictionary&lt;string, T&gt; rows, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">database</span></td>
+        <td><p>Raw database name</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">table</span></td>
+        <td><p>Raw table name</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IDictionary</span>&lt;<span class="xref">System.String</span>, T&gt;</td>
+        <td><span class="parametername">rows</span></td>
+        <td><p>Rows of keys and columns</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td><p>Task</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>DTO type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__JsonSerializerOptions_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync%60%601(System.String%2CSystem.String%2CIDictionary%7BSystem.String%2C%60%600%7D%2CJsonSerializerOptions%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L297">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__JsonSerializerOptions_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},JsonSerializerOptions,CancellationToken)">InsertRawRowsAsync&lt;T&gt;(String, String, IDictionary&lt;String, T&gt;, JsonSerializerOptions, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert the provided <code data-dev-comment-type="paramref" class="paramref">rows</code> into CDF Raw. The rows are a dictionary of
+keys and DTOs (data type objects). The DTOs  of type <code data-dev-comment-type="typeparamref" class="typeparamref">T</code> are serialized to JSON
+before they are sent to Raw. If the <code data-dev-comment-type="paramref" class="paramref">database</code> or <code data-dev-comment-type="paramref" class="paramref">table</code> do not
+exist, they are created</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task InsertRawRowsAsync&lt;T&gt;(string database, string table, IDictionary&lt;string, T&gt; rows, JsonSerializerOptions options, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">database</span></td>
+        <td><p>Raw database name</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">table</span></td>
+        <td><p>Raw table name</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IDictionary</span>&lt;<span class="xref">System.String</span>, T&gt;</td>
+        <td><span class="parametername">rows</span></td>
+        <td><p>Rows of keys and columns</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">JsonSerializerOptions</span></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Optional JSON options parameter, to be used when converting dto to JsonElement</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td><p>Task</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>DTO type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_TestCogniteConfig_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.TestCogniteConfig(CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L56">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_TestCogniteConfig_" data-uid="Cognite.Extractor.Utils.CogniteDestination.TestCogniteConfig*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_TestCogniteConfig_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.TestCogniteConfig(CancellationToken)">TestCogniteConfig(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Verifies that the currently configured Cognite client can access Cognite Data Fusion</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task TestCogniteConfig(CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Cognite.Common.IRawDestination.html">IRawDestination</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/da366b1fa50c6d97a844817ce20d04235ee3e413/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/da366b1fa50c6d97a844817ce20d04235ee3e413/ExtractorUtils/Cognite/CogniteDestination.cs/#L21" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
