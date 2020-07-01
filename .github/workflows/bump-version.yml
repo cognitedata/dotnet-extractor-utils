@@ -69,3 +69,12 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: true
+    - name: Build documentation
+      run: sh ./build-docs.sh
+    - name: Deploy documentation to github pages
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: docfx_project/_site
+        COMMIT_MESSAGE: Release ${{ github.ref }}
