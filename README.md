@@ -26,6 +26,9 @@ cd NewExtractor
 dotnet new console
 dotnet add package Cognite.ExtractorUtils -v 1.0.0-alpha-017
 ```
+
+[Documentation (WIP)](https://cognitedata.github.io/dotnet-extractor-utils/index.html)
+
 ## Quickstart
 
 Create a ```config.yml``` file containing the extractor configuration

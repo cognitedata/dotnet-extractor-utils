@@ -4,3 +4,7 @@
 .vscode/*
 /.vs/*
 **/TestResults
+**/_site
+docfx_project/docfx.console*
+docfx_project/api/*.yml
+docfx_project/api/.manifest
