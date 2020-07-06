@@ -167,6 +167,7 @@ namespace Cognite.Extractor.Utils
             IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)> points,
             CancellationToken token)
         {
+            if (!points.Any()) return;
             var request = new DataPointInsertionRequest();
             var dataPointCount = 0;
             foreach (var entry in points)
@@ -238,6 +239,7 @@ namespace Cognite.Extractor.Utils
             IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)> points,
             CancellationToken token)
         {
+            if (!points.Any()) return new InsertError(Enumerable.Empty<Identity>(), Enumerable.Empty<Identity>());
             var comparer = new IdentityComparer();
             var missing = new HashSet<Identity>(comparer);
             var mismatched = new HashSet<Identity>(comparer);
