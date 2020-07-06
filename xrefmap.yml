@@ -652,11 +652,11 @@ references:
   commentId: T:Cognite.Extractor.Logging.LoggingExtensions
   fullName: Cognite.Extractor.Logging.LoggingExtensions
   nameWithType: LoggingExtensions
-- uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
+- uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection)
   name: AddLogger(IServiceCollection)
-  href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_IServiceCollection_
-  commentId: M:Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
-  fullName: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
+  href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_Microsoft_Extensions_DependencyInjection_IServiceCollection_
+  commentId: M:Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  fullName: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection)
   nameWithType: LoggingExtensions.AddLogger(IServiceCollection)
 - uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger*
   name: AddLogger
