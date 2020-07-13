@@ -1,14 +1,14 @@
 # Using HistoryExtractionState
 
-HistoryExtractionState is a more advanced abstraction of the history extraction process. Basic usage is fairly similar to BaseExtractionState, but using it requires a few extra steps when extracting data. It handles some more of the logic behind synchronization of data between source and destination systems.
+[HistoryExtractionState](xref:Cognite.Extractor.StateStorage.HistoryExtractionState) is a more advanced abstraction of the history extraction process. Basic usage is fairly similar to BaseExtractionState, but using it requires a few extra steps when extracting data. It handles some more of the logic behind synchronization of data between source and destination systems.
 
-Most importantly it introduces a new TimeRange "SourceExtractedRange", which describes the range of data present in the source system. This is separate from the data present in destination systems and handles the "Read, but not pushed" case described [here](state-store.md).
+Most importantly it introduces a new [TimeRange](xref:Cognite.Extractor.Common.TimeRange) `SourceExtractedRange`, which describes the range of data present in the source system. This is separate from the data present in destination systems and handles the "Read, but not pushed" case described [here](state-store.md).
 
 Using the state consists of the source range separately from the destination range, in different ways depending on which operation is being performed.
 
 ## Initialization
 
-First of all, when creating HistoryExtractionState you must specify whether frontfill/backfill is enabled for the given state. This determines how the state is synchronized, and what default values for ranges are.
+First of all, when creating a state you must specify whether frontfill/backfill is enabled for the given state. This determines how the state is synchronized, and what default values for ranges are.
 
 It also allows using multiple source systems for initialization. After creating the state, it is possible to call `InitExtractedRange` for each source system. Then, once that is done, call `FinalizeRangeInit` to set un-initialized states to default values.
 

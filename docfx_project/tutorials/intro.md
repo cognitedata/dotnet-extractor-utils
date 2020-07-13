@@ -19,6 +19,8 @@ cognite:
   api-key: ${COGNITE_API_KEY}
 ```
 
+See [full config object](xref:Cognite.Extractor.Utils.BaseConfig) for full list of options. 
+
 Set the ```COGNITE_PROJECT``` and ```COGNITE_API_KEY``` environment variables. Set the ```metrics``` tag, only if collecting metrics is required by the extractor. If using a [Prometheus pushgateway](https://prometheus.io/docs/practices/pushing/), set ```host```to a valid endpoint.
 
 The library is intended to be used with dependency injection, In ```Program.cs```:

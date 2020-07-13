@@ -2,6 +2,8 @@
 
 The state store is used to store the ranges of points/events/others extracted from source systems. It is intended to be used when the source system has significant amounts of historical data, and reading first/last timestamps from CDF or other destination systems is infeasible.
 
+Basic usage is with [BaseExtractionState](xref:Cognite.Extractor.StateStorage.BaseExtractionState).
+
 ## Concepts
 
 When reading data from historical source systems there are three typical sources:
