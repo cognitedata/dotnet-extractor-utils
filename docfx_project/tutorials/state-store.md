@@ -75,4 +75,6 @@ foreach (var kvp in points)
         state.UpdateDestinationRange(min, max);
     }
 }
+// Finally store states in state store, this only stores modified states.
+await stateStore.StoreExtractionState(states, "someTable", cancellationToken);
 ```

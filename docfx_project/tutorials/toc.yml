@@ -4,3 +4,6 @@
   href: raw-queue.md
 - name: State Store
   href: state-store.md
+  items:
+    - name: Advanced State Type
+      href: history-state.md
