@@ -5,23 +5,26 @@ namespace Cognite.Extractor.Common
     /// <summary>
     /// Represents a range of time from First to Last. First and Last are both considered
     /// to be included in the range.
-    /// The legal range of values is from the unix epoch to DateTime.MaxValue.
+    /// The legal range of values is from the unix epoch, midnight 1/1/1970, to DateTime.MaxValue.
     /// </summary>
     public sealed class TimeRange
     {
         /// <summary>
-        /// An empty range where first > last, and both are at the extreme range.
+        /// An empty range where first > last, and both are at the extreme range, (DateTime.MaxValue, Epoch).
         /// Extending an empty range will return the given range
         /// Contracting an empty range will return the empty range
         /// </summary>
         public static readonly TimeRange Empty = new TimeRange(DateTime.MaxValue, CogniteTime.DateTimeEpoch);
+
         /// <summary>
-        /// The full range of legal values. 
+        /// The largest legal range, (Epoch, DateTime.MaxValue).
+        /// Extending a complete range will return the complete range.
+        /// Contracting a complete range will return the given range.
         /// </summary>
         public static readonly TimeRange Complete = new TimeRange(CogniteTime.DateTimeEpoch, DateTime.MaxValue);
 
         /// <summary>
-        /// Initialize a TimeRange object
+        /// Initialize a TimeRange object from two timestamps.
         /// </summary>
         /// <param name="first">First point in the time range</param>
         /// <param name="last">Last point in the time range</param>
@@ -32,10 +35,12 @@ namespace Cognite.Extractor.Common
             First = first;
             Last = last;
         }
+
         /// <summary>
         /// First point in the range
         /// </summary>
         public DateTime First { get; }
+
         /// <summary>
         /// Last point in the range
         /// </summary>
@@ -44,13 +49,8 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// True if there are no points in the range at all (first > last).
         /// </summary>
-        public bool IsEmpty
-        {
-            get
-            {
-                return First > Last;
-            }
-        }
+        public bool IsEmpty => First > Last;
+
         /// <summary>
         /// True if given datetime is inside the range
         /// </summary>
@@ -61,23 +61,24 @@ namespace Cognite.Extractor.Common
             return t >= First && t <= Last;
         }
         /// <summary>
-        /// True if given datetime is ahead of the range.
+        /// Check if <paramref name="t"/> is before the first point in the range.
         /// </summary>
         /// <param name="t">Datetime to test</param>
-        /// <returns></returns>
+        /// <returns>True if <paramref name="t"/> is before the first point in the range</returns>
         public bool Before(DateTime t)
         {
             return t < First;
         }
         /// <summary>
-        /// True if given datetime is after the range
+        /// Check if <paramref name="t"/> is after the last point in the range.
         /// </summary>
         /// <param name="t">Datetime to test</param>
-        /// <returns></returns>
+        /// <returns>True if <paramref name="t"/> is after the last point in the range</returns>
         public bool After(DateTime t)
         {
             return t > Last;
         }
+
         /// <summary>
         /// Return a new TimeRange extended by the given timestamps.
         /// New TimeRange is the earliest start point and the latest end point.
@@ -85,7 +86,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="first">First point in extending range</param>
         /// <param name="last">Last point in extending range</param>
-        /// <returns></returns>
+        /// <returns>A new TimeRange extended by <paramref name="first"/> and <paramref name="last"/></returns>
         public TimeRange Extend(DateTime? first, DateTime? last)
         {
             if (!first.HasValue || first >= First)
@@ -96,16 +97,18 @@ namespace Cognite.Extractor.Common
                 return new TimeRange(first.Value, last.Value);
             return this;
         }
+
         /// <summary>
         /// Returns a new TimeRange extended by the given TimeRange
         /// New TimeRange is the earliest start point and the latest end point.
         /// </summary>
         /// <param name="newRange">Extending range</param>
-        /// <returns></returns>
+        /// <returns>A new TimeRange extended by <paramref name="newRange"/></returns>
         public TimeRange Extend(TimeRange newRange)
         {
             return Extend(newRange.First, newRange.Last);
         }
+
         /// <summary>
         /// Return a new TimeRange contracted by the given timestamps.
         /// New TimeRange is the latest start point and earliest end point.
@@ -113,7 +116,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="first">First point in contracting range</param>
         /// <param name="last">Last point in contracting range</param>
-        /// <returns></returns>
+        /// <returns>A new TimeRange contracted by <paramref name="first"/> and <paramref name="last"/></returns>
         public TimeRange Contract(DateTime? first, DateTime? last)
         {
             if (!first.HasValue || first <= First)
@@ -124,24 +127,27 @@ namespace Cognite.Extractor.Common
                 return new TimeRange(first.Value, last.Value);
             return this;
         }
+
         /// <summary>
         /// Returns a new TimeRange contracted by the given TimeRange
         /// New TimeRange is the latest start point and the earliest end point.
         /// </summary>
         /// <param name="newRange">Extending range</param>
-        /// <returns></returns>
+        /// <returns>A new TimeRange contracted by <paramref name="newRange"/></returns>
         public TimeRange Contract(TimeRange newRange)
         {
             return Contract(newRange.First, newRange.Last);
         }
+
         /// <summary>
-        /// Returns a string representation of the TimeRange.
+        /// Returns a string representation of the TimeRange, on the form ([First as ISO-string], [Last as ISO-string]).
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string representation of the TimeRange</returns>
         public override string ToString()
         {
             return $"({First.ToISOString()}, {Last.ToISOString()})";
         }
+
         /// <summary>
         /// Compares this time range with the provided object and returns
         /// true if they are equal
@@ -154,6 +160,7 @@ namespace Cognite.Extractor.Common
             if (obj == null) return false;
             return obj is TimeRange && this == (TimeRange)obj;
         }
+
         /// <summary>
         /// Returns the computed hash code for this time range using its (First, Last) tuple
         /// </summary>

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Cognite.Extractor.Utils
 {
     /// <summary>
-    /// Extension utility methods for <see cref="Client"/>
+    /// Extension utility methods for CogniteSdk Client.
     /// </summary>
     public static class EventExtensions
     {
@@ -32,7 +32,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildEvents">Async function that builds <see cref="EventCreate"/> objects</param>
+        /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
@@ -59,7 +59,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildEvents">Async function that builds <see cref="EventCreate"/> objects</param>
+        /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
@@ -147,7 +147,7 @@ namespace Cognite.Extractor.Utils
         /// duplicates (already exist in CDF)
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
-        /// <param name="events">List of <see cref="EventCreate"/> objects</param>
+        /// <param name="events">List of CogniteSdk EventCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="failOnError">Fail if an error other than detected duplicates occurs</param>

@@ -33,7 +33,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="timeSeries">Cognite timeseries resource</param>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildTimeSeries">Function that builds <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="buildTimeSeries">Function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
@@ -61,7 +61,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="timeSeries">Cognite client</param>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildTimeSeries">Async function that builds <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="buildTimeSeries">Async function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
@@ -108,7 +108,7 @@ namespace Cognite.Extractor.Utils
         /// duplicates (already exist in CDF)
         /// </summary>
         /// <param name="timeSeries">Cognite client</param>
-        /// <param name="timeSeriesToEnsure">List of <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="timeSeriesToEnsure">List of CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
@@ -143,7 +143,7 @@ namespace Cognite.Extractor.Utils
         /// Get the time series with the provided <paramref name="ids"/>. Ignore any
         /// unknown ids
         /// </summary>
-        /// <param name="timeSeries">A <see cref="Client.TimeSeries"/> client</param>
+        /// <param name="timeSeries">A CogniteSdk TimeSeries resource</param>
         /// <param name="ids">List of <see cref="Identity"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>

@@ -30,7 +30,7 @@ namespace Cognite.Extractor.StateStorage
         /// Store states into state store table given by <paramref name="tableName"/>
         /// </summary>
         /// <param name="extractionStates">States to store</param>
-        /// <param name="tableName">Table to store to</param>
+        /// <param name="tableName">Collection to store to</param>
         /// <param name="token"></param>
         /// <returns></returns>
         Task StoreExtractionState<K>(IEnumerable<K> extractionStates, string tableName, CancellationToken token)
@@ -55,8 +55,9 @@ namespace Cognite.Extractor.StateStorage
         /// <summary>
         /// Restores state from state store table given by <paramref name="tableName"/>
         /// </summary>
+        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to restore</param>
-        /// <param name="tableName">Table to restore from</param>
+        /// <param name="tableName">Collection to restore from</param>
         /// <param name="initializeMissing">If true, initialize states missing from store to empty.</param>
         /// <param name="token"></param>
         /// <returns></returns>
@@ -71,7 +72,7 @@ namespace Cognite.Extractor.StateStorage
         /// Deletes states from state store table given by <paramref name="tableName"/>
         /// </summary>
         /// <param name="extractionStates">States to delete</param>
-        /// <param name="tableName">Table to delete from</param>
+        /// <param name="tableName">Collection to delete from</param>
         /// <param name="token"></param>
         /// <returns></returns>
         Task DeleteExtractionState(IEnumerable<IExtractionState> extractionStates, string tableName, CancellationToken token);

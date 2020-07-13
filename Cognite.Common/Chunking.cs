@@ -17,13 +17,14 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Chunk the input [(key, [values])] sequence into a sequence subject to constraints on the number
         /// of keys and total number of values per chunk.
+        /// Keys should be unique.
         /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TVal"></typeparam>
-        /// <param name="points"></param>
-        /// <param name="maxPerList"></param>
-        /// <param name="maxKeys"></param>
-        /// <returns></returns>
+        /// <typeparam name="TKey">Type of keys to group by, should be unique</typeparam>
+        /// <typeparam name="TVal">Value type</typeparam>
+        /// <param name="points">List of (key, [values]) that will be chunked</param>
+        /// <param name="maxPerList">Maximum number of entries per list of values in the output</param>
+        /// <param name="maxKeys">Maximum number of keys per list of groups in the output</param>
+        /// <returns>A chunking of the output subject to <paramref name="maxKeys"/> and <paramref name="maxPerList"/>.</returns>
         public static IEnumerable<IEnumerable<(TKey Key, IEnumerable<TVal> Values)>> ChunkBy<TKey, TVal>(
             this IEnumerable<(TKey, IEnumerable<TVal>)> points, int maxPerList, int maxKeys)
         {
@@ -96,10 +97,10 @@ namespace Cognite.Extractor.Common
         /// Chunk the input sequence into a sequence of sequences subject to a constraint on the maximum
         /// number of elements per inner sequence.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="input"></param>
-        /// <param name="maxSize"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Input type</typeparam>
+        /// <param name="input">List of objects to be chunked</param>
+        /// <param name="maxSize">Maximum number of entires per list in the output</param>
+        /// <returns>A list of lists where each list is subject to <paramref name="maxSize"/></returns>
         public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> input, int maxSize)
         {
             var list = new List<T>(maxSize);

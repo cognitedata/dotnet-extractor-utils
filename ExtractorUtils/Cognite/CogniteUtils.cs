@@ -46,7 +46,7 @@ namespace Cognite.Extractor.Utils
         public const long TimestampMax = 2556144000000L;
 
         /// <summary>
-        /// Configure a <see cref="Client.Builder"/> according to the <paramref name="config"/> object
+        /// Configure a CogntieSdk Client.Builder according to the <paramref name="config"/> object
         /// </summary>
         /// <param name="clientBuilder">This builder</param>
         /// <param name="config">A <see cref="CogniteConfig"/> configuration object</param>
@@ -196,12 +196,12 @@ namespace Cognite.Extractor.Utils
     }
 
     /// <summary>
-    /// Comparer for <see cref="Identity"/> objects
+    /// Comparer for CogniteSdk Identity objects
     /// </summary>
     public class IdentityComparer : IEqualityComparer<Identity>
     {
         /// <summary>
-        /// Determine if two <see cref="Identity"/> objects are equal:
+        /// Determine if two CogniteSdk Identity objects are equal:
         /// They have the same Id or ExternalId
         /// </summary>
         /// <param name="x">Identity</param>
@@ -321,7 +321,7 @@ namespace Cognite.Extractor.Utils
         /// Cognite API (enabled in debug mode)</param>
         /// <param name="setMetrics">If true, a <see cref="IMetrics"/> metrics collector is created and used by the client
         /// to report metrics on the number and duration of API requests</param>
-        /// <param name="setHttpClient">Default true. If false <see cref="Client.Builder"/> is not added to the
+        /// <param name="setHttpClient">Default true. If false CogniteSdk Client.Builder is not added to the
         /// <see cref="ServiceCollection"/>. If this is false it must be added before this method is called.</param>
         public static void AddCogniteClient(this IServiceCollection services,
                                             string appId,

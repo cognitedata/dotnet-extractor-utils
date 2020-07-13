@@ -10,9 +10,9 @@ namespace Cognite.Extractor.Common
     public static class CommonUtils
     {
         /// <summary>
-        /// Trim this string object to null
+        /// Trim this string object to null.
         /// </summary>
-        /// <returns>A string with all leading and trailing white-space. If empty or null, returns null</returns>
+        /// <returns>A string without leading or trailing whitespace, or null.</returns>
         public static string TrimToNull(this string @this)
         {
             string s = @this?.Trim() ?? null;
@@ -77,12 +77,13 @@ namespace Cognite.Extractor.Common
         }
 
         /// <summary>
-        /// Returns elements of the source enumerable, where all elments have distinct results of the selector function.
+        /// Returns elements of the source enumerable, where all elments have distinct results of <paramref name="selector"/>.
+        /// If there are duplicates, only the first occurence in the input enumerable will be used.
         /// </summary>
         /// <param name="source">Input enumerable</param>
         /// <param name="selector">Function to generate keys</param>
         /// <param name="comparer">Optional element comparer</param>
-        /// <returns></returns>
+        /// <returns>Entries of the source enumerable, where all elements have distinct results of <paramref name="selector"/></returns>
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source,
             Func<TSource, TKey> selector, IEqualityComparer<TKey> comparer = null)
         {

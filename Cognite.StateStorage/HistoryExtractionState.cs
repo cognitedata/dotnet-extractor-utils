@@ -7,6 +7,24 @@ namespace Cognite.Extractor.StateStorage
     /// Represents an object to be extracted from the source system.
     /// This object is intended to be used with a system that can both feed live data
     /// and read historical data.
+    /// 
+    /// This is intended to be used with more complicated setups involving multiple destination systems,
+    /// and large amounts of historical data.
+    /// 
+    /// It works by keeping track of two <see cref="TimeRange"/>, SourceExtractedRange and DestinationExtractedRange.
+    /// 
+    /// SourceExtractedRange is the range of timestamps extracted from the source system, DestinationExtractedRange is a subset
+    /// of SourceExtractedRange, representing the range of timestamps pushed to destination systems.
+    /// 
+    /// The intended mechanism of this state is to update the source range after each iteration of frontfill
+    /// (reading forwards in time), and backfill (reading backwards), as well as handling "streamed" points,
+    /// which may appear at any point in time.
+    /// 
+    /// Once these points are pushed to destinations, the DestinationExtractedRange is updated, this is the range that
+    /// gets synchronized to state-stores.
+    /// 
+    /// On startup, the state can be initialized from one or more systems, and the most conservative number will be used.
+    /// After calling InitExtractedRange from each destination system, FinalizeRangeInit must be called before reading history.
     /// </summary>
     public class HistoryExtractionState : BaseExtractionState
     {
@@ -25,12 +43,12 @@ namespace Cognite.Extractor.StateStorage
         public bool FrontfillEnabled { get; protected set; }
 
         /// <summary>
-        /// True if state is actively backfilling.
+        /// True if state is actively backfilling, or should start.
         /// </summary>
         public bool IsBackfilling { get; protected set; }
 
         /// <summary>
-        /// True if state is actively frontfilling
+        /// True if state is actively frontfilling, or should start.
         /// </summary>
         public bool IsFrontfilling { get; protected set; }
 
@@ -66,6 +84,13 @@ namespace Cognite.Extractor.StateStorage
         /// <summary>
         /// Called after range initialization to set uninitialized ranges to proper default values depending on whether
         /// backfill is enabled or not.
+        /// 
+        /// This means that uninitialized ranges (ranges that are complete after contracting), are set to
+        /// (now, now) unless only frontfill is enabled, in which case it is set to (epoch, epoch).
+        /// 
+        /// Either way, SourceExtractedRange is set equal to DestinationExtractedRange, to start extracting from history.
+        /// 
+        /// If the destination range starts at epoch, backfilling is considered to be done.
         /// </summary>
         public virtual void FinalizeRangeInit()
         {
@@ -93,7 +118,7 @@ namespace Cognite.Extractor.StateStorage
             }
         }
         /// <summary>
-        /// Update start of source range from history backfill.
+        /// Update start of source range from history backfill. If <paramref name="final"/> is true, IsBackfilling is set to false.
         /// </summary>
         /// <param name="first">Earliest timestamp in backfilled chunk</param>
         /// <param name="final">True if this is the end of history</param>
@@ -111,7 +136,7 @@ namespace Cognite.Extractor.StateStorage
         }
 
         /// <summary>
-        /// Update end of source range from history frontfill.
+        /// Update end of source range from history frontfill. If <paramref name="final"/> is true, IsFrontfilling is set to false.
         /// </summary>
         /// <param name="last">Last timestamp in frontfilled chunk</param>
         /// <param name="final">True if this is the end of history</param>
@@ -128,7 +153,7 @@ namespace Cognite.Extractor.StateStorage
         }
 
         /// <summary>
-        /// Update end of source range from streamed data.
+        /// Update source range from streamed points.
         /// Streamed data may come from anywhere. If backfill/frontfill is running,
         /// only points after/before the first/last timestamp are considered.
         /// </summary>
@@ -194,7 +219,8 @@ namespace Cognite.Extractor.StateStorage
 
         /// <summary>
         /// Restart history by reseting the source range to the destination range,
-        /// and setting IsStreaming and IsBackfilling to false.
+        /// and resetting IsFrontfilling and IsBackfilling based on FrontfillEnabled and BackfillEnabled,
+        /// as well as the destination range.
         /// </summary>
         public virtual void RestartHistory()
         {

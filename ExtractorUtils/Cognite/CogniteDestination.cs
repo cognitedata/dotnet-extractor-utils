@@ -67,7 +67,7 @@ namespace Cognite.Extractor.Utils
         /// against CDF 
         /// </summary>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildTimeSeries">Function that builds <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="buildTimeSeries">Function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
@@ -91,7 +91,7 @@ namespace Cognite.Extractor.Utils
         /// against CDF 
         /// </summary>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildTimeSeries">Async function that builds <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="buildTimeSeries">Async function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
@@ -113,7 +113,7 @@ namespace Cognite.Extractor.Utils
         /// Tries to create the time series and returns when all are created or reported as 
         /// duplicates (already exist in CDF)
         /// </summary>
-        /// <param name="timeSeries">List of <see cref="TimeSeriesCreate"/> objects</param>
+        /// <param name="timeSeries">List of CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task EnsureTimeSeriesExistsAsync(
@@ -138,7 +138,7 @@ namespace Cognite.Extractor.Utils
         /// against CDF 
         /// </summary>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildAssets">Function that builds <see cref="AssetCreate"/> objects</param>
+        /// <param name="buildAssets">Function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
@@ -162,7 +162,7 @@ namespace Cognite.Extractor.Utils
         /// against CDF 
         /// </summary>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildAssets">Async function that builds <see cref="AssetCreate"/> objects</param>
+        /// <param name="buildAssets">Async function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
@@ -184,7 +184,7 @@ namespace Cognite.Extractor.Utils
         /// Tries to create the assets and returns when all are created or reported as 
         /// duplicates (already exist in CDF)
         /// </summary>
-        /// <param name="assets">List of <see cref="AssetCreate"/> objects</param>
+        /// <param name="assets">List of CogniteSdk AssetCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task EnsureAssetsExistsAsync(
@@ -203,7 +203,8 @@ namespace Cognite.Extractor.Utils
         #region datapoints
         /// <summary>
         /// Insert the provided data points into CDF. The data points are chunked
-        /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
+        /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the
+        /// <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
         /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
         /// </summary>
         /// <param name="points">Data points</param>
@@ -464,7 +465,7 @@ namespace Cognite.Extractor.Utils
         /// against CDF 
         /// </summary>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildEvents">Function that builds <see cref="EventCreate"/> objects</param>
+        /// <param name="buildEvents">Function that builds CogniteSdk EventCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<IEnumerable<Event>> GetOrCreateEventsAsync(
@@ -488,7 +489,7 @@ namespace Cognite.Extractor.Utils
         /// against CDF 
         /// </summary>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildEvents">Async function that builds <see cref="EventCreate"/> objects</param>
+        /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<IEnumerable<Event>> GetOrCreateEventsAsync(
@@ -510,7 +511,7 @@ namespace Cognite.Extractor.Utils
         /// Tries to create the events and returns when all are created or reported as 
         /// duplicates (already exist in CDF)
         /// </summary>
-        /// <param name="events">List of <see cref="EventCreate"/> objects</param>
+        /// <param name="events">List of CogniteSdk EventCreate objects</param>
         /// <param name="failOnError">Throw if an error other than duplicate events in CDF occurs.</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
