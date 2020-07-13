@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Cognite.Extractor.Utils
 {
     /// <summary>
-    /// Extension utility methods for <see cref="Client"/>
+    /// Extension utility methods for CogniteSDK Client.
     /// </summary>
     public static class AssetExtensions
     {
@@ -31,7 +31,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildAssets">Async function that builds <see cref="AssetCreate"/> objects</param>
+        /// <param name="buildAssets">Async function that builds AssetCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
@@ -58,7 +58,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="externalIds">External Ids</param>
-        /// <param name="buildAssets">Async function that builds <see cref="AssetCreate"/> objects</param>
+        /// <param name="buildAssets">Async function that builds AssetCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
@@ -105,7 +105,7 @@ namespace Cognite.Extractor.Utils
         /// duplicates (already exist in CDF)
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
-        /// <param name="assetsToEnsure">List of <see cref="AssetCreate"/> objects</param>
+        /// <param name="assetsToEnsure">List of AssetCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>

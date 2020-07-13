@@ -29,6 +29,16 @@ namespace Cognite.Extractor.StateStorage
             Mapper = StateStoreUtils.BuildMapper();
         }
 
+        /// <summary>
+        /// Restore states from raw table using <paramref name="restoreStorableState"/> method to write values into states.
+        /// </summary>
+        /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> inserted into state store</typeparam>
+        /// <typeparam name="K">Implementation of <see cref="IExtractionState"/> used as state</typeparam>
+        /// <param name="extractionStates">States to store</param>
+        /// <param name="tableName">Raw table to store into</param>
+        /// <param name="restoreStorableState">Action for pair of stored object and state, to restore the state with information from the poco</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task RestoreExtractionState<T, K>(
             IDictionary<string, K> extractionStates,
             string tableName,
@@ -66,6 +76,15 @@ namespace Cognite.Extractor.StateStorage
             }
         }
 
+        /// <summary>
+        /// Restores state from raw table given by <paramref name="tableName"/>
+        /// </summary>
+        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
+        /// <param name="extractionStates">States to restore</param>
+        /// <param name="tableName">Raw table to restore from</param>
+        /// <param name="initializeMissing">If true, initialize states missing from store to empty.</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task RestoreExtractionState<K>(
             IDictionary<string, K> extractionStates,
             string tableName,
@@ -90,7 +109,18 @@ namespace Cognite.Extractor.StateStorage
             }
         }
 
-        public async Task StoreExtractionState<T, K>(IEnumerable<K> extractionStates, string tableName, Func<K, T> buildStorableState, CancellationToken token)
+        /// <summary>
+        /// Store information from states into raw state store.
+        /// </summary>
+        /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> extracted from state store</typeparam>
+        /// <typeparam name="K">Implementation of <see cref="IExtractionState"/> used as state</typeparam>
+        /// <param name="extractionStates">States to store</param>
+        /// <param name="tableName">Raw tabke to store into</param>
+        /// <param name="buildStorableState">Method to create a storable state from extraction state</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task StoreExtractionState<T, K>(IEnumerable<K> extractionStates, string tableName,
+            Func<K, T> buildStorableState, CancellationToken token)
             where T : BaseStorableState
             where K : IExtractionState
         {
@@ -130,6 +160,14 @@ namespace Cognite.Extractor.StateStorage
             }
         }
 
+        /// <summary>
+        /// Store first and last timestamp to raw state store table given by <paramref name="tableName"/>
+        /// </summary>
+        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
+        /// <param name="extractionStates">States to store</param>
+        /// <param name="tableName">Raw table to store to</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public Task StoreExtractionState<K>(IEnumerable<K> extractionStates, string tableName, CancellationToken token) where K : BaseExtractionState
         {
             return StoreExtractionState(extractionStates, tableName, state =>

@@ -6,7 +6,12 @@ using System.Text;
 namespace Cognite.Extractor.StateStorage
 {
     /// <summary>
-    /// Represents a minimal extraction state implementation
+    /// A minimal extraction state implementation.
+    /// Represents a single object in a source system that maps to a single
+    /// object in some destination system.
+    /// 
+    /// Keeps track of a <see cref="TimeRange"/> DestinationExtractedRange which represents
+    /// the range of timestamps that are currently present in the destination system.
     /// </summary>
     public class BaseExtractionState : IExtractionState
     {
@@ -14,10 +19,13 @@ namespace Cognite.Extractor.StateStorage
         /// Mutex used for safely modifying ranges
         /// </summary>
         protected readonly object _mutex = new object();
+
         /// <summary>
-        /// Unique id for extracted object
+        /// Unique id for extracted object. Used as unique ID when storing in permanent storage,
+        /// so it must be unique within each store.
         /// </summary>
         public string Id { get; }
+
         /// <summary>
         /// Range of data pushed to destination(s)
         /// </summary>
@@ -32,6 +40,7 @@ namespace Cognite.Extractor.StateStorage
             }
         }
         private TimeRange _destinationExtractedRange;
+
         /// <summary>
         /// Last time the destination range was modified.
         /// </summary>
@@ -49,9 +58,10 @@ namespace Cognite.Extractor.StateStorage
 
         /// <summary>
         /// Called when initializing extracted range from destinations and state storage.
+        /// Sets the DestinationExtractedRange to (first, last) and sets LastTimeModified to null.
         /// </summary>
-        /// <param name="first"></param>
-        /// <param name="last"></param>
+        /// <param name="first">First point in destination system</param>
+        /// <param name="last">Last point in destination system</param>
         public virtual void InitExtractedRange(DateTime first, DateTime last)
         {
             lock (_mutex)

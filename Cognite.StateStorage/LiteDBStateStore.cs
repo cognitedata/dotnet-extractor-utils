@@ -29,8 +29,6 @@ namespace Cognite.Extractor.StateStorage
         public BsonMapper Mapper { get; }
         private string ConnectionString { get => $"filename={_config.Location};upgrade=true"; }
 
-
-
         /// <summary>
         /// Create StateStore wrapper.
         /// </summary>
@@ -42,6 +40,7 @@ namespace Cognite.Extractor.StateStorage
             _logger = logger;
             Mapper = StateStoreUtils.BuildMapper();
         }
+
         /// <summary>
         /// Return a connection to the database. Must be disposed of after use.
         /// This uses the custom DateTime mapper.
@@ -52,11 +51,12 @@ namespace Cognite.Extractor.StateStorage
         {
             return new LiteDatabase(readOnly ? $"{ConnectionString};ReadOnly=true" : ConnectionString, Mapper);
         }
+
         /// <summary>
         /// Store information from states into state store
         /// </summary>
         /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> extracted from state store</typeparam>
-        /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
+        /// <typeparam name="K">Implementation of <see cref="IExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to store</param>
         /// <param name="tableName">Collection to store into</param>
         /// <param name="buildStorableState">Method to create a storable state from extraction state</param>
@@ -105,6 +105,7 @@ namespace Cognite.Extractor.StateStorage
         /// <summary>
         /// Store first and last timestamp to litedb state store collection given by <paramref name="tableName"/>
         /// </summary>
+        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to store</param>
         /// <param name="tableName">Collection to store to</param>
         /// <param name="token"></param>
@@ -125,7 +126,7 @@ namespace Cognite.Extractor.StateStorage
         /// Generic method to restore state with a custom type.
         /// </summary>
         /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> inserted into state store</typeparam>
-        /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
+        /// <typeparam name="K">Subtype of <see cref="IExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to store</param>
         /// <param name="tableName">Collection to store into</param>
         /// <param name="restoreStorableState">Action for pair of stored object and state, to restore the state with information from the poco</param>
@@ -173,7 +174,7 @@ namespace Cognite.Extractor.StateStorage
         /// <summary>
         /// Restore first and last timestamp from state store.
         /// </summary>
-        /// <typeparam name="K">Subtype of <see cref="HistoryExtractionState"/> used as state</typeparam>
+        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
         /// <param name="extractionStates">States to restore</param>
         /// <param name="tableName">Table to restore from</param>
         /// <param name="initializeMissing">Initialize states missing from store to empty</param>

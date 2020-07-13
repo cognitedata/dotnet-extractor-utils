@@ -26,9 +26,10 @@ namespace Cognite.Extractor.Configuration
             .Build();
 
         /// <summary>
-        /// Reads the provided string containing yml and deserializes it to an object of type <typeparamref name="T"/>
+        /// Reads the provided string containing yml and deserializes it to an object of type <typeparamref name="T"/>.
+        /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
         /// </summary>
-        /// <param name="yaml">String containing yml</param>
+        /// <param name="yaml">Yaml string to parse</param>
         /// <typeparam name="T">Type to read to</typeparam>
         /// <returns>Object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown in case of yaml parsing errors, with an inner <see cref="YamlException"/></exception>
@@ -45,9 +46,10 @@ namespace Cognite.Extractor.Configuration
         }
 
         /// <summary>
-        /// Reads the yml file found in the provided path and deserializes it to an object of type <typeparamref name="T"/> 
+        /// Reads the yaml file found in the provided path and deserializes it to an object of type <typeparamref name="T"/> 
+        /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
         /// </summary>
-        /// <param name="path">String containing the path to a yml file</param>
+        /// <param name="path">String containing the path to a yaml file</param>
         /// <typeparam name="T">Type to read to</typeparam>
         /// <returns>Object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown in case of yaml parsing errors, with an inner <see cref="YamlException"/>.
@@ -101,6 +103,7 @@ namespace Cognite.Extractor.Configuration
         /// Try to read a configuration object of type <typeparamref name="T"/> from the provided <paramref name="yaml"/>
         /// string. Matching the configuration object version with the versions provided in <paramref name="acceptedConfigVersions"/>.
         /// Also calls GenerateDefaults() on the retrieved configuration object after reading.
+        /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
         /// </summary>
         /// <param name="yaml">String containing a yaml configuration</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
@@ -123,8 +126,9 @@ namespace Cognite.Extractor.Configuration
         /// the provided <paramref name="path"/>. Matching the configuration object version with the versions 
         /// provided in <paramref name="acceptedConfigVersions"/>.
         /// Also calls GenerateDefaults() on the retrieved configuration object after reading.
+        /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
         /// </summary>
-        /// <param name="path">Path to the yml file</param>
+        /// <param name="path">Path to the yaml file</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
         /// <typeparam name="T">A type that inherits from <see cref="VersionedConfig"/></typeparam>
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
@@ -173,10 +177,11 @@ namespace Cognite.Extractor.Configuration
             }
             throw new ConfigurationException("The yaml configuration file should contain a 'version' tag");
         }
+
         /// <summary>
-        /// Attempt to add the list of config-object types to the <see cref="ServiceCollection"/>, it looks at
-        /// the public properties of <typeparamref name="T"/>.
-        /// Applies to subtypes of the types given in <paramref name="types"/>. Having multiple candidates
+        /// Attempt to add the list of config-object types <paramref name="types"/> to the <see cref="ServiceCollection"/>
+        /// by iterating through the public properties of <paramref name="config"/>.
+        /// Applies to supertypes of the types given in <paramref name="types"/>. Having multiple candidates
         /// for a type can be unpredictable.
         /// </summary>
         /// <typeparam name="T">Configuration object type</typeparam>

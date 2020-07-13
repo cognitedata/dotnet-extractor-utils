@@ -3,7 +3,8 @@
 namespace Cognite.Extractor.StateStorage
 {
     /// <summary>
-    /// Represents an historical object in the destination system
+    /// Represents an historical object in the destination system,
+    /// used as storable object in state-stores.
     /// </summary>
     public class BaseExtractionStatePoco : BaseStorableState
     {
