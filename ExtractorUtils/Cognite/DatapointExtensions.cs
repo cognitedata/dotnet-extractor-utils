@@ -388,7 +388,8 @@ namespace Cognite.Extractor.Utils
             }
 
             var queryChunks = query
-                .ChunkBy(listChunkSize); // Maximum number of items in the /timeseries/data/list endpoint.
+                .ChunkBy(listChunkSize)
+                .ToList(); // Maximum number of items in the /timeseries/data/list endpoint.
 
             var notVerified = new HashSet<Identity>(new IdentityComparer());
             var verifyGenerators = queryChunks
@@ -405,7 +406,7 @@ namespace Cognite.Extractor.Utils
             taskNum = 0;
             await verifyGenerators.RunThrottled(
                 listThrottleSize,
-                (_) => { _logger.LogDebug("Verifying data points deletion: {Num}/{Total}", ++taskNum, queryChunks.Count()); },
+                (_) => { _logger.LogDebug("Verifying data points deletion: {Num}/{Total}", ++taskNum, queryChunks.Count); },
                 token);
 
             _logger.LogDebug("Deletion tasks completed");
@@ -529,7 +530,8 @@ namespace Cognite.Extractor.Utils
                     }
                     return idt;
                 })
-                .ChunkBy(chunkSize);
+                .ChunkBy(chunkSize)
+                .ToList();
 
             var generators = chunks.Select<IEnumerable<IdentityWithBefore>, Func<Task>>(
                 chunk => async () =>
@@ -566,7 +568,9 @@ namespace Cognite.Extractor.Utils
                         }
                     }
                 });
-            await generators.RunThrottled(throttleSize, token);
+            int numTasks = 0;
+            await generators.RunThrottled(throttleSize, (_) =>
+                _logger.LogDebug("Last timestamp from CDF: {num}/{total}", ++numTasks, chunks.Count), token);
             return ret;
         }
 
@@ -610,7 +614,8 @@ namespace Cognite.Extractor.Utils
                     }
                     return query;
                 })
-                .ChunkBy(chunkSize);
+                .ChunkBy(chunkSize)
+                .ToList();
 
             var generators = chunks.Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
                 chunk => async () =>
@@ -654,7 +659,9 @@ namespace Cognite.Extractor.Utils
                         }
                     }
                 });
-            await generators.RunThrottled(throttleSize, token);
+            int numTasks = 0;
+            await generators.RunThrottled(throttleSize, (_) =>
+                _logger.LogDebug("First timestamp from CDF: {num}/{total}", ++numTasks, chunks.Count), token);
             return ret;
         }
         /// <summary>
