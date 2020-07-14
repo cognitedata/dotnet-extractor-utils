@@ -171,7 +171,9 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             var chunks = events
-                .ChunkBy(chunkSize);
+                .ChunkBy(chunkSize)
+                .ToList();
+
             _logger.LogDebug("Ensuring events. Number of events: {Number}. Number of chunks: {Chunks}", events.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
@@ -185,7 +187,7 @@ namespace Cognite.Extractor.Utils
                 (_) => {
                     if (chunks.Count() > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(EnsureExistsAsync), ++taskNum, chunks.Count());
+                            nameof(EnsureExistsAsync), ++taskNum, chunks.Count);
                 },
                 token);
         }

@@ -77,6 +77,7 @@ namespace Cognite.Extractor.Utils
             var chunks = externalIds
                 .ChunkBy(chunkSize)
                 .ToList();
+
             _logger.LogDebug("Getting or creating assets. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(

@@ -53,6 +53,7 @@ namespace Cognite.Extractor.Utils
             var chunks = rows
                 .Select(kvp =>  new RawRowCreateJson() { Key = kvp.Key, Columns = DtoToJson(kvp.Value, options) })
                 .ChunkBy(chunkSize);
+
             var generators = chunks.
                 Select<IEnumerable<RawRowCreateJson>, Func<Task>>(
                     chunk => async () => {
@@ -62,7 +63,10 @@ namespace Cognite.Extractor.Utils
                         }
                     }
                 );
-            await generators.RunThrottled(throttleSize, token);
+            int numTasks = 0;
+            await generators.RunThrottled(throttleSize, (_) =>
+                _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(InsertRowsAsync), ++numTasks,
+                    Math.Ceiling((double)rows.Count / chunkSize)),  token);
         }
 
         internal static JsonElement DtoToJson<T>(T dto, JsonSerializerOptions options)
@@ -153,7 +157,9 @@ namespace Cognite.Extractor.Utils
                 );
             try
             {
-                await generators.RunThrottled(throttleSize, token);
+                int numTasks = 0;
+                await generators.RunThrottled(throttleSize, (_) =>
+                    _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(DeleteRowsAsync), ++numTasks, rowKeys.Count()), token);
             }
             catch (ResponseException ex)
             {

@@ -81,6 +81,7 @@ namespace Cognite.Extractor.Utils
             var chunks = externalIds
                 .ChunkBy(chunkSize)
                 .ToList();
+
             _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
@@ -121,7 +122,9 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             var chunks = timeSeriesToEnsure
-                .ChunkBy(chunkSize);
+                .ChunkBy(chunkSize)
+                .ToList();
+
             _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeriesToEnsure.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<TimeSeriesCreate>, Func<Task>>(
@@ -135,7 +138,7 @@ namespace Cognite.Extractor.Utils
                 (_) => {
                     if (chunks.Count() > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count());
+                            nameof(EnsureTimeSeriesExistsAsync), ++taskNum, chunks.Count);
                 },
                 token);
         }
@@ -161,7 +164,9 @@ namespace Cognite.Extractor.Utils
             object mutex = new object();
 
             var chunks = ids
-                .ChunkBy(chunkSize);
+                .ChunkBy(chunkSize)
+                .ToList();
+
             var generators = chunks
                 .Select<IEnumerable<Identity>, Func<Task>>(
                 chunk => async () => {
@@ -175,7 +180,10 @@ namespace Cognite.Extractor.Utils
                         result.AddRange(found);
                     }
                 });
-            await generators.RunThrottled(throttleSize, token);
+            int numTasks = 0;
+            await generators.RunThrottled(throttleSize, (_) =>
+                _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetTimeSeriesByIdsIgnoreErrors), ++numTasks, chunks.Count),
+                token);
             return result;
         }
 
