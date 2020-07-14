@@ -4,6 +4,7 @@ using CogniteSdk;
 using CogniteSdk.Resources;
 using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
+using Prometheus;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -164,7 +165,11 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<Identity>, Func<Task>>(
                 chunk => async () => {
-                    var found = await timeSeries.RetrieveAsync(chunk, true, token);
+                    IEnumerable<TimeSeries> found;
+                    using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
+                    {
+                        found = await timeSeries.RetrieveAsync(chunk, true, token);
+                    }
                     lock (mutex)
                     {
                         result.AddRange(found);
@@ -181,7 +186,11 @@ namespace Cognite.Extractor.Utils
             int backoff,
             CancellationToken token)
         {
-            var found = await client.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token);
+            IEnumerable<TimeSeries> found;
+            using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
+            {
+                found = await client.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token);
+            }
             _logger.LogDebug("Retrieved {Existing} times series from CDF", found.Count());
 
             var existingTimeSeries = found.ToList();
@@ -195,7 +204,12 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Could not fetch {Missing} out of {Found} time series. Attempting to create the missing ones", missing.Count, externalIds.Count());
             try
             {
-                var newTs = await client.CreateAsync(await buildTimeSeries(missing), token);
+                var toCreate = await buildTimeSeries(missing);
+                IEnumerable<TimeSeries> newTs;
+                using (CdfMetrics.TimeSeries.WithLabels("create").NewTimer())
+                {
+                    newTs = await client.CreateAsync(toCreate, token);
+                }
                 existingTimeSeries.AddRange(newTs);
                 _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
                 return existingTimeSeries;
@@ -226,7 +240,11 @@ namespace Cognite.Extractor.Utils
             {
                 try
                 {
-                    var newTs = await timeSeries.CreateAsync(create, token);
+                    IEnumerable<TimeSeries> newTs;
+                    using (CdfMetrics.TimeSeries.WithLabels("create").NewTimer())
+                    {
+                        newTs = await timeSeries.CreateAsync(create, token);
+                    }
                     _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
                     return;
                 }
