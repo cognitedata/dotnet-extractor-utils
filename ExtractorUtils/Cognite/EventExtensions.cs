@@ -3,6 +3,7 @@ using Cognite.Extractor.Logging;
 using CogniteSdk;
 using CogniteSdk.Resources;
 using Microsoft.Extensions.Logging;
+using Prometheus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,7 +108,11 @@ namespace Cognite.Extractor.Utils
             int backoff,
             CancellationToken token)
         {
-            var found = await resource.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+            IEnumerable<Event> found;
+            using (CdfMetrics.Events.WithLabels("retrieve").NewTimer())
+            {
+                found = await resource.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+            }
             _logger.LogDebug("Retrieved {Existing} events from CDF", found.Count());
 
             var existingEvents = found.ToList();
@@ -121,7 +126,12 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Could not fetch {Missing} out of {Found} events. Attempting to create the missing ones", missing.Count, externalIds.Count());
             try
             {
-                var newEvents = await resource.CreateAsync(await buildEvents(missing), token);
+                var toCreate = await buildEvents(missing);
+                IEnumerable<Event> newEvents;
+                using (CdfMetrics.Events.WithLabels("create").NewTimer())
+                {
+                    newEvents = await resource.CreateAsync(toCreate, token);
+                }
                 existingEvents.AddRange(newEvents);
                 _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
                 return existingEvents;
@@ -191,8 +201,12 @@ namespace Cognite.Extractor.Utils
             {
                 try
                 {
-                    var newTs = await resource.CreateAsync(create, token);
-                    _logger.LogDebug("Created {New} new events in CDF", newTs.Count());
+                    IEnumerable<Event> newEvents;
+                    using (CdfMetrics.Events.WithLabels("create").NewTimer())
+                    {
+                        newEvents = await resource.CreateAsync(create, token);
+                    }
+                    _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
                     return;
                 }
                 catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())

@@ -224,7 +224,10 @@ namespace Cognite.Extractor.Utils
             }
             try
             {
-                await dataPoints.CreateAsync(request, token);
+                using (CdfMetrics.Datapoints.WithLabels("insert").NewTimer())
+                {
+                    await dataPoints.CreateAsync(request, token);
+                }
                 _numberDataPoints.Inc(dataPointCount);
             }
             catch (TimeoutRejectedException)
@@ -258,7 +261,11 @@ namespace Cognite.Extractor.Utils
                     // The error message does not specify which time series caused the error.
                     // Need to fetch all time series in the chunk and check...
                     var chunking = new ChunkingConfig();
-                    var timeseries = await client.TimeSeries.GetTimeSeriesByIdsIgnoreErrors(points.Select(p => p.id), chunking.TimeSeries, 1, token);
+                    IEnumerable<TimeSeries> timeseries;
+                    using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
+                    {
+                        timeseries = await client.TimeSeries.GetTimeSeriesByIdsIgnoreErrors(points.Select(p => p.id), chunking.TimeSeries, 1, token);
+                    }
                     foreach (var entry in points)
                     {
                         var ts = timeseries
@@ -415,8 +422,12 @@ namespace Cognite.Extractor.Utils
             {
                 Items = chunks
             };
-            try{
-                await dataPoints.DeleteAsync(deleteQuery, token);
+            try
+            {
+                using (CdfMetrics.Datapoints.WithLabels("delete").NewTimer())
+                {
+                    await dataPoints.DeleteAsync(deleteQuery, token);
+                }
             }
             catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
             {
@@ -444,7 +455,11 @@ namespace Cognite.Extractor.Utils
             while (count > 0 && tries < _maxNumOfVerifyRequests)
             {
                 notVerified.Clear();
-                var results = await dataPoints.ListAsync(dataPointsQuery, token);
+                DataPointListResponse results;
+                using (CdfMetrics.Datapoints.WithLabels("list").NewTimer())
+                {
+                    results = await dataPoints.ListAsync(dataPointsQuery, token);
+                }
                 count = 0;
                 var queries = dataPointsQuery.Items.ToList();
                 var remaining = new List<DataPointsQueryItem>(); 
@@ -519,12 +534,17 @@ namespace Cognite.Extractor.Utils
             var generators = chunks.Select<IEnumerable<IdentityWithBefore>, Func<Task>>(
                 chunk => async () =>
                 {
-                    var dps = await dataPoints.LatestAsync(
-                        new DataPointsLatestQuery
-                        {
-                            IgnoreUnknownIds = true,
-                            Items = chunk
-                        }, token);
+                    IEnumerable<DataPointsItem<DataPoint>> dps;
+                    using (CdfMetrics.Datapoints.WithLabels("latest").NewTimer())
+                    {
+                        dps = await dataPoints.LatestAsync(
+                            new DataPointsLatestQuery
+                            {
+                                IgnoreUnknownIds = true,
+                                Items = chunk
+                            }, token);
+                    }
+                        
                     foreach (var dp in dps)
                     {
                         if (dp.DataPoints.Any())
@@ -595,13 +615,18 @@ namespace Cognite.Extractor.Utils
             var generators = chunks.Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
                 chunk => async () =>
                 {
-                    var dps = await dataPoints.ListAsync(
-                        new DataPointsQuery
-                        {
-                            IgnoreUnknownIds = true,
-                            Items = chunk,
-                            Limit = 1
-                        }, token);
+                    DataPointListResponse dps;
+                    using (CdfMetrics.Datapoints.WithLabels("first").NewTimer())
+                    {
+                        dps = await dataPoints.ListAsync(
+                            new DataPointsQuery
+                            {
+                                IgnoreUnknownIds = true,
+                                Items = chunk,
+                                Limit = 1
+                            }, token);
+                    }
+                   
                     foreach (var dp in dps.Items)
                     {
                         Identity id;

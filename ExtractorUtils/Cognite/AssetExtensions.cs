@@ -3,10 +3,10 @@ using Cognite.Extractor.Logging;
 using CogniteSdk;
 using CogniteSdk.Resources;
 using Microsoft.Extensions.Logging;
+using Prometheus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -143,7 +143,11 @@ namespace Cognite.Extractor.Utils
             int backoff,
             CancellationToken token)
         {
-            var found = await assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+            IEnumerable<Asset> found;
+            using (CdfMetrics.Assets.WithLabels("retrieve").NewTimer())
+            {
+                found = await assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+            }
             _logger.LogDebug("Retrieved {Existing} assets from CDF", found.Count());
 
             var existingAssets = found.ToList();
@@ -157,7 +161,12 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
             try
             {
-                var newAssets = await assets.CreateAsync(await buildAssets(missing), token);
+                var toCreate = await buildAssets(missing);
+                IEnumerable<Asset> newAssets;
+                using (CdfMetrics.Assets.WithLabels("create"))
+                {
+                    newAssets = await assets.CreateAsync(toCreate, token);
+                }
                 existingAssets.AddRange(newAssets);
                 _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
                 return existingAssets;
@@ -188,8 +197,13 @@ namespace Cognite.Extractor.Utils
             {
                 try
                 {
-                    var newTs = await assets.CreateAsync(create, token);
-                    _logger.LogDebug("Created {New} new assets in CDF", newTs.Count());
+                    IEnumerable<Asset> newAssets;
+                    using (CdfMetrics.Assets.WithLabels("create"))
+                    {
+                        newAssets = await assets.CreateAsync(create, token);
+                    }
+
+                    _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
                     return;
                 }
                 catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())

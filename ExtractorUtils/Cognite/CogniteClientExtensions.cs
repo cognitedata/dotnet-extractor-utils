@@ -4,6 +4,8 @@ using CogniteSdk;
 using Microsoft.Extensions.Logging;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
+using Prometheus;
+using CogniteSdk.Login;
 
 namespace Cognite.Extractor.Utils
 {
@@ -32,7 +34,11 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException("CDF project is not configured");
             }
 
-            var loginStatus = await client.Login.StatusAsync(token);
+            LoginStatus loginStatus;
+            using (CdfMetrics.Login.WithLabels("status").NewTimer())
+            {
+                loginStatus = await client.Login.StatusAsync(token);
+            }
             if (!loginStatus.LoggedIn)
             {
                 throw new CogniteUtilsException("CDF credentials are invalid");

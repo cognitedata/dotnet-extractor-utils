@@ -55,7 +55,12 @@ namespace Cognite.Extractor.Utils
                 .ChunkBy(chunkSize);
             var generators = chunks.
                 Select<IEnumerable<RawRowCreateJson>, Func<Task>>(
-                    chunk => async () => await raw.CreateRowsJsonAsync(database, table, chunk, true, token)
+                    chunk => async () => {
+                        using (CdfMetrics.Raw.WithLabels("create_rows"))
+                        {
+                            await raw.CreateRowsJsonAsync(database, table, chunk, true, token);
+                        }
+                    }
                 );
             await generators.RunThrottled(throttleSize, token);
         }
@@ -97,7 +102,11 @@ namespace Cognite.Extractor.Utils
                 {
                     query.Cursor = cursor;
                 }
-                var rows = await raw.ListRowsAsync(dbName, tableName, query, token);
+                ItemsWithCursor<RawRow> rows;
+                using (CdfMetrics.Raw.WithLabels("list_rows").NewTimer())
+                {
+                    rows = await raw.ListRowsAsync(dbName, tableName, query, token);
+                }
                 foreach (var row in rows.Items)
                 {
                     result[row.Key] = row.Columns;
@@ -134,7 +143,13 @@ namespace Cognite.Extractor.Utils
                 .ChunkBy(chunkSize);
             var generators = chunks
                 .Select<IEnumerable<RawRowDelete>, Func<Task>>(
-                    chunk => async () => await raw.DeleteRowsAsync(dbName, tableName, chunk, token)
+                    chunk => async () =>
+                    {
+                        using (CdfMetrics.Raw.WithLabels("delete").NewTimer())
+                        {
+                            await raw.DeleteRowsAsync(dbName, tableName, chunk, token);
+                        }
+                    }
                 );
             try
             {
