@@ -54,7 +54,8 @@ namespace Cognite.Extractor.Utils
             CogniteDestination destination,
             TimeSpan interval,
             int maxSize,
-            ILogger<CogniteDestination> logger) : base(destination, interval, maxSize, logger)
+            ILogger<CogniteDestination> logger,
+            Func<QueueUploadResult<(string key, T columns)>, Task> callback) : base(destination, interval, maxSize, logger, callback)
         {
             _db = db;
             _table = table;
@@ -69,6 +70,7 @@ namespace Cognite.Extractor.Utils
         protected override async Task<QueueUploadResult<(string key, T columns)>> UploadEntries(
             IEnumerable<(string key, T columns)> items, CancellationToken token)
         {
+            _queueSize.Dec(items.Count());
             var rows = items.ToDictionary(pair => pair.key, pair => pair.columns);
             if (!rows.Any())
             {

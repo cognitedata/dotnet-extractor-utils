@@ -75,13 +75,15 @@ namespace Cognite.Extractor.Utils
             CogniteDestination destination,
             TimeSpan interval,
             int maxSize,
-            ILogger<CogniteDestination> logger)
+            ILogger<CogniteDestination> logger,
+            Func<QueueUploadResult<T>, Task> callback)
         {
             _maxSize = maxSize;
             _destination = destination;
             _items = new ConcurrentQueue<T>();
             _logger = logger;
             _pushEvent = new ManualResetEventSlim(false);
+            _callback = callback;
 
             if (interval == TimeSpan.Zero || interval == Timeout.InfiniteTimeSpan) return;
 
@@ -97,7 +99,7 @@ namespace Cognite.Extractor.Utils
         /// Enqueue a single item in the internal queue.
         /// </summary>
         /// <param name="item">Item to enqueue</param>
-        public void Enqueue(T item)
+        public virtual void Enqueue(T item)
         {
             _items.Enqueue(item);
             if (_maxSize > 0 && _items.Count >= _maxSize)
@@ -110,7 +112,7 @@ namespace Cognite.Extractor.Utils
         /// Empty the queue and return the contents
         /// </summary>
         /// <returns>Contents of the queue</returns>
-        public IEnumerable<T> Dequeue()
+        public virtual IEnumerable<T> Dequeue()
         {
             var items = new List<T>();
             while (_items.TryDequeue(out T item))

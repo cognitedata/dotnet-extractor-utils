@@ -358,11 +358,49 @@ namespace Cognite.Extractor.Utils
         /// <param name="table">Raw table name</param>
         /// <param name="interval">Upload interval</param>
         /// <param name="maxQueueSize">Maximum queue size</param>
+        /// <param name="callback">Callback on upload</param>
         /// <typeparam name="T">Type of the DTO</typeparam>
         /// <returns>An upload queue object</returns>
-        public IRawUploadQueue<T> CreateRawUploadQueue<T>(string database, string table, TimeSpan interval, int maxQueueSize = 0)
+        public IRawUploadQueue<T> CreateRawUploadQueue<T>(string database, string table,
+            TimeSpan interval, int maxQueueSize = 0, Func<QueueUploadResult<(string key, T columns)>, Task> callback = null)
         {
-            return new RawUploadQueue<T>(database, table, this, interval, maxQueueSize, _logger);
+            return new RawUploadQueue<T>(database, table, this, interval, maxQueueSize, _logger, callback);
+        }
+
+        /// <summary>
+        /// Creates a datapoint upload queue. It is used to queue datapoints before uploading them to timeseries in CDF.
+        /// The items are dequeued and uploaded every <paramref name="interval"/>. If <paramref name="maxQueueSize"/> is greater than zero,
+        /// the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
+        /// If <paramref name="interval"/> is zero or infinite, the queue will never upload unless prompted or <paramref name="maxQueueSize"/> is reached.
+        /// To start the upload loop, use the <see cref="BaseUploadQueue{T}.Start(CancellationToken)"/> method. To stop it, dispose of the queue or
+        /// cancel the token
+        /// </summary>
+        /// <param name="interval">Upload interval</param>
+        /// <param name="maxQueueSize">Maximum queue size</param>
+        /// <param name="callback">Callback on upload</param>
+        /// <returns>An upload queue object</returns>
+        public TimeSeriesUploadQueue CreateTimeSeriesUploadQueue(TimeSpan interval, int maxQueueSize = 0,
+            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback = null)
+        {
+            return new TimeSeriesUploadQueue(this, interval, maxQueueSize, _logger, callback);
+        }
+
+        /// <summary>
+        /// Creates an event upload queue. It is used to queue events before uploading them to CDF.
+        /// The items are dequeued and uploaded every <paramref name="interval"/>. If <paramref name="maxQueueSize"/> is greater than zero,
+        /// the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
+        /// If <paramref name="interval"/> is zero or infinite, the queue will never upload unless prompted or <paramref name="maxQueueSize"/> is reached.
+        /// To start the upload loop, use the <see cref="BaseUploadQueue{T}.Start(CancellationToken)"/> method. To stop it, dispose of the queue or
+        /// cancel the token
+        /// </summary>
+        /// <param name="interval">Upload interval</param>
+        /// <param name="maxQueueSize">Maximum queue size</param>
+        /// <param name="callback">Callback on upload</param>
+        /// <returns>An upload queue object</returns>
+        public EventUploadQueue CreateEventUploadQueue(TimeSpan interval, int maxQueueSize = 0,
+            Func<QueueUploadResult<EventCreate>, Task> callback = null)
+        {
+            return new EventUploadQueue(this, interval, maxQueueSize, _logger, callback);
         }
 
         /// <summary>
