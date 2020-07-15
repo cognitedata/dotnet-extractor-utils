@@ -227,7 +227,7 @@ namespace ExtractorUtils.Test
             using (var provider = services.BuildServiceProvider())
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
-                var logger = provider.GetRequiredService<ILogger<CdfRawTest>>();
+                var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
                 // queue with 1 sec upload interval
                 using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
@@ -253,7 +253,7 @@ namespace ExtractorUtils.Test
                 }
 
                 Assert.Equal(3 * 13, dpCount);
-                Assert.True(cbCount <= 3);
+                Assert.True(cbCount <= 4);
                 cbCount = 0;
 
                 // queue with maximum size

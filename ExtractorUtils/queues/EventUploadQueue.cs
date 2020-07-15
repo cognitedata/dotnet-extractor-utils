@@ -25,6 +25,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="interval">Interval between each automated push, leave at zero to disable timed pushing</param>
         /// <param name="maxSize">Max size of queue before pushing, set to zero to disable max size</param>
         /// <param name="logger">Logger to use</param>
+        /// <param name="callback">Callback after uploading</param>
         public EventUploadQueue(
             CogniteDestination destination,
             TimeSpan interval,
