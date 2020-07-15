@@ -392,7 +392,7 @@ namespace Cognite.Extractor.Utils
         public Task DeleteRowsAsync(string dbName, string tableName, IEnumerable<string> rowKeys, CancellationToken token)
         {
             _logger.LogDebug("Deleting {count} rows from database {db}, table {table}", rowKeys.Count(), dbName, tableName);
-            return _client.Raw.DeleteRowsAsync(dbName, tableName, rowKeys, _config.CdfChunking.RawRows, _config.CdfThrottling.Raw, token);
+            return _client.Raw.DeleteRowsAsync(dbName, tableName, rowKeys, _config.CdfChunking.RawRowsDelete, _config.CdfThrottling.Raw, token);
         }
         #endregion
 

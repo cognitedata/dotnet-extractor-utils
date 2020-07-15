@@ -213,6 +213,13 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int RawRows { get; set; } = 10_000;
+        
+        /// <summary>
+        /// Maximum number of rows per Raw row delete request
+        /// </summary>
+        /// <value>Maximum chunk size</value>
+        public int RawRowsDelete { get; set; } = 1000;
+
         /// <summary>
         /// Maximum number of timeseries to check for each request to get latest datapoint
         /// </summary>
