@@ -98,7 +98,7 @@ namespace Cognite.Extractor.StateStorage
             }
             catch (LiteException e)
             {
-                _logger.LogWarning(e, "Failed to store extraction state to litedb store {store}: {Message}", tableName, e.Message);
+                _logger.LogWarning("Failed to store extraction state to litedb store {store}: {Message}", tableName, e.Message);
             }
         }
 
@@ -140,7 +140,7 @@ namespace Cognite.Extractor.StateStorage
         {
             try
             {
-                _logger.LogDebug("Attempting to restore {TotalNum} extration states from litedb store {store}", extractionStates.Count(), tableName);
+                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from litedb store {store}", extractionStates.Count(), tableName);
                 using (var db = GetDatabase(true))
                 {
                     var col = db.GetCollection<T>(tableName);
@@ -156,7 +156,7 @@ namespace Cognite.Extractor.StateStorage
                     }
                     StateStoreMetrics.StateRestoreCount.Inc();
                     StateStoreMetrics.StateRestoreStates.Inc(count);
-                    _logger.LogDebug("Restored {Restored} out of {TotalNum} extration states from litedb store {store}",
+                    _logger.LogDebug("Restored {Restored} out of {TotalNum} extraction states from litedb store {store}",
                         count,
                         extractionStates.Count(),
                         tableName);
@@ -164,11 +164,11 @@ namespace Cognite.Extractor.StateStorage
             }
             catch (LiteException e)
             {
-                _logger.LogWarning(e, "Failed to restore extraction state from litedb store {store}: {Message}", tableName, e.Message);
+                _logger.LogWarning("Failed to restore extraction state from litedb store {store}: {Message}", tableName, e.Message);
             }
             catch (FileNotFoundException e)
             {
-                _logger.LogWarning(e, "Failed to restore extraction state, store does not exist {store}: {Message}", tableName, e.Message);
+                _logger.LogWarning("Failed to restore extraction state, store {store} does not exist: {Message}", tableName, e.Message);
             }
         }
         /// <summary>
@@ -227,7 +227,7 @@ namespace Cognite.Extractor.StateStorage
             }
             catch (LiteException e)
             {
-                _logger.LogWarning(e, "Failed to delete extraction state from store {store}: {Message}", e.Message, tableName);
+                _logger.LogWarning("Failed to delete extraction state from store {store}: {Message}", e.Message, tableName);
             }
         }
     }

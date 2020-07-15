@@ -49,7 +49,7 @@ namespace Cognite.Extractor.StateStorage
         {
             try
             {
-                _logger.LogDebug("Attempting to restore {TotalNum} extration states from raw table {table}", extractionStates.Count(), tableName);
+                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from raw table {table}", extractionStates.Count(), tableName);
                 int count = 0;
                 var raw = await _destination.GetRowsAsync(_dbName, tableName, token);
                 foreach (var kvp in raw)
@@ -65,7 +65,7 @@ namespace Cognite.Extractor.StateStorage
                 }
                 StateStoreMetrics.StateRestoreCount.Inc();
                 StateStoreMetrics.StateRestoreStates.Inc(count);
-                _logger.LogDebug("Restored {Restored} out of {TotalNum} extration states from raw table {store}",
+                _logger.LogDebug("Restored {Restored} out of {TotalNum} extraction states from raw table {store}",
                         count,
                         extractionStates.Count(),
                         tableName);
