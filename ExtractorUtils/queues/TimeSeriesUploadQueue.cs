@@ -79,7 +79,10 @@ namespace Cognite.Extractor.Utils
             if (!dps.Any()) return new QueueUploadResult<(Identity, Datapoint)>(Enumerable.Empty<(Identity, Datapoint)>());
             _logger.LogTrace("Dequeued {Number} datapoints to upload to CDF", dps.Count());
 
-            var dpMap = dps.GroupBy(pair => pair.id).ToDictionary(group => group.Key, group => (IEnumerable<Datapoint>)group, new IdentityComparer());
+            var comparer = new IdentityComparer();
+
+            var dpMap = dps.GroupBy(pair => pair.id, pair => pair.dp, comparer).ToDictionary(group => group.Key,
+                group => (IEnumerable<Datapoint>)group, comparer);
 
             try
             {

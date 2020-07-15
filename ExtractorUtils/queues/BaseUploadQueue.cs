@@ -188,8 +188,8 @@ namespace Cognite.Extractor.Utils
                     {
                         _timer.Stop();
                         var items = Dequeue();
-                        var result = UploadEntries(items, _tokenSource.Token).GetAwaiter().GetResult();
-                        if (_callback != null) _callback(result).GetAwaiter().GetResult();
+                        var result = UploadEntries(items, _tokenSource.Token).Result;
+                        if (_callback != null) _callback(result).Wait();
                         if (!_tokenSource.IsCancellationRequested)
                         {
                             _tokenSource.Cancel();
