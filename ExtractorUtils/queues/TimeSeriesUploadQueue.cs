@@ -89,6 +89,7 @@ namespace Cognite.Extractor.Utils
 
         private async Task HandleUploadResult(Dictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
         {
+            if (_states == null || !_states.Any()) return;
             foreach (var kvp in dps)
             {
                 var states = new List<BaseExtractionState>();
