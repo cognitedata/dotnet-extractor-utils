@@ -171,12 +171,12 @@ namespace Cognite.Extractor.Utils
         /// <returns>Storable bytes</returns>
         public static byte[] StringToStorable(string str)
         {
-            ushort size = (ushort)((str?.Length ?? 0) * sizeof(char));
+            var strBytes = System.Text.Encoding.UTF8.GetBytes(str);
+            ushort size = (ushort)strBytes.Length;
             byte[] bytes = new byte[size + sizeof(ushort)];
             Buffer.BlockCopy(BitConverter.GetBytes(size), 0, bytes, 0, sizeof(ushort));
             if (size == 0) return bytes;
-            Buffer.BlockCopy(str?.ToCharArray() ?? Array.Empty<char>(), 0, bytes, sizeof(ushort),
-                size);
+            Buffer.BlockCopy(strBytes, 0, bytes, sizeof(ushort), size);
             return bytes;
         }
         /// <summary>
@@ -186,7 +186,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="stream">Stream to read from</param>
         /// <param name="size">Optional size, if this is non-null, skip reading size from the stream</param>
         /// <returns>Resulting parsed string</returns>
-        public static string StringFromStorable(Stream stream, ushort? size = null)
+        public static string StringFromStream(Stream stream, ushort? size = null)
         {
             if (!size.HasValue)
             {
@@ -199,7 +199,7 @@ namespace Cognite.Extractor.Utils
             var bytes = new byte[size.Value];
             if (stream.Read(bytes, 0, size.Value) < size.Value) return null;
 
-            return System.Text.Encoding.Default.GetString(bytes);
+            return System.Text.Encoding.UTF8.GetString(bytes);
         }
 
         /// <summary>
@@ -294,13 +294,13 @@ namespace Cognite.Extractor.Utils
                 }
                 else
                 {
-                    string extId = StringFromStorable(stream, size);
+                    string extId = StringFromStream(stream, size);
                     if (extId == null) break;
                     id = Identity.Create(extId);
                 }
 
                 var countBuffer = new byte[sizeof(uint)];
-                if (stream.Read(countBuffer, 0, sizeof(uint)) < sizeof(int)) break;
+                if (stream.Read(countBuffer, 0, sizeof(uint)) < sizeof(uint)) break;
                 uint count = BitConverter.ToUInt32(countBuffer, 0);
                 if (count == 0) continue;
 
@@ -603,14 +603,19 @@ namespace Cognite.Extractor.Utils
         public byte[] ToStorableBytes()
         {
             ushort size = sizeof(long) + sizeof(bool);
+
+            byte[] valBytes;
+
             if (IsString)
             {
-                size += (ushort)(_stringValue?.Length * sizeof(char) + sizeof(ushort));
+                valBytes = CogniteUtils.StringToStorable(_stringValue);
             }
             else
             {
-                size += sizeof(double);
+                valBytes = BitConverter.GetBytes(_numericValue.Value);
             }
+            size += (ushort)valBytes.Length;
+
             var bytes = new byte[size];
             int pos = 0;
             Buffer.BlockCopy(BitConverter.GetBytes(_timestamp), 0, bytes, pos, sizeof(long));
@@ -618,15 +623,7 @@ namespace Cognite.Extractor.Utils
             Buffer.BlockCopy(BitConverter.GetBytes(IsString), 0, bytes, pos, sizeof(bool));
             pos += sizeof(bool);
 
-            if (IsString)
-            {
-                var valBytes = CogniteUtils.StringToStorable(StringValue);
-                Buffer.BlockCopy(valBytes, 0, bytes, pos, valBytes.Length);
-            }
-            else
-            {
-                Buffer.BlockCopy(BitConverter.GetBytes(_numericValue.Value), 0, bytes, pos, sizeof(double));
-            }
+            Buffer.BlockCopy(valBytes, 0, bytes, pos, valBytes.Length);
 
             return bytes;
         }
@@ -645,14 +642,13 @@ namespace Cognite.Extractor.Utils
 
             if (isString)
             {
-                string value = CogniteUtils.StringFromStorable(stream);
+                string value = CogniteUtils.StringFromStream(stream);
                 return new Datapoint(timestamp, value);
             }
             else
             {
                 var valueBytes = new byte[sizeof(double)];
-                read = stream.Read(baseBytes, 0, sizeof(double));
-                if (read < sizeof(double)) return null;
+                if (stream.Read(valueBytes, 0, sizeof(double)) < sizeof(double)) return null;
                 double value = BitConverter.ToDouble(valueBytes, 0);
                 return new Datapoint(timestamp, value);
             }
