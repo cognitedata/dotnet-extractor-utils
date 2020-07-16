@@ -11,7 +11,8 @@ private class ColumnsDto
 }
 
 // Creates an queue that uploads rows to Raw every 5 seconds (or when the queue size reaches 1.000)
-using (var queue = destination.CreateRawUploadQueue<ColumnsDto>("myDb", "myTable", TimeSpan.FromSeconds(5), 1_000))
+using (var queue = destination.CreateRawUploadQueue<ColumnsDto>("myDb", "myTable", TimeSpan.FromSeconds(5), 1_000,
+    result => { // handle result of upload here }))
 {
     // Task to generate rows at regular intervals
     var enqueueTask = Task.Run(async () => {
