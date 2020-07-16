@@ -171,6 +171,10 @@ namespace Cognite.Extractor.Utils
         /// <returns>Storable bytes</returns>
         public static byte[] StringToStorable(string str)
         {
+            if (str == null)
+            {
+                return BitConverter.GetBytes((ushort)0);
+            }
             var strBytes = System.Text.Encoding.UTF8.GetBytes(str);
             ushort size = (ushort)strBytes.Length;
             byte[] bytes = new byte[size + sizeof(ushort)];
@@ -209,9 +213,10 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="datapoints">Datapoints to store</param>
         /// <param name="stream">Stream to write to</param>
-        public static Task WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Datapoint>> datapoints, Stream stream)
+        /// <param name="token"></param>
+        public static Task WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Datapoint>> datapoints, Stream stream, CancellationToken token)
         {
-            return Task.Run(() => WriteDatapoints(datapoints, stream));
+            return Task.Run(() => WriteDatapoints(datapoints, stream), token);
         }
 
         /// <summary>
@@ -325,6 +330,187 @@ namespace Cognite.Extractor.Utils
             }
 
             return ret.ToDictionary(kvp => kvp.Key, kvp => (IEnumerable<Datapoint>)kvp.Value, new IdentityComparer());
+        }
+
+        /// <summary>
+        /// Transforms a single event into an array of bytes.
+        /// Encoding:
+        /// [Id][Start][End][Description][Type][SubType][Source][assetIdCount][dataSetId]{[assetId1]...}[MetaCount]{[key][value]...}
+        /// </summary>
+        /// <param name="evt">Event to write</param>
+        /// <returns>Event serialized as bytes</returns>
+        public static byte[] EventToStorable(EventCreate evt)
+        {
+            var bytes = new List<byte>();
+            bytes.AddRange(StringToStorable(evt.ExternalId));
+            bytes.AddRange(BitConverter.GetBytes(evt.StartTime ?? -1));
+            bytes.AddRange(BitConverter.GetBytes(evt.EndTime ?? -1));
+            bytes.AddRange(StringToStorable(evt.Description));
+            bytes.AddRange(StringToStorable(evt.Type));
+            bytes.AddRange(StringToStorable(evt.Subtype));
+            bytes.AddRange(StringToStorable(evt.Source));
+            bytes.AddRange(BitConverter.GetBytes(evt.DataSetId ?? 0));
+
+            if (evt.AssetIds != null)
+            {
+                var assetIdBytes = new List<byte>();
+                foreach (var id in evt.AssetIds)
+                {
+                    assetIdBytes.AddRange(BitConverter.GetBytes(id));
+                }
+                bytes.AddRange(BitConverter.GetBytes((ushort)evt.AssetIds.Count()));
+                bytes.AddRange(assetIdBytes);
+            }
+            else
+            {
+                bytes.AddRange(new byte[] { 0, 0 });
+            }
+
+
+            if (evt.Metadata != null)
+            {
+                var metaDataBytes = new List<byte>();
+                foreach (var kvp in evt.Metadata)
+                {
+                    metaDataBytes.AddRange(StringToStorable(kvp.Key));
+                    metaDataBytes.AddRange(StringToStorable(kvp.Value));
+                }
+                bytes.AddRange(BitConverter.GetBytes((ushort)evt.Metadata.Count));
+                bytes.AddRange(metaDataBytes);
+            }
+            else
+            {
+                bytes.AddRange(new byte[] { 0, 0 });
+            }
+
+
+            return bytes.ToArray();
+        }
+        /// <summary>
+        /// Reads a single event from a stream.
+        /// Encoding:
+        /// [Id][Start][End][Description][Type][SubType][Source][assetIdCount][dataSetId]{[assetId1]...}[MetaCount]{[key][value]...}
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <returns></returns>
+        public static EventCreate EventFromStream(Stream stream)
+        {
+            var evt = new EventCreate();
+            evt.ExternalId = StringFromStream(stream);
+
+            var timeBytes = new byte[sizeof(long) * 2];
+            if (stream.Read(timeBytes, 0, sizeof(long) * 2) < sizeof(long) * 2) return null;
+            var startTime = BitConverter.ToInt64(timeBytes, 0);
+            var endTime = BitConverter.ToInt64(timeBytes, sizeof(long));
+            if (startTime >= 0) evt.StartTime = startTime;
+            if (endTime >= 0) evt.EndTime = endTime;
+
+            evt.Description = StringFromStream(stream);
+            evt.Type = StringFromStream(stream);
+            evt.Subtype = StringFromStream(stream);
+            evt.Source = StringFromStream(stream);
+
+            var dataSetBytes = new byte[sizeof(long)];
+            if (stream.Read(dataSetBytes, 0, sizeof(long)) < sizeof(long)) return null;
+            long dataSetId = BitConverter.ToInt64(dataSetBytes, 0);
+            if (dataSetId > 0) evt.DataSetId = dataSetId;
+
+            var countBytes = new byte[sizeof(ushort)];
+            if (stream.Read(countBytes, 0, sizeof(ushort)) < sizeof(ushort)) return null;
+            ushort assetIdCount = BitConverter.ToUInt16(countBytes, 0);
+
+            if (assetIdCount > 0)
+            {
+                var assetIds = new List<long>();
+                var idBytes = new byte[sizeof(long)];
+                for (int i = 0; i < assetIdCount; i++)
+                {
+                    if (stream.Read(idBytes, 0, sizeof(long)) < sizeof(long)) return null;
+                    long id = BitConverter.ToInt64(idBytes, 0);
+                    assetIds.Add(id);
+                }
+                evt.AssetIds = assetIds;
+            }
+
+
+            if (stream.Read(countBytes, 0, sizeof(ushort)) < sizeof(ushort)) return null;
+            ushort metaDataCount = BitConverter.ToUInt16(countBytes, 0);
+
+            if (metaDataCount > 0)
+            {
+                evt.Metadata = new Dictionary<string, string>();
+                for (int i = 0; i < metaDataCount; i++)
+                {
+                    var key = StringFromStream(stream);
+                    var value = StringFromStream(stream);
+                    if (key == null) return null;
+                    evt.Metadata[key] = value;
+                }
+            }
+
+
+            return evt;
+        }
+
+        /// <summary>
+        /// Read events from a stream.
+        /// Encoding:
+        /// [Id][Start][End][Description][Type][SubType][Source][assetIdCount][dataSetId]{[assetId1]...}[MetaCount]{[key][value]...}
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <returns>A list of created events</returns>
+        public static IEnumerable<EventCreate> ReadEvents(Stream stream)
+        {
+            var events = new List<EventCreate>();
+            while (true)
+            {
+                var evt = EventFromStream(stream);
+                if (evt == null) break;
+                events.Add(evt);
+            }
+            return events;
+        }
+
+        /// <summary>
+        /// Read events from a stream.
+        /// Encoding:
+        /// [Id][Start][End][Description][Type][SubType][Source][assetIdCount][dataSetId]{[assetId1]...}[MetaCount]{[key][value]...}
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <param name="token"></param>
+        /// <returns>A list of created events</returns>
+        public static Task<IEnumerable<EventCreate>> ReadEventsAsync(Stream stream, CancellationToken token)
+        {
+            return Task.Run(() => ReadEvents(stream), token);
+        }
+
+        /// <summary>
+        /// Write events to a stream.
+        /// Encoding:
+        /// [Id][Start][End][Description][Type][SubType][Source][assetIdCount][dataSetId]{[assetId1]...}[MetaCount]{[key][value]...}
+        /// </summary>
+        /// <param name="events">Events to write</param>
+        /// <param name="stream">Stream to write to</param>
+        public static void WriteEvents(IEnumerable<EventCreate> events, Stream stream)
+        {
+            foreach (var evt in events)
+            {
+                var bytes = EventToStorable(evt);
+                stream.Write(bytes, 0, bytes.Length);
+            }
+        }
+
+        /// <summary>
+        /// Write events to a stream.
+        /// Encoding:
+        /// [Id][Start][End][Description][Type][SubType][Source][assetIdCount][dataSetId]{[assetId1]...}[MetaCount]{[key][value]...}
+        /// </summary>
+        /// <param name="events">Events to write</param>
+        /// <param name="stream">Stream to write to</param>
+        /// <param name="token"></param>
+        public static Task WriteEventsAsync(IEnumerable<EventCreate> events, Stream stream, CancellationToken token)
+        {
+            return Task.Run(() => WriteEvents(events, stream), token);
         }
     }
 
