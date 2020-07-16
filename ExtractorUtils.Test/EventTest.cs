@@ -1,7 +1,9 @@
-﻿using Cognite.Extractor.Logging;
+﻿using Cognite.Extractor.Common;
+using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -104,6 +106,114 @@ namespace ExtractorUtils.Test
                 }
                 Assert.Equal(ids.Count(), _ensuredEvents
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
+            }
+
+            System.IO.File.Delete(path);
+        }
+
+        [Fact]
+        public async Task TestUploadQueue()
+        {
+            string path = "test-event-queue-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: {_apiKey}",
+                               $"  host: {_host}",
+                                "  cdf-chunking:",
+                                "    events: 2",
+                                "  cdf-throttling:",
+                                "    events: 2" };
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureEventsSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddCogniteClient("testApp", true, false);
+            var index = 0;
+
+            int evtCount = 0;
+            int cbCount = 0;
+
+            using (var source = new CancellationTokenSource())
+            using (var provider = services.BuildServiceProvider())
+            {
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var logger = provider.GetRequiredService<ILogger<EventTest>>();
+                // queue with 1 sec upload interval
+                using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
+                {
+                    evtCount += res.Uploaded.Count();
+                    cbCount++;
+                    return Task.CompletedTask;
+                }))
+                {
+                    var enqueueTask = Task.Run(async () => {
+                        while (index < 13)
+                        {
+                            queue.Enqueue(new EventCreate
+                            {
+                                ExternalId = "id " + index,
+                                StartTime = DateTime.UtcNow.ToUnixTimeMilliseconds(),
+                                EndTime = DateTime.UtcNow.ToUnixTimeMilliseconds()
+                            });
+                            await Task.Delay(100, source.Token);
+                            index++;
+                        }
+                    });
+                    var uploadTask = queue.Start(source.Token);
+
+                    var t = Task.WhenAny(uploadTask, enqueueTask);
+                    await t;
+                    logger.LogInformation("Enqueueing task completed. Disposing of the upload queue");
+                }
+
+                Assert.Equal(13, evtCount);
+                Assert.True(cbCount <= 3);
+                cbCount = 0;
+
+                // queue with maximum size
+                using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
+                {
+                    evtCount += res.Uploaded.Count();
+                    cbCount++;
+                    return Task.CompletedTask;
+                }))
+                {
+                    var enqueueTask = Task.Run(async () => {
+                        while (index < 23)
+                        {
+                            queue.Enqueue(new EventCreate
+                            {
+                                ExternalId = "id " + index,
+                                StartTime = DateTime.UtcNow.ToUnixTimeMilliseconds(),
+                                EndTime = DateTime.UtcNow.ToUnixTimeMilliseconds()
+                            });
+                            await Task.Delay(100, source.Token);
+                            index++;
+                        }
+                    });
+                    var uploadTask = queue.Start(source.Token);
+
+                    await enqueueTask;
+
+                    // test cancelling the token;
+                    source.Cancel();
+                    await uploadTask;
+                    Assert.True(uploadTask.IsCompleted);
+                    logger.LogInformation("Enqueueing task cancelled. Disposing of the upload queue");
+                }
+
+                Assert.Equal(23, evtCount);
+                Assert.Equal(3, cbCount);
             }
 
             System.IO.File.Delete(path);

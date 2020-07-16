@@ -15,6 +15,7 @@ using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
 using Google.Protobuf;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
@@ -177,6 +178,114 @@ namespace ExtractorUtils.Test
                 Assert.Contains(new Identity("missing-F"), errors.IdsNotFound);
                 Assert.Contains(new Identity("nc-E"), errors.IdsDeleteNotConfirmed);
                 Assert.Contains(new Identity("nc-H"), errors.IdsDeleteNotConfirmed);
+            }
+
+            System.IO.File.Delete(path);
+        }
+        [Fact]
+        public async Task TestUploadQueue()
+        {
+            string path = "test-ts-queue-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: someKey",
+                               $"  host: https://test.cognitedata.com",
+                                "  cdf-chunking:",
+                                "    data-points: 4",
+                                "    data-point-time-series: 2",
+                                "  cdf-throttling:",
+                                "    data-points: 2"};
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertDataPointsAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddCogniteClient("testApp", true, false);
+            var index = 0;
+
+            Func<int, Dictionary<Identity, Datapoint>> uploadGenerator = (int i) => new Dictionary<Identity, Datapoint>() {
+                    { new Identity("idMissing1"), new Datapoint(DateTime.UtcNow, i.ToString())},
+                    { new Identity("idNumeric1"), new Datapoint(DateTime.UtcNow, i) },
+                    { new Identity("idNumeric2"), new Datapoint(DateTime.UtcNow, i) },
+                    { new Identity("idMismatchedString1"), new Datapoint(DateTime.UtcNow, i) },
+                    { new Identity("idString1"), new Datapoint(DateTime.UtcNow, i.ToString()) }
+                };
+
+            int dpCount = 0;
+            int cbCount = 0;
+
+            using (var source = new CancellationTokenSource())
+            using (var provider = services.BuildServiceProvider())
+            {
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
+                // queue with 1 sec upload interval
+                using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
+                {
+                    dpCount += res.Uploaded.Count();
+                    cbCount++;
+                    return Task.CompletedTask;
+                }))
+                {
+                    var enqueueTask = Task.Run(async () => {
+                        while (index < 13)
+                        {
+                            var dps = uploadGenerator(index);
+                            foreach (var kvp in dps) queue.Enqueue(kvp.Key, kvp.Value);
+                            await Task.Delay(100, source.Token);
+                            index++;
+                        }
+                    });
+                    var uploadTask = queue.Start(source.Token);
+
+                    var t = Task.WhenAny(uploadTask, enqueueTask);
+                    await t;
+                    logger.LogInformation("Enqueueing task completed. Disposing of the upload queue");
+                }
+
+                Assert.Equal(3 * 13, dpCount);
+                Assert.True(cbCount <= 4);
+                cbCount = 0;
+
+                // queue with maximum size
+                using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
+                {
+                    dpCount += res.Uploaded.Count();
+                    cbCount++;
+                    return Task.CompletedTask;
+                }))
+                {
+                    var enqueueTask = Task.Run(async () => {
+                        while (index < 23)
+                        {
+                            var dps = uploadGenerator(index);
+                            foreach (var kvp in dps) queue.Enqueue(kvp.Key, kvp.Value);
+                            await Task.Delay(100, source.Token);
+                            index++;
+                        }
+                    });
+                    var uploadTask = queue.Start(source.Token);
+
+                    await enqueueTask;
+
+                    // test cancelling the token;
+                    source.Cancel();
+                    await uploadTask;
+                    Assert.True(uploadTask.IsCompleted);
+                    logger.LogInformation("Enqueueing task cancelled. Disposing of the upload queue");
+                }
+
+                Assert.Equal(3 * 23, dpCount);
+                Assert.Equal(11, cbCount);
             }
 
             System.IO.File.Delete(path);
