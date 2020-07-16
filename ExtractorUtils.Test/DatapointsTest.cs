@@ -222,11 +222,11 @@ namespace ExtractorUtils.Test
                 };
 
             var states = new[]
-{
+            {
                     new BaseExtractionState("idNumeric1"),
                     new BaseExtractionState("idNumeric2"),
                     new BaseExtractionState("idString1")
-                };
+            };
             foreach (var state in states) state.InitExtractedRange(CogniteTime.DateTimeEpoch, CogniteTime.DateTimeEpoch);
             var stateMap = states.ToDictionary(state => Identity.Create(state.Id), new IdentityComparer());
 
