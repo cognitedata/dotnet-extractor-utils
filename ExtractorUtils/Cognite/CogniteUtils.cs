@@ -12,6 +12,8 @@ using Polly.Timeout;
 using Cognite.Extractor.Common;
 using System.Linq;
 using Cognite.Common;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Cognite.Extractor.Utils
 {
@@ -161,6 +163,168 @@ namespace Cognite.Extractor.Utils
         public static IEnumerable<Datapoint> RemoveOutOfRangeTimestamps(this IEnumerable<Datapoint> points)
         {
             return points.Where(p => p.Timestamp >= TimestampMin && p.Timestamp <= TimestampMax);
+        }
+        /// <summary>
+        /// Turn string into an array of bytes on the format [unsigned short length][string].
+        /// </summary>
+        /// <param name="str">String to transform</param>
+        /// <returns>Storable bytes</returns>
+        public static byte[] StringToStorable(string str)
+        {
+            ushort size = (ushort)((str?.Length ?? 0) * sizeof(char));
+            byte[] bytes = new byte[size + sizeof(ushort)];
+            Buffer.BlockCopy(BitConverter.GetBytes(size), 0, bytes, 0, sizeof(ushort));
+            if (size == 0) return bytes;
+            Buffer.BlockCopy(str?.ToCharArray() ?? Array.Empty<char>(), 0, bytes, sizeof(ushort),
+                size);
+            return bytes;
+        }
+        /// <summary>
+        /// Read a string from given array of bytes, starting from given position.
+        /// String being read is assumed to be on the format [unsigned short length][string]
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <param name="size">Optional size, if this is non-null, skip reading size from the stream</param>
+        /// <returns>Resulting parsed string</returns>
+        public static string StringFromStorable(Stream stream, ushort? size = null)
+        {
+            if (!size.HasValue)
+            {
+                var sizeBytes = new byte[sizeof(ushort)];
+                if (stream.Read(sizeBytes, 0, sizeof(ushort)) < sizeof(ushort)) return null;
+                size = BitConverter.ToUInt16(sizeBytes, 0);
+                if (size == 0) return null;
+            }
+
+            var bytes = new byte[size.Value];
+            if (stream.Read(bytes, 0, size.Value) < size.Value) return null;
+
+            return System.Text.Encoding.Default.GetString(bytes);
+        }
+
+        /// <summary>
+        /// Write dictionary of datapoints to a stream.
+        /// Encoding for one timeseries:
+        /// [ushort id-length, 0 if internalId]{Either [long internalId] or [ushort size][string]}[uint count][dp 1]...[dp count]
+        /// </summary>
+        /// <param name="datapoints">Datapoints to store</param>
+        /// <param name="stream">Stream to write to</param>
+        public static Task WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Datapoint>> datapoints, Stream stream)
+        {
+            return Task.Run(() => WriteDatapoints(datapoints, stream));
+        }
+
+        /// <summary>
+        /// Write dictionary of datapoints to a stream.
+        /// Encoding for one timeseries:
+        /// [ushort id-length, 0 if internalId]{Either [long internalId] or [ushort size][string]}[uint count][dp 1]...[dp count]
+        /// </summary>
+        /// <param name="datapoints">Datapoints to store</param>
+        /// <param name="stream">Stream to write to</param>
+        public static void WriteDatapoints(IDictionary<Identity, IEnumerable<Datapoint>> datapoints, Stream stream)
+        {
+            foreach (var kvp in datapoints)
+            {
+                var id = kvp.Key;
+                var dps = kvp.Value;
+                if (!dps.Any()) continue;
+                byte[] idBytes;
+
+                if (id.Id != null)
+                {
+                    idBytes = new byte[sizeof(ushort) + sizeof(long)];
+                    idBytes[0] = idBytes[1] = 0;
+                    Buffer.BlockCopy(BitConverter.GetBytes(id.Id.Value), 0, idBytes, sizeof(ushort), sizeof(long));
+                }
+                else
+                {
+                    idBytes = StringToStorable(id.ExternalId);
+                }
+                stream.Write(idBytes, 0, idBytes.Length);
+
+                var count = dps.Count();
+                stream.Write(BitConverter.GetBytes(count), 0, sizeof(int));
+
+                foreach (var dp in dps)
+                {
+                    var bytes = dp.ToStorableBytes();
+                    stream.Write(bytes, 0, bytes.Length);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Transforms binary encoded datapoints in a stream into a dictionary of datapoints.
+        /// Encoding for one timeseries, ids may repeat:
+        /// [ushort id-length, 0 if internalId]{Either [long internalId] or [ushort size][string]}[uint count][dp 1]...[dp count]
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <param name="token"></param>
+        /// <returns>Read datapoints grouped by identity</returns>
+        public static Task<IDictionary<Identity, IEnumerable<Datapoint>>> ReadDatapointsAsync(Stream stream, CancellationToken token)
+        {
+            return Task.Run(() => ReadDatapoints(stream), token);
+        }
+
+        /// <summary>
+        /// Transforms binary encoded datapoints in a stream into a dictionary of datapoints.
+        /// Encoding for one timeseries, ids may repeat:
+        /// [ushort id-length, 0 if internalId]{Either [long internalId] or [ushort size][string]}[uint count][dp 1]...[dp count]
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        /// <returns>Read datapoints grouped by identity</returns>
+        public static IDictionary<Identity, IEnumerable<Datapoint>> ReadDatapoints(Stream stream)
+        {
+            var ret = new Dictionary<Identity, List<Datapoint>>(new IdentityComparer());
+
+            var idSizeBuffer = new byte[sizeof(ushort)];
+
+            while (true)
+            {
+                if (stream.Read(idSizeBuffer, 0, sizeof(ushort)) < sizeof(ushort)) break;
+                ushort size = BitConverter.ToUInt16(idSizeBuffer, 0);
+
+                Identity id;
+                // A 0-length ID implies that the datapoint uses internalId
+                if (size == 0)
+                {
+                    var idBuffer = new byte[sizeof(long)];
+                    if (stream.Read(idBuffer, 0, sizeof(long)) < sizeof(long)) break;
+                    id = Identity.Create(BitConverter.ToInt64(idBuffer, 0));
+                }
+                else
+                {
+                    string extId = StringFromStorable(stream, size);
+                    if (extId == null) break;
+                    id = Identity.Create(extId);
+                }
+
+                var countBuffer = new byte[sizeof(uint)];
+                if (stream.Read(countBuffer, 0, sizeof(uint)) < sizeof(int)) break;
+                uint count = BitConverter.ToUInt32(countBuffer, 0);
+                if (count == 0) continue;
+
+                var dps = new List<Datapoint>();
+
+                for (int i = 0; i < count; i++)
+                {
+                    var dp = Datapoint.FromStream(stream);
+                    if (dp == null) break;
+
+                    dps.Add(dp);
+                }
+                
+                if (!ret.TryGetValue(id, out var datapoints))
+                {
+                    ret[id] = dps;
+                }
+                else
+                {
+                    datapoints.AddRange(dps);
+                }
+            }
+
+            return ret.ToDictionary(kvp => kvp.Key, kvp => (IEnumerable<Datapoint>)kvp.Value, new IdentityComparer());
         }
     }
 
@@ -381,6 +545,11 @@ namespace Cognite.Extractor.Utils
         public double? NumericValue => _numericValue;
 
         /// <summary>
+        /// True if datapoint is string
+        /// </summary>
+        public bool IsString => _numericValue == null;
+
+        /// <summary>
         /// Creates a numeric data point
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
@@ -402,6 +571,91 @@ namespace Cognite.Extractor.Utils
             _timestamp = timestamp.ToUnixTimeMilliseconds();
             _numericValue = null;
             _stringValue = stringValue;
+        }
+        /// <summary>
+        /// Creates a numeric data point
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="numericValue">double value</param>
+        public Datapoint(long timestamp, double numericValue)
+        {
+            _timestamp = timestamp;
+            _numericValue = numericValue;
+            _stringValue = null;
+        }
+
+        /// <summary>
+        /// Creates a string data point
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="stringValue">string value</param>
+        public Datapoint(long timestamp, string stringValue)
+        {
+            _timestamp = timestamp;
+            _numericValue = null;
+            _stringValue = stringValue;
+        }
+        /// <summary>
+        /// Convert datapoint into an array of bytes on the form
+        /// [long timestamp][boolean isString]{Either [ushort length][string value] or [double value]}
+        /// </summary>
+        /// <returns></returns>
+        public byte[] ToStorableBytes()
+        {
+            ushort size = sizeof(long) + sizeof(bool);
+            if (IsString)
+            {
+                size += (ushort)(_stringValue?.Length * sizeof(char) + sizeof(ushort));
+            }
+            else
+            {
+                size += sizeof(double);
+            }
+            var bytes = new byte[size];
+            int pos = 0;
+            Buffer.BlockCopy(BitConverter.GetBytes(_timestamp), 0, bytes, pos, sizeof(long));
+            pos += sizeof(long);
+            Buffer.BlockCopy(BitConverter.GetBytes(IsString), 0, bytes, pos, sizeof(bool));
+            pos += sizeof(bool);
+
+            if (IsString)
+            {
+                var valBytes = CogniteUtils.StringToStorable(StringValue);
+                Buffer.BlockCopy(valBytes, 0, bytes, pos, valBytes.Length);
+            }
+            else
+            {
+                Buffer.BlockCopy(BitConverter.GetBytes(_numericValue.Value), 0, bytes, pos, sizeof(double));
+            }
+
+            return bytes;
+        }
+        /// <summary>
+        /// Initializes Datapoint by reading from a stream. Requires that the next bytes in the stream represent a datapoint.
+        /// </summary>
+        /// <param name="stream">Stream to read from</param>
+        public static Datapoint FromStream(Stream stream)
+        {
+            var baseBytes = new byte[sizeof(long) + sizeof(bool)];
+            int read = stream.Read(baseBytes, 0, sizeof(long) + sizeof(bool));
+            if (read < sizeof(long) + sizeof(bool)) return null;
+
+            var timestamp = BitConverter.ToInt64(baseBytes, 0);
+            var isString = BitConverter.ToBoolean(baseBytes, sizeof(long));
+
+            if (isString)
+            {
+                string value = CogniteUtils.StringFromStorable(stream);
+                return new Datapoint(timestamp, value);
+            }
+            else
+            {
+                var valueBytes = new byte[sizeof(double)];
+                read = stream.Read(baseBytes, 0, sizeof(double));
+                if (read < sizeof(double)) return null;
+                double value = BitConverter.ToDouble(valueBytes, 0);
+                return new Datapoint(timestamp, value);
+            }
         }
     }
 }
