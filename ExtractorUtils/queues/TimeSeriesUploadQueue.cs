@@ -1,4 +1,6 @@
-﻿using CogniteSdk;
+﻿using Cognite.Extractor.Common;
+using Cognite.Extractor.StateStorage;
+using CogniteSdk;
 using Microsoft.Extensions.Logging;
 using Prometheus;
 using System;
@@ -14,6 +16,11 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public class TimeSeriesUploadQueue : BaseUploadQueue<(Identity id, Datapoint dp)>
     {
+        private IExtractionStateStore _store;
+        private IDictionary<Identity, BaseExtractionState> _states;
+        private string _collection;
+
+
         private static readonly Counter _numberPoints = Prometheus.Metrics.CreateCounter("extractor_utils_queue_datapoints",
             "Number of datapoints uploaded to CDF from the queue");
         private static readonly Gauge _queueSize = Prometheus.Metrics.CreateGauge("extractor_utils_datapoints_queue_size",
@@ -65,6 +72,42 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
+        /// Add state storage to the queue. States are stored at after each upload.
+        /// </summary>
+        /// <param name="states">Map from timeseries identity to extraction state. Missing states are ignored. Required.</param>
+        /// <param name="stateStore">Store to store states in. Optional.</param>
+        /// <param name="collection">Collection in state store to use for extraction states</param>
+        public void AddStateStorage(
+            IDictionary<Identity, BaseExtractionState> states,
+            IExtractionStateStore stateStore,
+            string collection)
+        {
+            _store = stateStore;
+            _states = states;
+            _collection = collection;
+        }
+
+        private async Task HandleUploadResult(Dictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
+        {
+            if (_states == null || !_states.Any()) return;
+            foreach (var kvp in dps)
+            {
+                var states = new List<BaseExtractionState>();
+                if (kvp.Value.Any() && _states.TryGetValue(kvp.Key, out var state))
+                {
+                    var (min, max) = kvp.Value.MinMax(dp => CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp));
+                    state.UpdateDestinationRange(min, max);
+                    states.Add(state);
+                }
+                if (_store != null && !string.IsNullOrWhiteSpace(_collection) && states.Any())
+                {
+                    await _store.StoreExtractionState(states, _collection, token);
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Upload datapoints to CDF.
         /// </summary>
         /// <param name="dps">Datapoints to upload</param>
@@ -100,6 +143,17 @@ namespace Cognite.Extractor.Utils
             {
                 return new QueueUploadResult<(Identity id, Datapoint dp)>(ex);
             }
+
+            try
+            {
+                await HandleUploadResult(dpMap, token);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to handle upload results: {msg}", ex.Message);
+            }
+
+
             var uploaded = dpMap.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList();
             _numberPoints.Inc(uploaded.Count);
             return new QueueUploadResult<(Identity, Datapoint)>(uploaded);

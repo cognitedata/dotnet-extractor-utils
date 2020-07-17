@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
+using Cognite.Extractor.StateStorage;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
@@ -220,6 +221,17 @@ namespace ExtractorUtils.Test
                     { new Identity("idString1"), new Datapoint(DateTime.UtcNow, i.ToString()) }
                 };
 
+            var states = new[]
+            {
+                    new BaseExtractionState("idNumeric1"),
+                    new BaseExtractionState("idNumeric2"),
+                    new BaseExtractionState("idString1")
+            };
+            foreach (var state in states) state.InitExtractedRange(CogniteTime.DateTimeEpoch, CogniteTime.DateTimeEpoch);
+            var stateMap = states.ToDictionary(state => Identity.Create(state.Id), new IdentityComparer());
+
+            var stateStore = new DummyExtractionStore();
+
             int dpCount = 0;
             int cbCount = 0;
 
@@ -236,6 +248,7 @@ namespace ExtractorUtils.Test
                     return Task.CompletedTask;
                 }))
                 {
+                    queue.AddStateStorage(stateMap, stateStore, "test-states");
                     var enqueueTask = Task.Run(async () => {
                         while (index < 13)
                         {
@@ -264,6 +277,7 @@ namespace ExtractorUtils.Test
                     return Task.CompletedTask;
                 }))
                 {
+                    queue.AddStateStorage(stateMap, stateStore, "test-states");
                     var enqueueTask = Task.Run(async () => {
                         while (index < 23)
                         {
@@ -286,6 +300,10 @@ namespace ExtractorUtils.Test
 
                 Assert.Equal(3 * 23, dpCount);
                 Assert.Equal(11, cbCount);
+                foreach (var state in states)
+                {
+                    Assert.NotEqual(CogniteTime.DateTimeEpoch, state.DestinationExtractedRange.Last);
+                }
             }
 
             System.IO.File.Delete(path);
