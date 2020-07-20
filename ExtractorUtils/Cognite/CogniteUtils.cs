@@ -264,11 +264,14 @@ namespace Cognite.Extractor.Utils
         /// [ushort id-length, 0 if internalId]{Either [long internalId] or [ushort size][string]}[uint count][dp 1]...[dp count]
         /// </summary>
         /// <param name="stream">Stream to read from</param>
-        /// <param name="token"></param>
+        /// <param name="token"></param>'
+        /// <param name="chunkSize">Max number of points to read before returning, reuse the stream to continue reading.
+        /// 0 means that there is no upper limit. If there are timeseries-chunks larger than the chunk size in the stream,
+        /// it may be exceeded</param>
         /// <returns>Read datapoints grouped by identity</returns>
-        public static Task<IDictionary<Identity, IEnumerable<Datapoint>>> ReadDatapointsAsync(Stream stream, CancellationToken token)
+        public static Task<IDictionary<Identity, IEnumerable<Datapoint>>> ReadDatapointsAsync(Stream stream, CancellationToken token, int chunkSize = 0)
         {
-            return Task.Run(() => ReadDatapoints(stream), token);
+            return Task.Run(() => ReadDatapoints(stream, chunkSize), token);
         }
 
         /// <summary>
@@ -277,12 +280,17 @@ namespace Cognite.Extractor.Utils
         /// [ushort id-length, 0 if internalId]{Either [long internalId] or [ushort size][string]}[uint count][dp 1]...[dp count]
         /// </summary>
         /// <param name="stream">Stream to read from</param>
+        /// <param name="chunkSize">Max number of points to read before returning, reuse the stream to continue reading.
+        /// 0 means that there is no upper limit. If there are timeseries-chunks larger than the chunk size in the stream,
+        /// it may be exceeded.</param>
         /// <returns>Read datapoints grouped by identity</returns>
-        public static IDictionary<Identity, IEnumerable<Datapoint>> ReadDatapoints(Stream stream)
+        public static IDictionary<Identity, IEnumerable<Datapoint>> ReadDatapoints(Stream stream, int chunkSize = 0)
         {
             var ret = new Dictionary<Identity, List<Datapoint>>(new IdentityComparer());
 
             var idSizeBuffer = new byte[sizeof(ushort)];
+
+            int total = 0;
 
             while (true)
             {
@@ -309,6 +317,8 @@ namespace Cognite.Extractor.Utils
                 uint count = BitConverter.ToUInt32(countBuffer, 0);
                 if (count == 0) continue;
 
+                if (chunkSize > 0 && count + total > chunkSize && total > 0) break;
+
                 var dps = new List<Datapoint>();
 
                 for (int i = 0; i < count; i++)
@@ -316,6 +326,7 @@ namespace Cognite.Extractor.Utils
                     var dp = Datapoint.FromStream(stream);
                     if (dp == null) break;
 
+                    total++;
                     dps.Add(dp);
                 }
                 
@@ -458,8 +469,10 @@ namespace Cognite.Extractor.Utils
         /// [Id][Start][End][Description][Type][SubType][Source][assetIdCount][dataSetId]{[assetId1]...}[MetaCount]{[key][value]...}
         /// </summary>
         /// <param name="stream">Stream to read from</param>
+        /// <param name="chunkSize">Maximum number of events to read at a time, reuse the stream to continue reading.
+        /// If the list is empty, end of file is reached or the file is corrupt</param>
         /// <returns>A list of created events</returns>
-        public static IEnumerable<EventCreate> ReadEvents(Stream stream)
+        public static IEnumerable<EventCreate> ReadEvents(Stream stream, int chunkSize = 0)
         {
             var events = new List<EventCreate>();
             while (true)
@@ -478,10 +491,12 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="stream">Stream to read from</param>
         /// <param name="token"></param>
+        /// <param name="chunkSize">Maximum number of events to read at a time, reuse the stream to continue reading.
+        /// If the list is empty, end of file is reached or the file is corrupt</param>
         /// <returns>A list of created events</returns>
-        public static Task<IEnumerable<EventCreate>> ReadEventsAsync(Stream stream, CancellationToken token)
+        public static Task<IEnumerable<EventCreate>> ReadEventsAsync(Stream stream, CancellationToken token, int chunkSize = 0)
         {
-            return Task.Run(() => ReadEvents(stream), token);
+            return Task.Run(() => ReadEvents(stream, chunkSize), token);
         }
 
         /// <summary>
