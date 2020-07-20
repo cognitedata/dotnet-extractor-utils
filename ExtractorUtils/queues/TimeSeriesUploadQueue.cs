@@ -131,7 +131,7 @@ namespace Cognite.Extractor.Utils
 
                     do
                     {
-                        dps = await CogniteUtils.ReadDatapointsAsync(stream, token, 10_000);
+                        dps = await CogniteUtils.ReadDatapointsAsync(stream, token, 1_000_000);
                         if (dps.Any())
                         {
                             await _destination.InsertDataPointsIgnoreErrorsAsync(dps, token);
