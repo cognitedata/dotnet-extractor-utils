@@ -367,16 +367,14 @@ namespace ExtractorUtils.Test
                     await queue.Trigger(CancellationToken.None);
                     Assert.True(new FileInfo("dp-buffer.bin").Length > 0);
                     Assert.Empty(_createdDataPoints);
+                    await queue.Trigger(CancellationToken.None);
+                    Assert.True(new FileInfo("dp-buffer.bin").Length > 0);
+                    Assert.Empty(_createdDataPoints);
                     _failInsert = false;
-                    for (int i = 0; i < 10; i++)
-                    {
-                        var dps = uploadGenerator(i);
-                        foreach (var kvp in dps) queue.Enqueue(kvp.Key, kvp.Value);
-                    }
                     await queue.Trigger(CancellationToken.None);
                     Assert.Equal(0, new FileInfo("dp-buffer.bin").Length);
                     Assert.Equal(3, _createdDataPoints.Count);
-                    Assert.Equal(20, _createdDataPoints["idNumeric1"].Count);
+                    Assert.Equal(10, _createdDataPoints["idNumeric1"].Count);
                 }
             }
 
@@ -391,22 +389,8 @@ namespace ExtractorUtils.Test
         private async Task<HttpResponseMessage> mockInsertDataPointsAsync(HttpRequestMessage message , CancellationToken token) {
             var uri = message.RequestUri.ToString();
 
-            if (uri.Contains("/timeseries/byids"))
-            {
-                return await CogniteTest.MockEnsureTimeSeriesSendAsync(message, token);
-            }
-            Assert.Contains($"{_project}/timeseries/data", uri);
-
             var responseBody = "{ }";
-            var statusCode = HttpStatusCode.OK;
-            var bytes = await message.Content.ReadAsByteArrayAsync();
-            var data = DataPointInsertionRequest.Parser.ParseFrom(bytes);
-            Assert.True(data.Items.Count <= 2); // data-points-time-series chunk size
-            Assert.True(data.Items
-                .Select(i => i.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.NumericDatapoints ?
-                        i.NumericDatapoints.Datapoints.Count : i.StringDatapoints.Datapoints.Count)
-                .Sum() <= 4); // data-points chunk size
-            
+
             if (_failInsert)
             {
                 dynamic failResponse = new ExpandoObject();
@@ -424,6 +408,43 @@ namespace ExtractorUtils.Test
                 fail.Headers.Add("x-request-id", "1");
                 return fail;
             }
+
+            if (uri.Contains("/login/status"))
+            {
+                dynamic loginResponse = new ExpandoObject();
+                loginResponse.data = new ExpandoObject();
+                loginResponse.data.user = "user";
+                loginResponse.data.project = _project;
+                loginResponse.data.loggedIn = true;
+                loginResponse.data.projectId = 1;
+
+                responseBody = JsonConvert.SerializeObject(loginResponse);
+                var login = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(responseBody)
+                };
+                login.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                login.Headers.Add("x-request-id", "1");
+                return login;
+            }
+
+            if (uri.Contains("/timeseries/byids"))
+            {
+                return await CogniteTest.MockEnsureTimeSeriesSendAsync(message, token);
+            }
+            Assert.Contains($"{_project}/timeseries/data", uri);
+
+            var statusCode = HttpStatusCode.OK;
+            var bytes = await message.Content.ReadAsByteArrayAsync();
+            var data = DataPointInsertionRequest.Parser.ParseFrom(bytes);
+            Assert.True(data.Items.Count <= 2); // data-points-time-series chunk size
+            Assert.True(data.Items
+                .Select(i => i.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.NumericDatapoints ?
+                        i.NumericDatapoints.Datapoints.Count : i.StringDatapoints.Datapoints.Count)
+                .Sum() <= 4); // data-points chunk size
+            
+
 
 
             dynamic missingResponse = new ExpandoObject();

@@ -136,6 +136,8 @@ namespace Cognite.Extractor.Utils
                         {
                             await _destination.InsertDataPointsIgnoreErrorsAsync(dps, token);
                             await HandleUploadResult(dps, token);
+                            if (_callback != null) await _callback(new QueueUploadResult<(Identity id, Datapoint dp)>(
+                                dps.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList()));
                         }
                     } while (dps.Any());
                 }
@@ -180,6 +182,30 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _queueSize.Dec(dps.Count());
+
+            if(!dps.Any())
+            {
+                if (_bufferAny)
+                {
+                    bool connected;
+                    try
+                    {
+                        await _destination.TestCogniteConfig(token);
+                        connected = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogTrace("Failed to connect to CDF for inserting datapoints: {msg}", ex.Message);
+                        connected = false;
+                    }
+                    if (connected)
+                    {
+                        _logger.LogTrace("Reconnected to CDF, reading datapoints from buffer");
+                        await ReadFromBuffer(token);
+                    }
+                }
+                return new QueueUploadResult<(Identity id, Datapoint dp)>(Enumerable.Empty<(Identity id, Datapoint dp)>());
+            }
 
             if (!dps.Any()) return new QueueUploadResult<(Identity, Datapoint)>(Enumerable.Empty<(Identity, Datapoint)>());
             _logger.LogTrace("Dequeued {Number} datapoints to upload to CDF", dps.Count());

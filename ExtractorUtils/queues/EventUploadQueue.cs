@@ -96,6 +96,7 @@ namespace Cognite.Extractor.Utils
                         if (events.Any())
                         {
                             await _destination.EnsureEventsExistsAsync(events, true, token);
+                            if (_callback != null) await _callback(new QueueUploadResult<EventCreate>(events));
                         }
                     } while (events.Any());
                 }
@@ -119,7 +120,29 @@ namespace Cognite.Extractor.Utils
         {
             _queueSize.Dec(items.Count());
 
-            if (!items.Any()) return new QueueUploadResult<EventCreate>(Enumerable.Empty<EventCreate>());
+            if (!items.Any())
+            {
+                if (_bufferAny)
+                {
+                    bool connected;
+                    try
+                    {
+                        await _destination.TestCogniteConfig(token);
+                        connected = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogTrace("Failed to connect to CDF for inserting events: {msg}", ex.Message);
+                        connected = false;
+                    }
+                    if (connected)
+                    {
+                        _logger.LogTrace("Reconnected to CDF, reading events from buffer");
+                        await ReadFromBuffer(token);
+                    }
+                }
+                return new QueueUploadResult<EventCreate>(Enumerable.Empty<EventCreate>());
+            }
 
             _logger.LogTrace("Dequeued {Number} events to upload to CDF", items.Count());
 

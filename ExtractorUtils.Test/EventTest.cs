@@ -274,19 +274,13 @@ namespace ExtractorUtils.Test
                     await queue.Trigger(CancellationToken.None);
                     Assert.True(new FileInfo("event-buffer.bin").Length > 0);
                     Assert.Empty(_ensuredEvents);
+                    await queue.Trigger(CancellationToken.None);
+                    Assert.True(new FileInfo("event-buffer.bin").Length > 0);
+                    Assert.Empty(_ensuredEvents);
                     _failInsert = false;
-                    for (int i = 0; i < 10; i++)
-                    {
-                        queue.Enqueue(new EventCreate
-                        {
-                            ExternalId = "id " + (10 + i),
-                            StartTime = DateTime.UtcNow.ToUnixTimeMilliseconds(),
-                            EndTime = DateTime.UtcNow.ToUnixTimeMilliseconds()
-                        });
-                    }
                     await queue.Trigger(CancellationToken.None);
                     Assert.Equal(0, new FileInfo("event-buffer.bin").Length);
-                    Assert.Equal(20, _ensuredEvents.Count);
+                    Assert.Equal(10, _ensuredEvents.Count);
                 }
             }
             System.IO.File.Delete("event-buffer.bin");
@@ -303,11 +297,6 @@ namespace ExtractorUtils.Test
         {
             var uri = message.RequestUri.ToString();
             var responseBody = "";
-            var statusCode = HttpStatusCode.OK;
-
-            var content = await message.Content.ReadAsStringAsync();
-            var ids = JsonConvert.DeserializeObject<dynamic>(content);
-            IEnumerable<dynamic> items = ids.items;
 
             if (_failInsert)
             {
@@ -326,6 +315,34 @@ namespace ExtractorUtils.Test
                 fail.Headers.Add("x-request-id", "1");
                 return fail;
             }
+
+            if (uri.Contains("/login/status"))
+            {
+                dynamic loginResponse = new ExpandoObject();
+                loginResponse.data = new ExpandoObject();
+                loginResponse.data.user = "user";
+                loginResponse.data.project = _project;
+                loginResponse.data.loggedIn = true;
+                loginResponse.data.projectId = 1;
+
+                responseBody = JsonConvert.SerializeObject(loginResponse);
+                var login = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(responseBody)
+                };
+                login.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                login.Headers.Add("x-request-id", "1");
+                return login;
+            }
+
+            var statusCode = HttpStatusCode.OK;
+
+            var content = await message.Content.ReadAsStringAsync();
+            var ids = JsonConvert.DeserializeObject<dynamic>(content);
+            IEnumerable<dynamic> items = ids.items;
+
+
 
             if (uri.Contains("/events/byids"))
             {
