@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Prometheus;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +27,9 @@ namespace Cognite.Extractor.Utils
         private static readonly Gauge _queueSize = Prometheus.Metrics.CreateGauge("extractor_utils_datapoints_queue_size",
             "Number of datapoints in the upload queue to CDF");
 
+        private readonly string _bufferPath;
+        private bool _bufferEnabled;
+        private bool _bufferAny;
         /// <summary>
         /// Upload queue for timeseries datapoints
         /// </summary>
@@ -34,13 +38,27 @@ namespace Cognite.Extractor.Utils
         /// <param name="maxSize">Max size of queue before pushing, set to zero to disable max size</param>
         /// <param name="logger">Logger to use</param>
         /// <param name="callback">Callback after pushing</param>
+        /// <param name="bufferPath">Path to local buffer file for binary buffering of datapoints</param>
         public TimeSeriesUploadQueue(
             CogniteDestination destination,
             TimeSpan interval,
             int maxSize,
             ILogger<CogniteDestination> logger,
-            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback) : base(destination, interval, maxSize, logger, callback)
-        { }
+            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback,
+            string bufferPath) : base(destination, interval, maxSize, logger, callback)
+        {
+            _bufferPath = bufferPath;
+            if (!string.IsNullOrWhiteSpace(_bufferPath))
+            {
+                _bufferEnabled = true;
+                if (!System.IO.File.Exists(_bufferPath))
+                {
+                    System.IO.File.Create(_bufferPath).Close();
+                }
+                _bufferAny = new FileInfo(_bufferPath).Length > 0;
+                _bufferEnabled = true;
+            }
+        }
 
         /// <summary>
         /// Enqueue a datapoint by externalId
@@ -85,6 +103,49 @@ namespace Cognite.Extractor.Utils
             _store = stateStore;
             _states = states;
             _collection = collection;
+        }
+
+        private async Task WriteToBuffer(Dictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
+        {
+            try
+            {
+                using (var stream = new FileStream(_bufferPath, FileMode.Append, FileAccess.Write, FileShare.None))
+                {
+                    await CogniteUtils.WriteDatapointsAsync(dps, stream, token);
+                }
+                _bufferAny = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Failed to write to buffer: {msg}", ex.Message);
+            }
+        }
+
+        private async Task ReadFromBuffer(CancellationToken token)
+        {
+            IDictionary<Identity, IEnumerable<Datapoint>> dps;
+            try
+            {
+                using (var stream = new FileStream(_bufferPath, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None))
+                {
+
+                    do
+                    {
+                        dps = await CogniteUtils.ReadDatapointsAsync(stream, token, 10_000);
+                        if (dps.Any())
+                        {
+                            await _destination.InsertDataPointsIgnoreErrorsAsync(dps, token);
+                        }
+                    } while (dps.Any());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Failed to read from buffer: {msg}", ex.Message);
+                return;
+            }
+            System.IO.File.Create(_bufferPath).Close();
+            _bufferAny = false;
         }
 
         private async Task HandleUploadResult(Dictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
@@ -141,6 +202,10 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
+                if (_bufferEnabled && (!(ex is ResponseException rex) || rex.Code >= 500))
+                {
+                    await WriteToBuffer(dpMap, token);
+                }
                 return new QueueUploadResult<(Identity id, Datapoint dp)>(ex);
             }
 
@@ -153,6 +218,10 @@ namespace Cognite.Extractor.Utils
                 _logger.LogWarning(ex, "Failed to handle upload results: {msg}", ex.Message);
             }
 
+            if (_bufferAny)
+            {
+                await ReadFromBuffer(token);
+            }
 
             var uploaded = dpMap.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList();
             _numberPoints.Inc(uploaded.Count);

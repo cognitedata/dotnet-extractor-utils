@@ -378,11 +378,13 @@ namespace Cognite.Extractor.Utils
         /// <param name="interval">Upload interval</param>
         /// <param name="maxQueueSize">Maximum queue size</param>
         /// <param name="callback">Callback on upload</param>
+        /// <param name="bufferPath">Path to local binary buffer file. If this is non-null, points are automatically buffered to
+        /// a local file if inserting times out or fails with status >= 500</param>
         /// <returns>An upload queue object</returns>
         public TimeSeriesUploadQueue CreateTimeSeriesUploadQueue(TimeSpan interval, int maxQueueSize = 0,
-            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback = null)
+            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback = null, string bufferPath = null)
         {
-            return new TimeSeriesUploadQueue(this, interval, maxQueueSize, _logger, callback);
+            return new TimeSeriesUploadQueue(this, interval, maxQueueSize, _logger, callback, bufferPath);
         }
 
         /// <summary>
@@ -396,11 +398,13 @@ namespace Cognite.Extractor.Utils
         /// <param name="interval">Upload interval</param>
         /// <param name="maxQueueSize">Maximum queue size</param>
         /// <param name="callback">Callback on upload</param>
+        /// <param name="bufferPath">Path to local binary buffer file. If this is non-null, points are automatically buffered to
+        /// a local file if inserting times out or fails with status >= 500</param>
         /// <returns>An upload queue object</returns>
         public EventUploadQueue CreateEventUploadQueue(TimeSpan interval, int maxQueueSize = 0,
-            Func<QueueUploadResult<EventCreate>, Task> callback = null)
+            Func<QueueUploadResult<EventCreate>, Task> callback = null, string bufferPath = null)
         {
-            return new EventUploadQueue(this, interval, maxQueueSize, _logger, callback);
+            return new EventUploadQueue(this, interval, maxQueueSize, _logger, callback, bufferPath);
         }
 
         /// <summary>
