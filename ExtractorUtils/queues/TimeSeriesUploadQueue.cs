@@ -135,6 +135,7 @@ namespace Cognite.Extractor.Utils
                         if (dps.Any())
                         {
                             await _destination.InsertDataPointsIgnoreErrorsAsync(dps, token);
+                            await HandleUploadResult(dps, token);
                         }
                     } while (dps.Any());
                 }
@@ -148,7 +149,7 @@ namespace Cognite.Extractor.Utils
             _bufferAny = false;
         }
 
-        private async Task HandleUploadResult(Dictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
+        private async Task HandleUploadResult(IDictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
         {
             if (_states == null || !_states.Any()) return;
             foreach (var kvp in dps)
@@ -209,6 +210,11 @@ namespace Cognite.Extractor.Utils
                 return new QueueUploadResult<(Identity id, Datapoint dp)>(ex);
             }
 
+            if (_bufferAny)
+            {
+                await ReadFromBuffer(token);
+            }
+
             try
             {
                 await HandleUploadResult(dpMap, token);
@@ -216,11 +222,6 @@ namespace Cognite.Extractor.Utils
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Failed to handle upload results: {msg}", ex.Message);
-            }
-
-            if (_bufferAny)
-            {
-                await ReadFromBuffer(token);
             }
 
             var uploaded = dpMap.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList();
