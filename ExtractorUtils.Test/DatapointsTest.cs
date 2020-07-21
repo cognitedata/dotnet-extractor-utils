@@ -28,6 +28,7 @@ namespace ExtractorUtils.Test
     public class DatapointsTest
     {
         private const string _project = "someProject";
+        private bool _failInsert = false;
 
         [Fact]
         public async Task TestInsertDataPoints()
@@ -308,12 +309,125 @@ namespace ExtractorUtils.Test
 
             System.IO.File.Delete(path);
         }
+        [Fact]
+        public async Task TestUploadQueueBuffer()
+        {
+            string path = "test-ts-queue-buffer-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: someKey",
+                               $"  host: https://test.cognitedata.com",
+                                "  cdf-chunking:",
+                                "    data-points: 4",
+                                "    data-point-time-series: 2",
+                                "  cdf-throttling:",
+                                "    data-points: 2"};
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertDataPointsAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddCogniteClient("testApp", true, false);
+
+            Func<int, Dictionary<Identity, Datapoint>> uploadGenerator = (int i) => new Dictionary<Identity, Datapoint>() {
+                    { new Identity("idMissing1"), new Datapoint(DateTime.UtcNow, i.ToString())},
+                    { new Identity("idNumeric1"), new Datapoint(DateTime.UtcNow, i) },
+                    { new Identity("idNumeric2"), new Datapoint(DateTime.UtcNow, i) },
+                    { new Identity("idMismatchedString1"), new Datapoint(DateTime.UtcNow, i) },
+                    { new Identity("idString1"), new Datapoint(DateTime.UtcNow, i.ToString()) }
+                };
+
+            System.IO.File.Create("dp-buffer.bin").Close();
+
+            using (var source = new CancellationTokenSource())
+            using (var provider = services.BuildServiceProvider())
+            {
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
+                // queue that will not upload automatically.
+                using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.Zero, 0, null, "dp-buffer.bin"))
+                {
+                    var _ = queue.Start(CancellationToken.None);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        var dps = uploadGenerator(i);
+                        foreach (var kvp in dps) queue.Enqueue(kvp.Key, kvp.Value);
+                    }
+                    _failInsert = true;
+                    Assert.Equal(0, new FileInfo("dp-buffer.bin").Length);
+                    await queue.Trigger(CancellationToken.None);
+                    Assert.True(new FileInfo("dp-buffer.bin").Length > 0);
+                    Assert.Empty(_createdDataPoints);
+                    await queue.Trigger(CancellationToken.None);
+                    Assert.True(new FileInfo("dp-buffer.bin").Length > 0);
+                    Assert.Empty(_createdDataPoints);
+                    _failInsert = false;
+                    await queue.Trigger(CancellationToken.None);
+                    Assert.Equal(0, new FileInfo("dp-buffer.bin").Length);
+                    Assert.Equal(3, _createdDataPoints.Count);
+                    Assert.Equal(10, _createdDataPoints["idNumeric1"].Count);
+                }
+            }
+
+            System.IO.File.Delete("dp-buffer.bin");
+            System.IO.File.Delete(path);
+        }
+
 
         #region mock
-        private static Dictionary<string, List<Datapoint>> _createdDataPoints = new Dictionary<string, List<Datapoint>>();
+        private Dictionary<string, List<Datapoint>> _createdDataPoints = new Dictionary<string, List<Datapoint>>();
 
-        private static async Task<HttpResponseMessage> mockInsertDataPointsAsync(HttpRequestMessage message , CancellationToken token) {
+        private async Task<HttpResponseMessage> mockInsertDataPointsAsync(HttpRequestMessage message , CancellationToken token) {
             var uri = message.RequestUri.ToString();
+
+            var responseBody = "{ }";
+
+            if (_failInsert)
+            {
+                dynamic failResponse = new ExpandoObject();
+                failResponse.error = new ExpandoObject();
+                failResponse.error.code = 500;
+                failResponse.error.message = "Something went wrong";
+
+                responseBody = JsonConvert.SerializeObject(failResponse);
+                var fail = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Content = new StringContent(responseBody)
+                };
+                fail.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                fail.Headers.Add("x-request-id", "1");
+                return fail;
+            }
+
+            if (uri.Contains("/login/status"))
+            {
+                dynamic loginResponse = new ExpandoObject();
+                loginResponse.data = new ExpandoObject();
+                loginResponse.data.user = "user";
+                loginResponse.data.project = _project;
+                loginResponse.data.loggedIn = true;
+                loginResponse.data.projectId = 1;
+
+                responseBody = JsonConvert.SerializeObject(loginResponse);
+                var login = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(responseBody)
+                };
+                login.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                login.Headers.Add("x-request-id", "1");
+                return login;
+            }
 
             if (uri.Contains("/timeseries/byids"))
             {
@@ -321,7 +435,6 @@ namespace ExtractorUtils.Test
             }
             Assert.Contains($"{_project}/timeseries/data", uri);
 
-            var responseBody = "{ }";
             var statusCode = HttpStatusCode.OK;
             var bytes = await message.Content.ReadAsByteArrayAsync();
             var data = DataPointInsertionRequest.Parser.ParseFrom(bytes);
@@ -331,6 +444,9 @@ namespace ExtractorUtils.Test
                         i.NumericDatapoints.Datapoints.Count : i.StringDatapoints.Datapoints.Count)
                 .Sum() <= 4); // data-points chunk size
             
+
+
+
             dynamic missingResponse = new ExpandoObject();
             missingResponse.error = new ExpandoObject();
             missingResponse.error.missing = new List<ExpandoObject>();

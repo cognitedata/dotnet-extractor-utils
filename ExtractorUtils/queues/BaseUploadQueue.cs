@@ -140,7 +140,7 @@ namespace Cognite.Extractor.Utils
         public async Task Start(CancellationToken token)
         {
             _tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
-            _timer.Start();
+            _timer?.Start();
             _logger.LogDebug("Queue of type {Type} started", GetType().Name);
             _uploadTask = Task.Run(async () =>
             {
@@ -186,7 +186,7 @@ namespace Cognite.Extractor.Utils
                 {
                     try
                     {
-                        _timer.Stop();
+                        _timer?.Stop();
                         var items = Dequeue();
                         var result = UploadEntries(items, _tokenSource.Token).Result;
                         if (_callback != null) _callback(result).Wait();
@@ -194,12 +194,15 @@ namespace Cognite.Extractor.Utils
                         {
                             _tokenSource.Cancel();
                         }
-                        _uploadTask.GetAwaiter().GetResult();
+                        if (_uploadTask != null)
+                        {
+                            _uploadTask.GetAwaiter().GetResult();
+                        }
                     }
                     finally
                     {
                         _pushEvent.Dispose();
-                        _timer.Close();
+                        _timer?.Close();
                         _tokenSource.Dispose();
                     }
                 }

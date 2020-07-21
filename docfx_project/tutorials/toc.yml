@@ -2,6 +2,10 @@
   href: intro.md
 - name: Raw Queue
   href: raw-queue.md
+- name: Time Series Queue
+  href: ts-queue.md
+- name: Event Queue
+  href: event-queue.md
 - name: State Store
   href: state-store.md
   items:

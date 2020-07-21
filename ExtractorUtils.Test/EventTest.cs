@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -25,6 +26,8 @@ namespace ExtractorUtils.Test
         private const string _project = "someProject";
         private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
+
+        private bool _failInsert;
 
         [Theory]
         [InlineData("id1", "id2")]
@@ -219,20 +222,126 @@ namespace ExtractorUtils.Test
             System.IO.File.Delete(path);
         }
 
-        #region mock
-        private static ConcurrentDictionary<string, int> _ensuredEvents = new ConcurrentDictionary<string, int>();
+        [Fact]
+        public async Task TestUploadQueueBuffer()
+        {
+            string path = "test-event-queue-buffer-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  api-key: {_apiKey}",
+                               $"  host: {_host}",
+                                "  cdf-chunking:",
+                                "    events: 2",
+                                "  cdf-throttling:",
+                                "    events: 2" };
+            System.IO.File.WriteAllLines(path, lines);
 
-        private static async Task<HttpResponseMessage> mockEnsureEventsSendAsync(
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureEventsSendAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
+            services.AddConfig<BaseConfig>(path, 2);
+            services.AddLogger();
+            services.AddCogniteClient("testApp", true, false);
+
+            System.IO.File.Create("event-buffer.bin").Close();
+
+            using (var source = new CancellationTokenSource())
+            using (var provider = services.BuildServiceProvider())
+            {
+                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var logger = provider.GetRequiredService<ILogger<EventTest>>();
+                using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.Zero, 0, null, "event-buffer.bin"))
+                {
+                    var _ = queue.Start(source.Token);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        queue.Enqueue(new EventCreate
+                        {
+                            ExternalId = "id " + i,
+                            StartTime = DateTime.UtcNow.ToUnixTimeMilliseconds(),
+                            EndTime = DateTime.UtcNow.ToUnixTimeMilliseconds()
+                        });
+                    }
+                    _failInsert = true;
+                    Assert.Equal(0, new FileInfo("event-buffer.bin").Length);
+                    await queue.Trigger(CancellationToken.None);
+                    Assert.True(new FileInfo("event-buffer.bin").Length > 0);
+                    Assert.Empty(_ensuredEvents);
+                    await queue.Trigger(CancellationToken.None);
+                    Assert.True(new FileInfo("event-buffer.bin").Length > 0);
+                    Assert.Empty(_ensuredEvents);
+                    _failInsert = false;
+                    await queue.Trigger(CancellationToken.None);
+                    Assert.Equal(0, new FileInfo("event-buffer.bin").Length);
+                    Assert.Equal(10, _ensuredEvents.Count);
+                }
+            }
+            System.IO.File.Delete("event-buffer.bin");
+            System.IO.File.Delete(path);
+        }
+
+
+        #region mock
+        private ConcurrentDictionary<string, int> _ensuredEvents = new ConcurrentDictionary<string, int>();
+
+        private async Task<HttpResponseMessage> mockEnsureEventsSendAsync(
             HttpRequestMessage message,
             CancellationToken token)
         {
             var uri = message.RequestUri.ToString();
             var responseBody = "";
+
+            if (_failInsert)
+            {
+                dynamic failResponse = new ExpandoObject();
+                failResponse.error = new ExpandoObject();
+                failResponse.error.code = 500;
+                failResponse.error.message = "Something went wrong";
+
+                responseBody = JsonConvert.SerializeObject(failResponse);
+                var fail = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Content = new StringContent(responseBody)
+                };
+                fail.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                fail.Headers.Add("x-request-id", "1");
+                return fail;
+            }
+
+            if (uri.Contains("/login/status"))
+            {
+                dynamic loginResponse = new ExpandoObject();
+                loginResponse.data = new ExpandoObject();
+                loginResponse.data.user = "user";
+                loginResponse.data.project = _project;
+                loginResponse.data.loggedIn = true;
+                loginResponse.data.projectId = 1;
+
+                responseBody = JsonConvert.SerializeObject(loginResponse);
+                var login = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(responseBody)
+                };
+                login.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                login.Headers.Add("x-request-id", "1");
+                return login;
+            }
+
             var statusCode = HttpStatusCode.OK;
 
             var content = await message.Content.ReadAsStringAsync();
             var ids = JsonConvert.DeserializeObject<dynamic>(content);
             IEnumerable<dynamic> items = ids.items;
+
 
 
             if (uri.Contains("/events/byids"))
