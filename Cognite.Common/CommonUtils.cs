@@ -33,23 +33,32 @@ namespace Cognite.Extractor.Common
         }
 
         /// <summary>
-        /// Get the minimum and maximum timestamp in a list, using <paramref name="tsSelector"/> to get the timestamp for
-        /// each item
+        /// Get the minimum and maximum value in a list, using <paramref name="selector"/> to get the value for
+        /// each item. Throws an exception if no elements are present.
         /// </summary>
         /// <typeparam name="T">Input element type</typeparam>
+        /// <typeparam name="R">Comparable element</typeparam>
         /// <param name="items">Input enumerable</param>
-        /// <param name="tsSelector">Function to get timestamp for each element</param>
+        /// <param name="selector">Function to get value for each element</param>
         /// <returns>A tuple (Min, Max)</returns>
-        public static (DateTime Min, DateTime Max) MinMax<T>(this IEnumerable<T> items, Func<T, DateTime> tsSelector)
+        public static (R Min, R Max) MinMax<T, R>(this IEnumerable<T> items, Func<T, R> selector) where R : IComparable
         {
-            DateTime min = DateTime.MaxValue;
-            DateTime max = DateTime.MinValue;
+            R min = default;
+            R max = default;
+            bool hasValue = false;
             foreach (var item in items)
             {
-                DateTime ts = tsSelector(item);
-                if (ts < min) min = ts;
-                if (ts > max) max = ts;
+                R val = selector(item);
+                if (!hasValue)
+                {
+                    min = max = val;
+                    hasValue = true;
+                    continue;
+                }
+                else if (val.CompareTo(min) < 0) min = val;
+                if (val.CompareTo(max) > 0) max = val;
             }
+            if (!hasValue) throw new InvalidOperationException("Enumerable is empty");
             return (min, max);
         }
 

@@ -159,8 +159,8 @@ namespace Cognite.Extractor.Utils
                 var states = new List<BaseExtractionState>();
                 if (kvp.Value.Any() && _states.TryGetValue(kvp.Key, out var state))
                 {
-                    var (min, max) = kvp.Value.MinMax(dp => CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp));
-                    state.UpdateDestinationRange(min, max);
+                    var (min, max) = kvp.Value.MinMax(dp => dp.Timestamp);
+                    state.UpdateDestinationRange(CogniteTime.FromUnixTimeMilliseconds(min), CogniteTime.FromUnixTimeMilliseconds(max));
                     states.Add(state);
                 }
                 if (_store != null && !string.IsNullOrWhiteSpace(_collection) && states.Any())
