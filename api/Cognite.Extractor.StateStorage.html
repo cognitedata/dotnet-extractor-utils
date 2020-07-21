@@ -78,18 +78,36 @@
     <h3 id="classes">Classes
   </h3>
       <h4><a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionState.html">BaseExtractionState</a></h4>
-      <section><p>Represents a minimal extraction state implementation</p>
+      <section><p>A minimal extraction state implementation.
+Represents a single object in a source system that maps to a single
+object in some destination system.</p>
+<p>Keeps track of a <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a> DestinationExtractedRange which represents
+the range of timestamps that are currently present in the destination system.</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionStatePoco.html">BaseExtractionStatePoco</a></h4>
-      <section><p>Represents an historical object in the destination system</p>
+      <section><p>Represents an historical object in the destination system,
+used as storable object in state-stores.</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.StateStorage.BaseStorableState.html">BaseStorableState</a></h4>
-      <section><p>Minimal state that may be stored to a state-storage system.</p>
+      <section><p>Minimal state that may be stored to a state-storage system.
+Only contains an Id. This should be extended to create custom storable objects.</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.StateStorage.HistoryExtractionState.html">HistoryExtractionState</a></h4>
       <section><p>Represents an object to be extracted from the source system.
 This object is intended to be used with a system that can both feed live data
 and read historical data.</p>
+<p>This is intended to be used with more complicated setups involving multiple destination systems,
+and large amounts of historical data.</p>
+<p>It works by keeping track of two <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>, SourceExtractedRange and DestinationExtractedRange.</p>
+<p>SourceExtractedRange is the range of timestamps extracted from the source system, DestinationExtractedRange is a subset
+of SourceExtractedRange, representing the range of timestamps pushed to destination systems.</p>
+<p>The intended mechanism of this state is to update the source range after each iteration of frontfill
+(reading forwards in time), and backfill (reading backwards), as well as handling &quot;streamed&quot; points,
+which may appear at any point in time.</p>
+<p>Once these points are pushed to destinations, the DestinationExtractedRange is updated, this is the range that
+gets synchronized to state-stores.</p>
+<p>On startup, the state can be initialized from one or more systems, and the most conservative number will be used.
+After calling InitExtractedRange from each destination system, FinalizeRangeInit must be called before reading history.</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.StateStorage.LiteDBStateStore.html">LiteDBStateStore</a></h4>
       <section><p>Local database to store state between each run of the extractor.

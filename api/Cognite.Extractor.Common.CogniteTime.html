@@ -115,14 +115,14 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_DateTimeEpoch.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.DateTimeEpoch%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_DateTimeEpoch.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.DateTimeEpoch%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L13">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L13">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_DateTimeEpoch_" data-uid="Cognite.Extractor.Common.CogniteTime.DateTimeEpoch*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_DateTimeEpoch" data-uid="Cognite.Extractor.Common.CogniteTime.DateTimeEpoch">DateTimeEpoch</h4>
-  <div class="markdown level1 summary"><p>DateTime object representing the Unix Epoch.</p>
+  <div class="markdown level1 summary"><p>DateTime object representing the Unix Epoch, midnight 1/1/1970, in UTC.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -148,15 +148,14 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_FromTicks_System_Int64_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.FromTicks(System.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_FromTicks_System_Int64_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.FromTicks(System.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L40">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L38">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_FromTicks_" data-uid="Cognite.Extractor.Common.CogniteTime.FromTicks*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_FromTicks_System_Int64_" data-uid="Cognite.Extractor.Common.CogniteTime.FromTicks(System.Int64)">FromTicks(Int64)</h4>
-  <div class="markdown level1 summary"><p>Constructs a DateTime object adding the number of ticks passed as parameter to
-Unix Epoch.</p>
+  <div class="markdown level1 summary"><p>Creates an UTC DateTime object at <code data-dev-comment-type="paramref" class="paramref">ticksSinceEpoch</code> ticks after the Unix Epoch, midninght 1/1/1970.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -176,7 +175,7 @@ Unix Epoch.</p>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">ticksSinceEpoch</span></td>
-        <td><p>number of ticks since Epoch</p>
+        <td><p>Number of ticks since Epoch</p>
 </td>
       </tr>
     </tbody>
@@ -192,22 +191,21 @@ Unix Epoch.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.DateTime</span></td>
-        <td><p>DateTime object correponding to the Unix time</p>
+        <td><p>UTC DateTime object at <code data-dev-comment-type="paramref" class="paramref">ticksSinceEpoch</code> ticks after epoch</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_FromUnixTimeMilliseconds_System_Int64_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.FromUnixTimeMilliseconds(System.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_FromUnixTimeMilliseconds_System_Int64_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.FromUnixTimeMilliseconds(System.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L25">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L24">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_FromUnixTimeMilliseconds_" data-uid="Cognite.Extractor.Common.CogniteTime.FromUnixTimeMilliseconds*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_FromUnixTimeMilliseconds_System_Int64_" data-uid="Cognite.Extractor.Common.CogniteTime.FromUnixTimeMilliseconds(System.Int64)">FromUnixTimeMilliseconds(Int64)</h4>
-  <div class="markdown level1 summary"><p>Constructs a DateTime object adding the number of milliseconds passed as parameter to
-Unix Epoch.</p>
+  <div class="markdown level1 summary"><p>Creates an UTC DateTime object at <code data-dev-comment-type="paramref" class="paramref">msSinceEpoch</code> milliseconds after the Unix Epoch, midnight 1/1/1970.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -227,7 +225,7 @@ Unix Epoch.</p>
       <tr>
         <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">msSinceEpoch</span></td>
-        <td><p>number of milliseconds since Epoch</p>
+        <td><p>Number of milliseconds since Epoch</p>
 </td>
       </tr>
     </tbody>
@@ -243,21 +241,21 @@ Unix Epoch.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.DateTime</span></td>
-        <td><p>DateTime object correponding to the Unix time</p>
+        <td><p>UTC DateTime object at <code data-dev-comment-type="paramref" class="paramref">msSinceEpoch</code> milliseconds after midnight 1/1/1970</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_Max_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.Max(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_Max_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.Max(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L112">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L109">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_Max_" data-uid="Cognite.Extractor.Common.CogniteTime.Max*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_Max_System_DateTime_System_DateTime_" data-uid="Cognite.Extractor.Common.CogniteTime.Max(System.DateTime,System.DateTime)">Max(DateTime, DateTime)</h4>
-  <div class="markdown level1 summary"><p>Return latest DateTime.</p>
+  <div class="markdown level1 summary"><p>Return the latest of the two given DateTimes</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -303,14 +301,14 @@ Unix Epoch.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_Min_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.Min(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_Min_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.Min(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L120">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L117">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_Min_" data-uid="Cognite.Extractor.Common.CogniteTime.Min*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_Min_System_DateTime_System_DateTime_" data-uid="Cognite.Extractor.Common.CogniteTime.Min(System.DateTime,System.DateTime)">Min(DateTime, DateTime)</h4>
-  <div class="markdown level1 summary"><p>Return earliest DateTime.</p>
+  <div class="markdown level1 summary"><p>Return the earliest of the two given DateTimes.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -356,15 +354,15 @@ Unix Epoch.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_NanosecondsSinceEpoch_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.NanosecondsSinceEpoch(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_NanosecondsSinceEpoch_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.NanosecondsSinceEpoch(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L89">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L86">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_NanosecondsSinceEpoch_" data-uid="Cognite.Extractor.Common.CogniteTime.NanosecondsSinceEpoch*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_NanosecondsSinceEpoch_System_DateTime_" data-uid="Cognite.Extractor.Common.CogniteTime.NanosecondsSinceEpoch(System.DateTime)">NanosecondsSinceEpoch(DateTime)</h4>
-  <div class="markdown level1 summary"><p>Returns the how many nanoseconds have passed since Unix Epoch to the
-date passed as parameter. A Nanosecond correspond to 100 ticks.</p>
+  <div class="markdown level1 summary"><p>Returns the how many nanoseconds have passed since the Unix Epoch, 1/1/1970 to the
+date passed as parameter. A Nanosecond corresponds to 100 ticks.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -384,7 +382,7 @@ date passed as parameter. A Nanosecond correspond to 100 ticks.</p>
       <tr>
         <td><span class="xref">System.DateTime</span></td>
         <td><span class="parametername">time</span></td>
-        <td><p>DateTime object to convert</p>
+        <td><p>UTC DateTime object to convert</p>
 </td>
       </tr>
     </tbody>
@@ -400,22 +398,22 @@ date passed as parameter. A Nanosecond correspond to 100 ticks.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Int64</span></td>
-        <td><p>Number of ticks since Epoch</p>
+        <td><p>Number of ticks since epoch</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_TicksSinceEpoch_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.TicksSinceEpoch(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_TicksSinceEpoch_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.TicksSinceEpoch(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L70">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L67">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_TicksSinceEpoch_" data-uid="Cognite.Extractor.Common.CogniteTime.TicksSinceEpoch*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_TicksSinceEpoch_System_DateTime_" data-uid="Cognite.Extractor.Common.CogniteTime.TicksSinceEpoch(System.DateTime)">TicksSinceEpoch(DateTime)</h4>
-  <div class="markdown level1 summary"><p>Returns the how many ticks have passed since Unix Epoch to the
-date passed as parameter. A Tick correspond to 10.000 ms (ref. TimeSpan.TicksPerMillisecond).</p>
+  <div class="markdown level1 summary"><p>Returns the how many ticks have passed since the Unix Epoch, 1/1/1970 to the
+date passed as parameter. A Tick corresponds to 10 000 ms (ref. TimeSpan.TicksPerMillisecond).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -435,7 +433,7 @@ date passed as parameter. A Tick correspond to 10.000 ms (ref. TimeSpan.TicksPer
       <tr>
         <td><span class="xref">System.DateTime</span></td>
         <td><span class="parametername">time</span></td>
-        <td><p>DateTime object to convert</p>
+        <td><p>UTC DateTime object to convert</p>
 </td>
       </tr>
     </tbody>
@@ -451,21 +449,21 @@ date passed as parameter. A Tick correspond to 10.000 ms (ref. TimeSpan.TicksPer
     <tbody>
       <tr>
         <td><span class="xref">System.Int64</span></td>
-        <td><p>Number of ticks since Epoch</p>
+        <td><p>Number of ticks since epoch</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_ToISOString_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.ToISOString(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_ToISOString_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.ToISOString(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L104">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L101">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_ToISOString_" data-uid="Cognite.Extractor.Common.CogniteTime.ToISOString*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_ToISOString_System_DateTime_" data-uid="Cognite.Extractor.Common.CogniteTime.ToISOString(System.DateTime)">ToISOString(DateTime)</h4>
-  <div class="markdown level1 summary"><p>Return ISO 8601 formatted string with millisecond resolution.</p>
+  <div class="markdown level1 summary"><p>Return ISO 8601 formatted string (yyyy-MM-dd HH:mm:ss.fff) with millisecond resolution.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -507,15 +505,14 @@ date passed as parameter. A Tick correspond to 10.000 ms (ref. TimeSpan.TicksPer
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_ToUnixTimeMilliseconds_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.ToUnixTimeMilliseconds(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime_ToUnixTimeMilliseconds_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime.ToUnixTimeMilliseconds(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L58">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L55">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_CogniteTime_ToUnixTimeMilliseconds_" data-uid="Cognite.Extractor.Common.CogniteTime.ToUnixTimeMilliseconds*"></a>
   <h4 id="Cognite_Extractor_Common_CogniteTime_ToUnixTimeMilliseconds_System_DateTime_" data-uid="Cognite.Extractor.Common.CogniteTime.ToUnixTimeMilliseconds(System.DateTime)">ToUnixTimeMilliseconds(DateTime)</h4>
-  <div class="markdown level1 summary"><p>Returns the how many milliseconds have passed since Unix Epoch to the
-date passed as parameter.
+  <div class="markdown level1 summary"><p>Returns the how many milliseconds have passed since the Unix Epoch, 1/1/1970 to the date passed as parameter.
 NOTE: Using TimeSpan.ToMilliseconds may cause rounding problems when 'time' is DateTime.MaxValue:
 The resulting(time - DateTimeEpoch).ToMilliseconds is 253402300800000, which cannot be
 converted back to DateTime(ArgumentOutOfRangeException). This method returns 253402300799999 instead.</p>
@@ -554,7 +551,7 @@ converted back to DateTime(ArgumentOutOfRangeException). This method returns 253
     <tbody>
       <tr>
         <td><span class="xref">System.Int64</span></td>
-        <td><p>Number of milliseconds since Epoch</p>
+        <td><p>Number of milliseconds since epoch</p>
 </td>
       </tr>
     </tbody>
@@ -567,10 +564,10 @@ converted back to DateTime(ArgumentOutOfRangeException). This method returns 253
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_CogniteTime.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.CogniteTime%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/CogniteTime.cs/#L8" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/CogniteTime.cs/#L8" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

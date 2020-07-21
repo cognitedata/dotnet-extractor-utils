@@ -75,7 +75,7 @@
   </h1>
   <div class="markdown level0 summary"><p>Represents a range of time from First to Last. First and Last are both considered
 to be included in the range.
-The legal range of values is from the unix epoch to DateTime.MaxValue.</p>
+The legal range of values is from the unix epoch, midnight 1/1/1970, to DateTime.MaxValue.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -108,14 +108,14 @@ The legal range of values is from the unix epoch to DateTime.MaxValue.</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange__ctor_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.%23ctor(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange__ctor_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.%23ctor(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L28">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L31">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange__ctor_" data-uid="Cognite.Extractor.Common.TimeRange.#ctor*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange__ctor_System_DateTime_System_DateTime_" data-uid="Cognite.Extractor.Common.TimeRange.#ctor(System.DateTime,System.DateTime)">TimeRange(DateTime, DateTime)</h4>
-  <div class="markdown level1 summary"><p>Initialize a TimeRange object</p>
+  <div class="markdown level1 summary"><p>Initialize a TimeRange object from two timestamps.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -150,13 +150,15 @@ The legal range of values is from the unix epoch to DateTime.MaxValue.</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Complete.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Complete%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Complete.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Complete%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L21">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L24">View Source</a>
   </span>
   <h4 id="Cognite_Extractor_Common_TimeRange_Complete" data-uid="Cognite.Extractor.Common.TimeRange.Complete">Complete</h4>
-  <div class="markdown level1 summary"><p>The full range of legal values.</p>
+  <div class="markdown level1 summary"><p>The largest legal range, (Epoch, DateTime.MaxValue).
+Extending a complete range will return the complete range.
+Contracting a complete range will return the given range.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -180,13 +182,13 @@ The legal range of values is from the unix epoch to DateTime.MaxValue.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Empty.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Empty%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Empty.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Empty%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L17">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L17">View Source</a>
   </span>
   <h4 id="Cognite_Extractor_Common_TimeRange_Empty" data-uid="Cognite.Extractor.Common.TimeRange.Empty">Empty</h4>
-  <div class="markdown level1 summary"><p>An empty range where first &gt; last, and both are at the extreme range.
+  <div class="markdown level1 summary"><p>An empty range where first &gt; last, and both are at the extreme range, (DateTime.MaxValue, Epoch).
 Extending an empty range will return the given range
 Contracting an empty range will return the empty range</p>
 </div>
@@ -214,10 +216,10 @@ Contracting an empty range will return the empty range</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_First.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.First%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_First.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.First%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L38">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L42">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_First_" data-uid="Cognite.Extractor.Common.TimeRange.First*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_First" data-uid="Cognite.Extractor.Common.TimeRange.First">First</h4>
@@ -245,10 +247,10 @@ Contracting an empty range will return the empty range</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_IsEmpty.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.IsEmpty%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_IsEmpty.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.IsEmpty%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L47">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L52">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_IsEmpty_" data-uid="Cognite.Extractor.Common.TimeRange.IsEmpty*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_IsEmpty" data-uid="Cognite.Extractor.Common.TimeRange.IsEmpty">IsEmpty</h4>
@@ -276,10 +278,10 @@ Contracting an empty range will return the empty range</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Last.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Last%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Last.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Last%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L42">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L47">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_Last_" data-uid="Cognite.Extractor.Common.TimeRange.Last*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_Last" data-uid="Cognite.Extractor.Common.TimeRange.Last">Last</h4>
@@ -309,14 +311,14 @@ Contracting an empty range will return the empty range</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_After_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.After(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_After_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.After(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L77">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L77">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_After_" data-uid="Cognite.Extractor.Common.TimeRange.After*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_After_System_DateTime_" data-uid="Cognite.Extractor.Common.TimeRange.After(System.DateTime)">After(DateTime)</h4>
-  <div class="markdown level1 summary"><p>True if given datetime is after the range</p>
+  <div class="markdown level1 summary"><p>Check if <code data-dev-comment-type="paramref" class="paramref">t</code> is after the last point in the range.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -352,20 +354,21 @@ Contracting an empty range will return the empty range</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p>True if <code data-dev-comment-type="paramref" class="paramref">t</code> is after the last point in the range</p>
+</td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Before_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Before(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Before_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Before(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L68">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L68">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_Before_" data-uid="Cognite.Extractor.Common.TimeRange.Before*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_Before_System_DateTime_" data-uid="Cognite.Extractor.Common.TimeRange.Before(System.DateTime)">Before(DateTime)</h4>
-  <div class="markdown level1 summary"><p>True if given datetime is ahead of the range.</p>
+  <div class="markdown level1 summary"><p>Check if <code data-dev-comment-type="paramref" class="paramref">t</code> is before the first point in the range.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -401,16 +404,17 @@ Contracting an empty range will return the empty range</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p>True if <code data-dev-comment-type="paramref" class="paramref">t</code> is before the first point in the range</p>
+</td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Contains_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Contains(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Contains_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Contains(System.DateTime)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L59">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L59">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_Contains_" data-uid="Cognite.Extractor.Common.TimeRange.Contains*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_Contains_System_DateTime_" data-uid="Cognite.Extractor.Common.TimeRange.Contains(System.DateTime)">Contains(DateTime)</h4>
@@ -456,10 +460,10 @@ Contracting an empty range will return the empty range</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Contract_Cognite_Extractor_Common_TimeRange_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Contract(Cognite.Extractor.Common.TimeRange)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Contract_Cognite_Extractor_Common_TimeRange_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Contract(Cognite.Extractor.Common.TimeRange)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L133">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L137">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_Contract_" data-uid="Cognite.Extractor.Common.TimeRange.Contract*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_Contract_Cognite_Extractor_Common_TimeRange_" data-uid="Cognite.Extractor.Common.TimeRange.Contract(Cognite.Extractor.Common.TimeRange)">Contract(TimeRange)</h4>
@@ -500,16 +504,17 @@ New TimeRange is the latest start point and the earliest end point.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a></td>
-        <td></td>
+        <td><p>A new TimeRange contracted by <code data-dev-comment-type="paramref" class="paramref">newRange</code></p>
+</td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Contract_System_Nullable_System_DateTime__System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Contract(System.Nullable%7BSystem.DateTime%7D%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Contract_System_Nullable_System_DateTime__System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Contract(System.Nullable%7BSystem.DateTime%7D%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L117">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L120">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_Contract_" data-uid="Cognite.Extractor.Common.TimeRange.Contract*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_Contract_System_Nullable_System_DateTime__System_Nullable_System_DateTime__" data-uid="Cognite.Extractor.Common.TimeRange.Contract(System.Nullable{System.DateTime},System.Nullable{System.DateTime})">Contract(Nullable&lt;DateTime&gt;, Nullable&lt;DateTime&gt;)</h4>
@@ -557,16 +562,17 @@ Letting first or last be null will keep the existing value for that end of the r
     <tbody>
       <tr>
         <td><a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a></td>
-        <td></td>
+        <td><p>A new TimeRange contracted by <code data-dev-comment-type="paramref" class="paramref">first</code> and <code data-dev-comment-type="paramref" class="paramref">last</code></p>
+</td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L151">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L157">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_Equals_" data-uid="Cognite.Extractor.Common.TimeRange.Equals*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_Equals_System_Object_" data-uid="Cognite.Extractor.Common.TimeRange.Equals(System.Object)">Equals(Object)</h4>
@@ -616,10 +622,10 @@ true if they are equal</p>
   <div><span class="xref">System.Object.Equals(System.Object)</span></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Extend_Cognite_Extractor_Common_TimeRange_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Extend(Cognite.Extractor.Common.TimeRange)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Extend_Cognite_Extractor_Common_TimeRange_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Extend(Cognite.Extractor.Common.TimeRange)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L105">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L107">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_Extend_" data-uid="Cognite.Extractor.Common.TimeRange.Extend*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_Extend_Cognite_Extractor_Common_TimeRange_" data-uid="Cognite.Extractor.Common.TimeRange.Extend(Cognite.Extractor.Common.TimeRange)">Extend(TimeRange)</h4>
@@ -660,16 +666,17 @@ New TimeRange is the earliest start point and the latest end point.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a></td>
-        <td></td>
+        <td><p>A new TimeRange extended by <code data-dev-comment-type="paramref" class="paramref">newRange</code></p>
+</td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Extend_System_Nullable_System_DateTime__System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Extend(System.Nullable%7BSystem.DateTime%7D%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_Extend_System_Nullable_System_DateTime__System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.Extend(System.Nullable%7BSystem.DateTime%7D%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L89">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L90">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_Extend_" data-uid="Cognite.Extractor.Common.TimeRange.Extend*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_Extend_System_Nullable_System_DateTime__System_Nullable_System_DateTime__" data-uid="Cognite.Extractor.Common.TimeRange.Extend(System.Nullable{System.DateTime},System.Nullable{System.DateTime})">Extend(Nullable&lt;DateTime&gt;, Nullable&lt;DateTime&gt;)</h4>
@@ -717,16 +724,17 @@ Letting first or last be null will keep the existing value for that end of the r
     <tbody>
       <tr>
         <td><a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a></td>
-        <td></td>
+        <td><p>A new TimeRange extended by <code data-dev-comment-type="paramref" class="paramref">first</code> and <code data-dev-comment-type="paramref" class="paramref">last</code></p>
+</td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_GetHashCode.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_GetHashCode.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L161">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L168">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_GetHashCode_" data-uid="Cognite.Extractor.Common.TimeRange.GetHashCode*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_GetHashCode" data-uid="Cognite.Extractor.Common.TimeRange.GetHashCode">GetHashCode()</h4>
@@ -756,14 +764,14 @@ Letting first or last be null will keep the existing value for that end of the r
   <div><span class="xref">System.Object.GetHashCode()</span></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_ToString.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.ToString%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_ToString.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.ToString%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L141">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L146">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_ToString_" data-uid="Cognite.Extractor.Common.TimeRange.ToString*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_ToString" data-uid="Cognite.Extractor.Common.TimeRange.ToString">ToString()</h4>
-  <div class="markdown level1 summary"><p>Returns a string representation of the TimeRange.</p>
+  <div class="markdown level1 summary"><p>Returns a string representation of the TimeRange, on the form ([First as ISO-string], [Last as ISO-string]).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -781,7 +789,8 @@ Letting first or last be null will keep the existing value for that end of the r
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>A string representation of the TimeRange</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -791,10 +800,10 @@ Letting first or last be null will keep the existing value for that end of the r
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_op_Equality_Cognite_Extractor_Common_TimeRange_Cognite_Extractor_Common_TimeRange_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.op_Equality(Cognite.Extractor.Common.TimeRange%2CCognite.Extractor.Common.TimeRange)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_op_Equality_Cognite_Extractor_Common_TimeRange_Cognite_Extractor_Common_TimeRange_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.op_Equality(Cognite.Extractor.Common.TimeRange%2CCognite.Extractor.Common.TimeRange)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L173">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L180">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_op_Equality_" data-uid="Cognite.Extractor.Common.TimeRange.op_Equality*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_op_Equality_Cognite_Extractor_Common_TimeRange_Cognite_Extractor_Common_TimeRange_" data-uid="Cognite.Extractor.Common.TimeRange.op_Equality(Cognite.Extractor.Common.TimeRange,Cognite.Extractor.Common.TimeRange)">Equality(TimeRange, TimeRange)</h4>
@@ -847,10 +856,10 @@ Letting first or last be null will keep the existing value for that end of the r
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_op_Inequality_Cognite_Extractor_Common_TimeRange_Cognite_Extractor_Common_TimeRange_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.op_Inequality(Cognite.Extractor.Common.TimeRange%2CCognite.Extractor.Common.TimeRange)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange_op_Inequality_Cognite_Extractor_Common_TimeRange_Cognite_Extractor_Common_TimeRange_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange.op_Inequality(Cognite.Extractor.Common.TimeRange%2CCognite.Extractor.Common.TimeRange)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L189">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L196">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TimeRange_op_Inequality_" data-uid="Cognite.Extractor.Common.TimeRange.op_Inequality*"></a>
   <h4 id="Cognite_Extractor_Common_TimeRange_op_Inequality_Cognite_Extractor_Common_TimeRange_Cognite_Extractor_Common_TimeRange_" data-uid="Cognite.Extractor.Common.TimeRange.op_Inequality(Cognite.Extractor.Common.TimeRange,Cognite.Extractor.Common.TimeRange)">Inequality(TimeRange, TimeRange)</h4>
@@ -909,10 +918,10 @@ Letting first or last be null will keep the existing value for that end of the r
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b9359681737f8273ffe265e84c10b344110085bf/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/apiSpec/new?filename=Cognite_Extractor_Common_TimeRange.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeRange%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b9359681737f8273ffe265e84c10b344110085bf/Cognite.Common/TimeRange.cs/#L10" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/Cognite.Common/TimeRange.cs/#L10" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

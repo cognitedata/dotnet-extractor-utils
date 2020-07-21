@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>API documentation </title>
+    <title>Using HistoryExtractionState </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="API documentation ">
+    <meta name="title" content="Using HistoryExtractionState ">
     <meta name="generator" content="docfx 2.51.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
@@ -67,8 +67,69 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-<h1 id="api-documentation">API documentation</h1>
+<h1 id="using-historyextractionstate">Using HistoryExtractionState</h1>
 
+<p><a class="xref" href="../api/Cognite.Extractor.StateStorage.HistoryExtractionState.html">HistoryExtractionState</a> is a more advanced abstraction of the history extraction process. Basic usage is fairly similar to BaseExtractionState, but using it requires a few extra steps when extracting data. It handles some more of the logic behind synchronization of data between source and destination systems.</p>
+<p>Most importantly it introduces a new <a class="xref" href="../api/Cognite.Extractor.Common.TimeRange.html">TimeRange</a> <code>SourceExtractedRange</code>, which describes the range of data present in the source system. This is separate from the data present in destination systems and handles the &quot;Read, but not pushed&quot; case described <a href="state-store.html">here</a>.</p>
+<p>Using the state consists of the source range separately from the destination range, in different ways depending on which operation is being performed.</p>
+<h2 id="initialization">Initialization</h2>
+<p>First of all, when creating a state you must specify whether frontfill/backfill is enabled for the given state. This determines how the state is synchronized, and what default values for ranges are.</p>
+<p>It also allows using multiple source systems for initialization. After creating the state, it is possible to call <code>InitExtractedRange</code> for each source system. Then, once that is done, call <code>FinalizeRangeInit</code> to set un-initialized states to default values.</p>
+<pre><code class="lang-c#">
+IEnumerable&lt;HistoryExtractionState&gt; states = ObtainStatesFromSourceSystem();
+var stateDict = states.ToDictionary(state =&gt; state.Id);
+
+var stateStore = provider.GetRequiredService&lt;IExtractionStateStore&gt;();
+
+await stateStore.RestoreExtractionState(stateDict, &quot;someTable&quot;, cancellationToken);
+
+var destination = provider.GetRequiredService&lt;CogniteDestination&gt;();
+
+var ids = states.Select(state =&gt; Identity.Create(state.Id))
+var ranges = await destination.GetExtractedRanges(ids, cancellationToken);
+
+foreach (var state in states)
+{
+    if (ranges.TryGetValue(Identity.Create(state.Id), out TimeRange range)) {
+        state.InitExtractedRange(range.First, range.Last);
+    }
+}
+
+foreach (var state in states)
+{
+    state.FinalizeRangeInit();
+}
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>When running, after each block of data obtained from the source system, the state should be updated.</p>
+<pre><code class="lang-c#">
+Dictionary&lt;string, IEnumerable&lt;Datapoints&gt;&gt; points = DoFrontfill();
+
+foreach (var kvp in points)
+{
+    var max = kvp.Value.Select(dp =&gt; dp.Timestamp).Max();
+    // True to indicate that this is the final block of data
+    stateDict[kvp.Key].UpdateFromFrontfill(max, true);
+}
+
+points = DoBackfill();
+
+foreach (var kvp in points)
+{
+    var min = kvp.Value.Select(dp =&gt; dp.Timestamp).Min();
+    // True to indicate that this is the final block of data
+    stateDict[kvp.Key].UpdateFromBackfill(min, true);
+}
+
+points = DoStreaming();
+
+foreach (var kvp in points)
+{
+    var (min, max) = kvp.Value.MinMax(dp =&gt; dp.Timestamp);
+    stateDict[kvp.Key].UpdateFromStream(min, max);
+}
+</code></pre>
+<p>Then after pushing to destinations, call <code>UpdateDestinationRange</code> as normal.</p>
 </article>
           </div>
           
@@ -77,7 +138,7 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/docfx_project/api/index.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/docfx_project/tutorials/history-state.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

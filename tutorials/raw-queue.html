@@ -5,16 +5,16 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>.NET Extractor Utils for Cognite Data Fusion </title>
+    <title>Using Raw upload queues. </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content=".NET Extractor Utils for Cognite Data Fusion ">
+    <meta name="title" content="Using Raw upload queues. ">
     <meta name="generator" content="docfx 2.51.0.0">
     
-    <link rel="shortcut icon" href="favicon.ico">
-    <link rel="stylesheet" href="styles/docfx.vendor.css">
-    <link rel="stylesheet" href="styles/docfx.css">
-    <link rel="stylesheet" href="styles/main.css">
-    <meta property="docfx:navrel" content="toc.html">
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
     
     
@@ -34,8 +34,8 @@
                 <span class="icon-bar"></span>
               </button>
               
-              <a class="navbar-brand" href="index.html">
-                <img id="logo" class="svg" src="logo.svg" alt="">
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
@@ -57,12 +57,49 @@
         </div>
       </header>
       <div role="main" class="container body-content hide-when-search">
-        <div class="article row grid">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-<h1 id="net-extractor-utils-for-cognite-data-fusion">.NET Extractor Utils for Cognite Data Fusion</h1>
+<h1 id="using-raw-upload-queues">Using Raw upload queues.</h1>
 
-<p>This is a collection of libraries to simplify the creation of extractors in .NET.</p>
+<p>Raw upload queues buffer POCOs and stores them in Raw at a fixed interval or whenever the queue reaches a specified max size.</p>
+<pre><code class="lang-c#">// Data transfer object representing raw columns
+private class ColumnsDto
+{
+    public string Name { get; set; }
+    public int Number { get; set; }
+}
+
+// Creates an queue that uploads rows to Raw every 5 seconds (or when the queue size reaches 1.000)
+using (var queue = destination.CreateRawUploadQueue&lt;ColumnsDto&gt;(&quot;myDb&quot;, &quot;myTable&quot;, TimeSpan.FromSeconds(5), 1_000,
+    result =&gt; { handle result of upload here }))
+{
+    // Task to generate rows at regular intervals
+    var enqueueTask = Task.Run(async () =&gt; {
+        while (index &lt; 2_000)
+        {
+            queue.EnqueueRow($&quot;r{index}&quot;, new ColumnsDto {Name = &quot;Test&quot;, Number = index});
+            await Task.Delay(50, cancellationToken);
+            index++;
+        }
+    });
+    
+    // Task to start the upload queue
+    var uploadTask = queue.Start(cancellationToken);
+
+    // wait for either the enqueue task to finish or the upload task to fail
+    var t = Task.WhenAny(uploadTask, enqueueTask);
+    await t;
+    logger.LogInformation(&quot;Enqueueing task completed. Disposing of the upload queue&quot;);
+} // disposing the queue will upload any rows left and stop the upload loop
+</code></pre>
 </article>
           </div>
           
@@ -71,7 +108,7 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/docfx_project/index.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/docfx_project/tutorials/raw-queue.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
@@ -97,8 +134,8 @@
       </footer>
     </div>
     
-    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
-    <script type="text/javascript" src="styles/docfx.js"></script>
-    <script type="text/javascript" src="styles/main.js"></script>
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
   </body>
 </html>

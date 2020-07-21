@@ -1863,6 +1863,150 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.BaseConfig.StateStore
   nameWithType: BaseConfig.StateStore
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1
+  name: BaseUploadQueue<T>
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html
+  commentId: T:Cognite.Extractor.Utils.BaseUploadQueue`1
+  name.vb: BaseUploadQueue(Of T)
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T)
+  nameWithType: BaseUploadQueue<T>
+  nameWithType.vb: BaseUploadQueue(Of T)
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1._callback
+  name: _callback
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1__callback
+  commentId: F:Cognite.Extractor.Utils.BaseUploadQueue`1._callback
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>._callback
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T)._callback
+  nameWithType: BaseUploadQueue<T>._callback
+  nameWithType.vb: BaseUploadQueue(Of T)._callback
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1._destination
+  name: _destination
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1__destination
+  commentId: F:Cognite.Extractor.Utils.BaseUploadQueue`1._destination
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>._destination
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T)._destination
+  nameWithType: BaseUploadQueue<T>._destination
+  nameWithType.vb: BaseUploadQueue(Of T)._destination
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1._logger
+  name: _logger
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1__logger
+  commentId: F:Cognite.Extractor.Utils.BaseUploadQueue`1._logger
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>._logger
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T)._logger
+  nameWithType: BaseUploadQueue<T>._logger
+  nameWithType.vb: BaseUploadQueue(Of T)._logger
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Dequeue
+  name: Dequeue()
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dequeue
+  commentId: M:Cognite.Extractor.Utils.BaseUploadQueue`1.Dequeue
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Dequeue()
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Dequeue()
+  nameWithType: BaseUploadQueue<T>.Dequeue()
+  nameWithType.vb: BaseUploadQueue(Of T).Dequeue()
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Dequeue*
+  name: Dequeue
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dequeue_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.Dequeue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Dequeue
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Dequeue
+  nameWithType: BaseUploadQueue<T>.Dequeue
+  nameWithType.vb: BaseUploadQueue(Of T).Dequeue
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Dispose
+  name: Dispose()
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dispose
+  commentId: M:Cognite.Extractor.Utils.BaseUploadQueue`1.Dispose
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Dispose()
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Dispose()
+  nameWithType: BaseUploadQueue<T>.Dispose()
+  nameWithType.vb: BaseUploadQueue(Of T).Dispose()
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Dispose(System.Boolean)
+  name: Dispose(Boolean)
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dispose_System_Boolean_
+  commentId: M:Cognite.Extractor.Utils.BaseUploadQueue`1.Dispose(System.Boolean)
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Dispose(System.Boolean)
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Dispose(System.Boolean)
+  nameWithType: BaseUploadQueue<T>.Dispose(Boolean)
+  nameWithType.vb: BaseUploadQueue(Of T).Dispose(Boolean)
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Dispose*
+  name: Dispose
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dispose_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.Dispose
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Dispose
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Dispose
+  nameWithType: BaseUploadQueue<T>.Dispose
+  nameWithType.vb: BaseUploadQueue(Of T).Dispose
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Enqueue(`0)
+  name: Enqueue(T)
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Enqueue__0_
+  commentId: M:Cognite.Extractor.Utils.BaseUploadQueue`1.Enqueue(`0)
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Enqueue(T)
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Enqueue(T)
+  nameWithType: BaseUploadQueue<T>.Enqueue(T)
+  nameWithType.vb: BaseUploadQueue(Of T).Enqueue(T)
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Enqueue*
+  name: Enqueue
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Enqueue_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.Enqueue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Enqueue
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Enqueue
+  nameWithType: BaseUploadQueue<T>.Enqueue
+  nameWithType.vb: BaseUploadQueue(Of T).Enqueue
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Start(CancellationToken)
+  name: Start(CancellationToken)
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Start_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.BaseUploadQueue`1.Start(CancellationToken)
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Start(CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Start(CancellationToken)
+  nameWithType: BaseUploadQueue<T>.Start(CancellationToken)
+  nameWithType.vb: BaseUploadQueue(Of T).Start(CancellationToken)
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Start*
+  name: Start
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Start_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.Start
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Start
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Start
+  nameWithType: BaseUploadQueue<T>.Start
+  nameWithType.vb: BaseUploadQueue(Of T).Start
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Trigger(CancellationToken)
+  name: Trigger(CancellationToken)
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Trigger_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.BaseUploadQueue`1.Trigger(CancellationToken)
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Trigger(CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Trigger(CancellationToken)
+  nameWithType: BaseUploadQueue<T>.Trigger(CancellationToken)
+  nameWithType.vb: BaseUploadQueue(Of T).Trigger(CancellationToken)
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Trigger*
+  name: Trigger
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Trigger_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.Trigger
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Trigger
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Trigger
+  nameWithType: BaseUploadQueue<T>.Trigger
+  nameWithType.vb: BaseUploadQueue(Of T).Trigger
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.UploadEntries(IEnumerable{`0},CancellationToken)
+  name: UploadEntries(IEnumerable<T>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_UploadEntries_IEnumerable__0__CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.BaseUploadQueue`1.UploadEntries(IEnumerable{`0},CancellationToken)
+  name.vb: UploadEntries(IEnumerable(Of T), CancellationToken)
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.UploadEntries(IEnumerable<T>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).UploadEntries(IEnumerable(Of T), CancellationToken)
+  nameWithType: BaseUploadQueue<T>.UploadEntries(IEnumerable<T>, CancellationToken)
+  nameWithType.vb: BaseUploadQueue(Of T).UploadEntries(IEnumerable(Of T), CancellationToken)
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.UploadEntries*
+  name: UploadEntries
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_UploadEntries_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.UploadEntries
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.UploadEntries
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).UploadEntries
+  nameWithType: BaseUploadQueue<T>.UploadEntries
+  nameWithType.vb: BaseUploadQueue(Of T).UploadEntries
 - uid: Cognite.Extractor.Utils.ChunkingConfig
   name: ChunkingConfig
   href: api/Cognite.Extractor.Utils.ChunkingConfig.html
@@ -1973,6 +2117,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ChunkingConfig.RawRows
   nameWithType: ChunkingConfig.RawRows
+- uid: Cognite.Extractor.Utils.ChunkingConfig.RawRowsDelete
+  name: RawRowsDelete
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_RawRowsDelete
+  commentId: P:Cognite.Extractor.Utils.ChunkingConfig.RawRowsDelete
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.RawRowsDelete
+  nameWithType: ChunkingConfig.RawRowsDelete
+- uid: Cognite.Extractor.Utils.ChunkingConfig.RawRowsDelete*
+  name: RawRowsDelete
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_RawRowsDelete_
+  commentId: Overload:Cognite.Extractor.Utils.ChunkingConfig.RawRowsDelete
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.RawRowsDelete
+  nameWithType: ChunkingConfig.RawRowsDelete
 - uid: Cognite.Extractor.Utils.ChunkingConfig.TimeSeries
   name: TimeSeries
   href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_TimeSeries
@@ -2150,6 +2307,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.CogniteClient
   nameWithType: CogniteDestination.CogniteClient
+- uid: Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue(TimeSpan,System.Int32,Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)
+  name: CreateEventUploadQueue(TimeSpan, Int32, Func<QueueUploadResult<EventCreate>, Task>, String)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_CreateEventUploadQueue_TimeSpan_System_Int32_Func_Cognite_Extractor_Utils_QueueUploadResult_EventCreate__Task__System_String_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue(TimeSpan,System.Int32,Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)
+  name.vb: CreateEventUploadQueue(TimeSpan, Int32, Func(Of QueueUploadResult(Of EventCreate), Task), String)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue(TimeSpan, System.Int32, Func<Cognite.Extractor.Utils.QueueUploadResult<EventCreate>, Task>, System.String)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue(TimeSpan, System.Int32, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of EventCreate), Task), System.String)
+  nameWithType: CogniteDestination.CreateEventUploadQueue(TimeSpan, Int32, Func<QueueUploadResult<EventCreate>, Task>, String)
+  nameWithType.vb: CogniteDestination.CreateEventUploadQueue(TimeSpan, Int32, Func(Of QueueUploadResult(Of EventCreate), Task), String)
+- uid: Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue*
+  name: CreateEventUploadQueue
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_CreateEventUploadQueue_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue
+  nameWithType: CogniteDestination.CreateEventUploadQueue
 - uid: Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue*
   name: CreateRawUploadQueue
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue_
@@ -2157,15 +2330,31 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue
   nameWithType: CogniteDestination.CreateRawUploadQueue
-- uid: Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue``1(System.String,System.String,TimeSpan,System.Int32)
-  name: CreateRawUploadQueue<T>(String, String, TimeSpan, Int32)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue__1_System_String_System_String_TimeSpan_System_Int32_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue``1(System.String,System.String,TimeSpan,System.Int32)
-  name.vb: CreateRawUploadQueue(Of T)(String, String, TimeSpan, Int32)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue<T>(System.String, System.String, TimeSpan, System.Int32)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue(Of T)(System.String, System.String, TimeSpan, System.Int32)
-  nameWithType: CogniteDestination.CreateRawUploadQueue<T>(String, String, TimeSpan, Int32)
-  nameWithType.vb: CogniteDestination.CreateRawUploadQueue(Of T)(String, String, TimeSpan, Int32)
+- uid: Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue``1(System.String,System.String,TimeSpan,System.Int32,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},Task})
+  name: CreateRawUploadQueue<T>(String, String, TimeSpan, Int32, Func<QueueUploadResult<(String key, T columns)>, Task>)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue__1_System_String_System_String_TimeSpan_System_Int32_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___Task__
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue``1(System.String,System.String,TimeSpan,System.Int32,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},Task})
+  name.vb: CreateRawUploadQueue(Of T)(String, String, TimeSpan, Int32, Func(Of QueueUploadResult(Of (key As String, columns As T)), Task))
+  fullName: Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue<T>(System.String, System.String, TimeSpan, System.Int32, Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<System.String, T>>, Task>)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue(Of T)(System.String, System.String, TimeSpan, System.Int32, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of System.String, T)), Task))
+  nameWithType: CogniteDestination.CreateRawUploadQueue<T>(String, String, TimeSpan, Int32, Func<QueueUploadResult<(String key, T columns)>, Task>)
+  nameWithType.vb: CogniteDestination.CreateRawUploadQueue(Of T)(String, String, TimeSpan, Int32, Func(Of QueueUploadResult(Of (key As String, columns As T)), Task))
+- uid: Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan,System.Int32,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extractor.Utils.Datapoint}},Task},System.String)
+  name: CreateTimeSeriesUploadQueue(TimeSpan, Int32, Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>, String)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_CreateTimeSeriesUploadQueue_TimeSpan_System_Int32_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extractor_Utils_Datapoint___Task__System_String_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan,System.Int32,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extractor.Utils.Datapoint}},Task},System.String)
+  name.vb: CreateTimeSeriesUploadQueue(TimeSpan, Int32, Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task), String)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan, System.Int32, Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<Identity, Cognite.Extractor.Utils.Datapoint>>, Task>, System.String)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan, System.Int32, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of Identity, Cognite.Extractor.Utils.Datapoint)), Task), System.String)
+  nameWithType: CogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan, Int32, Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>, String)
+  nameWithType.vb: CogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan, Int32, Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task), String)
+- uid: Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue*
+  name: CreateTimeSeriesUploadQueue
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_CreateTimeSeriesUploadQueue_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue
+  nameWithType: CogniteDestination.CreateTimeSeriesUploadQueue
 - uid: Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary{Identity,IEnumerable{Cognite.Extractor.Common.TimeRange}},CancellationToken)
   name: DeleteDataPointsIgnoreErrorsAsync(IDictionary<Identity, IEnumerable<TimeRange>>, CancellationToken)
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Common_TimeRange___CancellationToken_
@@ -2470,6 +2659,32 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteUtils.Configure
   nameWithType: CogniteUtils.Configure
+- uid: Cognite.Extractor.Utils.CogniteUtils.EventFromStream(Stream)
+  name: EventFromStream(Stream)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_EventFromStream_Stream_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.EventFromStream(Stream)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.EventFromStream(Stream)
+  nameWithType: CogniteUtils.EventFromStream(Stream)
+- uid: Cognite.Extractor.Utils.CogniteUtils.EventFromStream*
+  name: EventFromStream
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_EventFromStream_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.EventFromStream
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.EventFromStream
+  nameWithType: CogniteUtils.EventFromStream
+- uid: Cognite.Extractor.Utils.CogniteUtils.EventToStorable(EventCreate)
+  name: EventToStorable(EventCreate)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_EventToStorable_EventCreate_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.EventToStorable(EventCreate)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.EventToStorable(EventCreate)
+  nameWithType: CogniteUtils.EventToStorable(EventCreate)
+- uid: Cognite.Extractor.Utils.CogniteUtils.EventToStorable*
+  name: EventToStorable
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_EventToStorable_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.EventToStorable
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.EventToStorable
+  nameWithType: CogniteUtils.EventToStorable
 - uid: Cognite.Extractor.Utils.CogniteUtils.ExtractMissingFromResponseException(HashSet{Identity},ResponseException)
   name: ExtractMissingFromResponseException(HashSet<Identity>, ResponseException)
   href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ExtractMissingFromResponseException_HashSet_Identity__ResponseException_
@@ -2498,6 +2713,58 @@ references:
   commentId: F:Cognite.Extractor.Utils.CogniteUtils.NumericValueMin
   fullName: Cognite.Extractor.Utils.CogniteUtils.NumericValueMin
   nameWithType: CogniteUtils.NumericValueMin
+- uid: Cognite.Extractor.Utils.CogniteUtils.ReadDatapoints(Stream,System.Int32)
+  name: ReadDatapoints(Stream, Int32)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ReadDatapoints_Stream_System_Int32_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.ReadDatapoints(Stream,System.Int32)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.ReadDatapoints(Stream, System.Int32)
+  nameWithType: CogniteUtils.ReadDatapoints(Stream, Int32)
+- uid: Cognite.Extractor.Utils.CogniteUtils.ReadDatapoints*
+  name: ReadDatapoints
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ReadDatapoints_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.ReadDatapoints
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.ReadDatapoints
+  nameWithType: CogniteUtils.ReadDatapoints
+- uid: Cognite.Extractor.Utils.CogniteUtils.ReadDatapointsAsync(Stream,CancellationToken,System.Int32)
+  name: ReadDatapointsAsync(Stream, CancellationToken, Int32)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ReadDatapointsAsync_Stream_CancellationToken_System_Int32_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.ReadDatapointsAsync(Stream,CancellationToken,System.Int32)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.ReadDatapointsAsync(Stream, CancellationToken, System.Int32)
+  nameWithType: CogniteUtils.ReadDatapointsAsync(Stream, CancellationToken, Int32)
+- uid: Cognite.Extractor.Utils.CogniteUtils.ReadDatapointsAsync*
+  name: ReadDatapointsAsync
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ReadDatapointsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.ReadDatapointsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.ReadDatapointsAsync
+  nameWithType: CogniteUtils.ReadDatapointsAsync
+- uid: Cognite.Extractor.Utils.CogniteUtils.ReadEvents(Stream,System.Int32)
+  name: ReadEvents(Stream, Int32)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ReadEvents_Stream_System_Int32_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.ReadEvents(Stream,System.Int32)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.ReadEvents(Stream, System.Int32)
+  nameWithType: CogniteUtils.ReadEvents(Stream, Int32)
+- uid: Cognite.Extractor.Utils.CogniteUtils.ReadEvents*
+  name: ReadEvents
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ReadEvents_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.ReadEvents
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.ReadEvents
+  nameWithType: CogniteUtils.ReadEvents
+- uid: Cognite.Extractor.Utils.CogniteUtils.ReadEventsAsync(Stream,CancellationToken,System.Int32)
+  name: ReadEventsAsync(Stream, CancellationToken, Int32)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ReadEventsAsync_Stream_CancellationToken_System_Int32_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.ReadEventsAsync(Stream,CancellationToken,System.Int32)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.ReadEventsAsync(Stream, CancellationToken, System.Int32)
+  nameWithType: CogniteUtils.ReadEventsAsync(Stream, CancellationToken, Int32)
+- uid: Cognite.Extractor.Utils.CogniteUtils.ReadEventsAsync*
+  name: ReadEventsAsync
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_ReadEventsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.ReadEventsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.ReadEventsAsync
+  nameWithType: CogniteUtils.ReadEventsAsync
 - uid: Cognite.Extractor.Utils.CogniteUtils.RemoveOutOfRangeTimestamps(IEnumerable{Cognite.Extractor.Utils.Datapoint})
   name: RemoveOutOfRangeTimestamps(IEnumerable<Datapoint>)
   href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_RemoveOutOfRangeTimestamps_IEnumerable_Cognite_Extractor_Utils_Datapoint__
@@ -2514,12 +2781,41 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteUtils.RemoveOutOfRangeTimestamps
   nameWithType: CogniteUtils.RemoveOutOfRangeTimestamps
+- uid: Cognite.Extractor.Utils.CogniteUtils.StringFromStream(Stream,System.Nullable{System.UInt16})
+  name: StringFromStream(Stream, Nullable<UInt16>)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_StringFromStream_Stream_System_Nullable_System_UInt16__
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.StringFromStream(Stream,System.Nullable{System.UInt16})
+  name.vb: StringFromStream(Stream, Nullable(Of UInt16))
+  fullName: Cognite.Extractor.Utils.CogniteUtils.StringFromStream(Stream, System.Nullable<System.UInt16>)
+  fullName.vb: Cognite.Extractor.Utils.CogniteUtils.StringFromStream(Stream, System.Nullable(Of System.UInt16))
+  nameWithType: CogniteUtils.StringFromStream(Stream, Nullable<UInt16>)
+  nameWithType.vb: CogniteUtils.StringFromStream(Stream, Nullable(Of UInt16))
+- uid: Cognite.Extractor.Utils.CogniteUtils.StringFromStream*
+  name: StringFromStream
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_StringFromStream_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.StringFromStream
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.StringFromStream
+  nameWithType: CogniteUtils.StringFromStream
 - uid: Cognite.Extractor.Utils.CogniteUtils.StringLengthMax
   name: StringLengthMax
   href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_StringLengthMax
   commentId: F:Cognite.Extractor.Utils.CogniteUtils.StringLengthMax
   fullName: Cognite.Extractor.Utils.CogniteUtils.StringLengthMax
   nameWithType: CogniteUtils.StringLengthMax
+- uid: Cognite.Extractor.Utils.CogniteUtils.StringToStorable(System.String)
+  name: StringToStorable(String)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_StringToStorable_System_String_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.StringToStorable(System.String)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.StringToStorable(System.String)
+  nameWithType: CogniteUtils.StringToStorable(String)
+- uid: Cognite.Extractor.Utils.CogniteUtils.StringToStorable*
+  name: StringToStorable
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_StringToStorable_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.StringToStorable
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.StringToStorable
+  nameWithType: CogniteUtils.StringToStorable
 - uid: Cognite.Extractor.Utils.CogniteUtils.TimestampMax
   name: TimestampMax
   href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_TimestampMax
@@ -2548,6 +2844,70 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteUtils.TrimValues
   nameWithType: CogniteUtils.TrimValues
+- uid: Cognite.Extractor.Utils.CogniteUtils.WriteDatapoints(IDictionary{Identity,IEnumerable{Cognite.Extractor.Utils.Datapoint}},Stream)
+  name: WriteDatapoints(IDictionary<Identity, IEnumerable<Datapoint>>, Stream)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_WriteDatapoints_IDictionary_Identity_IEnumerable_Cognite_Extractor_Utils_Datapoint___Stream_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.WriteDatapoints(IDictionary{Identity,IEnumerable{Cognite.Extractor.Utils.Datapoint}},Stream)
+  name.vb: WriteDatapoints(IDictionary(Of Identity, IEnumerable(Of Datapoint)), Stream)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.WriteDatapoints(IDictionary<Identity, IEnumerable<Cognite.Extractor.Utils.Datapoint>>, Stream)
+  fullName.vb: Cognite.Extractor.Utils.CogniteUtils.WriteDatapoints(IDictionary(Of Identity, IEnumerable(Of Cognite.Extractor.Utils.Datapoint)), Stream)
+  nameWithType: CogniteUtils.WriteDatapoints(IDictionary<Identity, IEnumerable<Datapoint>>, Stream)
+  nameWithType.vb: CogniteUtils.WriteDatapoints(IDictionary(Of Identity, IEnumerable(Of Datapoint)), Stream)
+- uid: Cognite.Extractor.Utils.CogniteUtils.WriteDatapoints*
+  name: WriteDatapoints
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_WriteDatapoints_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.WriteDatapoints
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.WriteDatapoints
+  nameWithType: CogniteUtils.WriteDatapoints
+- uid: Cognite.Extractor.Utils.CogniteUtils.WriteDatapointsAsync(IDictionary{Identity,IEnumerable{Cognite.Extractor.Utils.Datapoint}},Stream,CancellationToken)
+  name: WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Datapoint>>, Stream, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_WriteDatapointsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Utils_Datapoint___Stream_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.WriteDatapointsAsync(IDictionary{Identity,IEnumerable{Cognite.Extractor.Utils.Datapoint}},Stream,CancellationToken)
+  name.vb: WriteDatapointsAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), Stream, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Cognite.Extractor.Utils.Datapoint>>, Stream, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteUtils.WriteDatapointsAsync(IDictionary(Of Identity, IEnumerable(Of Cognite.Extractor.Utils.Datapoint)), Stream, CancellationToken)
+  nameWithType: CogniteUtils.WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Datapoint>>, Stream, CancellationToken)
+  nameWithType.vb: CogniteUtils.WriteDatapointsAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), Stream, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteUtils.WriteDatapointsAsync*
+  name: WriteDatapointsAsync
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_WriteDatapointsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.WriteDatapointsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.WriteDatapointsAsync
+  nameWithType: CogniteUtils.WriteDatapointsAsync
+- uid: Cognite.Extractor.Utils.CogniteUtils.WriteEvents(IEnumerable{EventCreate},Stream)
+  name: WriteEvents(IEnumerable<EventCreate>, Stream)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_WriteEvents_IEnumerable_EventCreate__Stream_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.WriteEvents(IEnumerable{EventCreate},Stream)
+  name.vb: WriteEvents(IEnumerable(Of EventCreate), Stream)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.WriteEvents(IEnumerable<EventCreate>, Stream)
+  fullName.vb: Cognite.Extractor.Utils.CogniteUtils.WriteEvents(IEnumerable(Of EventCreate), Stream)
+  nameWithType: CogniteUtils.WriteEvents(IEnumerable<EventCreate>, Stream)
+  nameWithType.vb: CogniteUtils.WriteEvents(IEnumerable(Of EventCreate), Stream)
+- uid: Cognite.Extractor.Utils.CogniteUtils.WriteEvents*
+  name: WriteEvents
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_WriteEvents_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.WriteEvents
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.WriteEvents
+  nameWithType: CogniteUtils.WriteEvents
+- uid: Cognite.Extractor.Utils.CogniteUtils.WriteEventsAsync(IEnumerable{EventCreate},Stream,CancellationToken)
+  name: WriteEventsAsync(IEnumerable<EventCreate>, Stream, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_WriteEventsAsync_IEnumerable_EventCreate__Stream_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteUtils.WriteEventsAsync(IEnumerable{EventCreate},Stream,CancellationToken)
+  name.vb: WriteEventsAsync(IEnumerable(Of EventCreate), Stream, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteUtils.WriteEventsAsync(IEnumerable<EventCreate>, Stream, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteUtils.WriteEventsAsync(IEnumerable(Of EventCreate), Stream, CancellationToken)
+  nameWithType: CogniteUtils.WriteEventsAsync(IEnumerable<EventCreate>, Stream, CancellationToken)
+  nameWithType.vb: CogniteUtils.WriteEventsAsync(IEnumerable(Of EventCreate), Stream, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteUtils.WriteEventsAsync*
+  name: WriteEventsAsync
+  href: api/Cognite.Extractor.Utils.CogniteUtils.html#Cognite_Extractor_Utils_CogniteUtils_WriteEventsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteUtils.WriteEventsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteUtils.WriteEventsAsync
+  nameWithType: CogniteUtils.WriteEventsAsync
 - uid: Cognite.Extractor.Utils.CogniteUtilsException
   name: CogniteUtilsException
   href: api/Cognite.Extractor.Utils.CogniteUtilsException.html
@@ -2619,6 +2979,18 @@ references:
   commentId: M:Cognite.Extractor.Utils.Datapoint.#ctor(DateTime,System.String)
   fullName: Cognite.Extractor.Utils.Datapoint.Datapoint(DateTime, System.String)
   nameWithType: Datapoint.Datapoint(DateTime, String)
+- uid: Cognite.Extractor.Utils.Datapoint.#ctor(System.Int64,System.Double)
+  name: Datapoint(Int64, Double)
+  href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint__ctor_System_Int64_System_Double_
+  commentId: M:Cognite.Extractor.Utils.Datapoint.#ctor(System.Int64,System.Double)
+  fullName: Cognite.Extractor.Utils.Datapoint.Datapoint(System.Int64, System.Double)
+  nameWithType: Datapoint.Datapoint(Int64, Double)
+- uid: Cognite.Extractor.Utils.Datapoint.#ctor(System.Int64,System.String)
+  name: Datapoint(Int64, String)
+  href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint__ctor_System_Int64_System_String_
+  commentId: M:Cognite.Extractor.Utils.Datapoint.#ctor(System.Int64,System.String)
+  fullName: Cognite.Extractor.Utils.Datapoint.Datapoint(System.Int64, System.String)
+  nameWithType: Datapoint.Datapoint(Int64, String)
 - uid: Cognite.Extractor.Utils.Datapoint.#ctor*
   name: Datapoint
   href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint__ctor_
@@ -2626,6 +2998,32 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Datapoint.Datapoint
   nameWithType: Datapoint.Datapoint
+- uid: Cognite.Extractor.Utils.Datapoint.FromStream(Stream)
+  name: FromStream(Stream)
+  href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint_FromStream_Stream_
+  commentId: M:Cognite.Extractor.Utils.Datapoint.FromStream(Stream)
+  fullName: Cognite.Extractor.Utils.Datapoint.FromStream(Stream)
+  nameWithType: Datapoint.FromStream(Stream)
+- uid: Cognite.Extractor.Utils.Datapoint.FromStream*
+  name: FromStream
+  href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint_FromStream_
+  commentId: Overload:Cognite.Extractor.Utils.Datapoint.FromStream
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Datapoint.FromStream
+  nameWithType: Datapoint.FromStream
+- uid: Cognite.Extractor.Utils.Datapoint.IsString
+  name: IsString
+  href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint_IsString
+  commentId: P:Cognite.Extractor.Utils.Datapoint.IsString
+  fullName: Cognite.Extractor.Utils.Datapoint.IsString
+  nameWithType: Datapoint.IsString
+- uid: Cognite.Extractor.Utils.Datapoint.IsString*
+  name: IsString
+  href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint_IsString_
+  commentId: Overload:Cognite.Extractor.Utils.Datapoint.IsString
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Datapoint.IsString
+  nameWithType: Datapoint.IsString
 - uid: Cognite.Extractor.Utils.Datapoint.NumericValue
   name: NumericValue
   href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint_NumericValue
@@ -2665,6 +3063,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Datapoint.Timestamp
   nameWithType: Datapoint.Timestamp
+- uid: Cognite.Extractor.Utils.Datapoint.ToStorableBytes
+  name: ToStorableBytes()
+  href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint_ToStorableBytes
+  commentId: M:Cognite.Extractor.Utils.Datapoint.ToStorableBytes
+  fullName: Cognite.Extractor.Utils.Datapoint.ToStorableBytes()
+  nameWithType: Datapoint.ToStorableBytes()
+- uid: Cognite.Extractor.Utils.Datapoint.ToStorableBytes*
+  name: ToStorableBytes
+  href: api/Cognite.Extractor.Utils.Datapoint.html#Cognite_Extractor_Utils_Datapoint_ToStorableBytes_
+  commentId: Overload:Cognite.Extractor.Utils.Datapoint.ToStorableBytes
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Datapoint.ToStorableBytes
+  nameWithType: Datapoint.ToStorableBytes
 - uid: Cognite.Extractor.Utils.DatapointExtensions
   name: DatapointExtensions
   href: api/Cognite.Extractor.Utils.DatapointExtensions.html
@@ -2848,6 +3259,57 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.EventExtensions.GetOrCreateAsync
   nameWithType: EventExtensions.GetOrCreateAsync
+- uid: Cognite.Extractor.Utils.EventUploadQueue
+  name: EventUploadQueue
+  href: api/Cognite.Extractor.Utils.EventUploadQueue.html
+  commentId: T:Cognite.Extractor.Utils.EventUploadQueue
+  fullName: Cognite.Extractor.Utils.EventUploadQueue
+  nameWithType: EventUploadQueue
+- uid: Cognite.Extractor.Utils.EventUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)
+  name: EventUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger<CogniteDestination>, Func<QueueUploadResult<EventCreate>, Task>, String)
+  href: api/Cognite.Extractor.Utils.EventUploadQueue.html#Cognite_Extractor_Utils_EventUploadQueue__ctor_Cognite_Extractor_Utils_CogniteDestination_TimeSpan_System_Int32_ILogger_Cognite_Extractor_Utils_CogniteDestination__Func_Cognite_Extractor_Utils_QueueUploadResult_EventCreate__Task__System_String_
+  commentId: M:Cognite.Extractor.Utils.EventUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)
+  name.vb: EventUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger(Of CogniteDestination), Func(Of QueueUploadResult(Of EventCreate), Task), String)
+  fullName: Cognite.Extractor.Utils.EventUploadQueue.EventUploadQueue(Cognite.Extractor.Utils.CogniteDestination, TimeSpan, System.Int32, ILogger<Cognite.Extractor.Utils.CogniteDestination>, Func<Cognite.Extractor.Utils.QueueUploadResult<EventCreate>, Task>, System.String)
+  fullName.vb: Cognite.Extractor.Utils.EventUploadQueue.EventUploadQueue(Cognite.Extractor.Utils.CogniteDestination, TimeSpan, System.Int32, ILogger(Of Cognite.Extractor.Utils.CogniteDestination), Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of EventCreate), Task), System.String)
+  nameWithType: EventUploadQueue.EventUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger<CogniteDestination>, Func<QueueUploadResult<EventCreate>, Task>, String)
+  nameWithType.vb: EventUploadQueue.EventUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger(Of CogniteDestination), Func(Of QueueUploadResult(Of EventCreate), Task), String)
+- uid: Cognite.Extractor.Utils.EventUploadQueue.#ctor*
+  name: EventUploadQueue
+  href: api/Cognite.Extractor.Utils.EventUploadQueue.html#Cognite_Extractor_Utils_EventUploadQueue__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.EventUploadQueue.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.EventUploadQueue.EventUploadQueue
+  nameWithType: EventUploadQueue.EventUploadQueue
+- uid: Cognite.Extractor.Utils.EventUploadQueue.Enqueue(EventCreate)
+  name: Enqueue(EventCreate)
+  href: api/Cognite.Extractor.Utils.EventUploadQueue.html#Cognite_Extractor_Utils_EventUploadQueue_Enqueue_EventCreate_
+  commentId: M:Cognite.Extractor.Utils.EventUploadQueue.Enqueue(EventCreate)
+  fullName: Cognite.Extractor.Utils.EventUploadQueue.Enqueue(EventCreate)
+  nameWithType: EventUploadQueue.Enqueue(EventCreate)
+- uid: Cognite.Extractor.Utils.EventUploadQueue.Enqueue*
+  name: Enqueue
+  href: api/Cognite.Extractor.Utils.EventUploadQueue.html#Cognite_Extractor_Utils_EventUploadQueue_Enqueue_
+  commentId: Overload:Cognite.Extractor.Utils.EventUploadQueue.Enqueue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.EventUploadQueue.Enqueue
+  nameWithType: EventUploadQueue.Enqueue
+- uid: Cognite.Extractor.Utils.EventUploadQueue.UploadEntries(IEnumerable{EventCreate},CancellationToken)
+  name: UploadEntries(IEnumerable<EventCreate>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.EventUploadQueue.html#Cognite_Extractor_Utils_EventUploadQueue_UploadEntries_IEnumerable_EventCreate__CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.EventUploadQueue.UploadEntries(IEnumerable{EventCreate},CancellationToken)
+  name.vb: UploadEntries(IEnumerable(Of EventCreate), CancellationToken)
+  fullName: Cognite.Extractor.Utils.EventUploadQueue.UploadEntries(IEnumerable<EventCreate>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.EventUploadQueue.UploadEntries(IEnumerable(Of EventCreate), CancellationToken)
+  nameWithType: EventUploadQueue.UploadEntries(IEnumerable<EventCreate>, CancellationToken)
+  nameWithType.vb: EventUploadQueue.UploadEntries(IEnumerable(Of EventCreate), CancellationToken)
+- uid: Cognite.Extractor.Utils.EventUploadQueue.UploadEntries*
+  name: UploadEntries
+  href: api/Cognite.Extractor.Utils.EventUploadQueue.html#Cognite_Extractor_Utils_EventUploadQueue_UploadEntries_
+  commentId: Overload:Cognite.Extractor.Utils.EventUploadQueue.UploadEntries
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.EventUploadQueue.UploadEntries
+  nameWithType: EventUploadQueue.UploadEntries
 - uid: Cognite.Extractor.Utils.IdentityComparer
   name: IdentityComparer
   href: api/Cognite.Extractor.Utils.IdentityComparer.html
@@ -2970,6 +3432,109 @@ references:
   fullName.vb: Cognite.Extractor.Utils.IRawUploadQueue(Of T).Start
   nameWithType: IRawUploadQueue<T>.Start
   nameWithType.vb: IRawUploadQueue(Of T).Start
+- uid: Cognite.Extractor.Utils.IRawUploadQueue`1.Trigger(CancellationToken)
+  name: Trigger(CancellationToken)
+  href: api/Cognite.Extractor.Utils.IRawUploadQueue-1.html#Cognite_Extractor_Utils_IRawUploadQueue_1_Trigger_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.IRawUploadQueue`1.Trigger(CancellationToken)
+  fullName: Cognite.Extractor.Utils.IRawUploadQueue<T>.Trigger(CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.IRawUploadQueue(Of T).Trigger(CancellationToken)
+  nameWithType: IRawUploadQueue<T>.Trigger(CancellationToken)
+  nameWithType.vb: IRawUploadQueue(Of T).Trigger(CancellationToken)
+- uid: Cognite.Extractor.Utils.IRawUploadQueue`1.Trigger*
+  name: Trigger
+  href: api/Cognite.Extractor.Utils.IRawUploadQueue-1.html#Cognite_Extractor_Utils_IRawUploadQueue_1_Trigger_
+  commentId: Overload:Cognite.Extractor.Utils.IRawUploadQueue`1.Trigger
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.IRawUploadQueue<T>.Trigger
+  fullName.vb: Cognite.Extractor.Utils.IRawUploadQueue(Of T).Trigger
+  nameWithType: IRawUploadQueue<T>.Trigger
+  nameWithType.vb: IRawUploadQueue(Of T).Trigger
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1
+  name: QueueUploadResult<T>
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html
+  commentId: T:Cognite.Extractor.Utils.QueueUploadResult`1
+  name.vb: QueueUploadResult(Of T)
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T)
+  nameWithType: QueueUploadResult<T>
+  nameWithType.vb: QueueUploadResult(Of T)
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.#ctor(Exception)
+  name: QueueUploadResult(Exception)
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1__ctor_Exception_
+  commentId: M:Cognite.Extractor.Utils.QueueUploadResult`1.#ctor(Exception)
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.QueueUploadResult(Exception)
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).QueueUploadResult(Exception)
+  nameWithType: QueueUploadResult<T>.QueueUploadResult(Exception)
+  nameWithType.vb: QueueUploadResult(Of T).QueueUploadResult(Exception)
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.#ctor(IEnumerable{`0})
+  name: QueueUploadResult(IEnumerable<T>)
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1__ctor_IEnumerable__0__
+  commentId: M:Cognite.Extractor.Utils.QueueUploadResult`1.#ctor(IEnumerable{`0})
+  name.vb: QueueUploadResult(IEnumerable(Of T))
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.QueueUploadResult(IEnumerable<T>)
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).QueueUploadResult(IEnumerable(Of T))
+  nameWithType: QueueUploadResult<T>.QueueUploadResult(IEnumerable<T>)
+  nameWithType.vb: QueueUploadResult(Of T).QueueUploadResult(IEnumerable(Of T))
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.#ctor*
+  name: QueueUploadResult
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.QueueUploadResult`1.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.QueueUploadResult
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).QueueUploadResult
+  nameWithType: QueueUploadResult<T>.QueueUploadResult
+  nameWithType.vb: QueueUploadResult(Of T).QueueUploadResult
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.Exception
+  name: Exception
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1_Exception
+  commentId: P:Cognite.Extractor.Utils.QueueUploadResult`1.Exception
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.Exception
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).Exception
+  nameWithType: QueueUploadResult<T>.Exception
+  nameWithType.vb: QueueUploadResult(Of T).Exception
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.Exception*
+  name: Exception
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1_Exception_
+  commentId: Overload:Cognite.Extractor.Utils.QueueUploadResult`1.Exception
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.Exception
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).Exception
+  nameWithType: QueueUploadResult<T>.Exception
+  nameWithType.vb: QueueUploadResult(Of T).Exception
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.IsFailed
+  name: IsFailed
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1_IsFailed
+  commentId: P:Cognite.Extractor.Utils.QueueUploadResult`1.IsFailed
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.IsFailed
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).IsFailed
+  nameWithType: QueueUploadResult<T>.IsFailed
+  nameWithType.vb: QueueUploadResult(Of T).IsFailed
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.IsFailed*
+  name: IsFailed
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1_IsFailed_
+  commentId: Overload:Cognite.Extractor.Utils.QueueUploadResult`1.IsFailed
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.IsFailed
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).IsFailed
+  nameWithType: QueueUploadResult<T>.IsFailed
+  nameWithType.vb: QueueUploadResult(Of T).IsFailed
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.Uploaded
+  name: Uploaded
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1_Uploaded
+  commentId: P:Cognite.Extractor.Utils.QueueUploadResult`1.Uploaded
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.Uploaded
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).Uploaded
+  nameWithType: QueueUploadResult<T>.Uploaded
+  nameWithType.vb: QueueUploadResult(Of T).Uploaded
+- uid: Cognite.Extractor.Utils.QueueUploadResult`1.Uploaded*
+  name: Uploaded
+  href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html#Cognite_Extractor_Utils_QueueUploadResult_1_Uploaded_
+  commentId: Overload:Cognite.Extractor.Utils.QueueUploadResult`1.Uploaded
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.QueueUploadResult<T>.Uploaded
+  fullName.vb: Cognite.Extractor.Utils.QueueUploadResult(Of T).Uploaded
+  nameWithType: QueueUploadResult<T>.Uploaded
+  nameWithType.vb: QueueUploadResult(Of T).Uploaded
 - uid: Cognite.Extractor.Utils.RawExtensions
   name: RawExtensions
   href: api/Cognite.Extractor.Utils.RawExtensions.html
@@ -3258,3 +3823,82 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors
   nameWithType: TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue
+  name: TimeSeriesUploadQueue
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html
+  commentId: T:Cognite.Extractor.Utils.TimeSeriesUploadQueue
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue
+  nameWithType: TimeSeriesUploadQueue
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extractor.Utils.Datapoint}},Task},System.String)
+  name: TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger<CogniteDestination>, Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>, String)
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_Cognite_Extractor_Utils_CogniteDestination_TimeSpan_System_Int32_ILogger_Cognite_Extractor_Utils_CogniteDestination__Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extractor_Utils_Datapoint___Task__System_String_
+  commentId: M:Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extractor.Utils.Datapoint}},Task},System.String)
+  name.vb: TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger(Of CogniteDestination), Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task), String)
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.TimeSeriesUploadQueue(Cognite.Extractor.Utils.CogniteDestination, TimeSpan, System.Int32, ILogger<Cognite.Extractor.Utils.CogniteDestination>, Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<Identity, Cognite.Extractor.Utils.Datapoint>>, Task>, System.String)
+  fullName.vb: Cognite.Extractor.Utils.TimeSeriesUploadQueue.TimeSeriesUploadQueue(Cognite.Extractor.Utils.CogniteDestination, TimeSpan, System.Int32, ILogger(Of Cognite.Extractor.Utils.CogniteDestination), Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of Identity, Cognite.Extractor.Utils.Datapoint)), Task), System.String)
+  nameWithType: TimeSeriesUploadQueue.TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger<CogniteDestination>, Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>, String)
+  nameWithType.vb: TimeSeriesUploadQueue.TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger(Of CogniteDestination), Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task), String)
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor*
+  name: TimeSeriesUploadQueue
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.TimeSeriesUploadQueue
+  nameWithType: TimeSeriesUploadQueue.TimeSeriesUploadQueue
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage(IDictionary{Identity,Cognite.Extractor.StateStorage.BaseExtractionState},Cognite.Extractor.StateStorage.IExtractionStateStore,System.String)
+  name: AddStateStorage(IDictionary<Identity, BaseExtractionState>, IExtractionStateStore, String)
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue_AddStateStorage_IDictionary_Identity_Cognite_Extractor_StateStorage_BaseExtractionState__Cognite_Extractor_StateStorage_IExtractionStateStore_System_String_
+  commentId: M:Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage(IDictionary{Identity,Cognite.Extractor.StateStorage.BaseExtractionState},Cognite.Extractor.StateStorage.IExtractionStateStore,System.String)
+  name.vb: AddStateStorage(IDictionary(Of Identity, BaseExtractionState), IExtractionStateStore, String)
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage(IDictionary<Identity, Cognite.Extractor.StateStorage.BaseExtractionState>, Cognite.Extractor.StateStorage.IExtractionStateStore, System.String)
+  fullName.vb: Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage(IDictionary(Of Identity, Cognite.Extractor.StateStorage.BaseExtractionState), Cognite.Extractor.StateStorage.IExtractionStateStore, System.String)
+  nameWithType: TimeSeriesUploadQueue.AddStateStorage(IDictionary<Identity, BaseExtractionState>, IExtractionStateStore, String)
+  nameWithType.vb: TimeSeriesUploadQueue.AddStateStorage(IDictionary(Of Identity, BaseExtractionState), IExtractionStateStore, String)
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage*
+  name: AddStateStorage
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue_AddStateStorage_
+  commentId: Overload:Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage
+  nameWithType: TimeSeriesUploadQueue.AddStateStorage
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(Identity,Cognite.Extractor.Utils.Datapoint)
+  name: Enqueue(Identity, Datapoint)
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_Identity_Cognite_Extractor_Utils_Datapoint_
+  commentId: M:Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(Identity,Cognite.Extractor.Utils.Datapoint)
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(Identity, Cognite.Extractor.Utils.Datapoint)
+  nameWithType: TimeSeriesUploadQueue.Enqueue(Identity, Datapoint)
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.Int64,Cognite.Extractor.Utils.Datapoint)
+  name: Enqueue(Int64, Datapoint)
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_System_Int64_Cognite_Extractor_Utils_Datapoint_
+  commentId: M:Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.Int64,Cognite.Extractor.Utils.Datapoint)
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.Int64, Cognite.Extractor.Utils.Datapoint)
+  nameWithType: TimeSeriesUploadQueue.Enqueue(Int64, Datapoint)
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.String,Cognite.Extractor.Utils.Datapoint)
+  name: Enqueue(String, Datapoint)
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_System_String_Cognite_Extractor_Utils_Datapoint_
+  commentId: M:Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.String,Cognite.Extractor.Utils.Datapoint)
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.String, Cognite.Extractor.Utils.Datapoint)
+  nameWithType: TimeSeriesUploadQueue.Enqueue(String, Datapoint)
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue*
+  name: Enqueue
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_
+  commentId: Overload:Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue
+  nameWithType: TimeSeriesUploadQueue.Enqueue
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries(IEnumerable{System.ValueTuple{Identity,Cognite.Extractor.Utils.Datapoint}},CancellationToken)
+  name: UploadEntries(IEnumerable<(Identity id, Datapoint dp)>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue_UploadEntries_IEnumerable_System_ValueTuple_Identity_Cognite_Extractor_Utils_Datapoint___CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries(IEnumerable{System.ValueTuple{Identity,Cognite.Extractor.Utils.Datapoint}},CancellationToken)
+  name.vb: UploadEntries(IEnumerable(Of (id As Identity, dp As Datapoint)), CancellationToken)
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries(IEnumerable<System.ValueTuple<Identity, Cognite.Extractor.Utils.Datapoint>>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries(IEnumerable(Of System.ValueTuple(Of Identity, Cognite.Extractor.Utils.Datapoint)), CancellationToken)
+  nameWithType: TimeSeriesUploadQueue.UploadEntries(IEnumerable<(Identity id, Datapoint dp)>, CancellationToken)
+  nameWithType.vb: TimeSeriesUploadQueue.UploadEntries(IEnumerable(Of (id As Identity, dp As Datapoint)), CancellationToken)
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries*
+  name: UploadEntries
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue_UploadEntries_
+  commentId: Overload:Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries
+  nameWithType: TimeSeriesUploadQueue.UploadEntries

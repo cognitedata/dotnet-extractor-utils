@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Using the state store. </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Using the state store. ">
+    <meta name="generator" content="docfx 2.51.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="using-the-state-store">Using the state store.</h1>
+
+<p>The state store is used to store the ranges of points/events/others extracted from source systems. It is intended to be used when the source system has significant amounts of historical data, and reading first/last timestamps from CDF or other destination systems is infeasible.</p>
+<p>Basic usage is with <a class="xref" href="../api/Cognite.Extractor.StateStorage.BaseExtractionState.html">BaseExtractionState</a>.</p>
+<h2 id="concepts">Concepts</h2>
+<p>When reading data from historical source systems there are three typical sources:</p>
+<ul>
+<li><em>Backfill</em>, meaning old historical data that should be synchronized to destination systems. Backfill typically only runs once for each source object, but there may be a lot of it, and it may take days or weeks to read it all. Backfill reads backwards through history.</li>
+<li><em>Frontfill</em>, meaning historical data that has been generated while the extractor was offline. This is usually a much smaller amount than for Backfill.</li>
+<li><em>Streaming</em>, meaning live updates to data. Usually this represents live data from source systems, but it can also be updates to old data, so streamed data can come from anywhere in history.</li>
+</ul>
+<p>Any point of data can exist in three different states:</p>
+<ul>
+<li>Unextracted, so sitting in source systems. This will usually be outside of frontfill/backfill ranges.</li>
+<li>Read, but not pushed to destinations. These points are in the extractor, but for whatever reason are not pushed to CDF or other destinations. Typically this will happen if the extractor does some kind of buffering of streamed data.</li>
+<li>Extracted, these points exist in destination systems and are considered to be safe.</li>
+</ul>
+<p>The state store is exclusively interested in points that have been fully extracted. Read points can be lost if the extractor goes down.</p>
+<h2 id="initialization">Initialization</h2>
+<p>When starting the extractor, it first needs to read ranges from state-store/destination systems.</p>
+<pre><code class="lang-c#">// Somehow generate states from source system, typically some method to list source system extractable objects.
+IEnumerable&lt;BaseExtractionState&gt; states = ObtainStatesFromSourceSystem();
+services.AddStateStore();
+
+using (var provider = services.BuildServiceProvider())
+{
+    var stateStore = provider.GetRequiredService&lt;IExtractionStateStore&gt;();
+    var stateDict = states.ToDictionary(state =&gt; state.Id);
+
+    await stateStore.RestoreExtractionState(stateDict, &quot;someTable&quot;, cancellationToken);
+}
+</code></pre>
+<p>Alternatively, using CDF timeseries as a kind of store</p>
+<pre><code class="lang-c#">IEnumerable&lt;BaseExtractionState&gt; states = ObtainStatesFromSourceSystem();
+
+var destination = provider.GetRequiredService&lt;CogniteDestination&gt;();
+
+var ids = states.Select(state =&gt; Identity.Create(state.Id))
+var ranges = await destination.GetExtractedRanges(ids, cancellationToken);
+
+foreach (var state in states) {
+    if (ranges.TryGetValue(Identity.Create(state.Id), out TimeRange range)) {
+        state.InitExtractedRange(range.First, range.Last);
+    }
+}
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>When the extractor is running, states must be informed of points pushed to destinations.</p>
+<pre><code class="lang-c#">var destination = provider.GetRequiredService&lt;CogniteDestination&gt;();
+var stateStore = provider.GetRequiredService&lt;IExtractionStateStore&gt;();
+
+IDictionary&lt;string, Datapoint&gt; points = ReadPointsFromSource();
+
+var pointsByIdentity = points.ToDictionary(kvp =&gt; Identity.Create(kvp.Key), kvp =&gt; kvp.Value, new IdentityComparer());
+
+await destination.InsertDataPointsIgnoreErrors(points, cancellationToken);
+
+// For each successfully pushed list of points, report the first/last timestamp to states.
+foreach (var kvp in points)
+{
+    if (stateDict.TryGetValue(kvp.Key, out var state)) {
+        DateTime (min, max) = kvp.Value.MinMax(dp =&gt; dp.Timestamp);
+        state.UpdateDestinationRange(min, max);
+    }
+}
+// Finally store states in state store, this only stores modified states.
+await stateStore.StoreExtractionState(states, &quot;someTable&quot;, cancellationToken);
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/61096ab1e2a18325f81396d81ba6b8a8bbd95fea/docfx_project/tutorials/state-store.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
