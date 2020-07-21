@@ -475,11 +475,13 @@ namespace Cognite.Extractor.Utils
         public static IEnumerable<EventCreate> ReadEvents(Stream stream, int chunkSize = 0)
         {
             var events = new List<EventCreate>();
+            int total = 0;
             while (true)
             {
                 var evt = EventFromStream(stream);
                 if (evt == null) break;
                 events.Add(evt);
+                if (chunkSize > 0 && ++total >= chunkSize) break;
             }
             return events;
         }
