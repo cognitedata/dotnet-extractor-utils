@@ -1,6 +1,6 @@
 # Using Raw upload queues.
 
-Raw upload queues buffer a predefined number of POCOs and stores them in Raw at a fixed interval or whenever the queue reaches a specified max size.
+Raw upload queues buffer POCOs and stores them in Raw at a fixed interval or whenever the queue reaches a specified max size.
 
 ```c#
 // Data transfer object representing raw columns
@@ -12,7 +12,7 @@ private class ColumnsDto
 
 // Creates an queue that uploads rows to Raw every 5 seconds (or when the queue size reaches 1.000)
 using (var queue = destination.CreateRawUploadQueue<ColumnsDto>("myDb", "myTable", TimeSpan.FromSeconds(5), 1_000,
-    result => { // handle result of upload here }))
+    result => { handle result of upload here }))
 {
     // Task to generate rows at regular intervals
     var enqueueTask = Task.Run(async () => {
