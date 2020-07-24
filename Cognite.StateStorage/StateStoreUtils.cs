@@ -1,5 +1,4 @@
-﻿using Cognite.Common;
-using Cognite.Extractor.Common;
+﻿using Cognite.Extractor.Common;
 using LiteDB;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

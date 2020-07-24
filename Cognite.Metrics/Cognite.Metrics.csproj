@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -8,6 +8,7 @@
     <Company>Cognite AS</Company>
     <Copyright>Cognite AS</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RootNamespace>Cognite.Extractor.Metrics</RootNamespace>
     <Description>
       A library containing metrics utilities for Cognite extractors
     </Description>
