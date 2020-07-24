@@ -163,13 +163,16 @@ namespace Cognite.Extractor.Utils
             try
             {
                 var toCreate = await buildAssets(missing);
-                IEnumerable<Asset> newAssets;
-                using (CdfMetrics.Assets.WithLabels("create"))
+                if (toCreate.Any())
                 {
-                    newAssets = await assets.CreateAsync(toCreate, token);
+                    IEnumerable<Asset> newAssets;
+                    using (CdfMetrics.Assets.WithLabels("create"))
+                    {
+                        newAssets = await assets.CreateAsync(toCreate, token);
+                    }
+                    existingAssets.AddRange(newAssets);
+                    _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
                 }
-                existingAssets.AddRange(newAssets);
-                _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
                 return existingAssets;
             }
             catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
