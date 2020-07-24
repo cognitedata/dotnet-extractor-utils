@@ -174,6 +174,32 @@ namespace Cognite.Extractor.Utils
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
+        private async Task FinalizeQueue()
+        {
+            try
+            {
+                _timer?.Stop();
+                var items = Dequeue();
+                var token = _tokenSource.IsCancellationRequested ? CancellationToken.None : _tokenSource.Token;
+                var result = await UploadEntries(items, token);
+                if (_callback != null) await _callback(result);
+
+                if (!_tokenSource.IsCancellationRequested)
+                {
+                    _tokenSource.Cancel();
+                }
+                if (_uploadTask != null)
+                {
+                    await _uploadTask;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception when disposing of upload queue: {msg}", ex.Message);
+            }
+        }
+
+
         /// <summary>
         /// Dispose of the queue, uploading all remaining entries.
         /// </summary>
@@ -184,32 +210,10 @@ namespace Cognite.Extractor.Utils
             {
                 if (disposing)
                 {
-                    try
-                    {
-                        _timer?.Stop();
-                        var items = Dequeue();
-                        var token = _tokenSource.IsCancellationRequested ? CancellationToken.None : _tokenSource.Token;
-                        var result = UploadEntries(items, token).Result;
-                        if (_callback != null) _callback(result).Wait();
-                        if (!_tokenSource.IsCancellationRequested)
-                        {
-                            _tokenSource.Cancel();
-                        }
-                        if (_uploadTask != null)
-                        {
-                            _uploadTask.GetAwaiter().GetResult();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Exception when disposing of upload queue: {msg}", ex.Message);
-                    }
-                    finally
-                    {
-                        _pushEvent.Dispose();
-                        _timer?.Close();
-                        _tokenSource.Dispose();
-                    }
+                    Task.Run(async () => await FinalizeQueue()).Wait();
+                    _pushEvent.Dispose();
+                    _timer?.Close();
+                    _tokenSource.Dispose();
                 }
 
                 disposedValue = true;

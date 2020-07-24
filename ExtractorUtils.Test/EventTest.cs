@@ -154,7 +154,7 @@ namespace ExtractorUtils.Test
                 // queue with 1 sec upload interval
                 using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
-                    evtCount += res.Uploaded.Count();
+                    evtCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;
                     return Task.CompletedTask;
                 }))
@@ -178,6 +178,7 @@ namespace ExtractorUtils.Test
                     await t;
                     logger.LogInformation("Enqueueing task completed. Disposing of the upload queue");
                 }
+                logger.LogInformation("Upload queue disposed");
 
                 Assert.Equal(13, evtCount);
                 Assert.True(cbCount <= 3);
@@ -186,7 +187,7 @@ namespace ExtractorUtils.Test
                 // queue with maximum size
                 using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
                 {
-                    evtCount += res.Uploaded.Count();
+                    evtCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;
                     return Task.CompletedTask;
                 }))
@@ -214,6 +215,7 @@ namespace ExtractorUtils.Test
                     Assert.True(uploadTask.IsCompleted);
                     logger.LogInformation("Enqueueing task cancelled. Disposing of the upload queue");
                 }
+                logger.LogInformation("Upload queue disposed");
 
                 Assert.Equal(23, evtCount);
                 Assert.Equal(3, cbCount);
@@ -281,7 +283,9 @@ namespace ExtractorUtils.Test
                     await queue.Trigger(CancellationToken.None);
                     Assert.Equal(0, new FileInfo("event-buffer.bin").Length);
                     Assert.Equal(10, _ensuredEvents.Count);
+                    logger.LogInformation("Disposing of the upload queue");
                 }
+                logger.LogInformation("Upload queue disposed");
             }
             System.IO.File.Delete("event-buffer.bin");
             System.IO.File.Delete(path);
