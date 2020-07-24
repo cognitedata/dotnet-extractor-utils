@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cognite.Extractor.StateStorage
 {
@@ -197,6 +199,59 @@ namespace Cognite.Extractor.StateStorage
                 }
 
             });
+        }
+
+        /// <summary>
+        /// Store a given liste of extraction states with given period.
+        /// </summary>
+        /// <typeparam name="T">Subtype of <see cref="BaseStorableState"/> extracted from state store</typeparam>
+        /// <typeparam name="K">Implementation of <see cref="IExtractionState"/> used as state</typeparam>
+        /// <param name="store">This store</param>
+        /// <param name="period">Minimum interval between each time states are stored</param>
+        /// <param name="extractionStates">States to store</param>
+        /// <param name="tableName">Collection to store into</param>
+        /// <param name="buildStorableState">Method to create a storable state from extraction state</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static async Task StoreStatesPeriodically<T, K>(this IExtractionStateStore store,
+            TimeSpan period,
+            IEnumerable<K> extractionStates,
+            string tableName,
+            Func<K, T> buildStorableState,
+            CancellationToken token)
+            where T : BaseStorableState where K : IExtractionState
+        {
+            while (!token.IsCancellationRequested)
+            {
+                var waitTask = Task.Delay(period);
+                var storeTask = store.StoreExtractionState(extractionStates, tableName, buildStorableState, token);
+                await Task.WhenAll(waitTask, storeTask);
+            }
+        }
+
+        /// <summary>
+        /// Store a given liste of extraction states with given period.
+        /// </summary>
+        /// <typeparam name="K">Subtype of <see cref="BaseExtractionState"/> used as state</typeparam>
+        /// <param name="store">This store</param>
+        /// <param name="period">Minimum interval between each time states are stored</param>
+        /// <param name="extractionStates">States to store</param>
+        /// <param name="tableName">Collection to store into</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static async Task StoreStatesPeriodically<K>(this IExtractionStateStore store,
+            TimeSpan period,
+            IEnumerable<K> extractionStates,
+            string tableName,
+            CancellationToken token)
+            where K : BaseExtractionState
+        {
+            while (!token.IsCancellationRequested)
+            {
+                var waitTask = Task.Delay(period);
+                var storeTask = store.StoreExtractionState(extractionStates, tableName, token);
+                await Task.WhenAll(waitTask, storeTask);
+            }
         }
     }
 }
