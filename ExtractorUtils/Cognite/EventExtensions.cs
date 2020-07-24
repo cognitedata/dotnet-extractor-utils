@@ -127,13 +127,16 @@ namespace Cognite.Extractor.Utils
             try
             {
                 var toCreate = await buildEvents(missing);
-                IEnumerable<Event> newEvents;
-                using (CdfMetrics.Events.WithLabels("create").NewTimer())
+                if (toCreate.Any())
                 {
-                    newEvents = await resource.CreateAsync(toCreate, token);
+                    IEnumerable<Event> newEvents;
+                    using (CdfMetrics.Events.WithLabels("create").NewTimer())
+                    {
+                        newEvents = await resource.CreateAsync(toCreate, token);
+                    }
+                    existingEvents.AddRange(newEvents);
+                    _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
                 }
-                existingEvents.AddRange(newEvents);
-                _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
                 return existingEvents;
             }
             catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())

@@ -213,13 +213,16 @@ namespace Cognite.Extractor.Utils
             try
             {
                 var toCreate = await buildTimeSeries(missing);
-                IEnumerable<TimeSeries> newTs;
-                using (CdfMetrics.TimeSeries.WithLabels("create").NewTimer())
+                if (toCreate.Any())
                 {
-                    newTs = await client.CreateAsync(toCreate, token);
+                    IEnumerable<TimeSeries> newTs;
+                    using (CdfMetrics.TimeSeries.WithLabels("create").NewTimer())
+                    {
+                        newTs = await client.CreateAsync(toCreate, token);
+                    }
+                    existingTimeSeries.AddRange(newTs);
+                    _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
                 }
-                existingTimeSeries.AddRange(newTs);
-                _logger.LogDebug("Created {New} new time series in CDF", newTs.Count());
                 return existingTimeSeries;
             }
             catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
