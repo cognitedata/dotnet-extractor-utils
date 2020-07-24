@@ -11,3 +11,5 @@
   items:
     - name: Advanced State Type
       href: history-state.md
+- name: Version Metrics
+  href: version.md
