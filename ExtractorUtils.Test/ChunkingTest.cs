@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils;
+using Xunit.Sdk;
 
 namespace ExtractorUtils.Test {
 
@@ -137,5 +138,54 @@ namespace ExtractorUtils.Test {
             Assert.True(exists.All(val => val));
         }
 
+        [Theory]
+        [InlineData(0, 2, 0, 50)]
+        [InlineData(5, 0, 0, 0)]
+        [InlineData(0, 0, 1, 50)]
+        [InlineData(0, 0, 2, 50)]
+        public static async Task TestTaskThrottler(int maxParallelism, int maxPerUnit, double maxUsagePerUnit, int timespanMs)
+        {
+            // Running this test in github actions is pretty unreliable...
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    using var throttler = new TaskThrottler(maxParallelism, true, maxPerUnit, maxUsagePerUnit, TimeSpan.FromMilliseconds(timespanMs));
+                    var generators = Enumerable.Range(0, 20)
+                        .Select<int, Func<Task>>(_ => () => Task.Delay(100))
+                        .ToList();
+
+                    var start = DateTime.UtcNow;
+                    foreach (var generator in generators) throttler.EnqueueTask(generator);
+
+                    await throttler.WaitForCompletion();
+                    var end = DateTime.UtcNow;
+
+                    double minElapsedTimeParallel = maxParallelism == 0
+                        ? 0
+                        : 20 / maxParallelism * 100;
+                    double minElapsedTimeLimit = maxPerUnit == 0 || timespanMs == 0
+                        ? 0
+                        : 20 / maxPerUnit * Math.Min(100, timespanMs);
+                    double minElapsedTimeUsage = maxUsagePerUnit == 0 || timespanMs == 0
+                        ? 0
+                        : 2000 / (timespanMs * maxUsagePerUnit);
+
+                    var minElapsedTime = Math.Max(minElapsedTimeUsage, Math.Max(minElapsedTimeParallel, minElapsedTimeLimit));
+
+                    var realMs = (end - start).TotalMilliseconds;
+
+                    // Task overhead
+                    var flex = 200;
+                    Assert.True(realMs > minElapsedTime && realMs < minElapsedTime + flex,
+                        $"Execution took {realMs}ms but should be between {minElapsedTime} and {minElapsedTime + flex}");
+                    break;
+                }
+                catch (TrueException)
+                {
+                    if (i == 4) throw;
+                }
+            }
+        }
     }
 }
