@@ -187,5 +187,36 @@ namespace ExtractorUtils.Test {
                 }
             }
         }
+        [Fact]
+        public static async Task TestTaskThrottlerResults()
+        {
+            using var throttler = new TaskThrottler(0);
+            static Task okGenerator() => Task.Delay(100);
+            static async Task badGenerator()
+            {
+                await Task.Delay(100);
+                Assert.True(false);
+            }
+            var result = await throttler.EnqueueAndWait(okGenerator);
+            Assert.Equal(0, result.Index);
+            Assert.Null(result.Exception);
+            Assert.True(result.IsCompleted);
+            Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 100);
+
+            var badResult = await throttler.EnqueueAndWait(badGenerator);
+            Assert.Equal(1, badResult.Index);
+            Assert.NotNull(badResult.Exception);
+            Assert.True(badResult.Exception is AggregateException exc && exc.InnerExceptions.First() is TrueException);
+
+            using var throttler2 = new TaskThrottler(0, true);
+
+            result = await throttler2.EnqueueAndWait(okGenerator);
+            Assert.Equal(0, result.Index);
+            Assert.Null(result.Exception);
+            Assert.True(result.IsCompleted);
+            Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 100);
+
+            await Assert.ThrowsAsync<AggregateException>(() => throttler2.EnqueueAndWait(badGenerator));
+        }
     }
 }

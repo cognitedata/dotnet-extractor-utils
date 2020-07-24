@@ -39,6 +39,7 @@ namespace Cognite.Extractor.Common
         internal TaskResult(DateTime startTime, int index)
         {
             StartTime = startTime;
+            Index = index;
         }
 
         internal void ReportResult(Task task)
@@ -146,6 +147,45 @@ namespace Cognite.Extractor.Common
             }
 
             _generators.Add(wrappedGenerator);
+        }
+
+        /// <summary>
+        /// Enqueue a task, then wait until it completes before returning its result
+        /// </summary>
+        /// <param name="generator">Task to enqueue</param>
+        /// <returns>Result of task</returns>
+        public async Task<TaskResult> EnqueueAndWait(Func<Task> generator)
+        {
+            using (var localCompletionEvent = new ManualResetEvent(false))
+            {
+                TaskResult localResult = null;
+                int localIndex;
+                lock (_lock)
+                {
+                    localIndex = _taskIndex++;
+                }
+                Task wrappedGenerator()
+                {
+                    var taskResult = new TaskResult(DateTime.UtcNow, localIndex);
+                    var result = generator();
+                    _results.Add(taskResult);
+                    return result.ContinueWith(task =>
+                    {
+                        taskResult.ReportResult(task);
+                        _taskCompletionEvent.Set();
+                        localCompletionEvent.Set();
+                        localResult = taskResult;
+                    });
+                }
+
+                _generators.Add(wrappedGenerator);
+                await ToTask(localCompletionEvent);
+                if (_quitOnFailure && localResult.Exception != null)
+                {
+                    throw new AggregateException("Failure in TaskThrottler", localResult.Exception);
+                }
+                return localResult;
+            }
         }
 
         private bool AllowSchedule()
