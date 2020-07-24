@@ -166,15 +166,14 @@ namespace Cognite.Extractor.Common
                 }
                 Task wrappedGenerator()
                 {
-                    var taskResult = new TaskResult(DateTime.UtcNow, localIndex);
+                    localResult = new TaskResult(DateTime.UtcNow, localIndex);
                     var result = generator();
-                    _results.Add(taskResult);
+                    _results.Add(localResult);
                     return result.ContinueWith(task =>
                     {
-                        taskResult.ReportResult(task);
+                        localResult.ReportResult(task);
                         _taskCompletionEvent.Set();
                         localCompletionEvent.Set();
-                        localResult = taskResult;
                     });
                 }
 

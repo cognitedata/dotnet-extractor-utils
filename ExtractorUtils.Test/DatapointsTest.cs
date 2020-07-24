@@ -244,7 +244,7 @@ namespace ExtractorUtils.Test
                 // queue with 1 sec upload interval
                 using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
-                    dpCount += res.Uploaded.Count();
+                    dpCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;
                     return Task.CompletedTask;
                 }))
@@ -265,6 +265,7 @@ namespace ExtractorUtils.Test
                     await t;
                     logger.LogInformation("Enqueueing task completed. Disposing of the upload queue");
                 }
+                logger.LogInformation("Upload queue disposed");
 
                 Assert.Equal(3 * 13, dpCount);
                 Assert.True(cbCount <= 4);
@@ -273,7 +274,7 @@ namespace ExtractorUtils.Test
                 // queue with maximum size
                 using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
                 {
-                    dpCount += res.Uploaded.Count();
+                    dpCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;
                     return Task.CompletedTask;
                 }))
@@ -298,6 +299,7 @@ namespace ExtractorUtils.Test
                     Assert.True(uploadTask.IsCompleted);
                     logger.LogInformation("Enqueueing task cancelled. Disposing of the upload queue");
                 }
+                logger.LogInformation("Upload queue disposed");
 
                 Assert.Equal(3 * 23, dpCount);
                 Assert.Equal(11, cbCount);
@@ -375,7 +377,10 @@ namespace ExtractorUtils.Test
                     Assert.Equal(0, new FileInfo("dp-buffer.bin").Length);
                     Assert.Equal(3, _createdDataPoints.Count);
                     Assert.Equal(10, _createdDataPoints["idNumeric1"].Count);
+                    logger.LogInformation("Disposing of the upload queue");
                 }
+                logger.LogInformation("Upload queue disposed");
+
             }
 
             System.IO.File.Delete("dp-buffer.bin");

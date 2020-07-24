@@ -134,12 +134,13 @@ namespace ExtractorUtils.Test
                     await t;
                     logger.LogInformation("Enqueueing task completed. Disposing of the upload queue");
                 } // disposing the queue will upload any rows left and stop the upload loop
+                logger.LogInformation("Upload queue disposed");
 
                 // Verify that the endpoint was called at most 3 times (once per upload interval and once disposing)
                 mockHttpMessageHandler.Protected()
                     .Verify<Task<HttpResponseMessage>>(
                         "SendAsync", 
-                        Times.AtMost(3),
+                        Times.AtMost(4),
                         ItExpr.IsAny<HttpRequestMessage>(),
                         ItExpr.IsAny<CancellationToken>());
 
@@ -164,12 +165,12 @@ namespace ExtractorUtils.Test
                     Assert.True(uploadTask.IsCompleted);
                     logger.LogInformation("Enqueueing task cancelled. Disposing of the upload queue");
                 }
-                
+                logger.LogInformation("Upload queue disposed");
                 // Verify that the endpoint was called at most 3 more times (once per max size and once disposing)
                 mockHttpMessageHandler.Protected()
                     .Verify<Task<HttpResponseMessage>>(
                         "SendAsync", 
-                        Times.AtMost(6),
+                        Times.AtMost(8),
                         ItExpr.IsAny<HttpRequestMessage>(),
                         ItExpr.IsAny<CancellationToken>());
 

@@ -201,7 +201,8 @@ namespace ExtractorUtils.Test {
             Assert.Equal(0, result.Index);
             Assert.Null(result.Exception);
             Assert.True(result.IsCompleted);
-            Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 100);
+            Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 100,
+                $"Expected task to take at least 100ms, but it took {(result.CompletionTime - result.StartTime).Value.TotalMilliseconds}ms");
 
             var badResult = await throttler.EnqueueAndWait(badGenerator);
             Assert.Equal(1, badResult.Index);
