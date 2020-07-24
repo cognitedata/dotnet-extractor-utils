@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.Common
+namespace Cognite.Extractor.StateStorage
 {
     /// <summary>
     /// A destination capable of pushing to raw

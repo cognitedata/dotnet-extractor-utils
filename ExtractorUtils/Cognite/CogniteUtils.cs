@@ -11,9 +11,9 @@ using Polly.Extensions.Http;
 using Polly.Timeout;
 using Cognite.Extractor.Common;
 using System.Linq;
-using Cognite.Common;
 using System.IO;
 using System.Threading.Tasks;
+using Cognite.Extractor.StateStorage;
 
 namespace Cognite.Extractor.Utils
 {

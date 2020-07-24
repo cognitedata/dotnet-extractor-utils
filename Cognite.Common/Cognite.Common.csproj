@@ -8,6 +8,7 @@
     <Company>Cognite AS</Company>
     <Copyright>Cognite AS</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RootNamespace>Cognite.Extractor.Common</RootNamespace>
     <Description>
       A library containing common utilities for Cognite extractors
     </Description>

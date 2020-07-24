@@ -8,6 +8,7 @@
     <Company>Cognite AS</Company>
     <Copyright>Cognite AS</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RootNamespace>Cognite.Extractor.Configuration</RootNamespace>
     <Description>
       A library containing utilities for configuring Cognite extractors
     </Description>
