@@ -24,4 +24,19 @@
     <ProjectReference Include="..\ExtractorUtils\ExtractorUtils.csproj" />
     <ProjectReference Include="..\Cognite.StateStorage\Cognite.StateStorage.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\GitCommitHash">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\GitCommitTime">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+      mkdir "$(MSBuildProjectDirectory)/Properties"
+      git describe --tags --dirty &gt; "$(MSBuildProjectDirectory)/Properties/GitCommitHash"
+      git log -1  --format="%25%25ai" &gt; "$(MSBuildProjectDirectory)/Properties/GitCommitTime"
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>
