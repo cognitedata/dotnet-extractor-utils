@@ -188,7 +188,8 @@ namespace Cognite.Extractor.Utils
                     {
                         _timer?.Stop();
                         var items = Dequeue();
-                        var result = UploadEntries(items, _tokenSource.Token).Result;
+                        var token = _tokenSource.IsCancellationRequested ? CancellationToken.None : _tokenSource.Token;
+                        var result = UploadEntries(items, token).Result;
                         if (_callback != null) _callback(result).Wait();
                         if (!_tokenSource.IsCancellationRequested)
                         {
@@ -198,6 +199,10 @@ namespace Cognite.Extractor.Utils
                         {
                             _uploadTask.GetAwaiter().GetResult();
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Exception when disposing of upload queue: {msg}", ex.Message);
                     }
                     finally
                     {
