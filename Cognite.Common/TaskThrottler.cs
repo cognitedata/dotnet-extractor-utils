@@ -225,7 +225,10 @@ namespace Cognite.Extractor.Common
                             try
                             {
                                 var generator = _generators.Take();
-                                _runningTasks.Add(generator());
+                                lock (_lock)
+                                {
+                                    _runningTasks.Add(generator());
+                                }
                             }
                             catch (InvalidOperationException)
                             {
@@ -245,18 +248,24 @@ namespace Cognite.Extractor.Common
                     source.Cancel();
                 }
 
-                if (_quitOnFailure && _runningTasks.Any(task => task.IsFaulted)) break;
-                if (_runningTasks.Any(task => task.IsCanceled)) break;
+                lock (_lock)
+                {
+                    if (_quitOnFailure && _runningTasks.Any(task => task.IsFaulted)) break;
+                    if (_runningTasks.Any(task => task.IsCanceled)) break;
+                }
 
                 if (!running)
                 {
                     await Task.WhenAll(_runningTasks);
                 }
 
-                var toRemove = _runningTasks.Where(task => task.IsCompleted || task.IsCanceled || task.IsFaulted).ToList();
-                foreach (var task in toRemove)
+                lock (_lock)
                 {
-                    _runningTasks.Remove(task);
+                    var toRemove = _runningTasks.Where(task => task.IsCompleted || task.IsCanceled || task.IsFaulted).ToList();
+                    foreach (var task in toRemove)
+                    {
+                        _runningTasks.Remove(task);
+                    }
                 }
             }
         }

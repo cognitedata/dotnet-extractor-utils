@@ -201,7 +201,8 @@ namespace ExtractorUtils.Test {
             Assert.Equal(0, result.Index);
             Assert.Null(result.Exception);
             Assert.True(result.IsCompleted);
-            Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 100,
+            // Turns out system clock resolution isn't actually precise enough to guarantee that delay takes as long as it says...
+            Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 80,
                 $"Expected task to take at least 100ms, but it took {(result.CompletionTime - result.StartTime).Value.TotalMilliseconds}ms");
 
             var badResult = await throttler.EnqueueAndWait(badGenerator);
@@ -215,7 +216,7 @@ namespace ExtractorUtils.Test {
             Assert.Equal(0, result.Index);
             Assert.Null(result.Exception);
             Assert.True(result.IsCompleted);
-            Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 100);
+            Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 80);
 
             await Assert.ThrowsAsync<AggregateException>(() => throttler2.EnqueueAndWait(badGenerator));
         }
