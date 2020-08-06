@@ -1,4 +1,5 @@
-﻿using CogniteSdk;
+﻿using Cognite.Extensions;
+using CogniteSdk;
 using Microsoft.Extensions.Logging;
 using Prometheus;
 using System;

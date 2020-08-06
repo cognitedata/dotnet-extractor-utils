@@ -27,6 +27,9 @@ jobs:
     - name: Dotnet Pack Logging
       run: dotnet pack Cognite.Logging/Cognite.Logging.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
 
+    - name: Dotnet Pack Extensions
+      run: dotnet pack Cognite.Extensions/Cognite.Extensions.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}
+
     - name: Dotnet Pack Metrics
       run: dotnet pack Cognite.Metrics/Cognite.Metrics.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
     
@@ -46,6 +49,10 @@ jobs:
 
     - name: Dotnet Nuget Push Logging
       run: dotnet nuget push nuget-packages/Cognite.Extractor.Logging*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      continue-on-error: false
+
+    - name: Dotnet Nuget Push Extensions
+      run: dotnet nuget push nuget-packages/Cognite.Extensions*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       continue-on-error: false
 
     - name: Dotnet Nuget Push Metrics

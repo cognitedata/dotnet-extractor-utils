@@ -7,6 +7,7 @@ using Xunit;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils;
 using Xunit.Sdk;
+using Cognite.Extensions;
 
 namespace ExtractorUtils.Test {
 

@@ -1,24 +1,23 @@
 ﻿using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
 using CogniteSdk;
 using CogniteSdk.Resources;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Prometheus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Extension utility methods for CogniteSdk Client.
     /// </summary>
     public static class EventExtensions
     {
-        private static ILogger _logger = LoggingUtils.GetDefault();
+        private static ILogger _logger = new NullLogger<Client>();
 
         internal static void SetLogger(ILogger logger)
         {

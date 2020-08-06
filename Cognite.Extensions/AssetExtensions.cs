@@ -1,8 +1,8 @@
 ﻿using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
 using CogniteSdk;
 using CogniteSdk.Resources;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Prometheus;
 using System;
 using System.Collections.Generic;
@@ -10,14 +10,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Extension utility methods for CogniteSDK Client.
     /// </summary>
     public static class AssetExtensions
     {
-        private static ILogger _logger = LoggingUtils.GetDefault();
+        private static ILogger _logger = new NullLogger<Client>();
 
         internal static void SetLogger(ILogger logger)
         {
@@ -78,7 +78,7 @@ namespace Cognite.Extractor.Utils
                 .ChunkBy(chunkSize)
                 .ToList();
 
-            _logger.LogDebug("Getting or creating assets. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
+            _logger?.LogDebug("Getting or creating assets. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {

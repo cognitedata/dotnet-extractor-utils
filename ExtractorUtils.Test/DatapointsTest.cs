@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.StateStorage;

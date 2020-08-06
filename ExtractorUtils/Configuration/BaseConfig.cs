@@ -49,8 +49,8 @@ namespace Cognite.Extractor.Utils
         }
     }
 
-#region Cognite configuration
-    
+    #region Cognite configuration
+
     /// <summary>
     /// Cognite configuration object
     /// </summary>
@@ -67,19 +67,19 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>API key</value>
         public string ApiKey { get; set; }
-        
+
         /// <summary>
         /// Authenticator config, if a bearer access token is to be used for authentication (optional)
         /// </summary>
         /// <value>Authenticator</value>
-        public AuthenticatorConfig IdpAuthentication{ get; set; }
-        
+        public AuthenticatorConfig IdpAuthentication { get; set; }
+
         /// <summary>
         /// API host
         /// </summary>
         /// <value>Absolute Uri for the host. Default: https://api.cognitedata.com</value>
         public string Host { get; set; } = "https://api.cognitedata.com";
-        
+
         /// <summary>
         /// Configuration for retries of failed requests to CDF.
         /// </summary>
@@ -91,7 +91,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public ChunkingConfig CdfChunking { get => _cdfChunking; set { _cdfChunking = value ?? _cdfChunking; } }
         private ChunkingConfig _cdfChunking = new ChunkingConfig();
-        
+
         /// <summary>
         /// Throttling of requests to CDF
         /// </summary>
@@ -115,7 +115,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value></value>
         public bool Disable { get; set; } = false;
-        
+
         /// <summary>
         /// Cognite Sdk logs are diplayed using this level.
         /// </summary>
@@ -141,19 +141,19 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>Client Id</value>
         public string ClientId { get; set; }
-        
+
         /// <summary>
         /// The directory tenant
         /// </summary>
         /// <value>Tenant</value>
         public string Tenant { get; set; }
-        
+
         /// <summary>
         /// The client secret
         /// </summary>
         /// <value>Secret</value>
         public string Secret { get; set; }
-        
+
         /// <summary>
         /// Resource scope
         /// </summary>
@@ -183,13 +183,13 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int Assets { get; set; } = 1_000;
-        
+
         /// <summary>
         /// Maximum number of time series per data point request
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int DataPointTimeSeries { get; set; } = 10_000;
-        
+
         /// <summary>
         /// Maximum number of ranges per data point delete request
         /// </summary>
@@ -201,7 +201,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int DataPointList { get; set; } = 100;
-        
+
         /// <summary>
         /// Maximum number of data points per data point update request
         /// </summary>
@@ -213,7 +213,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int RawRows { get; set; } = 10_000;
-        
+
         /// <summary>
         /// Maximum number of rows per Raw row delete request
         /// </summary>
@@ -290,5 +290,5 @@ namespace Cognite.Extractor.Utils
         public int MaxDelay { get; set; } = 5_000;
     }
 
-#endregion
+    #endregion
 }

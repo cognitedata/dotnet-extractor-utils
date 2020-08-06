@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cognite.Common", "Cognite.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognite.StateStorage", "Cognite.StateStorage\Cognite.StateStorage.csproj", "{86DA713B-2F4B-489A-95EA-C0BC1988EFF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognite.Extensions", "Cognite.Extensions\Cognite.Extensions.csproj", "{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +118,18 @@ Global
 		{86DA713B-2F4B-489A-95EA-C0BC1988EFF1}.Release|x64.Build.0 = Release|Any CPU
 		{86DA713B-2F4B-489A-95EA-C0BC1988EFF1}.Release|x86.ActiveCfg = Release|Any CPU
 		{86DA713B-2F4B-489A-95EA-C0BC1988EFF1}.Release|x86.Build.0 = Release|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Debug|x64.Build.0 = Debug|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Debug|x86.Build.0 = Debug|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Release|x64.ActiveCfg = Release|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Release|x64.Build.0 = Release|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Release|x86.ActiveCfg = Release|Any CPU
+		{8B5A5A21-C4D1-4547-85C9-AF2EABEE5832}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

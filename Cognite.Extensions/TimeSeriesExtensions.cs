@@ -1,25 +1,23 @@
 ﻿using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
 using CogniteSdk;
 using CogniteSdk.Resources;
-using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Prometheus;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Extension utility methods for <see cref="Client"/>
     /// </summary>
     public static class TimeSeriesExtensions
     {
-        private static ILogger _logger = LoggingUtils.GetDefault();
+        private static ILogger _logger = new NullLogger<Client>();
 
         internal static void SetLogger(ILogger logger)
         {

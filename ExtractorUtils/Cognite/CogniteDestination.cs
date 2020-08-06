@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions;
 using Cognite.Extractor.StateStorage;
 using CogniteSdk;
 using Microsoft.Extensions.Logging;
@@ -40,11 +41,6 @@ namespace Cognite.Extractor.Utils
             _client = client;
             _logger = logger;
             _config = config;
-            AssetExtensions.SetLogger(_logger);
-            DatapointExtensions.SetLogger(_logger);
-            TimeSeriesExtensions.SetLogger(_logger);
-            RawExtensions.SetLogger(_logger);
-            EventExtensions.SetLogger(_logger);
         }
 
         /// <summary>
@@ -243,6 +239,7 @@ namespace Cognite.Extractor.Utils
                 points,
                 _config.CdfChunking.DataPointTimeSeries,
                 _config.CdfChunking.DataPoints,
+                _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.DataPoints,
                 token);
             if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any()) {

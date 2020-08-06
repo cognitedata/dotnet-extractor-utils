@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using CogniteSdk;
 using Xunit;
-using Cognite.Extractor.Utils;
 using Cognite.Extractor.Common;
+using Cognite.Extensions;
 
 namespace ExtractorUtils.Test
 {
