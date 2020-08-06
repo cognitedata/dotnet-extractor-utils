@@ -583,6 +583,13 @@ namespace Cognite.Extensions
                 }
             };
         }
+        /// <summary>
+        /// Create a polly retry policy configured for use with CDF.
+        /// </summary>
+        /// <param name="logger">Logger to use on retry</param>
+        /// <param name="maxRetries">Maximum number of retries</param>
+        /// <param name="maxDelay">Maximum delay between each retry in milliseconds, negative for no upper limit</param>
+        /// <returns></returns>
         public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger logger,
             int? maxRetries,
             int? maxDelay)
@@ -612,16 +619,24 @@ namespace Cognite.Extensions
             }
                 
         }
-
+        /// <summary>
+        /// Get a polly timeout policy with a timeout set to <paramref name="timeout"/> milliseconds
+        /// </summary>
+        /// <param name="timeout">Timeout on each request in milliseconds</param>
+        /// <returns></returns>
         public static IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy(int? timeout)
         {
             TimeSpan timeoutSpan;
             if (timeout == null) timeoutSpan = TimeSpan.FromMilliseconds(80_000);
-            else if (timeout <= 0) timeoutSpan = TimeSpan.MaxValue;
+            else if (timeout <= 0) timeoutSpan = Timeout.InfiniteTimeSpan;
             else timeoutSpan = TimeSpan.FromMilliseconds(timeout.Value);
             return Policy.TimeoutAsync<HttpResponseMessage>(timeoutSpan); // timeout for each individual try
         }
 
+        /// <summary>
+        /// Add logger to client extension methods.
+        /// </summary>
+        /// <param name="provider">Serviceprovider to use to get the loggers</param>
         public static void AddExtensionLoggers(this IServiceProvider provider)
         {
             var logger = provider.GetService<ILogger<Client>>();

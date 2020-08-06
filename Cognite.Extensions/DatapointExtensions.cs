@@ -1,9 +1,9 @@
 ﻿using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
 using CogniteSdk;
 using CogniteSdk.Resources;
 using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Polly.Timeout;
 using Prometheus;
 using System;
@@ -21,7 +21,7 @@ namespace Cognite.Extensions
     /// </summary>
     public static class DatapointExtensions
     {
-        private static ILogger _logger = LoggingUtils.GetDefault();
+        private static ILogger _logger = new NullLogger<Client>();
         private const int _maxNumOfVerifyRequests = 10;
 
         internal static void SetLogger(ILogger logger)

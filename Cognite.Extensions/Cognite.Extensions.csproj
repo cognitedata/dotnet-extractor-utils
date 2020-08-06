@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cognite.Logging\Cognite.Logging.csproj" />
     <ProjectReference Include="..\Cognite.Common\Cognite.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

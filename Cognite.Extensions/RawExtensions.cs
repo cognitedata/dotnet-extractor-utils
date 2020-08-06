@@ -5,10 +5,10 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
 using CogniteSdk;
 using CogniteSdk.Resources;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Prometheus;
 
 namespace Cognite.Extensions
@@ -18,7 +18,7 @@ namespace Cognite.Extensions
     /// </summary>
     public static class RawExtensions
     {
-        private static ILogger _logger = LoggingUtils.GetDefault();
+        private static ILogger _logger = new NullLogger<Client>();
 
         internal static void SetLogger(ILogger logger)
         {

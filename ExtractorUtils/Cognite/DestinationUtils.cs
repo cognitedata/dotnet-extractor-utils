@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
 {
+    /// <summary>
+    /// Utilities for the setting up a cognite destination.
+    /// </summary>
     public static class DestinationUtils
     {
         /// <summary>
