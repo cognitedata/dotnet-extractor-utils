@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using CogniteSdk;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Class contaning errors resulting from insert operations 

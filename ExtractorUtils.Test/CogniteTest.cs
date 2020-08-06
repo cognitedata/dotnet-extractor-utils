@@ -18,6 +18,7 @@ using Cognite.Extractor.Utils;
 using Microsoft.Extensions.Logging;
 using Polly;
 using System.Collections.Concurrent;
+using Cognite.Extensions;
 
 namespace ExtractorUtils.Test
 {
@@ -218,18 +219,8 @@ namespace ExtractorUtils.Test
             {
                 var logger = provider.GetRequiredService<ILogger<CogniteDestination>>();
                 var config = provider.GetRequiredService<BaseConfig>().Cognite.CdfRetries;
-                retryPolicy = (IAsyncPolicy<HttpResponseMessage>)typeof(CogniteExtensions).GetMethod("GetRetryPolicy",
-                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
-                    .Invoke(null, new object[] {
-                        logger,
-                        config
-                    });
-
-                timeoutPolicy = (IAsyncPolicy<HttpResponseMessage>)typeof(CogniteExtensions).GetMethod("GetTimeoutPolicy",
-                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
-                    .Invoke(null, new object[] {
-                        config
-                    }) as IAsyncPolicy<HttpResponseMessage>;
+                retryPolicy = CogniteExtensions.GetRetryPolicy(logger, config.MaxRetries, config.MaxDelay);
+                timeoutPolicy = CogniteExtensions.GetTimeoutPolicy(config.Timeout);
             }
 
             services.AddHttpClient<Client.Builder>()

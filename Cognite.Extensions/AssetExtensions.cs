@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Extension utility methods for CogniteSDK Client.

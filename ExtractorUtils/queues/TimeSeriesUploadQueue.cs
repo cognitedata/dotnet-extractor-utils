@@ -1,4 +1,5 @@
-﻿using Cognite.Extractor.Common;
+﻿using Cognite.Extensions;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.StateStorage;
 using CogniteSdk;
 using Microsoft.Extensions.Logging;

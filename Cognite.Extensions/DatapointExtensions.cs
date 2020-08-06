@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Extension utility methods for <see cref="Client"/>
@@ -92,6 +92,7 @@ namespace Cognite.Extractor.Utils
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             int keyChunkSize,
             int valueChunkSize,
+            int timeSeriesChunk,
             int throttleSize,
             CancellationToken token)
         {
@@ -107,7 +108,7 @@ namespace Cognite.Extractor.Utils
             var generators = chunks
                 .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
                     chunk => async () => {
-                        var error = await InsertDataPointsIgnoreErrorsChunk(client, chunk, token);
+                        var error = await InsertDataPointsIgnoreErrorsChunk(client, chunk, timeSeriesChunk, token);
                         lock (mutex)
                         {
                             errors.Add(error);
@@ -240,6 +241,7 @@ namespace Cognite.Extractor.Utils
         private static async Task<InsertError> InsertDataPointsIgnoreErrorsChunk(
             this Client client,
             IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)> points,
+            int timeSeriesChunk,
             CancellationToken token)
         {
             if (!points.Any()) return new InsertError(Enumerable.Empty<Identity>(), Enumerable.Empty<Identity>());
@@ -260,11 +262,10 @@ namespace Cognite.Extractor.Utils
                 {
                     // The error message does not specify which time series caused the error.
                     // Need to fetch all time series in the chunk and check...
-                    var chunking = new ChunkingConfig();
                     IEnumerable<TimeSeries> timeseries;
                     using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
                     {
-                        timeseries = await client.TimeSeries.GetTimeSeriesByIdsIgnoreErrors(points.Select(p => p.id), chunking.TimeSeries, 1, token);
+                        timeseries = await client.TimeSeries.GetTimeSeriesByIdsIgnoreErrors(points.Select(p => p.id), timeSeriesChunk, 1, token);
                     }
                     foreach (var entry in points)
                     {
@@ -295,7 +296,7 @@ namespace Cognite.Extractor.Utils
                 }
                 var toInsert = points
                     .Where(p => !missing.Contains(p.id) && !mismatched.Contains(p.id));
-                var errors = await InsertDataPointsIgnoreErrorsChunk(client, toInsert, token);
+                var errors = await InsertDataPointsIgnoreErrorsChunk(client, toInsert, timeSeriesChunk, token);
                 missing.UnionWith(errors.IdsNotFound);
                 mismatched.UnionWith(errors.IdsWithMismatchedData);
             }
@@ -318,7 +319,7 @@ namespace Cognite.Extractor.Utils
         /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
         public static async Task<DeleteError> DeleteIgnoreErrorsAsync(
             this DataPointsResource dataPoints,
-            IDictionary<Identity, IEnumerable<Common.TimeRange>> ranges,
+            IDictionary<Identity, IEnumerable<TimeRange>> ranges,
             int deleteChunkSize,
             int listChunkSize,
             int deleteThrottleSize,

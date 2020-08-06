@@ -1,11 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CogniteSdk;
-using Microsoft.Extensions.Logging;
 using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
 using Prometheus;
 using CogniteSdk.Login;
+using Cognite.Extensions;
 
 namespace Cognite.Extractor.Utils
 {
@@ -14,6 +13,9 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class CogniteClientExtensions
     {
+        private static Summary login { get; } = Prometheus.Metrics.CreateSummary("extractor_utils_cdf_login_requests",
+            "Number and duration of login requests to CDF", "endpoint");
+
         /// <summary>
         /// Verifies that the <paramref name="client"/> configured according to <paramref name="config"/>
         /// can access Cognite Data Fusion
@@ -35,7 +37,7 @@ namespace Cognite.Extractor.Utils
             }
 
             LoginStatus loginStatus;
-            using (CdfMetrics.Login.WithLabels("status").NewTimer())
+            using (login.WithLabels("status").NewTimer())
             {
                 loginStatus = await client.Login.StatusAsync(token);
             }

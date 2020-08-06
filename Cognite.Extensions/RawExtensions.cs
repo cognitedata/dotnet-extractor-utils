@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -12,7 +11,7 @@ using CogniteSdk.Resources;
 using Microsoft.Extensions.Logging;
 using Prometheus;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Extension utility methods for <see cref="Client.Raw"/>
