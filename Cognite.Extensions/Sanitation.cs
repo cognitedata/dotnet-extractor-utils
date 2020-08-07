@@ -81,6 +81,33 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
+        /// Transform an enumerable into a dictionary. Unlike the LINQ version,
+        /// this simply uses the last value if there are duplicates, instead of throwing an error.
+        /// </summary>
+        /// <typeparam name="TInput">Input enumerable type</typeparam>
+        /// <typeparam name="TKey">Output key type</typeparam>
+        /// <typeparam name="TValue">Output value type</typeparam>
+        /// <param name="input">Input enumerable</param>
+        /// <param name="keySelector">Function to select key from input</param>
+        /// <param name="valueSelector">Function to select value from input</param>
+        /// <param name="comparer">IEqualityComparer to use for dictionary</param>
+        /// <returns>A dictionary form <typeparamref name="TKey"/> to <typeparamref name="TValue"/></returns>
+        public static Dictionary<TKey, TValue> ToDictionarySafe<TInput, TKey, TValue>(
+            this IEnumerable<TInput> input,
+            Func<TInput, TKey> keySelector,
+            Func<TInput, TValue> valueSelector,
+            IEqualityComparer<TKey> comparer = null)
+        {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+            var ret = new Dictionary<TKey, TValue>(comparer);
+            foreach (var elem in input)
+            {
+                ret[keySelector(elem)] = valueSelector(elem);
+            }
+            return ret;
+        }
+
+        /// <summary>
         /// Sanitize a string, string metadata dictionary by limiting the number of UTF8 bytes per key,
         /// value and total, as well as the total number of key, value pairs.
         /// </summary>
@@ -100,6 +127,7 @@ namespace Cognite.Extensions
             int count = 0;
             int byteCount = 0;
             return data
+                .Where(kvp => kvp.Key != null)
                 .Select(kvp => (kvp.Key.LimitUtf8ByteCount(maxPerKey), kvp.Value.LimitUtf8ByteCount(maxPerValue)))
                 .TakeWhile(pair =>
                 {
@@ -107,7 +135,7 @@ namespace Cognite.Extensions
                     byteCount += Encoding.UTF8.GetByteCount(pair.Item1) + Encoding.UTF8.GetByteCount(pair.Item2);
                     return count <= maxKeys && byteCount <= maxBytes;
                 })
-                .ToDictionary(pair => pair.Item1, pair => pair.Item2);
+                .ToDictionarySafe(pair => pair.Item1, pair => pair.Item2);
         }
 
         /// <summary>
@@ -126,9 +154,10 @@ namespace Cognite.Extensions
         {
             if (data == null || !data.Any()) return data;
             return data
+                .Where(kvp => kvp.Key != null)
                 .Select(kvp => (kvp.Key.LimitUtf8ByteCount(maxPerKey), kvp.Value.LimitUtf8ByteCount(maxPerValue)))
                 .Take(maxKeys)
-                .ToDictionary(pair => pair.Item1, pair => pair.Item2);
+                .ToDictionarySafe(pair => pair.Item1, pair => pair.Item2);
         }
 
         /// <summary>
