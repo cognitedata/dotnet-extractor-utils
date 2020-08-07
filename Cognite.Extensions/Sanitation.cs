@@ -38,7 +38,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="str">String to be shortened</param>
         /// <param name="maxLength">Maximum length of final string</param>
-        /// <returns>String which contains the first `maxLength` characters of the passed string.</returns>
+        /// <returns>String which contains the first <paramref name="maxLength"/> characters of the passed string.</returns>
         public static string Truncate(this string str, int maxLength)
         {
             if (string.IsNullOrEmpty(str) || str.Length <= maxLength) return str;
@@ -46,11 +46,11 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
-        /// Reduce the length of given string to maxLength, if it is longer.
+        /// Reduce the length of given CogniteExternalId to maxLength, if it is longer.
         /// </summary>
-        /// <param name="str">String to be shortened</param>
+        /// <param name="id">CogniteExternalId to be shortened</param>
         /// <param name="maxLength">Maximum length of final string</param>
-        /// <returns>String which contains the first `maxLength` characters of the passed string.</returns>
+        /// <returns>CogniteExternalId which contains the first <paramref name="maxLength"/> characters of the passed value.</returns>
         public static CogniteExternalId Truncate(this CogniteExternalId id, int maxLength)
         {
             if (id == null) return id;
