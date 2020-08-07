@@ -128,6 +128,7 @@ namespace Cognite.Extensions
                 var toCreate = await buildEvents(missing);
                 if (toCreate.Any())
                 {
+                    foreach (var evt in toCreate) evt.Sanitize();
                     IEnumerable<Event> newEvents;
                     using (CdfMetrics.Events.WithLabels("create").NewTimer())
                     {
@@ -172,6 +173,7 @@ namespace Cognite.Extensions
             bool failOnError,
             CancellationToken token)
         {
+            foreach (var evt in events) evt.Sanitize();
             var chunks = events
                 .ChunkBy(chunkSize)
                 .ToList();
