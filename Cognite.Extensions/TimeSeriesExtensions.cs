@@ -119,6 +119,7 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
+            foreach (var ts in timeSeriesToEnsure) ts.Sanitize();
             var chunks = timeSeriesToEnsure
                 .ChunkBy(chunkSize)
                 .ToList();
@@ -213,6 +214,7 @@ namespace Cognite.Extensions
                 var toCreate = await buildTimeSeries(missing);
                 if (toCreate.Any())
                 {
+                    foreach (var ts in toCreate) ts.Sanitize();
                     IEnumerable<TimeSeries> newTs;
                     using (CdfMetrics.TimeSeries.WithLabels("create").NewTimer())
                     {

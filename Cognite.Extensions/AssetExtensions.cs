@@ -117,6 +117,8 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
+            foreach (var asset in assetsToEnsure) asset.Sanitize();
+
             var chunks = assetsToEnsure
                 .ChunkBy(chunkSize);
             _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assetsToEnsure.Count(), chunks.Count());
@@ -165,6 +167,7 @@ namespace Cognite.Extensions
                 var toCreate = await buildAssets(missing);
                 if (toCreate.Any())
                 {
+                    foreach (var asset in toCreate) asset.Sanitize();
                     IEnumerable<Asset> newAssets;
                     using (CdfMetrics.Assets.WithLabels("create"))
                     {
