@@ -10,10 +10,11 @@ namespace Cognite.Extensions
 {
     public static class ResultHandlers
     {
-        public static CogniteError ParseCommonErrors(ResponseException ex)
+        private static CogniteError ParseCommonErrors(ResponseException ex)
         {
             // Handle any common behavior here
-            if (ex.Code >= 500 || ex.Code != 400 && ex.Code != 422 && ex.Code != 409) return new CogniteError { Message = ex.Message, Status = ex.Code };
+            if (ex.Code >= 500 || ex.Code != 400 && ex.Code != 422 && ex.Code != 409)
+                return new CogniteError { Message = ex.Message, Status = ex.Code, Exception = ex };
             return null;
         }
 
@@ -34,9 +35,16 @@ namespace Cognite.Extensions
         {
             if (!(ex is ResponseException rex))
             {
-                return new CogniteError { Message = ex.Message };
+                return new CogniteError { Message = ex.Message, Exception = ex };
             }
-            var result = new CogniteError { Status = rex.Code, Message = rex.Message };
+            var result = ParseCommonErrors(rex);
+            if (result == null) result = new CogniteError
+            {
+                Status = rex.Code,
+                Message = rex.Message,
+                Exception = ex
+            };
+            else return result;
 
             if (rex.Missing?.Any() ?? false)
             {
@@ -100,7 +108,7 @@ namespace Cognite.Extensions
             // This is mostly to avoid infinite loops. If there are no bad values then
             // there is no way to correctly clean the request, so there must be something
             // else wrong
-            if (!error.Values.Any()) return Array.Empty<AssetCreate>();
+            if (!error.Values?.Any() ?? true) return Array.Empty<AssetCreate>();
             
             if (!error.Complete)
             {
@@ -188,6 +196,17 @@ namespace Cognite.Extensions
         {
             Errors = errors;
         }
+        public CogniteResult Merge(CogniteResult other)
+        {
+            if (other == null) return this;
+            IEnumerable<CogniteError> errors;
+
+            if (Errors == null) errors = other.Errors;
+            else if (other.Errors == null) errors = Errors;
+            else errors = Errors.Concat(other.Errors);
+
+            return new CogniteResult(errors);
+        }
     }
 
     public class CogniteResult<TResult> : CogniteResult
@@ -219,6 +238,7 @@ namespace Cognite.Extensions
         public ErrorType Type { get; set; } = ErrorType.FatalFailure;
         public ResourceType Resource { get; set; } = ResourceType.None;
         public IEnumerable<Identity> Values { get; set; } = null;
+        public Exception Exception { get; set; }
         public string Message { get; set; }
         public int Status { get; set; }
         public bool Complete { get; set; } = true;
