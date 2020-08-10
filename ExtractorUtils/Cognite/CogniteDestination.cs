@@ -136,7 +136,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildAssets">Function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
+        public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
             CancellationToken token)
@@ -160,7 +160,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildAssets">Async function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Asset>> GetOrCreateAssetsAsync(
+        public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
             CancellationToken token)

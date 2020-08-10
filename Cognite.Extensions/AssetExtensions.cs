@@ -36,7 +36,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static Task<IEnumerable<Asset>> GetOrCreateAsync(
+        public static Task<CogniteResult<Asset>> GetOrCreateAsync(
             this AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
@@ -63,7 +63,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IEnumerable<Asset>> GetOrCreateAsync(
+        public static async Task<CogniteResult<Asset>> GetOrCreateAsync(
             this AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
@@ -71,7 +71,7 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
-            var result = new List<Asset>();
+            var results = new List<CogniteResult<Asset>>();
             object mutex = new object();
 
             var chunks = externalIds
@@ -82,10 +82,10 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
-                        var existing = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, 0, token);
+                        var result = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, 0, token);
                         lock (mutex)
                         {
-                            result.AddRange(existing);
+                            results.Add(result);
                         }
                     });
 
@@ -98,7 +98,11 @@ namespace Cognite.Extensions
                             nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
                 },
                 token);
-            return result;
+
+            if (!results.Any()) return new CogniteResult<Asset>(null, null);
+
+            var finalResult = results.Aggregate((seed, res) => seed.Merge(res));
+            return finalResult;
         }
         /// <summary>
         /// Ensures that all assets in <paramref name="assetsToEnsure"/> exist in CDF.
@@ -117,7 +121,7 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
-            foreach (var asset in assetsToEnsure) asset.Sanitize();
+            Sanitation.CleanAssetRequest(assetsToEnsure);
 
             var chunks = assetsToEnsure
                 .ChunkBy(chunkSize);
@@ -139,7 +143,7 @@ namespace Cognite.Extensions
                 token);
         }
 
-        private static async Task<IEnumerable<Asset>> GetOrCreateAssetsChunk(
+        private static async Task<CogniteResult<Asset>> GetOrCreateAssetsChunk(
             AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
@@ -158,40 +162,41 @@ namespace Cognite.Extensions
 
             if (!missing.Any())
             {
-                return existingAssets;
+                return new CogniteResult<Asset>(null, existingAssets);
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
-            try
+            var toCreate = await buildAssets(missing);
+
+            Sanitation.CleanAssetRequest(toCreate);
+
+            var result = await CreateAssetsHandleErrors(assets, toCreate, token);
+            result.Results = result.Results == null ? found : result.Results.Concat(found);
+
+            if (!result.Errors?.Any() ?? false) return result;
+
+            var duplicateErrors = result.Errors.Where(err =>
+                err.Resource == ResourceType.ExternalId
+                && err.Type == ErrorType.ItemExists)
+                .ToList();
+
+            var duplicatedIds = new HashSet<string>();
+            if (duplicateErrors.Any())
             {
-                var toCreate = await buildAssets(missing);
-                if (toCreate.Any())
+                foreach (var error in duplicateErrors)
                 {
-                    foreach (var asset in toCreate) asset.Sanitize();
-                    IEnumerable<Asset> newAssets;
-                    using (CdfMetrics.Assets.WithLabels("create"))
-                    {
-                        newAssets = await assets.CreateAsync(toCreate, token);
-                    }
-                    existingAssets.AddRange(newAssets);
-                    _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
+                    if (!error.Values?.Any() ?? false) continue;
+                    foreach (var idt in error.Values) duplicatedIds.Add(idt.ExternalId);
                 }
-                return existingAssets;
-            }
-            catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
-            {
-                if (backoff > 10) // ~3.5 min total backoff time
-                {
-                    throw;
-                }
-                _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumAssets} assets", e.Duplicated.Count(), missing.Count);
+                if (!duplicatedIds.Any()) return result;
+                _logger.LogDebug("Found {cnt} duplicated assets, retrying", duplicatedIds.Count);
             }
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var ensured = await GetOrCreateAssetsChunk(assets, missing, buildAssets, backoff + 1, token);
-            existingAssets.AddRange(ensured);
+            var nextResult = await GetOrCreateAssetsChunk(assets, duplicatedIds, buildAssets, backoff + 1, token);
+            result = result.Merge(nextResult);
 
-            return existingAssets;
+            return result;
         }
 
         private static async Task EnsureAssetsChunk(
@@ -235,6 +240,81 @@ namespace Cognite.Extensions
 #pragma warning restore CA1031 // Do not catch general exception types
                 await Task.Delay(TimeSpan.FromSeconds(1), token);
             }
+        }
+
+        /// <summary>
+        /// Get the assets with the provided <paramref name="ids"/>. Ignore any
+        /// unknown ids
+        /// </summary>
+        /// <param name="assets">A CogniteSdk Assets resource</param>
+        /// <param name="ids">List of <see cref="Identity"/> objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<Asset>> GetAssetsByIdsIgnoreErrors(
+            this AssetsResource assets,
+            IEnumerable<Identity> ids,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            var result = new List<Asset>();
+            object mutex = new object();
+
+            var chunks = ids
+                .ChunkBy(chunkSize)
+                .ToList();
+
+            var generators = chunks
+                .Select<IEnumerable<Identity>, Func<Task>>(
+                chunk => async () => {
+                    IEnumerable<Asset> found;
+                    using (CdfMetrics.Assets.WithLabels("retrieve").NewTimer())
+                    {
+                        found = await assets.RetrieveAsync(chunk, true, token);
+                    }
+                    lock (mutex)
+                    {
+                        result.AddRange(found);
+                    }
+                });
+            int numTasks = 0;
+            await generators.RunThrottled(throttleSize, (_) =>
+                _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetAssetsByIdsIgnoreErrors), ++numTasks, chunks.Count),
+                token);
+            return result;
+        }
+
+        private static async Task<CogniteResult<Asset>> CreateAssetsHandleErrors(
+            AssetsResource assets,
+            IEnumerable<AssetCreate> toCreate,
+            CancellationToken token)
+        {
+            var errors = new List<CogniteError>();
+            while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
+            {
+                try
+                {
+                    IEnumerable<Asset> newAssets;
+                    using (CdfMetrics.Assets.WithLabels("create"))
+                    {
+                        newAssets = await assets.CreateAsync(toCreate, token);
+                    }
+
+                    _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
+                    return new CogniteResult<Asset>(errors, newAssets);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogDebug("Failed to create {cnt} assets: {msg}",
+                        toCreate.Count(), ex.Message);
+                    var error = ResultHandlers.ParseException(ex, RequestType.CreateAssets);
+                    toCreate = await ResultHandlers.CleanFromError(assets, error, toCreate, 1000, 1, token);
+                    errors.Add(error);
+                }
+            }
+            return new CogniteResult<Asset>(errors, null);
         }
     }
 }

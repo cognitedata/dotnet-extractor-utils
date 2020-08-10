@@ -222,5 +222,44 @@ namespace Cognite.Extensions
             if (evt.DataSetId < 1) evt.DataSetId = null;
             evt.Metadata = evt.Metadata?.SanitizeMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventmetadataMaxBytes);
         }
+
+
+        public static (IEnumerable<AssetCreate>, CogniteError) CleanAssetRequest(IEnumerable<AssetCreate> assets)
+        {
+            var result = new List<AssetCreate>();
+
+            var ids = new HashSet<string>();
+            var duplicated = new HashSet<string>();
+
+            foreach (var asset in assets)
+            {
+                if (asset.ExternalId != null)
+                {
+                    if (ids.Add(asset.ExternalId))
+                    {
+                        asset.Sanitize();
+                        result.Add(asset);
+                    }
+                    else
+                    {
+                        duplicated.Add(asset.ExternalId);
+                    }
+                }
+            }
+            CogniteError error = null;
+            if (duplicated.Any())
+            {
+                error = new CogniteError
+                {
+                    Status = 409,
+                    Complete = true,
+                    Message = "Duplicate external ids",
+                    Resource = ResourceType.ExternalId,
+                    Type = ErrorType.ItemDuplicated,
+                    Values = duplicated.Select(item => Identity.Create(item)).ToArray()
+                };
+            }
+            return (result, error);
+        }
     }
 }
