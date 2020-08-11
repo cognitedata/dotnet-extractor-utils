@@ -114,5 +114,68 @@ namespace ExtractorUtils.Test
         {
             Assert.Equal(finalLength, str?.LimitUtf8ByteCount(9)?.Length ?? 0);
         }
+        [Fact]
+        public void TestSanitizeEventRequest()
+        {
+            var events = new[]
+            {
+                new EventCreate { ExternalId = "test1" },
+                new EventCreate { ExternalId = "test1" },
+                new EventCreate { ExternalId = "test2" },
+                new EventCreate { ExternalId = "test2" },
+                new EventCreate { ExternalId = "test3" }
+            };
+            var (result, err) = Sanitation.CleanEventRequest(events);
+            Assert.Equal(3, result.Count());
+            Assert.Equal(2, err.Values.Count());
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(ResourceType.ExternalId, err.Resource);
+            Assert.Equal(3, result.Select(evt => evt.ExternalId).Distinct().Count());
+        }
+        [Fact]
+        public void TestSanitizeAssetRequest()
+        {
+            var assets = new[]
+            {
+                new AssetCreate { ExternalId = "test1" },
+                new AssetCreate { ExternalId = "test1" },
+                new AssetCreate { ExternalId = "test2" },
+                new AssetCreate { ExternalId = "test2" },
+                new AssetCreate { ExternalId = "test3" }
+            };
+            var (result, err) = Sanitation.CleanAssetRequest(assets);
+            Assert.Equal(3, result.Count());
+            Assert.Equal(2, err.Values.Count());
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(ResourceType.ExternalId, err.Resource);
+            Assert.Equal(3, result.Select(evt => evt.ExternalId).Distinct().Count());
+        }
+        [Fact]
+        public void TestSanitizeTimeSeriesRequest()
+        {
+            var timeseries = new[]
+            {
+                new TimeSeriesCreate { LegacyName = "test4", ExternalId = "test1" },
+                new TimeSeriesCreate { LegacyName = "test5", ExternalId = "test1" },
+                new TimeSeriesCreate { LegacyName = "test6", ExternalId = "test2" },
+                new TimeSeriesCreate { LegacyName = "test7", ExternalId = "test2" },
+                new TimeSeriesCreate { LegacyName = "test8", ExternalId = "test3" },
+                new TimeSeriesCreate { LegacyName = "test1", ExternalId = "test4" },
+                new TimeSeriesCreate { LegacyName = "test1", ExternalId = "test5" },
+                new TimeSeriesCreate { LegacyName = "test2", ExternalId = "test6" },
+                new TimeSeriesCreate { LegacyName = "test2", ExternalId = "test7" },
+                new TimeSeriesCreate { LegacyName = "test3", ExternalId = "test8" }
+            };
+            var (result, err, err2) = Sanitation.CleanTimeSeriesRequest(timeseries);
+            Assert.Equal(6, result.Count());
+            Assert.Equal(2, err.Values.Count());
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(ResourceType.ExternalId, err.Resource);
+            Assert.Equal(2, err2.Values.Count());
+            Assert.Equal(ErrorType.ItemDuplicated, err2.Type);
+            Assert.Equal(ResourceType.LegacyName, err2.Resource);
+            Assert.Equal(6, result.Select(evt => evt.ExternalId).Distinct().Count());
+            Assert.Equal(6, result.Select(evt => evt.LegacyName).Distinct().Count());
+        }
     }
 }
