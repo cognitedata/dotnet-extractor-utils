@@ -308,8 +308,8 @@ namespace ExtractorUtils.Test
                     createFunction,
                     CancellationToken.None
                 );
-                Assert.Equal(ids.Count(), ts.Where(t => ids.Contains(t.ExternalId)).Count());
-                foreach (var t in ts)
+                Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
+                foreach (var t in ts.Results)
                 {
                     _ensuredTimeSeries.Remove(t.ExternalId, out _);
                 }

@@ -65,7 +65,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildTimeSeries">Function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
+        public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
             CancellationToken token)
@@ -89,7 +89,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildTimeSeries">Async function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TimeSeries>> GetOrCreateTimeSeriesAsync(
+        public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             CancellationToken token)
@@ -111,12 +111,12 @@ namespace Cognite.Extractor.Utils
         /// <param name="timeSeries">List of CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task EnsureTimeSeriesExistsAsync(
+        public async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
             IEnumerable<TimeSeriesCreate> timeSeries, 
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
-            await _client.TimeSeries.EnsureTimeSeriesExistsAsync(
+            return await _client.TimeSeries.EnsureTimeSeriesExistsAsync(
                 timeSeries,
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
@@ -182,12 +182,12 @@ namespace Cognite.Extractor.Utils
         /// <param name="assets">List of CogniteSdk AssetCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task EnsureAssetsExistsAsync(
+        public async Task<CogniteResult> EnsureAssetsExistsAsync(
             IEnumerable<AssetCreate> assets,
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} assets exist in CDF", assets.Count());
-            await _client.Assets.EnsureExistsAsync(
+            return await _client.Assets.EnsureExistsAsync(
                 assets,
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,

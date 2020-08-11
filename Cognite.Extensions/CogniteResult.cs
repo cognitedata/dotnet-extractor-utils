@@ -31,6 +31,96 @@ namespace Cognite.Extensions
             return ids;
         }
 
+        private static void ParseAssetException(ResponseException ex, CogniteError err)
+        {
+            if (ex.Missing?.Any() ?? false)
+            {
+                // TODO add asset labels here once fixed in the API.
+            }
+            else if (ex.Duplicated?.Any() ?? false)
+            {
+                // Only externalIds may be duplicated when creating assets
+                err.Type = ErrorType.ItemExists;
+                err.Resource = ResourceType.ExternalId;
+                err.Values = ex.Duplicated.Select(dict =>
+                    (dict["externalId"] as MultiValue.String)?.Value)
+                    .Where(id => id != null)
+                    .Select(Identity.Create);
+            }
+            else if (ex.Code == 400)
+            {
+                if (ex.Message.StartsWith("Reference to unknown parent with externalId", StringComparison.InvariantCulture))
+                {
+                    // Missing parentExternalId only returns one value for some reason.
+                    var missingId = ex.Message.Replace("Reference to unknown parent with externalId ", "");
+                    err.Complete = false;
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.ParentExternalId;
+                    err.Values = new[] { Identity.Create(missingId) };
+                }
+                else if (ex.Message.StartsWith("The given parent ids do not exist", StringComparison.InvariantCulture))
+                {
+                    var idString = ex.Message.Replace("The given parent ids do not exist: ", "");
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.ParentId;
+                    err.Values = ParseIdString(idString);
+                }
+                else if (ex.Message.StartsWith("Invalid dataSetIds", StringComparison.InvariantCulture))
+                {
+                    var idString = ex.Message.Replace("Invalid dataSetIds: ", "");
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.DataSetId;
+                    err.Values = ParseIdString(idString);
+                }
+            }
+        }
+
+        private static void ParseTimeSeriesException(ResponseException ex, CogniteError err)
+        {
+            if (ex.Missing?.Any() ?? false)
+            {
+                if (ex.Message.StartsWith("Asset ids not found"))
+                {
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.AssetId;
+                    err.Values = ex.Missing.Select(dict
+                        => (dict["id"] as MultiValue.Long)?.Value)
+                        .Where(id => id.HasValue)
+                        .Select(id => Identity.Create(id.Value));
+                }
+                else if (ex.Message.StartsWith("datasets ids not found"))
+                {
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.DataSetId;
+                    err.Values = ex.Missing.Select(dict
+                        => (dict["id"] as MultiValue.Long)?.Value)
+                        .Where(id => id.HasValue)
+                        .Select(id => Identity.Create(id.Value));
+                }
+            }
+            else if (ex.Duplicated?.Any() ?? false)
+            {
+                if (ex.Duplicated.First().ContainsKey("legacyName"))
+                {
+                    err.Type = ErrorType.ItemExists;
+                    err.Resource = ResourceType.LegacyName;
+                    err.Values = ex.Duplicated.Select(dict
+                        => (dict["legacyName"] as MultiValue.String)?.Value)
+                        .Where(id => id != null)
+                        .Select(Identity.Create);
+                }
+                else if (ex.Duplicated.First().ContainsKey("externalId"))
+                {
+                    err.Type = ErrorType.ItemExists;
+                    err.Resource = ResourceType.ExternalId;
+                    err.Values = ex.Duplicated.Select(dict
+                        => (dict["externalId"] as MultiValue.String)?.Value)
+                        .Where(id => id != null)
+                        .Select(Identity.Create);
+                }
+            }
+        }
+
         public static CogniteError ParseException(Exception ex, RequestType type)
         {
             if (!(ex is ResponseException rex))
@@ -45,53 +135,13 @@ namespace Cognite.Extensions
                 Exception = ex
             };
             else return result;
-
-            if (rex.Missing?.Any() ?? false)
+            if (type == RequestType.CreateAssets)
             {
-                // TODO add asset labels here once fixed in the API.
+                ParseAssetException(rex, result);
             }
-            else if (rex.Duplicated?.Any() ?? false)
+            else if (type == RequestType.CreateTimeSeries)
             {
-                if (type == RequestType.CreateAssets)
-                {
-                    // Only externalIds may be duplicated when creating assets
-                    result.Type = ErrorType.ItemExists;
-                    result.Message = rex.Message;
-                    result.Resource = ResourceType.ExternalId;
-                    result.Values = rex.Duplicated.Select(dict =>
-                        (dict["externalId"] as MultiValue.String)?.Value)
-                        .Where(id => id != null)
-                        .Select(Identity.Create);
-                }
-            }
-            else if (rex.Code == 400)
-            {
-                if (type == RequestType.CreateAssets)
-                {
-                    if (rex.Message.StartsWith("Reference to unknown parent with externalId", StringComparison.InvariantCulture))
-                    {
-                        // Missing parentExternalId only returns one value for some reason.
-                        var missingId = rex.Message.Replace("Reference to unknown parent with externalId ", "");
-                        result.Complete = false;
-                        result.Type = ErrorType.ItemMissing;
-                        result.Resource = ResourceType.ParentExternalId;
-                        result.Values = new[] { Identity.Create(missingId) };
-                    }
-                    else if (rex.Message.StartsWith("The given parent ids do not exist", StringComparison.InvariantCulture))
-                    {
-                        var idString = rex.Message.Replace("The given parent ids do not exist: ", "");
-                        result.Type = ErrorType.ItemMissing;
-                        result.Resource = ResourceType.ParentId;
-                        result.Values = ParseIdString(idString);
-                    }
-                    else if (rex.Message.StartsWith("Invalid dataSetIds", StringComparison.InvariantCulture))
-                    {
-                        var idString = rex.Message.Replace("Invalid dataSetIds: ", "");
-                        result.Type = ErrorType.ItemMissing;
-                        result.Resource = ResourceType.DataSetId;
-                        result.Values = ParseIdString(idString);
-                    }
-                }
+                ParseTimeSeriesException(rex, result);
             }
             return result;
         }
@@ -124,28 +174,48 @@ namespace Cognite.Extensions
                 switch (error.Resource)
                 {
                     case ResourceType.DataSetId:
-                        if (!asset.DataSetId.HasValue || !items.Contains(Identity.Create(asset.DataSetId.Value)))
-                        {
-                            ret.Add(asset);
-                        }
+                        if (!asset.DataSetId.HasValue || !items.Contains(Identity.Create(asset.DataSetId.Value))) ret.Add(asset);
                         break;
                     case ResourceType.ExternalId:
-                        if (asset.ExternalId == null || !items.Contains(Identity.Create(asset.ExternalId)))
-                        {
-                            ret.Add(asset);
-                        }
+                        if (asset.ExternalId == null || !items.Contains(Identity.Create(asset.ExternalId))) ret.Add(asset);
                         break;
                     case ResourceType.ParentExternalId:
-                        if (asset.ParentExternalId == null || !items.Contains(Identity.Create(asset.ParentExternalId)))
-                        {
-                            ret.Add(asset);
-                        }
+                        if (asset.ParentExternalId == null || !items.Contains(Identity.Create(asset.ParentExternalId))) ret.Add(asset);
                         break;
                     case ResourceType.ParentId:
-                        if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value)))
-                        {
-                            ret.Add(asset);
-                        }
+                        if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) ret.Add(asset);
+                        break;
+                }
+            }
+            return ret;
+        }
+
+        public static IEnumerable<TimeSeriesCreate> CleanFromError(
+            CogniteError error,
+            IEnumerable<TimeSeriesCreate> timeseries)
+        {
+            if (error == null) return timeseries;
+            if (!error.Values?.Any() ?? true) return Array.Empty<TimeSeriesCreate>();
+
+            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
+
+            var ret = new List<TimeSeriesCreate>();
+
+            foreach (var ts in timeseries)
+            {
+                switch (error.Resource)
+                {
+                    case ResourceType.DataSetId:
+                        if (!ts.DataSetId.HasValue || !items.Contains(Identity.Create(ts.DataSetId.Value))) ret.Add(ts);
+                        break;
+                    case ResourceType.ExternalId:
+                        if (ts.ExternalId == null || !items.Contains(Identity.Create(ts.ExternalId))) ret.Add(ts);
+                        break;
+                    case ResourceType.AssetId:
+                        if (!ts.AssetId.HasValue || !items.Contains(Identity.Create(ts.AssetId.Value))) ret.Add(ts);
+                        break;
+                    case ResourceType.LegacyName:
+                        if (ts.LegacyName == null || !items.Contains(Identity.Create(ts.LegacyName))) ret.Add(ts);
                         break;
                 }
             }
@@ -190,7 +260,7 @@ namespace Cognite.Extensions
 
     public class CogniteResult
     {
-        public IEnumerable<CogniteError> Errors { get; }
+        public IEnumerable<CogniteError> Errors { get; set; }
         public bool IsAllGood => !Errors?.Any() ?? true;
         public CogniteResult(IEnumerable<CogniteError> errors)
         {
@@ -259,6 +329,7 @@ namespace Cognite.Extensions
         ParentId,
         ParentExternalId,
         DataSetId,
+        LegacyName,
         None = -1
     }
     public enum RequestType

@@ -235,16 +235,14 @@ namespace Cognite.Extensions
             {
                 if (asset.ExternalId != null)
                 {
-                    if (ids.Add(asset.ExternalId))
-                    {
-                        asset.Sanitize();
-                        result.Add(asset);
-                    }
-                    else
+                    if (!ids.Add(asset.ExternalId))
                     {
                         duplicated.Add(asset.ExternalId);
+                        continue;
                     }
                 }
+                asset.Sanitize();
+                result.Add(asset);
             }
             CogniteError error = null;
             if (duplicated.Any())
@@ -252,7 +250,6 @@ namespace Cognite.Extensions
                 error = new CogniteError
                 {
                     Status = 409,
-                    Complete = true,
                     Message = "Duplicate external ids",
                     Resource = ResourceType.ExternalId,
                     Type = ErrorType.ItemDuplicated,
@@ -260,6 +257,64 @@ namespace Cognite.Extensions
                 };
             }
             return (result, error);
+        }
+
+        public static (IEnumerable<TimeSeriesCreate>, CogniteError idError, CogniteError nameError) CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate> timeseries)
+        {
+            var result = new List<TimeSeriesCreate>();
+
+            var ids = new HashSet<string>();
+            var duplicatedIds = new HashSet<string>();
+
+            var names = new HashSet<string>();
+            var duplicatedNames = new HashSet<string>();
+
+            foreach (var ts in timeseries)
+            {
+                if (ts.ExternalId != null)
+                {
+                    if (!ids.Add(ts.ExternalId))
+                    {
+                        duplicatedIds.Add(ts.ExternalId);
+                        continue;
+                    }
+                }
+                if (ts.LegacyName != null)
+                {
+                    if (!names.Add(ts.LegacyName))
+                    {
+                        duplicatedNames.Add(ts.LegacyName);
+                        continue;
+                    }
+                }
+                ts.Sanitize();
+                result.Add(ts);
+            }
+            CogniteError idError = null;
+            if (duplicatedIds.Any())
+            {
+                idError = new CogniteError
+                {
+                    Status = 409,
+                    Message = "Conflicting identifiers",
+                    Resource = ResourceType.ExternalId,
+                    Type = ErrorType.ItemDuplicated,
+                    Values = duplicatedIds.Select(Identity.Create).ToArray()
+                };
+            }
+            CogniteError nameError = null;
+            if (duplicatedNames.Any())
+            {
+                nameError = new CogniteError
+                {
+                    Status = 409,
+                    Message = "Duplicated metric names in request",
+                    Resource = ResourceType.LegacyName,
+                    Type = ErrorType.ItemDuplicated,
+                    Values = duplicatedNames.Select(Identity.Create).ToArray()
+                };
+            }
+            return (result, idError, nameError);
         }
     }
 }

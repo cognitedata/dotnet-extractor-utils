@@ -121,12 +121,17 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
-            Sanitation.CleanAssetRequest(assetsToEnsure);
+            CogniteError prePushError;
+            (assetsToEnsure, prePushError) = Sanitation.CleanAssetRequest(assetsToEnsure);
 
             var chunks = assetsToEnsure
                 .ChunkBy(chunkSize);
             _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assetsToEnsure.Count(), chunks.Count());
             var results = new List<CogniteResult>();
+            if (prePushError != null)
+            {
+                results.Add(new CogniteResult(new[] { prePushError }));
+            }
             object mutex = new object();
 
             var generators = chunks
@@ -163,21 +168,26 @@ namespace Cognite.Extensions
             }
             _logger.LogDebug("Retrieved {Existing} assets from CDF", found.Count());
 
-            var existingAssets = found.ToList();
-            var missing = externalIds.Except(existingAssets.Select(asset => asset.ExternalId)).ToList();
+            var missing = externalIds.Except(found.Select(asset => asset.ExternalId)).ToList();
 
             if (!missing.Any())
             {
-                return new CogniteResult<Asset>(null, existingAssets);
+                return new CogniteResult<Asset>(null, found);
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
             var toCreate = await buildAssets(missing);
 
-            Sanitation.CleanAssetRequest(toCreate);
+            CogniteError prePushError;
+            (toCreate, prePushError) = Sanitation.CleanAssetRequest(toCreate);
 
             var result = await CreateAssetsHandleErrors(assets, toCreate, token);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
+
+            if (prePushError != null)
+            {
+                result.Errors = result.Errors == null ? new[] { prePushError } : result.Errors.Append(prePushError);
+            }
 
             if (!result.Errors?.Any() ?? false) return result;
 
@@ -194,9 +204,10 @@ namespace Cognite.Extensions
                     if (!error.Values?.Any() ?? false) continue;
                     foreach (var idt in error.Values) duplicatedIds.Add(idt.ExternalId);
                 }
-                if (!duplicatedIds.Any()) return result;
-                _logger.LogDebug("Found {cnt} duplicated assets, retrying", duplicatedIds.Count);
             }
+
+            if (!duplicatedIds.Any()) return result;
+            _logger.LogDebug("Found {cnt} duplicated assets, retrying", duplicatedIds.Count);
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
             var nextResult = await GetOrCreateAssetsChunk(assets, duplicatedIds, buildAssets, backoff + 1, token);

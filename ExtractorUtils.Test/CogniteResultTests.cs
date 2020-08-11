@@ -107,7 +107,102 @@ namespace ExtractorUtils.Test
                 Assert.Equal(errors[i].Exception, exceptions[i]);
                 Assert.Equal(exceptions[i].Message, errors[i].Message);
             }
-
         }
+
+        [Fact]
+        public void CleanTimeSeriesRequest()
+        {
+            var timeseries = new[]
+            {
+                new TimeSeriesCreate
+                {
+                    ExternalId = "duplicate",
+                },
+                new TimeSeriesCreate
+                {
+                    ExternalId = "duplicate2"
+                },
+                new TimeSeriesCreate
+                {
+                    LegacyName = "duplicate",
+                },
+                new TimeSeriesCreate
+                {
+                    LegacyName = "duplicate2"
+                },
+                new TimeSeriesCreate
+                {
+                    DataSetId = 123
+                },
+                new TimeSeriesCreate
+                {
+                    DataSetId = 1234
+                },
+                new TimeSeriesCreate
+                {
+                    AssetId = 123
+                },
+                new TimeSeriesCreate
+                {
+                    AssetId = 1234
+                },
+                new TimeSeriesCreate
+                {
+                    ExternalId = "ImOk"
+                }
+            };
+            var exceptions = new[]
+            {
+                new ResponseException
+                {
+                    Duplicated = new [] { new Dictionary<string, MultiValue> {
+                        { "externalId", MultiValue.Create("duplicate") } },
+                    new Dictionary<string, MultiValue> {
+                        { "externalId", MultiValue.Create("duplicate2") } }},
+                    Code = 409
+                },
+                new ResponseException
+                {
+                    Duplicated = new [] { new Dictionary<string, MultiValue> {
+                        { "legacyName", MultiValue.Create("duplicate") } },
+                    new Dictionary<string, MultiValue> {
+                        { "legacyName", MultiValue.Create("duplicate2") } }},
+                    Code = 409
+                },
+                new ResponseException("datasets ids not found") {
+                    Missing = new [] { new Dictionary<string, MultiValue> {
+                        { "id", MultiValue.Create(123) } },
+                    new Dictionary<string, MultiValue> {
+                        { "id", MultiValue.Create(1234) } } },
+                    Code = 400
+                },
+                new ResponseException("Asset ids not found") {
+                    Missing = new [] { new Dictionary<string, MultiValue> {
+                        { "id", MultiValue.Create(123) } },
+                    new Dictionary<string, MultiValue> {
+                        { "id", MultiValue.Create(1234) } } },
+                    Code = 400
+                }
+            };
+            var errors = new List<CogniteError>();
+            for (int i = 0; i < exceptions.Length; i++)
+            {
+                var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateTimeSeries);
+                timeseries = (ResultHandlers.CleanFromError(error, timeseries))
+                    .ToArray();
+                Assert.Equal(9 - i * 2 - 2, timeseries.Count());
+                errors.Add(error);
+            }
+
+            Assert.Single(timeseries);
+            Assert.Equal("ImOk", timeseries[0].ExternalId);
+            Assert.Equal(4, errors.Count);
+            for (int i = 0; i < exceptions.Length; i++)
+            {
+                Assert.Equal(errors[i].Exception, exceptions[i]);
+                Assert.Equal(exceptions[i].Message, errors[i].Message);
+            }
+        }
+
     }
 }
