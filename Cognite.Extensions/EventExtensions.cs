@@ -37,7 +37,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static Task<IEnumerable<Event>> GetOrCreateAsync(
+        public static Task<CogniteResult<Event>> GetOrCreateAsync(
             this EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
@@ -64,7 +64,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IEnumerable<Event>> GetOrCreateAsync(
+        public static async Task<CogniteResult<Event>> GetOrCreateAsync(
             this EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
@@ -72,7 +72,7 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
-            var result = new List<Event>();
+            var results = new List<CogniteResult<Event>>();
             object mutex = new object();
             var chunks = externalIds
                 .ChunkBy(chunkSize)
@@ -81,11 +81,8 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     chunk => async () => {
-                        var existing = await GetOrCreateEventsChunk(resource, chunk, buildEvents, 0, token);
-                        lock (mutex)
-                        {
-                            result.AddRange(existing);
-                        }
+                        var result = await GetOrCreateEventsChunk(resource, chunk, buildEvents, 0, token);
+                        lock (mutex) results.Add(result);
                     });
 
             int taskNum = 0;
@@ -97,10 +94,11 @@ namespace Cognite.Extensions
                             nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
                 },
                 token);
-            return result;
+            if (!results.Any()) return new CogniteResult<Event>(null, null);
+            return results.Aggregate((seed, res) => seed.Merge(res));
         }
 
-        private static async Task<IEnumerable<Event>> GetOrCreateEventsChunk(
+        private static async Task<CogniteResult<Event>> GetOrCreateEventsChunk(
             EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
@@ -114,45 +112,52 @@ namespace Cognite.Extensions
             }
             _logger.LogDebug("Retrieved {Existing} events from CDF", found.Count());
 
-            var existingEvents = found.ToList();
-            var missing = externalIds.Except(existingEvents.Select(evt => evt.ExternalId)).ToList();
+            var missing = externalIds.Except(found.Select(evt => evt.ExternalId)).ToList();
 
             if (!missing.Any())
             {
-                return existingEvents;
+                return new CogniteResult<Event>(null, found);
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} events. Attempting to create the missing ones", missing.Count, externalIds.Count());
-            try
+            var toCreate = await buildEvents(missing);
+
+            CogniteError prePushError;
+            (toCreate, prePushError) = Sanitation.CleanEventRequest(toCreate);
+
+            var result = await CreateEventsHandleErrors(resource, toCreate, token);
+            result.Results = result.Results == null ? found : result.Results.Concat(found);
+
+            if (prePushError != null)
             {
-                var toCreate = await buildEvents(missing);
-                if (toCreate.Any())
-                {
-                    foreach (var evt in toCreate) evt.Sanitize();
-                    IEnumerable<Event> newEvents;
-                    using (CdfMetrics.Events.WithLabels("create").NewTimer())
-                    {
-                        newEvents = await resource.CreateAsync(toCreate, token);
-                    }
-                    existingEvents.AddRange(newEvents);
-                    _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
-                }
-                return existingEvents;
+                result.Errors = result.Errors == null ? new[] { prePushError } : result.Errors.Append(prePushError);
             }
-            catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
+
+            if (!result.Errors?.Any() ?? false) return result;
+
+            var duplicateErrors = result.Errors.Where(err =>
+                err.Resource == ResourceType.ExternalId
+                && err.Type == ErrorType.ItemExists)
+                .ToList();
+
+            var duplicatedIds = new HashSet<string>();
+            if (duplicateErrors.Any())
             {
-                if (backoff > 10) // ~3.5 min total backoff time
+                foreach (var error in duplicateErrors)
                 {
-                    throw;
+                    if (!error.Values?.Any() ?? false) continue;
+                    foreach (var idt in error.Values) duplicatedIds.Add(idt.ExternalId);
                 }
-                _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumEvents} events", e.Duplicated.Count(), missing.Count);
             }
+
+            if (!duplicatedIds.Any()) return result;
+            _logger.LogDebug("Found {cnt} duplicated events, retrying", duplicatedIds.Count);
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var ensured = await GetOrCreateEventsChunk(resource, missing, buildEvents, backoff + 1, token);
-            existingEvents.AddRange(ensured);
+            var nextResult = await GetOrCreateEventsChunk(resource, duplicatedIds, buildEvents, backoff + 1, token);
+            result = result.Merge(nextResult);
 
-            return existingEvents;
+            return result;
         }
         /// <summary>
         /// Ensures that all events in <paramref name="events"/> exist in CDF.
@@ -165,24 +170,34 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="failOnError">Fail if an error other than detected duplicates occurs</param>
         /// <param name="token">Cancellation token</param>
-        public static async Task EnsureExistsAsync(
+        public static async Task<CogniteResult> EnsureExistsAsync(
             this EventsResource resource,
             IEnumerable<EventCreate> events,
             int chunkSize,
             int throttleSize,
-            bool failOnError,
             CancellationToken token)
         {
-            foreach (var evt in events) evt.Sanitize();
+            CogniteError prePushError;
+            (events, prePushError) = Sanitation.CleanEventRequest(events);
+
             var chunks = events
                 .ChunkBy(chunkSize)
                 .ToList();
 
             _logger.LogDebug("Ensuring events. Number of events: {Number}. Number of chunks: {Chunks}", events.Count(), chunks.Count());
+
+            var results = new List<CogniteResult>();
+            object mutex = new object();
+            if (prePushError != null)
+            {
+                results.Add(new CogniteResult(new[] { prePushError }));
+            }
+
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
                 chunk => async () => {
-                    await EnsureChunk(resource, chunk, failOnError, token);
+                    var result = await CreateEventsHandleErrors(resource, events, token);
+                    lock (mutex) results.Add(result);
                 });
 
             int taskNum = 0;
@@ -194,49 +209,39 @@ namespace Cognite.Extensions
                             nameof(EnsureExistsAsync), ++taskNum, chunks.Count);
                 },
                 token);
+            if (!results.Any()) return new CogniteResult(null);
+            return results.Aggregate((seed, res) => seed.Merge(res));
         }
 
-        private static async Task EnsureChunk(
-            EventsResource resource,
-            IEnumerable<EventCreate> events,
-            bool failOnError,
+        private static async Task<CogniteResult<Event>> CreateEventsHandleErrors(
+            EventsResource events,
+            IEnumerable<EventCreate> toCreate,
             CancellationToken token)
         {
-            var create = events;
-            while (!token.IsCancellationRequested && create.Any())
+            var errors = new List<CogniteError>();
+            while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
             {
                 try
                 {
                     IEnumerable<Event> newEvents;
-                    using (CdfMetrics.Events.WithLabels("create").NewTimer())
+                    using (CdfMetrics.Events.WithLabels("create"))
                     {
-                        newEvents = await resource.CreateAsync(create, token);
+                        newEvents = await events.CreateAsync(toCreate, token);
                     }
+
                     _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
-                    return;
+                    return new CogniteResult<Event>(errors, newEvents);
                 }
-                catch (ResponseException e) when (e.Code == 409 && e.Duplicated.Any())
+                catch (Exception ex)
                 {
-                    // Remove duplicates - already exists
-                    var duplicated = new HashSet<string>(e.Duplicated
-                        .Select(d => d.GetValue("externalId", null))
-                        .Where(mv => mv != null)
-                        .Select(mv => mv.ToString()));
-                    create = events.Where(ts => !duplicated.Contains(ts.ExternalId));
-                    await Task.Delay(TimeSpan.FromMilliseconds(100), token);
-                    _logger.LogDebug("Found {NumDuplicated} duplicates, during the creation of {NumEvents} events",
-                        e.Duplicated.Count(), create.Count());
-                    continue;
+                    _logger.LogDebug("Failed to create {cnt} events: {msg}",
+                        toCreate.Count(), ex.Message);
+                    var error = ResultHandlers.ParseException(ex, RequestType.CreateEvents);
+                    toCreate = ResultHandlers.CleanFromError(error, toCreate);
+                    errors.Add(error);
                 }
-#pragma warning disable CA1031 // Do not catch general exception types
-                catch (Exception e)
-                {
-                    if (failOnError) throw;
-                    _logger.LogWarning("CDF create events failed: {Message} - Retrying in 1 second", e.Message);
-                }
-#pragma warning restore CA1031 // Do not catch general exception types
-                await Task.Delay(TimeSpan.FromSeconds(1), token);
             }
+            return new CogniteResult<Event>(errors, null);
         }
     }
 }

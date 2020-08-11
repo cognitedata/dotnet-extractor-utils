@@ -121,6 +121,41 @@ namespace Cognite.Extensions
             }
         }
 
+        private static void ParseEventException(ResponseException ex, CogniteError err)
+        {
+            if (ex.Missing?.Any() ?? false)
+            {
+                if (ex.Message.StartsWith("Asset ids not found"))
+                {
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.AssetId;
+                    err.Values = ex.Missing.Select(dict =>
+                        (dict["id"] as MultiValue.Long)?.Value)
+                        .Where(id => id.HasValue)
+                        .Select(id => Identity.Create(id.Value));
+                }
+            }
+            else if (ex.Duplicated?.Any() ?? false)
+            {
+                err.Type = ErrorType.ItemExists;
+                err.Resource = ResourceType.ExternalId;
+                err.Values = ex.Duplicated.Select(dict =>
+                    (dict["externalId"] as MultiValue.String)?.Value)
+                    .Where(id => id != null)
+                    .Select(Identity.Create);
+            }
+            else if (ex.Code == 400)
+            {
+                if (ex.Message.StartsWith("Invalid dataSetIds", StringComparison.InvariantCulture))
+                {
+                    var idString = ex.Message.Replace("Invalid dataSetIds: ", "");
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.DataSetId;
+                    err.Values = ParseIdString(idString);
+                }
+            }
+        }
+
         public static CogniteError ParseException(Exception ex, RequestType type)
         {
             if (!(ex is ResponseException rex))
@@ -143,6 +178,10 @@ namespace Cognite.Extensions
             {
                 ParseTimeSeriesException(rex, result);
             }
+            else if (type == RequestType.CreateEvents)
+            {
+                ParseEventException(rex, result);
+            }
             return result;
         }
 
@@ -158,8 +197,12 @@ namespace Cognite.Extensions
             // This is mostly to avoid infinite loops. If there are no bad values then
             // there is no way to correctly clean the request, so there must be something
             // else wrong
-            if (!error.Values?.Any() ?? true) return Array.Empty<AssetCreate>();
-            
+            if (!error.Values?.Any() ?? true)
+            {
+                error.Values = assets.Where(asset => asset.ExternalId != null).Select(asset => Identity.Create(asset.ExternalId));
+                return Array.Empty<AssetCreate>();
+            }
+
             if (!error.Complete)
             {
                 await CompleteError(resource, error, assets, assetChunkSize, assetThrottleSize, token);
@@ -195,7 +238,11 @@ namespace Cognite.Extensions
             IEnumerable<TimeSeriesCreate> timeseries)
         {
             if (error == null) return timeseries;
-            if (!error.Values?.Any() ?? true) return Array.Empty<TimeSeriesCreate>();
+            if (!error.Values?.Any() ?? true)
+            {
+                error.Values = timeseries.Where(ts => ts.ExternalId != null).Select(ts => Identity.Create(ts.ExternalId));
+                return Array.Empty<TimeSeriesCreate>();
+            }
 
             var items = new HashSet<Identity>(error.Values, new IdentityComparer());
 
@@ -216,6 +263,39 @@ namespace Cognite.Extensions
                         break;
                     case ResourceType.LegacyName:
                         if (ts.LegacyName == null || !items.Contains(Identity.Create(ts.LegacyName))) ret.Add(ts);
+                        break;
+                }
+            }
+            return ret;
+        }
+
+        public static IEnumerable<EventCreate> CleanFromError(
+            CogniteError error,
+            IEnumerable<EventCreate> events)
+        {
+            if (error == null) return events;
+            if (!error.Values?.Any() ?? true)
+            {
+                error.Values = events.Where(evt => evt.ExternalId != null).Select(evt => Identity.Create(evt.ExternalId));
+                return Array.Empty<EventCreate>();
+            }
+
+            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
+
+            var ret = new List<EventCreate>();
+
+            foreach (var evt in events)
+            {
+                switch (error.Resource)
+                {
+                    case ResourceType.DataSetId:
+                        if (!evt.DataSetId.HasValue || !items.Contains(Identity.Create(evt.DataSetId.Value))) ret.Add(evt);
+                        break;
+                    case ResourceType.ExternalId:
+                        if (evt.ExternalId == null || !items.Contains(Identity.Create(evt.ExternalId))) ret.Add(evt);
+                        break;
+                    case ResourceType.AssetId:
+                        if (evt.AssetIds == null || !evt.AssetIds.Any(id => items.Contains(Identity.Create(id)))) ret.Add(evt);
                         break;
                 }
             }

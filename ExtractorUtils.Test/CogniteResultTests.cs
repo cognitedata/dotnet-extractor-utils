@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Cognite.Extensions;
+using CogniteSdk;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Cognite.Extensions;
-using CogniteSdk;
 using Xunit;
 
 namespace ExtractorUtils.Test
@@ -197,6 +197,79 @@ namespace ExtractorUtils.Test
             Assert.Single(timeseries);
             Assert.Equal("ImOk", timeseries[0].ExternalId);
             Assert.Equal(4, errors.Count);
+            for (int i = 0; i < exceptions.Length; i++)
+            {
+                Assert.Equal(errors[i].Exception, exceptions[i]);
+                Assert.Equal(exceptions[i].Message, errors[i].Message);
+            }
+        }
+
+        [Fact]
+        public void CleanEventsRequest()
+        {
+            var events = new[]
+            {
+                new EventCreate
+                {
+                    ExternalId = "duplicate",
+                },
+                new EventCreate
+                {
+                    ExternalId = "duplicate2"
+                },
+                new EventCreate
+                {
+                    DataSetId = 123
+                },
+                new EventCreate
+                {
+                    DataSetId = 1234
+                },
+                new EventCreate
+                {
+                    AssetIds = new [] { 123L }
+                },
+                new EventCreate
+                {
+                    AssetIds = new [] { 1234L }
+                },
+                new EventCreate
+                {
+                    ExternalId = "ImOk"
+                }
+            };
+            var exceptions = new[]
+            {
+                new ResponseException
+                {
+                    Duplicated = new [] { new Dictionary<string, MultiValue> {
+                        { "externalId", MultiValue.Create("duplicate") } },
+                    new Dictionary<string, MultiValue> {
+                        { "externalId", MultiValue.Create("duplicate2") } }},
+                    Code = 409
+                },
+                new ResponseException("Invalid dataSetIds: 123, 1234") { Code = 400 },
+                new ResponseException("Asset ids not found") {
+                    Missing = new [] { new Dictionary<string, MultiValue> {
+                        { "id", MultiValue.Create(123) } },
+                    new Dictionary<string, MultiValue> {
+                        { "id", MultiValue.Create(1234) } } },
+                    Code = 400
+                }
+            };
+            var errors = new List<CogniteError>();
+            for (int i = 0; i < exceptions.Length; i++)
+            {
+                var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateEvents);
+                events = (ResultHandlers.CleanFromError(error, events))
+                    .ToArray();
+                Assert.Equal(7 - i * 2 - 2, events.Count());
+                errors.Add(error);
+            }
+
+            Assert.Single(events);
+            Assert.Equal("ImOk", events[0].ExternalId);
+            Assert.Equal(3, errors.Count);
             for (int i = 0; i < exceptions.Length; i++)
             {
                 Assert.Equal(errors[i].Exception, exceptions[i]);

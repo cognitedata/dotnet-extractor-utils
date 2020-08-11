@@ -233,6 +233,7 @@ namespace Cognite.Extensions
 
             foreach (var asset in assets)
             {
+                asset.Sanitize();
                 if (asset.ExternalId != null)
                 {
                     if (!ids.Add(asset.ExternalId))
@@ -241,7 +242,6 @@ namespace Cognite.Extensions
                         continue;
                     }
                 }
-                asset.Sanitize();
                 result.Add(asset);
             }
             CogniteError error = null;
@@ -271,6 +271,7 @@ namespace Cognite.Extensions
 
             foreach (var ts in timeseries)
             {
+                ts.Sanitize();
                 if (ts.ExternalId != null)
                 {
                     if (!ids.Add(ts.ExternalId))
@@ -287,7 +288,6 @@ namespace Cognite.Extensions
                         continue;
                     }
                 }
-                ts.Sanitize();
                 result.Add(ts);
             }
             CogniteError idError = null;
@@ -315,6 +315,41 @@ namespace Cognite.Extensions
                 };
             }
             return (result, idError, nameError);
+        }
+
+        public static (IEnumerable<EventCreate>, CogniteError) CleanEventRequest(IEnumerable<EventCreate> events)
+        {
+            var result = new List<EventCreate>();
+
+            var ids = new HashSet<string>();
+            var duplicated = new HashSet<string>();
+
+            foreach (var evt in events)
+            {
+                evt.Sanitize();
+                if (evt.ExternalId != null)
+                {
+                    if (!ids.Add(evt.ExternalId))
+                    {
+                        duplicated.Add(evt.ExternalId);
+                        continue;
+                    }
+                }
+                result.Add(evt);
+            }
+            CogniteError err = null;
+            if (duplicated.Any())
+            {
+                err = new CogniteError
+                {
+                    Status = 409,
+                    Message = "ExternalIds duplicated",
+                    Resource = ResourceType.ExternalId,
+                    Type = ErrorType.ItemDuplicated,
+                    Values = duplicated.Select(Identity.Create).ToArray()
+                };
+            }
+            return (result, err);
         }
     }
 }

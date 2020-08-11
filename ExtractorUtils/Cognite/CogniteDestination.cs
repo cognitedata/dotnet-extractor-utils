@@ -506,7 +506,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildEvents">Function that builds CogniteSdk EventCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Event>> GetOrCreateEventsAsync(
+        public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
             CancellationToken token)
@@ -530,7 +530,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Event>> GetOrCreateEventsAsync(
+        public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
             CancellationToken token)
@@ -550,20 +550,17 @@ namespace Cognite.Extractor.Utils
         /// duplicates (already exist in CDF)
         /// </summary>
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
-        /// <param name="failOnError">Throw if an error other than duplicate events in CDF occurs.</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public async Task EnsureEventsExistsAsync(
+        public async Task<CogniteResult> EnsureEventsExistsAsync(
             IEnumerable<EventCreate> events,
-            bool failOnError,
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} events exist in CDF", events.Count());
-            await _client.Events.EnsureExistsAsync(
+            return await _client.Events.EnsureExistsAsync(
                 events,
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,
-                failOnError,
                 token);
         }
         #endregion
