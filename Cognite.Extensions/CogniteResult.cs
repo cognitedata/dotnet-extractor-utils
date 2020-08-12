@@ -191,6 +191,7 @@ namespace Cognite.Extensions
             IEnumerable<AssetCreate> assets,
             int assetChunkSize,
             int assetThrottleSize,
+            bool emptyOnError,
             CancellationToken token)
         {
             if (error == null) return assets;
@@ -199,6 +200,7 @@ namespace Cognite.Extensions
             // else wrong
             if (!error.Values?.Any() ?? true)
             {
+                if (!emptyOnError) return assets;
                 error.Values = assets.Where(asset => asset.ExternalId != null).Select(asset => Identity.Create(asset.ExternalId));
                 return Array.Empty<AssetCreate>();
             }
@@ -235,11 +237,13 @@ namespace Cognite.Extensions
 
         public static IEnumerable<TimeSeriesCreate> CleanFromError(
             CogniteError error,
-            IEnumerable<TimeSeriesCreate> timeseries)
+            IEnumerable<TimeSeriesCreate> timeseries,
+            bool emptyOnError)
         {
             if (error == null) return timeseries;
             if (!error.Values?.Any() ?? true)
             {
+                if (!emptyOnError) return timeseries;
                 error.Values = timeseries.Where(ts => ts.ExternalId != null).Select(ts => Identity.Create(ts.ExternalId));
                 return Array.Empty<TimeSeriesCreate>();
             }
@@ -271,11 +275,13 @@ namespace Cognite.Extensions
 
         public static IEnumerable<EventCreate> CleanFromError(
             CogniteError error,
-            IEnumerable<EventCreate> events)
+            IEnumerable<EventCreate> events,
+            bool emptyOnError)
         {
             if (error == null) return events;
             if (!error.Values?.Any() ?? true)
             {
+                if (!emptyOnError) return events;
                 error.Values = events.Where(evt => evt.ExternalId != null).Select(evt => Identity.Create(evt.ExternalId));
                 return Array.Empty<EventCreate>();
             }

@@ -113,12 +113,15 @@ namespace Cognite.Extensions
         /// <param name="assetsToEnsure">List of AssetCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
+        /// <param name="failOnError">If true, return if a fatal error occurs,
+        /// otherwise retry forever or until all items have succeded or been removed.</param>
         /// <param name="token">Cancellation token</param>
         public static async Task<CogniteResult> EnsureExistsAsync(
             this AssetsResource assets,
             IEnumerable<AssetCreate> assetsToEnsure,
             int chunkSize,
             int throttleSize,
+            bool failOnError,
             CancellationToken token)
         {
             CogniteError prePushError;
@@ -137,7 +140,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<AssetCreate>, Func<Task>>(
                 chunk => async () => {
-                    var result = await CreateAssetsHandleErrors(assets, chunk, token);
+                    var result = await CreateAssetsHandleErrors(assets, chunk, failOnError, token);
                     lock (mutex) results.Add(result);
                 });
 
@@ -181,7 +184,7 @@ namespace Cognite.Extensions
             CogniteError prePushError;
             (toCreate, prePushError) = Sanitation.CleanAssetRequest(toCreate);
 
-            var result = await CreateAssetsHandleErrors(assets, toCreate, token);
+            var result = await CreateAssetsHandleErrors(assets, toCreate, true, token);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
             if (prePushError != null)
@@ -263,6 +266,7 @@ namespace Cognite.Extensions
         private static async Task<CogniteResult<Asset>> CreateAssetsHandleErrors(
             AssetsResource assets,
             IEnumerable<AssetCreate> toCreate,
+            bool failOnError,
             CancellationToken token)
         {
             var errors = new List<CogniteError>();
@@ -284,7 +288,11 @@ namespace Cognite.Extensions
                     _logger.LogDebug("Failed to create {cnt} assets: {msg}",
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException(ex, RequestType.CreateAssets);
-                    toCreate = await ResultHandlers.CleanFromError(assets, error, toCreate, 1000, 1, token);
+                    toCreate = await ResultHandlers.CleanFromError(assets, error, toCreate, 1000, 1, failOnError, token);
+                    if (error.Type == ErrorType.FatalFailure && !failOnError)
+                    {
+                        await Task.Delay(1000);
+                    }
                     errors.Add(error);
                 }
             }

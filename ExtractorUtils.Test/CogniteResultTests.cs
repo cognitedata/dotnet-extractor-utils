@@ -93,7 +93,7 @@ namespace ExtractorUtils.Test
             for (int i = 0; i < exceptions.Length; i++)
             {
                 var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateAssets);
-                assets = (await ResultHandlers.CleanFromError(null, error, assets, 1000, 1, CancellationToken.None))
+                assets = (await ResultHandlers.CleanFromError(null, error, assets, 1000, 1, true, CancellationToken.None))
                     .ToArray();
                 Assert.Equal(9 - i * 2 - 2, assets.Count());
                 errors.Add(error);
@@ -188,7 +188,7 @@ namespace ExtractorUtils.Test
             for (int i = 0; i < exceptions.Length; i++)
             {
                 var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateTimeSeries);
-                timeseries = (ResultHandlers.CleanFromError(error, timeseries))
+                timeseries = (ResultHandlers.CleanFromError(error, timeseries, true))
                     .ToArray();
                 Assert.Equal(9 - i * 2 - 2, timeseries.Count());
                 errors.Add(error);
@@ -261,7 +261,7 @@ namespace ExtractorUtils.Test
             for (int i = 0; i < exceptions.Length; i++)
             {
                 var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateEvents);
-                events = (ResultHandlers.CleanFromError(error, events))
+                events = (ResultHandlers.CleanFromError(error, events, true))
                     .ToArray();
                 Assert.Equal(7 - i * 2 - 2, events.Count());
                 errors.Add(error);

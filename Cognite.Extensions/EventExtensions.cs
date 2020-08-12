@@ -125,7 +125,7 @@ namespace Cognite.Extensions
             CogniteError prePushError;
             (toCreate, prePushError) = Sanitation.CleanEventRequest(toCreate);
 
-            var result = await CreateEventsHandleErrors(resource, toCreate, token);
+            var result = await CreateEventsHandleErrors(resource, toCreate, true, token);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
             if (prePushError != null)
@@ -168,13 +168,15 @@ namespace Cognite.Extensions
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="failOnError">Fail if an error other than detected duplicates occurs</param>
+        /// <param name="failOnError">Fail if a fatal error occurs,
+        /// otherwise retry forever or until all items have succeeded or been removed</param>
         /// <param name="token">Cancellation token</param>
         public static async Task<CogniteResult> EnsureExistsAsync(
             this EventsResource resource,
             IEnumerable<EventCreate> events,
             int chunkSize,
             int throttleSize,
+            bool failOnError,
             CancellationToken token)
         {
             CogniteError prePushError;
@@ -196,7 +198,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
                 chunk => async () => {
-                    var result = await CreateEventsHandleErrors(resource, events, token);
+                    var result = await CreateEventsHandleErrors(resource, events, failOnError, token);
                     lock (mutex) results.Add(result);
                 });
 
@@ -216,6 +218,7 @@ namespace Cognite.Extensions
         private static async Task<CogniteResult<Event>> CreateEventsHandleErrors(
             EventsResource events,
             IEnumerable<EventCreate> toCreate,
+            bool failOnError,
             CancellationToken token)
         {
             var errors = new List<CogniteError>();
@@ -237,7 +240,11 @@ namespace Cognite.Extensions
                     _logger.LogDebug("Failed to create {cnt} events: {msg}",
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException(ex, RequestType.CreateEvents);
-                    toCreate = ResultHandlers.CleanFromError(error, toCreate);
+                    toCreate = ResultHandlers.CleanFromError(error, toCreate, failOnError);
+                    if (error.Type == ErrorType.FatalFailure && !failOnError)
+                    {
+                        await Task.Delay(1000);
+                    }
                     errors.Add(error);
                 }
             }

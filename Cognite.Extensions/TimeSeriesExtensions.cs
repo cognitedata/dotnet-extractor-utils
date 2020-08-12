@@ -109,12 +109,14 @@ namespace Cognite.Extensions
         /// <param name="timeSeriesToEnsure">List of CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
+        /// <param name="failOnError">If true, return if a fatal error occurs</param>
         /// <param name="token">Cancellation token</param>
         public static async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
             this TimeSeriesResource timeseries,
             IEnumerable<TimeSeriesCreate> timeSeriesToEnsure,
             int chunkSize,
             int throttleSize,
+            bool failOnError,
             CancellationToken token)
         {
             CogniteError idError, nameError;
@@ -139,7 +141,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<TimeSeriesCreate>, Func<Task>>(
                 chunk => async () => {
-                    var result = await CreateTimeSeriesHandleErrors(timeseries, timeSeriesToEnsure, token);
+                    var result = await CreateTimeSeriesHandleErrors(timeseries, timeSeriesToEnsure, failOnError, token);
                     lock (mutex) results.Add(result);
                 });
 
@@ -227,7 +229,7 @@ namespace Cognite.Extensions
             CogniteError idError, nameError;
             (toCreate, idError, nameError) = Sanitation.CleanTimeSeriesRequest(toCreate);
 
-            var result = await CreateTimeSeriesHandleErrors(client, toCreate, token);
+            var result = await CreateTimeSeriesHandleErrors(client, toCreate, true, token);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
             if (idError != null || nameError != null)
@@ -269,6 +271,7 @@ namespace Cognite.Extensions
         private static async Task<CogniteResult<TimeSeries>> CreateTimeSeriesHandleErrors(
             TimeSeriesResource timeseries,
             IEnumerable<TimeSeriesCreate> toCreate,
+            bool failOnError,
             CancellationToken token)
         {
             var errors = new List<CogniteError>();
@@ -290,7 +293,11 @@ namespace Cognite.Extensions
                     _logger.LogDebug("Failed to create {cnt} timeseries: {msg}",
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException(ex, RequestType.CreateTimeSeries);
-                    toCreate = ResultHandlers.CleanFromError(error, toCreate);
+                    toCreate = ResultHandlers.CleanFromError(error, toCreate, failOnError);
+                    if (error.Type == ErrorType.FatalFailure && !failOnError)
+                    {
+                        await Task.Delay(1000);
+                    }
                     errors.Add(error);
                 }
             }

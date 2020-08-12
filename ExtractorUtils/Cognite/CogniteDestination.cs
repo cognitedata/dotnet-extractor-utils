@@ -109,10 +109,13 @@ namespace Cognite.Extractor.Utils
         /// duplicates (already exist in CDF)
         /// </summary>
         /// <param name="timeSeries">List of CogniteSdk TimeSeriesCreate objects</param>
+        /// <param name="failOnError">If true, return if a fatal error occurs,
+        /// otherwise retry forever or until all items have succeded or been removed.</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
-            IEnumerable<TimeSeriesCreate> timeSeries, 
+            IEnumerable<TimeSeriesCreate> timeSeries,
+            bool failOnError,
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
@@ -120,6 +123,7 @@ namespace Cognite.Extractor.Utils
                 timeSeries,
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
+                failOnError,
                 token);
         }
         #endregion
@@ -180,10 +184,13 @@ namespace Cognite.Extractor.Utils
         /// duplicates (already exist in CDF)
         /// </summary>
         /// <param name="assets">List of CogniteSdk AssetCreate objects</param>
+        /// <param name="failOnError">If true, return if a fatal error occurs,
+        /// otherwise retry forever or until all items have succeded or been removed.</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<CogniteResult> EnsureAssetsExistsAsync(
             IEnumerable<AssetCreate> assets,
+            bool failOnError,
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} assets exist in CDF", assets.Count());
@@ -191,6 +198,7 @@ namespace Cognite.Extractor.Utils
                 assets,
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
+                failOnError,
                 token);
         }
         #endregion
@@ -550,10 +558,13 @@ namespace Cognite.Extractor.Utils
         /// duplicates (already exist in CDF)
         /// </summary>
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
+        /// <param name="failOnError">If true, return if a fatal error occurs,
+        /// otherwise retry forever or until all items have succeded or been removed.</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public async Task<CogniteResult> EnsureEventsExistsAsync(
             IEnumerable<EventCreate> events,
+            bool failOnError,
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} events exist in CDF", events.Count());
@@ -561,6 +572,7 @@ namespace Cognite.Extractor.Utils
                 events,
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,
+                failOnError,
                 token);
         }
         #endregion

@@ -318,7 +318,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureTimeSeriesExistsAsync(newTs, source.Token);
+                    await cogniteDestination.EnsureTimeSeriesExistsAsync(newTs, false, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredTimeSeries
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
@@ -403,7 +403,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureAssetsExistsAsync(newAssets, source.Token);
+                    await cogniteDestination.EnsureAssetsExistsAsync(newAssets, false, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredAssets
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
