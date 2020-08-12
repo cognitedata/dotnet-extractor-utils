@@ -188,7 +188,7 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Ensures that all assets in <paramref name="assetsToEnsure"/> exist in CDF.
+        /// Ensures that all assets in <paramref name="assets"/> exist in CDF.
         /// Tries to create the assets and returns when all are created or have been removed
         /// due to issues with the request (missing parent, duplicated externalId or missing dataset)
         /// </summary>
