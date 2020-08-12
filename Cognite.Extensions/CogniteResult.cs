@@ -199,8 +199,6 @@ namespace Cognite.Extensions
         /// <param name="assets">Assets to clean</param>
         /// <param name="assetChunkSize">Maximum number of ids per asset read</param>
         /// <param name="assetThrottleSize">Maximum number of parallel asset read requests</param>
-        /// <param name="emptyOnError">True if a fatal error should remove all entries,
-        /// if this is false, a broken connection or similar may cause very long loops.</param>
         /// <param name="token"></param>
         /// <returns>Assets that are not affected by the error</returns>
         public static async Task<IEnumerable<AssetCreate>> CleanFromError(
@@ -209,7 +207,6 @@ namespace Cognite.Extensions
             IEnumerable<AssetCreate> assets,
             int assetChunkSize,
             int assetThrottleSize,
-            bool emptyOnError,
             CancellationToken token)
         {
             if (error == null) return assets;
@@ -218,7 +215,6 @@ namespace Cognite.Extensions
             // else wrong
             if (!error.Values?.Any() ?? true)
             {
-                if (!emptyOnError) return assets;
                 error.Values = assets.Where(asset => asset.ExternalId != null).Select(asset => Identity.Create(asset.ExternalId));
                 return Array.Empty<AssetCreate>();
             }
@@ -258,18 +254,14 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="error">Error that occured with a previous push</param>
         /// <param name="timeseries">Timeseries to clean</param>
-        /// <param name="emptyOnError">True if a fatal error should remove all entries,
-        /// if this is false, a broken connection or similar may cause very long loops.</param>
         /// <returns>TimeSeries that are not affected by the error</returns>
         public static IEnumerable<TimeSeriesCreate> CleanFromError(
             CogniteError error,
-            IEnumerable<TimeSeriesCreate> timeseries,
-            bool emptyOnError)
+            IEnumerable<TimeSeriesCreate> timeseries)
         {
             if (error == null) return timeseries;
             if (!error.Values?.Any() ?? true)
             {
-                if (!emptyOnError) return timeseries;
                 error.Values = timeseries.Where(ts => ts.ExternalId != null).Select(ts => Identity.Create(ts.ExternalId));
                 return Array.Empty<TimeSeriesCreate>();
             }
@@ -309,13 +301,11 @@ namespace Cognite.Extensions
         /// <returns>Events that are not affected by the error</returns>
         public static IEnumerable<EventCreate> CleanFromError(
             CogniteError error,
-            IEnumerable<EventCreate> events,
-            bool emptyOnError)
+            IEnumerable<EventCreate> events)
         {
             if (error == null) return events;
             if (!error.Values?.Any() ?? true)
             {
-                if (!emptyOnError) return events;
                 error.Values = events.Where(evt => evt.ExternalId != null).Select(evt => Identity.Create(evt.ExternalId));
                 return Array.Empty<EventCreate>();
             }
@@ -416,6 +406,17 @@ namespace Cognite.Extensions
 
             return new CogniteResult(errors);
         }
+
+        public static CogniteResult Merge(params CogniteResult[] results)
+        {
+            var errors = new List<CogniteError>();
+            foreach (var result in results)
+            {
+                if (result == null) continue;
+                if (result.Errors != null) errors.AddRange(result.Errors);
+            }
+            return new CogniteResult(errors);
+        }
     }
 
     /// <summary>
@@ -458,6 +459,19 @@ namespace Cognite.Extensions
             else errors = Errors.Concat(other.Errors);
 
             return new CogniteResult<TResult>(errors, results);
+        }
+
+        public static CogniteResult<TResult> Merge(params CogniteResult<TResult>[] results)
+        {
+            var items = new List<TResult>();
+            var errors = new List<CogniteError>();
+            foreach (var result in results)
+            {
+                if (result == null) continue;
+                if (result.Results != null) items.AddRange(result.Results);
+                if (result.Errors != null) errors.AddRange(result.Errors);
+            }
+            return new CogniteResult<TResult>(errors, items);
         }
     }
 
@@ -577,5 +591,36 @@ namespace Cognite.Extensions
         /// Create events
         /// </summary>
         CreateEvents
+    }
+
+    /// <summary>
+    /// When to retry a request, not all of these may be valid for each option.
+    /// </summary>
+    public enum RetryMode : int
+    {
+        /// <summary>
+        /// Never retry, always stop after the first failure,
+        /// multiple errors may still occur due to chunking.
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// Retry after a 4xx error that can be handled by cleaning the
+        /// request
+        /// </summary>
+        OnError = 2,
+        /// <summary>
+        /// Retry after a 4xx error that can be handled by cleaning the
+        /// request, but keep retrying for duplicates until they are
+        /// returned when reading
+        /// </summary>
+        OnErrorKeepDuplicates = 3,
+        /// <summary>
+        /// Same as OnError, but keep retrying if a fatal error occurs
+        /// </summary>
+        OnFatal = 4,
+        /// <summary>
+        /// Same as OnErrorKeepDuplicates, but keep retrying if a fatal error occurs
+        /// </summary>
+        OnFatalKeepDuplicates = 5
     }
 }

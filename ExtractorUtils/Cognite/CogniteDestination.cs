@@ -62,15 +62,18 @@ namespace Cognite.Extractor.Utils
         /// against CDF
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they will be removed before retrying.
+        /// This can be configured using <paramref name="retryMode"/>
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to handle failed requests</param>
         /// <returns></returns>
         public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", externalIds.Count());
             return await _client.TimeSeries.GetOrCreateTimeSeriesAsync(
@@ -78,7 +81,8 @@ namespace Cognite.Extractor.Utils
                 buildTimeSeries,
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
-                token);
+                token,
+                retryMode);
         }
         /// <summary>
         /// Ensures the the time series with the provided <paramref name="externalIds"/> exist in CDF.
@@ -86,17 +90,20 @@ namespace Cognite.Extractor.Utils
         /// the missing time series objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
         /// against CDF
-        /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
+        /// By default, if any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they will be removed before retrying.
+        /// This can be configured using <paramref name="retryMode"/>
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Async function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to handle failed requests</param>
         /// <returns></returns>
         public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", externalIds.Count());
             return await _client.TimeSeries.GetOrCreateTimeSeriesAsync(
@@ -104,32 +111,35 @@ namespace Cognite.Extractor.Utils
                 buildTimeSeries,
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
-                token);
+                token,
+                retryMode);
         }
 
         /// <summary>
-        /// Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
+        /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
         /// Tries to create the time series and returns when all are created or have been removed
-        /// due to issues with the request (missing asset, duplicated externalId, duplicated legacyName
-        /// or missing dataset)
+        /// due to issues with the request.
+        /// By default, if any items fail to be created due to missing asset, duplicated externalId, duplicated
+        /// legacy name, or missing dataSetId, they will be removed before retrying.
+        /// This can be configured using <paramref name="retryMode"/>
         /// </summary>
         /// <param name="timeSeries">List of CogniteSdk TimeSeriesCreate objects</param>
-        /// <param name="failOnError">If true, return if a fatal error occurs,
-        /// otherwise retry forever or until all items have succeded or been removed.</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
+        /// this method.</param>
         /// <returns></returns>
         public async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
             IEnumerable<TimeSeriesCreate> timeSeries,
-            bool failOnError,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnFatal)
         {
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
             return await _client.TimeSeries.EnsureTimeSeriesExistsAsync(
                 timeSeries,
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
-                failOnError,
-                token);
+                token,
+                retryMode);
         }
         #endregion
 
@@ -140,17 +150,19 @@ namespace Cognite.Extractor.Utils
         /// the missing asset objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
         /// against CDF
-        /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
-        /// they will be removed before retrying.
+        /// By default, if any items fail to be created due to missing parent, duplicated externalId or missing dataset
+        /// they will be removed before retrying. This can be configured using <paramref name="retryMode"/>
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to handle failed requests</param>
         /// <returns></returns>
         public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
         {
             _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
             return await _client.Assets.GetOrCreateAsync(
@@ -158,7 +170,8 @@ namespace Cognite.Extractor.Utils
                 buildAssets,
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
-                token);
+                token,
+                retryMode);
         }
         /// <summary>
         /// Ensures the the assets with the provided <paramref name="externalIds"/> exist in CDF.
@@ -166,17 +179,19 @@ namespace Cognite.Extractor.Utils
         /// the missing asset objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
         /// against CDF
-        /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
-        /// they will be removed before retrying.
+        /// By default, if any items fail to be created due to missing parent, duplicated externalId or missing dataset
+        /// they will be removed before retrying. This can be configured using <paramref name="retryMode"/>
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Async function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to handle failed requests</param>
         /// <returns></returns>
         public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
         {
             _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
             return await _client.Assets.GetOrCreateAsync(
@@ -184,31 +199,34 @@ namespace Cognite.Extractor.Utils
                 buildAssets,
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
-                token);
+                token,
+                retryMode);
         }
 
         /// <summary>
         /// Ensures that all assets in <paramref name="assets"/> exist in CDF.
         /// Tries to create the assets and returns when all are created or have been removed
-        /// due to issues with the request (missing parent, duplicated externalId or missing dataset)
+        /// due to issues with the request.
+        /// By default, if any items fail to be created due to missing parent, duplicated externalId or missing dataset
+        /// they will be removed before retrying. This can be configured using <paramref name="retryMode"/>.
         /// </summary>
         /// <param name="assets">List of CogniteSdk AssetCreate objects</param>
-        /// <param name="failOnError">If true, return if a fatal error occurs,
-        /// otherwise retry forever or until all items have succeded or been removed.</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
+        /// this method.</param>
         /// <returns></returns>
         public async Task<CogniteResult> EnsureAssetsExistsAsync(
             IEnumerable<AssetCreate> assets,
-            bool failOnError,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnFatal)
         {
             _logger.LogInformation("Ensuring that {Number} assets exist in CDF", assets.Count());
             return await _client.Assets.EnsureExistsAsync(
                 assets,
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
-                failOnError,
-                token);
+                token,
+                retryMode);
         }
         #endregion
 
@@ -519,16 +537,18 @@ namespace Cognite.Extractor.Utils
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
         /// against CDF
         /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
-        /// they will be removed before retrying.
+        /// they will be removed before retrying. This can be configured using <paramref name="retryMode"/>
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Function that builds CogniteSdk EventCreate objects</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to handle failed requests</param>
         /// <returns></returns>
         public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
         {
             _logger.LogInformation("Getting or creating {Number} events in CDF", externalIds.Count());
             return await _client.Events.GetOrCreateAsync(
@@ -545,16 +565,18 @@ namespace Cognite.Extractor.Utils
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
         /// against CDF
         /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
-        /// they will be removed before retrying.
+        /// they will be removed before retrying. This can be configured using <paramref name="retryMode"/>
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to handle failed requests</param>
         /// <returns></returns>
         public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
         {
             _logger.LogInformation("Getting or creating {Number} events in CDF", externalIds.Count());
             return await _client.Events.GetOrCreateAsync(
@@ -562,31 +584,34 @@ namespace Cognite.Extractor.Utils
                 buildEvents,
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,
-                token);
+                token,
+                retryMode);
         }
 
         /// <summary>
         /// Ensures that all events in <paramref name="events"/> exist in CDF.
         /// Tries to create the events and returns when all are created or removed
-        /// due to a handled error (missing asset ids, duplicated in CDF, etc.)
+        /// due to issues with the request.
+        /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+        /// they will be removed before retrying. This can be configured using <paramref name="retryMode"/>
         /// </summary>
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
-        /// <param name="failOnError">If true, return if a fatal error occurs,
-        /// otherwise retry forever or until all items have succeded or been removed.</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
+        /// this method.</param>
         /// <returns></returns>
         public async Task<CogniteResult> EnsureEventsExistsAsync(
             IEnumerable<EventCreate> events,
-            bool failOnError,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnFatal)
         {
             _logger.LogInformation("Ensuring that {Number} events exist in CDF", events.Count());
             return await _client.Events.EnsureExistsAsync(
                 events,
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,
-                failOnError,
-                token);
+                token,
+                retryMode);
         }
         #endregion
     }

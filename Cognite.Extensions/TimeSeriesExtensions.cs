@@ -38,6 +38,7 @@ namespace Cognite.Extensions
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to handle failed requests</param>
         /// <returns></returns>
         public static Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             this TimeSeriesResource timeSeries,
@@ -45,13 +46,15 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
             int chunkSize,
             int throttleSize,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
         {
             Task<IEnumerable<TimeSeriesCreate>> asyncBuildTimeSeries(IEnumerable<string> ids)
             {
                 return Task.FromResult(buildTimeSeries(ids));
             }
-            return timeSeries.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries, chunkSize, throttleSize, token);
+            return timeSeries.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries,
+                chunkSize, throttleSize, token, retryMode);
         }
 
         /// <summary>
@@ -68,6 +71,7 @@ namespace Cognite.Extensions
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to handle failed requests</param>
         /// <returns></returns>
         public static async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             this TimeSeriesResource timeSeries,
@@ -75,21 +79,23 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             int chunkSize,
             int throttleSize,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
         {
-            var results = new List<CogniteResult<TimeSeries>>();
-            object mutex = new object();
-
             var chunks = externalIds
                 .ChunkBy(chunkSize)
                 .ToList();
+            if (!chunks.Any()) return new CogniteResult<TimeSeries>(null, null);
+
+            var results = new CogniteResult<TimeSeries>[chunks.Count];
 
             _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
-                    chunk => async () => {
-                        var result = await GetOrCreateTimeSeriesChunk(timeSeries, chunk, buildTimeSeries, 0, token);
-                        lock (mutex) results.Add(result);
+                    (chunk, idx) => async () => {
+                        var result = await GetOrCreateTimeSeriesChunk(timeSeries, chunk,
+                            buildTimeSeries, 0, retryMode, token);
+                        results[idx] = result;
                     });
 
             int taskNum = 0;
@@ -101,8 +107,8 @@ namespace Cognite.Extensions
                             nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count);
                 },
                 token);
-            if (!results.Any()) return new CogniteResult<TimeSeries>(null, null);
-            return results.Aggregate((seed, res) => seed.Merge(res));
+
+            return CogniteResult<TimeSeries>.Merge(results);
         }
         /// <summary>
         /// Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
@@ -116,13 +122,15 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="failOnError">If true, return if a fatal error occurs</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
+        /// this method.</param>
         public static async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
             this TimeSeriesResource timeseries,
             IEnumerable<TimeSeriesCreate> timeSeriesToEnsure,
             int chunkSize,
             int throttleSize,
-            bool failOnError,
-            CancellationToken token)
+            CancellationToken token,
+            RetryMode retryMode = RetryMode.OnFatal)
         {
             CogniteError idError, nameError;
             (timeSeriesToEnsure, idError, nameError) = Sanitation.CleanTimeSeriesRequest(timeSeriesToEnsure);
@@ -131,23 +139,25 @@ namespace Cognite.Extensions
                 .ChunkBy(chunkSize)
                 .ToList();
 
-            var results = new List<CogniteResult>();
-            object mutex = new object();
+            int size = chunks.Count + (idError != null || nameError != null ? 1 : 0);
+            var results = new CogniteResult[size];
 
             if (idError != null || nameError != null)
             {
                 var errors = new List<CogniteError>();
                 if (idError != null) errors.Add(idError);
                 if (nameError != null) errors.Add(nameError);
-                results.Add(new CogniteResult(errors));
+                results[size - 1] = new CogniteResult(errors);
+                if (size == 1) return results[size - 1];
             }
+            if (size == 0) return new CogniteResult(null);
 
             _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeriesToEnsure.Count(), chunks.Count());
             var generators = chunks
                 .Select<IEnumerable<TimeSeriesCreate>, Func<Task>>(
-                chunk => async () => {
-                    var result = await CreateTimeSeriesHandleErrors(timeseries, timeSeriesToEnsure, failOnError, token);
-                    lock (mutex) results.Add(result);
+                (chunk, idx) => async () => {
+                    var result = await CreateTimeSeriesHandleErrors(timeseries, timeSeriesToEnsure, retryMode, token);
+                    results[idx] = result;
                 });
 
             int taskNum = 0;
@@ -159,8 +169,8 @@ namespace Cognite.Extensions
                             nameof(EnsureTimeSeriesExistsAsync), ++taskNum, chunks.Count);
                 },
                 token);
-            if (!results.Any()) return new CogniteResult(null);
-            return results.Aggregate((seed, res) => seed.Merge(res));
+
+            return CogniteResult.Merge(results);
         }
 
         /// <summary>
@@ -212,6 +222,7 @@ namespace Cognite.Extensions
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             int backoff,
+            RetryMode retryMode,
             CancellationToken token)
         {
             IEnumerable<TimeSeries> found;
@@ -234,7 +245,7 @@ namespace Cognite.Extensions
             CogniteError idError, nameError;
             (toCreate, idError, nameError) = Sanitation.CleanTimeSeriesRequest(toCreate);
 
-            var result = await CreateTimeSeriesHandleErrors(client, toCreate, true, token);
+            var result = await CreateTimeSeriesHandleErrors(client, toCreate, retryMode, token);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
             if (idError != null || nameError != null)
@@ -246,7 +257,7 @@ namespace Cognite.Extensions
                 result.Errors = errors;
             }
 
-            if (!result.Errors?.Any() ?? false) return result;
+            if (!result.Errors?.Any() ?? false || ((int)retryMode & 1) != 0) return result;
 
             var duplicateErrors = result.Errors.Where(err =>
                 err.Resource == ResourceType.ExternalId
@@ -267,7 +278,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Found {cnt} duplicated timeseries, retrying", duplicatedIds.Count);
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var nextResult = await GetOrCreateTimeSeriesChunk(client, duplicatedIds, buildTimeSeries, backoff + 1, token);
+            var nextResult = await GetOrCreateTimeSeriesChunk(client, duplicatedIds,
+                buildTimeSeries, backoff + 1, retryMode, token);
             result = result.Merge(nextResult);
 
             return result;
@@ -276,7 +288,7 @@ namespace Cognite.Extensions
         private static async Task<CogniteResult<TimeSeries>> CreateTimeSeriesHandleErrors(
             TimeSeriesResource timeseries,
             IEnumerable<TimeSeriesCreate> toCreate,
-            bool failOnError,
+            RetryMode retryMode,
             CancellationToken token)
         {
             var errors = new List<CogniteError>();
@@ -285,7 +297,7 @@ namespace Cognite.Extensions
                 try
                 {
                     IEnumerable<TimeSeries> newTimeseries;
-                    using (CdfMetrics.TimeSeries.WithLabels("create"))
+                    using (CdfMetrics.TimeSeries.WithLabels("create").NewTimer())
                     {
                         newTimeseries = await timeseries.CreateAsync(toCreate, token);
                     }
@@ -298,12 +310,16 @@ namespace Cognite.Extensions
                     _logger.LogDebug("Failed to create {cnt} timeseries: {msg}",
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException(ex, RequestType.CreateTimeSeries);
-                    toCreate = ResultHandlers.CleanFromError(error, toCreate, failOnError);
-                    if (error.Type == ErrorType.FatalFailure && !failOnError)
+                    errors.Add(error);
+                    if (error.Type == ErrorType.FatalFailure && ((int)retryMode & 4) != 0)
                     {
                         await Task.Delay(1000);
                     }
-                    errors.Add(error);
+                    else if (((int)retryMode & 2) == 0) break;
+                    else
+                    {
+                        toCreate = ResultHandlers.CleanFromError(error, toCreate);
+                    }
                 }
             }
             return new CogniteResult<TimeSeries>(errors, null);

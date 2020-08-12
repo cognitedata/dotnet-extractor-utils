@@ -105,7 +105,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureEventsExistsAsync(newEvents, false, source.Token);
+                    await cogniteDestination.EnsureEventsExistsAsync(newEvents, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredEvents
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
