@@ -29,6 +29,8 @@ namespace Cognite.Extensions
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
+        /// Tries to create the assets and returns when all are created or have been removed
+        /// due to issues with the request (missing parent, duplicated externalId or missing dataset)
         /// </summary>
         /// <param name="timeSeries">Cognite timeseries resource</param>
         /// <param name="externalIds">External Ids</param>
@@ -57,6 +59,8 @@ namespace Cognite.Extensions
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
+        /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
+        /// legacy name, or missing dataSetId, they will be removed before retrying.
         /// </summary>
         /// <param name="timeSeries">Cognite client</param>
         /// <param name="externalIds">External Ids</param>
@@ -102,8 +106,9 @@ namespace Cognite.Extensions
         }
         /// <summary>
         /// Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
-        /// Tries to create the time series and returns when all are created or reported as 
-        /// duplicates (already exist in CDF)
+        /// Tries to create the time series and returns when all are created or have been removed
+        /// due to issues with the request (missing asset, duplicated externalId, duplicated legacyName
+        /// or missing dataset)
         /// </summary>
         /// <param name="timeseries">Cognite client</param>
         /// <param name="timeSeriesToEnsure">List of CogniteSdk TimeSeriesCreate objects</param>

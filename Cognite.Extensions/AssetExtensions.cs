@@ -28,6 +28,8 @@ namespace Cognite.Extensions
         /// If one or more do not exist, use the <paramref name="buildAssets"/> function to construct
         /// the missing asset objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
+        /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
+        /// they will be removed before retrying.
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="externalIds">External Ids</param>
@@ -55,6 +57,8 @@ namespace Cognite.Extensions
         /// If one or more do not exist, use the <paramref name="buildAssets"/> function to construct
         /// the missing asset objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
+        /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
+        /// they will be removed before retrying.
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="externalIds">External Ids</param>
@@ -106,8 +110,8 @@ namespace Cognite.Extensions
         }
         /// <summary>
         /// Ensures that all assets in <paramref name="assetsToEnsure"/> exist in CDF.
-        /// Tries to create the assets and returns when all are created or reported as 
-        /// duplicates (already exist in CDF)
+        /// Tries to create the assets and returns when all are created or have been removed
+        /// due to issues with the request (missing parent, duplicated externalId or missing dataset)
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="assetsToEnsure">List of AssetCreate objects</param>

@@ -29,6 +29,8 @@ namespace Cognite.Extensions
         /// If one or more do not exist, use the <paramref name="buildEvents"/> function to construct
         /// the missing event objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
+        /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+        /// they will be removed before retrying.
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="externalIds">External Ids</param>
@@ -55,7 +57,9 @@ namespace Cognite.Extensions
         /// Get or create the events with the provided <paramref name="externalIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildEvents"/> function to construct
         /// the missing event objects and upload them to CDF using the chunking of items and throttling
-        /// passed as parameters
+        /// passed as parameters.
+        /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+        /// they will be removed before retrying.
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="externalIds">External Ids</param>
@@ -161,8 +165,8 @@ namespace Cognite.Extensions
         }
         /// <summary>
         /// Ensures that all events in <paramref name="events"/> exist in CDF.
-        /// Tries to create the events and returns when all are created or reported as 
-        /// duplicates (already exist in CDF)
+        /// Tries to create the events and returns when all are created or removed
+        /// due to a handled error (missing asset ids, duplicated in CDF, etc.)
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="events">List of CogniteSdk EventCreate objects</param>

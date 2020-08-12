@@ -59,7 +59,9 @@ namespace Cognite.Extractor.Utils
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
-        /// against CDF 
+        /// against CDF
+        /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
+        /// legacy name, or missing dataSetId, they will be removed before retrying.
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Function that builds CogniteSdk TimeSeriesCreate objects</param>
@@ -83,7 +85,9 @@ namespace Cognite.Extractor.Utils
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
-        /// against CDF 
+        /// against CDF
+        /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
+        /// legacy name, or missing dataSetId, they will be removed before retrying.
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Async function that builds CogniteSdk TimeSeriesCreate objects</param>
@@ -104,9 +108,10 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
-        /// Tries to create the time series and returns when all are created or reported as 
-        /// duplicates (already exist in CDF)
+        /// Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
+        /// Tries to create the time series and returns when all are created or have been removed
+        /// due to issues with the request (missing asset, duplicated externalId, duplicated legacyName
+        /// or missing dataset)
         /// </summary>
         /// <param name="timeSeries">List of CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="failOnError">If true, return if a fatal error occurs,
@@ -134,7 +139,9 @@ namespace Cognite.Extractor.Utils
         /// If one or more do not exist, use the <paramref name="buildAssets"/> function to construct
         /// the missing asset objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
-        /// against CDF 
+        /// against CDF
+        /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
+        /// they will be removed before retrying.
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Function that builds CogniteSdk AssetCreate objects</param>
@@ -158,7 +165,9 @@ namespace Cognite.Extractor.Utils
         /// If one or more do not exist, use the <paramref name="buildAssets"/> function to construct
         /// the missing asset objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
-        /// against CDF 
+        /// against CDF
+        /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
+        /// they will be removed before retrying.
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Async function that builds CogniteSdk AssetCreate objects</param>
@@ -179,9 +188,9 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Ensures that all assets in <paramref name="assets"/> exist in CDF.
-        /// Tries to create the assets and returns when all are created or reported as 
-        /// duplicates (already exist in CDF)
+        /// Ensures that all assets in <paramref name="assetsToEnsure"/> exist in CDF.
+        /// Tries to create the assets and returns when all are created or have been removed
+        /// due to issues with the request (missing parent, duplicated externalId or missing dataset)
         /// </summary>
         /// <param name="assets">List of CogniteSdk AssetCreate objects</param>
         /// <param name="failOnError">If true, return if a fatal error occurs,
@@ -508,7 +517,9 @@ namespace Cognite.Extractor.Utils
         /// If one or more do not exist, use the <paramref name="buildEvents"/> function to construct
         /// the missing event objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
-        /// against CDF 
+        /// against CDF
+        /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+        /// they will be removed before retrying.
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Function that builds CogniteSdk EventCreate objects</param>
@@ -532,7 +543,9 @@ namespace Cognite.Extractor.Utils
         /// If one or more do not exist, use the <paramref name="buildEvents"/> function to construct
         /// the missing event objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
-        /// against CDF 
+        /// against CDF
+        /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+        /// they will be removed before retrying.
         /// </summary>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
@@ -554,8 +567,8 @@ namespace Cognite.Extractor.Utils
 
         /// <summary>
         /// Ensures that all events in <paramref name="events"/> exist in CDF.
-        /// Tries to create the events and returns when all are created or reported as 
-        /// duplicates (already exist in CDF)
+        /// Tries to create the events and returns when all are created or removed
+        /// due to a handled error (missing asset ids, duplicated in CDF, etc.)
         /// </summary>
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
         /// <param name="failOnError">If true, return if a fatal error occurs,

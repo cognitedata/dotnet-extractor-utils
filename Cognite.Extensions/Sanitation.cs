@@ -223,7 +223,11 @@ namespace Cognite.Extensions
             evt.Metadata = evt.Metadata?.SanitizeMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventmetadataMaxBytes);
         }
 
-
+        /// <summary>
+        /// Clean list of AssetCreate objects, sanitizing each and removing any duplicates.
+        /// </summary>
+        /// <param name="assets">AssetCreate request to clean</param>
+        /// <returns>Cleaned create request and an optional error if any ids were duplicated</returns>
         public static (IEnumerable<AssetCreate>, CogniteError) CleanAssetRequest(IEnumerable<AssetCreate> assets)
         {
             var result = new List<AssetCreate>();
@@ -259,6 +263,11 @@ namespace Cognite.Extensions
             return (result, error);
         }
 
+        /// <summary>
+        /// Clean list of TimeSeriesCreate objects, sanitizing each and removing any duplicates.
+        /// </summary>
+        /// <param name="timeseries">TimeSeriesCreate request to clean</param>
+        /// <returns>Cleaned create request and optional errors for duplicated ids and legacyNames</returns>
         public static (IEnumerable<TimeSeriesCreate>, CogniteError idError, CogniteError nameError) CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate> timeseries)
         {
             var result = new List<TimeSeriesCreate>();
@@ -317,6 +326,11 @@ namespace Cognite.Extensions
             return (result, idError, nameError);
         }
 
+        /// <summary>
+        /// Clean list of EventCreate objects, sanitizing each and removing any duplicates.
+        /// </summary>
+        /// <param name="events">EventCreate request to clean</param>
+        /// <returns>Cleaned request and optional error if any ids were duplicated</returns>
         public static (IEnumerable<EventCreate>, CogniteError) CleanEventRequest(IEnumerable<EventCreate> events)
         {
             var result = new List<EventCreate>();

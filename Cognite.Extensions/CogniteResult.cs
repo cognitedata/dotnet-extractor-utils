@@ -156,6 +156,12 @@ namespace Cognite.Extensions
             }
         }
 
+        /// <summary>
+        /// Parse exception into CogniteError which describes the error in detail.
+        /// </summary>
+        /// <param name="ex">Exception to parse</param>
+        /// <param name="type">Request type</param>
+        /// <returns>CogniteError representation of the exception</returns>
         public static CogniteError ParseException(Exception ex, RequestType type)
         {
             if (!(ex is ResponseException rex))
@@ -185,6 +191,18 @@ namespace Cognite.Extensions
             return result;
         }
 
+        /// <summary>
+        /// Clean list of AssetCreate objects based on CogniteError object
+        /// </summary>
+        /// <param name="resource">CogniteSdk assets resource</param>
+        /// <param name="error">Error that occured with a previous push</param>
+        /// <param name="assets">Assets to clean</param>
+        /// <param name="assetChunkSize">Maximum number of ids per asset read</param>
+        /// <param name="assetThrottleSize">Maximum number of parallel asset read requests</param>
+        /// <param name="emptyOnError">True if a fatal error should remove all entries,
+        /// if this is false, a broken connection or similar may cause very long loops.</param>
+        /// <param name="token"></param>
+        /// <returns>Assets that are not affected by the error</returns>
         public static async Task<IEnumerable<AssetCreate>> CleanFromError(
             AssetsResource resource,
             CogniteError error,
@@ -235,6 +253,14 @@ namespace Cognite.Extensions
             return ret;
         }
 
+        /// <summary>
+        /// Clean list of TimeSeriesCreate objects based on CogniteError
+        /// </summary>
+        /// <param name="error">Error that occured with a previous push</param>
+        /// <param name="timeseries">Timeseries to clean</param>
+        /// <param name="emptyOnError">True if a fatal error should remove all entries,
+        /// if this is false, a broken connection or similar may cause very long loops.</param>
+        /// <returns>TimeSeries that are not affected by the error</returns>
         public static IEnumerable<TimeSeriesCreate> CleanFromError(
             CogniteError error,
             IEnumerable<TimeSeriesCreate> timeseries,
@@ -273,6 +299,14 @@ namespace Cognite.Extensions
             return ret;
         }
 
+        /// <summary>
+        /// Clean list of EventCreate objects based on CogniteError
+        /// </summary>
+        /// <param name="error">Error that occured with a previous push</param>
+        /// <param name="events">Events to clean</param>
+        /// <param name="emptyOnError">True if a fatal error should remove all entries,
+        /// if this is false, a broken connection or similar may cause very long loops.</param>
+        /// <returns>Events that are not affected by the error</returns>
         public static IEnumerable<EventCreate> CleanFromError(
             CogniteError error,
             IEnumerable<EventCreate> events,
@@ -344,14 +378,33 @@ namespace Cognite.Extensions
         }
     }
 
+    /// <summary>
+    /// Represents the result of one or more pushes to CDF.
+    /// Contains a list of errors, one for each failed push, and potentially pre-push santiation.
+    /// </summary>
     public class CogniteResult
     {
+        /// <summary>
+        /// Errors that have occured in this series of requests
+        /// </summary>
         public IEnumerable<CogniteError> Errors { get; set; }
+        /// <summary>
+        /// True if nothing went wrong
+        /// </summary>
         public bool IsAllGood => !Errors?.Any() ?? true;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="errors">Initial list of errors</param>
         public CogniteResult(IEnumerable<CogniteError> errors)
         {
             Errors = errors;
         }
+        /// <summary>
+        /// Return a new CogniteResult that contains errors from both
+        /// </summary>
+        /// <param name="other">CogniteResult to merge with</param>
+        /// <returns>A new result containing the CogniteErrors from both results</returns>
         public CogniteResult Merge(CogniteResult other)
         {
             if (other == null) return this;
@@ -365,13 +418,32 @@ namespace Cognite.Extensions
         }
     }
 
+    /// <summary>
+    /// Represents the result of one or more pushes to CDF.
+    /// Contains a list of errors, one for each failed push, and potentially pre-push santiation,
+    /// as well as a list of result objects.
+    /// </summary>
+    /// <typeparam name="TResult"></typeparam>
     public class CogniteResult<TResult> : CogniteResult
     {
+        /// <summary>
+        /// A list of results
+        /// </summary>
         public IEnumerable<TResult> Results { get; set; }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="errors">Initial list of errors</param>
+        /// <param name="results">Initial list of results</param>
         public CogniteResult(IEnumerable<CogniteError> errors, IEnumerable<TResult> results) : base(errors)
         {
             Results = results;
         }
+        /// <summary>
+        /// Return a new CogniteResult that contains errors and results from both
+        /// </summary>
+        /// <param name="other">CogniteResult to merge with</param>
+        /// <returns>A new result containing errors and results from both</returns>
         public CogniteResult<TResult> Merge(CogniteResult<TResult> other)
         {
             if (other == null) return this;
@@ -389,39 +461,121 @@ namespace Cognite.Extensions
         }
     }
 
+    /// <summary>
+    /// Represents an error that occured on a push to CDF, or
+    /// in pre-push sanitation.
+    /// </summary>
     public class CogniteError
     {
+        /// <summary>
+        /// Type of error, either pre-existing in CDF, duplicated in request,
+        /// missing from CDF, or a fatal error.
+        /// </summary>
         public ErrorType Type { get; set; } = ErrorType.FatalFailure;
+        /// <summary>
+        /// Affected resource if pre-existing, missing or duplicated.
+        /// </summary>
         public ResourceType Resource { get; set; } = ResourceType.None;
+        /// <summary>
+        /// Values of the affected resources as CogniteSdk identities.
+        /// </summary>
         public IEnumerable<Identity> Values { get; set; } = null;
+        /// <summary>
+        /// Exception that caused this error, if any.
+        /// </summary>
         public Exception Exception { get; set; }
+        /// <summary>
+        /// Message describing this error.
+        /// </summary>
         public string Message { get; set; }
+        /// <summary>
+        /// HTTP status code, if any.
+        /// </summary>
         public int Status { get; set; }
+        /// <summary>
+        /// False if this needs further work in order to complete,
+        /// because the error message from CDF does not contain sufficient
+        /// information.
+        /// </summary>
         public bool Complete { get; set; } = true;
     }
 
+    /// <summary>
+    /// General type of error
+    /// </summary>
     public enum ErrorType
     {
+        /// <summary>
+        /// Items already exist in CDF
+        /// </summary>
         ItemExists,
+        /// <summary>
+        /// Items are missing from CDF
+        /// </summary>
         ItemMissing,
+        /// <summary>
+        /// Items were duplicated in request
+        /// </summary>
         ItemDuplicated,
+        /// <summary>
+        /// Something else happened that caused the request to fail
+        /// </summary>
         FatalFailure = -1
     }
+    /// <summary>
+    /// Type of CDF attribute that caused this error
+    /// </summary>
     public enum ResourceType
     {
+        /// <summary>
+        /// Cognite internal id
+        /// </summary>
         Id,
+        /// <summary>
+        /// Cognite external id
+        /// </summary>
         ExternalId,
+        /// <summary>
+        /// Asset id on a timeseries or event
+        /// </summary>
         AssetId,
+        /// <summary>
+        /// Parent internal id on an asset
+        /// </summary>
         ParentId,
+        /// <summary>
+        /// Parent external id on an asset
+        /// </summary>
         ParentExternalId,
+        /// <summary>
+        /// Data set id on an asset, event or timeseries
+        /// </summary>
         DataSetId,
+        /// <summary>
+        /// LegacyName on a timeseries
+        /// </summary>
         LegacyName,
+        /// <summary>
+        /// None or unknown
+        /// </summary>
         None = -1
     }
+    /// <summary>
+    /// Type of request that caused an error
+    /// </summary>
     public enum RequestType
     {
+        /// <summary>
+        /// Create assets
+        /// </summary>
         CreateAssets,
+        /// <summary>
+        /// Create timeseries
+        /// </summary>
         CreateTimeSeries,
+        /// <summary>
+        /// Create events
+        /// </summary>
         CreateEvents
     }
 }
