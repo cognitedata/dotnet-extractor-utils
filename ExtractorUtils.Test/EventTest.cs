@@ -1,4 +1,5 @@
-﻿using Cognite.Extractor.Common;
+﻿using Cognite.Extensions;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
@@ -93,6 +94,7 @@ namespace ExtractorUtils.Test
                 var ts = await cogniteDestination.GetOrCreateEventsAsync(
                     ids,
                     createFunction,
+                    RetryMode.OnErrorKeepDuplicates,
                     CancellationToken.None
                 );
                 Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
@@ -105,7 +107,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureEventsExistsAsync(newEvents, source.Token);
+                    await cogniteDestination.EnsureEventsExistsAsync(newEvents, RetryMode.OnFatal, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredEvents
                     .Where(kvp => ids.Contains(kvp.Key)).Count());

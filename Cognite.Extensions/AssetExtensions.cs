@@ -29,15 +29,15 @@ namespace Cognite.Extensions
         /// the missing asset objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
-        /// they will be removed before retrying.
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>.
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Async function that builds AssetCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static Task<CogniteResult<Asset>> GetOrCreateAsync(
             this AssetsResource assets,
@@ -45,14 +45,14 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             Task<IEnumerable<AssetCreate>> asyncBuildAssets(IEnumerable<string> ids)
             {
                 return Task.FromResult(buildAssets(ids));
             }
-            return assets.GetOrCreateAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, token, retryMode);
+            return assets.GetOrCreateAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, retryMode, token);
         }
         /// <summary>
         /// Get or create the assets with the provided <paramref name="externalIds"/> exist in CDF.
@@ -60,15 +60,15 @@ namespace Cognite.Extensions
         /// the missing asset objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
-        /// they will be removed before retrying.
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>.
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Async function that builds AssetCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static async Task<CogniteResult<Asset>> GetOrCreateAsync(
             this AssetsResource assets,
@@ -76,8 +76,8 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             var chunks = externalIds
                 .ChunkBy(chunkSize)
@@ -109,22 +109,24 @@ namespace Cognite.Extensions
         /// <summary>
         /// Ensures that all assets in <paramref name="assetsToEnsure"/> exist in CDF.
         /// Tries to create the assets and returns when all are created or have been removed
-        /// due to issues with the request (missing parent, duplicated externalId or missing dataset)
+        /// due to issues with the request.
+        /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>.
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="assetsToEnsure">List of AssetCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
+        /// <param name="token">Cancellation token</param>
         public static async Task<CogniteResult> EnsureExistsAsync(
             this AssetsResource assets,
             IEnumerable<AssetCreate> assetsToEnsure,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnFatal)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             CogniteError prePushError;
             (assetsToEnsure, prePushError) = Sanitation.CleanAssetRequest(assetsToEnsure);

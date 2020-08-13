@@ -29,16 +29,16 @@ namespace Cognite.Extensions
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
-        /// Tries to create the assets and returns when all are created or have been removed
-        /// due to issues with the request (missing parent, duplicated externalId or missing dataset)
+        /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
+        /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
         /// <param name="timeSeries">Cognite timeseries resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             this TimeSeriesResource timeSeries,
@@ -46,15 +46,15 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             Task<IEnumerable<TimeSeriesCreate>> asyncBuildTimeSeries(IEnumerable<string> ids)
             {
                 return Task.FromResult(buildTimeSeries(ids));
             }
             return timeSeries.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries,
-                chunkSize, throttleSize, token, retryMode);
+                chunkSize, throttleSize, retryMode, token);
         }
 
         /// <summary>
@@ -63,15 +63,15 @@ namespace Cognite.Extensions
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
-        /// legacy name, or missing dataSetId, they will be removed before retrying.
+        /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
         /// <param name="timeSeries">Cognite client</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Async function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             this TimeSeriesResource timeSeries,
@@ -79,8 +79,8 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             var chunks = externalIds
                 .ChunkBy(chunkSize)
@@ -113,24 +113,24 @@ namespace Cognite.Extensions
         /// <summary>
         /// Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
         /// Tries to create the time series and returns when all are created or have been removed
-        /// due to issues with the request (missing asset, duplicated externalId, duplicated legacyName
-        /// or missing dataset)
+        /// due to issues with the request.
+        /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
+        /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
         /// <param name="timeseries">Cognite client</param>
         /// <param name="timeSeriesToEnsure">List of CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="failOnError">If true, return if a fatal error occurs</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
+        /// <param name="token">Cancellation token</param>
         public static async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
             this TimeSeriesResource timeseries,
             IEnumerable<TimeSeriesCreate> timeSeriesToEnsure,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnFatal)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             CogniteError idError, nameError;
             (timeSeriesToEnsure, idError, nameError) = Sanitation.CleanTimeSeriesRequest(timeSeriesToEnsure);

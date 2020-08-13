@@ -30,15 +30,15 @@ namespace Cognite.Extensions
         /// the missing event objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
-        /// they will be removed before retrying.
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static Task<CogniteResult<Event>> GetOrCreateAsync(
             this EventsResource resource,
@@ -46,14 +46,14 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             Task<IEnumerable<EventCreate>> asyncBuildEvents(IEnumerable<string> ids)
             {
                 return Task.FromResult(buildEvents(ids));
             }
-            return resource.GetOrCreateAsync(externalIds, asyncBuildEvents, chunkSize, throttleSize, token, retryMode);
+            return resource.GetOrCreateAsync(externalIds, asyncBuildEvents, chunkSize, throttleSize, retryMode, token);
         }
         /// <summary>
         /// Get or create the events with the provided <paramref name="externalIds"/> exist in CDF.
@@ -61,15 +61,15 @@ namespace Cognite.Extensions
         /// the missing event objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters.
         /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
-        /// they will be removed before retrying.
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static async Task<CogniteResult<Event>> GetOrCreateAsync(
             this EventsResource resource,
@@ -77,8 +77,8 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnErrorKeepDuplicates)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             var chunks = externalIds
                 .ChunkBy(chunkSize)
@@ -111,22 +111,24 @@ namespace Cognite.Extensions
         /// <summary>
         /// Ensures that all events in <paramref name="events"/> exist in CDF.
         /// Tries to create the events and returns when all are created or removed
-        /// due to a handled error (missing asset ids, duplicated in CDF, etc.)
+        /// due to a handled error.
+        /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
+        /// <param name="token">Cancellation token</param>
         public static async Task<CogniteResult> EnsureExistsAsync(
             this EventsResource resource,
             IEnumerable<EventCreate> events,
             int chunkSize,
             int throttleSize,
-            CancellationToken token,
-            RetryMode retryMode = RetryMode.OnFatal)
+            RetryMode retryMode,
+            CancellationToken token)
         {
             CogniteError prePushError;
             (events, prePushError) = Sanitation.CleanEventRequest(events);
