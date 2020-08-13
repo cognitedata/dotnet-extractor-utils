@@ -234,15 +234,19 @@ namespace Cognite.Extensions
                 {
                     case ResourceType.DataSetId:
                         if (!asset.DataSetId.HasValue || !items.Contains(Identity.Create(asset.DataSetId.Value))) ret.Add(asset);
+                        else CdfMetrics.AssetSkipped.Inc();
                         break;
                     case ResourceType.ExternalId:
                         if (asset.ExternalId == null || !items.Contains(Identity.Create(asset.ExternalId))) ret.Add(asset);
+                        else CdfMetrics.AssetSkipped.Inc();
                         break;
                     case ResourceType.ParentExternalId:
                         if (asset.ParentExternalId == null || !items.Contains(Identity.Create(asset.ParentExternalId))) ret.Add(asset);
+                        else CdfMetrics.AssetSkipped.Inc();
                         break;
                     case ResourceType.ParentId:
                         if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) ret.Add(asset);
+                        else CdfMetrics.AssetSkipped.Inc();
                         break;
                 }
             }
@@ -276,15 +280,19 @@ namespace Cognite.Extensions
                 {
                     case ResourceType.DataSetId:
                         if (!ts.DataSetId.HasValue || !items.Contains(Identity.Create(ts.DataSetId.Value))) ret.Add(ts);
+                        else CdfMetrics.TimeSeriesSkipped.Inc();
                         break;
                     case ResourceType.ExternalId:
                         if (ts.ExternalId == null || !items.Contains(Identity.Create(ts.ExternalId))) ret.Add(ts);
+                        else CdfMetrics.TimeSeriesSkipped.Inc();
                         break;
                     case ResourceType.AssetId:
                         if (!ts.AssetId.HasValue || !items.Contains(Identity.Create(ts.AssetId.Value))) ret.Add(ts);
+                        else CdfMetrics.TimeSeriesSkipped.Inc();
                         break;
                     case ResourceType.LegacyName:
                         if (ts.LegacyName == null || !items.Contains(Identity.Create(ts.LegacyName))) ret.Add(ts);
+                        else CdfMetrics.TimeSeriesSkipped.Inc();
                         break;
                 }
             }
@@ -320,12 +328,15 @@ namespace Cognite.Extensions
                 {
                     case ResourceType.DataSetId:
                         if (!evt.DataSetId.HasValue || !items.Contains(Identity.Create(evt.DataSetId.Value))) ret.Add(evt);
+                        else CdfMetrics.EventsSkipped.Inc();
                         break;
                     case ResourceType.ExternalId:
                         if (evt.ExternalId == null || !items.Contains(Identity.Create(evt.ExternalId))) ret.Add(evt);
+                        else CdfMetrics.EventsSkipped.Inc();
                         break;
                     case ResourceType.AssetId:
                         if (evt.AssetIds == null || !evt.AssetIds.Any(id => items.Contains(Identity.Create(id)))) ret.Add(evt);
+                        else CdfMetrics.EventsSkipped.Inc();
                         break;
                 }
             }
