@@ -643,11 +643,15 @@ namespace Cognite.Extensions
         /// </summary>
         CreateEvents
     }
+    
 
     /// <summary>
-    /// When to retry a request, not all of these may be valid for each option.
+    /// When to retry a request
+    /// For convenience, bit 0 indicates keeping duplicates,
+    /// bit 1 indicates retrying on errors,
+    /// bit 2 indicates retrying on fatal errors
     /// </summary>
-    public enum RetryMode : int
+    public enum RetryMode
     {
         /// <summary>
         /// Never retry, always stop after the first failure,
@@ -668,10 +672,10 @@ namespace Cognite.Extensions
         /// <summary>
         /// Same as OnError, but keep retrying if a fatal error occurs
         /// </summary>
-        OnFatal = 4,
+        OnFatal = 6,
         /// <summary>
         /// Same as OnErrorKeepDuplicates, but keep retrying if a fatal error occurs
         /// </summary>
-        OnFatalKeepDuplicates = 5
+        OnFatalKeepDuplicates = 7
     }
 }
