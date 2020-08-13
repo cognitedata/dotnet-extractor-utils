@@ -227,28 +227,39 @@ namespace Cognite.Extensions
             var items = new HashSet<Identity>(error.Values, new IdentityComparer());
 
             var ret = new List<AssetCreate>();
+            var skipped = new List<object>();
 
             foreach (var asset in assets)
             {
+                bool added = false;
                 switch (error.Resource)
                 {
                     case ResourceType.DataSetId:
-                        if (!asset.DataSetId.HasValue || !items.Contains(Identity.Create(asset.DataSetId.Value))) ret.Add(asset);
-                        else CdfMetrics.AssetSkipped.Inc();
+                        if (!asset.DataSetId.HasValue || !items.Contains(Identity.Create(asset.DataSetId.Value))) added = true;
                         break;
                     case ResourceType.ExternalId:
-                        if (asset.ExternalId == null || !items.Contains(Identity.Create(asset.ExternalId))) ret.Add(asset);
-                        else CdfMetrics.AssetSkipped.Inc();
+                        if (asset.ExternalId == null || !items.Contains(Identity.Create(asset.ExternalId))) added = true;
                         break;
                     case ResourceType.ParentExternalId:
-                        if (asset.ParentExternalId == null || !items.Contains(Identity.Create(asset.ParentExternalId))) ret.Add(asset);
-                        else CdfMetrics.AssetSkipped.Inc();
+                        if (asset.ParentExternalId == null || !items.Contains(Identity.Create(asset.ParentExternalId))) added = true;
                         break;
                     case ResourceType.ParentId:
-                        if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) ret.Add(asset);
-                        else CdfMetrics.AssetSkipped.Inc();
+                        if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) added = true;
                         break;
                 }
+                if (added)
+                {
+                    ret.Add(asset);
+                }
+                else
+                {
+                    CdfMetrics.AssetsSkipped.Inc();
+                    skipped.Add(asset);
+                }
+            }
+            if (skipped.Any())
+            {
+                error.Skipped = skipped;
             }
             return ret;
         }
@@ -273,28 +284,39 @@ namespace Cognite.Extensions
             var items = new HashSet<Identity>(error.Values, new IdentityComparer());
 
             var ret = new List<TimeSeriesCreate>();
+            var skipped = new List<object>();
 
             foreach (var ts in timeseries)
             {
+                bool added = false;
                 switch (error.Resource)
                 {
                     case ResourceType.DataSetId:
-                        if (!ts.DataSetId.HasValue || !items.Contains(Identity.Create(ts.DataSetId.Value))) ret.Add(ts);
-                        else CdfMetrics.TimeSeriesSkipped.Inc();
+                        if (!ts.DataSetId.HasValue || !items.Contains(Identity.Create(ts.DataSetId.Value))) added = true;
                         break;
                     case ResourceType.ExternalId:
-                        if (ts.ExternalId == null || !items.Contains(Identity.Create(ts.ExternalId))) ret.Add(ts);
-                        else CdfMetrics.TimeSeriesSkipped.Inc();
+                        if (ts.ExternalId == null || !items.Contains(Identity.Create(ts.ExternalId))) added = true;
                         break;
                     case ResourceType.AssetId:
-                        if (!ts.AssetId.HasValue || !items.Contains(Identity.Create(ts.AssetId.Value))) ret.Add(ts);
-                        else CdfMetrics.TimeSeriesSkipped.Inc();
+                        if (!ts.AssetId.HasValue || !items.Contains(Identity.Create(ts.AssetId.Value))) added = true;
                         break;
                     case ResourceType.LegacyName:
-                        if (ts.LegacyName == null || !items.Contains(Identity.Create(ts.LegacyName))) ret.Add(ts);
-                        else CdfMetrics.TimeSeriesSkipped.Inc();
+                        if (ts.LegacyName == null || !items.Contains(Identity.Create(ts.LegacyName))) added = true;
                         break;
                 }
+                if (added)
+                {
+                    ret.Add(ts);
+                }
+                else
+                {
+                    CdfMetrics.TimeSeriesSkipped.Inc();
+                    skipped.Add(ts);
+                }
+            }
+            if (skipped.Any())
+            {
+                error.Skipped = skipped;
             }
             return ret;
         }
@@ -321,24 +343,38 @@ namespace Cognite.Extensions
             var items = new HashSet<Identity>(error.Values, new IdentityComparer());
 
             var ret = new List<EventCreate>();
+            var skipped = new List<object>();
 
             foreach (var evt in events)
             {
+                bool added = false;
                 switch (error.Resource)
                 {
                     case ResourceType.DataSetId:
-                        if (!evt.DataSetId.HasValue || !items.Contains(Identity.Create(evt.DataSetId.Value))) ret.Add(evt);
+                        if (!evt.DataSetId.HasValue || !items.Contains(Identity.Create(evt.DataSetId.Value))) added = true;
                         else CdfMetrics.EventsSkipped.Inc();
                         break;
                     case ResourceType.ExternalId:
-                        if (evt.ExternalId == null || !items.Contains(Identity.Create(evt.ExternalId))) ret.Add(evt);
+                        if (evt.ExternalId == null || !items.Contains(Identity.Create(evt.ExternalId))) added = true;
                         else CdfMetrics.EventsSkipped.Inc();
                         break;
                     case ResourceType.AssetId:
-                        if (evt.AssetIds == null || !evt.AssetIds.Any(id => items.Contains(Identity.Create(id)))) ret.Add(evt);
-                        else CdfMetrics.EventsSkipped.Inc();
+                        if (evt.AssetIds == null || !evt.AssetIds.Any(id => items.Contains(Identity.Create(id)))) added = true;
                         break;
                 }
+                if (added)
+                {
+                    ret.Add(evt);
+                }
+                else
+                {
+                    CdfMetrics.EventsSkipped.Inc();
+                    skipped.Add(evt);
+                }
+            }
+            if (skipped.Any())
+            {
+                error.Skipped = skipped;
             }
             return ret;
         }
@@ -505,6 +541,10 @@ namespace Cognite.Extensions
         /// Values of the affected resources as CogniteSdk identities.
         /// </summary>
         public IEnumerable<Identity> Values { get; set; } = null;
+        /// <summary>
+        /// Input items skipped if the request was cleaned using this error.
+        /// </summary>
+        public IEnumerable<object> Skipped { get; set; } = null;
         /// <summary>
         /// Exception that caused this error, if any.
         /// </summary>

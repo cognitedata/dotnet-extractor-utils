@@ -15,7 +15,7 @@ namespace Cognite.Extensions
         public static Summary Raw { get; } = Metrics.CreateSummary("extractor_utils_cdf_raw_requests",
             "Number and duration of raw requests to CDF", "endpoint");
 
-        public static Counter AssetSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_assets_skipped",
+        public static Counter AssetsSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_assets_skipped",
             "Number of assets skipped due to errors");
         public static Counter TimeSeriesSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_timeseries_skipped",
             "Number of timeseries skipped due to errors");
