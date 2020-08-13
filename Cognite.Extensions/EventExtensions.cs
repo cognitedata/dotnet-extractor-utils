@@ -122,7 +122,7 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
-        public static async Task<CogniteResult> EnsureExistsAsync(
+        public static async Task<CogniteResult<Event>> EnsureExistsAsync(
             this EventsResource resource,
             IEnumerable<EventCreate> events,
             int chunkSize,
@@ -140,13 +140,13 @@ namespace Cognite.Extensions
             _logger.LogDebug("Ensuring events. Number of events: {Number}. Number of chunks: {Chunks}", events.Count(), chunks.Count());
 
             int size = chunks.Count + (prePushError != null ? 1 : 0);
-            var results = new CogniteResult[size];
+            var results = new CogniteResult<Event>[size];
             if (prePushError != null)
             {
-                results[size - 1] = new CogniteResult(new[] { prePushError });
+                results[size - 1] = new CogniteResult<Event>(new[] { prePushError }, null);
                 if (size == 1) return results[size - 1];
             }
-            if (!results.Any()) return new CogniteResult(null);
+            if (!results.Any()) return new CogniteResult<Event>(null, null);
 
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
@@ -165,7 +165,7 @@ namespace Cognite.Extensions
                 },
                 token);
 
-            return CogniteResult.Merge(results);
+            return CogniteResult<Event>.Merge(results);
         }
 
         private static async Task<CogniteResult<Event>> GetOrCreateEventsChunk(

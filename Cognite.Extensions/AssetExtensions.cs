@@ -120,7 +120,7 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
-        public static async Task<CogniteResult> EnsureExistsAsync(
+        public static async Task<CogniteResult<Asset>> EnsureExistsAsync(
             this AssetsResource assets,
             IEnumerable<AssetCreate> assetsToEnsure,
             int chunkSize,
@@ -136,13 +136,13 @@ namespace Cognite.Extensions
                 .ToList();
             _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assetsToEnsure.Count(), chunks.Count());
             int size = chunks.Count + (prePushError != null ? 1 : 0);
-            var results = new CogniteResult[size];
+            var results = new CogniteResult<Asset>[size];
             if (prePushError != null)
             {
-                results[size - 1] = new CogniteResult(new[] { prePushError });
+                results[size - 1] = new CogniteResult<Asset>(new[] { prePushError }, null);
                 if (size == 1) return results[size - 1];
             }
-            if (size == 0) return new CogniteResult(null);
+            if (size == 0) return new CogniteResult<Asset>(null, null);
 
             var generators = chunks
                 .Select<IEnumerable<AssetCreate>, Func<Task>>(
@@ -161,7 +161,7 @@ namespace Cognite.Extensions
                 },
                 token);
 
-            return CogniteResult.Merge(results);
+            return CogniteResult<Asset>.Merge(results);
         }
 
         private static async Task<CogniteResult<Asset>> GetOrCreateAssetsChunk(

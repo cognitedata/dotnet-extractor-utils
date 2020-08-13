@@ -124,7 +124,7 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
-        public static async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
+        public static async Task<CogniteResult<TimeSeries>> EnsureTimeSeriesExistsAsync(
             this TimeSeriesResource timeseries,
             IEnumerable<TimeSeriesCreate> timeSeriesToEnsure,
             int chunkSize,
@@ -140,17 +140,17 @@ namespace Cognite.Extensions
                 .ToList();
 
             int size = chunks.Count + (idError != null || nameError != null ? 1 : 0);
-            var results = new CogniteResult[size];
+            var results = new CogniteResult<TimeSeries>[size];
 
             if (idError != null || nameError != null)
             {
                 var errors = new List<CogniteError>();
                 if (idError != null) errors.Add(idError);
                 if (nameError != null) errors.Add(nameError);
-                results[size - 1] = new CogniteResult(errors);
+                results[size - 1] = new CogniteResult<TimeSeries>(errors, null);
                 if (size == 1) return results[size - 1];
             }
-            if (size == 0) return new CogniteResult(null);
+            if (size == 0) return new CogniteResult<TimeSeries>(null, null);
 
             _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeriesToEnsure.Count(), chunks.Count());
             var generators = chunks
@@ -170,7 +170,7 @@ namespace Cognite.Extensions
                 },
                 token);
 
-            return CogniteResult.Merge(results);
+            return CogniteResult<TimeSeries>.Merge(results);
         }
 
         /// <summary>
