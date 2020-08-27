@@ -38,7 +38,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
         public static Task<CogniteResult<Asset>> GetOrCreateAsync(
             this AssetsResource assets,
             IEnumerable<string> externalIds,
@@ -69,7 +69,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
         public static async Task<CogniteResult<Asset>> GetOrCreateAsync(
             this AssetsResource assets,
             IEnumerable<string> externalIds,
@@ -112,6 +112,7 @@ namespace Cognite.Extensions
         /// due to issues with the request.
         /// If any items fail to be created due to missing parent, duplicated externalId or missing dataset
         /// they can be removed before retrying by setting <paramref name="retryMode"/>.
+        /// Assets will be returned in the same order as given in <paramref name="assetsToEnsure"/>.
         /// </summary>
         /// <param name="assets">Cognite assets resource</param>
         /// <param name="assetsToEnsure">List of AssetCreate objects</param>
@@ -120,6 +121,7 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created assets</returns>
         public static async Task<CogniteResult<Asset>> EnsureExistsAsync(
             this AssetsResource assets,
             IEnumerable<AssetCreate> assetsToEnsure,
@@ -200,7 +202,9 @@ namespace Cognite.Extensions
                 result.Errors = result.Errors == null ? new[] { prePushError } : result.Errors.Append(prePushError);
             }
 
-            if (!result.Errors?.Any() ?? false || ((int)retryMode & 1) != 0) return result;
+            if (!result.Errors?.Any() ?? false
+                || retryMode != RetryMode.OnErrorKeepDuplicates
+                && retryMode != RetryMode.OnFatalKeepDuplicates) return result;
 
             var duplicateErrors = result.Errors.Where(err =>
                 err.Resource == ResourceType.ExternalId
@@ -297,11 +301,13 @@ namespace Cognite.Extensions
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException(ex, RequestType.CreateAssets);
                     errors.Add(error);
-                    if (error.Type == ErrorType.FatalFailure && ((int)retryMode & 4) != 0)
+                    if (error.Type == ErrorType.FatalFailure
+                        && (retryMode == RetryMode.OnFatal
+                            || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000);
                     }
-                    else if (((int)retryMode & 2) == 0) break;
+                    else if (retryMode == RetryMode.None) break;
                     else
                     {
                         toCreate = await ResultHandlers.CleanFromError(assets, error, toCreate, 1000, 1, token);

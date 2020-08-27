@@ -39,7 +39,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
         public static Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             this TimeSeriesResource timeSeries,
             IEnumerable<string> externalIds,
@@ -72,7 +72,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
         public static async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             this TimeSeriesResource timeSeries,
             IEnumerable<string> externalIds,
@@ -116,6 +116,7 @@ namespace Cognite.Extensions
         /// due to issues with the request.
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
+        /// Timeseries will be returned in the same order as given in <paramref name="timeSeriesToEnsure"/>
         /// </summary>
         /// <param name="timeseries">Cognite client</param>
         /// <param name="timeSeriesToEnsure">List of CogniteSdk TimeSeriesCreate objects</param>
@@ -124,6 +125,7 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created timeseries</returns>
         public static async Task<CogniteResult<TimeSeries>> EnsureTimeSeriesExistsAsync(
             this TimeSeriesResource timeseries,
             IEnumerable<TimeSeriesCreate> timeSeriesToEnsure,
@@ -156,7 +158,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<TimeSeriesCreate>, Func<Task>>(
                 (chunk, idx) => async () => {
-                    var result = await CreateTimeSeriesHandleErrors(timeseries, timeSeriesToEnsure, retryMode, token);
+                    var result = await CreateTimeSeriesHandleErrors(timeseries, chunk, retryMode, token);
                     results[idx] = result;
                 });
 
@@ -257,7 +259,9 @@ namespace Cognite.Extensions
                 result.Errors = errors;
             }
 
-            if (!result.Errors?.Any() ?? false || ((int)retryMode & 1) != 0) return result;
+            if (!result.Errors?.Any() ?? false
+                || retryMode != RetryMode.OnErrorKeepDuplicates
+                && retryMode != RetryMode.OnFatalKeepDuplicates) return result;
 
             var duplicateErrors = result.Errors.Where(err =>
                 err.Resource == ResourceType.ExternalId
@@ -311,11 +315,13 @@ namespace Cognite.Extensions
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException(ex, RequestType.CreateTimeSeries);
                     errors.Add(error);
-                    if (error.Type == ErrorType.FatalFailure && ((int)retryMode & 4) != 0)
+                    if (error.Type == ErrorType.FatalFailure
+                        && (retryMode == RetryMode.OnFatal
+                            || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000);
                     }
-                    else if (((int)retryMode & 2) == 0) break;
+                    else if (retryMode == RetryMode.None) break;
                     else
                     {
                         toCreate = ResultHandlers.CleanFromError(error, toCreate);

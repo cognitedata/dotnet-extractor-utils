@@ -39,7 +39,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
         public static Task<CogniteResult<Event>> GetOrCreateAsync(
             this EventsResource resource,
             IEnumerable<string> externalIds,
@@ -70,7 +70,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
         public static async Task<CogniteResult<Event>> GetOrCreateAsync(
             this EventsResource resource,
             IEnumerable<string> externalIds,
@@ -114,6 +114,7 @@ namespace Cognite.Extensions
         /// due to a handled error.
         /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
         /// they can be removed before retrying by setting <paramref name="retryMode"/>
+        /// Events will be returned in the same order as given in <paramref name="events"/>.
         /// </summary>
         /// <param name="resource">Cognite events resource</param>
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
@@ -122,6 +123,7 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created events</returns>
         public static async Task<CogniteResult<Event>> EnsureExistsAsync(
             this EventsResource resource,
             IEnumerable<EventCreate> events,
@@ -151,7 +153,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
                 (chunk, idx) => async () => {
-                    var result = await CreateEventsHandleErrors(resource, events, retryMode, token);
+                    var result = await CreateEventsHandleErrors(resource, chunk, retryMode, token);
                     results[idx] = result;
                 });
 
@@ -204,7 +206,9 @@ namespace Cognite.Extensions
                 result.Errors = result.Errors == null ? new[] { prePushError } : result.Errors.Append(prePushError);
             }
 
-            if (!result.Errors?.Any() ?? false || ((int)retryMode & 1) != 0) return result;
+            if (!result.Errors?.Any() ?? false
+                || retryMode != RetryMode.OnErrorKeepDuplicates
+                && retryMode != RetryMode.OnFatalKeepDuplicates) return result;
 
             var duplicateErrors = result.Errors.Where(err =>
                 err.Resource == ResourceType.ExternalId
@@ -257,11 +261,13 @@ namespace Cognite.Extensions
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException(ex, RequestType.CreateEvents);
                     errors.Add(error);
-                    if (error.Type == ErrorType.FatalFailure && ((int)retryMode & 4) != 0)
+                    if (error.Type == ErrorType.FatalFailure
+                        && (retryMode == RetryMode.OnFatal
+                            || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000);
                     }
-                    else if (((int)retryMode & 2) == 0) break;
+                    else if (retryMode == RetryMode.None) break;
                     else
                     {
                         toCreate = ResultHandlers.CleanFromError(error, toCreate);

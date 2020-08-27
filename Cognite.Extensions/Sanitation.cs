@@ -225,6 +225,7 @@ namespace Cognite.Extensions
 
         /// <summary>
         /// Clean list of AssetCreate objects, sanitizing each and removing any duplicates.
+        /// The first encountered duplicate is kept.
         /// </summary>
         /// <param name="assets">AssetCreate request to clean</param>
         /// <returns>Cleaned create request and an optional error if any ids were duplicated</returns>
@@ -265,6 +266,7 @@ namespace Cognite.Extensions
 
         /// <summary>
         /// Clean list of TimeSeriesCreate objects, sanitizing each and removing any duplicates.
+        /// The first encountered duplicate is kept.
         /// </summary>
         /// <param name="timeseries">TimeSeriesCreate request to clean</param>
         /// <returns>Cleaned create request and optional errors for duplicated ids and legacyNames</returns>
@@ -328,6 +330,7 @@ namespace Cognite.Extensions
 
         /// <summary>
         /// Clean list of EventCreate objects, sanitizing each and removing any duplicates.
+        /// The first encountered duplicate is kept.
         /// </summary>
         /// <param name="events">EventCreate request to clean</param>
         /// <returns>Cleaned request and optional error if any ids were duplicated</returns>

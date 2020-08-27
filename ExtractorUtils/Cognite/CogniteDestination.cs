@@ -68,7 +68,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildTimeSeries">Function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
         public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
@@ -98,7 +98,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildTimeSeries">Async function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
         public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
@@ -122,12 +122,13 @@ namespace Cognite.Extractor.Utils
         /// By default, if any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they can be removed before retrying by setting
         /// <paramref name="retryMode"/>
+        /// Timeseries will be returned in the same order as given in <paramref name="timeSeries"/>
         /// </summary>
         /// <param name="timeSeries">List of CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created timeseries</returns>
         public async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
             IEnumerable<TimeSeriesCreate> timeSeries,
             RetryMode retryMode,
@@ -157,7 +158,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildAssets">Function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
         public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
@@ -186,7 +187,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildAssets">Async function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
         public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
@@ -209,12 +210,13 @@ namespace Cognite.Extractor.Utils
         /// due to issues with the request.
         /// By default, if any items fail to be created due to missing parent, duplicated externalId or missing dataset
         /// they can be removed before retrying by setting <paramref name="retryMode"/>.
+        /// Assets will be returned in the same order as given in <paramref name="assets"/>.
         /// </summary>
         /// <param name="assets">List of CogniteSdk AssetCreate objects</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created assets</returns>
         public async Task<CogniteResult> EnsureAssetsExistsAsync(
             IEnumerable<AssetCreate> assets,
             RetryMode retryMode,
@@ -543,7 +545,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildEvents">Function that builds CogniteSdk EventCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
         public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
@@ -572,7 +574,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
         public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
@@ -595,12 +597,13 @@ namespace Cognite.Extractor.Utils
         /// due to issues with the request.
         /// If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
         /// they can be removed before retrying by setting <paramref name="retryMode"/>
+        /// Events will be returned in the same order as given in <paramref name="events"/>.
         /// </summary>
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created events</returns>
         public async Task<CogniteResult> EnsureEventsExistsAsync(
             IEnumerable<EventCreate> events,
             RetryMode retryMode,
