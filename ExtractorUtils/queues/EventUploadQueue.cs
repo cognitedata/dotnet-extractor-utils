@@ -96,7 +96,15 @@ namespace Cognite.Extractor.Utils
                         events = await CogniteUtils.ReadEventsAsync(stream, token, 10_000);
                         if (events.Any())
                         {
-                            await _destination.EnsureEventsExistsAsync(events, true, token);
+                            var result = await _destination.EnsureEventsExistsAsync(events, RetryMode.OnError, token);
+
+                            var fatalError = result.Errors?.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
+                            if (fatalError != null)
+                            {
+                                _logger.LogWarning("Failed to read from buffer: {msg}", fatalError.Message);
+                                return;
+                            }
+
                             if (_callback != null) await _callback(new QueueUploadResult<EventCreate>(events));
                         }
                     } while (events.Any());
@@ -147,20 +155,18 @@ namespace Cognite.Extractor.Utils
 
             _logger.LogTrace("Dequeued {Number} events to upload to CDF", items.Count());
 
-            try
+            var result = await _destination.EnsureEventsExistsAsync(items, RetryMode.OnError, token);
+
+            var fatalError = result.Errors?.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
+            if (fatalError != null)
             {
-                await _destination.EnsureEventsExistsAsync(items, true, token);
-                _numberEvents.Inc(items.Count());
-            }
-            catch (Exception ex)
-            {
-                // We retry on errors, if we hit a 400 here, it is probably an user error, and we don't really want to buffer.
-                if (_bufferEnabled && (!(ex is ResponseException rex) || rex.Code >= 500))
+                if (_bufferEnabled)
                 {
                     await WriteToBuffer(items, token);
                 }
-                return new QueueUploadResult<EventCreate>(ex);
+                return new QueueUploadResult<EventCreate>(fatalError.Exception);
             }
+
             if (_bufferAny)
             {
                 await ReadFromBuffer(token);

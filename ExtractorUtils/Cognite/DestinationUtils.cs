@@ -57,6 +57,7 @@ namespace Cognite.Extractor.Utils
                     provider.GetRequiredService<Authenticator>() : null;
                 var logger = setLogger ?
                     provider.GetRequiredService<ILogger<Client>>() : null;
+                CogniteExtensions.AddExtensionLoggers(provider);
                 var metrics = setMetrics ?
                     provider.GetRequiredService<IMetrics>() : null;
                 var client = cdfBuilder.Configure(conf, appId, auth, logger, metrics).Build();

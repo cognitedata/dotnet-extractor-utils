@@ -222,5 +222,151 @@ namespace Cognite.Extensions
             if (evt.DataSetId < 1) evt.DataSetId = null;
             evt.Metadata = evt.Metadata?.SanitizeMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventmetadataMaxBytes);
         }
+
+        /// <summary>
+        /// Clean list of AssetCreate objects, sanitizing each and removing any duplicates.
+        /// The first encountered duplicate is kept.
+        /// </summary>
+        /// <param name="assets">AssetCreate request to clean</param>
+        /// <returns>Cleaned create request and an optional error if any ids were duplicated</returns>
+        public static (IEnumerable<AssetCreate>, CogniteError) CleanAssetRequest(IEnumerable<AssetCreate> assets)
+        {
+            var result = new List<AssetCreate>();
+
+            var ids = new HashSet<string>();
+            var duplicated = new HashSet<string>();
+
+            foreach (var asset in assets)
+            {
+                asset.Sanitize();
+                if (asset.ExternalId != null)
+                {
+                    if (!ids.Add(asset.ExternalId))
+                    {
+                        duplicated.Add(asset.ExternalId);
+                        continue;
+                    }
+                }
+                result.Add(asset);
+            }
+            CogniteError error = null;
+            if (duplicated.Any())
+            {
+                error = new CogniteError
+                {
+                    Status = 409,
+                    Message = "Duplicate external ids",
+                    Resource = ResourceType.ExternalId,
+                    Type = ErrorType.ItemDuplicated,
+                    Values = duplicated.Select(item => Identity.Create(item)).ToArray()
+                };
+            }
+            return (result, error);
+        }
+
+        /// <summary>
+        /// Clean list of TimeSeriesCreate objects, sanitizing each and removing any duplicates.
+        /// The first encountered duplicate is kept.
+        /// </summary>
+        /// <param name="timeseries">TimeSeriesCreate request to clean</param>
+        /// <returns>Cleaned create request and optional errors for duplicated ids and legacyNames</returns>
+        public static (IEnumerable<TimeSeriesCreate>, CogniteError idError, CogniteError nameError) CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate> timeseries)
+        {
+            var result = new List<TimeSeriesCreate>();
+
+            var ids = new HashSet<string>();
+            var duplicatedIds = new HashSet<string>();
+
+            var names = new HashSet<string>();
+            var duplicatedNames = new HashSet<string>();
+
+            foreach (var ts in timeseries)
+            {
+                ts.Sanitize();
+                if (ts.ExternalId != null)
+                {
+                    if (!ids.Add(ts.ExternalId))
+                    {
+                        duplicatedIds.Add(ts.ExternalId);
+                        continue;
+                    }
+                }
+                if (ts.LegacyName != null)
+                {
+                    if (!names.Add(ts.LegacyName))
+                    {
+                        duplicatedNames.Add(ts.LegacyName);
+                        continue;
+                    }
+                }
+                result.Add(ts);
+            }
+            CogniteError idError = null;
+            if (duplicatedIds.Any())
+            {
+                idError = new CogniteError
+                {
+                    Status = 409,
+                    Message = "Conflicting identifiers",
+                    Resource = ResourceType.ExternalId,
+                    Type = ErrorType.ItemDuplicated,
+                    Values = duplicatedIds.Select(Identity.Create).ToArray()
+                };
+            }
+            CogniteError nameError = null;
+            if (duplicatedNames.Any())
+            {
+                nameError = new CogniteError
+                {
+                    Status = 409,
+                    Message = "Duplicated metric names in request",
+                    Resource = ResourceType.LegacyName,
+                    Type = ErrorType.ItemDuplicated,
+                    Values = duplicatedNames.Select(Identity.Create).ToArray()
+                };
+            }
+            return (result, idError, nameError);
+        }
+
+        /// <summary>
+        /// Clean list of EventCreate objects, sanitizing each and removing any duplicates.
+        /// The first encountered duplicate is kept.
+        /// </summary>
+        /// <param name="events">EventCreate request to clean</param>
+        /// <returns>Cleaned request and optional error if any ids were duplicated</returns>
+        public static (IEnumerable<EventCreate>, CogniteError) CleanEventRequest(IEnumerable<EventCreate> events)
+        {
+            var result = new List<EventCreate>();
+
+            var ids = new HashSet<string>();
+            var duplicated = new HashSet<string>();
+
+            foreach (var evt in events)
+            {
+                evt.Sanitize();
+                if (evt.ExternalId != null)
+                {
+                    if (!ids.Add(evt.ExternalId))
+                    {
+                        duplicated.Add(evt.ExternalId);
+                        continue;
+                    }
+                }
+                result.Add(evt);
+            }
+            CogniteError err = null;
+            if (duplicated.Any())
+            {
+                err = new CogniteError
+                {
+                    Status = 409,
+                    Message = "ExternalIds duplicated",
+                    Resource = ResourceType.ExternalId,
+                    Type = ErrorType.ItemDuplicated,
+                    Values = duplicated.Select(Identity.Create).ToArray()
+                };
+            }
+            return (result, err);
+        }
     }
 }

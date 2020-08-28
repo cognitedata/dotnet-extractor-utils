@@ -306,10 +306,11 @@ namespace ExtractorUtils.Test
                 var ts = await cogniteDestination.GetOrCreateTimeSeriesAsync(
                     ids,
                     createFunction,
+                    RetryMode.OnErrorKeepDuplicates,
                     CancellationToken.None
                 );
-                Assert.Equal(ids.Count(), ts.Where(t => ids.Contains(t.ExternalId)).Count());
-                foreach (var t in ts)
+                Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
+                foreach (var t in ts.Results)
                 {
                     _ensuredTimeSeries.Remove(t.ExternalId, out _);
                 }
@@ -318,7 +319,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureTimeSeriesExistsAsync(newTs, source.Token);
+                    await cogniteDestination.EnsureTimeSeriesExistsAsync(newTs, RetryMode.OnFatal, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredTimeSeries
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
@@ -391,10 +392,11 @@ namespace ExtractorUtils.Test
                 var ts = await cogniteDestination.GetOrCreateAssetsAsync(
                     ids,
                     createFunction,
+                    RetryMode.OnErrorKeepDuplicates,
                     CancellationToken.None
                 );
-                Assert.Equal(ids.Count(), ts.Where(t => ids.Contains(t.ExternalId)).Count());
-                foreach (var t in ts)
+                Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
+                foreach (var t in ts.Results)
                 {
                     _ensuredAssets.Remove(t.ExternalId, out _);
                 }
@@ -403,7 +405,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureAssetsExistsAsync(newAssets, source.Token);
+                    await cogniteDestination.EnsureAssetsExistsAsync(newAssets, RetryMode.OnFatal, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredAssets
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
