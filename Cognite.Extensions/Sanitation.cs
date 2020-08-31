@@ -21,9 +21,10 @@ namespace Cognite.Extensions
         public const int TimeSeriesNameMax = 255;
         public const int TimeSeriesDescriptionMax = 1000;
         public const int TimeSeriesUnitMax = 32;
-        public const int TimeSeriesMetadataMaxPerKey = 32;
-        public const int TimeSeriesMetadataMaxPerValue = 512;
-        public const int TimeSeriesMetadataMaxPairs = 16;
+        public const int TimeSeriesMetadataMaxPerKey = 128;
+        public const int TimeSeriesMetadataMaxPerValue = 10000;
+        public const int TimeSeriesMetadataMaxBytes = 10000;
+        public const int TimeSeriesMetadataMaxPairs = 256;
 
         public const int EventTypeMax = 64;
         public const int EventDescriptionMax = 500;
@@ -139,28 +140,6 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
-        /// Sanitize a string, string metadata dictionary by limiting the number of UTF8 bytes per key
-        /// and value, as well as the total number of key, value pairs.
-        /// </summary>
-        /// <param name="data">Metadata to limit</param>
-        /// <param name="maxPerKey">Maximum number of bytes per key</param>
-        /// <param name="maxKeys">Maximum number of keys</param>
-        /// <param name="maxPerValue">Maximum number of bytes per value</param>
-        /// <returns></returns>
-        public static Dictionary<string, string> SanitizeMetadata(this Dictionary<string, string> data,
-            int maxPerKey,
-            int maxKeys,
-            int maxPerValue)
-        {
-            if (data == null || !data.Any()) return data;
-            return data
-                .Where(kvp => kvp.Key != null)
-                .Select(kvp => (kvp.Key.LimitUtf8ByteCount(maxPerKey), kvp.Value.LimitUtf8ByteCount(maxPerValue)))
-                .Take(maxKeys)
-                .ToDictionarySafe(pair => pair.Item1, pair => pair.Item2);
-        }
-
-        /// <summary>
         /// Sanitize an AssetCreate so that it can be safely sent to CDF.
         /// Requests may still fail due to conflicts or missing ids.
         /// </summary>
@@ -195,7 +174,8 @@ namespace Cognite.Extensions
             if (ts.AssetId < 1) ts.AssetId = null;
             ts.Description = ts.Description?.Truncate(TimeSeriesDescriptionMax);
             if (ts.DataSetId < 1) ts.DataSetId = null;
-            ts.Metadata = ts.Metadata?.SanitizeMetadata(TimeSeriesMetadataMaxPerKey, TimeSeriesMetadataMaxPairs, TimeSeriesMetadataMaxPerValue);
+            ts.Metadata = ts.Metadata?.SanitizeMetadata(TimeSeriesMetadataMaxPerKey, TimeSeriesMetadataMaxPairs,
+                TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxBytes);
             ts.Unit = ts.Unit?.Truncate(TimeSeriesUnitMax);
             ts.LegacyName = ts.LegacyName?.Truncate(ExternalIdMax);
         }

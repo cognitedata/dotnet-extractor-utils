@@ -55,7 +55,7 @@ namespace ExtractorUtils.Test
                 AssetId = -1239,
                 LegacyName = new string('æ', 300),
                 Metadata = Enumerable.Range(0, 100)
-                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 600)),
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 200)),
                 Name = new string('æ', 300),
                 Unit = new string('æ', 200)
             };
@@ -67,10 +67,10 @@ namespace ExtractorUtils.Test
             Assert.Null(ts.DataSetId);
             Assert.Null(ts.AssetId);
             Assert.Equal(new string('æ', 255), ts.LegacyName);
-            Assert.Equal(16, ts.Metadata.Count);
-            // 32-6 = 26, 26/2 = 13, 13+6 = 19.
-            Assert.All(ts.Metadata, kvp => Assert.Equal(19, kvp.Key.Length));
-            Assert.All(ts.Metadata, kvp => Assert.Equal(256, kvp.Value.Length));
+            Assert.Equal(18, ts.Metadata.Count);
+            // 'æ' is 2 bytes, key{i} will be 6 bytes, so 128-6 = 122, 122/2 = 61, 61 + 6 = 67
+            Assert.All(ts.Metadata, kvp => Assert.Equal(67, kvp.Key.Length));
+            Assert.All(ts.Metadata, kvp => Assert.Equal(new string('æ', 200), kvp.Value));
             Assert.Equal(new string('æ', 255), ts.Name);
             Assert.Equal(new string('æ', 32), ts.Unit);
         }
