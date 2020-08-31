@@ -67,12 +67,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
         public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", externalIds.Count());
@@ -82,6 +84,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
                 retryMode,
+                sanitationMode,
                 token);
         }
         /// <summary>
@@ -97,12 +100,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildTimeSeries">Async function that builds CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
         public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", externalIds.Count());
@@ -112,6 +117,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
                 retryMode,
+                sanitationMode,
                 token);
         }
 
@@ -127,11 +133,13 @@ namespace Cognite.Extractor.Utils
         /// <param name="timeSeries">List of CogniteSdk TimeSeriesCreate objects</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created timeseries</returns>
         public async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
             IEnumerable<TimeSeriesCreate> timeSeries,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
@@ -140,6 +148,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
                 retryMode,
+                sanitationMode,
                 token);
         }
         #endregion
@@ -157,12 +166,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
         public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
@@ -172,6 +183,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
                 retryMode,
+                sanitationMode,
                 token);
         }
         /// <summary>
@@ -186,12 +198,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildAssets">Async function that builds CogniteSdk AssetCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
         public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} assets in CDF", externalIds.Count());
@@ -201,6 +215,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
                 retryMode,
+                sanitationMode,
                 token);
         }
 
@@ -215,11 +230,13 @@ namespace Cognite.Extractor.Utils
         /// <param name="assets">List of CogniteSdk AssetCreate objects</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created assets</returns>
         public async Task<CogniteResult> EnsureAssetsExistsAsync(
             IEnumerable<AssetCreate> assets,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} assets exist in CDF", assets.Count());
@@ -228,6 +245,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.Assets,
                 _config.CdfThrottling.Assets,
                 retryMode,
+                sanitationMode,
                 token);
         }
         #endregion
@@ -544,12 +562,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Function that builds CogniteSdk EventCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
         public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} events in CDF", externalIds.Count());
@@ -559,6 +579,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,
                 retryMode,
+                sanitationMode,
                 token);
         }
         /// <summary>
@@ -573,12 +594,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="externalIds">External Ids</param>
         /// <param name="buildEvents">Async function that builds CogniteSdk EventCreate objects</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
         public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Getting or creating {Number} events in CDF", externalIds.Count());
@@ -588,6 +611,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,
                 retryMode,
+                sanitationMode,
                 token);
         }
 
@@ -602,11 +626,13 @@ namespace Cognite.Extractor.Utils
         /// <param name="events">List of CogniteSdk EventCreate objects</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created events</returns>
         public async Task<CogniteResult> EnsureEventsExistsAsync(
             IEnumerable<EventCreate> events,
             RetryMode retryMode,
+            SanitationMode sanitationMode,
             CancellationToken token)
         {
             _logger.LogInformation("Ensuring that {Number} events exist in CDF", events.Count());
@@ -615,6 +641,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,
                 retryMode,
+                sanitationMode,
                 token);
         }
         #endregion

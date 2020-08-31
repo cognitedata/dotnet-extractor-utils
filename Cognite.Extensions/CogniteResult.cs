@@ -583,6 +583,10 @@ namespace Cognite.Extensions
         /// </summary>
         ItemDuplicated,
         /// <summary>
+        /// Item does not satisfy CDF field limits
+        /// </summary>
+        SanitationFailed,
+        /// <summary>
         /// Something else happened that caused the request to fail
         /// </summary>
         FatalFailure = -1
@@ -620,6 +624,42 @@ namespace Cognite.Extensions
         /// LegacyName on a timeseries
         /// </summary>
         LegacyName,
+        /// <summary>
+        /// Name on an asset or timeseries
+        /// </summary>
+        Name,
+        /// <summary>
+        /// Type of event
+        /// </summary>
+        Type,
+        /// <summary>
+        /// SubType of event
+        /// </summary>
+        SubType,
+        /// <summary>
+        /// Source on event or asset
+        /// </summary>
+        Source,
+        /// <summary>
+        /// Metadata on event, asset or timeseries
+        /// </summary>
+        Metadata,
+        /// <summary>
+        /// Labels on an asset
+        /// </summary>
+        Labels,
+        /// <summary>
+        /// Description on event, asset or timeseries
+        /// </summary>
+        Description,
+        /// <summary>
+        /// Start and end time on an event
+        /// </summary>
+        TimeRange,
+        /// <summary>
+        /// Unit on a timeseries
+        /// </summary>
+        Unit,
         /// <summary>
         /// None or unknown
         /// </summary>
@@ -677,5 +717,24 @@ namespace Cognite.Extensions
         /// Same as OnErrorKeepDuplicates, but keep retrying if a fatal error occurs
         /// </summary>
         OnFatalKeepDuplicates = 7
+    }
+    /// <summary>
+    /// How to do sanitation of objects before creating the request
+    /// </summary>
+    public enum SanitationMode
+    {
+        /// <summary>
+        /// Don't do any sanitation. If you use this, you should make sure that objects are sanitized
+        /// some other way.
+        /// </summary>
+        None,
+        /// <summary>
+        /// Clean objects before requesting. This modifies the passed request.
+        /// </summary>
+        Clean,
+        /// <summary>
+        /// Remove any offending objects and report them in the result.
+        /// </summary>
+        Remove
     }
 }

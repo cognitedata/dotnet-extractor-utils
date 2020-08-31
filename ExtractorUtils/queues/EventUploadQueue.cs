@@ -96,7 +96,7 @@ namespace Cognite.Extractor.Utils
                         events = await CogniteUtils.ReadEventsAsync(stream, token, 10_000);
                         if (events.Any())
                         {
-                            var result = await _destination.EnsureEventsExistsAsync(events, RetryMode.OnError, token);
+                            var result = await _destination.EnsureEventsExistsAsync(events, RetryMode.OnError, SanitationMode.Clean, token);
 
                             var fatalError = result.Errors?.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
                             if (fatalError != null)
@@ -155,7 +155,7 @@ namespace Cognite.Extractor.Utils
 
             _logger.LogTrace("Dequeued {Number} events to upload to CDF", items.Count());
 
-            var result = await _destination.EnsureEventsExistsAsync(items, RetryMode.OnError, token);
+            var result = await _destination.EnsureEventsExistsAsync(items, RetryMode.OnError, SanitationMode.Clean, token);
 
             var fatalError = result.Errors?.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
             if (fatalError != null)
