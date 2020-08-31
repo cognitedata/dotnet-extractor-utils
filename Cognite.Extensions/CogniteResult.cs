@@ -583,6 +583,10 @@ namespace Cognite.Extensions
         /// </summary>
         ItemDuplicated,
         /// <summary>
+        /// Item does not satisfy CDF field limits
+        /// </summary>
+        SanitationFailed,
+        /// <summary>
         /// Something else happened that caused the request to fail
         /// </summary>
         FatalFailure = -1

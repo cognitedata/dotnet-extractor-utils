@@ -125,7 +125,8 @@ namespace ExtractorUtils.Test
                 new EventCreate { ExternalId = "test2" },
                 new EventCreate { ExternalId = "test3" }
             };
-            var (result, err) = Sanitation.CleanEventRequest(events);
+            var (result, errors) = Sanitation.CleanEventRequest(events, false);
+            var err = errors.First();
             Assert.Equal(3, result.Count());
             Assert.Equal(2, err.Values.Count());
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);
@@ -143,7 +144,8 @@ namespace ExtractorUtils.Test
                 new AssetCreate { ExternalId = "test2" },
                 new AssetCreate { ExternalId = "test3" }
             };
-            var (result, err) = Sanitation.CleanAssetRequest(assets);
+            var (result, errors) = Sanitation.CleanAssetRequest(assets, false);
+            var err = errors.First();
             Assert.Equal(3, result.Count());
             Assert.Equal(2, err.Values.Count());
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);
@@ -166,7 +168,9 @@ namespace ExtractorUtils.Test
                 new TimeSeriesCreate { LegacyName = "test2", ExternalId = "test7" },
                 new TimeSeriesCreate { LegacyName = "test3", ExternalId = "test8" }
             };
-            var (result, err, err2) = Sanitation.CleanTimeSeriesRequest(timeseries);
+            var (result, errors) = Sanitation.CleanTimeSeriesRequest(timeseries, false);
+            var err = errors.First();
+            var err2 = errors.ElementAt(1);
             Assert.Equal(6, result.Count());
             Assert.Equal(2, err.Values.Count());
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);

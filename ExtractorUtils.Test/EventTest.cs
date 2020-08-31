@@ -95,6 +95,7 @@ namespace ExtractorUtils.Test
                     ids,
                     createFunction,
                     RetryMode.OnErrorKeepDuplicates,
+                    true,
                     CancellationToken.None
                 );
                 Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
@@ -107,7 +108,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureEventsExistsAsync(newEvents, RetryMode.OnFatal, source.Token);
+                    await cogniteDestination.EnsureEventsExistsAsync(newEvents, RetryMode.OnFatal, true, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredEvents
                     .Where(kvp => ids.Contains(kvp.Key)).Count());

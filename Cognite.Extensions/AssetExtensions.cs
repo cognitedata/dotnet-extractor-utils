@@ -37,6 +37,7 @@ namespace Cognite.Extensions
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="removeDirty">Whether to remove assets that do not satisfy CDF limits, or modify them to fit</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
         public static Task<CogniteResult<Asset>> GetOrCreateAsync(
@@ -46,13 +47,14 @@ namespace Cognite.Extensions
             int chunkSize,
             int throttleSize,
             RetryMode retryMode,
+            bool removeDirty,
             CancellationToken token)
         {
             Task<IEnumerable<AssetCreate>> asyncBuildAssets(IEnumerable<string> ids)
             {
                 return Task.FromResult(buildAssets(ids));
             }
-            return assets.GetOrCreateAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, retryMode, token);
+            return assets.GetOrCreateAsync(externalIds, asyncBuildAssets, chunkSize, throttleSize, retryMode, removeDirty, token);
         }
         /// <summary>
         /// Get or create the assets with the provided <paramref name="externalIds"/> exist in CDF.
@@ -68,6 +70,7 @@ namespace Cognite.Extensions
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="removeDirty">Whether to remove assets that do not satisfy CDF limits, or modify them to fit</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
         public static async Task<CogniteResult<Asset>> GetOrCreateAsync(
@@ -77,6 +80,7 @@ namespace Cognite.Extensions
             int chunkSize,
             int throttleSize,
             RetryMode retryMode,
+            bool removeDirty,
             CancellationToken token)
         {
             var chunks = externalIds
@@ -90,7 +94,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     (chunk, idx) => async () => {
-                        var result = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, 0, retryMode, token);
+                        var result = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, 0, retryMode, removeDirty, token);
                         results[idx] = result;
                     });
 
@@ -120,6 +124,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
+        /// <param name="removeDirty">Whether to remove assets that do not satisfy CDF limits, or modify them to fit</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created assets</returns>
         public static async Task<CogniteResult<Asset>> EnsureExistsAsync(
@@ -128,20 +133,21 @@ namespace Cognite.Extensions
             int chunkSize,
             int throttleSize,
             RetryMode retryMode,
+            bool removeDirty,
             CancellationToken token)
         {
-            CogniteError prePushError;
-            (assetsToEnsure, prePushError) = Sanitation.CleanAssetRequest(assetsToEnsure);
+            IEnumerable<CogniteError> errors;
+            (assetsToEnsure, errors) = Sanitation.CleanAssetRequest(assetsToEnsure, removeDirty);
 
             var chunks = assetsToEnsure
                 .ChunkBy(chunkSize)
                 .ToList();
             _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assetsToEnsure.Count(), chunks.Count());
-            int size = chunks.Count + (prePushError != null ? 1 : 0);
+            int size = chunks.Count + (errors.Any() ? 1 : 0);
             var results = new CogniteResult<Asset>[size];
-            if (prePushError != null)
+            if (errors.Any())
             {
-                results[size - 1] = new CogniteResult<Asset>(new[] { prePushError }, null);
+                results[size - 1] = new CogniteResult<Asset>(errors, null);
                 if (size == 1) return results[size - 1];
             }
             if (size == 0) return new CogniteResult<Asset>(null, null);
@@ -172,6 +178,7 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
             int backoff,
             RetryMode retryMode,
+            bool removeDirty,
             CancellationToken token)
         {
             IEnumerable<Asset> found;
@@ -191,15 +198,15 @@ namespace Cognite.Extensions
             _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
             var toCreate = await buildAssets(missing);
 
-            CogniteError prePushError;
-            (toCreate, prePushError) = Sanitation.CleanAssetRequest(toCreate);
+            IEnumerable<CogniteError> errors;
+            (toCreate, errors) = Sanitation.CleanAssetRequest(toCreate, removeDirty);
 
             var result = await CreateAssetsHandleErrors(assets, toCreate, retryMode, token);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
-            if (prePushError != null)
+            if (errors.Any())
             {
-                result.Errors = result.Errors == null ? new[] { prePushError } : result.Errors.Append(prePushError);
+                result.Errors = result.Errors == null ? errors : result.Errors.Concat(errors);
             }
 
             if (!result.Errors?.Any() ?? false
@@ -225,7 +232,7 @@ namespace Cognite.Extensions
             _logger.LogDebug("Found {cnt} duplicated assets, retrying", duplicatedIds.Count);
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var nextResult = await GetOrCreateAssetsChunk(assets, duplicatedIds, buildAssets, backoff + 1, retryMode, token);
+            var nextResult = await GetOrCreateAssetsChunk(assets, duplicatedIds, buildAssets, backoff + 1, retryMode, removeDirty, token);
             result = result.Merge(nextResult);
 
             return result;

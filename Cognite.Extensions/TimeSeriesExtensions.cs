@@ -38,6 +38,7 @@ namespace Cognite.Extensions
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="removeDirty">Whether to remove timeseries that do not satisfy CDF limits, or modify them to fit</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
         public static Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
@@ -47,6 +48,7 @@ namespace Cognite.Extensions
             int chunkSize,
             int throttleSize,
             RetryMode retryMode,
+            bool removeDirty,
             CancellationToken token)
         {
             Task<IEnumerable<TimeSeriesCreate>> asyncBuildTimeSeries(IEnumerable<string> ids)
@@ -54,7 +56,7 @@ namespace Cognite.Extensions
                 return Task.FromResult(buildTimeSeries(ids));
             }
             return timeSeries.GetOrCreateTimeSeriesAsync(externalIds, asyncBuildTimeSeries,
-                chunkSize, throttleSize, retryMode, token);
+                chunkSize, throttleSize, retryMode, removeDirty, token);
         }
 
         /// <summary>
@@ -71,6 +73,7 @@ namespace Cognite.Extensions
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="removeDirty">Whether to remove timeseries that do not satisfy CDF limits, or modify them to fit</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
         public static async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
@@ -80,6 +83,7 @@ namespace Cognite.Extensions
             int chunkSize,
             int throttleSize,
             RetryMode retryMode,
+            bool removeDirty,
             CancellationToken token)
         {
             var chunks = externalIds
@@ -94,7 +98,7 @@ namespace Cognite.Extensions
                 .Select<IEnumerable<string>, Func<Task>>(
                     (chunk, idx) => async () => {
                         var result = await GetOrCreateTimeSeriesChunk(timeSeries, chunk,
-                            buildTimeSeries, 0, retryMode, token);
+                            buildTimeSeries, 0, retryMode, removeDirty, token);
                         results[idx] = result;
                     });
 
@@ -124,6 +128,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
+        /// <param name="removeDirty">Whether to remove timeseries that do not satisfy CDF limits, or modify them to fit</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created timeseries</returns>
         public static async Task<CogniteResult<TimeSeries>> EnsureTimeSeriesExistsAsync(
@@ -132,23 +137,21 @@ namespace Cognite.Extensions
             int chunkSize,
             int throttleSize,
             RetryMode retryMode,
+            bool removeDirty,
             CancellationToken token)
         {
-            CogniteError idError, nameError;
-            (timeSeriesToEnsure, idError, nameError) = Sanitation.CleanTimeSeriesRequest(timeSeriesToEnsure);
+            IEnumerable<CogniteError> errors;
+            (timeSeriesToEnsure, errors) = Sanitation.CleanTimeSeriesRequest(timeSeriesToEnsure, removeDirty);
 
             var chunks = timeSeriesToEnsure
                 .ChunkBy(chunkSize)
                 .ToList();
 
-            int size = chunks.Count + (idError != null || nameError != null ? 1 : 0);
+            int size = chunks.Count + (errors.Any() ? 1 : 0);
             var results = new CogniteResult<TimeSeries>[size];
 
-            if (idError != null || nameError != null)
+            if (errors.Any())
             {
-                var errors = new List<CogniteError>();
-                if (idError != null) errors.Add(idError);
-                if (nameError != null) errors.Add(nameError);
                 results[size - 1] = new CogniteResult<TimeSeries>(errors, null);
                 if (size == 1) return results[size - 1];
             }
@@ -225,6 +228,7 @@ namespace Cognite.Extensions
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             int backoff,
             RetryMode retryMode,
+            bool removeDirty,
             CancellationToken token)
         {
             IEnumerable<TimeSeries> found;
@@ -244,19 +248,15 @@ namespace Cognite.Extensions
             _logger.LogDebug("Could not fetch {Missing} out of {Found} time series. Attempting to create the missing ones", missing.Count, externalIds.Count());
             var toCreate = await buildTimeSeries(missing);
 
-            CogniteError idError, nameError;
-            (toCreate, idError, nameError) = Sanitation.CleanTimeSeriesRequest(toCreate);
+            IEnumerable<CogniteError> errors;
+            (toCreate, errors) = Sanitation.CleanTimeSeriesRequest(toCreate, removeDirty);
 
             var result = await CreateTimeSeriesHandleErrors(client, toCreate, retryMode, token);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
-            if (idError != null || nameError != null)
+            if (errors.Any())
             {
-                var errors = new List<CogniteError>();
-                if (result.Errors != null) errors.AddRange(result.Errors);
-                if (idError != null) errors.Add(idError);
-                if (nameError != null) errors.Add(nameError);
-                result.Errors = errors;
+                result.Errors = result.Errors == null ? errors : result.Errors.Concat(errors);
             }
 
             if (!result.Errors?.Any() ?? false
@@ -283,7 +283,7 @@ namespace Cognite.Extensions
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
             var nextResult = await GetOrCreateTimeSeriesChunk(client, duplicatedIds,
-                buildTimeSeries, backoff + 1, retryMode, token);
+                buildTimeSeries, backoff + 1, retryMode, removeDirty, token);
             result = result.Merge(nextResult);
 
             return result;
