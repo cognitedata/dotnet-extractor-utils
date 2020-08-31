@@ -33,7 +33,7 @@ namespace Cognite.Extensions
         public const int EventMetadataMaxPerKey = 128;
         public const int EventMetadataMaxPerValue = 128_000;
         public const int EventMetadataMaxPairs = 256;
-        public const int EventmetadataMaxBytes = 200_000;
+        public const int EventMetadataMaxBytes = 200_000;
         public const int EventAssetIdsMax = 10_000;
         /// <summary>
         /// Reduce the length of given string to maxLength, if it is longer.
@@ -244,7 +244,7 @@ namespace Cognite.Extensions
             if (!ts.Description.CheckLength(TimeSeriesDescriptionMax)) return ResourceType.Description;
             if (ts.DataSetId != null && ts.DataSetId < 1) return ResourceType.DataSetId;
             if (!ts.Metadata.VerifyMetadata(TimeSeriesMetadataMaxPerKey, TimeSeriesMetadataMaxPairs,
-                TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxPerValue)) return ResourceType.Metadata;
+                TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxBytes)) return ResourceType.Metadata;
             if (!ts.Unit.CheckLength(TimeSeriesUnitMax)) return ResourceType.Unit;
             if (!ts.LegacyName.CheckLength(ExternalIdMax)) return ResourceType.LegacyName;
             return null;
@@ -270,7 +270,7 @@ namespace Cognite.Extensions
             if (evt.EndTime < 0) evt.EndTime = 0;
             if (evt.StartTime > evt.EndTime) evt.EndTime = evt.StartTime; 
             if (evt.DataSetId < 1) evt.DataSetId = null;
-            evt.Metadata = evt.Metadata.SanitizeMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventmetadataMaxBytes);
+            evt.Metadata = evt.Metadata.SanitizeMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventMetadataMaxBytes);
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace Cognite.Extensions
                 || evt.EndTime != null && evt.EndTime < 1
                 || evt.StartTime != null && evt.EndTime != null && evt.StartTime > evt.EndTime) return ResourceType.TimeRange;
             if (evt.DataSetId != null && evt.DataSetId < 1) return ResourceType.DataSetId;
-            if (!evt.Metadata.VerifyMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventmetadataMaxBytes))
+            if (!evt.Metadata.VerifyMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventMetadataMaxBytes))
                 return ResourceType.Metadata;
             return null;
         }
