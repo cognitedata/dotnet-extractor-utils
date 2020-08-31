@@ -718,4 +718,23 @@ namespace Cognite.Extensions
         /// </summary>
         OnFatalKeepDuplicates = 7
     }
+    /// <summary>
+    /// How to do sanitation of objects before creating the request
+    /// </summary>
+    public enum SanitationMode
+    {
+        /// <summary>
+        /// Don't do any sanitation. If you use this, you should make sure that objects are sanitized
+        /// some other way.
+        /// </summary>
+        None,
+        /// <summary>
+        /// Clean objects before requesting. This modifies the passed request.
+        /// </summary>
+        Clean,
+        /// <summary>
+        /// Remove any offending objects and report them in the result.
+        /// </summary>
+        Remove
+    }
 }

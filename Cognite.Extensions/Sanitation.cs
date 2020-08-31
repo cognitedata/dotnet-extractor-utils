@@ -300,9 +300,9 @@ namespace Cognite.Extensions
         /// The first encountered duplicate is kept.
         /// </summary>
         /// <param name="assets">AssetCreate request to clean</param>
-        /// <param name="removeDirty">If true, elements that do not satisfy CDF limits are removed instead of being modified</param>
+        /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned create request and an optional error if any ids were duplicated</returns>
-        public static (IEnumerable<AssetCreate>, IEnumerable<CogniteError>) CleanAssetRequest(IEnumerable<AssetCreate> assets, bool removeDirty)
+        public static (IEnumerable<AssetCreate>, IEnumerable<CogniteError>) CleanAssetRequest(IEnumerable<AssetCreate> assets, SanitationMode mode)
         {
             var result = new List<AssetCreate>();
             var errors = new List<CogniteError>();
@@ -314,7 +314,7 @@ namespace Cognite.Extensions
             foreach (var asset in assets)
             {
                 bool toAdd = true;
-                if (removeDirty)
+                if (mode == SanitationMode.Remove)
                 {
                     var failedField = asset.Verify();
                     if (failedField.HasValue)
@@ -323,7 +323,7 @@ namespace Cognite.Extensions
                         toAdd = false;
                     }
                 }
-                else
+                else if (mode == SanitationMode.Clean)
                 {
                     asset.Sanitize();
                 }
@@ -369,10 +369,10 @@ namespace Cognite.Extensions
         /// The first encountered duplicate is kept.
         /// </summary>
         /// <param name="timeseries">TimeSeriesCreate request to clean</param>
-        /// <param name="removeDirty">If true, elements that do not satisfy CDF limits are removed instead of being modified</param>
+        /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned create request and optional errors for duplicated ids and legacyNames</returns>
         public static (IEnumerable<TimeSeriesCreate>, IEnumerable<CogniteError>) CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate> timeseries,
-            bool removeDirty)
+            SanitationMode mode)
         {
             var result = new List<TimeSeriesCreate>();
             var errors = new List<CogniteError>();
@@ -389,7 +389,7 @@ namespace Cognite.Extensions
             foreach (var ts in timeseries)
             {
                 bool toAdd = true;
-                if (removeDirty)
+                if (mode == SanitationMode.Remove)
                 {
                     var failedField = ts.Verify();
                     if (failedField.HasValue)
@@ -398,7 +398,7 @@ namespace Cognite.Extensions
                         toAdd = false;
                     }
                 }
-                else
+                else if (mode == SanitationMode.Clean)
                 {
                     ts.Sanitize();
                 }
@@ -463,9 +463,9 @@ namespace Cognite.Extensions
         /// The first encountered duplicate is kept.
         /// </summary>
         /// <param name="events">EventCreate request to clean</param>
-        /// <param name="removeDirty">If true, elements that do not satisfy CDF limits are removed instead of being modified</param>
+        /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned request and optional error if any ids were duplicated</returns>
-        public static (IEnumerable<EventCreate>, IEnumerable<CogniteError>) CleanEventRequest(IEnumerable<EventCreate> events, bool removeDirty)
+        public static (IEnumerable<EventCreate>, IEnumerable<CogniteError>) CleanEventRequest(IEnumerable<EventCreate> events, SanitationMode mode)
         {
             var result = new List<EventCreate>();
             var errors = new List<CogniteError>();
@@ -478,7 +478,7 @@ namespace Cognite.Extensions
             foreach (var evt in events)
             {
                 bool toAdd = true;
-                if (removeDirty)
+                if (mode == SanitationMode.Remove)
                 {
                     var failedField = evt.Verify();
                     if (failedField.HasValue)
@@ -487,7 +487,7 @@ namespace Cognite.Extensions
                         toAdd = false;
                     }
                 }
-                else
+                else if (mode == SanitationMode.Clean)
                 {
                     evt.Sanitize();
                 }

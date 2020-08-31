@@ -307,7 +307,7 @@ namespace ExtractorUtils.Test
                     ids,
                     createFunction,
                     RetryMode.OnErrorKeepDuplicates,
-                    true,
+                    SanitationMode.Remove,
                     CancellationToken.None
                 );
                 Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
@@ -320,7 +320,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureTimeSeriesExistsAsync(newTs, RetryMode.OnFatal, true, source.Token);
+                    await cogniteDestination.EnsureTimeSeriesExistsAsync(newTs, RetryMode.OnFatal, SanitationMode.Remove, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredTimeSeries
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
@@ -394,7 +394,7 @@ namespace ExtractorUtils.Test
                     ids,
                     createFunction,
                     RetryMode.OnErrorKeepDuplicates,
-                    true,
+                    SanitationMode.Remove,
                     CancellationToken.None
                 );
                 Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
@@ -407,7 +407,7 @@ namespace ExtractorUtils.Test
                 using (var source = new CancellationTokenSource(5_000))
                 {
                     // a timeout would fail the test
-                    await cogniteDestination.EnsureAssetsExistsAsync(newAssets, RetryMode.OnFatal, true, source.Token);
+                    await cogniteDestination.EnsureAssetsExistsAsync(newAssets, RetryMode.OnFatal, SanitationMode.Remove, source.Token);
                 }
                 Assert.Equal(ids.Count(), _ensuredAssets
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
