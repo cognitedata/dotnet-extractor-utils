@@ -17,6 +17,7 @@ namespace Cognite.Extensions
         public const int AssetMetadataMaxPerValue = 10240;
         public const int AssetMetadataMaxPairs = 256;
         public const int AssetSourceMax = 128;
+        public const int AssetLabelsMax = 10;
 
         public const int TimeSeriesNameMax = 255;
         public const int TimeSeriesDescriptionMax = 1000;
@@ -192,20 +193,22 @@ namespace Cognite.Extensions
         /// Check that given AssetCreate satisfies CDF limits.
         /// </summary>
         /// <param name="asset">Asset to check</param>
-        /// <returns>True if asset satisfies limits</returns>
-        public static bool Verify(this AssetCreate asset)
+        /// <returns>Failed resourceType or null if nothing failed</returns>
+        public static ResourceType? Verify(this AssetCreate asset)
         {
             if (asset == null) throw new ArgumentNullException(nameof(asset));
-            return
-                asset.ExternalId.CheckLength(ExternalIdMax)
-                && asset.Name.CheckLength(AssetNameMax)
-                && (asset.ParentId == null || asset.ParentId > 0)
-                && asset.ParentExternalId.CheckLength(ExternalIdMax)
-                && asset.Description.CheckLength(AssetDescriptionMax)
-                && (asset.DataSetId == null || asset.DataSetId > 0)
-                && asset.Metadata.VerifyMetadata(AssetMetadataMaxPerKey, AssetMetadataMaxPairs, AssetMetadataMaxPerValue, AssetMetadataMaxBytes)
-                && asset.Source.CheckLength(AssetSourceMax)
-                && (asset.Labels == null || asset.Labels.Count() <= 10 && asset.Labels.All(label => label.ExternalId.CheckLength(ExternalIdMax)));
+            if (!asset.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
+            if (!asset.Name.CheckLength(AssetNameMax)) return ResourceType.Name;
+            if (asset.ParentId != null && asset.ParentId < 1) return ResourceType.ParentId;
+            if (!asset.ParentExternalId.CheckLength(ExternalIdMax)) return ResourceType.ParentExternalId;
+            if (!asset.Description.CheckLength(AssetDescriptionMax)) return ResourceType.Description;
+            if (asset.DataSetId != null && asset.DataSetId < 1) return ResourceType.DataSetId;
+            if (!asset.Metadata.VerifyMetadata(AssetMetadataMaxPerKey, AssetMetadataMaxPairs, AssetMetadataMaxPerValue, AssetMetadataMaxBytes))
+                return ResourceType.Metadata;
+            if (!asset.Source.CheckLength(AssetSourceMax)) return ResourceType.Source;
+            if (asset.Labels != null && (asset.Labels.Count() > AssetLabelsMax || asset.Labels.Any(label => !label.ExternalId.CheckLength(ExternalIdMax))))
+                return ResourceType.Labels;
+            return null;
         }
 
         /// <summary>
@@ -232,19 +235,19 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="asset">Timeseries to check</param>
         /// <returns>True if timeseries satisfies limits</returns>
-        public static bool Verify(this TimeSeriesCreate ts)
+        public static ResourceType? Verify(this TimeSeriesCreate ts)
         {
             if (ts == null) throw new ArgumentNullException(nameof(ts));
-            return
-                ts.ExternalId.CheckLength(ExternalIdMax)
-                && ts.Name.CheckLength(TimeSeriesNameMax)
-                && (ts.AssetId == null || ts.AssetId > 0)
-                && ts.Description.CheckLength(TimeSeriesDescriptionMax)
-                && (ts.DataSetId == null || ts.DataSetId > 0)
-                && ts.Metadata.VerifyMetadata(TimeSeriesMetadataMaxPerKey, TimeSeriesMetadataMaxPairs,
-                    TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxPerValue)
-                && ts.Unit.CheckLength(TimeSeriesUnitMax)
-                && ts.LegacyName.CheckLength(ExternalIdMax);
+            if (!ts.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
+            if (!ts.Name.CheckLength(TimeSeriesNameMax)) return ResourceType.Name;
+            if (ts.AssetId != null && ts.AssetId < 1) return ResourceType.AssetId;
+            if (!ts.Description.CheckLength(TimeSeriesDescriptionMax)) return ResourceType.Description;
+            if (ts.DataSetId != null && ts.DataSetId < 1) return ResourceType.DataSetId;
+            if (!ts.Metadata.VerifyMetadata(TimeSeriesMetadataMaxPerKey, TimeSeriesMetadataMaxPairs,
+                TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxPerValue)) return ResourceType.Metadata;
+            if (!ts.Unit.CheckLength(TimeSeriesUnitMax)) return ResourceType.Unit;
+            if (!ts.LegacyName.CheckLength(ExternalIdMax)) return ResourceType.LegacyName;
+            return null;
         }
 
         /// <summary>
@@ -275,21 +278,21 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="asset">Event to check</param>
         /// <returns>True if event satisfies limits</returns>
-        public static bool Verify(this EventCreate evt)
+        public static ResourceType? Verify(this EventCreate evt)
         {
             if (evt == null) throw new ArgumentNullException(nameof(evt));
-            return
-                evt.ExternalId.CheckLength(ExternalIdMax)
-                && evt.Type.CheckLength(EventTypeMax)
-                && evt.Subtype.CheckLength(EventTypeMax)
-                && evt.Source.CheckLength(EventSourceMax)
-                && evt.Description.CheckLength(EventDescriptionMax)
-                && (evt.AssetIds == null || evt.AssetIds.Count() <= EventAssetIdsMax && evt.AssetIds.All(id => id > 0))
-                && (evt.StartTime == null || evt.StartTime > 0)
-                && (evt.EndTime == null || evt.EndTime > 0)
-                && (evt.StartTime == null || evt.EndTime == null || evt.StartTime < evt.EndTime)
-                && (evt.DataSetId == null || evt.DataSetId > 0)
-                && evt.Metadata.VerifyMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventmetadataMaxBytes);
+            if (!evt.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
+            if (!evt.Type.CheckLength(EventTypeMax)) return ResourceType.Type;
+            if (!evt.Subtype.CheckLength(EventTypeMax)) return ResourceType.SubType;
+            if (!evt.Source.CheckLength(EventSourceMax)) return ResourceType.Source;
+            if (evt.AssetIds != null && (evt.AssetIds.Count() > EventAssetIdsMax || evt.AssetIds.Any(id => id < 1))) return ResourceType.AssetId;
+            if (evt.StartTime != null && evt.StartTime < 1
+                || evt.EndTime != null && evt.EndTime < 1
+                || evt.StartTime != null && evt.EndTime != null && evt.StartTime > evt.EndTime) return ResourceType.TimeRange;
+            if (evt.DataSetId != null && evt.DataSetId < 1) return ResourceType.DataSetId;
+            if (!evt.Metadata.VerifyMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventmetadataMaxBytes))
+                return ResourceType.Metadata;
+            return null;
         }
 
         /// <summary>
@@ -306,16 +309,17 @@ namespace Cognite.Extensions
 
             var ids = new HashSet<string>();
             var duplicated = new HashSet<string>();
-            var bad = new List<AssetCreate>();
+            var bad = new List<(ResourceType, AssetCreate)>();
 
             foreach (var asset in assets)
             {
                 bool toAdd = true;
                 if (removeDirty)
                 {
-                    if (!asset.Verify())
+                    var failedField = asset.Verify();
+                    if (failedField.HasValue)
                     {
-                        bad.Add(asset);
+                        bad.Add((failedField.Value, asset));
                         toAdd = false;
                     }
                 }
@@ -349,13 +353,13 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.Add(new CogniteError
+                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError
                 {
-                    Skipped = bad,
-                    Resource = ResourceType.None,
+                    Skipped = group.Select(pair => pair.Item2).ToList(),
+                    Resource = group.Key,
                     Type = ErrorType.SanitationFailed,
                     Status = 400
-                });
+                }));
             }
             return (result, errors);
         }
@@ -371,7 +375,7 @@ namespace Cognite.Extensions
             bool removeDirty)
         {
             var result = new List<TimeSeriesCreate>();
-            var bad = new List<TimeSeriesCreate>();
+            var errors = new List<CogniteError>();
 
             var ids = new HashSet<string>();
             var duplicatedIds = new HashSet<string>();
@@ -379,16 +383,18 @@ namespace Cognite.Extensions
             var names = new HashSet<string>();
             var duplicatedNames = new HashSet<string>();
 
-            var errors = new List<CogniteError>();
+            var bad = new List<(ResourceType, TimeSeriesCreate)>();
+
 
             foreach (var ts in timeseries)
             {
                 bool toAdd = true;
                 if (removeDirty)
                 {
-                    if (!ts.Verify())
+                    var failedField = ts.Verify();
+                    if (failedField.HasValue)
                     {
-                        bad.Add(ts);
+                        bad.Add((failedField.Value, ts));
                         toAdd = false;
                     }
                 }
@@ -441,13 +447,13 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.Add(new CogniteError
+                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError
                 {
-                    Skipped = bad,
-                    Resource = ResourceType.None,
+                    Skipped = group.Select(pair => pair.Item2).ToList(),
+                    Resource = group.Key,
                     Type = ErrorType.SanitationFailed,
                     Status = 400
-                });
+                }));
             }
             return (result, errors);
         }
@@ -467,16 +473,17 @@ namespace Cognite.Extensions
             var ids = new HashSet<string>();
             var duplicated = new HashSet<string>();
 
-            var bad = new List<EventCreate>();
+            var bad = new List<(ResourceType, EventCreate)>();
 
             foreach (var evt in events)
             {
                 bool toAdd = true;
                 if (removeDirty)
                 {
-                    if (!evt.Verify())
+                    var failedField = evt.Verify();
+                    if (failedField.HasValue)
                     {
-                        bad.Add(evt);
+                        bad.Add((failedField.Value, evt));
                         toAdd = false;
                     }
                 }
@@ -510,13 +517,13 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.Add(new CogniteError
+                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError
                 {
-                    Skipped = bad,
-                    Resource = ResourceType.None,
+                    Skipped = group.Select(pair => pair.Item2).ToList(),
+                    Resource = group.Key,
                     Type = ErrorType.SanitationFailed,
                     Status = 400
-                });
+                }));
             }
             return (result, errors);
         }

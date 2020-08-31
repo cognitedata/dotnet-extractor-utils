@@ -625,6 +625,42 @@ namespace Cognite.Extensions
         /// </summary>
         LegacyName,
         /// <summary>
+        /// Name on an asset or timeseries
+        /// </summary>
+        Name,
+        /// <summary>
+        /// Type of event
+        /// </summary>
+        Type,
+        /// <summary>
+        /// SubType of event
+        /// </summary>
+        SubType,
+        /// <summary>
+        /// Source on event or asset
+        /// </summary>
+        Source,
+        /// <summary>
+        /// Metadata on event, asset or timeseries
+        /// </summary>
+        Metadata,
+        /// <summary>
+        /// Labels on an asset
+        /// </summary>
+        Labels,
+        /// <summary>
+        /// Description on event, asset or timeseries
+        /// </summary>
+        Description,
+        /// <summary>
+        /// Start and end time on an event
+        /// </summary>
+        TimeRange,
+        /// <summary>
+        /// Unit on a timeseries
+        /// </summary>
+        Unit,
+        /// <summary>
         /// None or unknown
         /// </summary>
         None = -1
