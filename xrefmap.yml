@@ -2639,15 +2639,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.DeleteRowsAsync
   nameWithType: CogniteDestination.DeleteRowsAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable{AssetCreate},CancellationToken)
-  name: EnsureAssetsExistsAsync(IEnumerable<AssetCreate>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_IEnumerable_AssetCreate__CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable{AssetCreate},CancellationToken)
-  name.vb: EnsureAssetsExistsAsync(IEnumerable(Of AssetCreate), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable<AssetCreate>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable(Of AssetCreate), CancellationToken)
-  nameWithType: CogniteDestination.EnsureAssetsExistsAsync(IEnumerable<AssetCreate>, CancellationToken)
-  nameWithType.vb: CogniteDestination.EnsureAssetsExistsAsync(IEnumerable(Of AssetCreate), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable{AssetCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: EnsureAssetsExistsAsync(IEnumerable<AssetCreate>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_IEnumerable_AssetCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable{AssetCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: EnsureAssetsExistsAsync(IEnumerable(Of AssetCreate), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable<AssetCreate>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(IEnumerable(Of AssetCreate), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.EnsureAssetsExistsAsync(IEnumerable<AssetCreate>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.EnsureAssetsExistsAsync(IEnumerable(Of AssetCreate), RetryMode, SanitationMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync*
   name: EnsureAssetsExistsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_
@@ -2655,15 +2655,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync
   nameWithType: CogniteDestination.EnsureAssetsExistsAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable{EventCreate},System.Boolean,CancellationToken)
-  name: EnsureEventsExistsAsync(IEnumerable<EventCreate>, Boolean, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_IEnumerable_EventCreate__System_Boolean_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable{EventCreate},System.Boolean,CancellationToken)
-  name.vb: EnsureEventsExistsAsync(IEnumerable(Of EventCreate), Boolean, CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable<EventCreate>, System.Boolean, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable(Of EventCreate), System.Boolean, CancellationToken)
-  nameWithType: CogniteDestination.EnsureEventsExistsAsync(IEnumerable<EventCreate>, Boolean, CancellationToken)
-  nameWithType.vb: CogniteDestination.EnsureEventsExistsAsync(IEnumerable(Of EventCreate), Boolean, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable{EventCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: EnsureEventsExistsAsync(IEnumerable<EventCreate>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_IEnumerable_EventCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable{EventCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: EnsureEventsExistsAsync(IEnumerable(Of EventCreate), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable<EventCreate>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(IEnumerable(Of EventCreate), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.EnsureEventsExistsAsync(IEnumerable<EventCreate>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.EnsureEventsExistsAsync(IEnumerable(Of EventCreate), RetryMode, SanitationMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync*
   name: EnsureEventsExistsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_
@@ -2671,15 +2671,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync
   nameWithType: CogniteDestination.EnsureEventsExistsAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable{TimeSeriesCreate},CancellationToken)
-  name: EnsureTimeSeriesExistsAsync(IEnumerable<TimeSeriesCreate>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_IEnumerable_TimeSeriesCreate__CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable{TimeSeriesCreate},CancellationToken)
-  name.vb: EnsureTimeSeriesExistsAsync(IEnumerable(Of TimeSeriesCreate), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable<TimeSeriesCreate>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable(Of TimeSeriesCreate), CancellationToken)
-  nameWithType: CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable<TimeSeriesCreate>, CancellationToken)
-  nameWithType.vb: CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable(Of TimeSeriesCreate), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable{TimeSeriesCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: EnsureTimeSeriesExistsAsync(IEnumerable<TimeSeriesCreate>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_IEnumerable_TimeSeriesCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable{TimeSeriesCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: EnsureTimeSeriesExistsAsync(IEnumerable(Of TimeSeriesCreate), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable<TimeSeriesCreate>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable(Of TimeSeriesCreate), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable<TimeSeriesCreate>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable(Of TimeSeriesCreate), RetryMode, SanitationMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync*
   name: EnsureTimeSeriesExistsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_
@@ -2712,24 +2712,24 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges
   nameWithType: CogniteDestination.GetExtractedRanges
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{AssetCreate}},CancellationToken)
-  name: GetOrCreateAssetsAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<AssetCreate>>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_AssetCreate___CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{AssetCreate}},CancellationToken)
-  name.vb: GetOrCreateAssetsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of AssetCreate)), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<AssetCreate>>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of AssetCreate)), CancellationToken)
-  nameWithType: CogniteDestination.GetOrCreateAssetsAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<AssetCreate>>, CancellationToken)
-  nameWithType.vb: CogniteDestination.GetOrCreateAssetsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of AssetCreate)), CancellationToken)
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{AssetCreate}}},CancellationToken)
-  name: GetOrCreateAssetsAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<AssetCreate>>>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_AssetCreate____CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{AssetCreate}}},CancellationToken)
-  name.vb: GetOrCreateAssetsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of AssetCreate))), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<AssetCreate>>>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of AssetCreate))), CancellationToken)
-  nameWithType: CogniteDestination.GetOrCreateAssetsAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<AssetCreate>>>, CancellationToken)
-  nameWithType.vb: CogniteDestination.GetOrCreateAssetsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of AssetCreate))), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{AssetCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateAssetsAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<AssetCreate>>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_AssetCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{AssetCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateAssetsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of AssetCreate)), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<AssetCreate>>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of AssetCreate)), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateAssetsAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<AssetCreate>>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetOrCreateAssetsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of AssetCreate)), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{AssetCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateAssetsAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<AssetCreate>>>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_AssetCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{AssetCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateAssetsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of AssetCreate))), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<AssetCreate>>>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of AssetCreate))), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateAssetsAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<AssetCreate>>>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetOrCreateAssetsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of AssetCreate))), RetryMode, SanitationMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync*
   name: GetOrCreateAssetsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_
@@ -2737,24 +2737,24 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync
   nameWithType: CogniteDestination.GetOrCreateAssetsAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{EventCreate}},CancellationToken)
-  name: GetOrCreateEventsAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<EventCreate>>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_EventCreate___CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{EventCreate}},CancellationToken)
-  name.vb: GetOrCreateEventsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of EventCreate)), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<EventCreate>>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of EventCreate)), CancellationToken)
-  nameWithType: CogniteDestination.GetOrCreateEventsAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<EventCreate>>, CancellationToken)
-  nameWithType.vb: CogniteDestination.GetOrCreateEventsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of EventCreate)), CancellationToken)
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{EventCreate}}},CancellationToken)
-  name: GetOrCreateEventsAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<EventCreate>>>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_EventCreate____CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{EventCreate}}},CancellationToken)
-  name.vb: GetOrCreateEventsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of EventCreate))), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<EventCreate>>>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of EventCreate))), CancellationToken)
-  nameWithType: CogniteDestination.GetOrCreateEventsAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<EventCreate>>>, CancellationToken)
-  nameWithType.vb: CogniteDestination.GetOrCreateEventsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of EventCreate))), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{EventCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateEventsAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<EventCreate>>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_EventCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{EventCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateEventsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of EventCreate)), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<EventCreate>>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of EventCreate)), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateEventsAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<EventCreate>>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetOrCreateEventsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of EventCreate)), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{EventCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateEventsAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<EventCreate>>>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_EventCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{EventCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateEventsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of EventCreate))), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<EventCreate>>>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of EventCreate))), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateEventsAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<EventCreate>>>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetOrCreateEventsAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of EventCreate))), RetryMode, SanitationMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync*
   name: GetOrCreateEventsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_
@@ -2762,24 +2762,24 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync
   nameWithType: CogniteDestination.GetOrCreateEventsAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{TimeSeriesCreate}},CancellationToken)
-  name: GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<TimeSeriesCreate>>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_TimeSeriesCreate___CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{TimeSeriesCreate}},CancellationToken)
-  name.vb: GetOrCreateTimeSeriesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of TimeSeriesCreate)), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<TimeSeriesCreate>>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of TimeSeriesCreate)), CancellationToken)
-  nameWithType: CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<TimeSeriesCreate>>, CancellationToken)
-  nameWithType.vb: CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of TimeSeriesCreate)), CancellationToken)
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{TimeSeriesCreate}}},CancellationToken)
-  name: GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<TimeSeriesCreate>>>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_TimeSeriesCreate____CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{TimeSeriesCreate}}},CancellationToken)
-  name.vb: GetOrCreateTimeSeriesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of TimeSeriesCreate))), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<TimeSeriesCreate>>>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of TimeSeriesCreate))), CancellationToken)
-  nameWithType: CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<TimeSeriesCreate>>>, CancellationToken)
-  nameWithType.vb: CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of TimeSeriesCreate))), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{TimeSeriesCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<TimeSeriesCreate>>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_TimeSeriesCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{TimeSeriesCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateTimeSeriesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of TimeSeriesCreate)), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<TimeSeriesCreate>>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of TimeSeriesCreate)), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<TimeSeriesCreate>>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of TimeSeriesCreate)), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{TimeSeriesCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<TimeSeriesCreate>>>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_TimeSeriesCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{TimeSeriesCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateTimeSeriesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of TimeSeriesCreate))), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<TimeSeriesCreate>>>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of TimeSeriesCreate))), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<TimeSeriesCreate>>>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of TimeSeriesCreate))), RetryMode, SanitationMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync*
   name: GetOrCreateTimeSeriesAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_
