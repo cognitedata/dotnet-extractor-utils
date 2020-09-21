@@ -399,11 +399,12 @@ namespace Cognite.Extensions
 
             if (error.Resource == ResourceType.ParentExternalId)
             {
+                var comparer = new IdentityComparer();
                 var ids = assets.Select(asset => asset.ParentExternalId)
                     .Where(id => id != null)
                     .Distinct()
                     .Select(Identity.Create)
-                    .Except(error.Values, new IdentityComparer());
+                    .Except(error.Values, comparer);
 
                 try
                 {
@@ -411,9 +412,9 @@ namespace Cognite.Extensions
 
                     error.Complete = true;
                     error.Values = ids
-                        .Except(parents.Select(asset => Identity.Create(asset.ExternalId)))
+                        .Except(parents.Select(asset => Identity.Create(asset.ExternalId)), comparer)
                         .Concat(error.Values)
-                        .Distinct(new IdentityComparer());
+                        .Distinct(comparer);
                 }
                 catch
                 {
