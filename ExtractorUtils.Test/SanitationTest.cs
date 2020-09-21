@@ -73,7 +73,7 @@ namespace ExtractorUtils.Test
                 switch (field)
                 {
                     case ResourceType.ExternalId: asset.ExternalId = null; break;
-                    case ResourceType.Name: asset.Name = null; break;
+                    case ResourceType.Name: asset.Name = "name"; break;
                     case ResourceType.ParentId: asset.ParentId = null; break;
                     case ResourceType.ParentExternalId: asset.ParentExternalId = null; break;
                     case ResourceType.Description: asset.Description = null; break;
@@ -262,14 +262,16 @@ namespace ExtractorUtils.Test
         {
             var assets = new[]
             {
-                new AssetCreate { ExternalId = "test1" },
-                new AssetCreate { ExternalId = "test1" },
-                new AssetCreate { ExternalId = "test2" },
-                new AssetCreate { ExternalId = "test2" },
-                new AssetCreate { ExternalId = "test3" }
+                new AssetCreate { ExternalId = "test1", Name = "test" },
+                new AssetCreate { ExternalId = "test1", Name = "test" },
+                new AssetCreate { ExternalId = "test2", Name = "test" },
+                new AssetCreate { ExternalId = "test2", Name = "test" },
+                new AssetCreate { ExternalId = "test3", Name = "test" },
+                new AssetCreate { ExternalId = "test4", Name = null }
             };
             var (result, errors) = Sanitation.CleanAssetRequest(assets, SanitationMode.Clean);
             var err = errors.First();
+            Assert.Equal(2, errors.Count());
             Assert.Equal(3, result.Count());
             Assert.Equal(2, err.Values.Count());
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);
