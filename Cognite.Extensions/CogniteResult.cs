@@ -35,7 +35,12 @@ namespace Cognite.Extensions
         {
             if (ex.Missing?.Any() ?? false)
             {
-                // TODO add asset labels here once fixed in the API.
+                err.Type = ErrorType.ItemMissing;
+                err.Resource = ResourceType.Labels;
+                err.Values = ex.Missing.Select(dict =>
+                    (dict["externalId"] as MultiValue.String)?.Value)
+                    .Where(id => id != null)
+                    .Select(Identity.Create);
             }
             else if (ex.Duplicated?.Any() ?? false)
             {
@@ -245,6 +250,9 @@ namespace Cognite.Extensions
                         break;
                     case ResourceType.ParentId:
                         if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) added = true;
+                        break;
+                    case ResourceType.Labels:
+                        if (asset.Labels == null || !asset.Labels.Any(label => !items.Contains(Identity.Create(label.ExternalId)))) added = true;
                         break;
                 }
                 if (added)
