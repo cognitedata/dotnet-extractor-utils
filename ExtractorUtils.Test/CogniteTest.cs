@@ -385,7 +385,8 @@ namespace ExtractorUtils.Test
                         {
                             toCreate.Add(new AssetCreate
                             {
-                                ExternalId = id
+                                ExternalId = id,
+                                Name = id
                             });
                         }
                         return toCreate;

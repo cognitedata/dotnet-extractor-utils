@@ -198,7 +198,7 @@ namespace Cognite.Extensions
         {
             if (asset == null) throw new ArgumentNullException(nameof(asset));
             if (!asset.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
-            if (!asset.Name.CheckLength(AssetNameMax)) return ResourceType.Name;
+            if (!asset.Name.CheckLength(AssetNameMax) || asset.Name == null) return ResourceType.Name;
             if (asset.ParentId != null && asset.ParentId < 1) return ResourceType.ParentId;
             if (!asset.ParentExternalId.CheckLength(ExternalIdMax)) return ResourceType.ParentExternalId;
             if (!asset.Description.CheckLength(AssetDescriptionMax)) return ResourceType.Description;
@@ -326,6 +326,11 @@ namespace Cognite.Extensions
                 else if (mode == SanitationMode.Clean)
                 {
                     asset.Sanitize();
+                    if (asset.Name == null)
+                    {
+                        bad.Add((ResourceType.Name, asset));
+                        toAdd = false;
+                    }
                 }
                 if (asset.ExternalId != null)
                 {
@@ -335,6 +340,7 @@ namespace Cognite.Extensions
                         toAdd = false;
                     }
                 }
+
                 if (toAdd)
                 {
                     result.Add(asset);

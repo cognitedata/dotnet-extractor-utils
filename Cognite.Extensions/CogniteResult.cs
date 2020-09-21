@@ -35,7 +35,12 @@ namespace Cognite.Extensions
         {
             if (ex.Missing?.Any() ?? false)
             {
-                // TODO add asset labels here once fixed in the API.
+                err.Type = ErrorType.ItemMissing;
+                err.Resource = ResourceType.Labels;
+                err.Values = ex.Missing.Select(dict =>
+                    (dict["externalId"] as MultiValue.String)?.Value)
+                    .Where(id => id != null)
+                    .Select(Identity.Create);
             }
             else if (ex.Duplicated?.Any() ?? false)
             {
@@ -246,6 +251,9 @@ namespace Cognite.Extensions
                     case ResourceType.ParentId:
                         if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) added = true;
                         break;
+                    case ResourceType.Labels:
+                        if (asset.Labels == null || !asset.Labels.Any(label => !items.Contains(Identity.Create(label.ExternalId)))) added = true;
+                        break;
                 }
                 if (added)
                 {
@@ -391,11 +399,12 @@ namespace Cognite.Extensions
 
             if (error.Resource == ResourceType.ParentExternalId)
             {
+                var comparer = new IdentityComparer();
                 var ids = assets.Select(asset => asset.ParentExternalId)
                     .Where(id => id != null)
                     .Distinct()
                     .Select(Identity.Create)
-                    .Except(error.Values, new IdentityComparer());
+                    .Except(error.Values, comparer);
 
                 try
                 {
@@ -403,9 +412,9 @@ namespace Cognite.Extensions
 
                     error.Complete = true;
                     error.Values = ids
-                        .Except(parents.Select(asset => Identity.Create(asset.ExternalId)))
+                        .Except(parents.Select(asset => Identity.Create(asset.ExternalId)), comparer)
                         .Concat(error.Values)
-                        .Distinct(new IdentityComparer());
+                        .Distinct(comparer);
                 }
                 catch
                 {
