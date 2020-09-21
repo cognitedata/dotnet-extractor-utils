@@ -8,6 +8,7 @@
             "Cognite.Metrics/Cognite.Metrics.csproj",
             "Cognite.Common/Cognite.Common.csproj",
             "Cognite.Config/Cognite.Config.csproj",
+            "Cognite.Extensions/Cognite.Extensions.csproj",
             "Cognite.Logging/Cognite.Logging.csproj",
             "Cognite.StateStorage/Cognite.StateStorage.csproj",
             "ExtractorUtils/ExtractorUtils.csproj"
