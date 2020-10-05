@@ -136,7 +136,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created timeseries</returns>
-        public async Task<CogniteResult> EnsureTimeSeriesExistsAsync(
+        public async Task<CogniteResult<TimeSeries>> EnsureTimeSeriesExistsAsync(
             IEnumerable<TimeSeriesCreate> timeSeries,
             RetryMode retryMode,
             SanitationMode sanitationMode,
@@ -233,7 +233,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created assets</returns>
-        public async Task<CogniteResult> EnsureAssetsExistsAsync(
+        public async Task<CogniteResult<Asset>> EnsureAssetsExistsAsync(
             IEnumerable<AssetCreate> assets,
             RetryMode retryMode,
             SanitationMode sanitationMode,
