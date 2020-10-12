@@ -252,7 +252,7 @@ namespace Cognite.Extensions
                         if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) added = true;
                         break;
                     case ResourceType.Labels:
-                        if (asset.Labels == null || !asset.Labels.Any(label => !items.Contains(Identity.Create(label.ExternalId)))) added = true;
+                        if (asset.Labels == null || !asset.Labels.Any(label => items.Contains(Identity.Create(label.ExternalId)))) added = true;
                         break;
                 }
                 if (added)
@@ -268,6 +268,11 @@ namespace Cognite.Extensions
             if (skipped.Any())
             {
                 error.Skipped = skipped;
+            }
+            else
+            {
+                error.Skipped = assets;
+                return Array.Empty<AssetCreate>();
             }
             return ret;
         }
@@ -325,6 +330,11 @@ namespace Cognite.Extensions
             if (skipped.Any())
             {
                 error.Skipped = skipped;
+            }
+            else
+            {
+                error.Skipped = timeseries;
+                return Array.Empty<TimeSeriesCreate>();
             }
             return ret;
         }
@@ -384,6 +394,11 @@ namespace Cognite.Extensions
             {
                 error.Skipped = skipped;
             }
+            else
+            {
+                error.Skipped = events;
+                return Array.Empty<EventCreate>();
+            }
             return ret;
         }
 
@@ -405,6 +420,12 @@ namespace Cognite.Extensions
                     .Distinct()
                     .Select(Identity.Create)
                     .Except(error.Values, comparer);
+
+                if (!ids.Any())
+                {
+                    error.Complete = true;
+                    return;
+                }
 
                 try
                 {
