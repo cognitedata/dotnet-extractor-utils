@@ -91,7 +91,7 @@ namespace ExtractorUtils.Test
                 }, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
 
                 Assert.Equal(5, result.Results.Count());
-                Assert.Equal(Enumerable.Range('1', 5), result.Results.Select(res => (int)res.ExternalId.Last()));
+                Assert.Equal(Enumerable.Range('1', 5), result.Results.Select(res => (int)res.ExternalId.Last()).OrderBy(v => v));
             }
             finally
             {
