@@ -629,7 +629,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created events</returns>
-        public async Task<CogniteResult> EnsureEventsExistsAsync(
+        public async Task<CogniteResult<Event>> EnsureEventsExistsAsync(
             IEnumerable<EventCreate> events,
             RetryMode retryMode,
             SanitationMode sanitationMode,
