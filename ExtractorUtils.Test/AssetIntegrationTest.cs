@@ -246,7 +246,7 @@ namespace ExtractorUtils.Test
                 var result = await tester.Destination.EnsureAssetsExistsAsync(assets, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
 
                 Assert.Single(result.Results);
-                //Assert.Equal(5, result.Errors.Count());
+                Assert.Equal(5, result.Errors.Count());
                 Assert.Equal("final-asset-ok", result.Results.First().Name);
                 foreach (var error in result.Errors)
                 {
