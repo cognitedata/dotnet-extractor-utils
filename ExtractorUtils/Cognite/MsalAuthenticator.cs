@@ -15,11 +15,12 @@ namespace Cognite.Extractor.Utils
         // Injected properties
         private readonly AuthenticatorConfig _config;
         private readonly ILogger<IAuthenticator> _logger;
+
         private readonly IConfidentialClientApplication _app;
         private DateTimeOffset _lastTokenTime;
 
         /// <summary>
-        /// Creates a new authenticator
+        /// Creates a new MSAL authenticator
         /// </summary>
         /// <param name="config">Configuration object</param>
         /// <param name="logger">Logger</param>
@@ -60,7 +61,7 @@ namespace Cognite.Extractor.Utils
                 // The client application will take care of caching the token and 
                 // renewal before expiration
                 if (result.ExpiresOn != _lastTokenTime) {
-                    _logger.LogDebug("AAD token. Expires on {ttl}", result.ExpiresOn.ToString());
+                    _logger.LogDebug("New AAD token. Expires on {ttl}", result.ExpiresOn.ToString());
                     _lastTokenTime = result.ExpiresOn;
                 }
             }

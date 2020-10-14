@@ -10,13 +10,23 @@ using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
 {
+    /// <summary>
+    /// Interface for implementing authenticators based on bearer access tokens issued by an identity provider
+    /// </summary>
     public interface IAuthenticator
     {
+        /// <summary>
+        /// Return a valid(not expired) token that can be used to authorize API calls
+        /// </summary>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A valid token</returns>
         Task<string> GetToken(CancellationToken token = default);
     }
     
     /// <summary>
-    /// Authenticator that obtains bearer access tokens from a <see href="https://login.microsoftonline.com/">Microsoft</see> endpoint
+    /// Authenticator that issues a POST request to an authority endpoint defined in the <see cref="AuthenticatorConfig.Authority"/> configuration
+    /// in order to obtain bearer access tokens.
+    /// The token is cached and renewed if it expired
     /// </summary>
     public class Authenticator : IAuthenticator
     {
@@ -92,12 +102,12 @@ namespace Cognite.Extractor.Utils
 
         /// <summary>
         /// Request a token and cache it until it expires.
-        /// TODO: could start a background task to update the token so that this call does not block on the HTTP request.
         /// </summary>
         /// <param name="token">Cancellation token</param>
         /// <returns>A valid bearer access token</returns>
         public async Task<string> GetToken(CancellationToken token = default)
         {
+            // TODO: could start a background task to update the token so that this call does not block on the HTTP request.
             if (_config == null) {
                 _logger.LogInformation("ADD authentication disabled.");
                 return null;
