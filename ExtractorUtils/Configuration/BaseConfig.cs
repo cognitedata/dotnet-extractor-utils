@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
@@ -137,6 +138,32 @@ namespace Cognite.Extractor.Utils
     public class AuthenticatorConfig
     {
         /// <summary>
+        /// Available authenticator implementations 
+        /// </summary>
+        public enum AuthenticatorImplementation
+        {
+            /// <summary>
+            /// Use Microsoft Authentication Library (MSAL). Recommended
+            /// </summary>
+            MSAL,
+            /// <summary>
+            /// Use a basic implementation. Post requests to the authority endpoint and parse the JSON response in case of success
+            /// </summary>
+            Basic
+        }
+
+        /// <summary>
+        /// Which implementation to use in the authenticator (optional)
+        /// </summary>
+        public AuthenticatorImplementation Implementation { get; set; } = AuthenticatorImplementation.MSAL;
+        
+        /// <summary>
+        /// Identity provider authority endpoint (optional)
+        /// </summary>
+        /// <value>URI</value>
+        public string Authority { get; set; } = "https://login.microsoftonline.com/";
+        
+        /// <summary>
         /// The application (client) Id
         /// </summary>
         /// <value>Client Id</value>
@@ -158,7 +185,7 @@ namespace Cognite.Extractor.Utils
         /// Resource scope
         /// </summary>
         /// <value>Scope</value>
-        public string Scope { get; set; }
+        public List<string> Scopes { get; set; }
 
         /// <summary>
         /// Minimum time-to-live for the token in seconds (optional)

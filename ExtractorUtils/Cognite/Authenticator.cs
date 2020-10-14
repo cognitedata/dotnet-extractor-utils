@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,10 +10,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
 {
+    public interface IAuthenticator
+    {
+        Task<string> GetToken(CancellationToken token = default);
+    }
+    
     /// <summary>
     /// Authenticator that obtains bearer access tokens from a <see href="https://login.microsoftonline.com/">Microsoft</see> endpoint
     /// </summary>
-    public class Authenticator
+    public class Authenticator : IAuthenticator
     {
 
 #pragma warning disable CA1812
@@ -29,7 +35,7 @@ namespace Cognite.Extractor.Utils
         // Injected properties
         private readonly AuthenticatorConfig _config;
         private readonly HttpClient _client;
-        private readonly ILogger<Authenticator> _logger;
+        private readonly ILogger<IAuthenticator> _logger;
 
         private ResponseDTO _response;
         private DateTime _requestTime;
@@ -37,12 +43,12 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Creates a new authenticator
         /// </summary>
-        /// <param name="cogConfig">Configuration object</param>
+        /// <param name="config">Configuration object</param>
         /// <param name="client">Http client</param>
         /// <param name="logger">Logger</param>
-        public Authenticator(CogniteConfig cogConfig, HttpClient client, ILogger<Authenticator> logger)
+        public Authenticator(AuthenticatorConfig config, HttpClient client, ILogger<IAuthenticator> logger)
         {
-            _config = cogConfig.IdpAuthentication;
+            _config = config;
             _client = client;
             _logger = logger;
         }
@@ -52,15 +58,16 @@ namespace Cognite.Extractor.Utils
             var form = new Dictionary<string, string>
             {
                 { "client_id", _config.ClientId },
-                { "tenant", _config.Tenant },
                 { "client_secret", _config.Secret },
-                { "scope", _config.Scope },
+                { "scope", string.Join(" ", _config.Scopes) },
                 { "grant_type", "client_credentials" }
             };
             using (var httpContent = new FormUrlEncodedContent(form))
             {
                 _requestTime = DateTime.UtcNow;
-                var url = new Uri($"https://login.microsoftonline.com/{_config.Tenant}/oauth2/v2.0/token");
+                var uriBuilder = new UriBuilder(_config.Authority);
+                uriBuilder.Path = $"{_config.Tenant}/oauth2/v2.0/token";
+                var url = uriBuilder.Uri;
                 var response = await _client.PostAsync(url, httpContent, token);
                 _logger.LogInformation("Request AAD token {status} {message}", (int) response.StatusCode, response.ReasonPhrase);
                 var body = await response.Content.ReadAsStringAsync();
