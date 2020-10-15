@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading;
 using Cognite.Extensions;
 using Cognite.Extractor.Common;
@@ -48,13 +49,31 @@ namespace Cognite.Extractor.Utils
                     });
             }
 
-            services.AddHttpClient<Authenticator>();
+            // Configure token based authentication
+            var authClientName = "AuthenticatorClient";
+            services.AddHttpClient(authClientName);
+            services.AddTransient<IAuthenticator>(provider => {
+                var conf = provider.GetService<CogniteConfig>();
+                if (conf?.IdpAuthentication == null)
+                    return null;
+                var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
+                if (conf.IdpAuthentication.Implementation == AuthenticatorConfig.AuthenticatorImplementation.MSAL)
+                {
+                    return new MsalAuthenticator(conf.IdpAuthentication, logger);
+                }
+
+                // TODO: Remove the Basic authenticator if MSAL works for all workflows,
+                // else, improve the basic implementation. 
+                var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
+                var client = clientFactory.CreateClient(authClientName);
+                return new Authenticator(conf.IdpAuthentication, client, logger);
+            });
+            
             services.AddSingleton<IMetrics, CdfMetricCollector>();
             services.AddTransient(provider => {
                 var cdfBuilder = provider.GetRequiredService<Client.Builder>();
                 var conf = provider.GetService<CogniteConfig>();
-                var auth = conf?.IdpAuthentication != null ?
-                    provider.GetRequiredService<Authenticator>() : null;
+                var auth = provider.GetService<IAuthenticator>();
                 var logger = setLogger ?
                     provider.GetRequiredService<ILogger<Client>>() : null;
                 CogniteExtensions.AddExtensionLoggers(provider);
@@ -74,7 +93,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="clientBuilder">This builder</param>
         /// <param name="config">A <see cref="CogniteConfig"/> configuration object</param>
         /// <param name="appId">Identifier of the application using the Cognite API</param>
-        /// <param name="auth">A <see cref="Authenticator"/> authenticator used to obtain bearer access token. 
+        /// <param name="auth">A <see cref="IAuthenticator"/> authenticator used to obtain bearer access token. 
         /// If null, API keys are used for authentication</param>
         /// <param name="logger">A <see cref="ILogger"/> logger that the client can use to log calls to the 
         /// Cognite API (enabled in debug mode)</param>
@@ -87,7 +106,7 @@ namespace Cognite.Extractor.Utils
             this Client.Builder clientBuilder,
             CogniteConfig config,
             string appId,
-            Authenticator auth = null,
+            IAuthenticator auth = null,
             ILogger<Client> logger = null,
             IMetrics metrics = null)
         {

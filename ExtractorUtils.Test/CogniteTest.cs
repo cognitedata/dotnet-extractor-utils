@@ -41,10 +41,12 @@ namespace ExtractorUtils.Test
                                 "    level: verbose",
                                 "cognite:",
                                 "  idp-authentication:",
+                                "    implementation: Basic",
                                $"    client-id: {clientId}",
                                $"    tenant: {_authTenant}",
                                 "    secret: thisIsASecret",
-                                "    scope: thisIsAScope",
+                                "    scopes: ",
+                                "      - thisIsAScope",
                                 "    min-ttl: 0" };
             System.IO.File.WriteAllLines(path, lines);
 
@@ -55,11 +57,12 @@ namespace ExtractorUtils.Test
             // Setup services
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
-            services.AddConfig<BaseConfig>(path, 2);
+            var config = services.AddConfig<BaseConfig>(path, 2);
+            services.AddSingleton<AuthenticatorConfig>(config.Cognite.IdpAuthentication);
             services.AddLogger();
-            services.AddHttpClient<Authenticator>();
+            services.AddHttpClient<IAuthenticator, Authenticator>();
             using (var provider = services.BuildServiceProvider()) {
-                var auth = provider.GetRequiredService<Authenticator>();
+                var auth = provider.GetRequiredService<IAuthenticator>();
                 var token = await auth.GetToken();
                 Assert.Equal("token0", token);
                 await Task.Delay(100);
