@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -103,6 +104,78 @@ namespace Cognite.Extractor.Logging
         }
     }
 
+   /// <summary>
+   /// This class implements a <see cref="TraceListener"/> that, when configured, writes trace messages to the injected 
+   /// logger
+   /// </summary>
+   public class LoggerTraceListener : TraceListener
+    {
+        private readonly Microsoft.Extensions.Logging.ILogger<LoggerTraceListener> _logger;
+        private readonly string _level;
+
+        /// <summary>
+        /// Creates a new listener using the logger and configuration passed as parameters
+        /// </summary>
+        /// <param name="logger">Logger</param>
+        /// <param name="config">Logger configuration</param>
+        public LoggerTraceListener(Microsoft.Extensions.Logging.ILogger<LoggerTraceListener> logger, LoggerConfig config)
+        {
+            _logger = logger;
+            _level = config.TraceListener?.Level;
+        }
+
+        /// <summary>
+        /// Writes a trace message using the configured logger
+        /// </summary>
+        /// <param name="message">Trace message</param>
+        public override void Write(string message)
+        {
+            WriteLine(message);
+        }
+
+        /// <summary>
+        /// Writes a trace message using the configured logger
+        /// </summary>
+        /// <param name="message">Trace message</param>
+        public override void WriteLine(string message)
+        {
+            switch(_level){
+                case "verbose":
+                    _logger.LogTrace(message);
+                    break;
+                case "debug":
+                    _logger.LogDebug(message);
+                    break;
+                case "information":
+                    _logger.LogInformation(message);
+                    break;
+                case "warning":
+                    _logger.LogWarning(message);
+                    break;
+                case "error":
+                    _logger.LogError(message);
+                    break;
+                case "fatal":
+                    _logger.LogCritical(message);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Enable this Trace listener, so that trace messages are outputted by the logger
+        /// </summary>
+        public void Enable() 
+        {
+            if (_level != null)
+            {
+                Trace.Listeners.Add(this);
+                _logger.LogDebug("Outputting {Trace} messages as {level} logs", typeof(Trace).Name, _level);
+            }
+        }
+    }
+    
     /// <summary>
     /// Extension utilities for logging
     /// </summary>
@@ -116,6 +189,7 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <param name="services">The service collection</param>
         public static void AddLogger(this IServiceCollection services) {
+            services.AddSingleton<LoggerTraceListener>();
             services.AddSingleton<Serilog.ILogger>(p => {
                 var config = p.GetService<LoggerConfig>();
                 if (config == null || (config.Console == null && config.File == null)) {
