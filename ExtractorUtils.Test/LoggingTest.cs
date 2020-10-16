@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,9 +29,11 @@ namespace ExtractorUtils.Test
                                 "  console:",
                                 "    level: verbose",
                                 "  file:",
-                                "    level: debug",
+                                "    level: information",
                                @"    path: logs/log.txt",
-                                "    rolling-interval: day" };
+                                "    rolling-interval: day",
+                                "  trace-listener:",
+                                "    level: warning" };
             File.WriteAllLines(path, lines);
             
             l1.LogInformation("Adding Configuration and Logging services...");
@@ -42,7 +45,7 @@ namespace ExtractorUtils.Test
                 l1.LogInformation("Getting configuration singleton object");
                 var config = provider.GetRequiredService<TestLoggingConfig>();
                 Assert.Equal(2, config.Version);
-                Assert.Equal("debug", config.Logger.File.Level);
+                Assert.Equal("information", config.Logger.File.Level);
                 Assert.Equal(@"logs/log.txt", config.Logger.File.Path);
 
                 l1.LogInformation("Getting logger implementations");
@@ -57,6 +60,11 @@ namespace ExtractorUtils.Test
 
                 serilogLogger.Verbose("This log message is not in the log file"); // but should be seen in Console
                 microsoftLogger.LogTrace("This log message is not in the log file");
+
+                var traceListener = provider.GetService<LoggerTraceListener>();
+                traceListener.Enable();
+
+                Trace.WriteLine("This is a trace message");
             }
 
             l1.LogInformation("Verifying that the log file exists and contains INFO logs");
@@ -65,10 +73,15 @@ namespace ExtractorUtils.Test
             using (StreamReader r = new StreamReader(logfile))
             {
                 string line1 = r.ReadLine();
+                Assert.Contains(" INF] ", line1);
                 Assert.Contains("This is a information log from Serilog.Core.Logger", line1);
                 string line2 = r.ReadLine();
+                Assert.Contains(" INF] ", line2);
                 Assert.Contains("This is a information log from Microsoft.Extensions.Logging.Logger", line2);
-                Assert.Null(r.ReadLine()); // only debug level and above should be printed
+                string line3 = r.ReadLine();
+                Assert.Contains(" WRN] ", line3);
+                Assert.Contains("This is a trace message", line3);
+                Assert.Null(r.ReadLine()); // only information level and above should be printed
             }
             Directory.Delete("logs", true);
             File.Delete(path);

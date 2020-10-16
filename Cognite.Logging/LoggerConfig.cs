@@ -18,6 +18,12 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <value>A <see cref="FileConfig"/> config object</value>
         public FileConfig File { get; set; }
+
+        /// <summary>
+        /// Adds a listener that uses the configured logger to output <see cref="System.Diagnostics.Trace"/> messages
+        /// </summary>
+        /// <value></value>
+        public TraceListenerConfig TraceListener { get; set; }
         
     }
 
@@ -57,6 +63,14 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <value>One of 'day', 'hour'. Defaults to 'day'</value>
         public string RollingInterval { get; set; } = "day";
+    }
+
+    /// <summary>
+    /// Trace listener configuration object
+    /// </summary>
+    public class TraceListenerConfig : LogConfig
+    {
+
     }
 
 }
