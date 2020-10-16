@@ -1,6 +1,1763 @@
 ### YamlMime:XRefMap
 sorted: true
 references:
+- uid: Cognite.Extensions
+  name: Cognite.Extensions
+  href: api/Cognite.Extensions.html
+  commentId: N:Cognite.Extensions
+  fullName: Cognite.Extensions
+  nameWithType: Cognite.Extensions
+- uid: Cognite.Extensions.AssetExtensions
+  name: AssetExtensions
+  href: api/Cognite.Extensions.AssetExtensions.html
+  commentId: T:Cognite.Extensions.AssetExtensions
+  fullName: Cognite.Extensions.AssetExtensions
+  nameWithType: AssetExtensions
+- uid: Cognite.Extensions.AssetExtensions.EnsureExistsAsync(AssetsResource,IEnumerable{AssetCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: EnsureExistsAsync(AssetsResource, IEnumerable<AssetCreate>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_EnsureExistsAsync_AssetsResource_IEnumerable_AssetCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.AssetExtensions.EnsureExistsAsync(AssetsResource,IEnumerable{AssetCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: EnsureExistsAsync(AssetsResource, IEnumerable(Of AssetCreate), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.AssetExtensions.EnsureExistsAsync(AssetsResource, IEnumerable<AssetCreate>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.AssetExtensions.EnsureExistsAsync(AssetsResource, IEnumerable(Of AssetCreate), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: AssetExtensions.EnsureExistsAsync(AssetsResource, IEnumerable<AssetCreate>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: AssetExtensions.EnsureExistsAsync(AssetsResource, IEnumerable(Of AssetCreate), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.AssetExtensions.EnsureExistsAsync*
+  name: EnsureExistsAsync
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_EnsureExistsAsync_
+  commentId: Overload:Cognite.Extensions.AssetExtensions.EnsureExistsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.AssetExtensions.EnsureExistsAsync
+  nameWithType: AssetExtensions.EnsureExistsAsync
+- uid: Cognite.Extensions.AssetExtensions.GetAssetsByIdsIgnoreErrors(AssetsResource,IEnumerable{Identity},System.Int32,System.Int32,CancellationToken)
+  name: GetAssetsByIdsIgnoreErrors(AssetsResource, IEnumerable<Identity>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_GetAssetsByIdsIgnoreErrors_AssetsResource_IEnumerable_Identity__System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.AssetExtensions.GetAssetsByIdsIgnoreErrors(AssetsResource,IEnumerable{Identity},System.Int32,System.Int32,CancellationToken)
+  name.vb: GetAssetsByIdsIgnoreErrors(AssetsResource, IEnumerable(Of Identity), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.AssetExtensions.GetAssetsByIdsIgnoreErrors(AssetsResource, IEnumerable<Identity>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.AssetExtensions.GetAssetsByIdsIgnoreErrors(AssetsResource, IEnumerable(Of Identity), System.Int32, System.Int32, CancellationToken)
+  nameWithType: AssetExtensions.GetAssetsByIdsIgnoreErrors(AssetsResource, IEnumerable<Identity>, Int32, Int32, CancellationToken)
+  nameWithType.vb: AssetExtensions.GetAssetsByIdsIgnoreErrors(AssetsResource, IEnumerable(Of Identity), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.AssetExtensions.GetAssetsByIdsIgnoreErrors*
+  name: GetAssetsByIdsIgnoreErrors
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_GetAssetsByIdsIgnoreErrors_
+  commentId: Overload:Cognite.Extensions.AssetExtensions.GetAssetsByIdsIgnoreErrors
+  isSpec: "True"
+  fullName: Cognite.Extensions.AssetExtensions.GetAssetsByIdsIgnoreErrors
+  nameWithType: AssetExtensions.GetAssetsByIdsIgnoreErrors
+- uid: Cognite.Extensions.AssetExtensions.GetOrCreateAsync(AssetsResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{AssetCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateAsync(AssetsResource, IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<AssetCreate>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_GetOrCreateAsync_AssetsResource_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_AssetCreate___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.AssetExtensions.GetOrCreateAsync(AssetsResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{AssetCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateAsync(AssetsResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of AssetCreate)), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.AssetExtensions.GetOrCreateAsync(AssetsResource, IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<AssetCreate>>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.AssetExtensions.GetOrCreateAsync(AssetsResource, IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of AssetCreate)), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: AssetExtensions.GetOrCreateAsync(AssetsResource, IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<AssetCreate>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: AssetExtensions.GetOrCreateAsync(AssetsResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of AssetCreate)), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.AssetExtensions.GetOrCreateAsync(AssetsResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{AssetCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateAsync(AssetsResource, IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<AssetCreate>>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_GetOrCreateAsync_AssetsResource_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_AssetCreate____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.AssetExtensions.GetOrCreateAsync(AssetsResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{AssetCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateAsync(AssetsResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of AssetCreate))), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.AssetExtensions.GetOrCreateAsync(AssetsResource, IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<AssetCreate>>>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.AssetExtensions.GetOrCreateAsync(AssetsResource, IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of AssetCreate))), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: AssetExtensions.GetOrCreateAsync(AssetsResource, IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<AssetCreate>>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: AssetExtensions.GetOrCreateAsync(AssetsResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of AssetCreate))), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.AssetExtensions.GetOrCreateAsync*
+  name: GetOrCreateAsync
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_GetOrCreateAsync_
+  commentId: Overload:Cognite.Extensions.AssetExtensions.GetOrCreateAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.AssetExtensions.GetOrCreateAsync
+  nameWithType: AssetExtensions.GetOrCreateAsync
+- uid: Cognite.Extensions.CogniteError
+  name: CogniteError
+  href: api/Cognite.Extensions.CogniteError.html
+  commentId: T:Cognite.Extensions.CogniteError
+  fullName: Cognite.Extensions.CogniteError
+  nameWithType: CogniteError
+- uid: Cognite.Extensions.CogniteError.Complete
+  name: Complete
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Complete
+  commentId: P:Cognite.Extensions.CogniteError.Complete
+  fullName: Cognite.Extensions.CogniteError.Complete
+  nameWithType: CogniteError.Complete
+- uid: Cognite.Extensions.CogniteError.Complete*
+  name: Complete
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Complete_
+  commentId: Overload:Cognite.Extensions.CogniteError.Complete
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Complete
+  nameWithType: CogniteError.Complete
+- uid: Cognite.Extensions.CogniteError.Exception
+  name: Exception
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Exception
+  commentId: P:Cognite.Extensions.CogniteError.Exception
+  fullName: Cognite.Extensions.CogniteError.Exception
+  nameWithType: CogniteError.Exception
+- uid: Cognite.Extensions.CogniteError.Exception*
+  name: Exception
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Exception_
+  commentId: Overload:Cognite.Extensions.CogniteError.Exception
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Exception
+  nameWithType: CogniteError.Exception
+- uid: Cognite.Extensions.CogniteError.Message
+  name: Message
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Message
+  commentId: P:Cognite.Extensions.CogniteError.Message
+  fullName: Cognite.Extensions.CogniteError.Message
+  nameWithType: CogniteError.Message
+- uid: Cognite.Extensions.CogniteError.Message*
+  name: Message
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Message_
+  commentId: Overload:Cognite.Extensions.CogniteError.Message
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Message
+  nameWithType: CogniteError.Message
+- uid: Cognite.Extensions.CogniteError.Resource
+  name: Resource
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Resource
+  commentId: P:Cognite.Extensions.CogniteError.Resource
+  fullName: Cognite.Extensions.CogniteError.Resource
+  nameWithType: CogniteError.Resource
+- uid: Cognite.Extensions.CogniteError.Resource*
+  name: Resource
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Resource_
+  commentId: Overload:Cognite.Extensions.CogniteError.Resource
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Resource
+  nameWithType: CogniteError.Resource
+- uid: Cognite.Extensions.CogniteError.Skipped
+  name: Skipped
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Skipped
+  commentId: P:Cognite.Extensions.CogniteError.Skipped
+  fullName: Cognite.Extensions.CogniteError.Skipped
+  nameWithType: CogniteError.Skipped
+- uid: Cognite.Extensions.CogniteError.Skipped*
+  name: Skipped
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Skipped_
+  commentId: Overload:Cognite.Extensions.CogniteError.Skipped
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Skipped
+  nameWithType: CogniteError.Skipped
+- uid: Cognite.Extensions.CogniteError.Status
+  name: Status
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Status
+  commentId: P:Cognite.Extensions.CogniteError.Status
+  fullName: Cognite.Extensions.CogniteError.Status
+  nameWithType: CogniteError.Status
+- uid: Cognite.Extensions.CogniteError.Status*
+  name: Status
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Status_
+  commentId: Overload:Cognite.Extensions.CogniteError.Status
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Status
+  nameWithType: CogniteError.Status
+- uid: Cognite.Extensions.CogniteError.Type
+  name: Type
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Type
+  commentId: P:Cognite.Extensions.CogniteError.Type
+  fullName: Cognite.Extensions.CogniteError.Type
+  nameWithType: CogniteError.Type
+- uid: Cognite.Extensions.CogniteError.Type*
+  name: Type
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Type_
+  commentId: Overload:Cognite.Extensions.CogniteError.Type
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Type
+  nameWithType: CogniteError.Type
+- uid: Cognite.Extensions.CogniteError.Values
+  name: Values
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Values
+  commentId: P:Cognite.Extensions.CogniteError.Values
+  fullName: Cognite.Extensions.CogniteError.Values
+  nameWithType: CogniteError.Values
+- uid: Cognite.Extensions.CogniteError.Values*
+  name: Values
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Values_
+  commentId: Overload:Cognite.Extensions.CogniteError.Values
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Values
+  nameWithType: CogniteError.Values
+- uid: Cognite.Extensions.CogniteExtensions
+  name: CogniteExtensions
+  href: api/Cognite.Extensions.CogniteExtensions.html
+  commentId: T:Cognite.Extensions.CogniteExtensions
+  fullName: Cognite.Extensions.CogniteExtensions
+  nameWithType: CogniteExtensions
+- uid: Cognite.Extensions.CogniteExtensions.AddExtensionLoggers(IServiceProvider)
+  name: AddExtensionLoggers(IServiceProvider)
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_AddExtensionLoggers_IServiceProvider_
+  commentId: M:Cognite.Extensions.CogniteExtensions.AddExtensionLoggers(IServiceProvider)
+  fullName: Cognite.Extensions.CogniteExtensions.AddExtensionLoggers(IServiceProvider)
+  nameWithType: CogniteExtensions.AddExtensionLoggers(IServiceProvider)
+- uid: Cognite.Extensions.CogniteExtensions.AddExtensionLoggers*
+  name: AddExtensionLoggers
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_AddExtensionLoggers_
+  commentId: Overload:Cognite.Extensions.CogniteExtensions.AddExtensionLoggers
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteExtensions.AddExtensionLoggers
+  nameWithType: CogniteExtensions.AddExtensionLoggers
+- uid: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(ILogger,System.Nullable{System.Int32},System.Nullable{System.Int32})
+  name: GetRetryPolicy(ILogger, Nullable<Int32>, Nullable<Int32>)
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetRetryPolicy_ILogger_System_Nullable_System_Int32__System_Nullable_System_Int32__
+  commentId: M:Cognite.Extensions.CogniteExtensions.GetRetryPolicy(ILogger,System.Nullable{System.Int32},System.Nullable{System.Int32})
+  name.vb: GetRetryPolicy(ILogger, Nullable(Of Int32), Nullable(Of Int32))
+  fullName: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(ILogger, System.Nullable<System.Int32>, System.Nullable<System.Int32>)
+  fullName.vb: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(ILogger, System.Nullable(Of System.Int32), System.Nullable(Of System.Int32))
+  nameWithType: CogniteExtensions.GetRetryPolicy(ILogger, Nullable<Int32>, Nullable<Int32>)
+  nameWithType.vb: CogniteExtensions.GetRetryPolicy(ILogger, Nullable(Of Int32), Nullable(Of Int32))
+- uid: Cognite.Extensions.CogniteExtensions.GetRetryPolicy*
+  name: GetRetryPolicy
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetRetryPolicy_
+  commentId: Overload:Cognite.Extensions.CogniteExtensions.GetRetryPolicy
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteExtensions.GetRetryPolicy
+  nameWithType: CogniteExtensions.GetRetryPolicy
+- uid: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy(System.Nullable{System.Int32})
+  name: GetTimeoutPolicy(Nullable<Int32>)
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetTimeoutPolicy_System_Nullable_System_Int32__
+  commentId: M:Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy(System.Nullable{System.Int32})
+  name.vb: GetTimeoutPolicy(Nullable(Of Int32))
+  fullName: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy(System.Nullable<System.Int32>)
+  fullName.vb: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy(System.Nullable(Of System.Int32))
+  nameWithType: CogniteExtensions.GetTimeoutPolicy(Nullable<Int32>)
+  nameWithType.vb: CogniteExtensions.GetTimeoutPolicy(Nullable(Of Int32))
+- uid: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy*
+  name: GetTimeoutPolicy
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetTimeoutPolicy_
+  commentId: Overload:Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy
+  nameWithType: CogniteExtensions.GetTimeoutPolicy
+- uid: Cognite.Extensions.CogniteResult
+  name: CogniteResult
+  href: api/Cognite.Extensions.CogniteResult.html
+  commentId: T:Cognite.Extensions.CogniteResult
+  fullName: Cognite.Extensions.CogniteResult
+  nameWithType: CogniteResult
+- uid: Cognite.Extensions.CogniteResult.#ctor(IEnumerable{Cognite.Extensions.CogniteError})
+  name: CogniteResult(IEnumerable<CogniteError>)
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult__ctor_IEnumerable_Cognite_Extensions_CogniteError__
+  commentId: M:Cognite.Extensions.CogniteResult.#ctor(IEnumerable{Cognite.Extensions.CogniteError})
+  name.vb: CogniteResult(IEnumerable(Of CogniteError))
+  fullName: Cognite.Extensions.CogniteResult.CogniteResult(IEnumerable<Cognite.Extensions.CogniteError>)
+  fullName.vb: Cognite.Extensions.CogniteResult.CogniteResult(IEnumerable(Of Cognite.Extensions.CogniteError))
+  nameWithType: CogniteResult.CogniteResult(IEnumerable<CogniteError>)
+  nameWithType.vb: CogniteResult.CogniteResult(IEnumerable(Of CogniteError))
+- uid: Cognite.Extensions.CogniteResult.#ctor*
+  name: CogniteResult
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult__ctor_
+  commentId: Overload:Cognite.Extensions.CogniteResult.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult.CogniteResult
+  nameWithType: CogniteResult.CogniteResult
+- uid: Cognite.Extensions.CogniteResult.Errors
+  name: Errors
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult_Errors
+  commentId: P:Cognite.Extensions.CogniteResult.Errors
+  fullName: Cognite.Extensions.CogniteResult.Errors
+  nameWithType: CogniteResult.Errors
+- uid: Cognite.Extensions.CogniteResult.Errors*
+  name: Errors
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult_Errors_
+  commentId: Overload:Cognite.Extensions.CogniteResult.Errors
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult.Errors
+  nameWithType: CogniteResult.Errors
+- uid: Cognite.Extensions.CogniteResult.IsAllGood
+  name: IsAllGood
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult_IsAllGood
+  commentId: P:Cognite.Extensions.CogniteResult.IsAllGood
+  fullName: Cognite.Extensions.CogniteResult.IsAllGood
+  nameWithType: CogniteResult.IsAllGood
+- uid: Cognite.Extensions.CogniteResult.IsAllGood*
+  name: IsAllGood
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult_IsAllGood_
+  commentId: Overload:Cognite.Extensions.CogniteResult.IsAllGood
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult.IsAllGood
+  nameWithType: CogniteResult.IsAllGood
+- uid: Cognite.Extensions.CogniteResult.Merge(Cognite.Extensions.CogniteResult)
+  name: Merge(CogniteResult)
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult_Merge_Cognite_Extensions_CogniteResult_
+  commentId: M:Cognite.Extensions.CogniteResult.Merge(Cognite.Extensions.CogniteResult)
+  fullName: Cognite.Extensions.CogniteResult.Merge(Cognite.Extensions.CogniteResult)
+  nameWithType: CogniteResult.Merge(CogniteResult)
+- uid: Cognite.Extensions.CogniteResult.Merge(Cognite.Extensions.CogniteResult[])
+  name: Merge(CogniteResult[])
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult_Merge_Cognite_Extensions_CogniteResult___
+  commentId: M:Cognite.Extensions.CogniteResult.Merge(Cognite.Extensions.CogniteResult[])
+  name.vb: Merge(CogniteResult())
+  fullName: Cognite.Extensions.CogniteResult.Merge(Cognite.Extensions.CogniteResult[])
+  fullName.vb: Cognite.Extensions.CogniteResult.Merge(Cognite.Extensions.CogniteResult())
+  nameWithType: CogniteResult.Merge(CogniteResult[])
+  nameWithType.vb: CogniteResult.Merge(CogniteResult())
+- uid: Cognite.Extensions.CogniteResult.Merge*
+  name: Merge
+  href: api/Cognite.Extensions.CogniteResult.html#Cognite_Extensions_CogniteResult_Merge_
+  commentId: Overload:Cognite.Extensions.CogniteResult.Merge
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult.Merge
+  nameWithType: CogniteResult.Merge
+- uid: Cognite.Extensions.CogniteResult`1
+  name: CogniteResult<TResult>
+  href: api/Cognite.Extensions.CogniteResult-1.html
+  commentId: T:Cognite.Extensions.CogniteResult`1
+  name.vb: CogniteResult(Of TResult)
+  fullName: Cognite.Extensions.CogniteResult<TResult>
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult)
+  nameWithType: CogniteResult<TResult>
+  nameWithType.vb: CogniteResult(Of TResult)
+- uid: Cognite.Extensions.CogniteResult`1.#ctor(IEnumerable{Cognite.Extensions.CogniteError},IEnumerable{`0})
+  name: CogniteResult(IEnumerable<CogniteError>, IEnumerable<TResult>)
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1__ctor_IEnumerable_Cognite_Extensions_CogniteError__IEnumerable__0__
+  commentId: M:Cognite.Extensions.CogniteResult`1.#ctor(IEnumerable{Cognite.Extensions.CogniteError},IEnumerable{`0})
+  name.vb: CogniteResult(IEnumerable(Of CogniteError), IEnumerable(Of TResult))
+  fullName: Cognite.Extensions.CogniteResult<TResult>.CogniteResult(IEnumerable<Cognite.Extensions.CogniteError>, IEnumerable<TResult>)
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult).CogniteResult(IEnumerable(Of Cognite.Extensions.CogniteError), IEnumerable(Of TResult))
+  nameWithType: CogniteResult<TResult>.CogniteResult(IEnumerable<CogniteError>, IEnumerable<TResult>)
+  nameWithType.vb: CogniteResult(Of TResult).CogniteResult(IEnumerable(Of CogniteError), IEnumerable(Of TResult))
+- uid: Cognite.Extensions.CogniteResult`1.#ctor*
+  name: CogniteResult
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1__ctor_
+  commentId: Overload:Cognite.Extensions.CogniteResult`1.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult<TResult>.CogniteResult
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult).CogniteResult
+  nameWithType: CogniteResult<TResult>.CogniteResult
+  nameWithType.vb: CogniteResult(Of TResult).CogniteResult
+- uid: Cognite.Extensions.CogniteResult`1.Merge(Cognite.Extensions.CogniteResult{`0})
+  name: Merge(CogniteResult<TResult>)
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_Merge_Cognite_Extensions_CogniteResult__0__
+  commentId: M:Cognite.Extensions.CogniteResult`1.Merge(Cognite.Extensions.CogniteResult{`0})
+  name.vb: Merge(CogniteResult(Of TResult))
+  fullName: Cognite.Extensions.CogniteResult<TResult>.Merge(Cognite.Extensions.CogniteResult<TResult>)
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult).Merge(Cognite.Extensions.CogniteResult(Of TResult))
+  nameWithType: CogniteResult<TResult>.Merge(CogniteResult<TResult>)
+  nameWithType.vb: CogniteResult(Of TResult).Merge(CogniteResult(Of TResult))
+- uid: Cognite.Extensions.CogniteResult`1.Merge(Cognite.Extensions.CogniteResult{`0}[])
+  name: Merge(CogniteResult<TResult>[])
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_Merge_Cognite_Extensions_CogniteResult__0____
+  commentId: M:Cognite.Extensions.CogniteResult`1.Merge(Cognite.Extensions.CogniteResult{`0}[])
+  name.vb: Merge(CogniteResult(Of TResult)())
+  fullName: Cognite.Extensions.CogniteResult<TResult>.Merge(Cognite.Extensions.CogniteResult<TResult>[])
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult).Merge(Cognite.Extensions.CogniteResult(Of TResult)())
+  nameWithType: CogniteResult<TResult>.Merge(CogniteResult<TResult>[])
+  nameWithType.vb: CogniteResult(Of TResult).Merge(CogniteResult(Of TResult)())
+- uid: Cognite.Extensions.CogniteResult`1.Merge*
+  name: Merge
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_Merge_
+  commentId: Overload:Cognite.Extensions.CogniteResult`1.Merge
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult<TResult>.Merge
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult).Merge
+  nameWithType: CogniteResult<TResult>.Merge
+  nameWithType.vb: CogniteResult(Of TResult).Merge
+- uid: Cognite.Extensions.CogniteResult`1.Results
+  name: Results
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_Results
+  commentId: P:Cognite.Extensions.CogniteResult`1.Results
+  fullName: Cognite.Extensions.CogniteResult<TResult>.Results
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult).Results
+  nameWithType: CogniteResult<TResult>.Results
+  nameWithType.vb: CogniteResult(Of TResult).Results
+- uid: Cognite.Extensions.CogniteResult`1.Results*
+  name: Results
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_Results_
+  commentId: Overload:Cognite.Extensions.CogniteResult`1.Results
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult<TResult>.Results
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult).Results
+  nameWithType: CogniteResult<TResult>.Results
+  nameWithType.vb: CogniteResult(Of TResult).Results
+- uid: Cognite.Extensions.CogniteUtils
+  name: CogniteUtils
+  href: api/Cognite.Extensions.CogniteUtils.html
+  commentId: T:Cognite.Extensions.CogniteUtils
+  fullName: Cognite.Extensions.CogniteUtils
+  nameWithType: CogniteUtils
+- uid: Cognite.Extensions.CogniteUtils.EventFromStream(Stream)
+  name: EventFromStream(Stream)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_EventFromStream_Stream_
+  commentId: M:Cognite.Extensions.CogniteUtils.EventFromStream(Stream)
+  fullName: Cognite.Extensions.CogniteUtils.EventFromStream(Stream)
+  nameWithType: CogniteUtils.EventFromStream(Stream)
+- uid: Cognite.Extensions.CogniteUtils.EventFromStream*
+  name: EventFromStream
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_EventFromStream_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.EventFromStream
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.EventFromStream
+  nameWithType: CogniteUtils.EventFromStream
+- uid: Cognite.Extensions.CogniteUtils.EventToStorable(EventCreate)
+  name: EventToStorable(EventCreate)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_EventToStorable_EventCreate_
+  commentId: M:Cognite.Extensions.CogniteUtils.EventToStorable(EventCreate)
+  fullName: Cognite.Extensions.CogniteUtils.EventToStorable(EventCreate)
+  nameWithType: CogniteUtils.EventToStorable(EventCreate)
+- uid: Cognite.Extensions.CogniteUtils.EventToStorable*
+  name: EventToStorable
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_EventToStorable_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.EventToStorable
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.EventToStorable
+  nameWithType: CogniteUtils.EventToStorable
+- uid: Cognite.Extensions.CogniteUtils.ExtractMissingFromResponseException(HashSet{Identity},ResponseException)
+  name: ExtractMissingFromResponseException(HashSet<Identity>, ResponseException)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ExtractMissingFromResponseException_HashSet_Identity__ResponseException_
+  commentId: M:Cognite.Extensions.CogniteUtils.ExtractMissingFromResponseException(HashSet{Identity},ResponseException)
+  name.vb: ExtractMissingFromResponseException(HashSet(Of Identity), ResponseException)
+  fullName: Cognite.Extensions.CogniteUtils.ExtractMissingFromResponseException(HashSet<Identity>, ResponseException)
+  fullName.vb: Cognite.Extensions.CogniteUtils.ExtractMissingFromResponseException(HashSet(Of Identity), ResponseException)
+  nameWithType: CogniteUtils.ExtractMissingFromResponseException(HashSet<Identity>, ResponseException)
+  nameWithType.vb: CogniteUtils.ExtractMissingFromResponseException(HashSet(Of Identity), ResponseException)
+- uid: Cognite.Extensions.CogniteUtils.ExtractMissingFromResponseException*
+  name: ExtractMissingFromResponseException
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ExtractMissingFromResponseException_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.ExtractMissingFromResponseException
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.ExtractMissingFromResponseException
+  nameWithType: CogniteUtils.ExtractMissingFromResponseException
+- uid: Cognite.Extensions.CogniteUtils.NumericValueMax
+  name: NumericValueMax
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_NumericValueMax
+  commentId: F:Cognite.Extensions.CogniteUtils.NumericValueMax
+  fullName: Cognite.Extensions.CogniteUtils.NumericValueMax
+  nameWithType: CogniteUtils.NumericValueMax
+- uid: Cognite.Extensions.CogniteUtils.NumericValueMin
+  name: NumericValueMin
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_NumericValueMin
+  commentId: F:Cognite.Extensions.CogniteUtils.NumericValueMin
+  fullName: Cognite.Extensions.CogniteUtils.NumericValueMin
+  nameWithType: CogniteUtils.NumericValueMin
+- uid: Cognite.Extensions.CogniteUtils.ReadDatapoints(Stream,System.Int32)
+  name: ReadDatapoints(Stream, Int32)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ReadDatapoints_Stream_System_Int32_
+  commentId: M:Cognite.Extensions.CogniteUtils.ReadDatapoints(Stream,System.Int32)
+  fullName: Cognite.Extensions.CogniteUtils.ReadDatapoints(Stream, System.Int32)
+  nameWithType: CogniteUtils.ReadDatapoints(Stream, Int32)
+- uid: Cognite.Extensions.CogniteUtils.ReadDatapoints*
+  name: ReadDatapoints
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ReadDatapoints_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.ReadDatapoints
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.ReadDatapoints
+  nameWithType: CogniteUtils.ReadDatapoints
+- uid: Cognite.Extensions.CogniteUtils.ReadDatapointsAsync(Stream,CancellationToken,System.Int32)
+  name: ReadDatapointsAsync(Stream, CancellationToken, Int32)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ReadDatapointsAsync_Stream_CancellationToken_System_Int32_
+  commentId: M:Cognite.Extensions.CogniteUtils.ReadDatapointsAsync(Stream,CancellationToken,System.Int32)
+  fullName: Cognite.Extensions.CogniteUtils.ReadDatapointsAsync(Stream, CancellationToken, System.Int32)
+  nameWithType: CogniteUtils.ReadDatapointsAsync(Stream, CancellationToken, Int32)
+- uid: Cognite.Extensions.CogniteUtils.ReadDatapointsAsync*
+  name: ReadDatapointsAsync
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ReadDatapointsAsync_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.ReadDatapointsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.ReadDatapointsAsync
+  nameWithType: CogniteUtils.ReadDatapointsAsync
+- uid: Cognite.Extensions.CogniteUtils.ReadEvents(Stream,System.Int32)
+  name: ReadEvents(Stream, Int32)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ReadEvents_Stream_System_Int32_
+  commentId: M:Cognite.Extensions.CogniteUtils.ReadEvents(Stream,System.Int32)
+  fullName: Cognite.Extensions.CogniteUtils.ReadEvents(Stream, System.Int32)
+  nameWithType: CogniteUtils.ReadEvents(Stream, Int32)
+- uid: Cognite.Extensions.CogniteUtils.ReadEvents*
+  name: ReadEvents
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ReadEvents_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.ReadEvents
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.ReadEvents
+  nameWithType: CogniteUtils.ReadEvents
+- uid: Cognite.Extensions.CogniteUtils.ReadEventsAsync(Stream,CancellationToken,System.Int32)
+  name: ReadEventsAsync(Stream, CancellationToken, Int32)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ReadEventsAsync_Stream_CancellationToken_System_Int32_
+  commentId: M:Cognite.Extensions.CogniteUtils.ReadEventsAsync(Stream,CancellationToken,System.Int32)
+  fullName: Cognite.Extensions.CogniteUtils.ReadEventsAsync(Stream, CancellationToken, System.Int32)
+  nameWithType: CogniteUtils.ReadEventsAsync(Stream, CancellationToken, Int32)
+- uid: Cognite.Extensions.CogniteUtils.ReadEventsAsync*
+  name: ReadEventsAsync
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_ReadEventsAsync_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.ReadEventsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.ReadEventsAsync
+  nameWithType: CogniteUtils.ReadEventsAsync
+- uid: Cognite.Extensions.CogniteUtils.RemoveOutOfRangeTimestamps(IEnumerable{Cognite.Extensions.Datapoint})
+  name: RemoveOutOfRangeTimestamps(IEnumerable<Datapoint>)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_RemoveOutOfRangeTimestamps_IEnumerable_Cognite_Extensions_Datapoint__
+  commentId: M:Cognite.Extensions.CogniteUtils.RemoveOutOfRangeTimestamps(IEnumerable{Cognite.Extensions.Datapoint})
+  name.vb: RemoveOutOfRangeTimestamps(IEnumerable(Of Datapoint))
+  fullName: Cognite.Extensions.CogniteUtils.RemoveOutOfRangeTimestamps(IEnumerable<Cognite.Extensions.Datapoint>)
+  fullName.vb: Cognite.Extensions.CogniteUtils.RemoveOutOfRangeTimestamps(IEnumerable(Of Cognite.Extensions.Datapoint))
+  nameWithType: CogniteUtils.RemoveOutOfRangeTimestamps(IEnumerable<Datapoint>)
+  nameWithType.vb: CogniteUtils.RemoveOutOfRangeTimestamps(IEnumerable(Of Datapoint))
+- uid: Cognite.Extensions.CogniteUtils.RemoveOutOfRangeTimestamps*
+  name: RemoveOutOfRangeTimestamps
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_RemoveOutOfRangeTimestamps_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.RemoveOutOfRangeTimestamps
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.RemoveOutOfRangeTimestamps
+  nameWithType: CogniteUtils.RemoveOutOfRangeTimestamps
+- uid: Cognite.Extensions.CogniteUtils.StringFromStream(Stream,System.Nullable{System.UInt16})
+  name: StringFromStream(Stream, Nullable<UInt16>)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringFromStream_Stream_System_Nullable_System_UInt16__
+  commentId: M:Cognite.Extensions.CogniteUtils.StringFromStream(Stream,System.Nullable{System.UInt16})
+  name.vb: StringFromStream(Stream, Nullable(Of UInt16))
+  fullName: Cognite.Extensions.CogniteUtils.StringFromStream(Stream, System.Nullable<System.UInt16>)
+  fullName.vb: Cognite.Extensions.CogniteUtils.StringFromStream(Stream, System.Nullable(Of System.UInt16))
+  nameWithType: CogniteUtils.StringFromStream(Stream, Nullable<UInt16>)
+  nameWithType.vb: CogniteUtils.StringFromStream(Stream, Nullable(Of UInt16))
+- uid: Cognite.Extensions.CogniteUtils.StringFromStream*
+  name: StringFromStream
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringFromStream_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.StringFromStream
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.StringFromStream
+  nameWithType: CogniteUtils.StringFromStream
+- uid: Cognite.Extensions.CogniteUtils.StringLengthMax
+  name: StringLengthMax
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringLengthMax
+  commentId: F:Cognite.Extensions.CogniteUtils.StringLengthMax
+  fullName: Cognite.Extensions.CogniteUtils.StringLengthMax
+  nameWithType: CogniteUtils.StringLengthMax
+- uid: Cognite.Extensions.CogniteUtils.StringToStorable(System.String)
+  name: StringToStorable(String)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringToStorable_System_String_
+  commentId: M:Cognite.Extensions.CogniteUtils.StringToStorable(System.String)
+  fullName: Cognite.Extensions.CogniteUtils.StringToStorable(System.String)
+  nameWithType: CogniteUtils.StringToStorable(String)
+- uid: Cognite.Extensions.CogniteUtils.StringToStorable*
+  name: StringToStorable
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringToStorable_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.StringToStorable
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.StringToStorable
+  nameWithType: CogniteUtils.StringToStorable
+- uid: Cognite.Extensions.CogniteUtils.TimestampMax
+  name: TimestampMax
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_TimestampMax
+  commentId: F:Cognite.Extensions.CogniteUtils.TimestampMax
+  fullName: Cognite.Extensions.CogniteUtils.TimestampMax
+  nameWithType: CogniteUtils.TimestampMax
+- uid: Cognite.Extensions.CogniteUtils.TimestampMin
+  name: TimestampMin
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_TimestampMin
+  commentId: F:Cognite.Extensions.CogniteUtils.TimestampMin
+  fullName: Cognite.Extensions.CogniteUtils.TimestampMin
+  nameWithType: CogniteUtils.TimestampMin
+- uid: Cognite.Extensions.CogniteUtils.TrimValues(IEnumerable{Cognite.Extensions.Datapoint})
+  name: TrimValues(IEnumerable<Datapoint>)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_TrimValues_IEnumerable_Cognite_Extensions_Datapoint__
+  commentId: M:Cognite.Extensions.CogniteUtils.TrimValues(IEnumerable{Cognite.Extensions.Datapoint})
+  name.vb: TrimValues(IEnumerable(Of Datapoint))
+  fullName: Cognite.Extensions.CogniteUtils.TrimValues(IEnumerable<Cognite.Extensions.Datapoint>)
+  fullName.vb: Cognite.Extensions.CogniteUtils.TrimValues(IEnumerable(Of Cognite.Extensions.Datapoint))
+  nameWithType: CogniteUtils.TrimValues(IEnumerable<Datapoint>)
+  nameWithType.vb: CogniteUtils.TrimValues(IEnumerable(Of Datapoint))
+- uid: Cognite.Extensions.CogniteUtils.TrimValues*
+  name: TrimValues
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_TrimValues_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.TrimValues
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.TrimValues
+  nameWithType: CogniteUtils.TrimValues
+- uid: Cognite.Extensions.CogniteUtils.WriteDatapoints(IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},Stream)
+  name: WriteDatapoints(IDictionary<Identity, IEnumerable<Datapoint>>, Stream)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_WriteDatapoints_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___Stream_
+  commentId: M:Cognite.Extensions.CogniteUtils.WriteDatapoints(IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},Stream)
+  name.vb: WriteDatapoints(IDictionary(Of Identity, IEnumerable(Of Datapoint)), Stream)
+  fullName: Cognite.Extensions.CogniteUtils.WriteDatapoints(IDictionary<Identity, IEnumerable<Cognite.Extensions.Datapoint>>, Stream)
+  fullName.vb: Cognite.Extensions.CogniteUtils.WriteDatapoints(IDictionary(Of Identity, IEnumerable(Of Cognite.Extensions.Datapoint)), Stream)
+  nameWithType: CogniteUtils.WriteDatapoints(IDictionary<Identity, IEnumerable<Datapoint>>, Stream)
+  nameWithType.vb: CogniteUtils.WriteDatapoints(IDictionary(Of Identity, IEnumerable(Of Datapoint)), Stream)
+- uid: Cognite.Extensions.CogniteUtils.WriteDatapoints*
+  name: WriteDatapoints
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_WriteDatapoints_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.WriteDatapoints
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.WriteDatapoints
+  nameWithType: CogniteUtils.WriteDatapoints
+- uid: Cognite.Extensions.CogniteUtils.WriteDatapointsAsync(IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},Stream,CancellationToken)
+  name: WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Datapoint>>, Stream, CancellationToken)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_WriteDatapointsAsync_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___Stream_CancellationToken_
+  commentId: M:Cognite.Extensions.CogniteUtils.WriteDatapointsAsync(IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},Stream,CancellationToken)
+  name.vb: WriteDatapointsAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), Stream, CancellationToken)
+  fullName: Cognite.Extensions.CogniteUtils.WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Cognite.Extensions.Datapoint>>, Stream, CancellationToken)
+  fullName.vb: Cognite.Extensions.CogniteUtils.WriteDatapointsAsync(IDictionary(Of Identity, IEnumerable(Of Cognite.Extensions.Datapoint)), Stream, CancellationToken)
+  nameWithType: CogniteUtils.WriteDatapointsAsync(IDictionary<Identity, IEnumerable<Datapoint>>, Stream, CancellationToken)
+  nameWithType.vb: CogniteUtils.WriteDatapointsAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), Stream, CancellationToken)
+- uid: Cognite.Extensions.CogniteUtils.WriteDatapointsAsync*
+  name: WriteDatapointsAsync
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_WriteDatapointsAsync_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.WriteDatapointsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.WriteDatapointsAsync
+  nameWithType: CogniteUtils.WriteDatapointsAsync
+- uid: Cognite.Extensions.CogniteUtils.WriteEvents(IEnumerable{EventCreate},Stream)
+  name: WriteEvents(IEnumerable<EventCreate>, Stream)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_WriteEvents_IEnumerable_EventCreate__Stream_
+  commentId: M:Cognite.Extensions.CogniteUtils.WriteEvents(IEnumerable{EventCreate},Stream)
+  name.vb: WriteEvents(IEnumerable(Of EventCreate), Stream)
+  fullName: Cognite.Extensions.CogniteUtils.WriteEvents(IEnumerable<EventCreate>, Stream)
+  fullName.vb: Cognite.Extensions.CogniteUtils.WriteEvents(IEnumerable(Of EventCreate), Stream)
+  nameWithType: CogniteUtils.WriteEvents(IEnumerable<EventCreate>, Stream)
+  nameWithType.vb: CogniteUtils.WriteEvents(IEnumerable(Of EventCreate), Stream)
+- uid: Cognite.Extensions.CogniteUtils.WriteEvents*
+  name: WriteEvents
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_WriteEvents_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.WriteEvents
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.WriteEvents
+  nameWithType: CogniteUtils.WriteEvents
+- uid: Cognite.Extensions.CogniteUtils.WriteEventsAsync(IEnumerable{EventCreate},Stream,CancellationToken)
+  name: WriteEventsAsync(IEnumerable<EventCreate>, Stream, CancellationToken)
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_WriteEventsAsync_IEnumerable_EventCreate__Stream_CancellationToken_
+  commentId: M:Cognite.Extensions.CogniteUtils.WriteEventsAsync(IEnumerable{EventCreate},Stream,CancellationToken)
+  name.vb: WriteEventsAsync(IEnumerable(Of EventCreate), Stream, CancellationToken)
+  fullName: Cognite.Extensions.CogniteUtils.WriteEventsAsync(IEnumerable<EventCreate>, Stream, CancellationToken)
+  fullName.vb: Cognite.Extensions.CogniteUtils.WriteEventsAsync(IEnumerable(Of EventCreate), Stream, CancellationToken)
+  nameWithType: CogniteUtils.WriteEventsAsync(IEnumerable<EventCreate>, Stream, CancellationToken)
+  nameWithType.vb: CogniteUtils.WriteEventsAsync(IEnumerable(Of EventCreate), Stream, CancellationToken)
+- uid: Cognite.Extensions.CogniteUtils.WriteEventsAsync*
+  name: WriteEventsAsync
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_WriteEventsAsync_
+  commentId: Overload:Cognite.Extensions.CogniteUtils.WriteEventsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtils.WriteEventsAsync
+  nameWithType: CogniteUtils.WriteEventsAsync
+- uid: Cognite.Extensions.CogniteUtilsException
+  name: CogniteUtilsException
+  href: api/Cognite.Extensions.CogniteUtilsException.html
+  commentId: T:Cognite.Extensions.CogniteUtilsException
+  fullName: Cognite.Extensions.CogniteUtilsException
+  nameWithType: CogniteUtilsException
+- uid: Cognite.Extensions.CogniteUtilsException.#ctor
+  name: CogniteUtilsException()
+  href: api/Cognite.Extensions.CogniteUtilsException.html#Cognite_Extensions_CogniteUtilsException__ctor
+  commentId: M:Cognite.Extensions.CogniteUtilsException.#ctor
+  fullName: Cognite.Extensions.CogniteUtilsException.CogniteUtilsException()
+  nameWithType: CogniteUtilsException.CogniteUtilsException()
+- uid: Cognite.Extensions.CogniteUtilsException.#ctor(System.String)
+  name: CogniteUtilsException(String)
+  href: api/Cognite.Extensions.CogniteUtilsException.html#Cognite_Extensions_CogniteUtilsException__ctor_System_String_
+  commentId: M:Cognite.Extensions.CogniteUtilsException.#ctor(System.String)
+  fullName: Cognite.Extensions.CogniteUtilsException.CogniteUtilsException(System.String)
+  nameWithType: CogniteUtilsException.CogniteUtilsException(String)
+- uid: Cognite.Extensions.CogniteUtilsException.#ctor(System.String,Exception)
+  name: CogniteUtilsException(String, Exception)
+  href: api/Cognite.Extensions.CogniteUtilsException.html#Cognite_Extensions_CogniteUtilsException__ctor_System_String_Exception_
+  commentId: M:Cognite.Extensions.CogniteUtilsException.#ctor(System.String,Exception)
+  fullName: Cognite.Extensions.CogniteUtilsException.CogniteUtilsException(System.String, Exception)
+  nameWithType: CogniteUtilsException.CogniteUtilsException(String, Exception)
+- uid: Cognite.Extensions.CogniteUtilsException.#ctor*
+  name: CogniteUtilsException
+  href: api/Cognite.Extensions.CogniteUtilsException.html#Cognite_Extensions_CogniteUtilsException__ctor_
+  commentId: Overload:Cognite.Extensions.CogniteUtilsException.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteUtilsException.CogniteUtilsException
+  nameWithType: CogniteUtilsException.CogniteUtilsException
+- uid: Cognite.Extensions.Datapoint
+  name: Datapoint
+  href: api/Cognite.Extensions.Datapoint.html
+  commentId: T:Cognite.Extensions.Datapoint
+  fullName: Cognite.Extensions.Datapoint
+  nameWithType: Datapoint
+- uid: Cognite.Extensions.Datapoint.#ctor(DateTime,System.Double)
+  name: Datapoint(DateTime, Double)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_DateTime_System_Double_
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(DateTime,System.Double)
+  fullName: Cognite.Extensions.Datapoint.Datapoint(DateTime, System.Double)
+  nameWithType: Datapoint.Datapoint(DateTime, Double)
+- uid: Cognite.Extensions.Datapoint.#ctor(DateTime,System.String)
+  name: Datapoint(DateTime, String)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_DateTime_System_String_
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(DateTime,System.String)
+  fullName: Cognite.Extensions.Datapoint.Datapoint(DateTime, System.String)
+  nameWithType: Datapoint.Datapoint(DateTime, String)
+- uid: Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Double)
+  name: Datapoint(Int64, Double)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_Int64_System_Double_
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Double)
+  fullName: Cognite.Extensions.Datapoint.Datapoint(System.Int64, System.Double)
+  nameWithType: Datapoint.Datapoint(Int64, Double)
+- uid: Cognite.Extensions.Datapoint.#ctor(System.Int64,System.String)
+  name: Datapoint(Int64, String)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_Int64_System_String_
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(System.Int64,System.String)
+  fullName: Cognite.Extensions.Datapoint.Datapoint(System.Int64, System.String)
+  nameWithType: Datapoint.Datapoint(Int64, String)
+- uid: Cognite.Extensions.Datapoint.#ctor*
+  name: Datapoint
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_
+  commentId: Overload:Cognite.Extensions.Datapoint.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extensions.Datapoint.Datapoint
+  nameWithType: Datapoint.Datapoint
+- uid: Cognite.Extensions.Datapoint.FromStream(Stream)
+  name: FromStream(Stream)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_FromStream_Stream_
+  commentId: M:Cognite.Extensions.Datapoint.FromStream(Stream)
+  fullName: Cognite.Extensions.Datapoint.FromStream(Stream)
+  nameWithType: Datapoint.FromStream(Stream)
+- uid: Cognite.Extensions.Datapoint.FromStream*
+  name: FromStream
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_FromStream_
+  commentId: Overload:Cognite.Extensions.Datapoint.FromStream
+  isSpec: "True"
+  fullName: Cognite.Extensions.Datapoint.FromStream
+  nameWithType: Datapoint.FromStream
+- uid: Cognite.Extensions.Datapoint.IsString
+  name: IsString
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_IsString
+  commentId: P:Cognite.Extensions.Datapoint.IsString
+  fullName: Cognite.Extensions.Datapoint.IsString
+  nameWithType: Datapoint.IsString
+- uid: Cognite.Extensions.Datapoint.IsString*
+  name: IsString
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_IsString_
+  commentId: Overload:Cognite.Extensions.Datapoint.IsString
+  isSpec: "True"
+  fullName: Cognite.Extensions.Datapoint.IsString
+  nameWithType: Datapoint.IsString
+- uid: Cognite.Extensions.Datapoint.NumericValue
+  name: NumericValue
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_NumericValue
+  commentId: P:Cognite.Extensions.Datapoint.NumericValue
+  fullName: Cognite.Extensions.Datapoint.NumericValue
+  nameWithType: Datapoint.NumericValue
+- uid: Cognite.Extensions.Datapoint.NumericValue*
+  name: NumericValue
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_NumericValue_
+  commentId: Overload:Cognite.Extensions.Datapoint.NumericValue
+  isSpec: "True"
+  fullName: Cognite.Extensions.Datapoint.NumericValue
+  nameWithType: Datapoint.NumericValue
+- uid: Cognite.Extensions.Datapoint.StringValue
+  name: StringValue
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_StringValue
+  commentId: P:Cognite.Extensions.Datapoint.StringValue
+  fullName: Cognite.Extensions.Datapoint.StringValue
+  nameWithType: Datapoint.StringValue
+- uid: Cognite.Extensions.Datapoint.StringValue*
+  name: StringValue
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_StringValue_
+  commentId: Overload:Cognite.Extensions.Datapoint.StringValue
+  isSpec: "True"
+  fullName: Cognite.Extensions.Datapoint.StringValue
+  nameWithType: Datapoint.StringValue
+- uid: Cognite.Extensions.Datapoint.Timestamp
+  name: Timestamp
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_Timestamp
+  commentId: P:Cognite.Extensions.Datapoint.Timestamp
+  fullName: Cognite.Extensions.Datapoint.Timestamp
+  nameWithType: Datapoint.Timestamp
+- uid: Cognite.Extensions.Datapoint.Timestamp*
+  name: Timestamp
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_Timestamp_
+  commentId: Overload:Cognite.Extensions.Datapoint.Timestamp
+  isSpec: "True"
+  fullName: Cognite.Extensions.Datapoint.Timestamp
+  nameWithType: Datapoint.Timestamp
+- uid: Cognite.Extensions.Datapoint.ToStorableBytes
+  name: ToStorableBytes()
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_ToStorableBytes
+  commentId: M:Cognite.Extensions.Datapoint.ToStorableBytes
+  fullName: Cognite.Extensions.Datapoint.ToStorableBytes()
+  nameWithType: Datapoint.ToStorableBytes()
+- uid: Cognite.Extensions.Datapoint.ToStorableBytes*
+  name: ToStorableBytes
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_ToStorableBytes_
+  commentId: Overload:Cognite.Extensions.Datapoint.ToStorableBytes
+  isSpec: "True"
+  fullName: Cognite.Extensions.Datapoint.ToStorableBytes
+  nameWithType: Datapoint.ToStorableBytes
+- uid: Cognite.Extensions.DatapointExtensions
+  name: DatapointExtensions
+  href: api/Cognite.Extensions.DatapointExtensions.html
+  commentId: T:Cognite.Extensions.DatapointExtensions
+  fullName: Cognite.Extensions.DatapointExtensions
+  nameWithType: DatapointExtensions
+- uid: Cognite.Extensions.DatapointExtensions.DeleteIgnoreErrorsAsync(DataPointsResource,IDictionary{Identity,IEnumerable{Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Int32,CancellationToken)
+  name: DeleteIgnoreErrorsAsync(DataPointsResource, IDictionary<Identity, IEnumerable<TimeRange>>, Int32, Int32, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_DeleteIgnoreErrorsAsync_DataPointsResource_IDictionary_Identity_IEnumerable_Cognite_Extractor_Common_TimeRange___System_Int32_System_Int32_System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.DatapointExtensions.DeleteIgnoreErrorsAsync(DataPointsResource,IDictionary{Identity,IEnumerable{Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Int32,CancellationToken)
+  name.vb: DeleteIgnoreErrorsAsync(DataPointsResource, IDictionary(Of Identity, IEnumerable(Of TimeRange)), Int32, Int32, Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.DatapointExtensions.DeleteIgnoreErrorsAsync(DataPointsResource, IDictionary<Identity, IEnumerable<Cognite.Extractor.Common.TimeRange>>, System.Int32, System.Int32, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.DatapointExtensions.DeleteIgnoreErrorsAsync(DataPointsResource, IDictionary(Of Identity, IEnumerable(Of Cognite.Extractor.Common.TimeRange)), System.Int32, System.Int32, System.Int32, System.Int32, CancellationToken)
+  nameWithType: DatapointExtensions.DeleteIgnoreErrorsAsync(DataPointsResource, IDictionary<Identity, IEnumerable<TimeRange>>, Int32, Int32, Int32, Int32, CancellationToken)
+  nameWithType.vb: DatapointExtensions.DeleteIgnoreErrorsAsync(DataPointsResource, IDictionary(Of Identity, IEnumerable(Of TimeRange)), Int32, Int32, Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.DatapointExtensions.DeleteIgnoreErrorsAsync*
+  name: DeleteIgnoreErrorsAsync
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_DeleteIgnoreErrorsAsync_
+  commentId: Overload:Cognite.Extensions.DatapointExtensions.DeleteIgnoreErrorsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DatapointExtensions.DeleteIgnoreErrorsAsync
+  nameWithType: DatapointExtensions.DeleteIgnoreErrorsAsync
+- uid: Cognite.Extensions.DatapointExtensions.GetEarliestTimestamps(DataPointsResource,IEnumerable{System.ValueTuple{Identity,DateTime}},System.Int32,System.Int32,CancellationToken)
+  name: GetEarliestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime after)>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_GetEarliestTimestamps_DataPointsResource_IEnumerable_System_ValueTuple_Identity_DateTime___System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.DatapointExtensions.GetEarliestTimestamps(DataPointsResource,IEnumerable{System.ValueTuple{Identity,DateTime}},System.Int32,System.Int32,CancellationToken)
+  name.vb: GetEarliestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, after As DateTime)), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.DatapointExtensions.GetEarliestTimestamps(DataPointsResource, IEnumerable<System.ValueTuple<Identity, DateTime>>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.DatapointExtensions.GetEarliestTimestamps(DataPointsResource, IEnumerable(Of System.ValueTuple(Of Identity, DateTime)), System.Int32, System.Int32, CancellationToken)
+  nameWithType: DatapointExtensions.GetEarliestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime after)>, Int32, Int32, CancellationToken)
+  nameWithType.vb: DatapointExtensions.GetEarliestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, after As DateTime)), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.DatapointExtensions.GetEarliestTimestamps*
+  name: GetEarliestTimestamps
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_GetEarliestTimestamps_
+  commentId: Overload:Cognite.Extensions.DatapointExtensions.GetEarliestTimestamps
+  isSpec: "True"
+  fullName: Cognite.Extensions.DatapointExtensions.GetEarliestTimestamps
+  nameWithType: DatapointExtensions.GetEarliestTimestamps
+- uid: Cognite.Extensions.DatapointExtensions.GetExtractedRanges(DataPointsResource,IEnumerable{System.ValueTuple{Identity,Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,CancellationToken)
+  name: GetExtractedRanges(DataPointsResource, IEnumerable<(Identity id, TimeRange limit)>, Int32, Int32, Int32, Boolean, Boolean, CancellationToken)
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_GetExtractedRanges_DataPointsResource_IEnumerable_System_ValueTuple_Identity_Cognite_Extractor_Common_TimeRange___System_Int32_System_Int32_System_Int32_System_Boolean_System_Boolean_CancellationToken_
+  commentId: M:Cognite.Extensions.DatapointExtensions.GetExtractedRanges(DataPointsResource,IEnumerable{System.ValueTuple{Identity,Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,CancellationToken)
+  name.vb: GetExtractedRanges(DataPointsResource, IEnumerable(Of (id As Identity, limit As TimeRange)), Int32, Int32, Int32, Boolean, Boolean, CancellationToken)
+  fullName: Cognite.Extensions.DatapointExtensions.GetExtractedRanges(DataPointsResource, IEnumerable<System.ValueTuple<Identity, Cognite.Extractor.Common.TimeRange>>, System.Int32, System.Int32, System.Int32, System.Boolean, System.Boolean, CancellationToken)
+  fullName.vb: Cognite.Extensions.DatapointExtensions.GetExtractedRanges(DataPointsResource, IEnumerable(Of System.ValueTuple(Of Identity, Cognite.Extractor.Common.TimeRange)), System.Int32, System.Int32, System.Int32, System.Boolean, System.Boolean, CancellationToken)
+  nameWithType: DatapointExtensions.GetExtractedRanges(DataPointsResource, IEnumerable<(Identity id, TimeRange limit)>, Int32, Int32, Int32, Boolean, Boolean, CancellationToken)
+  nameWithType.vb: DatapointExtensions.GetExtractedRanges(DataPointsResource, IEnumerable(Of (id As Identity, limit As TimeRange)), Int32, Int32, Int32, Boolean, Boolean, CancellationToken)
+- uid: Cognite.Extensions.DatapointExtensions.GetExtractedRanges*
+  name: GetExtractedRanges
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_GetExtractedRanges_
+  commentId: Overload:Cognite.Extensions.DatapointExtensions.GetExtractedRanges
+  isSpec: "True"
+  fullName: Cognite.Extensions.DatapointExtensions.GetExtractedRanges
+  nameWithType: DatapointExtensions.GetExtractedRanges
+- uid: Cognite.Extensions.DatapointExtensions.GetLatestTimestamps(DataPointsResource,IEnumerable{System.ValueTuple{Identity,DateTime}},System.Int32,System.Int32,CancellationToken)
+  name: GetLatestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime before)>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_GetLatestTimestamps_DataPointsResource_IEnumerable_System_ValueTuple_Identity_DateTime___System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.DatapointExtensions.GetLatestTimestamps(DataPointsResource,IEnumerable{System.ValueTuple{Identity,DateTime}},System.Int32,System.Int32,CancellationToken)
+  name.vb: GetLatestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, before As DateTime)), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.DatapointExtensions.GetLatestTimestamps(DataPointsResource, IEnumerable<System.ValueTuple<Identity, DateTime>>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.DatapointExtensions.GetLatestTimestamps(DataPointsResource, IEnumerable(Of System.ValueTuple(Of Identity, DateTime)), System.Int32, System.Int32, CancellationToken)
+  nameWithType: DatapointExtensions.GetLatestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime before)>, Int32, Int32, CancellationToken)
+  nameWithType.vb: DatapointExtensions.GetLatestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, before As DateTime)), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.DatapointExtensions.GetLatestTimestamps*
+  name: GetLatestTimestamps
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_GetLatestTimestamps_
+  commentId: Overload:Cognite.Extensions.DatapointExtensions.GetLatestTimestamps
+  isSpec: "True"
+  fullName: Cognite.Extensions.DatapointExtensions.GetLatestTimestamps
+  nameWithType: DatapointExtensions.GetLatestTimestamps
+- uid: Cognite.Extensions.DatapointExtensions.InsertAsync(DataPointsResource,IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,CancellationToken)
+  name: InsertAsync(DataPointsResource, IDictionary<Identity, IEnumerable<Datapoint>>, Int32, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_InsertAsync_DataPointsResource_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.DatapointExtensions.InsertAsync(DataPointsResource,IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,CancellationToken)
+  name.vb: InsertAsync(DataPointsResource, IDictionary(Of Identity, IEnumerable(Of Datapoint)), Int32, Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.DatapointExtensions.InsertAsync(DataPointsResource, IDictionary<Identity, IEnumerable<Cognite.Extensions.Datapoint>>, System.Int32, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.DatapointExtensions.InsertAsync(DataPointsResource, IDictionary(Of Identity, IEnumerable(Of Cognite.Extensions.Datapoint)), System.Int32, System.Int32, System.Int32, CancellationToken)
+  nameWithType: DatapointExtensions.InsertAsync(DataPointsResource, IDictionary<Identity, IEnumerable<Datapoint>>, Int32, Int32, Int32, CancellationToken)
+  nameWithType.vb: DatapointExtensions.InsertAsync(DataPointsResource, IDictionary(Of Identity, IEnumerable(Of Datapoint)), Int32, Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.DatapointExtensions.InsertAsync*
+  name: InsertAsync
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_InsertAsync_
+  commentId: Overload:Cognite.Extensions.DatapointExtensions.InsertAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DatapointExtensions.InsertAsync
+  nameWithType: DatapointExtensions.InsertAsync
+- uid: Cognite.Extensions.DatapointExtensions.InsertDataPointsIgnoreErrorsAsync(Client,IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,CancellationToken)
+  name: InsertDataPointsIgnoreErrorsAsync(Client, IDictionary<Identity, IEnumerable<Datapoint>>, Int32, Int32, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_InsertDataPointsIgnoreErrorsAsync_Client_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.DatapointExtensions.InsertDataPointsIgnoreErrorsAsync(Client,IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,CancellationToken)
+  name.vb: InsertDataPointsIgnoreErrorsAsync(Client, IDictionary(Of Identity, IEnumerable(Of Datapoint)), Int32, Int32, Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.DatapointExtensions.InsertDataPointsIgnoreErrorsAsync(Client, IDictionary<Identity, IEnumerable<Cognite.Extensions.Datapoint>>, System.Int32, System.Int32, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.DatapointExtensions.InsertDataPointsIgnoreErrorsAsync(Client, IDictionary(Of Identity, IEnumerable(Of Cognite.Extensions.Datapoint)), System.Int32, System.Int32, System.Int32, System.Int32, CancellationToken)
+  nameWithType: DatapointExtensions.InsertDataPointsIgnoreErrorsAsync(Client, IDictionary<Identity, IEnumerable<Datapoint>>, Int32, Int32, Int32, Int32, CancellationToken)
+  nameWithType.vb: DatapointExtensions.InsertDataPointsIgnoreErrorsAsync(Client, IDictionary(Of Identity, IEnumerable(Of Datapoint)), Int32, Int32, Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.DatapointExtensions.InsertDataPointsIgnoreErrorsAsync*
+  name: InsertDataPointsIgnoreErrorsAsync
+  href: api/Cognite.Extensions.DatapointExtensions.html#Cognite_Extensions_DatapointExtensions_InsertDataPointsIgnoreErrorsAsync_
+  commentId: Overload:Cognite.Extensions.DatapointExtensions.InsertDataPointsIgnoreErrorsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DatapointExtensions.InsertDataPointsIgnoreErrorsAsync
+  nameWithType: DatapointExtensions.InsertDataPointsIgnoreErrorsAsync
+- uid: Cognite.Extensions.DeleteError
+  name: DeleteError
+  href: api/Cognite.Extensions.DeleteError.html
+  commentId: T:Cognite.Extensions.DeleteError
+  fullName: Cognite.Extensions.DeleteError
+  nameWithType: DeleteError
+- uid: Cognite.Extensions.DeleteError.#ctor(IEnumerable{Identity},IEnumerable{Identity})
+  name: DeleteError(IEnumerable<Identity>, IEnumerable<Identity>)
+  href: api/Cognite.Extensions.DeleteError.html#Cognite_Extensions_DeleteError__ctor_IEnumerable_Identity__IEnumerable_Identity__
+  commentId: M:Cognite.Extensions.DeleteError.#ctor(IEnumerable{Identity},IEnumerable{Identity})
+  name.vb: DeleteError(IEnumerable(Of Identity), IEnumerable(Of Identity))
+  fullName: Cognite.Extensions.DeleteError.DeleteError(IEnumerable<Identity>, IEnumerable<Identity>)
+  fullName.vb: Cognite.Extensions.DeleteError.DeleteError(IEnumerable(Of Identity), IEnumerable(Of Identity))
+  nameWithType: DeleteError.DeleteError(IEnumerable<Identity>, IEnumerable<Identity>)
+  nameWithType.vb: DeleteError.DeleteError(IEnumerable(Of Identity), IEnumerable(Of Identity))
+- uid: Cognite.Extensions.DeleteError.#ctor*
+  name: DeleteError
+  href: api/Cognite.Extensions.DeleteError.html#Cognite_Extensions_DeleteError__ctor_
+  commentId: Overload:Cognite.Extensions.DeleteError.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extensions.DeleteError.DeleteError
+  nameWithType: DeleteError.DeleteError
+- uid: Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
+  name: IdsDeleteNotConfirmed
+  href: api/Cognite.Extensions.DeleteError.html#Cognite_Extensions_DeleteError_IdsDeleteNotConfirmed
+  commentId: F:Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
+  fullName: Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
+  nameWithType: DeleteError.IdsDeleteNotConfirmed
+- uid: Cognite.Extensions.DeleteError.IdsNotFound
+  name: IdsNotFound
+  href: api/Cognite.Extensions.DeleteError.html#Cognite_Extensions_DeleteError_IdsNotFound
+  commentId: F:Cognite.Extensions.DeleteError.IdsNotFound
+  fullName: Cognite.Extensions.DeleteError.IdsNotFound
+  nameWithType: DeleteError.IdsNotFound
+- uid: Cognite.Extensions.ErrorType
+  name: ErrorType
+  href: api/Cognite.Extensions.ErrorType.html
+  commentId: T:Cognite.Extensions.ErrorType
+  fullName: Cognite.Extensions.ErrorType
+  nameWithType: ErrorType
+- uid: Cognite.Extensions.ErrorType.FatalFailure
+  name: FatalFailure
+  href: api/Cognite.Extensions.ErrorType.html#Cognite_Extensions_ErrorType_FatalFailure
+  commentId: F:Cognite.Extensions.ErrorType.FatalFailure
+  fullName: Cognite.Extensions.ErrorType.FatalFailure
+  nameWithType: ErrorType.FatalFailure
+- uid: Cognite.Extensions.ErrorType.ItemDuplicated
+  name: ItemDuplicated
+  href: api/Cognite.Extensions.ErrorType.html#Cognite_Extensions_ErrorType_ItemDuplicated
+  commentId: F:Cognite.Extensions.ErrorType.ItemDuplicated
+  fullName: Cognite.Extensions.ErrorType.ItemDuplicated
+  nameWithType: ErrorType.ItemDuplicated
+- uid: Cognite.Extensions.ErrorType.ItemExists
+  name: ItemExists
+  href: api/Cognite.Extensions.ErrorType.html#Cognite_Extensions_ErrorType_ItemExists
+  commentId: F:Cognite.Extensions.ErrorType.ItemExists
+  fullName: Cognite.Extensions.ErrorType.ItemExists
+  nameWithType: ErrorType.ItemExists
+- uid: Cognite.Extensions.ErrorType.ItemMissing
+  name: ItemMissing
+  href: api/Cognite.Extensions.ErrorType.html#Cognite_Extensions_ErrorType_ItemMissing
+  commentId: F:Cognite.Extensions.ErrorType.ItemMissing
+  fullName: Cognite.Extensions.ErrorType.ItemMissing
+  nameWithType: ErrorType.ItemMissing
+- uid: Cognite.Extensions.ErrorType.SanitationFailed
+  name: SanitationFailed
+  href: api/Cognite.Extensions.ErrorType.html#Cognite_Extensions_ErrorType_SanitationFailed
+  commentId: F:Cognite.Extensions.ErrorType.SanitationFailed
+  fullName: Cognite.Extensions.ErrorType.SanitationFailed
+  nameWithType: ErrorType.SanitationFailed
+- uid: Cognite.Extensions.EventExtensions
+  name: EventExtensions
+  href: api/Cognite.Extensions.EventExtensions.html
+  commentId: T:Cognite.Extensions.EventExtensions
+  fullName: Cognite.Extensions.EventExtensions
+  nameWithType: EventExtensions
+- uid: Cognite.Extensions.EventExtensions.EnsureExistsAsync(EventsResource,IEnumerable{EventCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: EnsureExistsAsync(EventsResource, IEnumerable<EventCreate>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.EventExtensions.html#Cognite_Extensions_EventExtensions_EnsureExistsAsync_EventsResource_IEnumerable_EventCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.EventExtensions.EnsureExistsAsync(EventsResource,IEnumerable{EventCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: EnsureExistsAsync(EventsResource, IEnumerable(Of EventCreate), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.EventExtensions.EnsureExistsAsync(EventsResource, IEnumerable<EventCreate>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.EventExtensions.EnsureExistsAsync(EventsResource, IEnumerable(Of EventCreate), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: EventExtensions.EnsureExistsAsync(EventsResource, IEnumerable<EventCreate>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: EventExtensions.EnsureExistsAsync(EventsResource, IEnumerable(Of EventCreate), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.EventExtensions.EnsureExistsAsync*
+  name: EnsureExistsAsync
+  href: api/Cognite.Extensions.EventExtensions.html#Cognite_Extensions_EventExtensions_EnsureExistsAsync_
+  commentId: Overload:Cognite.Extensions.EventExtensions.EnsureExistsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.EventExtensions.EnsureExistsAsync
+  nameWithType: EventExtensions.EnsureExistsAsync
+- uid: Cognite.Extensions.EventExtensions.GetOrCreateAsync(EventsResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{EventCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateAsync(EventsResource, IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<EventCreate>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.EventExtensions.html#Cognite_Extensions_EventExtensions_GetOrCreateAsync_EventsResource_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_EventCreate___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.EventExtensions.GetOrCreateAsync(EventsResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{EventCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateAsync(EventsResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of EventCreate)), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.EventExtensions.GetOrCreateAsync(EventsResource, IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<EventCreate>>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.EventExtensions.GetOrCreateAsync(EventsResource, IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of EventCreate)), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: EventExtensions.GetOrCreateAsync(EventsResource, IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<EventCreate>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: EventExtensions.GetOrCreateAsync(EventsResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of EventCreate)), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.EventExtensions.GetOrCreateAsync(EventsResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{EventCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateAsync(EventsResource, IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<EventCreate>>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.EventExtensions.html#Cognite_Extensions_EventExtensions_GetOrCreateAsync_EventsResource_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_EventCreate____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.EventExtensions.GetOrCreateAsync(EventsResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{EventCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateAsync(EventsResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of EventCreate))), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.EventExtensions.GetOrCreateAsync(EventsResource, IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<EventCreate>>>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.EventExtensions.GetOrCreateAsync(EventsResource, IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of EventCreate))), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: EventExtensions.GetOrCreateAsync(EventsResource, IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<EventCreate>>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: EventExtensions.GetOrCreateAsync(EventsResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of EventCreate))), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.EventExtensions.GetOrCreateAsync*
+  name: GetOrCreateAsync
+  href: api/Cognite.Extensions.EventExtensions.html#Cognite_Extensions_EventExtensions_GetOrCreateAsync_
+  commentId: Overload:Cognite.Extensions.EventExtensions.GetOrCreateAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.EventExtensions.GetOrCreateAsync
+  nameWithType: EventExtensions.GetOrCreateAsync
+- uid: Cognite.Extensions.IdentityComparer
+  name: IdentityComparer
+  href: api/Cognite.Extensions.IdentityComparer.html
+  commentId: T:Cognite.Extensions.IdentityComparer
+  fullName: Cognite.Extensions.IdentityComparer
+  nameWithType: IdentityComparer
+- uid: Cognite.Extensions.IdentityComparer.Equals(Identity,Identity)
+  name: Equals(Identity, Identity)
+  href: api/Cognite.Extensions.IdentityComparer.html#Cognite_Extensions_IdentityComparer_Equals_Identity_Identity_
+  commentId: M:Cognite.Extensions.IdentityComparer.Equals(Identity,Identity)
+  fullName: Cognite.Extensions.IdentityComparer.Equals(Identity, Identity)
+  nameWithType: IdentityComparer.Equals(Identity, Identity)
+- uid: Cognite.Extensions.IdentityComparer.Equals*
+  name: Equals
+  href: api/Cognite.Extensions.IdentityComparer.html#Cognite_Extensions_IdentityComparer_Equals_
+  commentId: Overload:Cognite.Extensions.IdentityComparer.Equals
+  isSpec: "True"
+  fullName: Cognite.Extensions.IdentityComparer.Equals
+  nameWithType: IdentityComparer.Equals
+- uid: Cognite.Extensions.IdentityComparer.GetHashCode(Identity)
+  name: GetHashCode(Identity)
+  href: api/Cognite.Extensions.IdentityComparer.html#Cognite_Extensions_IdentityComparer_GetHashCode_Identity_
+  commentId: M:Cognite.Extensions.IdentityComparer.GetHashCode(Identity)
+  fullName: Cognite.Extensions.IdentityComparer.GetHashCode(Identity)
+  nameWithType: IdentityComparer.GetHashCode(Identity)
+- uid: Cognite.Extensions.IdentityComparer.GetHashCode*
+  name: GetHashCode
+  href: api/Cognite.Extensions.IdentityComparer.html#Cognite_Extensions_IdentityComparer_GetHashCode_
+  commentId: Overload:Cognite.Extensions.IdentityComparer.GetHashCode
+  isSpec: "True"
+  fullName: Cognite.Extensions.IdentityComparer.GetHashCode
+  nameWithType: IdentityComparer.GetHashCode
+- uid: Cognite.Extensions.InsertError
+  name: InsertError
+  href: api/Cognite.Extensions.InsertError.html
+  commentId: T:Cognite.Extensions.InsertError
+  fullName: Cognite.Extensions.InsertError
+  nameWithType: InsertError
+- uid: Cognite.Extensions.InsertError.#ctor(IEnumerable{Identity},IEnumerable{Identity})
+  name: InsertError(IEnumerable<Identity>, IEnumerable<Identity>)
+  href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError__ctor_IEnumerable_Identity__IEnumerable_Identity__
+  commentId: M:Cognite.Extensions.InsertError.#ctor(IEnumerable{Identity},IEnumerable{Identity})
+  name.vb: InsertError(IEnumerable(Of Identity), IEnumerable(Of Identity))
+  fullName: Cognite.Extensions.InsertError.InsertError(IEnumerable<Identity>, IEnumerable<Identity>)
+  fullName.vb: Cognite.Extensions.InsertError.InsertError(IEnumerable(Of Identity), IEnumerable(Of Identity))
+  nameWithType: InsertError.InsertError(IEnumerable<Identity>, IEnumerable<Identity>)
+  nameWithType.vb: InsertError.InsertError(IEnumerable(Of Identity), IEnumerable(Of Identity))
+- uid: Cognite.Extensions.InsertError.#ctor*
+  name: InsertError
+  href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError__ctor_
+  commentId: Overload:Cognite.Extensions.InsertError.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extensions.InsertError.InsertError
+  nameWithType: InsertError.InsertError
+- uid: Cognite.Extensions.InsertError.IdsNotFound
+  name: IdsNotFound
+  href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError_IdsNotFound
+  commentId: F:Cognite.Extensions.InsertError.IdsNotFound
+  fullName: Cognite.Extensions.InsertError.IdsNotFound
+  nameWithType: InsertError.IdsNotFound
+- uid: Cognite.Extensions.InsertError.IdsWithMismatchedData
+  name: IdsWithMismatchedData
+  href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError_IdsWithMismatchedData
+  commentId: F:Cognite.Extensions.InsertError.IdsWithMismatchedData
+  fullName: Cognite.Extensions.InsertError.IdsWithMismatchedData
+  nameWithType: InsertError.IdsWithMismatchedData
+- uid: Cognite.Extensions.InsertError.UnionWith(Cognite.Extensions.InsertError)
+  name: UnionWith(InsertError)
+  href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError_UnionWith_Cognite_Extensions_InsertError_
+  commentId: M:Cognite.Extensions.InsertError.UnionWith(Cognite.Extensions.InsertError)
+  fullName: Cognite.Extensions.InsertError.UnionWith(Cognite.Extensions.InsertError)
+  nameWithType: InsertError.UnionWith(InsertError)
+- uid: Cognite.Extensions.InsertError.UnionWith*
+  name: UnionWith
+  href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError_UnionWith_
+  commentId: Overload:Cognite.Extensions.InsertError.UnionWith
+  isSpec: "True"
+  fullName: Cognite.Extensions.InsertError.UnionWith
+  nameWithType: InsertError.UnionWith
+- uid: Cognite.Extensions.RawExtensions
+  name: RawExtensions
+  href: api/Cognite.Extensions.RawExtensions.html
+  commentId: T:Cognite.Extensions.RawExtensions
+  fullName: Cognite.Extensions.RawExtensions
+  nameWithType: RawExtensions
+- uid: Cognite.Extensions.RawExtensions.DeleteRowsAsync(RawResource,System.String,System.String,IEnumerable{System.String},System.Int32,System.Int32,CancellationToken)
+  name: DeleteRowsAsync(RawResource, String, String, IEnumerable<String>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_DeleteRowsAsync_RawResource_System_String_System_String_IEnumerable_System_String__System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.RawExtensions.DeleteRowsAsync(RawResource,System.String,System.String,IEnumerable{System.String},System.Int32,System.Int32,CancellationToken)
+  name.vb: DeleteRowsAsync(RawResource, String, String, IEnumerable(Of String), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.RawExtensions.DeleteRowsAsync(RawResource, System.String, System.String, IEnumerable<System.String>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.RawExtensions.DeleteRowsAsync(RawResource, System.String, System.String, IEnumerable(Of System.String), System.Int32, System.Int32, CancellationToken)
+  nameWithType: RawExtensions.DeleteRowsAsync(RawResource, String, String, IEnumerable<String>, Int32, Int32, CancellationToken)
+  nameWithType.vb: RawExtensions.DeleteRowsAsync(RawResource, String, String, IEnumerable(Of String), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.RawExtensions.DeleteRowsAsync*
+  name: DeleteRowsAsync
+  href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_DeleteRowsAsync_
+  commentId: Overload:Cognite.Extensions.RawExtensions.DeleteRowsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.RawExtensions.DeleteRowsAsync
+  nameWithType: RawExtensions.DeleteRowsAsync
+- uid: Cognite.Extensions.RawExtensions.GetRowsAsync(RawResource,System.String,System.String,System.Int32,CancellationToken)
+  name: GetRowsAsync(RawResource, String, String, Int32, CancellationToken)
+  href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_GetRowsAsync_RawResource_System_String_System_String_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.RawExtensions.GetRowsAsync(RawResource,System.String,System.String,System.Int32,CancellationToken)
+  fullName: Cognite.Extensions.RawExtensions.GetRowsAsync(RawResource, System.String, System.String, System.Int32, CancellationToken)
+  nameWithType: RawExtensions.GetRowsAsync(RawResource, String, String, Int32, CancellationToken)
+- uid: Cognite.Extensions.RawExtensions.GetRowsAsync*
+  name: GetRowsAsync
+  href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_GetRowsAsync_
+  commentId: Overload:Cognite.Extensions.RawExtensions.GetRowsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.RawExtensions.GetRowsAsync
+  nameWithType: RawExtensions.GetRowsAsync
+- uid: Cognite.Extensions.RawExtensions.InsertRowsAsync*
+  name: InsertRowsAsync
+  href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_InsertRowsAsync_
+  commentId: Overload:Cognite.Extensions.RawExtensions.InsertRowsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.RawExtensions.InsertRowsAsync
+  nameWithType: RawExtensions.InsertRowsAsync
+- uid: Cognite.Extensions.RawExtensions.InsertRowsAsync``1(RawResource,System.String,System.String,IDictionary{System.String,``0},System.Int32,System.Int32,CancellationToken,JsonSerializerOptions)
+  name: InsertRowsAsync<T>(RawResource, String, String, IDictionary<String, T>, Int32, Int32, CancellationToken, JsonSerializerOptions)
+  href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_InsertRowsAsync__1_RawResource_System_String_System_String_IDictionary_System_String___0__System_Int32_System_Int32_CancellationToken_JsonSerializerOptions_
+  commentId: M:Cognite.Extensions.RawExtensions.InsertRowsAsync``1(RawResource,System.String,System.String,IDictionary{System.String,``0},System.Int32,System.Int32,CancellationToken,JsonSerializerOptions)
+  name.vb: InsertRowsAsync(Of T)(RawResource, String, String, IDictionary(Of String, T), Int32, Int32, CancellationToken, JsonSerializerOptions)
+  fullName: Cognite.Extensions.RawExtensions.InsertRowsAsync<T>(RawResource, System.String, System.String, IDictionary<System.String, T>, System.Int32, System.Int32, CancellationToken, JsonSerializerOptions)
+  fullName.vb: Cognite.Extensions.RawExtensions.InsertRowsAsync(Of T)(RawResource, System.String, System.String, IDictionary(Of System.String, T), System.Int32, System.Int32, CancellationToken, JsonSerializerOptions)
+  nameWithType: RawExtensions.InsertRowsAsync<T>(RawResource, String, String, IDictionary<String, T>, Int32, Int32, CancellationToken, JsonSerializerOptions)
+  nameWithType.vb: RawExtensions.InsertRowsAsync(Of T)(RawResource, String, String, IDictionary(Of String, T), Int32, Int32, CancellationToken, JsonSerializerOptions)
+- uid: Cognite.Extensions.RequestType
+  name: RequestType
+  href: api/Cognite.Extensions.RequestType.html
+  commentId: T:Cognite.Extensions.RequestType
+  fullName: Cognite.Extensions.RequestType
+  nameWithType: RequestType
+- uid: Cognite.Extensions.RequestType.CreateAssets
+  name: CreateAssets
+  href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_CreateAssets
+  commentId: F:Cognite.Extensions.RequestType.CreateAssets
+  fullName: Cognite.Extensions.RequestType.CreateAssets
+  nameWithType: RequestType.CreateAssets
+- uid: Cognite.Extensions.RequestType.CreateEvents
+  name: CreateEvents
+  href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_CreateEvents
+  commentId: F:Cognite.Extensions.RequestType.CreateEvents
+  fullName: Cognite.Extensions.RequestType.CreateEvents
+  nameWithType: RequestType.CreateEvents
+- uid: Cognite.Extensions.RequestType.CreateTimeSeries
+  name: CreateTimeSeries
+  href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_CreateTimeSeries
+  commentId: F:Cognite.Extensions.RequestType.CreateTimeSeries
+  fullName: Cognite.Extensions.RequestType.CreateTimeSeries
+  nameWithType: RequestType.CreateTimeSeries
+- uid: Cognite.Extensions.ResourceType
+  name: ResourceType
+  href: api/Cognite.Extensions.ResourceType.html
+  commentId: T:Cognite.Extensions.ResourceType
+  fullName: Cognite.Extensions.ResourceType
+  nameWithType: ResourceType
+- uid: Cognite.Extensions.ResourceType.AssetId
+  name: AssetId
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_AssetId
+  commentId: F:Cognite.Extensions.ResourceType.AssetId
+  fullName: Cognite.Extensions.ResourceType.AssetId
+  nameWithType: ResourceType.AssetId
+- uid: Cognite.Extensions.ResourceType.DataSetId
+  name: DataSetId
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_DataSetId
+  commentId: F:Cognite.Extensions.ResourceType.DataSetId
+  fullName: Cognite.Extensions.ResourceType.DataSetId
+  nameWithType: ResourceType.DataSetId
+- uid: Cognite.Extensions.ResourceType.Description
+  name: Description
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Description
+  commentId: F:Cognite.Extensions.ResourceType.Description
+  fullName: Cognite.Extensions.ResourceType.Description
+  nameWithType: ResourceType.Description
+- uid: Cognite.Extensions.ResourceType.ExternalId
+  name: ExternalId
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_ExternalId
+  commentId: F:Cognite.Extensions.ResourceType.ExternalId
+  fullName: Cognite.Extensions.ResourceType.ExternalId
+  nameWithType: ResourceType.ExternalId
+- uid: Cognite.Extensions.ResourceType.Id
+  name: Id
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Id
+  commentId: F:Cognite.Extensions.ResourceType.Id
+  fullName: Cognite.Extensions.ResourceType.Id
+  nameWithType: ResourceType.Id
+- uid: Cognite.Extensions.ResourceType.Labels
+  name: Labels
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Labels
+  commentId: F:Cognite.Extensions.ResourceType.Labels
+  fullName: Cognite.Extensions.ResourceType.Labels
+  nameWithType: ResourceType.Labels
+- uid: Cognite.Extensions.ResourceType.LegacyName
+  name: LegacyName
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_LegacyName
+  commentId: F:Cognite.Extensions.ResourceType.LegacyName
+  fullName: Cognite.Extensions.ResourceType.LegacyName
+  nameWithType: ResourceType.LegacyName
+- uid: Cognite.Extensions.ResourceType.Metadata
+  name: Metadata
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Metadata
+  commentId: F:Cognite.Extensions.ResourceType.Metadata
+  fullName: Cognite.Extensions.ResourceType.Metadata
+  nameWithType: ResourceType.Metadata
+- uid: Cognite.Extensions.ResourceType.Name
+  name: Name
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Name
+  commentId: F:Cognite.Extensions.ResourceType.Name
+  fullName: Cognite.Extensions.ResourceType.Name
+  nameWithType: ResourceType.Name
+- uid: Cognite.Extensions.ResourceType.None
+  name: None
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_None
+  commentId: F:Cognite.Extensions.ResourceType.None
+  fullName: Cognite.Extensions.ResourceType.None
+  nameWithType: ResourceType.None
+- uid: Cognite.Extensions.ResourceType.ParentExternalId
+  name: ParentExternalId
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_ParentExternalId
+  commentId: F:Cognite.Extensions.ResourceType.ParentExternalId
+  fullName: Cognite.Extensions.ResourceType.ParentExternalId
+  nameWithType: ResourceType.ParentExternalId
+- uid: Cognite.Extensions.ResourceType.ParentId
+  name: ParentId
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_ParentId
+  commentId: F:Cognite.Extensions.ResourceType.ParentId
+  fullName: Cognite.Extensions.ResourceType.ParentId
+  nameWithType: ResourceType.ParentId
+- uid: Cognite.Extensions.ResourceType.Source
+  name: Source
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Source
+  commentId: F:Cognite.Extensions.ResourceType.Source
+  fullName: Cognite.Extensions.ResourceType.Source
+  nameWithType: ResourceType.Source
+- uid: Cognite.Extensions.ResourceType.SubType
+  name: SubType
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_SubType
+  commentId: F:Cognite.Extensions.ResourceType.SubType
+  fullName: Cognite.Extensions.ResourceType.SubType
+  nameWithType: ResourceType.SubType
+- uid: Cognite.Extensions.ResourceType.TimeRange
+  name: TimeRange
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_TimeRange
+  commentId: F:Cognite.Extensions.ResourceType.TimeRange
+  fullName: Cognite.Extensions.ResourceType.TimeRange
+  nameWithType: ResourceType.TimeRange
+- uid: Cognite.Extensions.ResourceType.Type
+  name: Type
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Type
+  commentId: F:Cognite.Extensions.ResourceType.Type
+  fullName: Cognite.Extensions.ResourceType.Type
+  nameWithType: ResourceType.Type
+- uid: Cognite.Extensions.ResourceType.Unit
+  name: Unit
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Unit
+  commentId: F:Cognite.Extensions.ResourceType.Unit
+  fullName: Cognite.Extensions.ResourceType.Unit
+  nameWithType: ResourceType.Unit
+- uid: Cognite.Extensions.ResultHandlers
+  name: ResultHandlers
+  href: api/Cognite.Extensions.ResultHandlers.html
+  commentId: T:Cognite.Extensions.ResultHandlers
+  fullName: Cognite.Extensions.ResultHandlers
+  nameWithType: ResultHandlers
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource,Cognite.Extensions.CogniteError,IEnumerable{AssetCreate},System.Int32,System.Int32,CancellationToken)
+  name: CleanFromError(AssetsResource, CogniteError, IEnumerable<AssetCreate>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_AssetsResource_Cognite_Extensions_CogniteError_IEnumerable_AssetCreate__System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource,Cognite.Extensions.CogniteError,IEnumerable{AssetCreate},System.Int32,System.Int32,CancellationToken)
+  name.vb: CleanFromError(AssetsResource, CogniteError, IEnumerable(Of AssetCreate), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource, Cognite.Extensions.CogniteError, IEnumerable<AssetCreate>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource, Cognite.Extensions.CogniteError, IEnumerable(Of AssetCreate), System.Int32, System.Int32, CancellationToken)
+  nameWithType: ResultHandlers.CleanFromError(AssetsResource, CogniteError, IEnumerable<AssetCreate>, Int32, Int32, CancellationToken)
+  nameWithType.vb: ResultHandlers.CleanFromError(AssetsResource, CogniteError, IEnumerable(Of AssetCreate), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{EventCreate})
+  name: CleanFromError(CogniteError, IEnumerable<EventCreate>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_IEnumerable_EventCreate__
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{EventCreate})
+  name.vb: CleanFromError(CogniteError, IEnumerable(Of EventCreate))
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable<EventCreate>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable(Of EventCreate))
+  nameWithType: ResultHandlers.CleanFromError(CogniteError, IEnumerable<EventCreate>)
+  nameWithType.vb: ResultHandlers.CleanFromError(CogniteError, IEnumerable(Of EventCreate))
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{TimeSeriesCreate})
+  name: CleanFromError(CogniteError, IEnumerable<TimeSeriesCreate>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_IEnumerable_TimeSeriesCreate__
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{TimeSeriesCreate})
+  name.vb: CleanFromError(CogniteError, IEnumerable(Of TimeSeriesCreate))
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable<TimeSeriesCreate>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable(Of TimeSeriesCreate))
+  nameWithType: ResultHandlers.CleanFromError(CogniteError, IEnumerable<TimeSeriesCreate>)
+  nameWithType.vb: ResultHandlers.CleanFromError(CogniteError, IEnumerable(Of TimeSeriesCreate))
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError*
+  name: CleanFromError
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.CleanFromError
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError
+  nameWithType: ResultHandlers.CleanFromError
+- uid: Cognite.Extensions.ResultHandlers.ParseException(Exception,Cognite.Extensions.RequestType)
+  name: ParseException(Exception, RequestType)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ParseException_Exception_Cognite_Extensions_RequestType_
+  commentId: M:Cognite.Extensions.ResultHandlers.ParseException(Exception,Cognite.Extensions.RequestType)
+  fullName: Cognite.Extensions.ResultHandlers.ParseException(Exception, Cognite.Extensions.RequestType)
+  nameWithType: ResultHandlers.ParseException(Exception, RequestType)
+- uid: Cognite.Extensions.ResultHandlers.ParseException*
+  name: ParseException
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ParseException_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.ParseException
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.ParseException
+  nameWithType: ResultHandlers.ParseException
+- uid: Cognite.Extensions.RetryMode
+  name: RetryMode
+  href: api/Cognite.Extensions.RetryMode.html
+  commentId: T:Cognite.Extensions.RetryMode
+  fullName: Cognite.Extensions.RetryMode
+  nameWithType: RetryMode
+- uid: Cognite.Extensions.RetryMode.None
+  name: None
+  href: api/Cognite.Extensions.RetryMode.html#Cognite_Extensions_RetryMode_None
+  commentId: F:Cognite.Extensions.RetryMode.None
+  fullName: Cognite.Extensions.RetryMode.None
+  nameWithType: RetryMode.None
+- uid: Cognite.Extensions.RetryMode.OnError
+  name: OnError
+  href: api/Cognite.Extensions.RetryMode.html#Cognite_Extensions_RetryMode_OnError
+  commentId: F:Cognite.Extensions.RetryMode.OnError
+  fullName: Cognite.Extensions.RetryMode.OnError
+  nameWithType: RetryMode.OnError
+- uid: Cognite.Extensions.RetryMode.OnErrorKeepDuplicates
+  name: OnErrorKeepDuplicates
+  href: api/Cognite.Extensions.RetryMode.html#Cognite_Extensions_RetryMode_OnErrorKeepDuplicates
+  commentId: F:Cognite.Extensions.RetryMode.OnErrorKeepDuplicates
+  fullName: Cognite.Extensions.RetryMode.OnErrorKeepDuplicates
+  nameWithType: RetryMode.OnErrorKeepDuplicates
+- uid: Cognite.Extensions.RetryMode.OnFatal
+  name: OnFatal
+  href: api/Cognite.Extensions.RetryMode.html#Cognite_Extensions_RetryMode_OnFatal
+  commentId: F:Cognite.Extensions.RetryMode.OnFatal
+  fullName: Cognite.Extensions.RetryMode.OnFatal
+  nameWithType: RetryMode.OnFatal
+- uid: Cognite.Extensions.RetryMode.OnFatalKeepDuplicates
+  name: OnFatalKeepDuplicates
+  href: api/Cognite.Extensions.RetryMode.html#Cognite_Extensions_RetryMode_OnFatalKeepDuplicates
+  commentId: F:Cognite.Extensions.RetryMode.OnFatalKeepDuplicates
+  fullName: Cognite.Extensions.RetryMode.OnFatalKeepDuplicates
+  nameWithType: RetryMode.OnFatalKeepDuplicates
+- uid: Cognite.Extensions.Sanitation
+  name: Sanitation
+  href: api/Cognite.Extensions.Sanitation.html
+  commentId: T:Cognite.Extensions.Sanitation
+  fullName: Cognite.Extensions.Sanitation
+  nameWithType: Sanitation
+- uid: Cognite.Extensions.Sanitation.AssetDescriptionMax
+  name: AssetDescriptionMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_AssetDescriptionMax
+  commentId: F:Cognite.Extensions.Sanitation.AssetDescriptionMax
+  fullName: Cognite.Extensions.Sanitation.AssetDescriptionMax
+  nameWithType: Sanitation.AssetDescriptionMax
+- uid: Cognite.Extensions.Sanitation.AssetLabelsMax
+  name: AssetLabelsMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_AssetLabelsMax
+  commentId: F:Cognite.Extensions.Sanitation.AssetLabelsMax
+  fullName: Cognite.Extensions.Sanitation.AssetLabelsMax
+  nameWithType: Sanitation.AssetLabelsMax
+- uid: Cognite.Extensions.Sanitation.AssetMetadataMaxBytes
+  name: AssetMetadataMaxBytes
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_AssetMetadataMaxBytes
+  commentId: F:Cognite.Extensions.Sanitation.AssetMetadataMaxBytes
+  fullName: Cognite.Extensions.Sanitation.AssetMetadataMaxBytes
+  nameWithType: Sanitation.AssetMetadataMaxBytes
+- uid: Cognite.Extensions.Sanitation.AssetMetadataMaxPairs
+  name: AssetMetadataMaxPairs
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_AssetMetadataMaxPairs
+  commentId: F:Cognite.Extensions.Sanitation.AssetMetadataMaxPairs
+  fullName: Cognite.Extensions.Sanitation.AssetMetadataMaxPairs
+  nameWithType: Sanitation.AssetMetadataMaxPairs
+- uid: Cognite.Extensions.Sanitation.AssetMetadataMaxPerKey
+  name: AssetMetadataMaxPerKey
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_AssetMetadataMaxPerKey
+  commentId: F:Cognite.Extensions.Sanitation.AssetMetadataMaxPerKey
+  fullName: Cognite.Extensions.Sanitation.AssetMetadataMaxPerKey
+  nameWithType: Sanitation.AssetMetadataMaxPerKey
+- uid: Cognite.Extensions.Sanitation.AssetMetadataMaxPerValue
+  name: AssetMetadataMaxPerValue
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_AssetMetadataMaxPerValue
+  commentId: F:Cognite.Extensions.Sanitation.AssetMetadataMaxPerValue
+  fullName: Cognite.Extensions.Sanitation.AssetMetadataMaxPerValue
+  nameWithType: Sanitation.AssetMetadataMaxPerValue
+- uid: Cognite.Extensions.Sanitation.AssetNameMax
+  name: AssetNameMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_AssetNameMax
+  commentId: F:Cognite.Extensions.Sanitation.AssetNameMax
+  fullName: Cognite.Extensions.Sanitation.AssetNameMax
+  nameWithType: Sanitation.AssetNameMax
+- uid: Cognite.Extensions.Sanitation.AssetSourceMax
+  name: AssetSourceMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_AssetSourceMax
+  commentId: F:Cognite.Extensions.Sanitation.AssetSourceMax
+  fullName: Cognite.Extensions.Sanitation.AssetSourceMax
+  nameWithType: Sanitation.AssetSourceMax
+- uid: Cognite.Extensions.Sanitation.CleanAssetRequest(IEnumerable{AssetCreate},Cognite.Extensions.SanitationMode)
+  name: CleanAssetRequest(IEnumerable<AssetCreate>, SanitationMode)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanAssetRequest_IEnumerable_AssetCreate__Cognite_Extensions_SanitationMode_
+  commentId: M:Cognite.Extensions.Sanitation.CleanAssetRequest(IEnumerable{AssetCreate},Cognite.Extensions.SanitationMode)
+  name.vb: CleanAssetRequest(IEnumerable(Of AssetCreate), SanitationMode)
+  fullName: Cognite.Extensions.Sanitation.CleanAssetRequest(IEnumerable<AssetCreate>, Cognite.Extensions.SanitationMode)
+  fullName.vb: Cognite.Extensions.Sanitation.CleanAssetRequest(IEnumerable(Of AssetCreate), Cognite.Extensions.SanitationMode)
+  nameWithType: Sanitation.CleanAssetRequest(IEnumerable<AssetCreate>, SanitationMode)
+  nameWithType.vb: Sanitation.CleanAssetRequest(IEnumerable(Of AssetCreate), SanitationMode)
+- uid: Cognite.Extensions.Sanitation.CleanAssetRequest*
+  name: CleanAssetRequest
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanAssetRequest_
+  commentId: Overload:Cognite.Extensions.Sanitation.CleanAssetRequest
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.CleanAssetRequest
+  nameWithType: Sanitation.CleanAssetRequest
+- uid: Cognite.Extensions.Sanitation.CleanEventRequest(IEnumerable{EventCreate},Cognite.Extensions.SanitationMode)
+  name: CleanEventRequest(IEnumerable<EventCreate>, SanitationMode)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanEventRequest_IEnumerable_EventCreate__Cognite_Extensions_SanitationMode_
+  commentId: M:Cognite.Extensions.Sanitation.CleanEventRequest(IEnumerable{EventCreate},Cognite.Extensions.SanitationMode)
+  name.vb: CleanEventRequest(IEnumerable(Of EventCreate), SanitationMode)
+  fullName: Cognite.Extensions.Sanitation.CleanEventRequest(IEnumerable<EventCreate>, Cognite.Extensions.SanitationMode)
+  fullName.vb: Cognite.Extensions.Sanitation.CleanEventRequest(IEnumerable(Of EventCreate), Cognite.Extensions.SanitationMode)
+  nameWithType: Sanitation.CleanEventRequest(IEnumerable<EventCreate>, SanitationMode)
+  nameWithType.vb: Sanitation.CleanEventRequest(IEnumerable(Of EventCreate), SanitationMode)
+- uid: Cognite.Extensions.Sanitation.CleanEventRequest*
+  name: CleanEventRequest
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanEventRequest_
+  commentId: Overload:Cognite.Extensions.Sanitation.CleanEventRequest
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.CleanEventRequest
+  nameWithType: Sanitation.CleanEventRequest
+- uid: Cognite.Extensions.Sanitation.CleanTimeSeriesRequest(IEnumerable{TimeSeriesCreate},Cognite.Extensions.SanitationMode)
+  name: CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate>, SanitationMode)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanTimeSeriesRequest_IEnumerable_TimeSeriesCreate__Cognite_Extensions_SanitationMode_
+  commentId: M:Cognite.Extensions.Sanitation.CleanTimeSeriesRequest(IEnumerable{TimeSeriesCreate},Cognite.Extensions.SanitationMode)
+  name.vb: CleanTimeSeriesRequest(IEnumerable(Of TimeSeriesCreate), SanitationMode)
+  fullName: Cognite.Extensions.Sanitation.CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate>, Cognite.Extensions.SanitationMode)
+  fullName.vb: Cognite.Extensions.Sanitation.CleanTimeSeriesRequest(IEnumerable(Of TimeSeriesCreate), Cognite.Extensions.SanitationMode)
+  nameWithType: Sanitation.CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate>, SanitationMode)
+  nameWithType.vb: Sanitation.CleanTimeSeriesRequest(IEnumerable(Of TimeSeriesCreate), SanitationMode)
+- uid: Cognite.Extensions.Sanitation.CleanTimeSeriesRequest*
+  name: CleanTimeSeriesRequest
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanTimeSeriesRequest_
+  commentId: Overload:Cognite.Extensions.Sanitation.CleanTimeSeriesRequest
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.CleanTimeSeriesRequest
+  nameWithType: Sanitation.CleanTimeSeriesRequest
+- uid: Cognite.Extensions.Sanitation.EventAssetIdsMax
+  name: EventAssetIdsMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventAssetIdsMax
+  commentId: F:Cognite.Extensions.Sanitation.EventAssetIdsMax
+  fullName: Cognite.Extensions.Sanitation.EventAssetIdsMax
+  nameWithType: Sanitation.EventAssetIdsMax
+- uid: Cognite.Extensions.Sanitation.EventDescriptionMax
+  name: EventDescriptionMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventDescriptionMax
+  commentId: F:Cognite.Extensions.Sanitation.EventDescriptionMax
+  fullName: Cognite.Extensions.Sanitation.EventDescriptionMax
+  nameWithType: Sanitation.EventDescriptionMax
+- uid: Cognite.Extensions.Sanitation.EventMetadataMaxBytes
+  name: EventMetadataMaxBytes
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventMetadataMaxBytes
+  commentId: F:Cognite.Extensions.Sanitation.EventMetadataMaxBytes
+  fullName: Cognite.Extensions.Sanitation.EventMetadataMaxBytes
+  nameWithType: Sanitation.EventMetadataMaxBytes
+- uid: Cognite.Extensions.Sanitation.EventMetadataMaxPairs
+  name: EventMetadataMaxPairs
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventMetadataMaxPairs
+  commentId: F:Cognite.Extensions.Sanitation.EventMetadataMaxPairs
+  fullName: Cognite.Extensions.Sanitation.EventMetadataMaxPairs
+  nameWithType: Sanitation.EventMetadataMaxPairs
+- uid: Cognite.Extensions.Sanitation.EventMetadataMaxPerKey
+  name: EventMetadataMaxPerKey
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventMetadataMaxPerKey
+  commentId: F:Cognite.Extensions.Sanitation.EventMetadataMaxPerKey
+  fullName: Cognite.Extensions.Sanitation.EventMetadataMaxPerKey
+  nameWithType: Sanitation.EventMetadataMaxPerKey
+- uid: Cognite.Extensions.Sanitation.EventMetadataMaxPerValue
+  name: EventMetadataMaxPerValue
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventMetadataMaxPerValue
+  commentId: F:Cognite.Extensions.Sanitation.EventMetadataMaxPerValue
+  fullName: Cognite.Extensions.Sanitation.EventMetadataMaxPerValue
+  nameWithType: Sanitation.EventMetadataMaxPerValue
+- uid: Cognite.Extensions.Sanitation.EventSourceMax
+  name: EventSourceMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventSourceMax
+  commentId: F:Cognite.Extensions.Sanitation.EventSourceMax
+  fullName: Cognite.Extensions.Sanitation.EventSourceMax
+  nameWithType: Sanitation.EventSourceMax
+- uid: Cognite.Extensions.Sanitation.EventTypeMax
+  name: EventTypeMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventTypeMax
+  commentId: F:Cognite.Extensions.Sanitation.EventTypeMax
+  fullName: Cognite.Extensions.Sanitation.EventTypeMax
+  nameWithType: Sanitation.EventTypeMax
+- uid: Cognite.Extensions.Sanitation.ExternalIdMax
+  name: ExternalIdMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_ExternalIdMax
+  commentId: F:Cognite.Extensions.Sanitation.ExternalIdMax
+  fullName: Cognite.Extensions.Sanitation.ExternalIdMax
+  nameWithType: Sanitation.ExternalIdMax
+- uid: Cognite.Extensions.Sanitation.LimitUtf8ByteCount(System.String,System.Int32)
+  name: LimitUtf8ByteCount(String, Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_LimitUtf8ByteCount_System_String_System_Int32_
+  commentId: M:Cognite.Extensions.Sanitation.LimitUtf8ByteCount(System.String,System.Int32)
+  fullName: Cognite.Extensions.Sanitation.LimitUtf8ByteCount(System.String, System.Int32)
+  nameWithType: Sanitation.LimitUtf8ByteCount(String, Int32)
+- uid: Cognite.Extensions.Sanitation.LimitUtf8ByteCount*
+  name: LimitUtf8ByteCount
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_LimitUtf8ByteCount_
+  commentId: Overload:Cognite.Extensions.Sanitation.LimitUtf8ByteCount
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.LimitUtf8ByteCount
+  nameWithType: Sanitation.LimitUtf8ByteCount
+- uid: Cognite.Extensions.Sanitation.Sanitize(AssetCreate)
+  name: Sanitize(AssetCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_AssetCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Sanitize(AssetCreate)
+  fullName: Cognite.Extensions.Sanitation.Sanitize(AssetCreate)
+  nameWithType: Sanitation.Sanitize(AssetCreate)
+- uid: Cognite.Extensions.Sanitation.Sanitize(EventCreate)
+  name: Sanitize(EventCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_EventCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Sanitize(EventCreate)
+  fullName: Cognite.Extensions.Sanitation.Sanitize(EventCreate)
+  nameWithType: Sanitation.Sanitize(EventCreate)
+- uid: Cognite.Extensions.Sanitation.Sanitize(TimeSeriesCreate)
+  name: Sanitize(TimeSeriesCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_TimeSeriesCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Sanitize(TimeSeriesCreate)
+  fullName: Cognite.Extensions.Sanitation.Sanitize(TimeSeriesCreate)
+  nameWithType: Sanitation.Sanitize(TimeSeriesCreate)
+- uid: Cognite.Extensions.Sanitation.Sanitize*
+  name: Sanitize
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_
+  commentId: Overload:Cognite.Extensions.Sanitation.Sanitize
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.Sanitize
+  nameWithType: Sanitation.Sanitize
+- uid: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
+  name: SanitizeMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SanitizeMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_
+  commentId: M:Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
+  name.vb: SanitizeMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
+  fullName: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32)
+  fullName.vb: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32)
+  nameWithType: Sanitation.SanitizeMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
+  nameWithType.vb: Sanitation.SanitizeMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
+- uid: Cognite.Extensions.Sanitation.SanitizeMetadata*
+  name: SanitizeMetadata
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SanitizeMetadata_
+  commentId: Overload:Cognite.Extensions.Sanitation.SanitizeMetadata
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.SanitizeMetadata
+  nameWithType: Sanitation.SanitizeMetadata
+- uid: Cognite.Extensions.Sanitation.TimeSeriesDescriptionMax
+  name: TimeSeriesDescriptionMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_TimeSeriesDescriptionMax
+  commentId: F:Cognite.Extensions.Sanitation.TimeSeriesDescriptionMax
+  fullName: Cognite.Extensions.Sanitation.TimeSeriesDescriptionMax
+  nameWithType: Sanitation.TimeSeriesDescriptionMax
+- uid: Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxBytes
+  name: TimeSeriesMetadataMaxBytes
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_TimeSeriesMetadataMaxBytes
+  commentId: F:Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxBytes
+  fullName: Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxBytes
+  nameWithType: Sanitation.TimeSeriesMetadataMaxBytes
+- uid: Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPairs
+  name: TimeSeriesMetadataMaxPairs
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_TimeSeriesMetadataMaxPairs
+  commentId: F:Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPairs
+  fullName: Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPairs
+  nameWithType: Sanitation.TimeSeriesMetadataMaxPairs
+- uid: Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPerKey
+  name: TimeSeriesMetadataMaxPerKey
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_TimeSeriesMetadataMaxPerKey
+  commentId: F:Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPerKey
+  fullName: Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPerKey
+  nameWithType: Sanitation.TimeSeriesMetadataMaxPerKey
+- uid: Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPerValue
+  name: TimeSeriesMetadataMaxPerValue
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_TimeSeriesMetadataMaxPerValue
+  commentId: F:Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPerValue
+  fullName: Cognite.Extensions.Sanitation.TimeSeriesMetadataMaxPerValue
+  nameWithType: Sanitation.TimeSeriesMetadataMaxPerValue
+- uid: Cognite.Extensions.Sanitation.TimeSeriesNameMax
+  name: TimeSeriesNameMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_TimeSeriesNameMax
+  commentId: F:Cognite.Extensions.Sanitation.TimeSeriesNameMax
+  fullName: Cognite.Extensions.Sanitation.TimeSeriesNameMax
+  nameWithType: Sanitation.TimeSeriesNameMax
+- uid: Cognite.Extensions.Sanitation.TimeSeriesUnitMax
+  name: TimeSeriesUnitMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_TimeSeriesUnitMax
+  commentId: F:Cognite.Extensions.Sanitation.TimeSeriesUnitMax
+  fullName: Cognite.Extensions.Sanitation.TimeSeriesUnitMax
+  nameWithType: Sanitation.TimeSeriesUnitMax
+- uid: Cognite.Extensions.Sanitation.ToDictionarySafe*
+  name: ToDictionarySafe
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_ToDictionarySafe_
+  commentId: Overload:Cognite.Extensions.Sanitation.ToDictionarySafe
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.ToDictionarySafe
+  nameWithType: Sanitation.ToDictionarySafe
+- uid: Cognite.Extensions.Sanitation.ToDictionarySafe``3(IEnumerable{``0},Func{``0,``1},Func{``0,``2},IEqualityComparer{``1})
+  name: ToDictionarySafe<TInput, TKey, TValue>(IEnumerable<TInput>, Func<TInput, TKey>, Func<TInput, TValue>, IEqualityComparer<TKey>)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_ToDictionarySafe__3_IEnumerable___0__Func___0___1__Func___0___2__IEqualityComparer___1__
+  commentId: M:Cognite.Extensions.Sanitation.ToDictionarySafe``3(IEnumerable{``0},Func{``0,``1},Func{``0,``2},IEqualityComparer{``1})
+  name.vb: ToDictionarySafe(Of TInput, TKey, TValue)(IEnumerable(Of TInput), Func(Of TInput, TKey), Func(Of TInput, TValue), IEqualityComparer(Of TKey))
+  fullName: Cognite.Extensions.Sanitation.ToDictionarySafe<TInput, TKey, TValue>(IEnumerable<TInput>, Func<TInput, TKey>, Func<TInput, TValue>, IEqualityComparer<TKey>)
+  fullName.vb: Cognite.Extensions.Sanitation.ToDictionarySafe(Of TInput, TKey, TValue)(IEnumerable(Of TInput), Func(Of TInput, TKey), Func(Of TInput, TValue), IEqualityComparer(Of TKey))
+  nameWithType: Sanitation.ToDictionarySafe<TInput, TKey, TValue>(IEnumerable<TInput>, Func<TInput, TKey>, Func<TInput, TValue>, IEqualityComparer<TKey>)
+  nameWithType.vb: Sanitation.ToDictionarySafe(Of TInput, TKey, TValue)(IEnumerable(Of TInput), Func(Of TInput, TKey), Func(Of TInput, TValue), IEqualityComparer(Of TKey))
+- uid: Cognite.Extensions.Sanitation.Truncate(CogniteExternalId,System.Int32)
+  name: Truncate(CogniteExternalId, Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Truncate_CogniteExternalId_System_Int32_
+  commentId: M:Cognite.Extensions.Sanitation.Truncate(CogniteExternalId,System.Int32)
+  fullName: Cognite.Extensions.Sanitation.Truncate(CogniteExternalId, System.Int32)
+  nameWithType: Sanitation.Truncate(CogniteExternalId, Int32)
+- uid: Cognite.Extensions.Sanitation.Truncate(System.String,System.Int32)
+  name: Truncate(String, Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Truncate_System_String_System_Int32_
+  commentId: M:Cognite.Extensions.Sanitation.Truncate(System.String,System.Int32)
+  fullName: Cognite.Extensions.Sanitation.Truncate(System.String, System.Int32)
+  nameWithType: Sanitation.Truncate(String, Int32)
+- uid: Cognite.Extensions.Sanitation.Truncate*
+  name: Truncate
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Truncate_
+  commentId: Overload:Cognite.Extensions.Sanitation.Truncate
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.Truncate
+  nameWithType: Sanitation.Truncate
+- uid: Cognite.Extensions.Sanitation.Verify(AssetCreate)
+  name: Verify(AssetCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_AssetCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Verify(AssetCreate)
+  fullName: Cognite.Extensions.Sanitation.Verify(AssetCreate)
+  nameWithType: Sanitation.Verify(AssetCreate)
+- uid: Cognite.Extensions.Sanitation.Verify(EventCreate)
+  name: Verify(EventCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_EventCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Verify(EventCreate)
+  fullName: Cognite.Extensions.Sanitation.Verify(EventCreate)
+  nameWithType: Sanitation.Verify(EventCreate)
+- uid: Cognite.Extensions.Sanitation.Verify(TimeSeriesCreate)
+  name: Verify(TimeSeriesCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_TimeSeriesCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Verify(TimeSeriesCreate)
+  fullName: Cognite.Extensions.Sanitation.Verify(TimeSeriesCreate)
+  nameWithType: Sanitation.Verify(TimeSeriesCreate)
+- uid: Cognite.Extensions.Sanitation.Verify*
+  name: Verify
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_
+  commentId: Overload:Cognite.Extensions.Sanitation.Verify
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.Verify
+  nameWithType: Sanitation.Verify
+- uid: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
+  name: VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_
+  commentId: M:Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
+  name.vb: VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
+  fullName: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32)
+  fullName.vb: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32)
+  nameWithType: Sanitation.VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
+  nameWithType.vb: Sanitation.VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
+- uid: Cognite.Extensions.Sanitation.VerifyMetadata*
+  name: VerifyMetadata
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_
+  commentId: Overload:Cognite.Extensions.Sanitation.VerifyMetadata
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.VerifyMetadata
+  nameWithType: Sanitation.VerifyMetadata
+- uid: Cognite.Extensions.SanitationMode
+  name: SanitationMode
+  href: api/Cognite.Extensions.SanitationMode.html
+  commentId: T:Cognite.Extensions.SanitationMode
+  fullName: Cognite.Extensions.SanitationMode
+  nameWithType: SanitationMode
+- uid: Cognite.Extensions.SanitationMode.Clean
+  name: Clean
+  href: api/Cognite.Extensions.SanitationMode.html#Cognite_Extensions_SanitationMode_Clean
+  commentId: F:Cognite.Extensions.SanitationMode.Clean
+  fullName: Cognite.Extensions.SanitationMode.Clean
+  nameWithType: SanitationMode.Clean
+- uid: Cognite.Extensions.SanitationMode.None
+  name: None
+  href: api/Cognite.Extensions.SanitationMode.html#Cognite_Extensions_SanitationMode_None
+  commentId: F:Cognite.Extensions.SanitationMode.None
+  fullName: Cognite.Extensions.SanitationMode.None
+  nameWithType: SanitationMode.None
+- uid: Cognite.Extensions.SanitationMode.Remove
+  name: Remove
+  href: api/Cognite.Extensions.SanitationMode.html#Cognite_Extensions_SanitationMode_Remove
+  commentId: F:Cognite.Extensions.SanitationMode.Remove
+  fullName: Cognite.Extensions.SanitationMode.Remove
+  nameWithType: SanitationMode.Remove
+- uid: Cognite.Extensions.TimeSeriesExtensions
+  name: TimeSeriesExtensions
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html
+  commentId: T:Cognite.Extensions.TimeSeriesExtensions
+  fullName: Cognite.Extensions.TimeSeriesExtensions
+  nameWithType: TimeSeriesExtensions
+- uid: Cognite.Extensions.TimeSeriesExtensions.EnsureTimeSeriesExistsAsync(TimeSeriesResource,IEnumerable{TimeSeriesCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: EnsureTimeSeriesExistsAsync(TimeSeriesResource, IEnumerable<TimeSeriesCreate>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_EnsureTimeSeriesExistsAsync_TimeSeriesResource_IEnumerable_TimeSeriesCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.TimeSeriesExtensions.EnsureTimeSeriesExistsAsync(TimeSeriesResource,IEnumerable{TimeSeriesCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: EnsureTimeSeriesExistsAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesCreate), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.TimeSeriesExtensions.EnsureTimeSeriesExistsAsync(TimeSeriesResource, IEnumerable<TimeSeriesCreate>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.TimeSeriesExtensions.EnsureTimeSeriesExistsAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesCreate), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: TimeSeriesExtensions.EnsureTimeSeriesExistsAsync(TimeSeriesResource, IEnumerable<TimeSeriesCreate>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: TimeSeriesExtensions.EnsureTimeSeriesExistsAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesCreate), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.TimeSeriesExtensions.EnsureTimeSeriesExistsAsync*
+  name: EnsureTimeSeriesExistsAsync
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_EnsureTimeSeriesExistsAsync_
+  commentId: Overload:Cognite.Extensions.TimeSeriesExtensions.EnsureTimeSeriesExistsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.TimeSeriesExtensions.EnsureTimeSeriesExistsAsync
+  nameWithType: TimeSeriesExtensions.EnsureTimeSeriesExistsAsync
+- uid: Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{TimeSeriesCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<TimeSeriesCreate>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_GetOrCreateTimeSeriesAsync_TimeSeriesResource_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_TimeSeriesCreate___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{TimeSeriesCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of TimeSeriesCreate)), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<TimeSeriesCreate>>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of TimeSeriesCreate)), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<TimeSeriesCreate>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of TimeSeriesCreate)), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{TimeSeriesCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<TimeSeriesCreate>>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_GetOrCreateTimeSeriesAsync_TimeSeriesResource_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_TimeSeriesCreate____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{TimeSeriesCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of TimeSeriesCreate))), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<TimeSeriesCreate>>>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of TimeSeriesCreate))), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<TimeSeriesCreate>>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: TimeSeriesExtensions.GetOrCreateTimeSeriesAsync(TimeSeriesResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of TimeSeriesCreate))), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync*
+  name: GetOrCreateTimeSeriesAsync
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_GetOrCreateTimeSeriesAsync_
+  commentId: Overload:Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.TimeSeriesExtensions.GetOrCreateTimeSeriesAsync
+  nameWithType: TimeSeriesExtensions.GetOrCreateTimeSeriesAsync
+- uid: Cognite.Extensions.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors(TimeSeriesResource,IEnumerable{Identity},System.Int32,System.Int32,CancellationToken)
+  name: GetTimeSeriesByIdsIgnoreErrors(TimeSeriesResource, IEnumerable<Identity>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_GetTimeSeriesByIdsIgnoreErrors_TimeSeriesResource_IEnumerable_Identity__System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors(TimeSeriesResource,IEnumerable{Identity},System.Int32,System.Int32,CancellationToken)
+  name.vb: GetTimeSeriesByIdsIgnoreErrors(TimeSeriesResource, IEnumerable(Of Identity), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors(TimeSeriesResource, IEnumerable<Identity>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors(TimeSeriesResource, IEnumerable(Of Identity), System.Int32, System.Int32, CancellationToken)
+  nameWithType: TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors(TimeSeriesResource, IEnumerable<Identity>, Int32, Int32, CancellationToken)
+  nameWithType.vb: TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors(TimeSeriesResource, IEnumerable(Of Identity), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors*
+  name: GetTimeSeriesByIdsIgnoreErrors
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_GetTimeSeriesByIdsIgnoreErrors_
+  commentId: Overload:Cognite.Extensions.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors
+  isSpec: "True"
+  fullName: Cognite.Extensions.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors
+  nameWithType: TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors
 - uid: Cognite.Extractor.Common
   name: Cognite.Extractor.Common
   href: api/Cognite.Extractor.Common.html
@@ -779,6 +2536,80 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Logging.LoggerConfig.File
   nameWithType: LoggerConfig.File
+- uid: Cognite.Extractor.Logging.LoggerConfig.TraceListener
+  name: TraceListener
+  href: api/Cognite.Extractor.Logging.LoggerConfig.html#Cognite_Extractor_Logging_LoggerConfig_TraceListener
+  commentId: P:Cognite.Extractor.Logging.LoggerConfig.TraceListener
+  fullName: Cognite.Extractor.Logging.LoggerConfig.TraceListener
+  nameWithType: LoggerConfig.TraceListener
+- uid: Cognite.Extractor.Logging.LoggerConfig.TraceListener*
+  name: TraceListener
+  href: api/Cognite.Extractor.Logging.LoggerConfig.html#Cognite_Extractor_Logging_LoggerConfig_TraceListener_
+  commentId: Overload:Cognite.Extractor.Logging.LoggerConfig.TraceListener
+  isSpec: "True"
+  fullName: Cognite.Extractor.Logging.LoggerConfig.TraceListener
+  nameWithType: LoggerConfig.TraceListener
+- uid: Cognite.Extractor.Logging.LoggerTraceListener
+  name: LoggerTraceListener
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html
+  commentId: T:Cognite.Extractor.Logging.LoggerTraceListener
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener
+  nameWithType: LoggerTraceListener
+- uid: Cognite.Extractor.Logging.LoggerTraceListener.#ctor(Microsoft.Extensions.Logging.ILogger{Cognite.Extractor.Logging.LoggerTraceListener},Cognite.Extractor.Logging.LoggerConfig)
+  name: LoggerTraceListener(ILogger<LoggerTraceListener>, LoggerConfig)
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener__ctor_Microsoft_Extensions_Logging_ILogger_Cognite_Extractor_Logging_LoggerTraceListener__Cognite_Extractor_Logging_LoggerConfig_
+  commentId: M:Cognite.Extractor.Logging.LoggerTraceListener.#ctor(Microsoft.Extensions.Logging.ILogger{Cognite.Extractor.Logging.LoggerTraceListener},Cognite.Extractor.Logging.LoggerConfig)
+  name.vb: LoggerTraceListener(ILogger(Of LoggerTraceListener), LoggerConfig)
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener.LoggerTraceListener(Microsoft.Extensions.Logging.ILogger<Cognite.Extractor.Logging.LoggerTraceListener>, Cognite.Extractor.Logging.LoggerConfig)
+  fullName.vb: Cognite.Extractor.Logging.LoggerTraceListener.LoggerTraceListener(Microsoft.Extensions.Logging.ILogger(Of Cognite.Extractor.Logging.LoggerTraceListener), Cognite.Extractor.Logging.LoggerConfig)
+  nameWithType: LoggerTraceListener.LoggerTraceListener(ILogger<LoggerTraceListener>, LoggerConfig)
+  nameWithType.vb: LoggerTraceListener.LoggerTraceListener(ILogger(Of LoggerTraceListener), LoggerConfig)
+- uid: Cognite.Extractor.Logging.LoggerTraceListener.#ctor*
+  name: LoggerTraceListener
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener__ctor_
+  commentId: Overload:Cognite.Extractor.Logging.LoggerTraceListener.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener.LoggerTraceListener
+  nameWithType: LoggerTraceListener.LoggerTraceListener
+- uid: Cognite.Extractor.Logging.LoggerTraceListener.Enable
+  name: Enable()
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener_Enable
+  commentId: M:Cognite.Extractor.Logging.LoggerTraceListener.Enable
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener.Enable()
+  nameWithType: LoggerTraceListener.Enable()
+- uid: Cognite.Extractor.Logging.LoggerTraceListener.Enable*
+  name: Enable
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener_Enable_
+  commentId: Overload:Cognite.Extractor.Logging.LoggerTraceListener.Enable
+  isSpec: "True"
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener.Enable
+  nameWithType: LoggerTraceListener.Enable
+- uid: Cognite.Extractor.Logging.LoggerTraceListener.Write(System.String)
+  name: Write(String)
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener_Write_System_String_
+  commentId: M:Cognite.Extractor.Logging.LoggerTraceListener.Write(System.String)
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener.Write(System.String)
+  nameWithType: LoggerTraceListener.Write(String)
+- uid: Cognite.Extractor.Logging.LoggerTraceListener.Write*
+  name: Write
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener_Write_
+  commentId: Overload:Cognite.Extractor.Logging.LoggerTraceListener.Write
+  isSpec: "True"
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener.Write
+  nameWithType: LoggerTraceListener.Write
+- uid: Cognite.Extractor.Logging.LoggerTraceListener.WriteLine(System.String)
+  name: WriteLine(String)
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener_WriteLine_System_String_
+  commentId: M:Cognite.Extractor.Logging.LoggerTraceListener.WriteLine(System.String)
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener.WriteLine(System.String)
+  nameWithType: LoggerTraceListener.WriteLine(String)
+- uid: Cognite.Extractor.Logging.LoggerTraceListener.WriteLine*
+  name: WriteLine
+  href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener_WriteLine_
+  commentId: Overload:Cognite.Extractor.Logging.LoggerTraceListener.WriteLine
+  isSpec: "True"
+  fullName: Cognite.Extractor.Logging.LoggerTraceListener.WriteLine
+  nameWithType: LoggerTraceListener.WriteLine
 - uid: Cognite.Extractor.Logging.LoggingExtensions
   name: LoggingExtensions
   href: api/Cognite.Extractor.Logging.LoggingExtensions.html
@@ -856,6 +2687,12 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Logging.LoggingUtils.GetSerilogDefault
   nameWithType: LoggingUtils.GetSerilogDefault
+- uid: Cognite.Extractor.Logging.TraceListenerConfig
+  name: TraceListenerConfig
+  href: api/Cognite.Extractor.Logging.TraceListenerConfig.html
+  commentId: T:Cognite.Extractor.Logging.TraceListenerConfig
+  fullName: Cognite.Extractor.Logging.TraceListenerConfig
+  nameWithType: TraceListenerConfig
 - uid: Cognite.Extractor.Metrics
   name: Cognite.Extractor.Metrics
   href: api/Cognite.Extractor.Metrics.html
@@ -1944,15 +3781,15 @@ references:
   commentId: T:Cognite.Extractor.Utils.Authenticator
   fullName: Cognite.Extractor.Utils.Authenticator
   nameWithType: Authenticator
-- uid: Cognite.Extractor.Utils.Authenticator.#ctor(Cognite.Extractor.Utils.CogniteConfig,HttpClient,ILogger{Cognite.Extractor.Utils.Authenticator})
-  name: Authenticator(CogniteConfig, HttpClient, ILogger<Authenticator>)
-  href: api/Cognite.Extractor.Utils.Authenticator.html#Cognite_Extractor_Utils_Authenticator__ctor_Cognite_Extractor_Utils_CogniteConfig_HttpClient_ILogger_Cognite_Extractor_Utils_Authenticator__
-  commentId: M:Cognite.Extractor.Utils.Authenticator.#ctor(Cognite.Extractor.Utils.CogniteConfig,HttpClient,ILogger{Cognite.Extractor.Utils.Authenticator})
-  name.vb: Authenticator(CogniteConfig, HttpClient, ILogger(Of Authenticator))
-  fullName: Cognite.Extractor.Utils.Authenticator.Authenticator(Cognite.Extractor.Utils.CogniteConfig, HttpClient, ILogger<Cognite.Extractor.Utils.Authenticator>)
-  fullName.vb: Cognite.Extractor.Utils.Authenticator.Authenticator(Cognite.Extractor.Utils.CogniteConfig, HttpClient, ILogger(Of Cognite.Extractor.Utils.Authenticator))
-  nameWithType: Authenticator.Authenticator(CogniteConfig, HttpClient, ILogger<Authenticator>)
-  nameWithType.vb: Authenticator.Authenticator(CogniteConfig, HttpClient, ILogger(Of Authenticator))
+- uid: Cognite.Extractor.Utils.Authenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,HttpClient,ILogger{Cognite.Extractor.Utils.IAuthenticator})
+  name: Authenticator(AuthenticatorConfig, HttpClient, ILogger<IAuthenticator>)
+  href: api/Cognite.Extractor.Utils.Authenticator.html#Cognite_Extractor_Utils_Authenticator__ctor_Cognite_Extractor_Utils_AuthenticatorConfig_HttpClient_ILogger_Cognite_Extractor_Utils_IAuthenticator__
+  commentId: M:Cognite.Extractor.Utils.Authenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,HttpClient,ILogger{Cognite.Extractor.Utils.IAuthenticator})
+  name.vb: Authenticator(AuthenticatorConfig, HttpClient, ILogger(Of IAuthenticator))
+  fullName: Cognite.Extractor.Utils.Authenticator.Authenticator(Cognite.Extractor.Utils.AuthenticatorConfig, HttpClient, ILogger<Cognite.Extractor.Utils.IAuthenticator>)
+  fullName.vb: Cognite.Extractor.Utils.Authenticator.Authenticator(Cognite.Extractor.Utils.AuthenticatorConfig, HttpClient, ILogger(Of Cognite.Extractor.Utils.IAuthenticator))
+  nameWithType: Authenticator.Authenticator(AuthenticatorConfig, HttpClient, ILogger<IAuthenticator>)
+  nameWithType.vb: Authenticator.Authenticator(AuthenticatorConfig, HttpClient, ILogger(Of IAuthenticator))
 - uid: Cognite.Extractor.Utils.Authenticator.#ctor*
   name: Authenticator
   href: api/Cognite.Extractor.Utils.Authenticator.html#Cognite_Extractor_Utils_Authenticator__ctor_
@@ -1979,6 +3816,37 @@ references:
   commentId: T:Cognite.Extractor.Utils.AuthenticatorConfig
   fullName: Cognite.Extractor.Utils.AuthenticatorConfig
   nameWithType: AuthenticatorConfig
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation
+  name: AuthenticatorConfig.AuthenticatorImplementation
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html
+  commentId: T:Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation
+  nameWithType: AuthenticatorConfig.AuthenticatorImplementation
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.Basic
+  name: Basic
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html#Cognite_Extractor_Utils_AuthenticatorConfig_AuthenticatorImplementation_Basic
+  commentId: F:Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.Basic
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.Basic
+  nameWithType: AuthenticatorConfig.AuthenticatorImplementation.Basic
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.MSAL
+  name: MSAL
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html#Cognite_Extractor_Utils_AuthenticatorConfig_AuthenticatorImplementation_MSAL
+  commentId: F:Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.MSAL
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.MSAL
+  nameWithType: AuthenticatorConfig.AuthenticatorImplementation.MSAL
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Authority
+  name: Authority
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Authority
+  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Authority
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Authority
+  nameWithType: AuthenticatorConfig.Authority
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Authority*
+  name: Authority
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Authority_
+  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Authority
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Authority
+  nameWithType: AuthenticatorConfig.Authority
 - uid: Cognite.Extractor.Utils.AuthenticatorConfig.ClientId
   name: ClientId
   href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_ClientId
@@ -1992,6 +3860,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.AuthenticatorConfig.ClientId
   nameWithType: AuthenticatorConfig.ClientId
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
+  name: Implementation
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Implementation
+  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
+  nameWithType: AuthenticatorConfig.Implementation
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Implementation*
+  name: Implementation
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Implementation_
+  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
+  nameWithType: AuthenticatorConfig.Implementation
 - uid: Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl
   name: MinTtl
   href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_MinTtl
@@ -2005,19 +3886,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl
   nameWithType: AuthenticatorConfig.MinTtl
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Scope
-  name: Scope
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Scope
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Scope
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Scope
-  nameWithType: AuthenticatorConfig.Scope
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Scope*
-  name: Scope
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Scope_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Scope
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
+  name: Scopes
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Scopes
+  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
+  nameWithType: AuthenticatorConfig.Scopes
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes*
+  name: Scopes
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Scopes_
+  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Scope
-  nameWithType: AuthenticatorConfig.Scope
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
+  nameWithType: AuthenticatorConfig.Scopes
 - uid: Cognite.Extractor.Utils.AuthenticatorConfig.Secret
   name: Secret
   href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Secret
@@ -2911,15 +4792,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient
   nameWithType: DestinationUtils.AddCogniteClient
-- uid: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,Cognite.Extractor.Utils.Authenticator,ILogger{Client},IMetrics)
-  name: Configure(Client.Builder, CogniteConfig, String, Authenticator, ILogger<Client>, IMetrics)
-  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_String_Cognite_Extractor_Utils_Authenticator_ILogger_Client__IMetrics_
-  commentId: M:Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,Cognite.Extractor.Utils.Authenticator,ILogger{Client},IMetrics)
-  name.vb: Configure(Client.Builder, CogniteConfig, String, Authenticator, ILogger(Of Client), IMetrics)
-  fullName: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.String, Cognite.Extractor.Utils.Authenticator, ILogger<Client>, IMetrics)
-  fullName.vb: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.String, Cognite.Extractor.Utils.Authenticator, ILogger(Of Client), IMetrics)
-  nameWithType: DestinationUtils.Configure(Client.Builder, CogniteConfig, String, Authenticator, ILogger<Client>, IMetrics)
-  nameWithType.vb: DestinationUtils.Configure(Client.Builder, CogniteConfig, String, Authenticator, ILogger(Of Client), IMetrics)
+- uid: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,Cognite.Extractor.Utils.IAuthenticator,ILogger{Client},IMetrics)
+  name: Configure(Client.Builder, CogniteConfig, String, IAuthenticator, ILogger<Client>, IMetrics)
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_String_Cognite_Extractor_Utils_IAuthenticator_ILogger_Client__IMetrics_
+  commentId: M:Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,Cognite.Extractor.Utils.IAuthenticator,ILogger{Client},IMetrics)
+  name.vb: Configure(Client.Builder, CogniteConfig, String, IAuthenticator, ILogger(Of Client), IMetrics)
+  fullName: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.String, Cognite.Extractor.Utils.IAuthenticator, ILogger<Client>, IMetrics)
+  fullName.vb: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.String, Cognite.Extractor.Utils.IAuthenticator, ILogger(Of Client), IMetrics)
+  nameWithType: DestinationUtils.Configure(Client.Builder, CogniteConfig, String, IAuthenticator, ILogger<Client>, IMetrics)
+  nameWithType.vb: DestinationUtils.Configure(Client.Builder, CogniteConfig, String, IAuthenticator, ILogger(Of Client), IMetrics)
 - uid: Cognite.Extractor.Utils.DestinationUtils.Configure*
   name: Configure
   href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_Configure_
@@ -2978,6 +4859,25 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.EventUploadQueue.UploadEntries
   nameWithType: EventUploadQueue.UploadEntries
+- uid: Cognite.Extractor.Utils.IAuthenticator
+  name: IAuthenticator
+  href: api/Cognite.Extractor.Utils.IAuthenticator.html
+  commentId: T:Cognite.Extractor.Utils.IAuthenticator
+  fullName: Cognite.Extractor.Utils.IAuthenticator
+  nameWithType: IAuthenticator
+- uid: Cognite.Extractor.Utils.IAuthenticator.GetToken(CancellationToken)
+  name: GetToken(CancellationToken)
+  href: api/Cognite.Extractor.Utils.IAuthenticator.html#Cognite_Extractor_Utils_IAuthenticator_GetToken_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.IAuthenticator.GetToken(CancellationToken)
+  fullName: Cognite.Extractor.Utils.IAuthenticator.GetToken(CancellationToken)
+  nameWithType: IAuthenticator.GetToken(CancellationToken)
+- uid: Cognite.Extractor.Utils.IAuthenticator.GetToken*
+  name: GetToken
+  href: api/Cognite.Extractor.Utils.IAuthenticator.html#Cognite_Extractor_Utils_IAuthenticator_GetToken_
+  commentId: Overload:Cognite.Extractor.Utils.IAuthenticator.GetToken
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.IAuthenticator.GetToken
+  nameWithType: IAuthenticator.GetToken
 - uid: Cognite.Extractor.Utils.IRawUploadQueue`1
   name: IRawUploadQueue<T>
   href: api/Cognite.Extractor.Utils.IRawUploadQueue-1.html
@@ -3038,6 +4938,41 @@ references:
   fullName.vb: Cognite.Extractor.Utils.IRawUploadQueue(Of T).Trigger
   nameWithType: IRawUploadQueue<T>.Trigger
   nameWithType.vb: IRawUploadQueue(Of T).Trigger
+- uid: Cognite.Extractor.Utils.MsalAuthenticator
+  name: MsalAuthenticator
+  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html
+  commentId: T:Cognite.Extractor.Utils.MsalAuthenticator
+  fullName: Cognite.Extractor.Utils.MsalAuthenticator
+  nameWithType: MsalAuthenticator
+- uid: Cognite.Extractor.Utils.MsalAuthenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,ILogger{Cognite.Extractor.Utils.IAuthenticator})
+  name: MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>)
+  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator__ctor_Cognite_Extractor_Utils_AuthenticatorConfig_ILogger_Cognite_Extractor_Utils_IAuthenticator__
+  commentId: M:Cognite.Extractor.Utils.MsalAuthenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,ILogger{Cognite.Extractor.Utils.IAuthenticator})
+  name.vb: MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator))
+  fullName: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator(Cognite.Extractor.Utils.AuthenticatorConfig, ILogger<Cognite.Extractor.Utils.IAuthenticator>)
+  fullName.vb: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator(Cognite.Extractor.Utils.AuthenticatorConfig, ILogger(Of Cognite.Extractor.Utils.IAuthenticator))
+  nameWithType: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>)
+  nameWithType.vb: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator))
+- uid: Cognite.Extractor.Utils.MsalAuthenticator.#ctor*
+  name: MsalAuthenticator
+  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.MsalAuthenticator.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator
+  nameWithType: MsalAuthenticator.MsalAuthenticator
+- uid: Cognite.Extractor.Utils.MsalAuthenticator.GetToken(CancellationToken)
+  name: GetToken(CancellationToken)
+  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator_GetToken_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.MsalAuthenticator.GetToken(CancellationToken)
+  fullName: Cognite.Extractor.Utils.MsalAuthenticator.GetToken(CancellationToken)
+  nameWithType: MsalAuthenticator.GetToken(CancellationToken)
+- uid: Cognite.Extractor.Utils.MsalAuthenticator.GetToken*
+  name: GetToken
+  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator_GetToken_
+  commentId: Overload:Cognite.Extractor.Utils.MsalAuthenticator.GetToken
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.MsalAuthenticator.GetToken
+  nameWithType: MsalAuthenticator.GetToken
 - uid: Cognite.Extractor.Utils.QueueUploadResult`1
   name: QueueUploadResult<T>
   href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html

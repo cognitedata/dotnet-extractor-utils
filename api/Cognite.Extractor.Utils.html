@@ -78,7 +78,9 @@
     <h3 id="classes">Classes
   </h3>
       <h4><a class="xref" href="Cognite.Extractor.Utils.Authenticator.html">Authenticator</a></h4>
-      <section><p>Authenticator that obtains bearer access tokens from a <a href="https://login.microsoftonline.com/">Microsoft</a> endpoint</p>
+      <section><p>Authenticator that issues a POST request to an authority endpoint defined in the <a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Authority">Authority</a> configuration
+in order to obtain bearer access tokens.
+The token is cached and renewed if it expired</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig.html">AuthenticatorConfig</a></h4>
       <section><p>Authenticator configuration. For more information, read the
@@ -115,6 +117,10 @@ requests against the client</p>
       <h4><a class="xref" href="Cognite.Extractor.Utils.EventUploadQueue.html">EventUploadQueue</a></h4>
       <section><p>Queue for uploading events to CDF.</p>
 </section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.MsalAuthenticator.html">MsalAuthenticator</a></h4>
+      <section><p>Uses Microsoft Authentication Library (MSAL) to acquire tokens from the identity provider endpoint
+defined in the <a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Authority">Authority</a> configuration</p>
+</section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.QueueUploadResult-1.html">QueueUploadResult&lt;T&gt;</a></h4>
       <section><p>Result of an attempt to upload from an upload queue.</p>
 </section>
@@ -132,9 +138,17 @@ requests against the client</p>
 </section>
     <h3 id="interfaces">Interfaces
   </h3>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.IAuthenticator.html">IAuthenticator</a></h4>
+      <section><p>Interface for implementing authenticators based on bearer access tokens issued by an identity provider</p>
+</section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.IRawUploadQueue-1.html">IRawUploadQueue&lt;T&gt;</a></h4>
       <section><p>Interface to CDF Raw upload queues. The items in the queue are
 DTOs (data type objects) of type <code data-dev-comment-type="typeparamref" class="typeparamref">T</code>.</p>
+</section>
+    <h3 id="enums">Enums
+  </h3>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html">AuthenticatorConfig.AuthenticatorImplementation</a></h4>
+      <section><p>Available authenticator implementations</p>
 </section>
 </article>
           </div>
