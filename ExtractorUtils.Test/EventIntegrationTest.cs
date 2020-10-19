@@ -134,14 +134,14 @@ namespace ExtractorUtils.Test
                 Assert.Equal(ErrorType.ItemDuplicated, error1.Type);
                 Assert.Equal(ResourceType.ExternalId, error1.Resource);
                 Assert.Equal(2, result.Results.Count());
-                Assert.Equal(tester.Prefix + new string('æ', 250), result.Results.First().ExternalId);
+                Assert.Equal(tester.Prefix + new string('æ', 255 - tester.Prefix.Length), result.Results.First().ExternalId);
                 Assert.Equal($"{tester.Prefix} test-duplicate-externalId", result.Results.Last().ExternalId);
             }
             finally
             {
                 var ids = new[]
                 {
-                    tester.Prefix + new string('æ', 250),
+                    tester.Prefix + new string('æ', 255 - tester.Prefix.Length),
                     $"{tester.Prefix} test-duplicate-externalId"
                 };
                 await tester.Destination.CogniteClient.Events.DeleteAsync(new EventDelete

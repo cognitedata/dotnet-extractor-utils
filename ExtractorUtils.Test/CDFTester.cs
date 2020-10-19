@@ -2,10 +2,8 @@
 using Cognite.Extractor.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ExtractorUtils.Test
 {
@@ -33,7 +31,7 @@ namespace ExtractorUtils.Test
             Destination = Provider.GetRequiredService<CogniteDestination>();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             Random random = new Random();
-            Prefix = new string(Enumerable.Repeat(chars, 5)
+            Prefix = "net-utils-test-" + new string(Enumerable.Repeat(chars, 5)
               .Select(s => s[random.Next(s.Length)]).ToArray());
             Source = new CancellationTokenSource();
         }
