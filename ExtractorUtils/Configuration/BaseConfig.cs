@@ -182,7 +182,7 @@ namespace Cognite.Extractor.Utils
         public string Secret { get; set; }
 
         /// <summary>
-        /// Resource scope
+        /// Resource scopes
         /// </summary>
         /// <value>Scope</value>
         public List<string> Scopes { get; set; }
