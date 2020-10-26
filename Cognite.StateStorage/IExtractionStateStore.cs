@@ -8,7 +8,7 @@ namespace Cognite.Extractor.StateStorage
     /// <summary>
     /// Represents a general extractor state store, for storing first/last timestamps.
     /// </summary>
-    public interface IExtractionStateStore
+    public interface IExtractionStateStore : IDisposable
     {
         /// <summary>
         /// Store information from states into state store

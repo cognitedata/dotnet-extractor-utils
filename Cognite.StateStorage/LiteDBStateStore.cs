@@ -225,5 +225,24 @@ namespace Cognite.Extractor.StateStorage
                 _logger.LogWarning("Failed to delete extraction state from store {store}: {Message}", e.Message, tableName);
             }
         }
+        /// <summary>
+        /// Dispose lite database
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _db.Dispose();
+            }
+        }
+        /// <summary>
+        /// Dispose, for lite database.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }
