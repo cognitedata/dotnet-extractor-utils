@@ -74,7 +74,7 @@ namespace Cognite.Extensions
         /// <returns>A truncated string, may be the same if no truncating was necessary</returns>
         public static string LimitUtf8ByteCount(this string str, int n)
         {
-            if (string.IsNullOrEmpty(str) || Encoding.UTF8.GetByteCount(str) <= n) return str;
+            if (SafeByteCount(str) <= n) return str;
 
             var a = Encoding.UTF8.GetBytes(str);
             if (n > 0 && (a[n] & 0xC0) == 0x80)
@@ -114,6 +114,13 @@ namespace Cognite.Extensions
             return ret;
         }
 
+        private static int SafeByteCount(string str)
+        {
+            if (string.IsNullOrEmpty(str)) return 0;
+
+            return Encoding.UTF8.GetByteCount(str);
+        }
+
         /// <summary>
         /// Sanitize a string, string metadata dictionary by limiting the number of UTF8 bytes per key,
         /// value and total, as well as the total number of key, value pairs.
@@ -139,7 +146,7 @@ namespace Cognite.Extensions
                 .TakeWhile(pair =>
                 {
                     count++;
-                    byteCount += Encoding.UTF8.GetByteCount(pair.Item1) + Encoding.UTF8.GetByteCount(pair.Item2);
+                    byteCount += SafeByteCount(pair.Item1) + SafeByteCount(pair.Item2);
                     return count <= maxKeys && byteCount <= maxBytes;
                 })
                 .ToDictionarySafe(pair => pair.Item1, pair => pair.Item2);
@@ -156,9 +163,9 @@ namespace Cognite.Extensions
             int byteCount = 0;
             foreach (var kvp in data)
             {
-                var valueByteCount = string.IsNullOrEmpty(kvp.Value) ? 0 : Encoding.UTF8.GetByteCount(kvp.Value);
+                var valueByteCount = SafeByteCount(kvp.Value);
                 if (valueByteCount > maxPerValue) return false;
-                var keyByteCount = Encoding.UTF8.GetByteCount(kvp.Key);
+                var keyByteCount = SafeByteCount(kvp.Key);
                 if (keyByteCount > maxPerKey) return false;
                 byteCount += valueByteCount + keyByteCount;
                 count++;
