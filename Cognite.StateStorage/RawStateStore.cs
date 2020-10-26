@@ -194,5 +194,11 @@ namespace Cognite.Extractor.StateStorage
                 _logger.LogWarning(e, "Failed to delete extraction state from store {store}: {Message}", e.Message, tableName);
             }
         }
+        /// <summary>
+        /// For interface, nothing that should be disposed here.
+        /// </summary>
+        public void Dispose()
+        {
+        }
     }
 }

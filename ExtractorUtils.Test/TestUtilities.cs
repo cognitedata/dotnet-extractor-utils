@@ -39,6 +39,10 @@ namespace ExtractorUtils.Test {
             return Task.CompletedTask;
         }
 
+        public void Dispose()
+        {
+        }
+
         public Task RestoreExtractionState<T, K>(IDictionary<string, K> extractionStates, string tableName, Action<K, T> restoreStorableState, CancellationToken token)
             where T : BaseStorableState
             where K : IExtractionState
