@@ -8,6 +8,7 @@ using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils;
 using Xunit.Sdk;
 using Cognite.Extensions;
+using CogniteSdk;
 
 namespace ExtractorUtils.Test {
 
@@ -220,6 +221,30 @@ namespace ExtractorUtils.Test {
             Assert.True((result.CompletionTime - result.StartTime).Value.TotalMilliseconds >= 80);
 
             await Assert.ThrowsAsync<AggregateException>(() => throttler2.EnqueueAndWait(badGenerator));
+        }
+        [Theory]
+        [InlineData(1, new[] { 3, 2, 1, 1 })]
+        [InlineData(2, new[] { 3, 2, 2 })]
+        [InlineData(3, new[] { 3, 3, 1 })]
+        [InlineData(4, new[] { 3, 4 })]
+        [InlineData(5, new[] { 5, 2 })]
+        [InlineData(6, new[] { 6, 1 })]
+        [InlineData(7, new[] { 7 })]
+        public static void TestChunkByHierarchy(int maxSize, int[] lengths)
+        {
+            var assets = new List<AssetCreate>()
+            {
+                new AssetCreate { ExternalId = "1" },
+                new AssetCreate { ExternalId = "6", ParentExternalId = "5" },
+                new AssetCreate { ExternalId = "5", ParentExternalId = "4" },
+                new AssetCreate { ExternalId = "3", ParentExternalId = "2" },
+                new AssetCreate { ExternalId = "2" },
+                new AssetCreate { ExternalId = "4", ParentExternalId = "2" },
+                new AssetCreate { ExternalId = "7", ParentExternalId = "0" }
+            };
+            var result = assets.ChunkByHierarchy(maxSize, create => create.ExternalId, create => create.ParentExternalId).ToList();
+            Assert.Equal(7, result.Aggregate(0, (seed, res) => seed + res.Count()));
+            Assert.Equal(lengths, result.Select(res => res.Count()));
         }
     }
 }

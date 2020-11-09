@@ -156,17 +156,16 @@ namespace Cognite.Extractor.Common
                     var parentId = parentIdSelector(el);
                     if (eqComparer.Equals(parentId, default) || !level.ContainsKey(parentId)) continue;
                     var id = idSelector(el);
-                    if (level[parentId] <= level[id])
+                    if (level[parentId] >= level[id])
                     {
-                        level[parentId] = level[id] + 1;
+                        level[id] = level[parentId] + 1;
                         changed = true;
                     }
                 }
             }
             return input
                 .GroupBy(obj => level[idSelector(obj)])
-                .OrderByDescending(group => group.Key)
-                .Select(group => group)
+                .OrderBy(group => group.Key)
                 .ConservativeMerge(maxSize);
         }
         /// <summary>
@@ -180,10 +179,15 @@ namespace Cognite.Extractor.Common
         /// <returns>A list of lists, each list may </returns>
         private static IEnumerable<IEnumerable<T>> ConservativeMerge<T>(this IEnumerable<IEnumerable<T>> input, int maxSize)
         {
+            if (maxSize <= 1)
+            {
+                foreach (var chunk in input) yield return chunk;
+                yield break;
+            }
             var current = new List<T>();
             foreach (var chunk in input)
             {
-                if (current.Count + chunk.Count() < maxSize)
+                if (current.Count + chunk.Count() <= maxSize)
                 {
                     current.AddRange(chunk);
                 }
@@ -196,6 +200,10 @@ namespace Cognite.Extractor.Common
                     yield return current;
                     current = new List<T>(chunk);
                 }
+            }
+            if (current.Any())
+            {
+                yield return current;
             }
         }
 
