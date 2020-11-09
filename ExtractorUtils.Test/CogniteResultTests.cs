@@ -1,5 +1,8 @@
 ﻿using Cognite.Extensions;
+using Cognite.Extractor.Logging;
 using CogniteSdk;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +14,17 @@ namespace ExtractorUtils.Test
 {
     public class CogniteResultTests
     {
+        private ILogger<CogniteResultTests> logger;
+        public CogniteResultTests()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton(new LoggerConfig
+            {
+                Console = new LogConfig { Level = "debug" }
+            });
+            services.AddLogging();
+            logger = services.BuildServiceProvider().GetRequiredService<ILogger<CogniteResultTests>>();
+        }
         [Fact]
         public void ParseUnknownException()
         {
@@ -93,6 +107,7 @@ namespace ExtractorUtils.Test
             for (int i = 0; i < exceptions.Length; i++)
             {
                 var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateAssets);
+                logger.LogCogniteError(error, RequestType.CreateAssets, false, LogLevel.Debug, LogLevel.Warning);
                 assets = (await ResultHandlers.CleanFromError(null, error, assets, 1000, 1, CancellationToken.None))
                     .ToArray();
                 Assert.Equal(9 - i * 2 - 2, assets.Count());
@@ -188,6 +203,7 @@ namespace ExtractorUtils.Test
             for (int i = 0; i < exceptions.Length; i++)
             {
                 var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateTimeSeries);
+                logger.LogCogniteError(error, RequestType.CreateAssets, false, LogLevel.Debug, LogLevel.Warning);
                 timeseries = (ResultHandlers.CleanFromError(error, timeseries))
                     .ToArray();
                 Assert.Equal(9 - i * 2 - 2, timeseries.Count());
@@ -261,6 +277,7 @@ namespace ExtractorUtils.Test
             for (int i = 0; i < exceptions.Length; i++)
             {
                 var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateEvents);
+                logger.LogCogniteError(error, RequestType.CreateAssets, false, LogLevel.Debug, LogLevel.Warning);
                 events = (ResultHandlers.CleanFromError(error, events))
                     .ToArray();
                 Assert.Equal(7 - i * 2 - 2, events.Count());
