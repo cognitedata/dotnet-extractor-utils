@@ -204,6 +204,8 @@ namespace ExtractorUtils.Test
             {
                 var result = await tester.Destination.EnsureEventsExistsAsync(events, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
 
+                tester.Logger.LogResult(result, RequestType.CreateEvents, false);
+
                 Assert.Single(result.Results);
                 Assert.Equal(3, result.Errors.Count());
                 Assert.Equal($"{tester.Prefix} final-evt-ok", result.Results.First().ExternalId);

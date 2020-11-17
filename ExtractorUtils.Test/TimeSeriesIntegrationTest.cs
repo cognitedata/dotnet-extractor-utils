@@ -212,6 +212,8 @@ namespace ExtractorUtils.Test
             {
                 var result = await tester.Destination.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
 
+                tester.Logger.LogResult(result, RequestType.CreateTimeSeries, false);
+
                 Assert.Single(result.Results);
                 Assert.Equal(4, result.Errors.Count());
                 Assert.Equal($"{tester.Prefix} final-ts-ok", result.Results.First().ExternalId);
