@@ -120,6 +120,112 @@ namespace Cognite.Extractor.Common
             }
         }
 
+        /// <summary>
+        /// Chunk a list of entries with some sort of parent-child hierarchy into an ordered list where each element
+        /// contains all the parents of the next. The first list has no parents, or the parents are not in the list of given elements.
+        /// If <paramref name="maxSize"/> is set larger than 1, the lists are merged so that the first list may contain both
+        /// the first and second layers, etc. respecting the maximum number of elements in each chunk.
+        /// The final lists may be larger than <paramref name="maxSize"/>, it is only used to merge layers.
+        /// This is useful when pushing large numbers of assets to CDF.
+        /// </summary>
+        /// <typeparam name="T">Element to be grouped</typeparam>
+        /// <typeparam name="K">Type used for ids</typeparam>
+        /// <param name="input">Input list</param>
+        /// <param name="maxSize">Maximum number of elements when merging lists</param>
+        /// <param name="idSelector">Function to get id from each element</param>
+        /// <param name="parentIdSelector">Function to get parentId from each element</param>
+        /// <param name="comparer">Optional equalitycomparer</param>
+        /// <returns>A list of lists so that if they are consumed in order, all parents will be pushed ahead of children</returns>
+        public static IEnumerable<IEnumerable<T>> ChunkByHierarchy<T, K>(
+            this IEnumerable<T> input,
+            int maxSize,
+            Func<T, K> idSelector,
+            Func<T, K> parentIdSelector,
+            IEqualityComparer<K> comparer = null)
+        {
+            var eqComparer = comparer ?? EqualityComparer<K>.Default;
+            if (!input.Any()) return Enumerable.Empty<IEnumerable<T>>();
+
+            // We need a set of all node-ids
+            var nodeSet = new HashSet<K>(input.Select(idSelector));
+
+            // Find all parent-ids, and also identify all root level nodes.
+            var layer = new List<T>();
+            var children = new Dictionary<K, IList<T>>();
+            foreach (var el in input)
+            {
+                var parentId = parentIdSelector(el);
+                if (eqComparer.Equals(parentId, default) || !nodeSet.Contains(parentId))
+                {
+                    // This is the first layer, we can recursively traverse the tree using this later.
+                    layer.Add(el);
+                    continue;
+                }
+                if (!children.TryGetValue(parentId, out var nodes))
+                {
+                    children[parentId] = nodes = new List<T>();
+                }
+                nodes.Add(el);
+            }
+            var levels = new List<List<T>>();
+            // For each set of nodes, get their children, then assign them to the iteration number.
+            while (layer.Any())
+            {
+                levels.Add(layer);
+                var nextLayer = new List<T>();
+                foreach (var el in layer)
+                {
+                    var id = idSelector(el);
+                    if (!nodeSet.Remove(id)) throw new InvalidOperationException("Input is not a tree");
+                    if (children.TryGetValue(id, out var next))
+                    {
+                        nextLayer.AddRange(next);
+                    }
+                }
+                layer = nextLayer;
+            }
+
+            return levels.ConservativeMerge(maxSize);
+        }
+        /// <summary>
+        /// Conservatively merge a list of lists, ensuring that no sub-list is split, and no created list is longer than <paramref name="maxSize"/>.
+        /// Only subsequent lists are merged.
+        /// Example: maxSize = 10, list lengths are 1, 2, 6, 15, 17, 9, 4, 4 yields output lengths 9, 15, 17, 9, 8
+        /// </summary>
+        /// <typeparam name="T">Type of element</typeparam>
+        /// <param name="input">List of lists to merge</param>
+        /// <param name="maxSize">Maximum number of entries</param>
+        /// <returns>A list of lists, each list may </returns>
+        private static IEnumerable<IEnumerable<T>> ConservativeMerge<T>(this IEnumerable<IEnumerable<T>> input, int maxSize)
+        {
+            if (maxSize <= 1)
+            {
+                foreach (var chunk in input) yield return chunk;
+                yield break;
+            }
+            var current = new List<T>();
+            foreach (var chunk in input)
+            {
+                if (current.Count + chunk.Count() <= maxSize)
+                {
+                    current.AddRange(chunk);
+                }
+                else if (!current.Any())
+                {
+                    yield return chunk;
+                }
+                else
+                {
+                    yield return current;
+                    current = new List<T>(chunk);
+                }
+            }
+            if (current.Any())
+            {
+                yield return current;
+            }
+        }
+
         private static List<T> Dequeue<T>(this Queue<T> queue, int numToDequeue)
         {
             List<T> ret = new List<T>();
