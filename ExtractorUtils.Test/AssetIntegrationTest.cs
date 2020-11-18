@@ -1,6 +1,7 @@
 ﻿using Cognite.Extensions;
 using CogniteSdk;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -133,6 +134,15 @@ namespace ExtractorUtils.Test
                 {
                     Name = "test-duplicate-externalId",
                     ExternalId = $"{tester.Prefix} test-duplicate-externalId"
+                },
+                new AssetCreate
+                {
+                    Name = "test-null-metadata",
+                    ExternalId = $"{tester.Prefix} test-null-metadata",
+                    Metadata = new Dictionary<string, string>
+                    {
+                        { "key",  null }
+                    }
                 }
             };
 
@@ -147,16 +157,18 @@ namespace ExtractorUtils.Test
                 var error2 = result.Errors.Last();
                 Assert.Equal(ErrorType.SanitationFailed, error2.Type);
                 Assert.Equal(ResourceType.Name, error2.Resource);
-                Assert.Equal(2, result.Results.Count());
+                Assert.Equal(3, result.Results.Count());
                 Assert.Equal(tester.Prefix + new string('æ', 255 - tester.Prefix.Length), result.Results.First().ExternalId);
-                Assert.Equal($"{tester.Prefix} test-duplicate-externalId", result.Results.Last().ExternalId);
+                Assert.Equal($"{tester.Prefix} test-duplicate-externalId", result.Results.ElementAt(1).ExternalId);
+                Assert.Equal($"{tester.Prefix} test-null-metadata", result.Results.Last().ExternalId);
             }
             finally
             {
                 var ids = new[]
                 {
                     tester.Prefix + new string('æ', 255 - tester.Prefix.Length),
-                    $"{tester.Prefix} test-duplicate-externalId"
+                    $"{tester.Prefix} test-duplicate-externalId",
+                    $"{tester.Prefix} test-null-metadata"
                 };
                 await tester.Destination.CogniteClient.Assets.DeleteAsync(new AssetDelete
                 {
@@ -237,6 +249,15 @@ namespace ExtractorUtils.Test
                 },
                 new AssetCreate
                 {
+                    Name = "test-null-metadata",
+                    ExternalId = $"{tester.Prefix} test-null-metadata",
+                    Metadata = new Dictionary<string, string>
+                    {
+                        { "key", null }
+                    }
+                },
+                new AssetCreate
+                {
                     Name = "final-asset-ok",
                     ExternalId = $"{tester.Prefix} final-asset-ok"
                 }
@@ -248,7 +269,7 @@ namespace ExtractorUtils.Test
                 tester.Logger.LogResult(result, RequestType.CreateAssets, false);
 
                 Assert.Single(result.Results);
-                Assert.Equal(5, result.Errors.Count());
+                Assert.Equal(6, result.Errors.Count());
                 Assert.Equal("final-asset-ok", result.Results.First().Name);
                 foreach (var error in result.Errors)
                 {
@@ -289,6 +310,10 @@ namespace ExtractorUtils.Test
                             Assert.Contains(error.Values, idt => idt.Id == 124);
                             Assert.Equal(2, error.Skipped.Count());
                             break;
+                        case ResourceType.Metadata:
+                            Assert.Equal(ErrorType.SanitationFailed, error.Type);
+                            Assert.Single(error.Skipped);
+                            break;
                         default:
                             throw new Exception($"Bad resource type: {error.Type}", error.Exception);
                     }
@@ -306,7 +331,8 @@ namespace ExtractorUtils.Test
                     $"{tester.Prefix} test-missing-parent-internal-2",
                     $"{tester.Prefix} test-missing-dataset",
                     $"{tester.Prefix} test-missing-dataset-2",
-                    $"{tester.Prefix} final-asset-ok"
+                    $"{tester.Prefix} final-asset-ok",
+                    $"{tester.Prefix} test-null-metadata"
                 };
                 await tester.Destination.CogniteClient.Assets.DeleteAsync(new AssetDelete
                 {
