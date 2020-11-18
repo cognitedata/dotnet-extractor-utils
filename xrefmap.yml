@@ -1071,6 +1071,41 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.InsertError.UnionWith
   nameWithType: InsertError.UnionWith
+- uid: Cognite.Extensions.LoggerExtensions
+  name: LoggerExtensions
+  href: api/Cognite.Extensions.LoggerExtensions.html
+  commentId: T:Cognite.Extensions.LoggerExtensions
+  fullName: Cognite.Extensions.LoggerExtensions
+  nameWithType: LoggerExtensions
+- uid: Cognite.Extensions.LoggerExtensions.LogCogniteError(ILogger,Cognite.Extensions.CogniteError,Cognite.Extensions.RequestType,System.Boolean,LogLevel,LogLevel)
+  name: LogCogniteError(ILogger, CogniteError, RequestType, Boolean, LogLevel, LogLevel)
+  href: api/Cognite.Extensions.LoggerExtensions.html#Cognite_Extensions_LoggerExtensions_LogCogniteError_ILogger_Cognite_Extensions_CogniteError_Cognite_Extensions_RequestType_System_Boolean_LogLevel_LogLevel_
+  commentId: M:Cognite.Extensions.LoggerExtensions.LogCogniteError(ILogger,Cognite.Extensions.CogniteError,Cognite.Extensions.RequestType,System.Boolean,LogLevel,LogLevel)
+  fullName: Cognite.Extensions.LoggerExtensions.LogCogniteError(ILogger, Cognite.Extensions.CogniteError, Cognite.Extensions.RequestType, System.Boolean, LogLevel, LogLevel)
+  nameWithType: LoggerExtensions.LogCogniteError(ILogger, CogniteError, RequestType, Boolean, LogLevel, LogLevel)
+- uid: Cognite.Extensions.LoggerExtensions.LogCogniteError*
+  name: LogCogniteError
+  href: api/Cognite.Extensions.LoggerExtensions.html#Cognite_Extensions_LoggerExtensions_LogCogniteError_
+  commentId: Overload:Cognite.Extensions.LoggerExtensions.LogCogniteError
+  isSpec: "True"
+  fullName: Cognite.Extensions.LoggerExtensions.LogCogniteError
+  nameWithType: LoggerExtensions.LogCogniteError
+- uid: Cognite.Extensions.LoggerExtensions.LogResult*
+  name: LogResult
+  href: api/Cognite.Extensions.LoggerExtensions.html#Cognite_Extensions_LoggerExtensions_LogResult_
+  commentId: Overload:Cognite.Extensions.LoggerExtensions.LogResult
+  isSpec: "True"
+  fullName: Cognite.Extensions.LoggerExtensions.LogResult
+  nameWithType: LoggerExtensions.LogResult
+- uid: Cognite.Extensions.LoggerExtensions.LogResult``1(ILogger,Cognite.Extensions.CogniteResult{``0},Cognite.Extensions.RequestType,System.Boolean,LogLevel,LogLevel,LogLevel)
+  name: LogResult<T>(ILogger, CogniteResult<T>, RequestType, Boolean, LogLevel, LogLevel, LogLevel)
+  href: api/Cognite.Extensions.LoggerExtensions.html#Cognite_Extensions_LoggerExtensions_LogResult__1_ILogger_Cognite_Extensions_CogniteResult___0__Cognite_Extensions_RequestType_System_Boolean_LogLevel_LogLevel_LogLevel_
+  commentId: M:Cognite.Extensions.LoggerExtensions.LogResult``1(ILogger,Cognite.Extensions.CogniteResult{``0},Cognite.Extensions.RequestType,System.Boolean,LogLevel,LogLevel,LogLevel)
+  name.vb: LogResult(Of T)(ILogger, CogniteResult(Of T), RequestType, Boolean, LogLevel, LogLevel, LogLevel)
+  fullName: Cognite.Extensions.LoggerExtensions.LogResult<T>(ILogger, Cognite.Extensions.CogniteResult<T>, Cognite.Extensions.RequestType, System.Boolean, LogLevel, LogLevel, LogLevel)
+  fullName.vb: Cognite.Extensions.LoggerExtensions.LogResult(Of T)(ILogger, Cognite.Extensions.CogniteResult(Of T), Cognite.Extensions.RequestType, System.Boolean, LogLevel, LogLevel, LogLevel)
+  nameWithType: LoggerExtensions.LogResult<T>(ILogger, CogniteResult<T>, RequestType, Boolean, LogLevel, LogLevel, LogLevel)
+  nameWithType.vb: LoggerExtensions.LogResult(Of T)(ILogger, CogniteResult(Of T), RequestType, Boolean, LogLevel, LogLevel, LogLevel)
 - uid: Cognite.Extensions.RawExtensions
   name: RawExtensions
   href: api/Cognite.Extensions.RawExtensions.html
@@ -1795,6 +1830,22 @@ references:
   fullName.vb: Cognite.Extractor.Common.Chunking.ChunkBy(Of TKey, TVal)(System.Collections.Generic.IEnumerable(Of System.ValueTuple(Of TKey, System.Collections.Generic.IEnumerable(Of TVal))), System.Int32, System.Int32)
   nameWithType: Chunking.ChunkBy<TKey, TVal>(IEnumerable<(TKey, IEnumerable<TVal>)>, Int32, Int32)
   nameWithType.vb: Chunking.ChunkBy(Of TKey, TVal)(IEnumerable(Of (TKey, IEnumerable(Of TVal))), Int32, Int32)
+- uid: Cognite.Extractor.Common.Chunking.ChunkByHierarchy*
+  name: ChunkByHierarchy
+  href: api/Cognite.Extractor.Common.Chunking.html#Cognite_Extractor_Common_Chunking_ChunkByHierarchy_
+  commentId: Overload:Cognite.Extractor.Common.Chunking.ChunkByHierarchy
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.Chunking.ChunkByHierarchy
+  nameWithType: Chunking.ChunkByHierarchy
+- uid: Cognite.Extractor.Common.Chunking.ChunkByHierarchy``2(System.Collections.Generic.IEnumerable{``0},System.Int32,System.Func{``0,``1},System.Func{``0,``1},System.Collections.Generic.IEqualityComparer{``1})
+  name: ChunkByHierarchy<T, K>(IEnumerable<T>, Int32, Func<T, K>, Func<T, K>, IEqualityComparer<K>)
+  href: api/Cognite.Extractor.Common.Chunking.html#Cognite_Extractor_Common_Chunking_ChunkByHierarchy__2_System_Collections_Generic_IEnumerable___0__System_Int32_System_Func___0___1__System_Func___0___1__System_Collections_Generic_IEqualityComparer___1__
+  commentId: M:Cognite.Extractor.Common.Chunking.ChunkByHierarchy``2(System.Collections.Generic.IEnumerable{``0},System.Int32,System.Func{``0,``1},System.Func{``0,``1},System.Collections.Generic.IEqualityComparer{``1})
+  name.vb: ChunkByHierarchy(Of T, K)(IEnumerable(Of T), Int32, Func(Of T, K), Func(Of T, K), IEqualityComparer(Of K))
+  fullName: Cognite.Extractor.Common.Chunking.ChunkByHierarchy<T, K>(System.Collections.Generic.IEnumerable<T>, System.Int32, System.Func<T, K>, System.Func<T, K>, System.Collections.Generic.IEqualityComparer<K>)
+  fullName.vb: Cognite.Extractor.Common.Chunking.ChunkByHierarchy(Of T, K)(System.Collections.Generic.IEnumerable(Of T), System.Int32, System.Func(Of T, K), System.Func(Of T, K), System.Collections.Generic.IEqualityComparer(Of K))
+  nameWithType: Chunking.ChunkByHierarchy<T, K>(IEnumerable<T>, Int32, Func<T, K>, Func<T, K>, IEqualityComparer<K>)
+  nameWithType.vb: Chunking.ChunkByHierarchy(Of T, K)(IEnumerable(Of T), Int32, Func(Of T, K), Func(Of T, K), IEqualityComparer(Of K))
 - uid: Cognite.Extractor.Common.Chunking.RunThrottled(System.Collections.Generic.IEnumerable{System.Func{System.Threading.Tasks.Task}},System.Int32,System.Action{System.Threading.Tasks.Task},System.Threading.CancellationToken)
   name: RunThrottled(IEnumerable<Func<Task>>, Int32, Action<Task>, CancellationToken)
   href: api/Cognite.Extractor.Common.Chunking.html#Cognite_Extractor_Common_Chunking_RunThrottled_System_Collections_Generic_IEnumerable_System_Func_System_Threading_Tasks_Task___System_Int32_System_Action_System_Threading_Tasks_Task__System_Threading_CancellationToken_
