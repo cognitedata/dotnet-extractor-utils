@@ -145,28 +145,47 @@ namespace Cognite.Extractor.Common
         {
             var eqComparer = comparer ?? EqualityComparer<K>.Default;
             if (!input.Any()) return Enumerable.Empty<IEnumerable<T>>();
-            var level = new Dictionary<K, int>(eqComparer);
-            foreach (var el in input) level[idSelector(el)] = 0;
-            bool changed = true;
-            while (changed)
+
+            // We need a set of all node-ids
+            var nodeSet = new HashSet<K>(input.Select(idSelector));
+
+            // Find all parent-ids, and also identify all root level nodes.
+            var layer = new List<T>();
+            var children = new Dictionary<K, IList<T>>();
+            foreach (var el in input)
             {
-                changed = false;
-                foreach (var el in input)
+                var parentId = parentIdSelector(el);
+                if (eqComparer.Equals(parentId, default) || !nodeSet.Contains(parentId))
                 {
-                    var parentId = parentIdSelector(el);
-                    if (eqComparer.Equals(parentId, default) || !level.ContainsKey(parentId)) continue;
+                    // This is the first layer, we can recursively traverse the tree using this later.
+                    layer.Add(el);
+                    continue;
+                }
+                if (!children.TryGetValue(parentId, out var nodes))
+                {
+                    children[parentId] = nodes = new List<T>();
+                }
+                nodes.Add(el);
+            }
+            var levels = new List<List<T>>();
+            // For each set of nodes, get their children, then assign them to the iteration number.
+            while (layer.Any())
+            {
+                levels.Add(layer);
+                var nextLayer = new List<T>();
+                foreach (var el in layer)
+                {
                     var id = idSelector(el);
-                    if (level[parentId] >= level[id])
+                    if (!nodeSet.Remove(id)) throw new InvalidOperationException("Input is not a tree");
+                    if (children.TryGetValue(id, out var next))
                     {
-                        level[id] = level[parentId] + 1;
-                        changed = true;
+                        nextLayer.AddRange(next);
                     }
                 }
+                layer = nextLayer;
             }
-            return input
-                .GroupBy(obj => level[idSelector(obj)])
-                .OrderBy(group => group.Key)
-                .ConservativeMerge(maxSize);
+
+            return levels.ConservativeMerge(maxSize);
         }
         /// <summary>
         /// Conservatively merge a list of lists, ensuring that no sub-list is split, and no created list is longer than <paramref name="maxSize"/>.
