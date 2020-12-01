@@ -142,7 +142,7 @@ namespace Cognite.Extensions
             int byteCount = 0;
             return data
                 .Where(kvp => kvp.Key != null)
-                .Select(kvp => (kvp.Key.LimitUtf8ByteCount(maxPerKey), kvp.Value.LimitUtf8ByteCount(maxPerValue)))
+                .Select(kvp => (kvp.Key.LimitUtf8ByteCount(maxPerKey), kvp.Value.LimitUtf8ByteCount(maxPerValue) ?? ""))
                 .TakeWhile(pair =>
                 {
                     count++;
@@ -163,6 +163,7 @@ namespace Cognite.Extensions
             int byteCount = 0;
             foreach (var kvp in data)
             {
+                if (kvp.Value == null) return false;
                 var valueByteCount = SafeByteCount(kvp.Value);
                 if (valueByteCount > maxPerValue) return false;
                 var keyByteCount = SafeByteCount(kvp.Key);

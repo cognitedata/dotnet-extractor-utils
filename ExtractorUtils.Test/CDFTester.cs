@@ -1,6 +1,8 @@
-﻿using Cognite.Extractor.Logging;
+﻿using Castle.Core.Logging;
+using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading;
@@ -10,6 +12,7 @@ namespace ExtractorUtils.Test
     class CDFTester : IDisposable
     {
         private static int _configIdx;
+        public ILogger<CDFTester> Logger { get; }
         public ServiceProvider Provider { get; }
         public CogniteDestination Destination { get; }
         public CancellationTokenSource Source { get; }
@@ -28,6 +31,7 @@ namespace ExtractorUtils.Test
             services.AddLogger();
             services.AddCogniteClient("net-extractor-utils-test");
             Provider = services.BuildServiceProvider();
+            Logger = Provider.GetRequiredService<ILogger<CDFTester>>();
             Destination = Provider.GetRequiredService<CogniteDestination>();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             Random random = new Random();
