@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Cognite.Extractor.Configuration;
 
 namespace Cognite.Extractor.Utils
 {
@@ -22,7 +23,7 @@ namespace Cognite.Extractor.Utils
         /// <returns>A valid token</returns>
         Task<string> GetToken(CancellationToken token = default);
     }
-    
+
     /// <summary>
     /// Authenticator that issues a POST request to an authority endpoint defined in the <see cref="AuthenticatorConfig.Authority"/> configuration
     /// in order to obtain bearer access tokens.
@@ -47,6 +48,8 @@ namespace Cognite.Extractor.Utils
         private readonly HttpClient _client;
         private readonly ILogger<IAuthenticator> _logger;
 
+        private readonly Uri _tokenUri;
+
         private ResponseDTO _response;
         private DateTime _requestTime;
 
@@ -61,6 +64,21 @@ namespace Cognite.Extractor.Utils
             _config = config;
             _client = client;
             _logger = logger;
+
+            if (!string.IsNullOrWhiteSpace(config.TokenUrl))
+            {
+                _tokenUri = new Uri(config.TokenUrl);
+            }
+            else if (!string.IsNullOrWhiteSpace(config.Authority))
+            {
+                var uriBuilder = new UriBuilder(_config.Authority);
+                uriBuilder.Path = $"{_config.Tenant}/oauth2/v2.0/token";
+                _tokenUri = uriBuilder.Uri;
+            }
+            else
+            {
+                throw new ConfigurationException("No AAD tenant or token url defined");
+            }
         }
 
         private async Task<ResponseDTO> RequestToken(CancellationToken token = default)
@@ -72,14 +90,17 @@ namespace Cognite.Extractor.Utils
                 { "scope", string.Join(" ", _config.Scopes) },
                 { "grant_type", "client_credentials" }
             };
+
+            if (!string.IsNullOrWhiteSpace(_config.Resource))
+            {
+                form["resource"] = _config.Resource;
+            }
+
             using (var httpContent = new FormUrlEncodedContent(form))
             {
                 _requestTime = DateTime.UtcNow;
-                var uriBuilder = new UriBuilder(_config.Authority);
-                uriBuilder.Path = $"{_config.Tenant}/oauth2/v2.0/token";
-                var url = uriBuilder.Uri;
-                var response = await _client.PostAsync(url, httpContent, token);
-                _logger.LogInformation("Request AAD token {status} {message}", (int) response.StatusCode, response.ReasonPhrase);
+                var response = await _client.PostAsync(_tokenUri, httpContent, token);
+                _logger.LogInformation("Request AAD token {status} {message}", (int)response.StatusCode, response.ReasonPhrase);
                 var body = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
                 {
@@ -108,7 +129,8 @@ namespace Cognite.Extractor.Utils
         public async Task<string> GetToken(CancellationToken token = default)
         {
             // TODO: could start a background task to update the token so that this call does not block on the HTTP request.
-            if (_config == null) {
+            if (_config == null)
+            {
                 _logger.LogInformation("ADD authentication disabled.");
                 return null;
             }

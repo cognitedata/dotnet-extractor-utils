@@ -5,16 +5,16 @@ using Cognite.Extractor.Metrics;
 using Cognite.Extractor.StateStorage;
 using Microsoft.Extensions.Logging;
 
-namespace Cognite.Extractor.Utils 
+namespace Cognite.Extractor.Utils
 {
-    
+
     /// <summary>
     /// Base configuration object for extractors.
     /// The config should have a version property, so that versioning and compatibility can be tracked by the extractor.
     /// </summary>
-    public class BaseConfig : VersionedConfig 
+    public class BaseConfig : VersionedConfig
     {
-        
+
         /// <summary>
         /// Logging configuration (optional)
         /// </summary>
@@ -156,13 +156,13 @@ namespace Cognite.Extractor.Utils
         /// Which implementation to use in the authenticator (optional)
         /// </summary>
         public AuthenticatorImplementation Implementation { get; set; } = AuthenticatorImplementation.MSAL;
-        
+
         /// <summary>
         /// Identity provider authority endpoint (optional)
         /// </summary>
         /// <value>URI</value>
         public string Authority { get; set; } = "https://login.microsoftonline.com/";
-        
+
         /// <summary>
         /// The application (client) Id
         /// </summary>
@@ -170,16 +170,28 @@ namespace Cognite.Extractor.Utils
         public string ClientId { get; set; }
 
         /// <summary>
-        /// The directory tenant
+        /// The directory tenant. Either this or TokenUrl must be set.
         /// </summary>
         /// <value>Tenant</value>
         public string Tenant { get; set; }
+
+        /// <summary>
+        /// URL to fetch tokens from. Either this or Auhtority / Tenant must be set.
+        /// </summary>
+        /// <value>Tenant</value>
+        public string TokenUrl { get; set; }
 
         /// <summary>
         /// The client secret
         /// </summary>
         /// <value>Secret</value>
         public string Secret { get; set; }
+
+        /// <summary>
+        /// Resource (optional, only valid for Basic implementation)
+        /// </summary>
+        /// <value>Secret</value>
+        public string Resource { get; set; }
 
         /// <summary>
         /// Resource scopes

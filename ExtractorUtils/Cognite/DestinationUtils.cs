@@ -52,25 +52,29 @@ namespace Cognite.Extractor.Utils
             // Configure token based authentication
             var authClientName = "AuthenticatorClient";
             services.AddHttpClient(authClientName);
-            services.AddTransient<IAuthenticator>(provider => {
+            services.AddTransient<IAuthenticator>(provider =>
+            {
                 var conf = provider.GetService<CogniteConfig>();
                 if (conf?.IdpAuthentication == null)
                     return null;
                 var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
                 if (conf.IdpAuthentication.Implementation == AuthenticatorConfig.AuthenticatorImplementation.MSAL)
                 {
+                    if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.TokenUrl))
+                    {
+                        logger.LogWarning("Setting token-url directly is not supported for MSAL implementation, use Basic instead");
+                    }
                     return new MsalAuthenticator(conf.IdpAuthentication, logger);
                 }
 
-                // TODO: Remove the Basic authenticator if MSAL works for all workflows,
-                // else, improve the basic implementation. 
                 var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
                 var client = clientFactory.CreateClient(authClientName);
                 return new Authenticator(conf.IdpAuthentication, client, logger);
             });
-            
+
             services.AddSingleton<IMetrics, CdfMetricCollector>();
-            services.AddTransient(provider => {
+            services.AddTransient(provider =>
+            {
                 var cdfBuilder = provider.GetRequiredService<Client.Builder>();
                 var conf = provider.GetService<CogniteConfig>();
                 var auth = provider.GetService<IAuthenticator>();
