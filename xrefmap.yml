@@ -3956,6 +3956,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl
   nameWithType: AuthenticatorConfig.MinTtl
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Resource
+  name: Resource
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Resource
+  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Resource
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Resource
+  nameWithType: AuthenticatorConfig.Resource
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Resource*
+  name: Resource
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Resource_
+  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Resource
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Resource
+  nameWithType: AuthenticatorConfig.Resource
 - uid: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
   name: Scopes
   href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Scopes
@@ -3995,6 +4008,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Tenant
   nameWithType: AuthenticatorConfig.Tenant
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
+  name: TokenUrl
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_TokenUrl
+  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
+  nameWithType: AuthenticatorConfig.TokenUrl
+- uid: Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl*
+  name: TokenUrl
+  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_TokenUrl_
+  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
+  nameWithType: AuthenticatorConfig.TokenUrl
 - uid: Cognite.Extractor.Utils.BaseConfig
   name: BaseConfig
   href: api/Cognite.Extractor.Utils.BaseConfig.html
