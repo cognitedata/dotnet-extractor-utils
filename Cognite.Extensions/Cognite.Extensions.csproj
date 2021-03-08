@@ -8,10 +8,11 @@
     <ProjectReference Include="..\Cognite.Common\Cognite.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CogniteSdk" Version="1.0.21" />
-    <PackageReference Include="prometheus-net" Version="3.6.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.9" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.9" />
+    <PackageReference Include="CogniteSdk" Version="1.5.0-beta-003" />
+    <PackageReference Include="prometheus-net" Version="4.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+    <PackageReference Include="Oryx" Version="3.0.0-beta-004" />
   </ItemGroup>
 </Project>
