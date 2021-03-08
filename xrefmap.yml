@@ -2607,14 +2607,14 @@ references:
   fullName: Cognite.Extractor.Logging.LoggerTraceListener
   nameWithType: LoggerTraceListener
 - uid: Cognite.Extractor.Logging.LoggerTraceListener.#ctor(Microsoft.Extensions.Logging.ILogger{Cognite.Extractor.Logging.LoggerTraceListener},Cognite.Extractor.Logging.LoggerConfig)
-  name: LoggerTraceListener(ILogger<LoggerTraceListener>, LoggerConfig)
+  name: LoggerTraceListener(Extensions.Logging.ILogger<LoggerTraceListener>, LoggerConfig)
   href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener__ctor_Microsoft_Extensions_Logging_ILogger_Cognite_Extractor_Logging_LoggerTraceListener__Cognite_Extractor_Logging_LoggerConfig_
   commentId: M:Cognite.Extractor.Logging.LoggerTraceListener.#ctor(Microsoft.Extensions.Logging.ILogger{Cognite.Extractor.Logging.LoggerTraceListener},Cognite.Extractor.Logging.LoggerConfig)
-  name.vb: LoggerTraceListener(ILogger(Of LoggerTraceListener), LoggerConfig)
+  name.vb: LoggerTraceListener(Extensions.Logging.ILogger(Of LoggerTraceListener), LoggerConfig)
   fullName: Cognite.Extractor.Logging.LoggerTraceListener.LoggerTraceListener(Microsoft.Extensions.Logging.ILogger<Cognite.Extractor.Logging.LoggerTraceListener>, Cognite.Extractor.Logging.LoggerConfig)
   fullName.vb: Cognite.Extractor.Logging.LoggerTraceListener.LoggerTraceListener(Microsoft.Extensions.Logging.ILogger(Of Cognite.Extractor.Logging.LoggerTraceListener), Cognite.Extractor.Logging.LoggerConfig)
-  nameWithType: LoggerTraceListener.LoggerTraceListener(ILogger<LoggerTraceListener>, LoggerConfig)
-  nameWithType.vb: LoggerTraceListener.LoggerTraceListener(ILogger(Of LoggerTraceListener), LoggerConfig)
+  nameWithType: LoggerTraceListener.LoggerTraceListener(Extensions.Logging.ILogger<LoggerTraceListener>, LoggerConfig)
+  nameWithType.vb: LoggerTraceListener.LoggerTraceListener(Extensions.Logging.ILogger(Of LoggerTraceListener), LoggerConfig)
 - uid: Cognite.Extractor.Logging.LoggerTraceListener.#ctor*
   name: LoggerTraceListener
   href: api/Cognite.Extractor.Logging.LoggerTraceListener.html#Cognite_Extractor_Logging_LoggerTraceListener__ctor_
@@ -2667,11 +2667,11 @@ references:
   commentId: T:Cognite.Extractor.Logging.LoggingExtensions
   fullName: Cognite.Extractor.Logging.LoggingExtensions
   nameWithType: LoggingExtensions
-- uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+- uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
   name: AddLogger(IServiceCollection)
-  href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_Microsoft_Extensions_DependencyInjection_IServiceCollection_
-  commentId: M:Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  fullName: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_IServiceCollection_
+  commentId: M:Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
+  fullName: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
   nameWithType: LoggingExtensions.AddLogger(IServiceCollection)
 - uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger*
   name: AddLogger
