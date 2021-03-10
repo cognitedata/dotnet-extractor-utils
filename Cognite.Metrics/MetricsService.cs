@@ -1,3 +1,4 @@
+using System.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
+using Polly.Timeout;
 using Prometheus;
 using Cognite.Extractor.Common;
 
@@ -56,6 +58,7 @@ namespace Cognite.Extractor.Metrics
                 {
 
                     HttpClient client = _clientFactory.CreateClient(HttpClientName);
+                    client.Timeout = Timeout.InfiniteTimeSpan;
                     var pusher = StartPusher(gateway, client);
                     if (pusher != null)
                     {
@@ -112,7 +115,17 @@ namespace Cognite.Extractor.Metrics
                 Endpoint =  uri.ToString(),
                 Job = config.Job,
                 IntervalMilliseconds = config.PushInterval * 1_000L,
-                HttpClientProvider = () => client
+                HttpClientProvider = () => client,
+                OnError = (e) => {
+                    if (e is TimeoutRejectedException)
+                    {
+                        _logger.LogError("Metrics push attempt timed out after retrying");
+                    }
+                    else
+                    {
+                        _logger.LogError("Metrics push error: " + e.Message);
+                    }
+                }
             });
             try 
             {
@@ -151,18 +164,38 @@ namespace Cognite.Extractor.Metrics
         /// simple retry policy to handle transient http errors configured (5 retries with exponential backoff).
         /// </summary>
         /// <param name="services"></param>
-        public static void AddMetrics(this IServiceCollection services)
+        /// <param name="pushTimeout">Timeout in milliseconds for each push attempt</param>
+        public static void AddMetrics(this IServiceCollection services, int pushTimeout = 80_000)
         {
             services.AddHttpClient(MetricsService.HttpClientName)
-                .AddPolicyHandler(GetRetryPolicy());
+                .AddPolicyHandler((p, m) => GetRetryPolicy(p.GetRequiredService<ILogger<MetricServer>>()))
+                // The Prometheus client may silently terminate on OperationCanceledException.
+                // This timeout policy will produce a TimeoutRejectException instead. 
+                .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMilliseconds(pushTimeout)));
             services.AddSingleton<MetricsService>();
         }
 
-        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger logger)
         {
             return HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+                .Or<TimeoutRejectedException>()
+                .WaitAndRetryAsync(
+                    3, // Don't need to retry too many times, as data will be pushed in the next push interval.
+                    retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    (ex, ts) => {
+                        if (ex.Result != null)
+                        {
+                            logger.LogWarning("{Method} {Uri} failed with status code: {Code}. Retrying in {Time} s. {Message}",
+                                ex.Result.RequestMessage?.Method, ex.Result.RequestMessage?.RequestUri,
+                                (int)ex.Result.StatusCode, ts.TotalSeconds, ex.Result.ReasonPhrase);
+                        }
+                        else if (ex.Exception != null)
+                        {
+                            logger.LogWarning("Metrics push attempt timed out or failed: {Message} Retrying in {Time} s.",
+                                ex.Exception.Message, ts.TotalSeconds);
+                        }
+                    });
         }
     }
 }
