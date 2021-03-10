@@ -2833,12 +2833,12 @@ references:
   commentId: T:Cognite.Extractor.Metrics.MetricsExtensions
   fullName: Cognite.Extractor.Metrics.MetricsExtensions
   nameWithType: MetricsExtensions
-- uid: Cognite.Extractor.Metrics.MetricsExtensions.AddMetrics(IServiceCollection)
-  name: AddMetrics(IServiceCollection)
-  href: api/Cognite.Extractor.Metrics.MetricsExtensions.html#Cognite_Extractor_Metrics_MetricsExtensions_AddMetrics_IServiceCollection_
-  commentId: M:Cognite.Extractor.Metrics.MetricsExtensions.AddMetrics(IServiceCollection)
-  fullName: Cognite.Extractor.Metrics.MetricsExtensions.AddMetrics(IServiceCollection)
-  nameWithType: MetricsExtensions.AddMetrics(IServiceCollection)
+- uid: Cognite.Extractor.Metrics.MetricsExtensions.AddMetrics(IServiceCollection,System.Int32)
+  name: AddMetrics(IServiceCollection, Int32)
+  href: api/Cognite.Extractor.Metrics.MetricsExtensions.html#Cognite_Extractor_Metrics_MetricsExtensions_AddMetrics_IServiceCollection_System_Int32_
+  commentId: M:Cognite.Extractor.Metrics.MetricsExtensions.AddMetrics(IServiceCollection,System.Int32)
+  fullName: Cognite.Extractor.Metrics.MetricsExtensions.AddMetrics(IServiceCollection, System.Int32)
+  nameWithType: MetricsExtensions.AddMetrics(IServiceCollection, Int32)
 - uid: Cognite.Extractor.Metrics.MetricsExtensions.AddMetrics*
   name: AddMetrics
   href: api/Cognite.Extractor.Metrics.MetricsExtensions.html#Cognite_Extractor_Metrics_MetricsExtensions_AddMetrics_
