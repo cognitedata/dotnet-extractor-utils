@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading;
 using System;
 using System.Collections.Generic;
@@ -56,10 +57,7 @@ namespace Cognite.Extractor.Metrics
             {
                 foreach (var gateway in pushGateways)
                 {
-
-                    HttpClient client = _clientFactory.CreateClient(HttpClientName);
-                    client.Timeout = Timeout.InfiniteTimeSpan;
-                    var pusher = StartPusher(gateway, client);
+                    var pusher = StartPusher(gateway);
                     if (pusher != null)
                     {
                         _pushers.Add(pusher);
@@ -87,7 +85,7 @@ namespace Cognite.Extractor.Metrics
             }
         }
 
-        private MetricPusher StartPusher(PushGatewayConfig config, HttpClient client) {
+        private MetricPusher StartPusher(PushGatewayConfig config) {
             if (config.Host.TrimToNull() == null || config.Job.TrimToNull() == null)
             {
                 _logger.LogWarning("Invalid metrics push destination (missing Host or Job)");
@@ -95,15 +93,6 @@ namespace Cognite.Extractor.Metrics
             }
 
             _logger.LogInformation("Pushing metrics to {PushgatewayHost} with job name {PushgatewayJob}", config.Host, config.Job);
-
-            if (config.Username.TrimToNull() != null && config.Password.TrimToNull() != null)
-            {
-                var headerValue = Convert.ToBase64String(
-                        System.Text.Encoding
-                            .GetEncoding("ISO-8859-1")
-                            .GetBytes(config.Username + ":" + config.Password));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", headerValue);
-            }
 
             var uri = new Uri(config.Host);
             if (uri.Segments.Last() != "metrics" && uri.Segments.Last() != "metrics/") {
@@ -115,7 +104,7 @@ namespace Cognite.Extractor.Metrics
                 Endpoint =  uri.ToString(),
                 Job = config.Job,
                 IntervalMilliseconds = config.PushInterval * 1_000L,
-                HttpClientProvider = () => client,
+                HttpClientProvider = () => CreateClient(config),
                 OnError = (e) => {
                     if (e is TimeoutRejectedException)
                     {
@@ -125,7 +114,7 @@ namespace Cognite.Extractor.Metrics
                     {
                         _logger.LogError("Metrics push error: " + e.Message);
                     }
-                }
+                },
             });
             try 
             {
@@ -137,6 +126,21 @@ namespace Cognite.Extractor.Metrics
                 return null;
             }
             return pusher;
+        }
+
+        private HttpClient CreateClient(PushGatewayConfig config)
+        {
+            var client = _clientFactory.CreateClient(HttpClientName);
+            if (config.Username.TrimToNull() != null && config.Password.TrimToNull() != null)
+            {
+                var headerValue = Convert.ToBase64String(
+                        System.Text.Encoding
+                            .GetEncoding("ISO-8859-1")
+                            .GetBytes(config.Username + ":" + config.Password));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", headerValue);
+            }
+
+            return client;
         }
 
         private MetricServer StartServer(MetricsServerConfig config)
@@ -167,7 +171,7 @@ namespace Cognite.Extractor.Metrics
         /// <param name="pushTimeout">Timeout in milliseconds for each push attempt</param>
         public static void AddMetrics(this IServiceCollection services, int pushTimeout = 80_000)
         {
-            services.AddHttpClient(MetricsService.HttpClientName)
+            services.AddHttpClient(MetricsService.HttpClientName, c => c.Timeout = Timeout.InfiniteTimeSpan)
                 .AddPolicyHandler((p, m) => GetRetryPolicy(p.GetRequiredService<ILogger<MetricServer>>()))
                 // The Prometheus client may silently terminate on OperationCanceledException.
                 // This timeout policy will produce a TimeoutRejectException instead. 
@@ -194,6 +198,12 @@ namespace Cognite.Extractor.Metrics
                         {
                             logger.LogWarning("Metrics push attempt timed out or failed: {Message} Retrying in {Time} s.",
                                 ex.Exception.Message, ts.TotalSeconds);
+                            var inner = ex.Exception.InnerException;
+                            while (inner != null)
+                            {
+                                logger.LogDebug("Inner exception: {Message}", inner.Message);
+                                inner = inner.InnerException;
+                            }
                         }
                     });
         }
