@@ -11,24 +11,13 @@ namespace ExtractorUtils.Test
 {
     public class EventIntegrationTest
     {
-        private string[] lines = {
-            "version: 2",
-            "logger:",
-            "  console:",
-            "    level: verbose",
-            "cognite:",
-            "  project: ${TEST_PROJECT}",
-            "  api-key: ${TEST_API_KEY}",
-            "  host: ${TEST_HOST}",
-            "  cdf-chunking:",
-            "    events: 20",
-            "  cdf-throttling:",
-            "    events: 2" };
 
-        [Fact]
-        public async Task TestCreateEvents()
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestCreateEvents(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
             var ids = new[] {
                 $"{tester.Prefix} evt-1",
                 $"{tester.Prefix} evt-2",
@@ -99,10 +88,13 @@ namespace ExtractorUtils.Test
                 }, tester.Source.Token);
             }
         }
-        [Fact]
-        public async Task TestSanitation()
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
 
             var events = new[] {
                 new EventCreate
@@ -151,10 +143,13 @@ namespace ExtractorUtils.Test
                 }, tester.Source.Token);
             }
         }
-        [Fact]
-        public async Task TestErrorHandling()
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
 
             await tester.Destination.EnsureEventsExistsAsync(new[]
             {
