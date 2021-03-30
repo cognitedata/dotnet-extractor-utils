@@ -11,24 +11,13 @@ namespace ExtractorUtils.Test
 {
     public class TimeSeriesIntegrationTest
     {
-        private string[] lines = {
-            "version: 2",
-            "logger:",
-            "  console:",
-            "    level: verbose",
-            "cognite:",
-            "  project: ${TEST_PROJECT}",
-            "  api-key: ${TEST_API_KEY}",
-            "  host: ${TEST_HOST}",
-            "  cdf-chunking:",
-            "    time-series: 20",
-            "  cdf-throttling:",
-            "    time-series: 2" };
 
-        [Fact]
-        public async Task TestCreateTimeSeries()
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestCreateTimeSeries(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
             var ids = new[] {
                 $"{tester.Prefix} ts-1",
                 $"{tester.Prefix} ts-2",
@@ -99,10 +88,13 @@ namespace ExtractorUtils.Test
                 }, tester.Source.Token);
             }
         }
-        [Fact]
-        public async Task TestSanitation()
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
 
             var timeseries = new[] {
                 new TimeSeriesCreate
@@ -153,10 +145,13 @@ namespace ExtractorUtils.Test
                 }, tester.Source.Token);
             }
         }
-        [Fact]
-        public async Task TestErrorHandling()
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
 
             await tester.Destination.EnsureTimeSeriesExistsAsync(new[]
             {
@@ -200,11 +195,6 @@ namespace ExtractorUtils.Test
                 },
                 new TimeSeriesCreate
                 {
-                    ExternalId = $"{tester.Prefix} duplicated-legacyname",
-                    LegacyName = $"{tester.Prefix} existing-ts"
-                },
-                new TimeSeriesCreate
-                {
                     ExternalId = $"{tester.Prefix} final-ts-ok"
                 }
             };
@@ -215,7 +205,7 @@ namespace ExtractorUtils.Test
                 tester.Logger.LogResult(result, RequestType.CreateTimeSeries, false);
 
                 Assert.Single(result.Results);
-                Assert.Equal(4, result.Errors.Count());
+                Assert.Equal(3, result.Errors.Count());
                 Assert.Equal($"{tester.Prefix} final-ts-ok", result.Results.First().ExternalId);
                 foreach (var error in result.Errors)
                 {
@@ -241,12 +231,6 @@ namespace ExtractorUtils.Test
                             Assert.Equal($"{tester.Prefix} existing-ts", error.Values.First().ExternalId);
                             Assert.Single(error.Skipped);
                             break;
-                        case ResourceType.LegacyName:
-                            Assert.Equal(ErrorType.ItemExists, error.Type);
-                            Assert.Single(error.Values);
-                            Assert.Equal($"{tester.Prefix} existing-ts", error.Values.First().ExternalId);
-                            Assert.Single(error.Skipped);
-                            break;
                         default:
                             throw new Exception($"Bad resource type: {error.Type}", error.Exception);
                     }
@@ -262,7 +246,6 @@ namespace ExtractorUtils.Test
                     $"{tester.Prefix} missing-asset-id-3",
                     $"{tester.Prefix} missing-dataset-id",
                     $"{tester.Prefix} missing-dataset-id-2",
-                    $"{tester.Prefix} duplicated-legacyname",
                     $"{tester.Prefix} final-ts-ok"
                 };
                 await tester.Destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete

@@ -1,14 +1,20 @@
-﻿using Castle.Core.Logging;
-using Cognite.Extractor.Logging;
+﻿using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
 namespace ExtractorUtils.Test
 {
+    public enum CogniteHost
+    {
+        GreenField,
+        BlueField
+    }
+
     class CDFTester : IDisposable
     {
         private static int _configIdx;
@@ -21,11 +27,11 @@ namespace ExtractorUtils.Test
         public string Prefix { get; private set; }
         private readonly string _configPath;
 
-        public CDFTester(string[] configLines)
+        public CDFTester(CogniteHost host)
         {
             // Thread safe increment and store
             _configPath = $"test-config-{Interlocked.Increment(ref _configIdx)}";
-            System.IO.File.WriteAllLines(_configPath, configLines);
+            System.IO.File.WriteAllLines(_configPath, GetConfig(host));
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(_configPath, 2);
             services.AddLogger();
@@ -38,6 +44,50 @@ namespace ExtractorUtils.Test
             Prefix = "net-utils-test-" + new string(Enumerable.Repeat(chars, 5)
               .Select(s => s[random.Next(s.Length)]).ToArray());
             Source = new CancellationTokenSource();
+        }
+
+        public static string[] GetConfig(CogniteHost host)
+        {
+            var config = new List<string>() {
+                "version: 2",
+                "logger:",
+                "  console:",
+                "    level: verbose",
+                "cognite:",
+            };
+            switch (host)
+            {
+                case CogniteHost.GreenField:
+                    config = config.Concat(new List<String>() {
+                        "  project: ${TEST_PROJECT}",
+                        "  api-key: ${TEST_API_KEY}",
+                        "  host: ${TEST_HOST}"
+                    }).ToList();
+                    break;
+                case CogniteHost.BlueField:
+                    config = config.Concat(new List<String>() {
+                        "  project: ${BF_TEST_PROJECT}",
+                        "  host: ${BF_TEST_HOST}",
+                        "  idp-authentication:",
+                        "    client-id: ${BF_TEST_CLIENT_ID}",
+                        "    tenant: ${BF_TEST_TENANT}",
+                        "    secret: ${BF_TEST_SECRET}",
+                        "    scopes:",
+                        "    - ${BF_TEST_SCOPE}"
+                    }).ToList();
+                    break;
+            }
+            config = config.Concat(new List<String>() {
+                "  cdf-chunking:",
+                "    time-series: 20",
+                "    assets: 20",
+                "    events: 20",
+                "  cdf-throttling:",
+                "    time-series: 2",
+                "    assets: 2",
+                "    events: 2"
+            }).ToList();
+            return config.ToArray();
         }
 
         #region IDisposable Support

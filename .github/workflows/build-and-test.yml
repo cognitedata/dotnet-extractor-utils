@@ -27,6 +27,13 @@ jobs:
         TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
         TEST_PROJECT: "extractor-tests"
         TEST_HOST: "https://greenfield.cognitedata.com"
+        BF_TEST_PROJECT: "extractor-bluefield-testing"
+        BF_TEST_HOST: "https://bluefield.cognitedata.com"
+        BF_TEST_SCOPE: "https://bluefield.cognitedata.com/.default"
+        BF_TEST_CLIENT_ID: ${{ secrets.BF_TEST_CLIENT_ID }}
+        BF_TEST_TENANT: ${{ secrets.BF_TEST_TENANT }}
+        BF_TEST_SECRET: ${{ secrets.BF_TEST_SECRET }}
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:

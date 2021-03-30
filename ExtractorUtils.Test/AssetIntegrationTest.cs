@@ -10,24 +10,13 @@ namespace ExtractorUtils.Test
 {
     public class AssetIntegrationTest
     {
-        private string[] lines = { 
-            "version: 2",
-            "logger:",
-            "  console:",
-            "    level: verbose",
-            "cognite:",
-            "  project: ${TEST_PROJECT}",
-            "  api-key: ${TEST_API_KEY}",
-            "  host: ${TEST_HOST}",
-            "  cdf-chunking:",
-            "    assets: 20",
-            "  cdf-throttling:",
-            "    assets: 2" };
         // Basic usage of ensure and GetOrCreate
-        [Fact]
-        public async Task TestCreateAssets()
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestCreateAssets(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
             var ids = new[] {
                 $"{tester.Prefix} asset-1",
                 $"{tester.Prefix} asset-2",
@@ -105,10 +94,12 @@ namespace ExtractorUtils.Test
         }
         // This is just for testing that the sanitation conforms with CDF limits in the places where
         // it is reasonable to test.
-        [Fact]
-        public async Task TestSanitation()
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
             
             var assets = new[] {
                 new AssetCreate
@@ -177,10 +168,13 @@ namespace ExtractorUtils.Test
                 }, tester.Source.Token);
             }
         }
-        [Fact]
-        public async Task TestErrorHandling()
+        
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(lines);
+            using var tester = new CDFTester(host);
 
             // Create duplicate asset
             await tester.Destination.EnsureAssetsExistsAsync(new[]

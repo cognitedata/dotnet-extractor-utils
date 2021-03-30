@@ -84,7 +84,7 @@ namespace Cognite.Extensions
         {
             if (ex.Missing?.Any() ?? false)
             {
-                if (ex.Message.StartsWith("Asset ids not found"))
+                if (ex.Message.StartsWith("Asset ids not found", StringComparison.InvariantCultureIgnoreCase))
                 {
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.AssetId;
@@ -93,7 +93,8 @@ namespace Cognite.Extensions
                         .Where(id => id.HasValue)
                         .Select(id => Identity.Create(id.Value));
                 }
-                else if (ex.Message.StartsWith("datasets ids not found"))
+                else if (ex.Message.StartsWith("Datasets ids not found", StringComparison.InvariantCultureIgnoreCase)
+                        || ex.Message.StartsWith("Data set ids not found", StringComparison.InvariantCultureIgnoreCase))
                 {
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.DataSetId;
@@ -107,6 +108,8 @@ namespace Cognite.Extensions
             {
                 if (ex.Duplicated.First().ContainsKey("legacyName"))
                 {
+                    //TODO: legacyName will be ignored when the 0.5 api is removed. 
+                    // Should remove this check then.
                     err.Type = ErrorType.ItemExists;
                     err.Resource = ResourceType.LegacyName;
                     err.Values = ex.Duplicated.Select(dict
