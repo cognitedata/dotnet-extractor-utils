@@ -143,7 +143,8 @@ namespace Cognite.Extensions
         {
             var chunks = rowKeys
                 .Select(key => new RawRowDelete { Key = key })
-                .ChunkBy(chunkSize);
+                .ChunkBy(chunkSize)
+                .ToList();
             var generators = chunks
                 .Select<IEnumerable<RawRowDelete>, Func<Task>>(
                     chunk => async () =>
@@ -158,7 +159,7 @@ namespace Cognite.Extensions
             {
                 int numTasks = 0;
                 await generators.RunThrottled(throttleSize, (_) =>
-                    _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(DeleteRowsAsync), ++numTasks, rowKeys.Count()), token);
+                    _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(DeleteRowsAsync), ++numTasks, chunks.Count), token);
             }
             catch (ResponseException ex)
             {
