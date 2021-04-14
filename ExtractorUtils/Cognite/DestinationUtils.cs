@@ -20,7 +20,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="services">The service collection</param>
         /// <param name="appId">Identifier of the application using the Cognite API</param>
-        /// <param name="setLogger">If true, a <see cref="ILogger"/> logger is created and used by the client log calls to the 
+        /// <param name="setLogger">If true, a <see cref="ILogger"/> logger is created and used by the client to log calls to the 
         /// Cognite API (enabled in debug mode)</param>
         /// <param name="setMetrics">If true, a <see cref="IMetrics"/> metrics collector is created and used by the client
         /// to report metrics on the number and duration of API requests</param>
