@@ -57,9 +57,6 @@ namespace Cognite.Extractor.Utils
 
             [JsonPropertyName("error_uri")]
             public string ErrorDUri { get; set; }
-           
-            [JsonPropertyName("other_date")]
-            public string OtherData { get; set; }
         }
 
         // Injected properties
