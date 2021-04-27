@@ -72,8 +72,7 @@ namespace ExtractorUtils.Test
                 token = await auth.GetToken(); // new token
                 Assert.Equal("token1", token);
                 await Task.Delay(1100); // token expired
-                token = await auth.GetToken(); // failed, returns null
-                Assert.Null(token);
+                await Assert.ThrowsAsync<CogniteUtilsException>(() => auth.GetToken()); // failed, returns null
             }
 
             // Verify that the authentication endpoint was called 3 times
@@ -660,7 +659,7 @@ namespace ExtractorUtils.Test
             if (_tokenCounter == 2) //third call fails
             {
                 var errorReply = "{" + Environment.NewLine +
-                                $"  \"error\": \"invalid_scope\",{Environment.NewLine}" +
+                                $"  \"error\": \"invalid_scope\"{Environment.NewLine}" +
                                  "}";
                 var errorResponse = new HttpResponseMessage
                 {

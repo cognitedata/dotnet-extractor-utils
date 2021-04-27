@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Cognite.Extractor.Configuration;
+using Cognite.Extensions;
+using Cognite.Extractor.Common;
 
 namespace Cognite.Extractor.Utils
 {
@@ -41,6 +43,20 @@ namespace Cognite.Extractor.Utils
 
             [JsonPropertyName("expires_in")]
             public int ExpiresIn { get; set; }
+        }
+
+#pragma warning disable CA1812
+        private class ErrorDTO
+#pragma warning restore CA1812
+        {
+            [JsonPropertyName("error")]
+            public string Error { get; set; }
+
+            [JsonPropertyName("error_description")]
+            public string ErrorDescription { get; set; }
+
+            [JsonPropertyName("error_uri")]
+            public string ErrorDUri { get; set; }
         }
 
         // Injected properties
@@ -77,7 +93,7 @@ namespace Cognite.Extractor.Utils
             }
             else
             {
-                throw new ConfigurationException("No AAD tenant or token url defined");
+                throw new ConfigurationException("No OIDC tenant or token url defined");
             }
         }
 
@@ -100,15 +116,22 @@ namespace Cognite.Extractor.Utils
             {
                 _requestTime = DateTime.UtcNow;
                 var response = await _client.PostAsync(_tokenUri, httpContent, token);
-                _logger.LogInformation("Request AAD token {status} {message}", (int)response.StatusCode, response.ReasonPhrase);
                 var body = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
                 {
-                    return JsonSerializer.Deserialize<ResponseDTO>(body);
+                    var tokenResponse = JsonSerializer.Deserialize<ResponseDTO>(body);
+                    _logger.LogDebug(
+                        "New OIDC token. Expires on {ttl}", 
+                        (DateTime.UtcNow + TimeSpan.FromSeconds(tokenResponse.ExpiresIn)).ToISOString());
+                    return tokenResponse;
                 }
-                // TODO: parse error json response. 
+                else
+                {
+                    var error = JsonSerializer.Deserialize<ErrorDTO>(body);
+                    _logger.LogError("Unable to obtain OIDC token: {Message}", error.ErrorDescription);
+                    throw new CogniteUtilsException($"Could not obtain OIDC token: {error.Error} {error.ErrorDescription}");
+                }
             }
-            return null;
         }
 
         private bool TokenValid()
@@ -126,12 +149,13 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="token">Cancellation token</param>
         /// <returns>A valid bearer access token</returns>
+        /// <exception cref="CogniteUtilsException">Thrown when it was not possible to obtain an authentication token.</exception>
         public async Task<string> GetToken(CancellationToken token = default)
         {
             // TODO: could start a background task to update the token so that this call does not block on the HTTP request.
             if (_config == null)
             {
-                _logger.LogInformation("ADD authentication disabled.");
+                _logger.LogInformation("OIDC authentication disabled.");
                 return null;
             }
             if (TokenValid())
@@ -141,11 +165,6 @@ namespace Cognite.Extractor.Utils
 
             _requestTime = DateTime.UtcNow;
             _response = await RequestToken(token);
-
-            if (_response != null)
-            {
-                _logger.LogDebug("New AAD token TTL {ttl}", _response.ExpiresIn);
-            }
 
             return _response?.AccessToken;
         }

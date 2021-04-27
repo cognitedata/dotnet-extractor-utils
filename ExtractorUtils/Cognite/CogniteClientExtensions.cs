@@ -1,9 +1,11 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CogniteSdk;
-using Cognite.Extractor.Common;
 using Prometheus;
+using CogniteSdk;
 using CogniteSdk.Login;
+using CogniteSdk.Token;
+using Cognite.Extractor.Common;
 using Cognite.Extensions;
 
 namespace Cognite.Extractor.Utils
@@ -13,8 +15,13 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class CogniteClientExtensions
     {
-        private static Summary login { get; } = Prometheus.Metrics.CreateSummary("extractor_utils_cdf_login_requests",
+        private static Summary loginSummary { get; } = Prometheus.Metrics.CreateSummary(
+            "extractor_utils_cdf_login_requests",
             "Number and duration of login requests to CDF", "endpoint");
+
+        private static Summary tokenSummary { get; } = Prometheus.Metrics.CreateSummary(
+            "extractor_utils_cdf_token_requests",
+            "Number and duration of token requests to CDF", "endpoint");
 
         /// <summary>
         /// Verifies that the <paramref name="client"/> configured according to <paramref name="config"/>
@@ -36,18 +43,34 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException("CDF project is not configured");
             }
 
-            LoginStatus loginStatus;
-            using (login.WithLabels("status").NewTimer())
+            if (config?.ApiKey?.TrimToNull() != null)
             {
-                loginStatus = await client.Login.StatusAsync(token);
+                LoginStatus loginStatus;
+                using (loginSummary.WithLabels("status").NewTimer())
+                {
+                    loginStatus = await client.Login.StatusAsync(token);
+                }
+                if (!loginStatus.LoggedIn)
+                {
+                    throw new CogniteUtilsException("CDF credentials are invalid");
+                }
+                if (!loginStatus.Project.Equals(config.Project))
+                {
+                    throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
+                }
             }
-            if (!loginStatus.LoggedIn)
+            else if (config?.IdpAuthentication != null)
             {
-                throw new CogniteUtilsException("CDF credentials are invalid");
-            }
-            if (!loginStatus.Project.Equals(config.Project))
-            {
-                throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
+                TokenInspect tokenInspect;
+                using (tokenSummary.WithLabels("inspect").NewTimer())
+                {
+                    tokenInspect = await client.Token.InspectAsync(token);
+                }
+                if (tokenInspect.Projects == null || !tokenInspect.Projects.Any(p => p.ProjectUrlName == config.Project))
+                {
+                    throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
+                }
+                
             }
         }
     }

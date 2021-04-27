@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
+using Cognite.Extensions;
+using Cognite.Extractor.Common;
 
 namespace Cognite.Extractor.Utils
 {
@@ -44,11 +46,11 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="token">Cancellation token</param>
         /// <returns>A valid bearer access token</returns>
-        /// <exception cref="MsalServiceException">Thrown when it was not possible to obtain an authentication token.</exception>
+        /// <exception cref="CogniteUtilsException">Thrown when it was not possible to obtain an authentication token.</exception>
         public async Task<string> GetToken(CancellationToken token = default)
         {
             if (_config == null) {
-                _logger.LogInformation("ADD authentication disabled.");
+                _logger.LogInformation("OIDC authentication disabled.");
                 return null;
             }
 
@@ -61,14 +63,16 @@ namespace Cognite.Extractor.Utils
                 // The client application will take care of caching the token and 
                 // renewal before expiration
                 if (result.ExpiresOn != _lastTokenTime) {
-                    _logger.LogDebug("New AAD token. Expires on {ttl}", result.ExpiresOn.ToString());
+                    _logger.LogDebug(
+                        "New OIDC token. Expires on {ttl}", 
+                        result.ExpiresOn.UtcDateTime.ToISOString());
                     _lastTokenTime = result.ExpiresOn;
                 }
             }
             catch (MsalServiceException ex)
             {
-                _logger.LogError("Unable to obtain AAD token: {Message}", ex.Message);
-                throw;
+                _logger.LogError("Unable to obtain OIDC token: {Message}", ex.Message);
+                throw new CogniteUtilsException($"Could not obtain OIDC token: {ex.ErrorCode} {ex.Message}");
             }
 
             return result?.AccessToken;
