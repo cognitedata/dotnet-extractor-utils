@@ -66,7 +66,6 @@ namespace Cognite.Extractor.Utils
                 {
                     tokenInspect = await client.Token.InspectAsync(token);
                 }
-                var projects = tokenInspect.Projects.Where(p => p.ProjectUrlName == config.Project).ToList();
                 if (tokenInspect.Projects == null || !tokenInspect.Projects.Where(p => p.ProjectUrlName == config.Project).Any())
                 {
                     throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");

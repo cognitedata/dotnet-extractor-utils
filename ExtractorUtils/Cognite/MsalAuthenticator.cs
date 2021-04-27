@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Cognite.Extensions;
-using Cognite.Extractor.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
+using Cognite.Extensions;
+using Cognite.Extractor.Common;
 
 namespace Cognite.Extractor.Utils
 {
