@@ -27,11 +27,11 @@ namespace ExtractorUtils.Test
         public string Prefix { get; private set; }
         private readonly string _configPath;
 
-        public CDFTester(CogniteHost host)
+        public CDFTester(string[] config)
         {
             // Thread safe increment and store
             _configPath = $"test-config-{Interlocked.Increment(ref _configIdx)}";
-            System.IO.File.WriteAllLines(_configPath, GetConfig(host));
+            System.IO.File.WriteAllLines(_configPath, config);
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(_configPath, 2);
             services.AddLogger();
@@ -44,6 +44,9 @@ namespace ExtractorUtils.Test
             Prefix = "net-utils-test-" + new string(Enumerable.Repeat(chars, 5)
               .Select(s => s[random.Next(s.Length)]).ToArray());
             Source = new CancellationTokenSource();
+        }
+        public CDFTester(CogniteHost host) : this(GetConfig(host))
+        {
         }
 
         public static string[] GetConfig(CogniteHost host)

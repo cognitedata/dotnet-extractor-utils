@@ -1,0 +1,83 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Cognite.Extensions;
+using Microsoft.Identity.Client;
+using Xunit;
+
+namespace ExtractorUtils.Test
+{
+    public class AuthIntegrationTest
+    {
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestClientConfig(CogniteHost host)
+        {
+            if (host == CogniteHost.BlueField)
+            {
+                var configMsal = CDFTester.GetConfig(host);
+                using (var tester = new CDFTester(configMsal))
+                {
+                    await tester.Destination.TestCogniteConfig(tester.Source.Token); // should not throw
+                }
+
+                // Fail to validate the project
+                configMsal = CDFTester.GetConfig(host);
+                configMsal[5] = "  project: not-a-valid-project";
+                using (var tester = new CDFTester(configMsal))
+                {
+                    await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
+                }
+
+                // Fail to obtain the token
+                configMsal = CDFTester.GetConfig(host);
+                configMsal[10] = "    secret: invalid-secret";
+                using (var tester = new CDFTester(configMsal))
+                {
+                    await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
+                }
+
+                var configList = new List<string>(CDFTester.GetConfig(host));
+                configList.Insert(13, "    implementation: basic");
+                configList.Insert(14, "    token-url: https://login.microsoftonline.com/${BF_TEST_TENANT}/oauth2/v2.0/token");
+                var configBasic = configList.ToArray();
+                using (var tester = new CDFTester(configBasic))
+                {
+                    await tester.Destination.TestCogniteConfig(tester.Source.Token); // should not throw
+                }
+
+                configBasic = configList.ToArray();
+                configBasic[10] = "    secret: invalid-secret";
+                using (var tester = new CDFTester(configBasic))
+                {
+                    await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
+                }
+            }
+            else if (host == CogniteHost.GreenField)
+            {
+                var configKey = CDFTester.GetConfig(host);
+                using (var tester = new CDFTester(configKey))
+                {
+                    await tester.Destination.TestCogniteConfig(tester.Source.Token); // should not throw
+                }
+
+                // Fail to validate the project
+                configKey = CDFTester.GetConfig(host);
+                configKey[5] = "  project: not-a-valid-project";
+                using (var tester = new CDFTester(configKey))
+                {
+                    await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
+                }
+
+                // Not logged in
+                configKey = CDFTester.GetConfig(host);
+                configKey[6] = "  api-key: invalid-api-key";
+                using (var tester = new CDFTester(configKey))
+                {
+                    await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
+                }
+            }
+        }
+    }
+}

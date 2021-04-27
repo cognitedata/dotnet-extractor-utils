@@ -47,7 +47,7 @@ namespace Cognite.Extractor.Utils
         /// Verifies that the currently configured Cognite client can access Cognite Data Fusion
         /// </summary>
         /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
+        /// <exception cref="CogniteUtilsException">Thrown when credentials are invalid</exception>
         public async Task TestCogniteConfig(CancellationToken token)
         {
             await _client.TestCogniteConfig(_config, token);
