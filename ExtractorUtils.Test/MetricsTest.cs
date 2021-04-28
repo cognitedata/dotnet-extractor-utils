@@ -231,9 +231,9 @@ namespace ExtractorUtils.Test
             string version = Cognite.Extractor.Metrics.Version.GetVersion();
             string desc = Cognite.Extractor.Metrics.Version.Status();
             // This test does not pass in CI, because github actions does not provide proper access
-            // Assert.False(string.IsNullOrWhiteSpace(version));
-            // Assert.False(string.IsNullOrWhiteSpace(desc));
-            // Assert.NotEqual(version.Trim(), desc.Trim());
+            Assert.False(string.IsNullOrWhiteSpace(version));
+            Assert.False(string.IsNullOrWhiteSpace(desc));
+            Assert.NotEqual(version.Trim(), desc.Trim());
         }
     }
 }
