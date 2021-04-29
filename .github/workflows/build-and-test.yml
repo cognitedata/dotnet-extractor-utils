@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Debug --no-restore /p:Version=1.0.0
     - name: Test
-      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:Version=1.0.0 /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
+      run: dotnet test --no-build --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:Version=1.0.0 /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
       env:
         TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
         TEST_PROJECT: "extractor-tests"
