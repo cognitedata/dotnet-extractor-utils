@@ -35,7 +35,7 @@ namespace ExtractorUtils.Test
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(_configPath, 2);
             services.AddLogger();
-            services.AddCogniteClient("net-extractor-utils-test");
+            services.AddCogniteClient("net-extractor-utils-test", userAgent: "Utils-Tests/v1.0.0 (Test)");
             Provider = services.BuildServiceProvider();
             Logger = Provider.GetRequiredService<ILogger<CDFTester>>();
             Destination = Provider.GetRequiredService<CogniteDestination>();

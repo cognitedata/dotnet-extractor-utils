@@ -110,7 +110,7 @@ namespace ExtractorUtils.Test
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
-            services.AddCogniteClient("testApp", true, false);
+            services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
             using (var source = new CancellationTokenSource())
             using (var provider = services.BuildServiceProvider()) {

@@ -143,7 +143,7 @@ namespace ExtractorUtils.Test
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
-            services.AddCogniteClient("testApp", true, false);
+            services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
 
             int evtCount = 0;
@@ -253,7 +253,7 @@ namespace ExtractorUtils.Test
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
-            services.AddCogniteClient("testApp", true, false);
+            services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
 
             System.IO.File.Create("event-buffer.bin").Close();
 

@@ -1,6 +1,9 @@
+using System.Linq;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Cognite.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using Xunit;
 
@@ -76,6 +79,31 @@ namespace ExtractorUtils.Test
                 using (var tester = new CDFTester(configKey))
                 {
                     await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestClientHeaders(CogniteHost host)
+        {
+            if (host == CogniteHost.BlueField)
+            {
+                var configMsal = CDFTester.GetConfig(host);
+                using (var tester = new CDFTester(configMsal))
+                {
+                    var factory = tester.Provider.GetRequiredService<IHttpClientFactory>();
+                    var client = factory.CreateClient("AuthenticatorClient");
+                    Assert.NotEmpty(client.DefaultRequestHeaders);
+                    Assert.NotEmpty(client.DefaultRequestHeaders.UserAgent);
+                    Assert.Equal(2, client.DefaultRequestHeaders.UserAgent.Count);
+                    var product = client.DefaultRequestHeaders.UserAgent.ToArray()[0].Product;
+                    Assert.Equal("Utils-Tests", product.Name);
+                    Assert.Equal("v1.0.0", product.Version);
+                    var comment = client.DefaultRequestHeaders.UserAgent.ToArray()[1].Comment;
+                    Assert.Equal("(Test)", comment);
+                    await tester.Destination.TestCogniteConfig(tester.Source.Token); // should not throw
                 }
             }
         }

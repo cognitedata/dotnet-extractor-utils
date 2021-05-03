@@ -1,4 +1,6 @@
-﻿using System;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System;
 using System.Net.Http;
 using System.Threading;
 using Cognite.Extensions;
@@ -20,6 +22,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="services">The service collection</param>
         /// <param name="appId">Identifier of the application using the Cognite API</param>
+        /// <param name="userAgent">User-Agent header. If added, should conform to RFC 7231: 'Product/Version (Optional comment)'</param>
         /// <param name="setLogger">If true, a <see cref="ILogger"/> logger is created and used by the client to log calls to the 
         /// Cognite API (enabled in debug mode)</param>
         /// <param name="setMetrics">If true, a <see cref="IMetrics"/> metrics collector is created and used by the client
@@ -28,6 +31,7 @@ namespace Cognite.Extractor.Utils
         /// <see cref="ServiceCollection"/>. If this is false it must be added before this method is called.</param>
         public static void AddCogniteClient(this IServiceCollection services,
                                             string appId,
+                                            string userAgent = null,
                                             bool setLogger = false,
                                             bool setMetrics = false,
                                             bool setHttpClient = true)
@@ -51,23 +55,30 @@ namespace Cognite.Extractor.Utils
 
             // Configure token based authentication
             var authClientName = "AuthenticatorClient";
-            services.AddHttpClient(authClientName);
+            services.AddHttpClient(
+                authClientName,
+                c => {
+                    if (userAgent != null)
+                    {
+                        c.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+                    }
+                });
             services.AddTransient<IAuthenticator>(provider =>
             {
                 var conf = provider.GetService<CogniteConfig>();
                 if (conf?.IdpAuthentication == null)
                     return null;
                 var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
+                var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
                 if (conf.IdpAuthentication.Implementation == AuthenticatorConfig.AuthenticatorImplementation.MSAL)
                 {
                     if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.TokenUrl))
                     {
                         logger.LogWarning("Setting token-url directly is not supported for MSAL implementation, use Basic instead");
                     }
-                    return new MsalAuthenticator(conf.IdpAuthentication, logger);
+                    return new MsalAuthenticator(conf.IdpAuthentication, logger, clientFactory, authClientName);
                 }
 
-                var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
                 var client = clientFactory.CreateClient(authClientName);
                 return new Authenticator(conf.IdpAuthentication, client, logger);
             });
@@ -83,7 +94,7 @@ namespace Cognite.Extractor.Utils
                 CogniteExtensions.AddExtensionLoggers(provider);
                 var metrics = setMetrics ?
                     provider.GetRequiredService<IMetrics>() : null;
-                var client = cdfBuilder.Configure(conf, appId, auth, logger, metrics).Build();
+                var client = cdfBuilder.Configure(conf, appId, userAgent, auth, logger, metrics).Build();
                 return client;
             });
             services.AddTransient<CogniteDestination>();
@@ -97,6 +108,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="clientBuilder">This builder</param>
         /// <param name="config">A <see cref="CogniteConfig"/> configuration object</param>
         /// <param name="appId">Identifier of the application using the Cognite API</param>
+        /// <param name="userAgent">User-agent header</param>
         /// <param name="auth">A <see cref="IAuthenticator"/> authenticator used to obtain bearer access token. 
         /// If null, API keys are used for authentication</param>
         /// <param name="logger">A <see cref="ILogger"/> logger that the client can use to log calls to the 
@@ -110,12 +122,18 @@ namespace Cognite.Extractor.Utils
             this Client.Builder clientBuilder,
             CogniteConfig config,
             string appId,
+            string userAgent = null,
             IAuthenticator auth = null,
             ILogger<Client> logger = null,
             IMetrics metrics = null)
         {
             var builder = clientBuilder
                 .SetAppId(appId);
+
+            if (userAgent != null)
+            {
+                builder = builder.SetUserAgent(userAgent);
+            }
 
             if (config?.Project?.TrimToNull() != null)
             {
