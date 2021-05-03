@@ -70,6 +70,7 @@ namespace Cognite.Extractor.Utils
 
         private CancellationTokenSource _tokenSource;
         private Task _uploadTask;
+        private Task _triggerTask;
 
         internal BaseUploadQueue(
             CogniteDestination destination,
@@ -142,27 +143,46 @@ namespace Cognite.Extractor.Utils
             _tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
             _timer?.Start();
             _logger.LogDebug("Queue of type {Type} started", GetType().Name);
-            _uploadTask = Task.Run(async () =>
-            {
-                try
+
+            using( var tokenRegistration = _tokenSource.Token.Register(async () => {
+                // When the queue is disposed/cancelled, if there are still some upload tasks running,
+                // should it give some extra time for the tasks to complete.
+                // Otherwise some items will not be uploaded (Cancellation propagates to Chunking.RunThrottled)
+                // Alternative is to use a separate token and block until completion
+                var t = await Task.WhenAny(_triggerTask, Task.Delay(60_000));
+                if (t != _triggerTask || t.Status != TaskStatus.RanToCompletion) {
+                    _logger.LogError("Upload queue of type {Type} aborted before finishing uploading: Timeout", GetType().Name);
+                }
+            })) {
+                _uploadTask = Task.Run(async () =>
                 {
-                    while (!_tokenSource.IsCancellationRequested)
+                    try
                     {
-                        _pushEvent.Wait(_tokenSource.Token);
-                        var result = await Trigger(_tokenSource.Token);
-                        _pushEvent.Reset();
-                        _timer.Start();
-                        if (_callback != null) await _callback(result);
+                        while (!_tokenSource.IsCancellationRequested)
+                        {
+                            _triggerTask = UploadIteration();
+                            await _triggerTask;
+                        }
                     }
-                }
-                catch (OperationCanceledException)
-                {
-                    // ignore cancel exceptions, but throw any other exception
-                    _logger.LogDebug("Upload queue of type {Type} cancelled with {QueueSize} items left", GetType().Name, _items.Count);
-                }
-            });
-            await _uploadTask;
+                    catch (OperationCanceledException)
+                    {
+                        // ignore cancel exceptions, but throw any other exception
+                        _logger.LogDebug("Upload queue of type {Type} cancelled with {QueueSize} items left", GetType().Name, _items.Count);
+                    }
+                });
+                await _uploadTask;
+            }
         }
+
+        private async Task UploadIteration()
+        {
+            _pushEvent.Wait(_tokenSource.Token);
+            var result = await Trigger(_tokenSource.Token);
+            _pushEvent.Reset();
+            _timer.Start();
+            if (_callback != null) await _callback(result);
+        }
+
         /// <summary>
         /// Method called to upload entries
         /// </summary>
