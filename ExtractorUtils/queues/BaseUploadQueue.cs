@@ -69,8 +69,9 @@ namespace Cognite.Extractor.Utils
         private readonly System.Timers.Timer _timer;
 
         private CancellationTokenSource _tokenSource;
+        private CancellationTokenSource _internalSource;
+        private Task _uploadLoopTask;
         private Task _uploadTask;
-        private Task _triggerTask;
 
         internal BaseUploadQueue(
             CogniteDestination destination,
@@ -144,43 +145,39 @@ namespace Cognite.Extractor.Utils
             _timer?.Start();
             _logger.LogDebug("Queue of type {Type} started", GetType().Name);
 
-            using( var tokenRegistration = _tokenSource.Token.Register(async () => {
-                // When the queue is disposed/cancelled, if there are still some upload tasks running,
-                // should it give some extra time for the tasks to complete.
-                // Otherwise some items will not be uploaded (Cancellation propagates to Chunking.RunThrottled)
-                // Alternative is to use a separate token and block until completion
-                var t = await Task.WhenAny(_triggerTask, Task.Delay(60_000));
-                if (t != _triggerTask || t.Status != TaskStatus.RanToCompletion) {
-                    _logger.LogError("Upload queue of type {Type} aborted before finishing uploading: Timeout", GetType().Name);
-                }
-            })) {
-                _uploadTask = Task.Run(async () =>
+            // Use a separate token to avoid propagating the loop cancellation to Chunking.RunThrottled
+            _internalSource = new CancellationTokenSource();
+
+            _uploadLoopTask = Task.Run(() =>
+            {
+                try
                 {
-                    try
+                    while (!_tokenSource.IsCancellationRequested)
                     {
-                        while (!_tokenSource.IsCancellationRequested)
-                        {
-                            _triggerTask = UploadIteration();
-                            await _triggerTask;
-                        }
+                        _pushEvent.Wait(_tokenSource.Token);
+                        _uploadTask = TriggerUploadAndCallback(_internalSource.Token);
+                        // stop waiting if the source token gets cancelled, but do not
+                        // cancel the upload task
+                        _uploadTask.Wait(_tokenSource.Token);
+                        _pushEvent.Reset();
+                        _timer.Start();
                     }
-                    catch (OperationCanceledException)
-                    {
-                        // ignore cancel exceptions, but throw any other exception
-                        _logger.LogDebug("Upload queue of type {Type} cancelled with {QueueSize} items left", GetType().Name, _items.Count);
-                    }
-                });
-                await _uploadTask;
-            }
+                }
+                catch (OperationCanceledException)
+                {
+                    // ignore cancel exceptions, but throw any other exception
+                    _logger.LogDebug("Upload queue of type {Type} cancelled with {QueueSize} items left", GetType().Name, _items.Count);
+                }
+            });
+            await _uploadLoopTask;
         }
 
-        private async Task UploadIteration()
+        private Task TriggerUploadAndCallback(CancellationToken token)
         {
-            _pushEvent.Wait(_tokenSource.Token);
-            var result = await Trigger(_tokenSource.Token);
-            _pushEvent.Reset();
-            _timer.Start();
-            if (_callback != null) await _callback(result);
+            return Task.Run(async () => {
+                var result = await Trigger(token);
+                if (_callback != null) await _callback(result);
+            });
         }
 
         /// <summary>
@@ -199,19 +196,23 @@ namespace Cognite.Extractor.Utils
             try
             {
                 _timer?.Stop();
-                var items = Dequeue();
-                var token = _tokenSource.IsCancellationRequested ? CancellationToken.None : _tokenSource.Token;
-                var result = await UploadEntries(items, token);
-                if (_callback != null) await _callback(result);
-
+                
                 if (!_tokenSource.IsCancellationRequested)
                 {
                     _tokenSource.Cancel();
                 }
+                if (_uploadLoopTask != null)
+                {
+                    await _uploadLoopTask;
+                }
                 if (_uploadTask != null)
                 {
-                    await _uploadTask;
+                    // Wait for the current upload task to end or timeout, if any
+                    await WaitOrTimeout(_uploadTask);
                 }
+
+                // If there is anything left in the queue, push it,
+                await WaitOrTimeout(TriggerUploadAndCallback(_internalSource.Token));
             }
             catch (Exception ex)
             {
@@ -219,6 +220,14 @@ namespace Cognite.Extractor.Utils
             }
         }
 
+        private async Task WaitOrTimeout(Task task)
+        {
+            var t = await Task.WhenAny(task, Task.Delay(60_000));
+            if (t != task || t.Status != TaskStatus.RanToCompletion)
+            {
+                _logger.LogError("Upload queue of type {Type} aborted before finishing uploading: Timeout", GetType().Name);
+            }
+        }
 
         /// <summary>
         /// Dispose of the queue, uploading all remaining entries.
@@ -234,6 +243,7 @@ namespace Cognite.Extractor.Utils
                     _pushEvent.Dispose();
                     _timer?.Close();
                     _tokenSource.Dispose();
+                    _internalSource.Dispose();
                 }
 
                 disposedValue = true;
