@@ -27,6 +27,8 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="config">Configuration object</param>
         /// <param name="logger">Logger</param>
+        /// <param name="httpClientFactory">Http client factory used by this authenticator</param>
+        /// <param name="authClientName">Name of http client. Used by the factory to instantiate a pre-configured client</param>
         public MsalAuthenticator(AuthenticatorConfig config, ILogger<IAuthenticator> logger, IHttpClientFactory httpClientFactory, string authClientName)
         {
             _config = config;
