@@ -212,7 +212,7 @@ namespace ExtractorUtils.Test
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
-            services.AddCogniteClient("testApp", true, false);
+            services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
 
             Func<int, Dictionary<Identity, Datapoint>> uploadGenerator = (int i) => new Dictionary<Identity, Datapoint>() {
@@ -339,7 +339,7 @@ namespace ExtractorUtils.Test
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
-            services.AddCogniteClient("testApp", true, false);
+            services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
 
             Func<int, Dictionary<Identity, Datapoint>> uploadGenerator = (int i) => new Dictionary<Identity, Datapoint>() {
                     { new Identity("idMissing1"), new Datapoint(DateTime.UtcNow, i.ToString())},

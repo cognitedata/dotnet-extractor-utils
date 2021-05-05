@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using Cognite.Extensions;
 using Cognite.Extractor.Common;
+using System.Net.Http;
 
 namespace Cognite.Extractor.Utils
 {
@@ -26,7 +27,9 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="config">Configuration object</param>
         /// <param name="logger">Logger</param>
-        public MsalAuthenticator(AuthenticatorConfig config, ILogger<IAuthenticator> logger)
+        /// <param name="httpClientFactory">Http client factory used by this authenticator</param>
+        /// <param name="authClientName">Name of http client. Used by the factory to instantiate a pre-configured client</param>
+        public MsalAuthenticator(AuthenticatorConfig config, ILogger<IAuthenticator> logger, IHttpClientFactory httpClientFactory, string authClientName)
         {
             _config = config;
             _logger = logger;
@@ -35,6 +38,7 @@ namespace Cognite.Extractor.Utils
                 uriBuilder.Path = $"{_config.Tenant}";
                 var url = uriBuilder.Uri;
                 _app = ConfidentialClientApplicationBuilder.Create(_config.ClientId)
+                    .WithHttpClientFactory(new MsalClientFactory(httpClientFactory, authClientName))
                     .WithClientSecret(_config.Secret)
                     .WithAuthority(url)
                     .Build();
@@ -76,6 +80,24 @@ namespace Cognite.Extractor.Utils
             }
 
             return result?.AccessToken;
+        }
+    }
+
+    internal class MsalClientFactory : IMsalHttpClientFactory
+    {
+        private readonly IHttpClientFactory httpClientFactory;
+        private readonly string clientName;
+
+        public MsalClientFactory(IHttpClientFactory httpClientFactory, string clientName)
+        {
+            this.httpClientFactory = httpClientFactory;
+            this.clientName = clientName;
+        }
+
+        public HttpClient GetHttpClient()
+        {
+            var client = httpClientFactory.CreateClient(clientName);
+            return client;
         }
     }
 }

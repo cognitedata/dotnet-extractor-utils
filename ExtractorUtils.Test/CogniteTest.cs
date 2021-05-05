@@ -86,8 +86,6 @@ namespace ExtractorUtils.Test
             System.IO.File.Delete(path);
         }
 
-
-
         [Fact]
         public async Task TestCogniteClient()
         {
@@ -111,7 +109,7 @@ namespace ExtractorUtils.Test
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddLogger();
-            services.AddCogniteClient("testApp", true, true);
+            services.AddCogniteClient("testApp", "Utils-Tests/v1.0.0 (Test)", setLogger: true, setMetrics: true);
             using (var provider = services.BuildServiceProvider()) {
                 var config = provider.GetRequiredService<CogniteConfig>();
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
@@ -172,7 +170,7 @@ namespace ExtractorUtils.Test
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddCogniteClient("testApp");
+            services.AddCogniteClient("testApp", "Utils-Tests/v1.0.0 (Test)");
             using (var provider = services.BuildServiceProvider()) {
                 var config = provider.GetRequiredService<CogniteConfig>();
                 var cogClient = provider.GetRequiredService<Client>();
@@ -230,7 +228,7 @@ namespace ExtractorUtils.Test
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(timeoutPolicy);
 
-            services.AddCogniteClient("testApp", true, true, false);
+            services.AddCogniteClient("testApp", setLogger: true, setMetrics: true, setHttpClient: false);
             using (var provider = services.BuildServiceProvider())
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
@@ -613,6 +611,16 @@ namespace ExtractorUtils.Test
             var reply = "";
             Assert.True(message.RequestUri.ToString() == $@"{_host}/api/v1/projects/{_project}/timeseries/list" ||
                         message.RequestUri.ToString() == $@"{_host}/login/status");
+
+            Assert.NotEmpty(message.Headers);
+            Assert.NotEmpty(message.Headers.UserAgent);
+            Assert.Equal(2, message.Headers.UserAgent.Count);
+            var product = message.Headers.UserAgent.ToArray()[0].Product;
+            Assert.Equal("Utils-Tests", product.Name);
+            Assert.Equal("v1.0.0", product.Version);
+            var comment = message.Headers.UserAgent.ToArray()[1].Comment;
+            Assert.Equal("(Test)", comment);
+
             if (message.RequestUri.ToString() == $@"{_host}/login/status")
             {
                 Assert.Equal(HttpMethod.Get, message.Method);
