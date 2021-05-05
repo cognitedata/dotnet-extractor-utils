@@ -4875,12 +4875,12 @@ references:
   commentId: T:Cognite.Extractor.Utils.DestinationUtils
   fullName: Cognite.Extractor.Utils.DestinationUtils
   nameWithType: DestinationUtils
-- uid: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection,System.String,System.Boolean,System.Boolean,System.Boolean)
-  name: AddCogniteClient(IServiceCollection, String, Boolean, Boolean, Boolean)
-  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_IServiceCollection_System_String_System_Boolean_System_Boolean_System_Boolean_
-  commentId: M:Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection,System.String,System.Boolean,System.Boolean,System.Boolean)
-  fullName: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection, System.String, System.Boolean, System.Boolean, System.Boolean)
-  nameWithType: DestinationUtils.AddCogniteClient(IServiceCollection, String, Boolean, Boolean, Boolean)
+- uid: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)
+  name: AddCogniteClient(IServiceCollection, String, String, Boolean, Boolean, Boolean)
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_IServiceCollection_System_String_System_String_System_Boolean_System_Boolean_System_Boolean_
+  commentId: M:Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)
+  fullName: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection, System.String, System.String, System.Boolean, System.Boolean, System.Boolean)
+  nameWithType: DestinationUtils.AddCogniteClient(IServiceCollection, String, String, Boolean, Boolean, Boolean)
 - uid: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient*
   name: AddCogniteClient
   href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_
@@ -4888,15 +4888,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient
   nameWithType: DestinationUtils.AddCogniteClient
-- uid: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,Cognite.Extractor.Utils.IAuthenticator,ILogger{Client},IMetrics)
-  name: Configure(Client.Builder, CogniteConfig, String, IAuthenticator, ILogger<Client>, IMetrics)
-  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_String_Cognite_Extractor_Utils_IAuthenticator_ILogger_Client__IMetrics_
-  commentId: M:Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,Cognite.Extractor.Utils.IAuthenticator,ILogger{Client},IMetrics)
-  name.vb: Configure(Client.Builder, CogniteConfig, String, IAuthenticator, ILogger(Of Client), IMetrics)
-  fullName: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.String, Cognite.Extractor.Utils.IAuthenticator, ILogger<Client>, IMetrics)
-  fullName.vb: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.String, Cognite.Extractor.Utils.IAuthenticator, ILogger(Of Client), IMetrics)
-  nameWithType: DestinationUtils.Configure(Client.Builder, CogniteConfig, String, IAuthenticator, ILogger<Client>, IMetrics)
-  nameWithType.vb: DestinationUtils.Configure(Client.Builder, CogniteConfig, String, IAuthenticator, ILogger(Of Client), IMetrics)
+- uid: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,System.String,Cognite.Extractor.Utils.IAuthenticator,ILogger{Client},IMetrics)
+  name: Configure(Client.Builder, CogniteConfig, String, String, IAuthenticator, ILogger<Client>, IMetrics)
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_String_System_String_Cognite_Extractor_Utils_IAuthenticator_ILogger_Client__IMetrics_
+  commentId: M:Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,System.String,Cognite.Extractor.Utils.IAuthenticator,ILogger{Client},IMetrics)
+  name.vb: Configure(Client.Builder, CogniteConfig, String, String, IAuthenticator, ILogger(Of Client), IMetrics)
+  fullName: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.String, System.String, Cognite.Extractor.Utils.IAuthenticator, ILogger<Client>, IMetrics)
+  fullName.vb: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.String, System.String, Cognite.Extractor.Utils.IAuthenticator, ILogger(Of Client), IMetrics)
+  nameWithType: DestinationUtils.Configure(Client.Builder, CogniteConfig, String, String, IAuthenticator, ILogger<Client>, IMetrics)
+  nameWithType.vb: DestinationUtils.Configure(Client.Builder, CogniteConfig, String, String, IAuthenticator, ILogger(Of Client), IMetrics)
 - uid: Cognite.Extractor.Utils.DestinationUtils.Configure*
   name: Configure
   href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_Configure_
@@ -5040,15 +5040,15 @@ references:
   commentId: T:Cognite.Extractor.Utils.MsalAuthenticator
   fullName: Cognite.Extractor.Utils.MsalAuthenticator
   nameWithType: MsalAuthenticator
-- uid: Cognite.Extractor.Utils.MsalAuthenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,ILogger{Cognite.Extractor.Utils.IAuthenticator})
-  name: MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>)
-  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator__ctor_Cognite_Extractor_Utils_AuthenticatorConfig_ILogger_Cognite_Extractor_Utils_IAuthenticator__
-  commentId: M:Cognite.Extractor.Utils.MsalAuthenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,ILogger{Cognite.Extractor.Utils.IAuthenticator})
-  name.vb: MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator))
-  fullName: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator(Cognite.Extractor.Utils.AuthenticatorConfig, ILogger<Cognite.Extractor.Utils.IAuthenticator>)
-  fullName.vb: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator(Cognite.Extractor.Utils.AuthenticatorConfig, ILogger(Of Cognite.Extractor.Utils.IAuthenticator))
-  nameWithType: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>)
-  nameWithType.vb: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator))
+- uid: Cognite.Extractor.Utils.MsalAuthenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,ILogger{Cognite.Extractor.Utils.IAuthenticator},IHttpClientFactory,System.String)
+  name: MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>, IHttpClientFactory, String)
+  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator__ctor_Cognite_Extractor_Utils_AuthenticatorConfig_ILogger_Cognite_Extractor_Utils_IAuthenticator__IHttpClientFactory_System_String_
+  commentId: M:Cognite.Extractor.Utils.MsalAuthenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,ILogger{Cognite.Extractor.Utils.IAuthenticator},IHttpClientFactory,System.String)
+  name.vb: MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator), IHttpClientFactory, String)
+  fullName: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator(Cognite.Extractor.Utils.AuthenticatorConfig, ILogger<Cognite.Extractor.Utils.IAuthenticator>, IHttpClientFactory, System.String)
+  fullName.vb: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator(Cognite.Extractor.Utils.AuthenticatorConfig, ILogger(Of Cognite.Extractor.Utils.IAuthenticator), IHttpClientFactory, System.String)
+  nameWithType: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>, IHttpClientFactory, String)
+  nameWithType.vb: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator), IHttpClientFactory, String)
 - uid: Cognite.Extractor.Utils.MsalAuthenticator.#ctor*
   name: MsalAuthenticator
   href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator__ctor_
