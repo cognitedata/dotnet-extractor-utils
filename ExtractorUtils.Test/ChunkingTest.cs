@@ -165,22 +165,22 @@ namespace ExtractorUtils.Test {
 
                     double minElapsedTimeParallel = maxParallelism == 0
                         ? 0
-                        : 20 / maxParallelism * 100;
+                        : 2000 / maxParallelism;
                     double minElapsedTimeLimit = maxPerUnit == 0 || timespanMs == 0
                         ? 0
-                        : 20 / maxPerUnit * Math.Min(100, timespanMs);
+                        : 20 / maxPerUnit * timespanMs;
                     double minElapsedTimeUsage = maxUsagePerUnit == 0 || timespanMs == 0
                         ? 0
-                        : 2000 / (timespanMs * maxUsagePerUnit);
+                        : 2000 / (maxUsagePerUnit);
 
                     var minElapsedTime = Math.Max(minElapsedTimeUsage, Math.Max(minElapsedTimeParallel, minElapsedTimeLimit));
 
                     var realMs = (end - start).TotalMilliseconds;
 
                     // Task overhead
-                    var flex = 200;
-                    Assert.True(realMs > minElapsedTime && realMs < minElapsedTime + flex,
-                        $"Execution took {realMs}ms but should be between {minElapsedTime} and {minElapsedTime + flex}");
+                    var flex = 100 + realMs * 0.1;
+                    Assert.True(realMs > minElapsedTime - flex && realMs < minElapsedTime + flex,
+                        $"Execution took {realMs}ms but should be between {minElapsedTime - flex} and {minElapsedTime + flex}");
                     break;
                 }
                 catch (TrueException)

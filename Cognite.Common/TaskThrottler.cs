@@ -105,8 +105,12 @@ namespace Cognite.Extractor.Common
             _maxParallelism = maxParallelism;
             _maxPerUnit = perUnit;
             _maxUsagePerUnit = usagePerUnit;
-            // Discount is a geometric progression, so the real time unit is twice the given value, asymptotically.
-            _timeUnit = timeUnit == null ? TimeSpan.Zero : TimeSpan.FromTicks(timeUnit.Value.Ticks / 2);
+            // If max usage per unit is specified, max parallelism should be set as well.
+            if (_maxParallelism == 0 && _maxUsagePerUnit > 0)
+            {
+                _maxParallelism = (int)Math.Ceiling(_maxUsagePerUnit);
+            }
+            _timeUnit = timeUnit == null ? TimeSpan.Zero : TimeSpan.FromTicks(timeUnit.Value.Ticks);
             _quitOnFailure = quitOnFailure;
             RunTask = Run();
         }
@@ -195,16 +199,24 @@ namespace Cognite.Extractor.Common
                 if (_timeUnit > TimeSpan.Zero && (_maxPerUnit > 0 || _maxUsagePerUnit > 0))
                 {
                     var now = DateTime.UtcNow;
-                    var discountedUsage = _results.Aggregate((0d, 0d), (seed, result) =>
+                    var (usagePerUnit, perUnit) = _results.Aggregate((0d, 0d), (seed, result) =>
                     {
-                        var usage = (result.CompletionTime ?? DateTime.UtcNow) - result.StartTime;
-                        var diff = now - result.StartTime;
-                        double diffUnits = diff.Ticks / _timeUnit.Ticks;
-                        var discount = Math.Pow(2, -Math.Floor(diffUnits));
-                        return (seed.Item1 + discount * (usage.Ticks / _timeUnit.Ticks), seed.Item2 + discount);
+                        var endTime = result.CompletionTime ?? now;
+                        double unitsSinceStart = (double)decimal.Divide(now.Ticks - result.StartTime.Ticks, _timeUnit.Ticks);
+                        double unitsSinceEnd = (double)decimal.Divide(now.Ticks - endTime.Ticks, _timeUnit.Ticks);
+
+                        // Discounted cost of starting the task is 2^(-t), so the cost of having just started a task is 1.
+                        // If the goal is to start 1 task every period, then the costs sum to 1 + 1/2 + 1/4 + ... -> 2
+                        var startCost = Math.Pow(2, -unitsSinceStart);
+
+                        // Usage is the integral of the discounted cost from end to start
+                        // The cost of running for one full time unit is 1, 2 is 1.5, 3 is 1.75, approaching 2.
+                        var usageCost = (Math.Pow(2, -unitsSinceEnd) - Math.Pow(2, -unitsSinceStart)) * 2;
+
+                        return (seed.Item1 + usageCost, seed.Item2 + startCost);
                     });
-                    if (_maxUsagePerUnit > 0 && discountedUsage.Item1 >= _maxUsagePerUnit) return false;
-                    if (_maxPerUnit > 0 && discountedUsage.Item2 >= _maxPerUnit) return false;
+                    if (_maxUsagePerUnit > 0 && usagePerUnit / 2 >= _maxUsagePerUnit) return false;
+                    if (_maxPerUnit > 0 && perUnit / 2 >= _maxPerUnit) return false;
                 }
             }
             return true;
@@ -224,7 +236,7 @@ namespace Cognite.Extractor.Common
                         {
                             try
                             {
-                                var generator = _generators.Take();
+                                var generator = _generators.Take(source.Token);
                                 lock (_lock)
                                 {
                                     _runningTasks.Add(generator());
@@ -234,7 +246,8 @@ namespace Cognite.Extractor.Common
                             {
                                 running = false;
                             }
-                        }, source.Token));
+                            catch (OperationCanceledException) { }
+                        }));
                     }
                     else if (_timeUnit > TimeSpan.Zero)
                     {
