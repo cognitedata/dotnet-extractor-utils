@@ -76,10 +76,10 @@ namespace Cognite.Extractor.Utils
             {
                 return new QueueUploadResult<(string key, T columns)>(Enumerable.Empty<(string key, T columns)>());
             }
-            _logger.LogTrace("Dequeued {Number} {Type} rows to upload to CDF Raw", rows.Count, typeof(T).Name);
+            DestLogger.LogTrace("Dequeued {Number} {Type} rows to upload to CDF Raw", rows.Count, typeof(T).Name);
             try
             {
-                await _destination.InsertRawRowsAsync(_db, _table, rows, token);
+                await Destination.InsertRawRowsAsync(_db, _table, rows, token);
             }
             catch (Exception ex)
             {

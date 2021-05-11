@@ -197,7 +197,7 @@ namespace Cognite.Extractor.Utils
         /// Resource scopes
         /// </summary>
         /// <value>Scope</value>
-        public List<string> Scopes { get; set; }
+        public IList<string> Scopes { get; set; }
 
         /// <summary>
         /// Minimum time-to-live for the token in seconds (optional)

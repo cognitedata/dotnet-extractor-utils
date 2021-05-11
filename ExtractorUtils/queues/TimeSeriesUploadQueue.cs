@@ -118,7 +118,7 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Failed to write to buffer: {msg}", ex.Message);
+                DestLogger.LogWarning("Failed to write to buffer: {msg}", ex.Message);
             }
         }
 
@@ -135,9 +135,9 @@ namespace Cognite.Extractor.Utils
                         dps = await CogniteUtils.ReadDatapointsAsync(stream, token, 1_000_000);
                         if (dps.Any())
                         {
-                            await _destination.InsertDataPointsIgnoreErrorsAsync(dps, token);
+                            await Destination.InsertDataPointsIgnoreErrorsAsync(dps, token);
                             await HandleUploadResult(dps, token);
-                            if (_callback != null) await _callback(new QueueUploadResult<(Identity id, Datapoint dp)>(
+                            if (Callback != null) await Callback(new QueueUploadResult<(Identity id, Datapoint dp)>(
                                 dps.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList()));
                         }
                     } while (dps.Any());
@@ -145,7 +145,7 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Failed to read from buffer: {msg}", ex.Message);
+                DestLogger.LogWarning("Failed to read from buffer: {msg}", ex.Message);
                 return;
             }
             System.IO.File.Create(_bufferPath).Close();
@@ -191,17 +191,17 @@ namespace Cognite.Extractor.Utils
                     bool connected;
                     try
                     {
-                        await _destination.TestCogniteConfig(token);
+                        await Destination.TestCogniteConfig(token);
                         connected = true;
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogTrace("Failed to connect to CDF for inserting datapoints: {msg}", ex.Message);
+                        DestLogger.LogTrace("Failed to connect to CDF for inserting datapoints: {msg}", ex.Message);
                         connected = false;
                     }
                     if (connected)
                     {
-                        _logger.LogTrace("Reconnected to CDF, reading datapoints from buffer");
+                        DestLogger.LogTrace("Reconnected to CDF, reading datapoints from buffer");
                         await ReadFromBuffer(token);
                     }
                 }
@@ -209,7 +209,7 @@ namespace Cognite.Extractor.Utils
             }
 
             if (!dps.Any()) return new QueueUploadResult<(Identity, Datapoint)>(Enumerable.Empty<(Identity, Datapoint)>());
-            _logger.LogTrace("Dequeued {Number} datapoints to upload to CDF", dps.Count());
+            DestLogger.LogTrace("Dequeued {Number} datapoints to upload to CDF", dps.Count());
 
             var comparer = new IdentityComparer();
 
@@ -218,7 +218,7 @@ namespace Cognite.Extractor.Utils
 
             try
             {
-                var err = await _destination.InsertDataPointsIgnoreErrorsAsync(dpMap, token);
+                var err = await Destination.InsertDataPointsIgnoreErrorsAsync(dpMap, token);
                 if (err.IdsNotFound?.Any() ?? false)
                 {
                     foreach (var id in err.IdsNotFound) dpMap.Remove(id);
@@ -248,7 +248,7 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Failed to handle upload results: {msg}", ex.Message);
+                DestLogger.LogWarning(ex, "Failed to handle upload results: {msg}", ex.Message);
             }
 
             var uploaded = dpMap.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList();

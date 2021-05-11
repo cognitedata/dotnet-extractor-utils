@@ -76,7 +76,7 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Failed to write to buffer: {msg}", ex.Message);
+                DestLogger.LogWarning("Failed to write to buffer: {msg}", ex.Message);
             }
         }
 
@@ -96,23 +96,23 @@ namespace Cognite.Extractor.Utils
                         events = await CogniteUtils.ReadEventsAsync(stream, token, 10_000);
                         if (events.Any())
                         {
-                            var result = await _destination.EnsureEventsExistsAsync(events, RetryMode.OnError, SanitationMode.Clean, token);
+                            var result = await Destination.EnsureEventsExistsAsync(events, RetryMode.OnError, SanitationMode.Clean, token);
 
                             var fatalError = result.Errors?.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
                             if (fatalError != null)
                             {
-                                _logger.LogWarning("Failed to read from buffer: {msg}", fatalError.Message);
+                                DestLogger.LogWarning("Failed to read from buffer: {msg}", fatalError.Message);
                                 return;
                             }
 
-                            if (_callback != null) await _callback(new QueueUploadResult<EventCreate>(events));
+                            if (Callback != null) await Callback(new QueueUploadResult<EventCreate>(events));
                         }
                     } while (events.Any());
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Failed to read from buffer: {msg}", ex.Message);
+                DestLogger.LogWarning("Failed to read from buffer: {msg}", ex.Message);
                 return;
             }
             System.IO.File.Create(_bufferPath).Close();
@@ -136,26 +136,26 @@ namespace Cognite.Extractor.Utils
                     bool connected;
                     try
                     {
-                        await _destination.TestCogniteConfig(token);
+                        await Destination.TestCogniteConfig(token);
                         connected = true;
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogTrace("Failed to connect to CDF for inserting events: {msg}", ex.Message);
+                        DestLogger.LogTrace("Failed to connect to CDF for inserting events: {msg}", ex.Message);
                         connected = false;
                     }
                     if (connected)
                     {
-                        _logger.LogTrace("Reconnected to CDF, reading events from buffer");
+                        DestLogger.LogTrace("Reconnected to CDF, reading events from buffer");
                         await ReadFromBuffer(token);
                     }
                 }
                 return new QueueUploadResult<EventCreate>(Enumerable.Empty<EventCreate>());
             }
 
-            _logger.LogTrace("Dequeued {Number} events to upload to CDF", items.Count());
+            DestLogger.LogTrace("Dequeued {Number} events to upload to CDF", items.Count());
 
-            var result = await _destination.EnsureEventsExistsAsync(items, RetryMode.OnError, SanitationMode.Clean, token);
+            var result = await Destination.EnsureEventsExistsAsync(items, RetryMode.OnError, SanitationMode.Clean, token);
 
             var fatalError = result.Errors?.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
             if (fatalError != null)
