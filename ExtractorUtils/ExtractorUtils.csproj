@@ -11,6 +11,8 @@
     <Description>
       A library containing utilities for building extractors in .Net
     </Description>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\LICENSE" Pack="true" Visible="false" PackagePath=""/>
