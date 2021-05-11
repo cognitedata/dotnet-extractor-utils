@@ -115,7 +115,7 @@ namespace Cognite.Extractor.Utils
         /// Disables Sdk logging 
         /// </summary>
         /// <value></value>
-        public bool Disable { get; set; } = false;
+        public bool Disable { get; set; }
 
         /// <summary>
         /// Cognite Sdk logs are diplayed using this level.
