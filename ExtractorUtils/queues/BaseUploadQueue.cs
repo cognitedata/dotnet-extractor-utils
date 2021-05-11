@@ -177,7 +177,7 @@ namespace Cognite.Extractor.Utils
             return Task.Run(async () => {
                 var result = await Trigger(token);
                 if (Callback != null) await Callback(result);
-            });
+            }, CancellationToken.None);
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Cognite.Extractor.Utils
         protected abstract Task<QueueUploadResult<T>> UploadEntries(IEnumerable<T> items, CancellationToken token);
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
+        private bool disposedValue; // To detect redundant calls
 
         private async Task FinalizeQueue()
         {
@@ -256,6 +256,7 @@ namespace Cognite.Extractor.Utils
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

@@ -263,6 +263,10 @@ namespace Cognite.Extractor.Utils
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             CancellationToken token)
         {
+            if (points == null || !points.Any())
+            {
+                return;
+            }
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
@@ -317,6 +321,10 @@ namespace Cognite.Extractor.Utils
             IDictionary<Identity, IEnumerable<Common.TimeRange>> ranges,
             CancellationToken token)
         {
+            if (ranges == null || !ranges.Any())
+            {
+                return new DeleteError(new List<Identity>(), new List<Identity>());
+            }
             _logger.LogDebug("Deleting data points in CDF for {NumberTs} time series", 
                 ranges.Keys.Count);
             var errors = await _client.DataPoints.DeleteIgnoreErrorsAsync(
@@ -353,6 +361,10 @@ namespace Cognite.Extractor.Utils
             JsonSerializerOptions options,
             CancellationToken token)
         {
+            if (rows == null || !rows.Any())
+            {
+                return;
+            }
             _logger.LogDebug("Uploading {Number} rows to CDF Raw. Database: {Db}. Table: {Table}",
                 rows.Count,
                 database,
@@ -385,6 +397,10 @@ namespace Cognite.Extractor.Utils
             IDictionary<string, T> rows, 
             CancellationToken token)
         {
+            if (rows == null || !rows.Any())
+            {
+                return;
+            }
             _logger.LogDebug("Uploading {Number} rows to CDF Raw. Database: {Db}. Table: {Table}", 
                 rows.Count,
                 database,
