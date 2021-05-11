@@ -38,7 +38,7 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException("Cognite configuration missing");
             }
             
-            if (config?.Project?.TrimToNull() == null)
+            if (config.Project?.TrimToNull() == null)
             {
                 throw new CogniteUtilsException("CDF project is not configured");
             }
