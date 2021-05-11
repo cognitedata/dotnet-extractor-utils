@@ -42,3 +42,5 @@ dotnet_diagnostic.CA2007.severity = warning
 dotnet_diagnostic.CA2016.severity = warning
 # CA1816: Call GC.SuppressFinalize correctly
 dotnet_diagnostic.CA1816.severity = warning
+
+dotnet_code_quality.CA1062.exclude_extension_method_this_parameter = true

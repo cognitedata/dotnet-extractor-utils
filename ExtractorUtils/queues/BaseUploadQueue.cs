@@ -168,7 +168,7 @@ namespace Cognite.Extractor.Utils
                     // ignore cancel exceptions, but throw any other exception
                     DestLogger.LogDebug("Upload queue of type {Type} cancelled with {QueueSize} items left", GetType().Name, _items.Count);
                 }
-            });
+            }, CancellationToken.None);
             await _uploadLoopTask;
         }
 

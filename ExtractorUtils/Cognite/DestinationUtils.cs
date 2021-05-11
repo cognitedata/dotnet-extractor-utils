@@ -103,7 +103,7 @@ namespace Cognite.Extractor.Utils
 
 
         /// <summary>
-        /// Configure a CogntieSdk Client.Builder according to the <paramref name="config"/> object
+        /// Configure a CogniteSdk Client.Builder according to the <paramref name="config"/> object
         /// </summary>
         /// <param name="clientBuilder">This builder</param>
         /// <param name="config">A <see cref="CogniteConfig"/> configuration object</param>
@@ -127,23 +127,27 @@ namespace Cognite.Extractor.Utils
             ILogger<Client> logger = null,
             IMetrics metrics = null)
         {
+            if (config == null)
+            {
+                throw new CogniteUtilsException("Cannot configure Builder: Configuration is missing");
+            }
+            if (config.Project?.TrimToNull() == null)
+            {
+                throw new CogniteUtilsException("Cannot configure Builder: Project is not configured");
+            }
             var builder = clientBuilder
-                .SetAppId(appId);
+                .SetAppId(appId)
+                .SetProject(config.Project);
 
             if (userAgent != null)
             {
                 builder = builder.SetUserAgent(userAgent);
             }
 
-            if (config?.Project?.TrimToNull() != null)
-            {
-                builder = builder.SetProject(config?.Project);
-            }
-
-            if (config?.Host?.TrimToNull() != null)
+            if (config.Host?.TrimToNull() != null)
                 builder = builder.SetBaseUrl(new Uri(config.Host));
 
-            if (config?.ApiKey?.TrimToNull() != null)
+            if (config.ApiKey?.TrimToNull() != null)
             {
                 builder = builder
                     .SetApiKey(config.ApiKey);
@@ -153,7 +157,7 @@ namespace Cognite.Extractor.Utils
                 builder = builder.SetTokenProvider(token => auth.GetToken(token));
             }
 
-            if (config?.SdkLogging != null && !config.SdkLogging.Disable && logger != null)
+            if (config.SdkLogging != null && !config.SdkLogging.Disable && logger != null)
             {
                 builder = builder
                     .SetLogLevel(config.SdkLogging.Level)

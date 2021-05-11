@@ -127,9 +127,18 @@ namespace Cognite.Extractor.Utils
                 }
                 else
                 {
-                    var error = JsonSerializer.Deserialize<ErrorDTO>(body);
-                    _logger.LogError("Unable to obtain OIDC token: {Message}", error.ErrorDescription);
-                    throw new CogniteUtilsException($"Could not obtain OIDC token: {error.Error} {error.ErrorDescription}");
+                    try {
+                        var error = JsonSerializer.Deserialize<ErrorDTO>(body);
+                        _logger.LogError("Unable to obtain OIDC token: {Message}", error.ErrorDescription);
+                        throw new CogniteUtilsException($"Could not obtain OIDC token: {error.Error} {error.ErrorDescription}");
+                    }
+                    catch (JsonException ex)
+                    {
+                        _logger.LogError("Unable to obtain OIDC token: R{Code} - {Message}", (int) response.StatusCode, response.ReasonPhrase);
+                        throw new CogniteUtilsException(
+                            $"Could not obtain OIDC token: {(int) response.StatusCode} - {response.ReasonPhrase}",
+                            ex);
+                    }
                 }
             }
         }

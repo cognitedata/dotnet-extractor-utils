@@ -50,7 +50,7 @@ namespace Cognite.Extractor.Utils
         /// <exception cref="CogniteUtilsException">Thrown when credentials are invalid</exception>
         public async Task TestCogniteConfig(CancellationToken token)
         {
-            await _client.TestCogniteConfig(_config, token);
+            await _client.TestCogniteConfig(_config, token).ConfigureAwait(false);
         }
 
         #region timeseries
@@ -69,7 +69,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occurred and a list of the created and found timeseries</returns>
         public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
@@ -85,7 +85,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.TimeSeries,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
         /// <summary>
         /// Ensures the the time series with the provided <paramref name="externalIds"/> exist in CDF.
@@ -118,7 +118,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.TimeSeries,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.TimeSeries,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
         #endregion
 
@@ -184,7 +184,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.Assets,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
         /// <summary>
         /// Ensures the the assets with the provided <paramref name="externalIds"/> exist in CDF.
@@ -216,7 +216,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.Assets,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.Assets,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
         #endregion
 
@@ -275,7 +275,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.DataPointTimeSeries,
                 _config.CdfChunking.DataPoints,
                 _config.CdfThrottling.DataPoints,
-                token);
+                token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -291,6 +291,10 @@ namespace Cognite.Extractor.Utils
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             CancellationToken token)
         {
+            if (points == null || !points.Any())
+            {
+                return new InsertError(new List<Identity>(), new List<Identity>());
+            }
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
@@ -300,7 +304,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.DataPoints,
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.DataPoints,
-                token);
+                token).ConfigureAwait(false);
             if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any()) {
                     _logger.LogDebug("Found {NumMissing} missing ids and {NumMismatched} mismatched time series", 
                 errors.IdsNotFound.Count(), errors.IdsWithMismatchedData.Count());
@@ -333,7 +337,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.DataPointList,
                 _config.CdfThrottling.DataPoints,
                 _config.CdfThrottling.DataPoints,
-                token);
+                token).ConfigureAwait(false);
             _logger.LogDebug("During deletion, {NumMissing} ids where not found and {NumNotConfirmed} range deletions could not be confirmed", 
                 errors.IdsNotFound.Count(), errors.IdsDeleteNotConfirmed.Count());
             return errors;
@@ -376,7 +380,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfChunking.RawRows,
                 _config.CdfThrottling.Raw,
                 token,
-                options);
+                options).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -411,7 +415,7 @@ namespace Cognite.Extractor.Utils
                 rows,
                 _config.CdfChunking.RawRows,
                 _config.CdfThrottling.Raw,
-                token);
+                token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -596,7 +600,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.Events,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
         /// <summary>
         /// Ensures the the events with the provided <paramref name="externalIds"/> exist in CDF.
@@ -628,7 +632,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.Events,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -658,7 +662,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.Events,
                 retryMode,
                 sanitationMode,
-                token);
+                token).ConfigureAwait(false);
         }
         #endregion
     }
