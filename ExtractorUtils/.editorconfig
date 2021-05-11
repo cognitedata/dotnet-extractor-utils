@@ -26,3 +26,5 @@ dotnet_diagnostic.CA1056.severity = suggestion
 dotnet_diagnostic.CA2227.severity = none
 # CA1711: Identifiers should not have incorrect suffix
 dotnet_diagnostic.CA1711.severity = none
+# CA1508: Avoid dead conditional code
+dotnet_diagnostic.CA1508.severity = error

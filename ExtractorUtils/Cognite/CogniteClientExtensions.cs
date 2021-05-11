@@ -43,7 +43,7 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException("CDF project is not configured");
             }
 
-            if (config?.ApiKey?.TrimToNull() != null)
+            if (config.ApiKey?.TrimToNull() != null)
             {
                 LoginStatus loginStatus;
                 using (loginSummary.WithLabels("status").NewTimer())
@@ -54,12 +54,12 @@ namespace Cognite.Extractor.Utils
                 {
                     throw new CogniteUtilsException("CDF credentials are invalid");
                 }
-                if (!loginStatus.Project.Equals(config.Project))
+                if (!loginStatus.Project.Equals(config.Project, System.StringComparison.Ordinal))
                 {
                     throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
                 }
             }
-            else if (config?.IdpAuthentication != null)
+            else if (config.IdpAuthentication != null)
             {
                 TokenInspect tokenInspect;
                 using (tokenSummary.WithLabels("inspect").NewTimer())
