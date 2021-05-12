@@ -48,7 +48,7 @@ namespace Cognite.Extractor.Utils
                 LoginStatus loginStatus;
                 using (loginSummary.WithLabels("status").NewTimer())
                 {
-                    loginStatus = await client.Login.StatusAsync(token);
+                    loginStatus = await client.Login.StatusAsync(token).ConfigureAwait(false);
                 }
                 if (!loginStatus.LoggedIn)
                 {
@@ -64,7 +64,7 @@ namespace Cognite.Extractor.Utils
                 TokenInspect tokenInspect;
                 using (tokenSummary.WithLabels("inspect").NewTimer())
                 {
-                    tokenInspect = await client.Token.InspectAsync(token);
+                    tokenInspect = await client.Token.InspectAsync(token).ConfigureAwait(false);
                 }
                 if (tokenInspect.Projects == null || !tokenInspect.Projects.Any(p => p.ProjectUrlName == config.Project))
                 {

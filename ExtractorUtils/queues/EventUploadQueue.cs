@@ -64,6 +64,7 @@ namespace Cognite.Extractor.Utils
             _numberEvents.Inc();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task WriteToBuffer(IEnumerable<EventCreate> events, CancellationToken token)
         {
             try
@@ -80,6 +81,7 @@ namespace Cognite.Extractor.Utils
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task ReadFromBuffer(CancellationToken token)
         {
             IEnumerable<EventCreate> events;
@@ -125,6 +127,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="items">Events to upload</param>
         /// <param name="token"></param>
         /// <returns>An error or the uploaded events</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         protected override async Task<QueueUploadResult<EventCreate>> UploadEntries(IEnumerable<EventCreate> items, CancellationToken token)
         {
             _queueSize.Dec(items.Count());

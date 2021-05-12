@@ -133,7 +133,7 @@ namespace Cognite.Extractor.Utils
         public async Task<QueueUploadResult<T>> Trigger(CancellationToken token)
         {
             var items = Dequeue();
-            return await UploadEntries(items, token);
+            return await UploadEntries(items, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -169,9 +169,11 @@ namespace Cognite.Extractor.Utils
                     DestLogger.LogDebug("Upload queue of type {Type} cancelled with {QueueSize} items left", GetType().Name, _items.Count);
                 }
             }, CancellationToken.None);
-            await _uploadLoopTask;
+            await _uploadLoopTask.ConfigureAwait(false);
         }
 
+        
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private Task TriggerUploadAndCallback(CancellationToken token)
         {
             return Task.Run(async () => {
@@ -191,6 +193,7 @@ namespace Cognite.Extractor.Utils
         #region IDisposable Support
         private bool disposedValue; // To detect redundant calls
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Fine to wait in the same context")]
         private async Task FinalizeQueue()
         {
             try
@@ -220,6 +223,7 @@ namespace Cognite.Extractor.Utils
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task WaitOrTimeout(Task task)
         {
             var t = await Task.WhenAny(task, Task.Delay(60_000));
@@ -233,6 +237,7 @@ namespace Cognite.Extractor.Utils
         /// Dispose of the queue, uploading all remaining entries.
         /// </summary>
         /// <param name="disposing"></param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Fine to wait in the same context")]
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

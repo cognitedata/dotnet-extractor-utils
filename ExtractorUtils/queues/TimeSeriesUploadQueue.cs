@@ -106,6 +106,7 @@ namespace Cognite.Extractor.Utils
             _collection = collection;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task WriteToBuffer(Dictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
         {
             try
@@ -122,6 +123,7 @@ namespace Cognite.Extractor.Utils
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task ReadFromBuffer(CancellationToken token)
         {
             IDictionary<Identity, IEnumerable<Datapoint>> dps;
@@ -152,6 +154,7 @@ namespace Cognite.Extractor.Utils
             _bufferAny = false;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task HandleUploadResult(IDictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
         {
             if (_states == null || !_states.Any()) return;
@@ -178,6 +181,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="dps">Datapoints to upload</param>
         /// <param name="token"></param>
         /// <returns>Uploaded points or an error</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         protected override async Task<QueueUploadResult<(Identity id, Datapoint dp)>> UploadEntries(
             IEnumerable<(Identity id, Datapoint dp)> dps,
             CancellationToken token)

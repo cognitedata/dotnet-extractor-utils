@@ -67,6 +67,7 @@ namespace Cognite.Extractor.Utils
             _queueSize.WithLabels(typeof(T).Name).Inc();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         protected override async Task<QueueUploadResult<(string key, T columns)>> UploadEntries(
             IEnumerable<(string key, T columns)> items, CancellationToken token)
         {
