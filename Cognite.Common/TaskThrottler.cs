@@ -50,29 +50,19 @@ namespace Cognite.Extractor.Common
         }
     }
     /// <summary>
-    /// Tool to throttle the execution of tasks based on execution time, max perallelism, and max number of tasks
+    /// Tool to throttle the execution of tasks based on max perallelism, and max number of tasks
     /// scheduled per time unit.
     /// 
     /// Maximum parallelism simply limits the number of parallel tasks.
     /// 
-    /// Per unit sets the target for the number of tasks to schedule per timeUnit. This is approximated
-    /// over time, so if there is a steady supply of tasks to schedule it will limit the number scheduled
-    /// to this value.
-    /// 
-    /// Usage per unit sets the number of full threads (in theory), that should be able to be consumed per time unit.
-    /// For example, if usagePerUnit is 2.0, an average of two tasks should be running at any point in time.
-    /// If this value has been exceeded on average over the last few time units, no new tasks are scheduled.
-    /// In this case the timeUnit value indicates over what time the average should be taken.
-    /// 
-    /// These are not fixed bounds, but target average values.
-    /// 
+    /// Per unit sets the maximum number of tasks scheduled per time unit.
+    ///
     /// Tasks are enqueued and scheduled for execution in order.
     /// </summary>
     public class TaskThrottler : IDisposable
     {
         private readonly int _maxParallelism;
         private readonly int _maxPerUnit;
-        private readonly double _maxUsagePerUnit;
         private readonly TimeSpan _timeUnit;
         // Default unederlying collection is a ConcurrentQueue
         private readonly BlockingCollection<Func<Task>> _generators = new BlockingCollection<Func<Task>>();
@@ -98,15 +88,12 @@ namespace Cognite.Extractor.Common
         /// <param name="maxParallelism">Maximum number of parallel threads</param>
         /// <param name="quitOnFailure">True if </param>
         /// <param name="perUnit"></param>
-        /// <param name="usagePerUnit"></param>
         /// <param name="timeUnit"></param>
-        public TaskThrottler(int maxParallelism, bool quitOnFailure = false, int perUnit = 0, double usagePerUnit = 0, TimeSpan? timeUnit = null)
+        public TaskThrottler(int maxParallelism, bool quitOnFailure = false, int perUnit = 0, TimeSpan? timeUnit = null)
         {
             _maxParallelism = maxParallelism;
             _maxPerUnit = perUnit;
-            _maxUsagePerUnit = usagePerUnit;
-            // Discount is a geometric progression, so the real time unit is twice the given value, asymptotically.
-            _timeUnit = timeUnit == null ? TimeSpan.Zero : TimeSpan.FromTicks(timeUnit.Value.Ticks / 2);
+            _timeUnit = timeUnit == null ? TimeSpan.Zero : TimeSpan.FromTicks(timeUnit.Value.Ticks);
             _quitOnFailure = quitOnFailure;
             RunTask = Run();
         }
@@ -192,19 +179,12 @@ namespace Cognite.Extractor.Common
             lock (_lock)
             {
                 if (_maxParallelism > 0 && _runningTasks.Count >= _maxParallelism) return false;
-                if (_timeUnit > TimeSpan.Zero && (_maxPerUnit > 0 || _maxUsagePerUnit > 0))
+                if (_timeUnit > TimeSpan.Zero && _maxPerUnit > 0)
                 {
                     var now = DateTime.UtcNow;
-                    var discountedUsage = _results.Aggregate((0d, 0d), (seed, result) =>
-                    {
-                        var usage = (result.CompletionTime ?? DateTime.UtcNow) - result.StartTime;
-                        var diff = now - result.StartTime;
-                        double diffUnits = diff.Ticks / _timeUnit.Ticks;
-                        var discount = Math.Pow(2, -Math.Floor(diffUnits));
-                        return (seed.Item1 + discount * (usage.Ticks / _timeUnit.Ticks), seed.Item2 + discount);
-                    });
-                    if (_maxUsagePerUnit > 0 && discountedUsage.Item1 >= _maxUsagePerUnit) return false;
-                    if (_maxPerUnit > 0 && discountedUsage.Item2 >= _maxPerUnit) return false;
+                    var scheduledWithinLastTimeUnit = _results.Count(res => res.StartTime > now - _timeUnit);
+
+                    if (scheduledWithinLastTimeUnit > _maxPerUnit) return false;
                 }
             }
             return true;
@@ -224,7 +204,7 @@ namespace Cognite.Extractor.Common
                         {
                             try
                             {
-                                var generator = _generators.Take();
+                                var generator = _generators.Take(source.Token);
                                 lock (_lock)
                                 {
                                     _runningTasks.Add(generator());
@@ -234,7 +214,8 @@ namespace Cognite.Extractor.Common
                             {
                                 running = false;
                             }
-                        }, source.Token));
+                            catch (OperationCanceledException) { }
+                        }));
                     }
                     else if (_timeUnit > TimeSpan.Zero)
                     {
