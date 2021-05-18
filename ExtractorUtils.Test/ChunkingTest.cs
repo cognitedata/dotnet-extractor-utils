@@ -141,18 +141,17 @@ namespace ExtractorUtils.Test {
         }
 
         [Theory]
-        [InlineData(0, 2, 0, 50)]
-        [InlineData(5, 0, 0, 0)]
-        [InlineData(0, 0, 1, 50)]
-        [InlineData(0, 0, 2, 50)]
-        public static async Task TestTaskThrottler(int maxParallelism, int maxPerUnit, double maxUsagePerUnit, int timespanMs)
+        [InlineData(0, 2, 50)]
+        [InlineData(5, 0, 0)]
+        [InlineData(2, 2, 50)]
+        public static async Task TestTaskThrottler(int maxParallelism, int maxPerUnit, int timespanMs)
         {
             // Running this test in github actions is pretty unreliable...
             for (int i = 0; i < 5; i++)
             {
                 try
                 {
-                    using var throttler = new TaskThrottler(maxParallelism, true, maxPerUnit, maxUsagePerUnit, TimeSpan.FromMilliseconds(timespanMs));
+                    using var throttler = new TaskThrottler(maxParallelism, true, maxPerUnit, TimeSpan.FromMilliseconds(timespanMs));
                     var generators = Enumerable.Range(0, 20)
                         .Select<int, Func<Task>>(_ => () => Task.Delay(100))
                         .ToList();
@@ -169,11 +168,8 @@ namespace ExtractorUtils.Test {
                     double minElapsedTimeLimit = maxPerUnit == 0 || timespanMs == 0
                         ? 0
                         : 20 / maxPerUnit * timespanMs;
-                    double minElapsedTimeUsage = maxUsagePerUnit == 0 || timespanMs == 0
-                        ? 0
-                        : 2000 / (maxUsagePerUnit);
 
-                    var minElapsedTime = Math.Max(minElapsedTimeUsage, Math.Max(minElapsedTimeParallel, minElapsedTimeLimit));
+                    var minElapsedTime = Math.Max(minElapsedTimeParallel, minElapsedTimeLimit);
 
                     var realMs = (end - start).TotalMilliseconds;
 
