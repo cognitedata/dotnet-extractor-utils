@@ -62,7 +62,7 @@ namespace Cognite.Extractor.Utils
             try
             {
                 result = await _app.AcquireTokenForClient(_config.Scopes)
-                    .ExecuteAsync(token);
+                    .ExecuteAsync(token).ConfigureAwait(false);
                 
                 // The client application will take care of caching the token and 
                 // renewal before expiration

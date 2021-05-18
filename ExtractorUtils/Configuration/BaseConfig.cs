@@ -115,7 +115,7 @@ namespace Cognite.Extractor.Utils
         /// Disables Sdk logging 
         /// </summary>
         /// <value></value>
-        public bool Disable { get; set; } = false;
+        public bool Disable { get; set; }
 
         /// <summary>
         /// Cognite Sdk logs are diplayed using this level.
@@ -197,7 +197,7 @@ namespace Cognite.Extractor.Utils
         /// Resource scopes
         /// </summary>
         /// <value>Scope</value>
-        public List<string> Scopes { get; set; }
+        public IList<string> Scopes { get; set; }
 
         /// <summary>
         /// Minimum time-to-live for the token in seconds (optional)

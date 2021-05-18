@@ -38,33 +38,33 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException("Cognite configuration missing");
             }
             
-            if (config?.Project?.TrimToNull() == null)
+            if (config.Project?.TrimToNull() == null)
             {
                 throw new CogniteUtilsException("CDF project is not configured");
             }
 
-            if (config?.ApiKey?.TrimToNull() != null)
+            if (config.ApiKey?.TrimToNull() != null)
             {
                 LoginStatus loginStatus;
                 using (loginSummary.WithLabels("status").NewTimer())
                 {
-                    loginStatus = await client.Login.StatusAsync(token);
+                    loginStatus = await client.Login.StatusAsync(token).ConfigureAwait(false);
                 }
                 if (!loginStatus.LoggedIn)
                 {
                     throw new CogniteUtilsException("CDF credentials are invalid");
                 }
-                if (!loginStatus.Project.Equals(config.Project))
+                if (!loginStatus.Project.Equals(config.Project, System.StringComparison.Ordinal))
                 {
                     throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
                 }
             }
-            else if (config?.IdpAuthentication != null)
+            else if (config.IdpAuthentication != null)
             {
                 TokenInspect tokenInspect;
                 using (tokenSummary.WithLabels("inspect").NewTimer())
                 {
-                    tokenInspect = await client.Token.InspectAsync(token);
+                    tokenInspect = await client.Token.InspectAsync(token).ConfigureAwait(false);
                 }
                 if (tokenInspect.Projects == null || !tokenInspect.Projects.Any(p => p.ProjectUrlName == config.Project))
                 {

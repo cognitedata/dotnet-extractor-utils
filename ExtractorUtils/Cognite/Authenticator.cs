@@ -77,6 +77,10 @@ namespace Cognite.Extractor.Utils
         /// <param name="logger">Logger</param>
         public Authenticator(AuthenticatorConfig config, HttpClient client, ILogger<IAuthenticator> logger)
         {
+            if (config == null)
+            {
+                throw new ConfigurationException("Configuration missing");
+            }
             _config = config;
             _client = client;
             _logger = logger;
@@ -97,6 +101,7 @@ namespace Cognite.Extractor.Utils
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task<ResponseDTO> RequestToken(CancellationToken token = default)
         {
             var form = new Dictionary<string, string>
@@ -127,9 +132,18 @@ namespace Cognite.Extractor.Utils
                 }
                 else
                 {
-                    var error = JsonSerializer.Deserialize<ErrorDTO>(body);
-                    _logger.LogError("Unable to obtain OIDC token: {Message}", error.ErrorDescription);
-                    throw new CogniteUtilsException($"Could not obtain OIDC token: {error.Error} {error.ErrorDescription}");
+                    try {
+                        var error = JsonSerializer.Deserialize<ErrorDTO>(body);
+                        _logger.LogError("Unable to obtain OIDC token: {Message}", error.ErrorDescription);
+                        throw new CogniteUtilsException($"Could not obtain OIDC token: {error.Error} {error.ErrorDescription}");
+                    }
+                    catch (JsonException ex)
+                    {
+                        _logger.LogError("Unable to obtain OIDC token: R{Code} - {Message}", (int) response.StatusCode, response.ReasonPhrase);
+                        throw new CogniteUtilsException(
+                            $"Could not obtain OIDC token: {(int) response.StatusCode} - {response.ReasonPhrase}",
+                            ex);
+                    }
                 }
             }
         }
@@ -164,7 +178,7 @@ namespace Cognite.Extractor.Utils
             }
 
             _requestTime = DateTime.UtcNow;
-            _response = await RequestToken(token);
+            _response = await RequestToken(token).ConfigureAwait(false);
 
             return _response?.AccessToken;
         }

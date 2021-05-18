@@ -1,0 +1,66 @@
+# Remove the line below if you want to inherit .editorconfig settings from higher directories
+root = true
+
+# C# files
+[*.cs]
+
+#### Core EditorConfig Options ####
+
+# Indentation and spacing
+indent_size = 4
+indent_style = space
+tab_width = 4
+
+#### .NET Coding Conventions ####
+
+# this. and Me. preferences
+dotnet_style_qualification_for_method = true
+
+#### Diagnostic configuration ####
+
+# CA1812: Avoid uninstantiated internal classes
+dotnet_diagnostic.CA1812.severity = none
+# CA2227: Collection properties should be read only
+dotnet_diagnostic.CA2227.severity = none
+# CA1711: Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1711.severity = none
+# CA1056: URI properties should not be strings
+dotnet_diagnostic.CA1056.severity = suggestion
+#CA1805: Do not initialize unnecessarily
+dotnet_diagnostic.CA1805.severity = suggestion
+# CA1725: Parameter names should match base declaration
+dotnet_diagnostic.CA1725.severity = suggestion
+# CA1508: Avoid dead conditional code
+dotnet_diagnostic.CA1508.severity = warning
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = warning
+dotnet_code_quality.CA1062.exclude_extension_method_this_parameter = true
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = warning
+# CA1816: Call GC.SuppressFinalize correctly
+dotnet_diagnostic.CA1816.severity = warning
+
+#### Reliability rules ####
+
+# CA2000: Dispose objects before losing scope
+dotnet_diagnostic.CA2000.severity = error
+# CA2002: Do not lock on objects with weak identity
+dotnet_diagnostic.CA2002.severity = error
+# CA2007: Do not directly await a Task
+dotnet_diagnostic.CA2007.severity = warning
+# CA2008: Do not create tasks without passing a TaskScheduler
+dotnet_diagnostic.CA2008.severity = warning
+# CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+dotnet_diagnostic.CA2009.severity = warning
+# CA2011: Do not assign property within its setter
+dotnet_diagnostic.CA2011.severity = error
+# CA2012: Use ValueTasks correctly
+dotnet_diagnostic.CA2012.severity = error
+# CA2013: Do not use ReferenceEquals with value types
+dotnet_diagnostic.CA2013.severity = error
+# CA2014: Do not use stackalloc in loops
+dotnet_diagnostic.CA2014.severity = error
+# CA2015: Do not define finalizers for types derived from MemoryManager<T>
+dotnet_diagnostic.CA2015.severity = error
+# CA2016: Forward the CancellationToken parameter to methods that take one
+dotnet_diagnostic.CA2016.severity = warning

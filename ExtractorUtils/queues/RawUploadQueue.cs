@@ -67,6 +67,7 @@ namespace Cognite.Extractor.Utils
             _queueSize.WithLabels(typeof(T).Name).Inc();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         protected override async Task<QueueUploadResult<(string key, T columns)>> UploadEntries(
             IEnumerable<(string key, T columns)> items, CancellationToken token)
         {
@@ -76,10 +77,10 @@ namespace Cognite.Extractor.Utils
             {
                 return new QueueUploadResult<(string key, T columns)>(Enumerable.Empty<(string key, T columns)>());
             }
-            _logger.LogTrace("Dequeued {Number} {Type} rows to upload to CDF Raw", rows.Count, typeof(T).Name);
+            DestLogger.LogTrace("Dequeued {Number} {Type} rows to upload to CDF Raw", rows.Count, typeof(T).Name);
             try
             {
-                await _destination.InsertRawRowsAsync(_db, _table, rows, token);
+                await Destination.InsertRawRowsAsync(_db, _table, rows, token);
             }
             catch (Exception ex)
             {

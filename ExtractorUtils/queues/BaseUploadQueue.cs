@@ -50,24 +50,24 @@ namespace Cognite.Extractor.Utils
     /// <typeparam name="T"></typeparam>
     public abstract class BaseUploadQueue<T> : IDisposable
     {
-        private readonly int _maxSize;
         /// <summary>
         /// CogniteDestination to use
         /// </summary>
-        protected readonly CogniteDestination _destination;
+        protected CogniteDestination Destination { get; private set; }
         /// <summary>
         /// Callback on upload
         /// </summary>
-        protected readonly Func<QueueUploadResult<T>, Task> _callback;
+        protected Func<QueueUploadResult<T>, Task> Callback { get; private set; }
 
-        private readonly ConcurrentQueue<T> _items;
         /// <summary>
         /// Logger to use
         /// </summary>
-        protected readonly ILogger<CogniteDestination> _logger;
+        protected ILogger<CogniteDestination> DestLogger { get; private set; }
+
+        private readonly ConcurrentQueue<T> _items;
+        private readonly int _maxSize;
         private readonly ManualResetEventSlim _pushEvent;
         private readonly System.Timers.Timer _timer;
-
         private CancellationTokenSource _tokenSource;
         private CancellationTokenSource _internalSource;
         private Task _uploadLoopTask;
@@ -81,11 +81,11 @@ namespace Cognite.Extractor.Utils
             Func<QueueUploadResult<T>, Task> callback)
         {
             _maxSize = maxSize;
-            _destination = destination;
+            Destination = destination;
             _items = new ConcurrentQueue<T>();
-            _logger = logger;
+            DestLogger = logger;
             _pushEvent = new ManualResetEventSlim(false);
-            _callback = callback;
+            Callback = callback;
 
             if (interval == TimeSpan.Zero || interval == Timeout.InfiniteTimeSpan) return;
 
@@ -133,7 +133,7 @@ namespace Cognite.Extractor.Utils
         public async Task<QueueUploadResult<T>> Trigger(CancellationToken token)
         {
             var items = Dequeue();
-            return await UploadEntries(items, token);
+            return await UploadEntries(items, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Cognite.Extractor.Utils
         {
             _tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
             _timer?.Start();
-            _logger.LogDebug("Queue of type {Type} started", GetType().Name);
+            DestLogger.LogDebug("Queue of type {Type} started", GetType().Name);
 
             // Use a separate token to avoid propagating the loop cancellation to Chunking.RunThrottled
             _internalSource = new CancellationTokenSource();
@@ -166,18 +166,20 @@ namespace Cognite.Extractor.Utils
                 catch (OperationCanceledException)
                 {
                     // ignore cancel exceptions, but throw any other exception
-                    _logger.LogDebug("Upload queue of type {Type} cancelled with {QueueSize} items left", GetType().Name, _items.Count);
+                    DestLogger.LogDebug("Upload queue of type {Type} cancelled with {QueueSize} items left", GetType().Name, _items.Count);
                 }
-            });
-            await _uploadLoopTask;
+            }, CancellationToken.None);
+            await _uploadLoopTask.ConfigureAwait(false);
         }
 
+        
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private Task TriggerUploadAndCallback(CancellationToken token)
         {
             return Task.Run(async () => {
                 var result = await Trigger(token);
-                if (_callback != null) await _callback(result);
-            });
+                if (Callback != null) await Callback(result);
+            }, CancellationToken.None);
         }
 
         /// <summary>
@@ -189,8 +191,9 @@ namespace Cognite.Extractor.Utils
         protected abstract Task<QueueUploadResult<T>> UploadEntries(IEnumerable<T> items, CancellationToken token);
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
+        private bool disposedValue; // To detect redundant calls
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Fine to wait in the same context")]
         private async Task FinalizeQueue()
         {
             try
@@ -216,16 +219,17 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception when disposing of upload queue: {msg}", ex.Message);
+                DestLogger.LogError(ex, "Exception when disposing of upload queue: {msg}", ex.Message);
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task WaitOrTimeout(Task task)
         {
             var t = await Task.WhenAny(task, Task.Delay(60_000));
             if (t != task || t.Status != TaskStatus.RanToCompletion)
             {
-                _logger.LogError("Upload queue of type {Type} aborted before finishing uploading: Timeout", GetType().Name);
+                DestLogger.LogError("Upload queue of type {Type} aborted before finishing uploading: Timeout", GetType().Name);
             }
         }
 
@@ -233,6 +237,7 @@ namespace Cognite.Extractor.Utils
         /// Dispose of the queue, uploading all remaining entries.
         /// </summary>
         /// <param name="disposing"></param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Fine to wait in the same context")]
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -256,6 +261,7 @@ namespace Cognite.Extractor.Utils
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }
