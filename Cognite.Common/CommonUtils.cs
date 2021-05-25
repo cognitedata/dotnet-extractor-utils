@@ -43,6 +43,10 @@ namespace Cognite.Extractor.Common
         /// <returns>A tuple (Min, Max)</returns>
         public static (R Min, R Max) MinMax<T, R>(this IEnumerable<T> items, Func<T, R> selector) where R : IComparable
         {
+            if (selector == null)
+            {
+                throw new ArgumentNullException(nameof(selector));
+            }
             R min = default;
             R max = default;
             bool hasValue = false;
@@ -96,6 +100,10 @@ namespace Cognite.Extractor.Common
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source,
             Func<TSource, TKey> selector, IEqualityComparer<TKey> comparer = null)
         {
+            if (selector == null)
+            {
+                throw new ArgumentNullException(nameof(selector));
+            }
             if (source == null) throw new ArgumentNullException(nameof(source));
             HashSet<TKey> seenKeys = new HashSet<TKey>(comparer);
             foreach (var elem in source)

@@ -143,6 +143,15 @@ namespace Cognite.Extractor.Common
             Func<T, K> parentIdSelector,
             IEqualityComparer<K> comparer = null)
         {
+            if (idSelector == null)
+            {
+                throw new ArgumentNullException(nameof(idSelector));
+            }
+            if (parentIdSelector == null)
+            {
+                throw new ArgumentNullException(nameof(parentIdSelector));
+            }
+
             var eqComparer = comparer ?? EqualityComparer<K>.Default;
             if (!input.Any()) return Enumerable.Empty<IEnumerable<T>>();
 
@@ -247,7 +256,7 @@ namespace Cognite.Extractor.Common
             int parallelism,
             CancellationToken token)
         {
-            await RunThrottled(generators, parallelism, null, token);
+            await RunThrottled(generators, parallelism, null, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -274,9 +283,9 @@ namespace Cognite.Extractor.Common
                 token.ThrowIfCancellationRequested();
                 if (tasks.Any())
                 {
-                    var task = await Task.WhenAny(tasks);
+                    var task = await Task.WhenAny(tasks).ConfigureAwait(false);
                     // will throw exception if the task failed, returns immediately
-                    await task;
+                    await task.ConfigureAwait(false);
                     completedTasks++;
                     Debug.Assert(completedTasks <= totalTasks);
                     tasks.Remove(task);

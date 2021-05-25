@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Globalization;
+using System;
 
 namespace Cognite.Extractor.Common
 {
@@ -100,7 +101,7 @@ namespace Cognite.Extractor.Common
         /// <returns>ISO 8601 formatted string</returns>
         public static string ToISOString(this DateTime time)
         {
-            return time.ToString("yyyy-MM-dd HH\\:mm\\:ss.fff");
+            return time.ToString("yyyy-MM-dd HH\\:mm\\:ss.fff", CultureInfo.InvariantCulture);
         }
 
         /// <summary>

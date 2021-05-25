@@ -59,7 +59,7 @@ namespace Cognite.Extractor.Common
     ///
     /// Tasks are enqueued and scheduled for execution in order.
     /// </summary>
-    public class TaskThrottler : IDisposable
+    public sealed class TaskThrottler : IDisposable
     {
         private readonly int _maxParallelism;
         private readonly int _maxPerUnit;
@@ -100,13 +100,13 @@ namespace Cognite.Extractor.Common
 
         private static Task ToTask(WaitHandle waitHandle)
         {
-            if (waitHandle == null) throw new ArgumentNullException("waitHandle");
+            if (waitHandle == null) throw new ArgumentNullException(nameof(waitHandle));
 
             var tcs = new TaskCompletionSource<bool>();
             var rwh = ThreadPool.RegisterWaitForSingleObject(waitHandle,
                 delegate { tcs.TrySetResult(true); }, null, -1, true);
             var t = tcs.Task;
-            t.ContinueWith((antecedent) => rwh.Unregister(null));
+            t.ContinueWith((antecedent) => rwh.Unregister(null), TaskScheduler.Default);
             return t;
         }
 
@@ -130,7 +130,7 @@ namespace Cognite.Extractor.Common
                 {
                     taskResult.ReportResult(task);
                     _taskCompletionEvent.Set();
-                });
+                }, TaskScheduler.Default);
             }
 
             _generators.Add(wrappedGenerator);
@@ -161,11 +161,11 @@ namespace Cognite.Extractor.Common
                         localResult.ReportResult(task);
                         _taskCompletionEvent.Set();
                         localCompletionEvent.Set();
-                    });
+                    }, TaskScheduler.Default);
                 }
 
                 _generators.Add(wrappedGenerator);
-                await ToTask(localCompletionEvent);
+                await ToTask(localCompletionEvent).ConfigureAwait(false);
                 if (_quitOnFailure && localResult.Exception != null)
                 {
                     throw new AggregateException("Failure in TaskThrottler", localResult.Exception);
@@ -223,7 +223,7 @@ namespace Cognite.Extractor.Common
                     }
                     _toWaitFor.Add(ToTask(_taskCompletionEvent));
 
-                    await Task.WhenAny(_toWaitFor);
+                    await Task.WhenAny(_toWaitFor).ConfigureAwait(false);
 
                     _taskCompletionEvent.Reset();
                     source.Cancel();
@@ -237,7 +237,7 @@ namespace Cognite.Extractor.Common
 
                 if (!running)
                 {
-                    await Task.WhenAll(_runningTasks);
+                    await Task.WhenAll(_runningTasks).ConfigureAwait(false);
                 }
 
                 lock (_lock)
@@ -285,7 +285,7 @@ namespace Cognite.Extractor.Common
         public async Task<IEnumerable<TaskResult>> WaitForCompletion()
         {
             _generators.CompleteAdding();
-            await RunTask;
+            await RunTask.ConfigureAwait(false);
             CheckResult();
             return _results;
         }
