@@ -106,6 +106,10 @@ namespace Cognite.Extractor.Common
         /// <returns>A new TimeRange extended by <paramref name="newRange"/></returns>
         public TimeRange Extend(TimeRange newRange)
         {
+            if (newRange == null)
+            {
+                throw new ArgumentNullException(nameof(newRange));
+            }
             return Extend(newRange.First, newRange.Last);
         }
 
@@ -136,6 +140,10 @@ namespace Cognite.Extractor.Common
         /// <returns>A new TimeRange contracted by <paramref name="newRange"/></returns>
         public TimeRange Contract(TimeRange newRange)
         {
+            if (newRange == null)
+            {
+                throw new ArgumentNullException(nameof(newRange));
+            }
             return Contract(newRange.First, newRange.Last);
         }
 
