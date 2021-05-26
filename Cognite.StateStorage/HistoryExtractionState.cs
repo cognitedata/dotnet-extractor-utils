@@ -76,7 +76,7 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="last"></param>
         public override void InitExtractedRange(DateTime first, DateTime last)
         {
-            lock (_mutex)
+            lock (Mutex)
             {
                 DestinationExtractedRange = DestinationExtractedRange.Contract(first, last);
             }
@@ -94,7 +94,7 @@ namespace Cognite.Extractor.StateStorage
         /// </summary>
         public virtual void FinalizeRangeInit()
         {
-            lock (_mutex)
+            lock (Mutex)
             {
                 if (DestinationExtractedRange == TimeRange.Complete)
                 {
@@ -124,7 +124,7 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="final">True if this is the end of history</param>
         public virtual void UpdateFromBackfill(DateTime first, bool final)
         {
-            lock (_mutex)
+            lock (Mutex)
             {
                 if (first < SourceExtractedRange.First)
                 {
@@ -142,7 +142,7 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="final">True if this is the end of history</param>
         public virtual void UpdateFromFrontfill(DateTime last, bool final)
         {
-            lock (_mutex)
+            lock (Mutex)
             {
                 if (last > SourceExtractedRange.Last)
                 {
@@ -162,7 +162,7 @@ namespace Cognite.Extractor.StateStorage
         public virtual void UpdateFromStream(DateTime first, DateTime last)
         {
             if (IsFrontfilling && IsBackfilling) return;
-            lock (_mutex)
+            lock (Mutex)
             {
                 if (IsFrontfilling && last > SourceExtractedRange.Last)
                 {
@@ -190,7 +190,7 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="last">Latest timestamp in successful push to destination(s)</param>
         public override void UpdateDestinationRange(DateTime first, DateTime last)
         {
-            lock (_mutex)
+            lock (Mutex)
             {
                 // If points are pushed outside of the source range, we must getting points from some other source.
                 // To make sure that all source data is extracted, even if the extractor crashes immediately,
@@ -224,7 +224,7 @@ namespace Cognite.Extractor.StateStorage
         /// </summary>
         public virtual void RestartHistory()
         {
-            lock (_mutex)
+            lock (Mutex)
             {
                 IsFrontfilling = FrontfillEnabled;
                 IsBackfilling = BackfillEnabled && DestinationExtractedRange.First > CogniteTime.DateTimeEpoch;

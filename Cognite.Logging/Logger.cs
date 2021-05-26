@@ -39,6 +39,10 @@ namespace Cognite.Extractor.Logging
         /// <returns>A configured logger</returns>
         public static Serilog.ILogger GetConfiguredLogger(LoggerConfig config)
         {
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
             var logToConsole = Enum.TryParse(config.Console?.Level, true, out LogEventLevel consoleLevel);
             var logToFile = Enum.TryParse(config.File?.Level, true, out LogEventLevel fileLevel);
 
@@ -77,9 +81,11 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <returns>A <see cref="Microsoft.Extensions.Logging.ILogger"/> logger with default properties</returns>
         public static Microsoft.Extensions.Logging.ILogger GetDefault() {
-            var loggerFactory = new LoggerFactory();
-            loggerFactory.AddSerilog(GetSerilogDefault(), true);
-            return loggerFactory.CreateLogger("default");
+            using (var loggerFactory = new LoggerFactory())
+            {
+                loggerFactory.AddSerilog(GetSerilogDefault(), true);
+                return loggerFactory.CreateLogger("default");
+            }
         }
 
         /// <summary>
@@ -120,6 +126,14 @@ namespace Cognite.Extractor.Logging
         /// <param name="config">Logger configuration</param>
         public LoggerTraceListener(Microsoft.Extensions.Logging.ILogger<LoggerTraceListener> logger, LoggerConfig config)
         {
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
             _logger = logger;
             _level = config.TraceListener?.Level;
         }

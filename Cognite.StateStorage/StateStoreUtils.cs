@@ -1,4 +1,5 @@
-﻿using Cognite.Extractor.Common;
+﻿using System.Globalization;
+using Cognite.Extractor.Common;
 using LiteDB;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -59,7 +60,9 @@ namespace Cognite.Extractor.StateStorage
         /// <returns>snake-case string</returns>
         public static string ToSnakeCase(this string str)
         {
-            return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "-" + x.ToString() : x.ToString())).ToLower();
+            return string
+                .Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "-" + x.ToString() : x.ToString()))
+                .ToLower(CultureInfo.InvariantCulture);
         }
 
         private static object BsonToDictRec(BsonValue value)
@@ -98,6 +101,10 @@ namespace Cognite.Extractor.StateStorage
         /// <returns>Converted document</returns>
         public static IDictionary<string, object> BsonToDict(BsonDocument value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             var result = new Dictionary<string, object>();
             foreach (var kvp in value)
             {
@@ -163,6 +170,14 @@ namespace Cognite.Extractor.StateStorage
         /// <returns>An instance of <typeparamref name="T"/></returns>
         public static T DeserializeViaBson<T>(IDictionary<string, JsonElement> raw, BsonMapper mapper)
         {
+            if (raw == null)
+            {
+                throw new ArgumentNullException(nameof(raw));
+            }
+            if (mapper == null)
+            {
+                throw new ArgumentNullException(nameof(mapper));
+            }
             var doc = new BsonDocument();
             foreach (var kvp in raw)
             {
@@ -222,9 +237,9 @@ namespace Cognite.Extractor.StateStorage
         {
             while (!token.IsCancellationRequested)
             {
-                var waitTask = Task.Delay(period);
+                var waitTask = Task.Delay(period, token);
                 var storeTask = store.StoreExtractionState(extractionStates, tableName, buildStorableState, token);
-                await Task.WhenAll(waitTask, storeTask);
+                await Task.WhenAll(waitTask, storeTask).ConfigureAwait(false);
             }
         }
 
@@ -247,9 +262,9 @@ namespace Cognite.Extractor.StateStorage
         {
             while (!token.IsCancellationRequested)
             {
-                var waitTask = Task.Delay(period);
+                var waitTask = Task.Delay(period, token);
                 var storeTask = store.StoreExtractionState(extractionStates, tableName, token);
-                await Task.WhenAll(waitTask, storeTask);
+                await Task.WhenAll(waitTask, storeTask).ConfigureAwait(false);
             }
         }
     }

@@ -48,9 +48,11 @@ namespace Cognite.Extractor.StateStorage
         {
             try
             {
-                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from raw table {table}", extractionStates.Count(), tableName);
+                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from raw table {table}", 
+                    extractionStates.Count, 
+                    tableName);
                 int count = 0;
-                var raw = await _destination.GetRowsAsync(_dbName, tableName, token);
+                var raw = await _destination.GetRowsAsync(_dbName, tableName, token).ConfigureAwait(false);
                 foreach (var kvp in raw)
                 {
                     var id = kvp.Key;
@@ -66,7 +68,7 @@ namespace Cognite.Extractor.StateStorage
                 StateStoreMetrics.StateRestoreStates.Inc(count);
                 _logger.LogDebug("Restored {Restored} out of {TotalNum} extraction states from raw table {store}",
                         count,
-                        extractionStates.Count(),
+                        extractionStates.Count,
                         tableName);
             }
             catch (Exception e)
@@ -97,7 +99,7 @@ namespace Cognite.Extractor.StateStorage
                 if (!(poco is BaseExtractionStatePoco statePoco)) return;
                 state.InitExtractedRange(statePoco.FirstTimestamp, statePoco.LastTimestamp);
                 mapped.Add(state.Id);
-            }, token);
+            }, token).ConfigureAwait(false);
 
             if (initializeMissing)
             {
@@ -144,7 +146,7 @@ namespace Cognite.Extractor.StateStorage
                 {
                     dict.Remove("_id");
                 }
-                await _destination.InsertRawRowsAsync(_dbName, tableName, dicts, token);
+                await _destination.InsertRawRowsAsync(_dbName, tableName, dicts, token).ConfigureAwait(false);
                 StateStoreMetrics.StateStoreCount.Inc();
                 StateStoreMetrics.StateStoreStates.Inc(pocosToStore.Count);
 
@@ -186,7 +188,7 @@ namespace Cognite.Extractor.StateStorage
             try
             {
                 _logger.LogInformation("Attempting to delete {Num} entries from raw table {store}", idsToDelete.Count, tableName);
-                await _destination.DeleteRowsAsync(_dbName, tableName, idsToDelete, token);
+                await _destination.DeleteRowsAsync(_dbName, tableName, idsToDelete, token).ConfigureAwait(false);
                 _logger.LogDebug("Removed {NumDeleted} entries from store {store}", idsToDelete.Count, tableName);
             }
             catch (Exception e)

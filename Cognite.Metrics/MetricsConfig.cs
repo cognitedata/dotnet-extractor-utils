@@ -19,7 +19,7 @@ namespace Cognite.Extractor.Metrics
         /// A list of Prometheus push gateway destinations (optional)
         /// </summary>
         /// <value>A list <see cref="PushGatewayConfig"/> of config objects</value>
-        public List<PushGatewayConfig> PushGateways { get; set; }
+        public IList<PushGatewayConfig> PushGateways { get; set; }
 #pragma warning restore CA2227 // Collection properties should be read only
 
     }

@@ -8,7 +8,8 @@ namespace Cognite.Extractor.StateStorage
     /// Property to assign custom name in destination store.
     /// Default behavior transforms PascalCase into snake-case.
     /// </summary>
-    public class StateStoreProperty : Attribute
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class StateStoreProperty : Attribute
     {
         /// <summary>
         /// Override name

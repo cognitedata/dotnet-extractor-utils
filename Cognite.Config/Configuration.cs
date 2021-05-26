@@ -156,7 +156,7 @@ namespace Cognite.Extractor.Configuration
         }
 
         private static void CheckVersion(int version, params int[] acceptedConfigVersions) {
-            if (acceptedConfigVersions == null || acceptedConfigVersions.Length == 0)
+            if (acceptedConfigVersions.Length == 0)
             {
                 return;
             }
