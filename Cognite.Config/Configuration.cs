@@ -155,8 +155,9 @@ namespace Cognite.Extractor.Configuration
             deserializer = builder.Build();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code", Justification = "Other methods using this can still pass null as parameter")]
         private static void CheckVersion(int version, params int[] acceptedConfigVersions) {
-            if (acceptedConfigVersions.Length == 0)
+            if (acceptedConfigVersions == null || acceptedConfigVersions.Length == 0)
             {
                 return;
             }
