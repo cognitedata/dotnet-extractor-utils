@@ -15,10 +15,13 @@ namespace Cognite.Extractor.StateStorage
     /// </summary>
     public class BaseExtractionState : IExtractionState
     {
+        private readonly object _mutex = new object();
         /// <summary>
         /// Mutex used for safely modifying ranges
         /// </summary>
-        protected readonly object _mutex = new object();
+        protected  object Mutex { 
+            get { return _mutex; }
+        }
 
         /// <summary>
         /// Unique id for extracted object. Used as unique ID when storing in permanent storage,

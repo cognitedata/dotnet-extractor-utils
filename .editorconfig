@@ -18,37 +18,60 @@ dotnet_style_qualification_for_method = true
 
 #### Diagnostic configuration ####
 
-# CA1812: Avoid uninstantiated internal classes
-dotnet_diagnostic.CA1812.severity = none
-# CA2227: Collection properties should be read only
-dotnet_diagnostic.CA2227.severity = none
-# CA1711: Identifiers should not have incorrect suffix
-dotnet_diagnostic.CA1711.severity = none
+#### Design rules ####
+
+# CA1002: Do not expose generic lists
+dotnet_diagnostic.CA1002.severity = suggestion
+# CA1018: Mark attributes with AttributeUsageAttribute
+dotnet_diagnostic.CA1018.severity = warning
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = suggestion
+# CA1032: Implement standard exception constructors
+dotnet_diagnostic.CA1032.severity = suggestion
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = warning
 # CA1056: URI properties should not be strings
 dotnet_diagnostic.CA1056.severity = suggestion
-#CA1805: Do not initialize unnecessarily
-dotnet_diagnostic.CA1805.severity = suggestion
-# CA1725: Parameter names should match base declaration
-dotnet_diagnostic.CA1725.severity = suggestion
-# CA1305: Specify IFormatProvider
-dotnet_diagnostic.CA1305.severity = suggestion
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = warning
 dotnet_code_quality.CA1062.exclude_extension_method_this_parameter = true
-# CA1031: Do not catch general exception types
-dotnet_diagnostic.CA1031.severity = warning
-# CA1816: Call GC.SuppressFinalize correctly
-dotnet_diagnostic.CA1816.severity = warning
+
+#### Globalization rules ####
+
+# CA1305: Specify IFormatProvider
+dotnet_diagnostic.CA1305.severity = suggestion
+# CA1308: Normalize strings to uppercase
+dotnet_diagnostic.CA1308.severity = none
+
+#### Naming rules ####
+
+# CA1710: Identifiers should have correct suffix
+dotnet_diagnostic.CA1710.severity = suggestion
+# CA1711: Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1711.severity = none
 # CA1715: Identifiers should have correct prefix
 dotnet_diagnostic.CA1715.severity = warning
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
+# CA1725: Parameter names should match base declaration
+dotnet_diagnostic.CA1725.severity = suggestion
+
+#### Performance rules ####
+
+# CA1805: Do not initialize unnecessarily
+dotnet_diagnostic.CA1805.severity = warning
+# CA1812: Avoid uninstantiated internal classes
+dotnet_diagnostic.CA1812.severity = suggestion
+# CA1813: Avoid unsealed attributes
+dotnet_diagnostic.CA1813.severity = warning
+# CA1829: Use Length/Count property instead of Enumerable.Count method
+dotnet_diagnostic.CA1829.severity = warning
 
 #### Maintainability rules ####
 
-# CA1508: Avoid dead conditional code
-dotnet_diagnostic.CA1508.severity = warning
 # CA1507: Use nameof in place of string
 dotnet_diagnostic.CA1507.severity = warning
+# CA1508: Avoid dead conditional code
+dotnet_diagnostic.CA1508.severity = warning
 
 #### Reliability rules ####
 
@@ -74,3 +97,10 @@ dotnet_diagnostic.CA2014.severity = error
 dotnet_diagnostic.CA2015.severity = error
 # CA2016: Forward the CancellationToken parameter to methods that take one
 dotnet_diagnostic.CA2016.severity = warning
+
+#### Usage rules ####
+
+# CA1816: Call GC.SuppressFinalize correctly
+dotnet_diagnostic.CA1816.severity = warning
+# CA2227: Collection properties should be read only
+dotnet_diagnostic.CA2227.severity = none

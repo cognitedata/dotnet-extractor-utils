@@ -22,12 +22,18 @@ namespace Cognite.Extractor.StateStorage
         private readonly StateStoreConfig _config;
         private readonly ILogger _logger;
         private ConcurrentDictionary<string, DateTime> _lastTimeStored = new ConcurrentDictionary<string, DateTime>();
-        private readonly LiteDatabase _db;
 
         /// <summary>
         /// BsonMapper used to convert objects into bson. Can be modified to add functionality.
         /// </summary>
         public BsonMapper Mapper { get; }
+
+        /// <summary>
+        /// Return a connection to the database. Must be disposed of after use.
+        /// This uses the custom DateTime mapper.
+        /// </summary>
+        public LiteDatabase Database { get; }
+        
         private string ConnectionString { get => $"filename={_config.Location};upgrade=true"; }
 
         /// <summary>
@@ -40,17 +46,7 @@ namespace Cognite.Extractor.StateStorage
             _config = config;
             _logger = logger;
             Mapper = StateStoreUtils.BuildMapper();
-            _db = new LiteDatabase(ConnectionString, Mapper);
-        }
-
-        /// <summary>
-        /// Return a connection to the database. Must be disposed of after use.
-        /// This uses the custom DateTime mapper.
-        /// </summary>
-        /// <returns></returns>
-        public LiteDatabase GetDatabase()
-        {
-            return _db;
+            Database = new LiteDatabase(ConnectionString, Mapper);
         }
 
         /// <summary>
@@ -85,10 +81,9 @@ namespace Cognite.Extractor.StateStorage
 
             try
             {
-                var db = GetDatabase();
-                var col = db.GetCollection<T>(tableName);
-                await Task.Run(() => col.Upsert(pocosToStore), token);
-                db.Checkpoint();
+                var col = Database.GetCollection<T>(tableName);
+                await Task.Run(() => col.Upsert(pocosToStore), token).ConfigureAwait(false);
+                Database.Checkpoint();
                 StateStoreMetrics.StateStoreCount.Inc();
                 StateStoreMetrics.StateStoreStates.Inc(pocosToStore.Count);
                 _logger.LogDebug("Saved {Stored} out of {TotalNumber} extraction states to litedb store {store}.",
@@ -137,12 +132,21 @@ namespace Cognite.Extractor.StateStorage
             Action<K, T> restoreStorableState,
             CancellationToken token) where T : BaseStorableState where K : IExtractionState
         {
+            if (extractionStates == null)
+            {
+                throw new ArgumentNullException(nameof(extractionStates));
+            }
+            if (restoreStorableState == null)
+            {
+                throw new ArgumentNullException(nameof(restoreStorableState));
+            }
             try
             {
-                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from litedb store {store}", extractionStates.Count(), tableName);
-                var db = GetDatabase();
-                var col = db.GetCollection<T>(tableName);
-                var pocos = await Task.Run(() => col.FindAll(), token);
+                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from litedb store {store}", 
+                    extractionStates.Count, 
+                    tableName);
+                var col = Database.GetCollection<T>(tableName);
+                var pocos = await Task.Run(() => col.FindAll(), token).ConfigureAwait(false);
                 int count = 0;
                 foreach (var poco in pocos)
                 {
@@ -156,7 +160,7 @@ namespace Cognite.Extractor.StateStorage
                 StateStoreMetrics.StateRestoreStates.Inc(count);
                 _logger.LogDebug("Restored {Restored} out of {TotalNum} extraction states from litedb store {store}",
                     count,
-                    extractionStates.Count(),
+                    extractionStates.Count,
                     tableName);
             }
             catch (LiteException e)
@@ -190,7 +194,7 @@ namespace Cognite.Extractor.StateStorage
                 if (!(poco is BaseExtractionStatePoco statePoco)) return;
                 state.InitExtractedRange(statePoco.FirstTimestamp, statePoco.LastTimestamp);
                 mapped.Add(state.Id);
-            }, token);
+            }, token).ConfigureAwait(false);
 
             if (initializeMissing)
             {
@@ -214,10 +218,11 @@ namespace Cognite.Extractor.StateStorage
 
             try
             {
-                var db = GetDatabase();
                 _logger.LogInformation("Attempting to delete {Num} entries from litedb state store {store}", idsToDelete.Count, tableName);
-                var col = db.GetCollection<BaseStorableState>(tableName);
-                int numDeleted = await Task.Run(() => col.DeleteMany(state => idsToDelete.Contains(state.Id)));
+                var col = Database.GetCollection<BaseStorableState>(tableName);
+                int numDeleted = await Task
+                    .Run(() => col.DeleteMany(state => idsToDelete.Contains(state.Id)))
+                    .ConfigureAwait(false);
                 _logger.LogDebug("Removed {NumDeleted} entries from store {store}", numDeleted++, tableName);
             }
             catch (LiteException e)
@@ -233,7 +238,7 @@ namespace Cognite.Extractor.StateStorage
         {
             if (disposing)
             {
-                _db.Dispose();
+                Database?.Dispose();
             }
         }
         /// <summary>

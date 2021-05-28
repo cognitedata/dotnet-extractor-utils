@@ -8,10 +8,16 @@ namespace Cognite.Extractor.Configuration
     public class ConfigurationException : Exception
     {
         /// <summary>
+        /// Create a new configuration exception with the default error message
+        /// </summary>
+        public ConfigurationException() : base("Configuration error")
+        {
+        }
+
+        /// <summary>
         /// Create a new configuration exception with the given <paramref name="message"/>
         /// </summary>
         /// <param name="message">Exception message</param>
-        /// <returns></returns>
         public ConfigurationException(string message) : base(message)
         {
         }
@@ -22,7 +28,6 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         /// <param name="message">Exception message</param>
         /// <param name="innerException">Inner exception</param>
-        /// <returns></returns>
         public ConfigurationException(string message, Exception innerException) : base(message, innerException)
         {
         }

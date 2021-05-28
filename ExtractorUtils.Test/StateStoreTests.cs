@@ -426,9 +426,7 @@ namespace ExtractorUtils.Test
                     ArrayProp = new [] { "test", "test2" }
                 }, CancellationToken.None);
 
-            var db = stateStore.GetDatabase();
-
-            var col = db.GetCollection("customstates");
+            var col = stateStore.Database.GetCollection("customstates");
             var ret = col.FindAll();
 
             Assert.Single(ret);

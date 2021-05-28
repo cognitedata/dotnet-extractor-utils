@@ -45,6 +45,7 @@ namespace Cognite.Extractor.Metrics
         /// <summary>
         /// Starts a Prometheus server for scrape and multiple push gateway destinations, based on the configuration. 
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000: Dispose objects before losing scope", Justification = "StopAsync() will dispose of the pusher")]        
         public void Start() {
             if (_config == null || (_config.PushGateways == null && _config.Server == null))
             {
@@ -77,14 +78,16 @@ namespace Cognite.Extractor.Metrics
         public async Task Stop() {
             if (_pushers.Any())
             {
-                await Task.WhenAll(_pushers.Select(p => p.StopAsync()));
+                await Task.WhenAll(_pushers.Select(p => p.StopAsync())).ConfigureAwait(false);
+                _pushers.Clear();
             }
             if (_server != null)
             {
-                await _server.StopAsync();
+                await _server.StopAsync().ConfigureAwait(false);
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000: Dispose objects before losing scope", Justification = "StopAsync() will dispose of the pusher")]
         private MetricPusher StartPusher(PushGatewayConfig config) {
             if (config.Host.TrimToNull() == null || config.Job.TrimToNull() == null)
             {
