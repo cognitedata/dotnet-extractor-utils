@@ -210,11 +210,11 @@ namespace Cognite.Extractor.Common
                                     _runningTasks.Add(generator());
                                 }
                             }
-                            catch (InvalidOperationException)
+                            catch { }
+                            finally
                             {
-                                running = false;
+                                if (_generators.IsCompleted) running = false;
                             }
-                            catch (OperationCanceledException) { }
                         }));
                     }
                     else if (_timeUnit > TimeSpan.Zero)
@@ -232,7 +232,6 @@ namespace Cognite.Extractor.Common
                 lock (_lock)
                 {
                     if (_quitOnFailure && _runningTasks.Any(task => task.IsFaulted)) break;
-                    if (_runningTasks.Any(task => task.IsCanceled)) break;
                 }
 
                 if (!running)
