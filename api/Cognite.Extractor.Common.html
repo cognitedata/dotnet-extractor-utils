@@ -91,17 +91,10 @@ a sequence of tasks in parallel.</p>
       <section><p>Result of an executed task</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Common.TaskThrottler.html">TaskThrottler</a></h4>
-      <section><p>Tool to throttle the execution of tasks based on execution time, max perallelism, and max number of tasks
+      <section><p>Tool to throttle the execution of tasks based on max perallelism, and max number of tasks
 scheduled per time unit.</p>
 <p>Maximum parallelism simply limits the number of parallel tasks.</p>
-<p>Per unit sets the target for the number of tasks to schedule per timeUnit. This is approximated
-over time, so if there is a steady supply of tasks to schedule it will limit the number scheduled
-to this value.</p>
-<p>Usage per unit sets the number of full threads (in theory), that should be able to be consumed per time unit.
-For example, if usagePerUnit is 2.0, an average of two tasks should be running at any point in time.
-If this value has been exceeded on average over the last few time units, no new tasks are scheduled.
-In this case the timeUnit value indicates over what time the average should be taken.</p>
-<p>These are not fixed bounds, but target average values.</p>
+<p>Per unit sets the maximum number of tasks scheduled per time unit.</p>
 <p>Tasks are enqueued and scheduled for execution in order.</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a></h4>

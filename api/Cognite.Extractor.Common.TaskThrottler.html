@@ -73,17 +73,10 @@
   
   <h1 id="Cognite_Extractor_Common_TaskThrottler" data-uid="Cognite.Extractor.Common.TaskThrottler" class="text-break">Class TaskThrottler
   </h1>
-  <div class="markdown level0 summary"><p>Tool to throttle the execution of tasks based on execution time, max perallelism, and max number of tasks
+  <div class="markdown level0 summary"><p>Tool to throttle the execution of tasks based on max perallelism, and max number of tasks
 scheduled per time unit.</p>
 <p>Maximum parallelism simply limits the number of parallel tasks.</p>
-<p>Per unit sets the target for the number of tasks to schedule per timeUnit. This is approximated
-over time, so if there is a steady supply of tasks to schedule it will limit the number scheduled
-to this value.</p>
-<p>Usage per unit sets the number of full threads (in theory), that should be able to be consumed per time unit.
-For example, if usagePerUnit is 2.0, an average of two tasks should be running at any point in time.
-If this value has been exceeded on average over the last few time units, no new tasks are scheduled.
-In this case the timeUnit value indicates over what time the average should be taken.</p>
-<p>These are not fixed bounds, but target average values.</p>
+<p>Per unit sets the maximum number of tasks scheduled per time unit.</p>
 <p>Tasks are enqueued and scheduled for execution in order.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -124,25 +117,25 @@ In this case the timeUnit value indicates over what time the average should be t
   <h6><strong>Assembly</strong>: Cognite.Common.dll</h6>
   <h5 id="Cognite_Extractor_Common_TaskThrottler_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class TaskThrottler : IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class TaskThrottler : IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler__ctor_System_Int32_System_Boolean_System_Int32_System_Double_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.%23ctor(System.Int32%2CSystem.Boolean%2CSystem.Int32%2CSystem.Double%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d2181a8bd32dd70e57f0c39c61a355ce993f922e/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler__ctor_System_Int32_System_Boolean_System_Int32_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.%23ctor(System.Int32%2CSystem.Boolean%2CSystem.Int32%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/Cognite.Common/TaskThrottler.cs/#L103">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d2181a8bd32dd70e57f0c39c61a355ce993f922e/Cognite.Common/TaskThrottler.cs/#L92">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TaskThrottler__ctor_" data-uid="Cognite.Extractor.Common.TaskThrottler.#ctor*"></a>
-  <h4 id="Cognite_Extractor_Common_TaskThrottler__ctor_System_Int32_System_Boolean_System_Int32_System_Double_System_Nullable_System_TimeSpan__" data-uid="Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Double,System.Nullable{System.TimeSpan})">TaskThrottler(Int32, Boolean, Int32, Double, Nullable&lt;TimeSpan&gt;)</h4>
+  <h4 id="Cognite_Extractor_Common_TaskThrottler__ctor_System_Int32_System_Boolean_System_Int32_System_Nullable_System_TimeSpan__" data-uid="Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Nullable{System.TimeSpan})">TaskThrottler(Int32, Boolean, Int32, Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"><p>Constructor</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TaskThrottler(int maxParallelism, bool quitOnFailure = false, int perUnit = 0, double usagePerUnit = 0, TimeSpan? timeUnit = default(TimeSpan? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public TaskThrottler(int maxParallelism, bool quitOnFailure = false, int perUnit = 0, TimeSpan? timeUnit = default(TimeSpan? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -172,11 +165,6 @@ In this case the timeUnit value indicates over what time the average should be t
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">usagePerUnit</span></td>
-        <td></td>
-      </tr>
-      <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeUnit</span></td>
         <td></td>
@@ -187,10 +175,10 @@ In this case the timeUnit value indicates over what time the average should be t
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_RunTask.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.RunTask%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d2181a8bd32dd70e57f0c39c61a355ce993f922e/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_RunTask.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.RunTask%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/Cognite.Common/TaskThrottler.cs/#L83">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d2181a8bd32dd70e57f0c39c61a355ce993f922e/Cognite.Common/TaskThrottler.cs/#L73">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TaskThrottler_RunTask_" data-uid="Cognite.Extractor.Common.TaskThrottler.RunTask*"></a>
   <h4 id="Cognite_Extractor_Common_TaskThrottler_RunTask" data-uid="Cognite.Extractor.Common.TaskThrottler.RunTask">RunTask</h4>
@@ -220,10 +208,10 @@ In this case the timeUnit value indicates over what time the average should be t
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_CheckResult.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.CheckResult%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d2181a8bd32dd70e57f0c39c61a355ce993f922e/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_CheckResult.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.CheckResult%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/Cognite.Common/TaskThrottler.cs/#L277">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d2181a8bd32dd70e57f0c39c61a355ce993f922e/Cognite.Common/TaskThrottler.cs/#L258">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TaskThrottler_CheckResult_" data-uid="Cognite.Extractor.Common.TaskThrottler.CheckResult*"></a>
   <h4 id="Cognite_Extractor_Common_TaskThrottler_CheckResult" data-uid="Cognite.Extractor.Common.TaskThrottler.CheckResult">CheckResult()</h4>
@@ -237,10 +225,10 @@ if quitOnFailure is true and an error has occured in a task.</p>
   </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_Dispose.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.Dispose%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d2181a8bd32dd70e57f0c39c61a355ce993f922e/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_Dispose.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.Dispose%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/Cognite.Common/TaskThrottler.cs/#L315">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d2181a8bd32dd70e57f0c39c61a355ce993f922e/Cognite.Common/TaskThrottler.cs/#L296">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TaskThrottler_Dispose_" data-uid="Cognite.Extractor.Common.TaskThrottler.Dispose*"></a>
   <h4 id="Cognite_Extractor_Common_TaskThrottler_Dispose" data-uid="Cognite.Extractor.Common.TaskThrottler.Dispose">Dispose()</h4>
@@ -253,10 +241,10 @@ if quitOnFailure is true and an error has occured in a task.</p>
   </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_EnqueueAndWait_System_Func_System_Threading_Tasks_Task__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.EnqueueAndWait(System.Func%7BSystem.Threading.Tasks.Task%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d2181a8bd32dd70e57f0c39c61a355ce993f922e/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_EnqueueAndWait_System_Func_System_Threading_Tasks_Task__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.EnqueueAndWait(System.Func%7BSystem.Threading.Tasks.Task%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/Cognite.Common/TaskThrottler.cs/#L157">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d2181a8bd32dd70e57f0c39c61a355ce993f922e/Cognite.Common/TaskThrottler.cs/#L144">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TaskThrottler_EnqueueAndWait_" data-uid="Cognite.Extractor.Common.TaskThrottler.EnqueueAndWait*"></a>
   <h4 id="Cognite_Extractor_Common_TaskThrottler_EnqueueAndWait_System_Func_System_Threading_Tasks_Task__" data-uid="Cognite.Extractor.Common.TaskThrottler.EnqueueAndWait(System.Func{System.Threading.Tasks.Task})">EnqueueAndWait(Func&lt;Task&gt;)</h4>
@@ -303,10 +291,10 @@ if quitOnFailure is true and an error has occured in a task.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_EnqueueTask_System_Func_System_Threading_Tasks_Task__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.EnqueueTask(System.Func%7BSystem.Threading.Tasks.Task%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d2181a8bd32dd70e57f0c39c61a355ce993f922e/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_EnqueueTask_System_Func_System_Threading_Tasks_Task__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.EnqueueTask(System.Func%7BSystem.Threading.Tasks.Task%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/Cognite.Common/TaskThrottler.cs/#L130">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d2181a8bd32dd70e57f0c39c61a355ce993f922e/Cognite.Common/TaskThrottler.cs/#L117">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TaskThrottler_EnqueueTask_" data-uid="Cognite.Extractor.Common.TaskThrottler.EnqueueTask*"></a>
   <h4 id="Cognite_Extractor_Common_TaskThrottler_EnqueueTask_System_Func_System_Threading_Tasks_Task__" data-uid="Cognite.Extractor.Common.TaskThrottler.EnqueueTask(System.Func{System.Threading.Tasks.Task})">EnqueueTask(Func&lt;Task&gt;)</h4>
@@ -336,10 +324,10 @@ if quitOnFailure is true and an error has occured in a task.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_WaitForCompletion.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.WaitForCompletion%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d2181a8bd32dd70e57f0c39c61a355ce993f922e/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler_WaitForCompletion.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler.WaitForCompletion%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/Cognite.Common/TaskThrottler.cs/#L304">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d2181a8bd32dd70e57f0c39c61a355ce993f922e/Cognite.Common/TaskThrottler.cs/#L285">View Source</a>
   </span>
   <a id="Cognite_Extractor_Common_TaskThrottler_WaitForCompletion_" data-uid="Cognite.Extractor.Common.TaskThrottler.WaitForCompletion*"></a>
   <h4 id="Cognite_Extractor_Common_TaskThrottler_WaitForCompletion" data-uid="Cognite.Extractor.Common.TaskThrottler.WaitForCompletion">WaitForCompletion()</h4>
@@ -380,10 +368,10 @@ If any task has failed and quitOnFailure is true, this will throw an exception.<
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d2181a8bd32dd70e57f0c39c61a355ce993f922e/apiSpec/new?filename=Cognite_Extractor_Common_TaskThrottler.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TaskThrottler%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/17cf4e8c5f97f4cf18112e6bbcabc327c5427782/Cognite.Common/TaskThrottler.cs/#L71" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d2181a8bd32dd70e57f0c39c61a355ce993f922e/Cognite.Common/TaskThrottler.cs/#L62" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

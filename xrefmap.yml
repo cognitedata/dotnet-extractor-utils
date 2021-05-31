@@ -2167,15 +2167,15 @@ references:
   commentId: T:Cognite.Extractor.Common.TaskThrottler
   fullName: Cognite.Extractor.Common.TaskThrottler
   nameWithType: TaskThrottler
-- uid: Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Double,System.Nullable{System.TimeSpan})
-  name: TaskThrottler(Int32, Boolean, Int32, Double, Nullable<TimeSpan>)
-  href: api/Cognite.Extractor.Common.TaskThrottler.html#Cognite_Extractor_Common_TaskThrottler__ctor_System_Int32_System_Boolean_System_Int32_System_Double_System_Nullable_System_TimeSpan__
-  commentId: M:Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Double,System.Nullable{System.TimeSpan})
-  name.vb: TaskThrottler(Int32, Boolean, Int32, Double, Nullable(Of TimeSpan))
-  fullName: Cognite.Extractor.Common.TaskThrottler.TaskThrottler(System.Int32, System.Boolean, System.Int32, System.Double, System.Nullable<System.TimeSpan>)
-  fullName.vb: Cognite.Extractor.Common.TaskThrottler.TaskThrottler(System.Int32, System.Boolean, System.Int32, System.Double, System.Nullable(Of System.TimeSpan))
-  nameWithType: TaskThrottler.TaskThrottler(Int32, Boolean, Int32, Double, Nullable<TimeSpan>)
-  nameWithType.vb: TaskThrottler.TaskThrottler(Int32, Boolean, Int32, Double, Nullable(Of TimeSpan))
+- uid: Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Nullable{System.TimeSpan})
+  name: TaskThrottler(Int32, Boolean, Int32, Nullable<TimeSpan>)
+  href: api/Cognite.Extractor.Common.TaskThrottler.html#Cognite_Extractor_Common_TaskThrottler__ctor_System_Int32_System_Boolean_System_Int32_System_Nullable_System_TimeSpan__
+  commentId: M:Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Nullable{System.TimeSpan})
+  name.vb: TaskThrottler(Int32, Boolean, Int32, Nullable(Of TimeSpan))
+  fullName: Cognite.Extractor.Common.TaskThrottler.TaskThrottler(System.Int32, System.Boolean, System.Int32, System.Nullable<System.TimeSpan>)
+  fullName.vb: Cognite.Extractor.Common.TaskThrottler.TaskThrottler(System.Int32, System.Boolean, System.Int32, System.Nullable(Of System.TimeSpan))
+  nameWithType: TaskThrottler.TaskThrottler(Int32, Boolean, Int32, Nullable<TimeSpan>)
+  nameWithType.vb: TaskThrottler.TaskThrottler(Int32, Boolean, Int32, Nullable(Of TimeSpan))
 - uid: Cognite.Extractor.Common.TaskThrottler.#ctor*
   name: TaskThrottler
   href: api/Cognite.Extractor.Common.TaskThrottler.html#Cognite_Extractor_Common_TaskThrottler__ctor_
@@ -3067,12 +3067,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.StateStorage.BaseExtractionState.BaseExtractionState
   nameWithType: BaseExtractionState.BaseExtractionState
-- uid: Cognite.Extractor.StateStorage.BaseExtractionState._mutex
-  name: _mutex
-  href: api/Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState__mutex
-  commentId: F:Cognite.Extractor.StateStorage.BaseExtractionState._mutex
-  fullName: Cognite.Extractor.StateStorage.BaseExtractionState._mutex
-  nameWithType: BaseExtractionState._mutex
 - uid: Cognite.Extractor.StateStorage.BaseExtractionState.DestinationExtractedRange
   name: DestinationExtractedRange
   href: api/Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_DestinationExtractedRange
@@ -3125,6 +3119,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.StateStorage.BaseExtractionState.LastTimeModified
   nameWithType: BaseExtractionState.LastTimeModified
+- uid: Cognite.Extractor.StateStorage.BaseExtractionState.Mutex
+  name: Mutex
+  href: api/Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_Mutex
+  commentId: P:Cognite.Extractor.StateStorage.BaseExtractionState.Mutex
+  fullName: Cognite.Extractor.StateStorage.BaseExtractionState.Mutex
+  nameWithType: BaseExtractionState.Mutex
+- uid: Cognite.Extractor.StateStorage.BaseExtractionState.Mutex*
+  name: Mutex
+  href: api/Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_Mutex_
+  commentId: Overload:Cognite.Extractor.StateStorage.BaseExtractionState.Mutex
+  isSpec: "True"
+  fullName: Cognite.Extractor.StateStorage.BaseExtractionState.Mutex
+  nameWithType: BaseExtractionState.Mutex
 - uid: Cognite.Extractor.StateStorage.BaseExtractionState.UpdateDestinationRange(DateTime,DateTime)
   name: UpdateDestinationRange(DateTime, DateTime)
   href: api/Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_UpdateDestinationRange_DateTime_DateTime_
@@ -3538,6 +3545,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.StateStorage.LiteDBStateStore.LiteDBStateStore
   nameWithType: LiteDBStateStore.LiteDBStateStore
+- uid: Cognite.Extractor.StateStorage.LiteDBStateStore.Database
+  name: Database
+  href: api/Cognite.Extractor.StateStorage.LiteDBStateStore.html#Cognite_Extractor_StateStorage_LiteDBStateStore_Database
+  commentId: P:Cognite.Extractor.StateStorage.LiteDBStateStore.Database
+  fullName: Cognite.Extractor.StateStorage.LiteDBStateStore.Database
+  nameWithType: LiteDBStateStore.Database
+- uid: Cognite.Extractor.StateStorage.LiteDBStateStore.Database*
+  name: Database
+  href: api/Cognite.Extractor.StateStorage.LiteDBStateStore.html#Cognite_Extractor_StateStorage_LiteDBStateStore_Database_
+  commentId: Overload:Cognite.Extractor.StateStorage.LiteDBStateStore.Database
+  isSpec: "True"
+  fullName: Cognite.Extractor.StateStorage.LiteDBStateStore.Database
+  nameWithType: LiteDBStateStore.Database
 - uid: Cognite.Extractor.StateStorage.LiteDBStateStore.DeleteExtractionState(IEnumerable{Cognite.Extractor.StateStorage.IExtractionState},System.String,CancellationToken)
   name: DeleteExtractionState(IEnumerable<IExtractionState>, String, CancellationToken)
   href: api/Cognite.Extractor.StateStorage.LiteDBStateStore.html#Cognite_Extractor_StateStorage_LiteDBStateStore_DeleteExtractionState_IEnumerable_Cognite_Extractor_StateStorage_IExtractionState__System_String_CancellationToken_
@@ -3573,19 +3593,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.StateStorage.LiteDBStateStore.Dispose
   nameWithType: LiteDBStateStore.Dispose
-- uid: Cognite.Extractor.StateStorage.LiteDBStateStore.GetDatabase
-  name: GetDatabase()
-  href: api/Cognite.Extractor.StateStorage.LiteDBStateStore.html#Cognite_Extractor_StateStorage_LiteDBStateStore_GetDatabase
-  commentId: M:Cognite.Extractor.StateStorage.LiteDBStateStore.GetDatabase
-  fullName: Cognite.Extractor.StateStorage.LiteDBStateStore.GetDatabase()
-  nameWithType: LiteDBStateStore.GetDatabase()
-- uid: Cognite.Extractor.StateStorage.LiteDBStateStore.GetDatabase*
-  name: GetDatabase
-  href: api/Cognite.Extractor.StateStorage.LiteDBStateStore.html#Cognite_Extractor_StateStorage_LiteDBStateStore_GetDatabase_
-  commentId: Overload:Cognite.Extractor.StateStorage.LiteDBStateStore.GetDatabase
-  isSpec: "True"
-  fullName: Cognite.Extractor.StateStorage.LiteDBStateStore.GetDatabase
-  nameWithType: LiteDBStateStore.GetDatabase
 - uid: Cognite.Extractor.StateStorage.LiteDBStateStore.Mapper
   name: Mapper
   href: api/Cognite.Extractor.StateStorage.LiteDBStateStore.html#Cognite_Extractor_StateStorage_LiteDBStateStore_Mapper
@@ -4101,30 +4108,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T)
   nameWithType: BaseUploadQueue<T>
   nameWithType.vb: BaseUploadQueue(Of T)
-- uid: Cognite.Extractor.Utils.BaseUploadQueue`1._callback
-  name: _callback
-  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1__callback
-  commentId: F:Cognite.Extractor.Utils.BaseUploadQueue`1._callback
-  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>._callback
-  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T)._callback
-  nameWithType: BaseUploadQueue<T>._callback
-  nameWithType.vb: BaseUploadQueue(Of T)._callback
-- uid: Cognite.Extractor.Utils.BaseUploadQueue`1._destination
-  name: _destination
-  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1__destination
-  commentId: F:Cognite.Extractor.Utils.BaseUploadQueue`1._destination
-  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>._destination
-  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T)._destination
-  nameWithType: BaseUploadQueue<T>._destination
-  nameWithType.vb: BaseUploadQueue(Of T)._destination
-- uid: Cognite.Extractor.Utils.BaseUploadQueue`1._logger
-  name: _logger
-  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1__logger
-  commentId: F:Cognite.Extractor.Utils.BaseUploadQueue`1._logger
-  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>._logger
-  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T)._logger
-  nameWithType: BaseUploadQueue<T>._logger
-  nameWithType.vb: BaseUploadQueue(Of T)._logger
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Callback
+  name: Callback
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Callback
+  commentId: P:Cognite.Extractor.Utils.BaseUploadQueue`1.Callback
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Callback
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Callback
+  nameWithType: BaseUploadQueue<T>.Callback
+  nameWithType.vb: BaseUploadQueue(Of T).Callback
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Callback*
+  name: Callback
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Callback_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.Callback
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Callback
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Callback
+  nameWithType: BaseUploadQueue<T>.Callback
+  nameWithType.vb: BaseUploadQueue(Of T).Callback
 - uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Dequeue
   name: Dequeue()
   href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dequeue
@@ -4142,6 +4142,40 @@ references:
   fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Dequeue
   nameWithType: BaseUploadQueue<T>.Dequeue
   nameWithType.vb: BaseUploadQueue(Of T).Dequeue
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Destination
+  name: Destination
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Destination
+  commentId: P:Cognite.Extractor.Utils.BaseUploadQueue`1.Destination
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Destination
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Destination
+  nameWithType: BaseUploadQueue<T>.Destination
+  nameWithType.vb: BaseUploadQueue(Of T).Destination
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Destination*
+  name: Destination
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Destination_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.Destination
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.Destination
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).Destination
+  nameWithType: BaseUploadQueue<T>.Destination
+  nameWithType.vb: BaseUploadQueue(Of T).Destination
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.DestLogger
+  name: DestLogger
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_DestLogger
+  commentId: P:Cognite.Extractor.Utils.BaseUploadQueue`1.DestLogger
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.DestLogger
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).DestLogger
+  nameWithType: BaseUploadQueue<T>.DestLogger
+  nameWithType.vb: BaseUploadQueue(Of T).DestLogger
+- uid: Cognite.Extractor.Utils.BaseUploadQueue`1.DestLogger*
+  name: DestLogger
+  href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_DestLogger_
+  commentId: Overload:Cognite.Extractor.Utils.BaseUploadQueue`1.DestLogger
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseUploadQueue<T>.DestLogger
+  fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).DestLogger
+  nameWithType: BaseUploadQueue<T>.DestLogger
+  nameWithType.vb: BaseUploadQueue(Of T).DestLogger
 - uid: Cognite.Extractor.Utils.BaseUploadQueue`1.Dispose
   name: Dispose()
   href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dispose
