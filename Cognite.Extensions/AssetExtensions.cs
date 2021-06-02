@@ -90,11 +90,11 @@ namespace Cognite.Extensions
 
             var results = new CogniteResult<Asset>[chunks.Count];
 
-            _logger.LogDebug("Getting or creating assets. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
+            _logger.LogDebug("Getting or creating assets. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     (chunk, idx) => async () => {
-                        var result = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, 0, retryMode, sanitationMode, token);
+                        var result = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
                     });
 
@@ -106,7 +106,7 @@ namespace Cognite.Extensions
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
                 },
-                token);
+                token).ConfigureAwait(false);
                  
             return CogniteResult<Asset>.Merge(results);
         }
@@ -142,7 +142,7 @@ namespace Cognite.Extensions
             var chunks = assetsToEnsure
                 .ChunkBy(chunkSize)
                 .ToList();
-            _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assetsToEnsure.Count(), chunks.Count());
+            _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assetsToEnsure.Count(), chunks.Count);
             int size = chunks.Count + (errors.Any() ? 1 : 0);
             var results = new CogniteResult<Asset>[size];
             if (errors.Any())
@@ -155,7 +155,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<AssetCreate>, Func<Task>>(
                 (chunk, idx) => async () => {
-                    var result = await CreateAssetsHandleErrors(assets, chunk, retryMode, token);
+                    var result = await CreateAssetsHandleErrors(assets, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
 
@@ -163,11 +163,11 @@ namespace Cognite.Extensions
             await generators.RunThrottled(
                 throttleSize,
                 (_) => {
-                    if (chunks.Count() > 1)
+                    if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(EnsureExistsAsync), ++taskNum, chunks.Count());
+                            nameof(EnsureExistsAsync), ++taskNum, chunks.Count);
                 },
-                token);
+                token).ConfigureAwait(false);
 
             return CogniteResult<Asset>.Merge(results);
         }
@@ -184,7 +184,7 @@ namespace Cognite.Extensions
             IEnumerable<Asset> found;
             using (CdfMetrics.Assets.WithLabels("retrieve").NewTimer())
             {
-                found = await assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+                found = await assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token).ConfigureAwait(false);
             }
             _logger.LogDebug("Retrieved {Existing} assets from CDF", found.Count());
 
@@ -196,12 +196,12 @@ namespace Cognite.Extensions
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
-            var toCreate = await buildAssets(missing);
+            var toCreate = await buildAssets(missing).ConfigureAwait(false);
 
             IEnumerable<CogniteError> errors;
             (toCreate, errors) = Sanitation.CleanAssetRequest(toCreate, sanitationMode);
 
-            var result = await CreateAssetsHandleErrors(assets, toCreate, retryMode, token);
+            var result = await CreateAssetsHandleErrors(assets, toCreate, retryMode, token).ConfigureAwait(false);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
             if (errors.Any())
@@ -231,8 +231,11 @@ namespace Cognite.Extensions
             if (!duplicatedIds.Any()) return result;
             _logger.LogDebug("Found {cnt} duplicated assets, retrying", duplicatedIds.Count);
 
-            await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var nextResult = await GetOrCreateAssetsChunk(assets, duplicatedIds, buildAssets, backoff + 1, retryMode, sanitationMode, token);
+            await Task
+                .Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)), token)
+                .ConfigureAwait(false);
+            var nextResult = await GetOrCreateAssetsChunk(assets, duplicatedIds, buildAssets, backoff + 1, retryMode, sanitationMode, token)
+                .ConfigureAwait(false);
             result = result.Merge(nextResult);
 
             return result;
@@ -268,7 +271,7 @@ namespace Cognite.Extensions
                     IEnumerable<Asset> found;
                     using (CdfMetrics.Assets.WithLabels("retrieve").NewTimer())
                     {
-                        found = await assets.RetrieveAsync(chunk, true, token);
+                        found = await assets.RetrieveAsync(chunk, true, token).ConfigureAwait(false);
                     }
                     lock (mutex)
                     {
@@ -278,7 +281,7 @@ namespace Cognite.Extensions
             int numTasks = 0;
             await generators.RunThrottled(throttleSize, (_) =>
                 _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetAssetsByIdsIgnoreErrors), ++numTasks, chunks.Count),
-                token);
+                token).ConfigureAwait(false);
             return result;
         }
 
@@ -296,7 +299,9 @@ namespace Cognite.Extensions
                     IEnumerable<Asset> newAssets;
                     using (CdfMetrics.Assets.WithLabels("create").NewTimer())
                     {
-                        newAssets = await assets.CreateAsync(toCreate, token);
+                        newAssets = await assets
+                            .CreateAsync(toCreate, token)
+                            .ConfigureAwait(false);
                     }
 
                     _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
@@ -312,12 +317,14 @@ namespace Cognite.Extensions
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
-                        await Task.Delay(1000);
+                        await Task.Delay(1000, token).ConfigureAwait(false);
                     }
                     else if (retryMode == RetryMode.None) break;
                     else
                     {
-                        toCreate = await ResultHandlers.CleanFromError(assets, error, toCreate, 1000, 1, token);
+                        toCreate = await ResultHandlers
+                            .CleanFromError(assets, error, toCreate, 1000, 1, token)
+                            .ConfigureAwait(false);
                     }
                 }
             }

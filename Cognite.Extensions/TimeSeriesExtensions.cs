@@ -93,12 +93,12 @@ namespace Cognite.Extensions
 
             var results = new CogniteResult<TimeSeries>[chunks.Count];
 
-            _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
+            _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     (chunk, idx) => async () => {
                         var result = await GetOrCreateTimeSeriesChunk(timeSeries, chunk,
-                            buildTimeSeries, 0, retryMode, sanitationMode, token);
+                            buildTimeSeries, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
                     });
 
@@ -110,7 +110,7 @@ namespace Cognite.Extensions
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count);
                 },
-                token);
+                token).ConfigureAwait(false);
 
             return CogniteResult<TimeSeries>.Merge(results);
         }
@@ -157,11 +157,11 @@ namespace Cognite.Extensions
             }
             if (size == 0) return new CogniteResult<TimeSeries>(null, null);
 
-            _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeriesToEnsure.Count(), chunks.Count());
+            _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeriesToEnsure.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<TimeSeriesCreate>, Func<Task>>(
                 (chunk, idx) => async () => {
-                    var result = await CreateTimeSeriesHandleErrors(timeseries, chunk, retryMode, token);
+                    var result = await CreateTimeSeriesHandleErrors(timeseries, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
 
@@ -169,11 +169,11 @@ namespace Cognite.Extensions
             await generators.RunThrottled(
                 throttleSize,
                 (_) => {
-                    if (chunks.Count() > 1)
+                    if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(EnsureTimeSeriesExistsAsync), ++taskNum, chunks.Count);
                 },
-                token);
+                token).ConfigureAwait(false);
 
             return CogniteResult<TimeSeries>.Merge(results);
         }
@@ -208,7 +208,7 @@ namespace Cognite.Extensions
                     IEnumerable<TimeSeries> found;
                     using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
                     {
-                        found = await timeSeries.RetrieveAsync(chunk, true, token);
+                        found = await timeSeries.RetrieveAsync(chunk, true, token).ConfigureAwait(false);
                     }
                     lock (mutex)
                     {
@@ -218,7 +218,7 @@ namespace Cognite.Extensions
             int numTasks = 0;
             await generators.RunThrottled(throttleSize, (_) =>
                 _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetTimeSeriesByIdsIgnoreErrors), ++numTasks, chunks.Count),
-                token);
+                token).ConfigureAwait(false);
             return result;
         }
 
@@ -234,7 +234,7 @@ namespace Cognite.Extensions
             IEnumerable<TimeSeries> found;
             using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
             {
-                found = await client.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token);
+                found = await client.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token).ConfigureAwait(false);
             }
             _logger.LogDebug("Retrieved {Existing} times series from CDF", found.Count());
 
@@ -246,12 +246,12 @@ namespace Cognite.Extensions
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} time series. Attempting to create the missing ones", missing.Count, externalIds.Count());
-            var toCreate = await buildTimeSeries(missing);
+            var toCreate = await buildTimeSeries(missing).ConfigureAwait(false);
 
             IEnumerable<CogniteError> errors;
             (toCreate, errors) = Sanitation.CleanTimeSeriesRequest(toCreate, sanitationMode);
 
-            var result = await CreateTimeSeriesHandleErrors(client, toCreate, retryMode, token);
+            var result = await CreateTimeSeriesHandleErrors(client, toCreate, retryMode, token).ConfigureAwait(false);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
             if (errors.Any())
@@ -281,9 +281,10 @@ namespace Cognite.Extensions
             if (!duplicatedIds.Any()) return result;
             _logger.LogDebug("Found {cnt} duplicated timeseries, retrying", duplicatedIds.Count);
 
-            await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
+            await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)), token).ConfigureAwait(false);
             var nextResult = await GetOrCreateTimeSeriesChunk(client, duplicatedIds,
-                buildTimeSeries, backoff + 1, retryMode, sanitationMode, token);
+                buildTimeSeries, backoff + 1, retryMode, sanitationMode, token)
+                .ConfigureAwait(false);
             result = result.Merge(nextResult);
 
             return result;
@@ -303,7 +304,7 @@ namespace Cognite.Extensions
                     IEnumerable<TimeSeries> newTimeseries;
                     using (CdfMetrics.TimeSeries.WithLabels("create").NewTimer())
                     {
-                        newTimeseries = await timeseries.CreateAsync(toCreate, token);
+                        newTimeseries = await timeseries.CreateAsync(toCreate, token).ConfigureAwait(false);
                     }
 
                     _logger.LogDebug("Created {New} new timeseries in CDF", newTimeseries.Count());
@@ -319,7 +320,7 @@ namespace Cognite.Extensions
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
-                        await Task.Delay(1000);
+                        await Task.Delay(1000, token).ConfigureAwait(false);
                     }
                     else if (retryMode == RetryMode.None) break;
                     else

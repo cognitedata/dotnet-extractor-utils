@@ -53,7 +53,11 @@ namespace Cognite.Extensions
         /// <param name="e">Error containing missing ids</param>
         public static void ExtractMissingFromResponseException(HashSet<Identity> missing, ResponseException e)
         {
-            foreach (var ts in e.Missing)
+            if (missing is null)
+            {
+                throw new ArgumentNullException(nameof(missing));
+            }
+            foreach (var ts in e?.Missing)
             {
                 if (ts.TryGetValue("externalId", out MultiValue exIdValue))
                 {
@@ -133,6 +137,10 @@ namespace Cognite.Extensions
         /// <returns>Resulting parsed string</returns>
         public static string StringFromStream(Stream stream, ushort? size = null)
         {
+            if (stream is null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
             if (!size.HasValue)
             {
                 var sizeBytes = new byte[sizeof(ushort)];
@@ -169,6 +177,14 @@ namespace Cognite.Extensions
         /// <param name="stream">Stream to write to</param>
         public static void WriteDatapoints(IDictionary<Identity, IEnumerable<Datapoint>> datapoints, Stream stream)
         {
+            if (datapoints is null)
+            {
+                throw new ArgumentNullException(nameof(datapoints));
+            }
+            if (stream is null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
             foreach (var kvp in datapoints)
             {
                 var id = kvp.Key;
@@ -227,6 +243,10 @@ namespace Cognite.Extensions
         /// <returns>Read datapoints grouped by identity</returns>
         public static IDictionary<Identity, IEnumerable<Datapoint>> ReadDatapoints(Stream stream, int chunkSize = 0)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
             var ret = new Dictionary<Identity, List<Datapoint>>(new IdentityComparer());
 
             var idSizeBuffer = new byte[sizeof(ushort)];
@@ -293,6 +313,10 @@ namespace Cognite.Extensions
         /// <returns>Event serialized as bytes</returns>
         public static byte[] EventToStorable(EventCreate evt)
         {
+            if (evt == null)
+            {
+                throw new ArgumentNullException(nameof(evt));
+            }
             var bytes = new List<byte>();
             bytes.AddRange(StringToStorable(evt.ExternalId));
             bytes.AddRange(BitConverter.GetBytes(evt.StartTime ?? -1));
@@ -347,6 +371,10 @@ namespace Cognite.Extensions
         /// <returns></returns>
         public static EventCreate EventFromStream(Stream stream)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
             var evt = new EventCreate();
             evt.ExternalId = StringFromStream(stream);
 
@@ -451,6 +479,14 @@ namespace Cognite.Extensions
         /// <param name="stream">Stream to write to</param>
         public static void WriteEvents(IEnumerable<EventCreate> events, Stream stream)
         {
+            if (events == null)
+            {
+                throw new ArgumentNullException(nameof(events));
+            }
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
             foreach (var evt in events)
             {
                 var bytes = EventToStorable(evt);
@@ -761,6 +797,10 @@ namespace Cognite.Extensions
         /// <param name="stream">Stream to read from</param>
         public static Datapoint FromStream(Stream stream)
         {
+            if (stream is null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
             var baseBytes = new byte[sizeof(long) + sizeof(bool)];
             int read = stream.Read(baseBytes, 0, sizeof(long) + sizeof(bool));
             if (read < sizeof(long) + sizeof(bool)) return null;

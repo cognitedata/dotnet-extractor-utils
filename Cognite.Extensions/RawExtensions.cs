@@ -58,14 +58,16 @@ namespace Cognite.Extensions
                     chunk => async () => {
                         using (CdfMetrics.Raw.WithLabels("create_rows"))
                         {
-                            await raw.CreateRowsJsonAsync(database, table, chunk, true, token);
+                            await raw.CreateRowsJsonAsync(database, table, chunk, true, token).ConfigureAwait(false);
                         }
                     }
                 );
             int numTasks = 0;
-            await generators.RunThrottled(throttleSize, (_) =>
-                _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(InsertRowsAsync), ++numTasks,
-                    Math.Ceiling((double)rows.Count / chunkSize)),  token);
+            await generators
+                .RunThrottled(throttleSize, (_) =>
+                    _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(InsertRowsAsync), ++numTasks,
+                        Math.Ceiling((double)rows.Count / chunkSize)),  token)
+                .ConfigureAwait(false);
         }
 
         internal static JsonElement DtoToJson<T>(T dto, JsonSerializerOptions options)
@@ -108,7 +110,7 @@ namespace Cognite.Extensions
                 ItemsWithCursor<RawRow> rows;
                 using (CdfMetrics.Raw.WithLabels("list_rows").NewTimer())
                 {
-                    rows = await raw.ListRowsAsync(dbName, tableName, query, token);
+                    rows = await raw.ListRowsAsync(dbName, tableName, query, token).ConfigureAwait(false);
                 }
                 foreach (var row in rows.Items)
                 {
@@ -151,15 +153,17 @@ namespace Cognite.Extensions
                     {
                         using (CdfMetrics.Raw.WithLabels("delete").NewTimer())
                         {
-                            await raw.DeleteRowsAsync(dbName, tableName, chunk, token);
+                            await raw.DeleteRowsAsync(dbName, tableName, chunk, token).ConfigureAwait(false);
                         }
                     }
                 );
             try
             {
                 int numTasks = 0;
-                await generators.RunThrottled(throttleSize, (_) =>
-                    _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(DeleteRowsAsync), ++numTasks, chunks.Count), token);
+                await generators
+                    .RunThrottled(throttleSize, (_) =>
+                        _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(DeleteRowsAsync), ++numTasks, chunks.Count), token)
+                    .ConfigureAwait(false);
             }
             catch (ResponseException ex)
             {

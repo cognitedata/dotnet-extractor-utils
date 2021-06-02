@@ -6,35 +6,134 @@ using System.Text;
 
 namespace Cognite.Extensions
 {
+    /// <summary>
+    /// Collection of methods for cleaning and sanitizing objects used in
+    /// requests to various CDF endpoints
+    /// </summary>
     public static class Sanitation
     {
+        /// <summary>
+        /// Maximum length of External ID
+        /// </summary>
         public const int ExternalIdMax = 255;
 
+        /// <summary>
+        /// Maximum length of Asset name
+        /// </summary>
         public const int AssetNameMax = 140;
+
+        /// <summary>
+        /// Maximum length of Asset description
+        /// </summary>
         public const int AssetDescriptionMax = 500;
+
+        /// <summary>
+        /// Maximum size in bytes of the Asset metadata field
+        /// </summary>
         public const int AssetMetadataMaxBytes = 10240;
+
+        /// <summary>
+        /// Maximum size in bytes of each Asset metadata key
+        /// </summary>
         public const int AssetMetadataMaxPerKey = 128;
+
+        /// <summary>
+        /// Maximum size in bytes of each Asset metadata value
+        /// </summary>
         public const int AssetMetadataMaxPerValue = 10240;
+
+        /// <summary>
+        /// Maximum number of Asset metadata key/value pairs
+        /// </summary>
         public const int AssetMetadataMaxPairs = 256;
+
+        /// <summary>
+        /// Maximum length of Asset source
+        /// </summary>
         public const int AssetSourceMax = 128;
+
+        /// <summary>
+        /// Maximum number of Asset labels
+        /// </summary>
         public const int AssetLabelsMax = 10;
 
+        
+        /// <summary>
+        /// Maximum length of Timeseries name
+        /// </summary>
         public const int TimeSeriesNameMax = 255;
+
+        /// <summary>
+        /// Maximum length of Timeseries description
+        /// </summary>
         public const int TimeSeriesDescriptionMax = 1000;
+
+        /// <summary>
+        /// Maximum length of Timeseries unit
+        /// </summary>
         public const int TimeSeriesUnitMax = 32;
+
+        /// <summary>
+        /// Maximum size in bytes of each Timeseries metadata key
+        /// </summary>
         public const int TimeSeriesMetadataMaxPerKey = 128;
+
+        /// <summary>
+        /// Maximum size in bytes of each Timeseries metadata value
+        /// </summary>
         public const int TimeSeriesMetadataMaxPerValue = 10000;
+
+        /// <summary>
+        /// Maximum size in bytes of Timeseries metadata field
+        /// </summary>
         public const int TimeSeriesMetadataMaxBytes = 10000;
+
+        /// <summary>
+        /// Maximum number of Timeseries metadata key/value pairs
+        /// </summary>
         public const int TimeSeriesMetadataMaxPairs = 256;
 
+
+        /// <summary>
+        /// Maximum length of Event type
+        /// </summary>
         public const int EventTypeMax = 64;
+
+        /// <summary>
+        /// Maximum length of Event description
+        /// </summary>
         public const int EventDescriptionMax = 500;
+
+        /// <summary>
+        /// Maximum length of Event source
+        /// </summary>
         public const int EventSourceMax = 128;
+
+        /// <summary>
+        /// Maximum size in bytes of each Event metadata key
+        /// </summary>
         public const int EventMetadataMaxPerKey = 128;
+
+        /// <summary>
+        /// Maximum size in bytes of each Event metadata value
+        /// </summary>
         public const int EventMetadataMaxPerValue = 128_000;
+
+        /// <summary>
+        /// Maximum number Event metadata key/value pairs
+        /// </summary>
         public const int EventMetadataMaxPairs = 256;
+
+        /// <summary>
+        /// Maximum size in bytes of Event metadata field
+        /// </summary>
         public const int EventMetadataMaxBytes = 200_000;
+
+        /// <summary>
+        /// Maximum number of Event asset ids
+        /// </summary>
         public const int EventAssetIdsMax = 10_000;
+        
         /// <summary>
         /// Reduce the length of given string to maxLength, if it is longer.
         /// </summary>
@@ -105,7 +204,18 @@ namespace Cognite.Extensions
             Func<TInput, TValue> valueSelector,
             IEqualityComparer<TKey> comparer = null)
         {
-            if (input == null) throw new ArgumentNullException(nameof(input));
+            if (input == null) 
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+            if (keySelector == null)
+            {
+                throw new ArgumentNullException(nameof(keySelector));
+            }
+            if (valueSelector == null)
+            {
+                throw new ArgumentNullException(nameof(valueSelector));
+            }
             var ret = new Dictionary<TKey, TValue>(comparer);
             foreach (var elem in input)
             {
@@ -152,7 +262,7 @@ namespace Cognite.Extensions
                 .ToDictionarySafe(pair => pair.Item1, pair => pair.Item2);
         }
 
-        public static bool VerifyMetadata(this Dictionary<string, string> data,
+        private static bool VerifyMetadata(this Dictionary<string, string> data,
             int maxPerKey,
             int maxKeys,
             int maxPerValue,
@@ -241,7 +351,7 @@ namespace Cognite.Extensions
         /// <summary>
         /// Check that given TimeSeriesCreate satisfies CDF limits.
         /// </summary>
-        /// <param name="asset">Timeseries to check</param>
+        /// <param name="ts">Timeseries to check</param>
         /// <returns>True if timeseries satisfies limits</returns>
         public static ResourceType? Verify(this TimeSeriesCreate ts)
         {
@@ -284,7 +394,7 @@ namespace Cognite.Extensions
         /// <summary>
         /// Check that given EventCreate satisfies CDF limits.
         /// </summary>
-        /// <param name="asset">Event to check</param>
+        /// <param name="evt">Event to check</param>
         /// <returns>True if event satisfies limits</returns>
         public static ResourceType? Verify(this EventCreate evt)
         {
@@ -310,8 +420,14 @@ namespace Cognite.Extensions
         /// <param name="assets">AssetCreate request to clean</param>
         /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned create request and an optional error if any ids were duplicated</returns>
-        public static (IEnumerable<AssetCreate>, IEnumerable<CogniteError>) CleanAssetRequest(IEnumerable<AssetCreate> assets, SanitationMode mode)
+        public static (IEnumerable<AssetCreate>, IEnumerable<CogniteError>) CleanAssetRequest(
+            IEnumerable<AssetCreate> assets, 
+            SanitationMode mode)
         {
+            if (assets == null)
+            {
+                throw new ArgumentNullException(nameof(assets));
+            }
             var result = new List<AssetCreate>();
             var errors = new List<CogniteError>();
 
@@ -385,9 +501,14 @@ namespace Cognite.Extensions
         /// <param name="timeseries">TimeSeriesCreate request to clean</param>
         /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned create request and optional errors for duplicated ids and legacyNames</returns>
-        public static (IEnumerable<TimeSeriesCreate>, IEnumerable<CogniteError>) CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate> timeseries,
+        public static (IEnumerable<TimeSeriesCreate>, IEnumerable<CogniteError>) CleanTimeSeriesRequest(
+            IEnumerable<TimeSeriesCreate> timeseries,
             SanitationMode mode)
         {
+            if (timeseries == null)
+            {
+                throw new ArgumentNullException(nameof(timeseries));
+            }
             var result = new List<TimeSeriesCreate>();
             var errors = new List<CogniteError>();
 
@@ -479,8 +600,14 @@ namespace Cognite.Extensions
         /// <param name="events">EventCreate request to clean</param>
         /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned request and optional error if any ids were duplicated</returns>
-        public static (IEnumerable<EventCreate>, IEnumerable<CogniteError>) CleanEventRequest(IEnumerable<EventCreate> events, SanitationMode mode)
+        public static (IEnumerable<EventCreate>, IEnumerable<CogniteError>) CleanEventRequest(
+            IEnumerable<EventCreate> events, 
+            SanitationMode mode)
         {
+            if (events == null)
+            {
+                throw new ArgumentNullException(nameof(events));
+            }
             var result = new List<EventCreate>();
             var errors = new List<CogniteError>();
 
