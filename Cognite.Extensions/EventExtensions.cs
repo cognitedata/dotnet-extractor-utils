@@ -91,11 +91,11 @@ namespace Cognite.Extensions
 
             var results = new CogniteResult<Event>[chunks.Count];
 
-            _logger.LogDebug("Getting or creating events. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count());
+            _logger.LogDebug("Getting or creating events. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     (chunk, idx) => async () => {
-                        var result = await GetOrCreateEventsChunk(resource, chunk, buildEvents, 0, retryMode, sanitationMode, token);
+                        var result = await GetOrCreateEventsChunk(resource, chunk, buildEvents, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
                     });
 
@@ -107,7 +107,7 @@ namespace Cognite.Extensions
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
                 },
-                token);
+                token).ConfigureAwait(false);
 
             return CogniteResult<Event>.Merge(results);
         }
@@ -145,7 +145,7 @@ namespace Cognite.Extensions
                 .ChunkBy(chunkSize)
                 .ToList();
 
-            _logger.LogDebug("Ensuring events. Number of events: {Number}. Number of chunks: {Chunks}", events.Count(), chunks.Count());
+            _logger.LogDebug("Ensuring events. Number of events: {Number}. Number of chunks: {Chunks}", events.Count(), chunks.Count);
 
             int size = chunks.Count + (errors.Any() ? 1 : 0);
             var results = new CogniteResult<Event>[size];
@@ -159,7 +159,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
                 (chunk, idx) => async () => {
-                    var result = await CreateEventsHandleErrors(resource, chunk, retryMode, token);
+                    var result = await CreateEventsHandleErrors(resource, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
 
@@ -167,11 +167,11 @@ namespace Cognite.Extensions
             await generators.RunThrottled(
                 throttleSize,
                 (_) => {
-                    if (chunks.Count() > 1)
+                    if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(EnsureExistsAsync), ++taskNum, chunks.Count);
                 },
-                token);
+                token).ConfigureAwait(false);
 
             return CogniteResult<Event>.Merge(results);
         }
@@ -188,7 +188,7 @@ namespace Cognite.Extensions
             IEnumerable<Event> found;
             using (CdfMetrics.Events.WithLabels("retrieve").NewTimer())
             {
-                found = await resource.RetrieveAsync(externalIds.Select(Identity.Create), true, token);
+                found = await resource.RetrieveAsync(externalIds.Select(Identity.Create), true, token).ConfigureAwait(false);
             }
             _logger.LogDebug("Retrieved {Existing} events from CDF", found.Count());
 
@@ -200,12 +200,12 @@ namespace Cognite.Extensions
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} events. Attempting to create the missing ones", missing.Count, externalIds.Count());
-            var toCreate = await buildEvents(missing);
+            var toCreate = await buildEvents(missing).ConfigureAwait(false);
 
             IEnumerable<CogniteError> errors;
             (toCreate, errors) = Sanitation.CleanEventRequest(toCreate, sanitationMode);
 
-            var result = await CreateEventsHandleErrors(resource, toCreate, retryMode, token);
+            var result = await CreateEventsHandleErrors(resource, toCreate, retryMode, token).ConfigureAwait(false);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
             if (errors.Any())
@@ -235,8 +235,11 @@ namespace Cognite.Extensions
             if (!duplicatedIds.Any()) return result;
             _logger.LogDebug("Found {cnt} duplicated events, retrying", duplicatedIds.Count);
 
-            await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)));
-            var nextResult = await GetOrCreateEventsChunk(resource, duplicatedIds, buildEvents, backoff + 1, retryMode, sanitationMode, token);
+            await Task
+                .Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)), token)
+                .ConfigureAwait(false);
+            var nextResult = await GetOrCreateEventsChunk(resource, duplicatedIds, buildEvents, backoff + 1, retryMode, sanitationMode, token)
+                .ConfigureAwait(false);
             result = result.Merge(nextResult);
 
             return result;
@@ -256,7 +259,7 @@ namespace Cognite.Extensions
                     IEnumerable<Event> newEvents;
                     using (CdfMetrics.Events.WithLabels("create").NewTimer())
                     {
-                        newEvents = await events.CreateAsync(toCreate, token);
+                        newEvents = await events.CreateAsync(toCreate, token).ConfigureAwait(false);
                     }
 
                     _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
@@ -272,7 +275,7 @@ namespace Cognite.Extensions
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
-                        await Task.Delay(1000);
+                        await Task.Delay(1000, token).ConfigureAwait(false);
                     }
                     else if (retryMode == RetryMode.None) break;
                     else

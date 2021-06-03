@@ -53,6 +53,10 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
+            if (points is null)
+            {
+                throw new ArgumentNullException(nameof(points));
+            }
             var trimmedDict = GetTrimmedDataPoints(points);
             var chunks = trimmedDict
                 .Select(p => (p.Key, p.Value))
@@ -61,7 +65,7 @@ namespace Cognite.Extensions
 
             var generators = chunks
                 .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
-                    chunk => async () => await InsertDataPointsChunk(dataPoints, chunk, token));
+                    chunk => async () => await InsertDataPointsChunk(dataPoints, chunk, token).ConfigureAwait(false));
 
             int taskNum = 0;
             await generators.RunThrottled(
@@ -71,7 +75,7 @@ namespace Cognite.Extensions
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(InsertAsync), ++taskNum, chunks.Count);
                 },
-                token);
+                token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -82,8 +86,9 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="client">Cognite client</param>
         /// <param name="points">Data points</param>
-        /// <param name="keyChunkSize">Dictionary key chunk size</param>
-        /// <param name="valueChunkSize">Dictionary value chunk size</param>
+        /// <param name="keyChunkSize">Dictionary key (timeseries id) chunk size</param>
+        /// <param name="valueChunkSize">Dictionary value (datapoint) chunk size</param>
+        /// <param name="timeSeriesChunk">Chuck size for requests to the timeseries endpoint</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
@@ -96,6 +101,10 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
+            if (points == null)
+            {
+                throw new ArgumentNullException(nameof(points));
+            }
             var trimmedDict = GetTrimmedDataPoints(points);
             var chunks = trimmedDict
                 .Select(p => (p.Key, p.Value))
@@ -108,7 +117,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
                     chunk => async () => {
-                        var error = await InsertDataPointsIgnoreErrorsChunk(client, chunk, timeSeriesChunk, token);
+                        var error = await InsertDataPointsIgnoreErrorsChunk(client, chunk, timeSeriesChunk, token).ConfigureAwait(false);
                         lock (mutex)
                         {
                             errors.Add(error);
@@ -122,8 +131,8 @@ namespace Cognite.Extensions
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(InsertDataPointsIgnoreErrorsAsync), ++taskNum, chunks.Count);
                 },
-                token);
-            InsertError errorsFound = new InsertError(new Identity[] { }, new Identity[] { });
+                token).ConfigureAwait(false);
+            InsertError errorsFound = new InsertError(Enumerable.Empty<Identity>(), Enumerable.Empty<Identity>());
             foreach (var err in errors)
             {
                 errorsFound = errorsFound.UnionWith(err);
@@ -227,7 +236,7 @@ namespace Cognite.Extensions
             {
                 using (CdfMetrics.Datapoints.WithLabels("insert").NewTimer())
                 {
-                    await dataPoints.CreateAsync(request, token);
+                    await dataPoints.CreateAsync(request, token).ConfigureAwait(false);
                 }
                 _numberDataPoints.Inc(dataPointCount);
             }
@@ -250,7 +259,7 @@ namespace Cognite.Extensions
             var mismatched = new HashSet<Identity>(comparer);
             try
             {
-                await InsertDataPointsChunk(client.DataPoints, points, token);
+                await InsertDataPointsChunk(client.DataPoints, points, token).ConfigureAwait(false);
             }
             catch (ResponseException e) when (e.Code == 400)
             {
@@ -265,7 +274,9 @@ namespace Cognite.Extensions
                     IEnumerable<TimeSeries> timeseries;
                     using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
                     {
-                        timeseries = await client.TimeSeries.GetTimeSeriesByIdsIgnoreErrors(points.Select(p => p.id), timeSeriesChunk, 1, token);
+                        timeseries = await client.TimeSeries
+                            .GetTimeSeriesByIdsIgnoreErrors(points.Select(p => p.id), timeSeriesChunk, 1, token)
+                            .ConfigureAwait(false);
                     }
                     foreach (var entry in points)
                     {
@@ -296,7 +307,7 @@ namespace Cognite.Extensions
                 }
                 var toInsert = points
                     .Where(p => !missing.Contains(p.id) && !mismatched.Contains(p.id));
-                var errors = await InsertDataPointsIgnoreErrorsChunk(client, toInsert, timeSeriesChunk, token);
+                var errors = await InsertDataPointsIgnoreErrorsChunk(client, toInsert, timeSeriesChunk, token).ConfigureAwait(false);
                 missing.UnionWith(errors.IdsNotFound);
                 mismatched.UnionWith(errors.IdsWithMismatchedData);
             }
@@ -326,6 +337,10 @@ namespace Cognite.Extensions
             int listThrottleSize,
             CancellationToken token)
         {
+            if (ranges == null)
+            {
+                throw new ArgumentNullException(nameof(ranges));
+            }
             var toDelete = new List<IdentityWithRange>();
             foreach(var kvp in ranges)
             {
@@ -353,7 +368,7 @@ namespace Cognite.Extensions
                 .Select<IEnumerable<IdentityWithRange>, Func<Task>>(
                     c => async () =>
                     {
-                        var errors = await DeleteDataPointsIgnoreErrorsChunk(dataPoints, c, token);
+                        var errors = await DeleteDataPointsIgnoreErrorsChunk(dataPoints, c, token).ConfigureAwait(false);
                         lock (mutex)
                         {
                             missing.UnionWith(errors);
@@ -368,7 +383,7 @@ namespace Cognite.Extensions
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
                             nameof(DeleteIgnoreErrorsAsync), ++taskNum, chunks.Count); 
                 },
-                token);
+                token).ConfigureAwait(false);
             _logger.LogDebug("Deletion completed. Verifying that data points were removed from CDF");
 
             var query = new List<DataPointsQueryItem>();
@@ -397,7 +412,7 @@ namespace Cognite.Extensions
                 .Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
                     c => async () =>
                     {
-                        var errors = await VerifyDataPointsDeletion(dataPoints, c, token);
+                        var errors = await VerifyDataPointsDeletion(dataPoints, c, token).ConfigureAwait(false);
                         lock (mutex)
                         {
                             notVerified.UnionWith(errors);
@@ -408,7 +423,7 @@ namespace Cognite.Extensions
             await verifyGenerators.RunThrottled(
                 listThrottleSize,
                 (_) => { _logger.LogDebug("Verifying data points deletion: {Num}/{Total}", ++taskNum, queryChunks.Count); },
-                token);
+                token).ConfigureAwait(false);
 
             _logger.LogDebug("Deletion tasks completed");
             return new DeleteError(missing, notVerified);
@@ -428,14 +443,14 @@ namespace Cognite.Extensions
             {
                 using (CdfMetrics.Datapoints.WithLabels("delete").NewTimer())
                 {
-                    await dataPoints.DeleteAsync(deleteQuery, token);
+                    await dataPoints.DeleteAsync(deleteQuery, token).ConfigureAwait(false);
                 }
             }
             catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
             {
                 CogniteUtils.ExtractMissingFromResponseException(missing, e);
                 var remaining = chunks.Where(i => !missing.Contains(i.Id.HasValue ? new Identity(i.Id.Value) : new Identity(i.ExternalId)));
-                var errors = await DeleteDataPointsIgnoreErrorsChunk(dataPoints, remaining, token);
+                var errors = await DeleteDataPointsIgnoreErrorsChunk(dataPoints, remaining, token).ConfigureAwait(false);
                 missing.UnionWith(errors);
             }
             return missing;
@@ -460,7 +475,7 @@ namespace Cognite.Extensions
                 DataPointListResponse results;
                 using (CdfMetrics.Datapoints.WithLabels("list").NewTimer())
                 {
-                    results = await dataPoints.ListAsync(dataPointsQuery, token);
+                    results = await dataPoints.ListAsync(dataPointsQuery, token).ConfigureAwait(false);
                 }
                 count = 0;
                 var queries = dataPointsQuery.Items.ToList();
@@ -483,7 +498,7 @@ namespace Cognite.Extensions
                     dataPointsQuery.Items = remaining;
                     tries++;
                     _logger.LogDebug("Could not verify the deletion of data points in {Count}/{Total} time series. Retrying in 500ms", count, query.Count());
-                    await Task.Delay(500);
+                    await Task.Delay(500, token).ConfigureAwait(false);
                 }
             }
             if (tries == _maxNumOfVerifyRequests && count > 0)
@@ -545,7 +560,7 @@ namespace Cognite.Extensions
                             {
                                 IgnoreUnknownIds = true,
                                 Items = chunk
-                            }, token);
+                            }, token).ConfigureAwait(false);
                     }
                         
                     foreach (var dp in dps)
@@ -570,8 +585,10 @@ namespace Cognite.Extensions
                     }
                 });
             int numTasks = 0;
-            await generators.RunThrottled(throttleSize, (_) =>
-                _logger.LogDebug("Last timestamp from CDF: {num}/{total}", ++numTasks, chunks.Count), token);
+            await generators
+                .RunThrottled(throttleSize, (_) =>
+                    _logger.LogDebug("Last timestamp from CDF: {num}/{total}", ++numTasks, chunks.Count), token)
+                .ConfigureAwait(false);
             return ret;
         }
 
@@ -630,7 +647,7 @@ namespace Cognite.Extensions
                                 IgnoreUnknownIds = true,
                                 Items = chunk,
                                 Limit = 1
-                            }, token);
+                            }, token).ConfigureAwait(false);
                     }
                    
                     foreach (var dp in dps.Items)
@@ -661,8 +678,10 @@ namespace Cognite.Extensions
                     }
                 });
             int numTasks = 0;
-            await generators.RunThrottled(throttleSize, (_) =>
-                _logger.LogDebug("First timestamp from CDF: {num}/{total}", ++numTasks, chunks.Count), token);
+            await generators
+                .RunThrottled(throttleSize, (_) => 
+                    _logger.LogDebug("First timestamp from CDF: {num}/{total}", ++numTasks, chunks.Count), token)
+                .ConfigureAwait(false);
             return ret;
         }
         /// <summary>
@@ -689,6 +708,10 @@ namespace Cognite.Extensions
             bool earliest,
             CancellationToken token)
         {
+            if (ids == null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
             _logger.LogDebug("Getting extracted ranges for {num} timeseries", ids.Count());
 
             if (latest && earliest) throttleSize = Math.Max(1, throttleSize / 2);
@@ -707,7 +730,7 @@ namespace Cognite.Extensions
                 tasks.Add(dataPoints.GetEarliestTimestamps(ids.Select(pair => (pair.id, pair.limit?.First ?? CogniteTime.DateTimeEpoch)),
                     chunkSizeEarliest, throttleSize, token));
             }
-            var results = await Task.WhenAll(tasks);
+            var results = await Task.WhenAll(tasks).ConfigureAwait(false);
             if (latest)
             {
                 var latestResult = results[0];

@@ -11,12 +11,12 @@ namespace Cognite.Extensions
         /// <summary>
         /// Ids/External ids not found in CDF
         /// </summary>
-        public readonly IEnumerable<Identity> IdsNotFound;
+        public IEnumerable<Identity> IdsNotFound { get; }
         
         /// <summary>
         /// Ids of time series with unconfirmed data point deletions
         /// </summary>
-        public readonly IEnumerable<Identity> IdsDeleteNotConfirmed;
+        public IEnumerable<Identity> IdsDeleteNotConfirmed { get; }
 
         /// <summary>
         /// Creates an instance with the provided identifiers that were not

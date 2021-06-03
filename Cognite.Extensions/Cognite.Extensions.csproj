@@ -1,6 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Cognite.Extensions</PackageId>
+    <Author>Cognite AS</Author>
+    <Company>Cognite AS</Company>
+    <Copyright>Cognite AS</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RootNamespace>Cognite.Extensions</RootNamespace>
+    <Description>
+      A library containing extensions methods to the Cognite SDK
+    </Description>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>Default</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cognite.Common\Cognite.Common.csproj" />
