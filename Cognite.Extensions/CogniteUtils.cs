@@ -57,7 +57,11 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(missing));
             }
-            foreach (var ts in e?.Missing)
+            if (e is null)
+            {
+                throw new ArgumentNullException(nameof(e));
+            }
+            foreach (var ts in e.Missing)
             {
                 if (ts.TryGetValue("externalId", out MultiValue exIdValue))
                 {
