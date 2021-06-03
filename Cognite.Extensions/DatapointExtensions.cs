@@ -132,7 +132,7 @@ namespace Cognite.Extensions
                             nameof(InsertDataPointsIgnoreErrorsAsync), ++taskNum, chunks.Count);
                 },
                 token).ConfigureAwait(false);
-            InsertError errorsFound = new InsertError(Array.Empty<Identity>(), Array.Empty<Identity>());
+            InsertError errorsFound = new InsertError(Enumerable.Empty<Identity>(), Enumerable.Empty<Identity>());
             foreach (var err in errors)
             {
                 errorsFound = errorsFound.UnionWith(err);
