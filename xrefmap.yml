@@ -900,13 +900,27 @@ references:
 - uid: Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
   name: IdsDeleteNotConfirmed
   href: api/Cognite.Extensions.DeleteError.html#Cognite_Extensions_DeleteError_IdsDeleteNotConfirmed
-  commentId: F:Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
+  commentId: P:Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
+  fullName: Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
+  nameWithType: DeleteError.IdsDeleteNotConfirmed
+- uid: Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed*
+  name: IdsDeleteNotConfirmed
+  href: api/Cognite.Extensions.DeleteError.html#Cognite_Extensions_DeleteError_IdsDeleteNotConfirmed_
+  commentId: Overload:Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
+  isSpec: "True"
   fullName: Cognite.Extensions.DeleteError.IdsDeleteNotConfirmed
   nameWithType: DeleteError.IdsDeleteNotConfirmed
 - uid: Cognite.Extensions.DeleteError.IdsNotFound
   name: IdsNotFound
   href: api/Cognite.Extensions.DeleteError.html#Cognite_Extensions_DeleteError_IdsNotFound
-  commentId: F:Cognite.Extensions.DeleteError.IdsNotFound
+  commentId: P:Cognite.Extensions.DeleteError.IdsNotFound
+  fullName: Cognite.Extensions.DeleteError.IdsNotFound
+  nameWithType: DeleteError.IdsNotFound
+- uid: Cognite.Extensions.DeleteError.IdsNotFound*
+  name: IdsNotFound
+  href: api/Cognite.Extensions.DeleteError.html#Cognite_Extensions_DeleteError_IdsNotFound_
+  commentId: Overload:Cognite.Extensions.DeleteError.IdsNotFound
+  isSpec: "True"
   fullName: Cognite.Extensions.DeleteError.IdsNotFound
   nameWithType: DeleteError.IdsNotFound
 - uid: Cognite.Extensions.ErrorType
@@ -1049,13 +1063,27 @@ references:
 - uid: Cognite.Extensions.InsertError.IdsNotFound
   name: IdsNotFound
   href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError_IdsNotFound
-  commentId: F:Cognite.Extensions.InsertError.IdsNotFound
+  commentId: P:Cognite.Extensions.InsertError.IdsNotFound
+  fullName: Cognite.Extensions.InsertError.IdsNotFound
+  nameWithType: InsertError.IdsNotFound
+- uid: Cognite.Extensions.InsertError.IdsNotFound*
+  name: IdsNotFound
+  href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError_IdsNotFound_
+  commentId: Overload:Cognite.Extensions.InsertError.IdsNotFound
+  isSpec: "True"
   fullName: Cognite.Extensions.InsertError.IdsNotFound
   nameWithType: InsertError.IdsNotFound
 - uid: Cognite.Extensions.InsertError.IdsWithMismatchedData
   name: IdsWithMismatchedData
   href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError_IdsWithMismatchedData
-  commentId: F:Cognite.Extensions.InsertError.IdsWithMismatchedData
+  commentId: P:Cognite.Extensions.InsertError.IdsWithMismatchedData
+  fullName: Cognite.Extensions.InsertError.IdsWithMismatchedData
+  nameWithType: InsertError.IdsWithMismatchedData
+- uid: Cognite.Extensions.InsertError.IdsWithMismatchedData*
+  name: IdsWithMismatchedData
+  href: api/Cognite.Extensions.InsertError.html#Cognite_Extensions_InsertError_IdsWithMismatchedData_
+  commentId: Overload:Cognite.Extensions.InsertError.IdsWithMismatchedData
+  isSpec: "True"
   fullName: Cognite.Extensions.InsertError.IdsWithMismatchedData
   nameWithType: InsertError.IdsWithMismatchedData
 - uid: Cognite.Extensions.InsertError.UnionWith(Cognite.Extensions.InsertError)
@@ -1690,22 +1718,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.Verify
   nameWithType: Sanitation.Verify
-- uid: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
-  name: VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
-  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_
-  commentId: M:Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
-  name.vb: VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
-  fullName: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32)
-  fullName.vb: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32)
-  nameWithType: Sanitation.VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
-  nameWithType.vb: Sanitation.VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
-- uid: Cognite.Extensions.Sanitation.VerifyMetadata*
-  name: VerifyMetadata
-  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_
-  commentId: Overload:Cognite.Extensions.Sanitation.VerifyMetadata
-  isSpec: "True"
-  fullName: Cognite.Extensions.Sanitation.VerifyMetadata
-  nameWithType: Sanitation.VerifyMetadata
 - uid: Cognite.Extensions.SanitationMode
   name: SanitationMode
   href: api/Cognite.Extensions.SanitationMode.html
