@@ -29,6 +29,10 @@ namespace Cognite.Extensions
             LogLevel handledLevel = LogLevel.Debug,
             LogLevel fatalLevel = LogLevel.Error)
         {
+            if (error == null)
+            {
+                throw new ArgumentNullException(nameof(error));
+            }
             string valueString = null;
             if (error.Values != null && error.Values.Any())
             {

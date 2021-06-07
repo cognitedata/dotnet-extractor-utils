@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Cognite.Extensions
 {
+    /// <summary>
+    /// Class containing static methods to parse errors from the SDK and clean request objects
+    /// </summary>
     public static class ResultHandlers
     {
         private static CogniteError ParseCommonErrors(ResponseException ex)
@@ -133,7 +136,7 @@ namespace Cognite.Extensions
         {
             if (ex.Missing?.Any() ?? false)
             {
-                if (ex.Message.StartsWith("Asset ids not found"))
+                if (ex.Message.StartsWith("Asset ids not found", StringComparison.InvariantCulture))
                 {
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.AssetId;
@@ -172,31 +175,38 @@ namespace Cognite.Extensions
         /// <returns>CogniteError representation of the exception</returns>
         public static CogniteError ParseException(Exception ex, RequestType type)
         {
-            if (!(ex is ResponseException rex))
+            if (ex == null)
+            {
+                throw new ArgumentNullException(nameof(ex));
+            }
+            if (ex is ResponseException rex)
+            {
+                var result = ParseCommonErrors(rex);
+                if (result == null) result = new CogniteError
+                {
+                    Status = rex.Code,
+                    Message = rex.Message,
+                    Exception = ex
+                };
+                else return result;
+                if (type == RequestType.CreateAssets)
+                {
+                    ParseAssetException(rex, result);
+                }
+                else if (type == RequestType.CreateTimeSeries)
+                {
+                    ParseTimeSeriesException(rex, result);
+                }
+                else if (type == RequestType.CreateEvents)
+                {
+                    ParseEventException(rex, result);
+                }
+                return result;
+            }
+            else
             {
                 return new CogniteError { Message = ex.Message, Exception = ex };
             }
-            var result = ParseCommonErrors(rex);
-            if (result == null) result = new CogniteError
-            {
-                Status = rex.Code,
-                Message = rex.Message,
-                Exception = ex
-            };
-            else return result;
-            if (type == RequestType.CreateAssets)
-            {
-                ParseAssetException(rex, result);
-            }
-            else if (type == RequestType.CreateTimeSeries)
-            {
-                ParseTimeSeriesException(rex, result);
-            }
-            else if (type == RequestType.CreateEvents)
-            {
-                ParseEventException(rex, result);
-            }
-            return result;
         }
 
         /// <summary>
@@ -217,7 +227,14 @@ namespace Cognite.Extensions
             int assetThrottleSize,
             CancellationToken token)
         {
-            if (error == null) return assets;
+            if (assets == null)
+            {
+                throw new ArgumentNullException(nameof(assets));
+            }
+            if (error == null) 
+            {
+                return assets;
+            }
             // This is mostly to avoid infinite loops. If there are no bad values then
             // there is no way to correctly clean the request, so there must be something
             // else wrong
@@ -229,7 +246,7 @@ namespace Cognite.Extensions
 
             if (!error.Complete)
             {
-                await CompleteError(resource, error, assets, assetChunkSize, assetThrottleSize, token);
+                await CompleteError(resource, error, assets, assetChunkSize, assetThrottleSize, token).ConfigureAwait(false);
             }
 
             var items = new HashSet<Identity>(error.Values, new IdentityComparer());
@@ -290,6 +307,10 @@ namespace Cognite.Extensions
             CogniteError error,
             IEnumerable<TimeSeriesCreate> timeseries)
         {
+            if (timeseries == null)
+            {
+                throw new ArgumentNullException(nameof(timeseries));
+            }
             if (error == null) return timeseries;
             if (!error.Values?.Any() ?? true)
             {
@@ -345,15 +366,17 @@ namespace Cognite.Extensions
         /// <summary>
         /// Clean list of EventCreate objects based on CogniteError
         /// </summary>
-        /// <param name="error">Error that occured with a previous push</param>
+        /// <param name="error">Error that occurred with a previous push</param>
         /// <param name="events">Events to clean</param>
-        /// <param name="emptyOnError">True if a fatal error should remove all entries,
-        /// if this is false, a broken connection or similar may cause very long loops.</param>
         /// <returns>Events that are not affected by the error</returns>
         public static IEnumerable<EventCreate> CleanFromError(
             CogniteError error,
             IEnumerable<EventCreate> events)
         {
+            if (events == null)
+            {
+                throw new ArgumentNullException(nameof(events));
+            }
             if (error == null) return events;
             if (!error.Values?.Any() ?? true)
             {
@@ -432,7 +455,9 @@ namespace Cognite.Extensions
 
                 try
                 {
-                    var parents = await resource.GetAssetsByIdsIgnoreErrors(ids, assetChunkSize, assetThrottleSize, token);
+                    var parents = await resource
+                        .GetAssetsByIdsIgnoreErrors(ids, assetChunkSize, assetThrottleSize, token)
+                        .ConfigureAwait(false);
 
                     error.Complete = true;
                     error.Values = ids
@@ -487,6 +512,11 @@ namespace Cognite.Extensions
             return new CogniteResult(errors);
         }
 
+        /// <summary>
+        /// Return a new CogniteResult that contains errors from all <paramref name="results"/> given as parameter
+        /// </summary>
+        /// <param name="results">List of CogniteResult to merge with</param>
+        /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
         public static CogniteResult Merge(params CogniteResult[] results)
         {
             var errors = new List<CogniteError>();
@@ -541,6 +571,11 @@ namespace Cognite.Extensions
             return new CogniteResult<TResult>(errors, results);
         }
 
+        /// <summary>
+        /// Return a new CogniteResult of type <typeparamref name="TResult"/> that contains errors from all <paramref name="results"/> given as parameter
+        /// </summary>
+        /// <param name="results">List of CogniteResult to merge with</param>
+        /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
         public static CogniteResult<TResult> Merge(params CogniteResult<TResult>[] results)
         {
             var items = new List<TResult>();
@@ -573,11 +608,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Values of the affected resources as CogniteSdk identities.
         /// </summary>
-        public IEnumerable<Identity> Values { get; set; } = null;
+        public IEnumerable<Identity> Values { get; set; }
         /// <summary>
         /// Input items skipped if the request was cleaned using this error.
         /// </summary>
-        public IEnumerable<object> Skipped { get; set; } = null;
+        public IEnumerable<object> Skipped { get; set; }
         /// <summary>
         /// Exception that caused this error, if any.
         /// </summary>

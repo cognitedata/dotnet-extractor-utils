@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CogniteSdk;
 
@@ -11,12 +12,12 @@ namespace Cognite.Extensions
         /// <summary>
         /// Ids/External ids not found in CDF
         /// </summary>
-        public readonly IEnumerable<Identity> IdsNotFound;
+        public IEnumerable<Identity> IdsNotFound { get; } 
         
         /// <summary>
         /// Ids with mismatched type in CDF
         /// </summary>
-        public readonly IEnumerable<Identity> IdsWithMismatchedData;
+        public IEnumerable<Identity> IdsWithMismatchedData { get; }
 
         /// <summary>
         /// Creates an instance with the provided identifiers that were not
@@ -35,8 +36,11 @@ namespace Cognite.Extensions
         /// a new object
         /// </summary>
         /// <param name="other">Other InsertError</param>
-        /// <returns></returns>
         public InsertError UnionWith(InsertError other) {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
             var comparer = new IdentityComparer();
             var idsNotFound = new HashSet<Identity>(IdsNotFound, comparer);
             idsNotFound.UnionWith(other.IdsNotFound);
