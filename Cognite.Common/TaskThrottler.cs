@@ -67,6 +67,8 @@ namespace Cognite.Extractor.Common
         // Default unederlying collection is a ConcurrentQueue
         private readonly BlockingCollection<Func<Task>> _generators = new BlockingCollection<Func<Task>>();
 
+        private readonly CancellationTokenSource _source = new CancellationTokenSource();
+        private readonly CancellationTokenSource _completionSource;
         /// <summary>
         /// Task for the main task loop in the throttler.
         /// </summary>
@@ -95,7 +97,8 @@ namespace Cognite.Extractor.Common
             _maxPerUnit = perUnit;
             _timeUnit = timeUnit == null ? TimeSpan.Zero : TimeSpan.FromTicks(timeUnit.Value.Ticks);
             _quitOnFailure = quitOnFailure;
-            RunTask = Run();
+            _completionSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
+            RunTask = Task.Run(async () => await Run().ConfigureAwait(false));
         }
 
         private static Task ToTask(WaitHandle waitHandle)
@@ -126,6 +129,7 @@ namespace Cognite.Extractor.Common
                 var taskResult = new TaskResult(DateTime.UtcNow, localIndex);
                 var result = generator();
                 _results.Add(taskResult);
+
                 return result.ContinueWith(task =>
                 {
                     taskResult.ReportResult(task);
@@ -156,6 +160,7 @@ namespace Cognite.Extractor.Common
                     localResult = new TaskResult(DateTime.UtcNow, localIndex);
                     var result = generator();
                     _results.Add(localResult);
+
                     return result.ContinueWith(task =>
                     {
                         localResult.ReportResult(task);
@@ -192,49 +197,49 @@ namespace Cognite.Extractor.Common
 
         private async Task Run()
         {
-            bool running = true;
-            while (running)
+            while (!_source.IsCancellationRequested && !_generators.IsCompleted)
             {
-                using (var source = new CancellationTokenSource())
+                // To allow canceling once, so that subsequent calls to _generators.Take() will fail if the collection is empty
+                // Setting BlockingCollection to complete does not terminate active calls to Take().
+                // Canceling _source indicates that we are killing the entire scheduler, which is different.
+                var token = _completionSource.IsCancellationRequested ? _source.Token : _completionSource.Token;
+                if (AllowSchedule())
                 {
-                    var _toWaitFor = new List<Task>();
-                    if (AllowSchedule())
+                    try
                     {
-                        _toWaitFor.Add(Task.Run(() =>
+                        var generator = _generators.Take(token);
+                        lock (_lock)
                         {
-                            try
-                            {
-                                var generator = _generators.Take(source.Token);
-                                lock (_lock)
-                                {
-                                    _runningTasks.Add(generator());
-                                }
-                            }
-                            catch { }
-                            finally
-                            {
-                                if (_generators.IsCompleted) running = false;
-                            }
-                        }));
+                            _runningTasks.Add(generator());
+                        }
                     }
-                    else if (_timeUnit > TimeSpan.Zero)
+                    catch (InvalidOperationException)
                     {
-                        _toWaitFor.Add(Task.Delay(_timeUnit, source.Token));
                     }
-                    _toWaitFor.Add(ToTask(_taskCompletionEvent));
-
-                    await Task.WhenAny(_toWaitFor).ConfigureAwait(false);
-
-                    _taskCompletionEvent.Reset();
-                    source.Cancel();
+                    catch (OperationCanceledException)
+                    {
+                    }
                 }
+                else
+                {
+                    if (_timeUnit > TimeSpan.Zero)
+                    {
+                        WaitHandle.WaitAny(new[] { token.WaitHandle, _taskCompletionEvent }, _timeUnit);
+                    }
+                    else
+                    {
+                        WaitHandle.WaitAny(new[] { token.WaitHandle, _taskCompletionEvent });
+                    }
+                    _taskCompletionEvent.Reset();
+                }
+
 
                 lock (_lock)
                 {
                     if (_quitOnFailure && _runningTasks.Any(task => task.IsFaulted)) break;
                 }
 
-                if (!running)
+                if (_source.IsCancellationRequested || _generators.IsCompleted)
                 {
                     await Task.WhenAll(_runningTasks).ConfigureAwait(false);
                 }
@@ -284,6 +289,7 @@ namespace Cognite.Extractor.Common
         public async Task<IEnumerable<TaskResult>> WaitForCompletion()
         {
             _generators.CompleteAdding();
+            _completionSource.Cancel();
             await RunTask.ConfigureAwait(false);
             CheckResult();
             return _results;
@@ -295,7 +301,11 @@ namespace Cognite.Extractor.Common
         public void Dispose()
         {
             _taskCompletionEvent.Dispose();
+            _generators.CompleteAdding();
             _generators.Dispose();
+            _source.Cancel();
+            _source.Dispose();
+            _completionSource.Dispose();
         }
     }
 }
