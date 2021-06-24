@@ -262,7 +262,18 @@ namespace Cognite.Extensions
                 .ToDictionarySafe(pair => pair.Item1, pair => pair.Item2);
         }
 
-        private static bool VerifyMetadata(this Dictionary<string, string> data,
+        /// <summary>
+        /// Check that the given metadata dictionary satisfies the limits of UTF8 bytes per key,
+        /// value and total, as well as the total number of key, value pairs, as specified
+        /// in the parameters
+        /// </summary>
+        /// <param name="data">Metadata to verify</param>
+        /// <param name="maxPerKey">Maximum number of bytes per key</param>
+        /// <param name="maxKeys">Maximum number of key, value pairs</param>
+        /// <param name="maxPerValue">Maximum number of bytes per value</param>
+        /// <param name="maxBytes">Maximum number of total bytes</param>
+        /// <returns>True if the limits are satisfied, false otherwise</returns>
+        public static bool VerifyMetadata(this Dictionary<string, string> data,
             int maxPerKey,
             int maxKeys,
             int maxPerValue,
