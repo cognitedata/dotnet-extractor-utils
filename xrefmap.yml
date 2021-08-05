@@ -1718,6 +1718,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.Verify
   nameWithType: Sanitation.Verify
+- uid: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
+  name: VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_
+  commentId: M:Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
+  name.vb: VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
+  fullName: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32)
+  fullName.vb: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32)
+  nameWithType: Sanitation.VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
+  nameWithType.vb: Sanitation.VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
+- uid: Cognite.Extensions.Sanitation.VerifyMetadata*
+  name: VerifyMetadata
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_
+  commentId: Overload:Cognite.Extensions.Sanitation.VerifyMetadata
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.VerifyMetadata
+  nameWithType: Sanitation.VerifyMetadata
 - uid: Cognite.Extensions.SanitationMode
   name: SanitationMode
   href: api/Cognite.Extensions.SanitationMode.html
