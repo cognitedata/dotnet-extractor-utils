@@ -34,7 +34,7 @@ namespace ExtractorUtils.Test
 
         private static LoggerConfig loggerConf = new LoggerConfig
         {
-            Console = new LogConfig
+            Console = new ConsoleConfig
             {
                 Level = "verbose"
             }
