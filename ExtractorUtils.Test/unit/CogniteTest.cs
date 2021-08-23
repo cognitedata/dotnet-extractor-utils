@@ -20,7 +20,7 @@ using Polly;
 using System.Collections.Concurrent;
 using Cognite.Extensions;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     public class CogniteTest
     {

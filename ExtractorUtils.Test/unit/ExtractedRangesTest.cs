@@ -19,7 +19,7 @@ using System.Linq;
 using CogniteSdk;
 using Cognite.Extractor.Common;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     public class ExtractedRangesTest
     {

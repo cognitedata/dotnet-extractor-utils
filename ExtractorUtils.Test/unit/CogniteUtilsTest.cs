@@ -6,7 +6,7 @@ using Xunit;
 using Cognite.Extractor.Common;
 using Cognite.Extensions;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     public class CogniteUtilsTest
     {

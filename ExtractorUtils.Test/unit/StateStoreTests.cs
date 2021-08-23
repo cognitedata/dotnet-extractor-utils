@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     [CollectionDefinition("state-store", DisableParallelization = true)]
     public class StateStoreTestCollection

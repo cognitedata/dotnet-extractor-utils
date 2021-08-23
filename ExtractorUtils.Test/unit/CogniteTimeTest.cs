@@ -2,7 +2,7 @@ using System;
 using Xunit;
 using Cognite.Extractor.Common;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     public static class CogniteTimeTest
     {
