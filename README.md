@@ -196,6 +196,8 @@ Due to restrictions on integration tests, PRs from external forks should be merg
 
 The project requires test coverage, if your change adds code, make sure to create a test for it.
 
+External commits are _merged_. PRs should have clean commit history with descriptive commit messages.
+
 ### Style
 
  - Newline before braces.
