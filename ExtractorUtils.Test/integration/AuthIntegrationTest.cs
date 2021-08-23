@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using Xunit;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Integration
 {
     public class AuthIntegrationTest
     {
