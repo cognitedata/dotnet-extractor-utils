@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     public class SanitationTest
     {

@@ -20,7 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     public class EventTest
     {

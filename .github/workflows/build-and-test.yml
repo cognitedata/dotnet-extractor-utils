@@ -2,9 +2,9 @@ name: Build and Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, integration ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, integration ]
 
 jobs:
   build:
@@ -21,8 +21,12 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Debug --no-restore
+    - name: Unit Test
+      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ --filter ExtractorUtils.Test.Unit. ./ExtractorUtils.Test/
+      if: ${{ github.event == 'pull_request' && github.base_ref == 'refs/heads/integration' }}
     - name: Test
       run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
+      if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
       env:
         TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
         TEST_PROJECT: "extractor-tests"

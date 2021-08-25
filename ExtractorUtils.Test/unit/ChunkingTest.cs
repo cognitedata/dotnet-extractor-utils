@@ -10,8 +10,8 @@ using Xunit.Sdk;
 using Cognite.Extensions;
 using CogniteSdk;
 
-namespace ExtractorUtils.Test {
-
+namespace ExtractorUtils.Test.Unit
+{
     public static class ChunkingTest {
 
         [Fact]

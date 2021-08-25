@@ -3,7 +3,7 @@ using Cognite.Extractor.Common;
 using System.Linq;
 using System;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     public static class CommonUtilsTest {
 

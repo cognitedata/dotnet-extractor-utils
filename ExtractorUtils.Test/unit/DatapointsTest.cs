@@ -24,7 +24,7 @@ using Newtonsoft.Json;
 using Xunit;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     public class DatapointsTest
     {

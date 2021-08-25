@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Integration
 {
     public class AssetIntegrationTest
     {

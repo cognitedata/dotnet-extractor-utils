@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Integration
 {
     public class TimeSeriesIntegrationTest
     {

@@ -7,7 +7,7 @@ using Xunit;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 
-namespace ExtractorUtils.Test
+namespace ExtractorUtils.Test.Unit
 {
     class TestLoggingConfig : BaseConfig {
         public string Foo { get; set; } = "";
