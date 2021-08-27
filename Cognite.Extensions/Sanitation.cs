@@ -123,26 +123,36 @@ namespace Cognite.Extensions
         /// <param name="maxKeys">Maximum number of key, value pairs</param>
         /// <param name="maxPerValue">Maximum number of bytes per value</param>
         /// <param name="maxBytes">Maximum number of total bytes</param>
+        /// <param name="bytes">Total number of bytes in returned metadata</param>
         /// <returns>A sanitized dictionary</returns>
         public static Dictionary<string, string> SanitizeMetadata(this Dictionary<string, string> data,
             int maxPerKey,
             int maxKeys,
             int maxPerValue,
-            int maxBytes)
+            int maxBytes,
+            out int bytes)
         {
+            bytes = 0;
             if (data == null || !data.Any()) return data;
             int count = 0;
             int byteCount = 0;
-            return data
+            var result = data
                 .Where(kvp => kvp.Key != null)
                 .Select(kvp => (kvp.Key.LimitUtf8ByteCount(maxPerKey), kvp.Value.LimitUtf8ByteCount(maxPerValue) ?? ""))
                 .TakeWhile(pair =>
                 {
                     count++;
-                    byteCount += SafeByteCount(pair.Item1) + SafeByteCount(pair.Item2);
-                    return count <= maxKeys && byteCount <= maxBytes;
+                    int numBytes = SafeByteCount(pair.Item1) + SafeByteCount(pair.Item2);
+                    if (count <= maxKeys && byteCount + numBytes <= maxBytes)
+                    {
+                        byteCount += numBytes;
+                        return true;
+                    }
+                    return false;
                 })
                 .ToDictionarySafe(pair => pair.Item1, pair => pair.Item2);
+            bytes = byteCount;
+            return result;
         }
 
         /// <summary>
@@ -155,16 +165,18 @@ namespace Cognite.Extensions
         /// <param name="maxKeys">Maximum number of key, value pairs</param>
         /// <param name="maxPerValue">Maximum number of bytes per value</param>
         /// <param name="maxBytes">Maximum number of total bytes</param>
+        /// <param name="bytes">Total number of bytes in metadata</param>
         /// <returns>True if the limits are satisfied, false otherwise</returns>
         public static bool VerifyMetadata(this Dictionary<string, string> data,
             int maxPerKey,
             int maxKeys,
             int maxPerValue,
-            int maxBytes)
+            int maxBytes,
+            out int bytes)
         {
+            bytes = 0;
             if (data == null || !data.Any()) return true;
             int count = 0;
-            int byteCount = 0;
             foreach (var kvp in data)
             {
                 if (kvp.Value == null) return false;
@@ -172,9 +184,10 @@ namespace Cognite.Extensions
                 if (valueByteCount > maxPerValue) return false;
                 var keyByteCount = SafeByteCount(kvp.Key);
                 if (keyByteCount > maxPerKey) return false;
-                byteCount += valueByteCount + keyByteCount;
+                int numBytes = valueByteCount + keyByteCount;
                 count++;
-                if (byteCount > maxBytes || count > maxKeys) return false;
+                if (bytes + numBytes > maxBytes || count > maxKeys) return false;
+                bytes += numBytes;
             }
             return true;
         }
