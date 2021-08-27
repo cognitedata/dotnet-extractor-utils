@@ -68,6 +68,10 @@ namespace Cognite.Extensions
                 {
                     ParseEventException(rex, result);
                 }
+                else if (type == RequestType.CreateSequences)
+                {
+                    ParseSequencesException(rex, result);
+                }
                 return result;
             }
             else
@@ -353,7 +357,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create events
         /// </summary>
-        CreateEvents
+        CreateEvents,
+        /// <summary>
+        /// Create sequences
+        /// </summary>
+        CreateSequences
     }
     
 
