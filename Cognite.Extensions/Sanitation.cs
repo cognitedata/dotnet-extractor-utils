@@ -16,49 +16,6 @@ namespace Cognite.Extensions
         /// Maximum length of External ID
         /// </summary>
         public const int ExternalIdMax = 255;
-
-        
-
-
-        /// <summary>
-        /// Maximum length of Event type
-        /// </summary>
-        public const int EventTypeMax = 64;
-
-        /// <summary>
-        /// Maximum length of Event description
-        /// </summary>
-        public const int EventDescriptionMax = 500;
-
-        /// <summary>
-        /// Maximum length of Event source
-        /// </summary>
-        public const int EventSourceMax = 128;
-
-        /// <summary>
-        /// Maximum size in bytes of each Event metadata key
-        /// </summary>
-        public const int EventMetadataMaxPerKey = 128;
-
-        /// <summary>
-        /// Maximum size in bytes of each Event metadata value
-        /// </summary>
-        public const int EventMetadataMaxPerValue = 128_000;
-
-        /// <summary>
-        /// Maximum number Event metadata key/value pairs
-        /// </summary>
-        public const int EventMetadataMaxPairs = 256;
-
-        /// <summary>
-        /// Maximum size in bytes of Event metadata field
-        /// </summary>
-        public const int EventMetadataMaxBytes = 200_000;
-
-        /// <summary>
-        /// Maximum number of Event asset ids
-        /// </summary>
-        public const int EventAssetIdsMax = 10_000;
         
         /// <summary>
         /// Reduce the length of given string to maxLength, if it is longer.
