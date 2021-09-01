@@ -25,6 +25,8 @@ namespace ExtractorUtils.Test.Unit
         private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
 
+        // The primary purpose of this test versus the integration tests is to verify that 
+        // the keep-duplicates logic works as intended.
         [Theory]
         [InlineData("id1", "id2")]
         [InlineData("id3", "id4", "id5", "id6", "id7")]
@@ -117,7 +119,7 @@ namespace ExtractorUtils.Test.Unit
             CancellationToken token)
         {
             var uri = message.RequestUri.ToString();
-            var responseBody = "";
+            string responseBody;
             var statusCode = HttpStatusCode.OK;
 
             var content = await message.Content.ReadAsStringAsync();

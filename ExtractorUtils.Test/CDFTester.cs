@@ -85,10 +85,12 @@ namespace ExtractorUtils.Test
                 "    time-series: 20",
                 "    assets: 20",
                 "    events: 20",
+                "    sequences: 10",
                 "  cdf-throttling:",
                 "    time-series: 2",
                 "    assets: 2",
-                "    events: 2"
+                "    events: 2",
+                "    sequences: 2"
             }).ToList();
             return config.ToArray();
         }

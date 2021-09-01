@@ -9,3 +9,5 @@ docfx_project/docfx.console*
 docfx_project/api/*.yml
 docfx_project/api/.manifest
 **/Properties
+
+*.runsettings
