@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.Extensions.Sequences
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Extensions to sequences.
@@ -42,7 +42,7 @@ namespace Cognite.Extensions.Sequences
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found sequences</returns>
-        public static Task<CogniteResult<Sequence>> GetOrCreateSequencesAsync(
+        public static Task<CogniteResult<Sequence>> GetOrCreateAsync(
             this SequencesResource sequences,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<SequenceCreate>> buildSequences,
@@ -77,7 +77,7 @@ namespace Cognite.Extensions.Sequences
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found sequences</returns>
-        public static async Task<CogniteResult<Sequence>> GetOrCreateSequencesAsync(
+        public static async Task<CogniteResult<Sequence>> GetOrCreateAsync(
             this SequencesResource sequences,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<SequenceCreate>>> buildSequences,
@@ -109,7 +109,7 @@ namespace Cognite.Extensions.Sequences
                 (_) => {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(GetOrCreateSequencesAsync), ++taskNum, chunks.Count);
+                            nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
                 },
                 token).ConfigureAwait(false);
 
@@ -132,7 +132,7 @@ namespace Cognite.Extensions.Sequences
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created sequences</returns>
-        public static async Task<CogniteResult<Sequence>> EnsureSequencesExistsAsync(
+        public static async Task<CogniteResult<Sequence>> EnsureExistsAsync(
             this SequencesResource sequences,
             IEnumerable<SequenceCreate> sequencesToEnsure,
             int chunkSize,
@@ -172,7 +172,7 @@ namespace Cognite.Extensions.Sequences
                 (_) => {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(EnsureSequencesExistsAsync), ++taskNum, chunks.Count);
+                            nameof(EnsureExistsAsync), ++taskNum, chunks.Count);
                 },
                 token).ConfigureAwait(false);
 
@@ -189,7 +189,7 @@ namespace Cognite.Extensions.Sequences
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IEnumerable<Sequence>> GetSequencesByIdsIgnoreErrors(
+        public static async Task<IEnumerable<Sequence>> GetByIdsIgnoreErrors(
             this SequencesResource sequences,
             IEnumerable<Identity> ids,
             int chunkSize,
@@ -218,7 +218,7 @@ namespace Cognite.Extensions.Sequences
                 });
             int numTasks = 0;
             await generators.RunThrottled(throttleSize, (_) =>
-                _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetSequencesByIdsIgnoreErrors), ++numTasks, chunks.Count),
+                _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetByIdsIgnoreErrors), ++numTasks, chunks.Count),
                 token).ConfigureAwait(false);
             return result;
         }
