@@ -95,7 +95,7 @@ namespace Cognite.Extensions
                 if (!col.Name.CheckLength(SequenceColumnNameMax)) return ResourceType.ColumnName;
                 if (!col.Description.CheckLength(SequenceColumnDescriptionMax)) return ResourceType.ColumnDescription;
                 if (!col.MetaData.VerifyMetadata(SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes,
-                    SequenceColumnMetadataMaxBytes, out int colBytes)) return ResourceType.ColumnMetadata;
+                    Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes)) return ResourceType.ColumnMetadata;
                 totalBytes += colBytes;
             }
 

@@ -230,6 +230,119 @@ namespace ExtractorUtils.Test.Unit
             }
             Assert.Null(evt.Verify());
         }
+
+        [Fact]
+        public void TestSanitizeSequence()
+        {
+            var seq = new SequenceCreate
+            {
+                AssetId = -123,
+                DataSetId = -123,
+                ExternalId = new string('æ', 300),
+                Metadata = Enumerable.Range(0, 200)
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 600)),
+                Name = new string('æ', 300),
+                Description = new string('æ', 2000),
+                Columns = Enumerable.Range(0, 20).Select(i =>
+                    new SequenceColumnWrite
+                    {
+                        ExternalId = new string('æ', 300),
+                        Name = new string('æ', 300),
+                        Description = new string('æ', 2000),
+                        MetaData = Enumerable.Range(0, 200)
+                                .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 600)),
+                    }).ToArray()
+            };
+            seq.Sanitize();
+            Assert.Null(seq.AssetId);
+            Assert.Null(seq.DataSetId);
+            Assert.Equal(new string('æ', 255), seq.ExternalId);
+            Assert.Equal(new string('æ', 1000), seq.Description);
+            // 706 chars * 2 bytes * 7 is about 10000 bytes
+            Assert.Equal(7, seq.Metadata.Count);
+            Assert.Equal(new string('æ', 255), seq.Name);
+            int idx = 0;
+            foreach (var col in seq.Columns)
+            {
+                Assert.Equal(new string('æ', 255), col.ExternalId);
+                Assert.Equal(new string('æ', 1000), col.Description);
+                Assert.Equal(new string('æ', 64), col.Name);
+                if (idx < 9)
+                {
+                    Assert.Equal(7, col.MetaData.Count);
+                }
+                else if (idx == 9)
+                {
+                    Assert.Single(col.MetaData);
+                }
+                else
+                {
+                    Assert.Empty(col.MetaData);
+                }
+                idx++;
+            }
+        }
+        [Fact]
+        public void TestVerifySequence()
+        {
+            var removeFields = new List<ResourceType>
+            {
+                ResourceType.ExternalId, ResourceType.Name, ResourceType.AssetId, ResourceType.Description,
+                ResourceType.DataSetId, ResourceType.Metadata, ResourceType.SequenceColumns,
+                ResourceType.ColumnExternalId, ResourceType.ColumnName, ResourceType.ColumnDescription,
+                ResourceType.ColumnMetadata
+            };
+            var seq = new SequenceCreate
+            {
+                AssetId = -123,
+                DataSetId = -123,
+                ExternalId = new string('æ', 300),
+                Metadata = Enumerable.Range(0, 200)
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 600)),
+                Name = new string('æ', 300),
+                Description = new string('æ', 2000)
+            };
+
+            foreach (var field in removeFields)
+            {
+                var errType = seq.Verify();
+                Assert.Equal(field, errType);
+                switch (field)
+                {
+                    case ResourceType.ExternalId: seq.ExternalId = null; break;
+                    case ResourceType.Name: seq.Name = null; break;
+                    case ResourceType.AssetId: seq.AssetId = null; break;
+                    case ResourceType.Description: seq.Description = null; break;
+                    case ResourceType.DataSetId: seq.DataSetId = null; break;
+                    case ResourceType.Metadata: seq.Metadata = null; break;
+                    case ResourceType.SequenceColumns:
+                        seq.Columns = Enumerable.Range(0, 20).Select(i =>
+                            new SequenceColumnWrite
+                            {
+                                ExternalId = new string('æ', 300),
+                                Name = new string('æ', 300),
+                                Description = new string('æ', 2000),
+                                MetaData = Enumerable.Range(0, 200)
+                                        .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 600)),
+                            }).ToArray();
+                        break;
+                    case ResourceType.ColumnExternalId:
+                        int idx = 0;
+                        foreach (var col in seq.Columns) col.ExternalId = $"idx{idx++}";
+                        break;
+                    case ResourceType.ColumnDescription:
+                        foreach (var col in seq.Columns) col.Description = null;
+                        break;
+                    case ResourceType.ColumnName:
+                        foreach (var col in seq.Columns) col.Name = null;
+                        break;
+                    case ResourceType.ColumnMetadata:
+                        foreach (var col in seq.Columns) col.MetaData = null;
+                        break;
+                }
+            }
+            Assert.Null(seq.Verify());
+        }
         [Theory]
         [InlineData("æææææ", 4)]
         [InlineData("123412341234", 9)]
@@ -306,6 +419,52 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(ResourceType.LegacyName, err2.Resource);
             Assert.Equal(6, result.Select(evt => evt.ExternalId).Distinct().Count());
             Assert.Equal(6, result.Select(evt => evt.LegacyName).Distinct().Count());
+        }
+        [Fact]
+        public void TestSanitizeSequenceRequest()
+        {
+            var sequences = new[]
+            {
+                new SequenceCreate { ExternalId = "test1", Columns = new [] { new SequenceColumnWrite { ExternalId = "test1" } } },
+                new SequenceCreate { ExternalId = "test2", Columns = new [] { new SequenceColumnWrite { ExternalId = "test1" } } },
+                new SequenceCreate { ExternalId = "test3", Columns = new [] { new SequenceColumnWrite { ExternalId = "test1" } } },
+                new SequenceCreate { ExternalId = "test3", Columns = new [] { new SequenceColumnWrite { ExternalId = "test2" } } },
+                new SequenceCreate { ExternalId = "test4", Columns = new [] { new SequenceColumnWrite { ExternalId = "test1" } } },
+                new SequenceCreate { ExternalId = "test4", Columns = new [] { new SequenceColumnWrite { ExternalId = "test2" } } },
+                new SequenceCreate { ExternalId = "test5", Columns = null },
+                new SequenceCreate { ExternalId = "test6", Columns = null },
+                new SequenceCreate { ExternalId = "test7", Columns = new [] {
+                    new SequenceColumnWrite { ExternalId = "test3" }, new SequenceColumnWrite { ExternalId = "test3" }
+                } },
+                new SequenceCreate { ExternalId = "test8", Columns = new [] {
+                    new SequenceColumnWrite { ExternalId = "test4" }, new SequenceColumnWrite { ExternalId = "test4" }
+                } },
+            };
+            var (result, errors) = Sanitation.CleanSequenceRequest(sequences, SanitationMode.Clean);
+            var errs = errors.ToList();
+            Assert.Equal(4, result.Count());
+            Assert.Equal(4, errors.Count());
+            var err = errs[2];
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(ResourceType.ExternalId, err.Resource);
+            Assert.Equal(2, err.Values.Count());
+
+            err = errs[3];
+            Assert.Equal(ErrorType.SanitationFailed, err.Type);
+            Assert.Equal(ResourceType.SequenceColumns, err.Resource);
+            Assert.Equal(2, err.Skipped.Count());
+
+            err = errs[0];
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(ResourceType.ColumnExternalId, err.Resource);
+            Assert.Single(err.Skipped);
+            Assert.Single(err.Values);
+
+            err = errs[1];
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(ResourceType.ColumnExternalId, err.Resource);
+            Assert.Single(err.Skipped);
+            Assert.Single(err.Values);
         }
     }
 }
