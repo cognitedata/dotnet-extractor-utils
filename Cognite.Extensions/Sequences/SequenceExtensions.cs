@@ -56,7 +56,7 @@ namespace Cognite.Extensions
             {
                 return Task.FromResult(buildSequences(ids));
             }
-            return sequences.GetOrCreateSequencesAsync(externalIds, asyncBuildSequences,
+            return sequences.GetOrCreateAsync(externalIds, asyncBuildSequences,
                 chunkSize, throttleSize, retryMode, sanitationMode, token);
         }
 
