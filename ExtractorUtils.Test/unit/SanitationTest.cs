@@ -249,7 +249,7 @@ namespace ExtractorUtils.Test.Unit
                         ExternalId = new string('æ', 300),
                         Name = new string('æ', 300),
                         Description = new string('æ', 2000),
-                        MetaData = Enumerable.Range(0, 200)
+                        Metadata = Enumerable.Range(0, 200)
                                 .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 600)),
                     }).ToArray()
             };
@@ -269,15 +269,15 @@ namespace ExtractorUtils.Test.Unit
                 Assert.Equal(new string('æ', 64), col.Name);
                 if (idx < 9)
                 {
-                    Assert.Equal(7, col.MetaData.Count);
+                    Assert.Equal(7, col.Metadata.Count);
                 }
                 else if (idx == 9)
                 {
-                    Assert.Single(col.MetaData);
+                    Assert.Single(col.Metadata);
                 }
                 else
                 {
-                    Assert.Empty(col.MetaData);
+                    Assert.Empty(col.Metadata);
                 }
                 idx++;
             }
@@ -322,7 +322,7 @@ namespace ExtractorUtils.Test.Unit
                                 ExternalId = new string('æ', 300),
                                 Name = new string('æ', 300),
                                 Description = new string('æ', 2000),
-                                MetaData = Enumerable.Range(0, 200)
+                                Metadata = Enumerable.Range(0, 200)
                                         .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 600)),
                             }).ToArray();
                         break;
@@ -337,7 +337,7 @@ namespace ExtractorUtils.Test.Unit
                         foreach (var col in seq.Columns) col.Name = null;
                         break;
                     case ResourceType.ColumnMetadata:
-                        foreach (var col in seq.Columns) col.MetaData = null;
+                        foreach (var col in seq.Columns) col.Metadata = null;
                         break;
                 }
             }

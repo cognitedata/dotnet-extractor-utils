@@ -155,7 +155,7 @@ namespace ExtractorUtils.Test.Integration
                             ExternalId = i + new string('æ', 300),
                             Name = new string('æ', 300),
                             Description = new string('æ', 2000),
-                            MetaData = Enumerable.Range(0, 200)
+                            Metadata = Enumerable.Range(0, 200)
                                     .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 600)),
                         }).ToArray()
                 },
@@ -187,12 +187,12 @@ namespace ExtractorUtils.Test.Integration
 
 
                 var errs = result.Errors.ToList();
-                Assert.Equal(ErrorType.SanitationFailed, errs[0].Type);
-                Assert.Equal(ResourceType.SequenceColumns, errs[0].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
+                Assert.Equal(ResourceType.SequenceColumns, errs[2].Resource);
+                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
+                Assert.Equal(ResourceType.ColumnExternalId, errs[0].Resource);
                 Assert.Equal(ErrorType.ItemDuplicated, errs[1].Type);
-                Assert.Equal(ResourceType.ColumnExternalId, errs[1].Resource);
-                Assert.Equal(ErrorType.ItemDuplicated, errs[2].Type);
-                Assert.Equal(ResourceType.ExternalId, errs[2].Resource);
+                Assert.Equal(ResourceType.ExternalId, errs[1].Resource);
 
                 Assert.Equal(3, result.Errors.Count());
                 

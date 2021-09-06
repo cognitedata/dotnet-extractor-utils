@@ -64,7 +64,7 @@ namespace Cognite.Extensions
                 col.ExternalId = col.ExternalId.Truncate(ExternalIdMax);
                 col.Name = col.Name.Truncate(SequenceColumnNameMax);
                 col.Description = col.Description.Truncate(SequenceColumnDescriptionMax);
-                col.MetaData = col.MetaData.SanitizeMetadata(SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes,
+                col.Metadata = col.Metadata.SanitizeMetadata(SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes,
                     SequenceColumnMetadataMaxBytes,
                     Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes);
                 totalBytes += colBytes;
@@ -94,7 +94,7 @@ namespace Cognite.Extensions
                 if (col.ExternalId == null || !col.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ColumnExternalId;
                 if (!col.Name.CheckLength(SequenceColumnNameMax)) return ResourceType.ColumnName;
                 if (!col.Description.CheckLength(SequenceColumnDescriptionMax)) return ResourceType.ColumnDescription;
-                if (!col.MetaData.VerifyMetadata(SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes,
+                if (!col.Metadata.VerifyMetadata(SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes,
                     Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes)) return ResourceType.ColumnMetadata;
                 totalBytes += colBytes;
             }
