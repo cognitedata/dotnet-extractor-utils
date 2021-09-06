@@ -29,6 +29,11 @@ namespace Cognite.Extensions
         public const int SequenceMetadataMaxBytesTotal = 100_000;
 
         /// <summary>
+        /// Maximum size of key in sequence column metadata
+        /// </summary>
+        public const int SequenceColumnMetadataMaxPerKey = 32;
+
+        /// <summary>
         /// Maximum size of sequence column metadata in bytes
         /// </summary>
         public const int SequenceColumnMetadataMaxBytes = 10_000;
@@ -64,7 +69,7 @@ namespace Cognite.Extensions
                 col.ExternalId = col.ExternalId.Truncate(ExternalIdMax);
                 col.Name = col.Name.Truncate(SequenceColumnNameMax);
                 col.Description = col.Description.Truncate(SequenceColumnDescriptionMax);
-                col.Metadata = col.Metadata.SanitizeMetadata(SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes,
+                col.Metadata = col.Metadata.SanitizeMetadata(SequenceColumnMetadataMaxPerKey, SequenceColumnMetadataMaxBytes,
                     SequenceColumnMetadataMaxBytes,
                     Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes);
                 totalBytes += colBytes;
@@ -94,7 +99,7 @@ namespace Cognite.Extensions
                 if (col.ExternalId == null || !col.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ColumnExternalId;
                 if (!col.Name.CheckLength(SequenceColumnNameMax)) return ResourceType.ColumnName;
                 if (!col.Description.CheckLength(SequenceColumnDescriptionMax)) return ResourceType.ColumnDescription;
-                if (!col.Metadata.VerifyMetadata(SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes,
+                if (!col.Metadata.VerifyMetadata(SequenceColumnMetadataMaxPerKey, SequenceColumnMetadataMaxBytes, SequenceColumnMetadataMaxBytes,
                     Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes)) return ResourceType.ColumnMetadata;
                 totalBytes += colBytes;
             }
