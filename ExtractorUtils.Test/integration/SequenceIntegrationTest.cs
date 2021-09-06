@@ -13,6 +13,7 @@ namespace ExtractorUtils.Test.Integration
     {
         private static async Task SafeDelete(string[] ids, CDFTester tester)
         {
+            // There's no "ignore missing" functionality on sequence delete, so we need this.
             var toDelete = ids;
 
             while (toDelete.Any())
@@ -187,6 +188,12 @@ namespace ExtractorUtils.Test.Integration
 
 
                 var errs = result.Errors.ToList();
+                foreach (var err in errs)
+                {
+                    Console.WriteLine(err.Message + ", " + err.Type + ", " + err.Resource);
+                }
+
+                Assert.Equal(3, errs.Count);
                 Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
                 Assert.Equal(ResourceType.SequenceColumns, errs[2].Resource);
                 Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
@@ -194,8 +201,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(ErrorType.ItemDuplicated, errs[1].Type);
                 Assert.Equal(ResourceType.ExternalId, errs[1].Resource);
 
-                Assert.Equal(3, result.Errors.Count());
-                
+
 
                 Assert.Equal(2, result.Results.Count());
                 Assert.Equal(tester.Prefix + new string('æ', 255 - tester.Prefix.Length), result.Results.First().ExternalId);
@@ -208,6 +214,121 @@ namespace ExtractorUtils.Test.Integration
                     tester.Prefix + new string('æ', 255 - tester.Prefix.Length),
                     $"{tester.Prefix} test-duplicate-id"
                 };
+                await SafeDelete(ids, tester);
+            }
+        }
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestErrorHandling(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+
+            var columns = new[] { new SequenceColumnWrite
+            {
+                ExternalId = "col"
+            } };
+
+            await tester.Destination.EnsureSequencesExistsAsync(new[]
+            {
+                new SequenceCreate
+                {
+                    ExternalId = $"{tester.Prefix} existing-sequence",
+                    Columns = columns
+                },
+            }, RetryMode.None, SanitationMode.None, tester.Source.Token);
+
+            var sequences = new[]
+            {
+                new SequenceCreate
+                {
+                    Name = "existing-sequence",
+                    ExternalId = $"{tester.Prefix} existing-sequence",
+                    Columns = columns
+                },
+                new SequenceCreate
+                {
+                    Name = "test-missing-asset-1",
+                    ExternalId = $"{tester.Prefix} test-missing-asset-1",
+                    AssetId = 123,
+                    Columns = columns
+                },
+                new SequenceCreate
+                {
+                    Name = "test-missing-asset-2",
+                    ExternalId = $"{tester.Prefix} test-missing-asset-2",
+                    AssetId = 123,
+                    Columns = columns
+                },
+                new SequenceCreate
+                {
+                    Name = "test-missing-asset-3",
+                    ExternalId = $"{tester.Prefix} test-missing-asset-3",
+                    AssetId = 124,
+                    Columns = columns
+                },
+                new SequenceCreate
+                {
+                    Name = "test-missing-dataset-1",
+                    ExternalId = $"{tester.Prefix} test-missing-dataset-1",
+                    DataSetId = 123,
+                    Columns = columns
+                },
+                new SequenceCreate
+                {
+                    Name = "test-missing-dataset-2",
+                    ExternalId = $"{tester.Prefix} test-missing-dataset-2",
+                    DataSetId = 124,
+                    Columns = columns
+                },
+                new SequenceCreate
+                {
+                    Name = "test-final-ok",
+                    ExternalId = $"{tester.Prefix} test-final-ok",
+                    Columns = columns
+                }
+            };
+
+            try
+            {
+                var result = await tester.Destination.EnsureSequencesExistsAsync(sequences, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+
+                Assert.Single(result.Results);
+                Assert.Equal(3, result.Errors.Count());
+                Assert.Equal("test-final-ok", result.Results.First().Name);
+
+                foreach (var error in result.Errors)
+                {
+                    switch (error.Resource)
+                    {
+                        case ResourceType.ExternalId:
+                            Assert.Equal(ErrorType.ItemExists, error.Type);
+                            Assert.Single(error.Values);
+                            Assert.Equal($"{tester.Prefix} existing-sequence", error.Values.First().ExternalId);
+                            Assert.Single(error.Skipped);
+                            break;
+                        case ResourceType.AssetId:
+                            Assert.Equal(ErrorType.ItemMissing, error.Type);
+                            Assert.Equal(2, error.Values.Count());
+                            Assert.Contains(error.Values, idt => idt.Id == 123);
+                            Assert.Contains(error.Values, idt => idt.Id == 124);
+                            Assert.Equal(3, error.Skipped.Count());
+                            break;
+                        case ResourceType.DataSetId:
+                            Assert.Equal(ErrorType.ItemMissing, error.Type);
+                            Assert.Equal(2, error.Values.Count());
+                            Assert.Contains(error.Values, idt => idt.Id == 123);
+                            Assert.Contains(error.Values, idt => idt.Id == 124);
+                            Assert.Equal(2, error.Skipped.Count());
+                            break;
+                        default:
+                            throw new Exception($"Bad resource type: {error.Type}", error.Exception);
+                    }
+                }
+            }
+            finally
+            {
+                var ids = sequences.Select(seq => seq.ExternalId).ToArray();
                 await SafeDelete(ids, tester);
             }
         }
