@@ -56,7 +56,7 @@ namespace Cognite.Extensions
             ts.Description = ts.Description.Truncate(TimeSeriesDescriptionMax);
             if (ts.DataSetId < 1) ts.DataSetId = null;
             ts.Metadata = ts.Metadata.SanitizeMetadata(TimeSeriesMetadataMaxPerKey, TimeSeriesMetadataMaxPairs,
-                TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxBytes);
+                TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxBytes, out _);
             ts.Unit = ts.Unit.Truncate(TimeSeriesUnitMax);
             ts.LegacyName = ts.LegacyName.Truncate(ExternalIdMax);
         }
@@ -75,7 +75,7 @@ namespace Cognite.Extensions
             if (!ts.Description.CheckLength(TimeSeriesDescriptionMax)) return ResourceType.Description;
             if (ts.DataSetId != null && ts.DataSetId < 1) return ResourceType.DataSetId;
             if (!ts.Metadata.VerifyMetadata(TimeSeriesMetadataMaxPerKey, TimeSeriesMetadataMaxPairs,
-                TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxBytes)) return ResourceType.Metadata;
+                TimeSeriesMetadataMaxPerValue, TimeSeriesMetadataMaxBytes, out _)) return ResourceType.Metadata;
             if (!ts.Unit.CheckLength(TimeSeriesUnitMax)) return ResourceType.Unit;
             if (!ts.LegacyName.CheckLength(ExternalIdMax)) return ResourceType.LegacyName;
             return null;

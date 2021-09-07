@@ -68,6 +68,10 @@ namespace Cognite.Extensions
                 {
                     ParseEventException(rex, result);
                 }
+                else if (type == RequestType.CreateSequences)
+                {
+                    ParseSequencesException(rex, result);
+                }
                 return result;
             }
             else
@@ -333,6 +337,26 @@ namespace Cognite.Extensions
         /// </summary>
         Unit,
         /// <summary>
+        /// The Columns field on a sequence
+        /// </summary>
+        SequenceColumns,
+        /// <summary>
+        /// Name of a sequence column
+        /// </summary>
+        ColumnName,
+        /// <summary>
+        /// Description of a sequence column
+        /// </summary>
+        ColumnDescription,
+        /// <summary>
+        /// ExternalId of a sequence column
+        /// </summary>
+        ColumnExternalId,
+        /// <summary>
+        /// Metadata of a sequence column
+        /// </summary>
+        ColumnMetadata,
+        /// <summary>
         /// None or unknown
         /// </summary>
         None = -1
@@ -353,7 +377,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create events
         /// </summary>
-        CreateEvents
+        CreateEvents,
+        /// <summary>
+        /// Create sequences
+        /// </summary>
+        CreateSequences
     }
     
 

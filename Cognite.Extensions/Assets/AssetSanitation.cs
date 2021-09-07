@@ -62,7 +62,8 @@ namespace Cognite.Extensions
             asset.ParentExternalId = asset.ParentExternalId.Truncate(ExternalIdMax);
             asset.Description = asset.Description.Truncate(AssetDescriptionMax);
             if (asset.DataSetId < 1) asset.DataSetId = null;
-            asset.Metadata = asset.Metadata?.SanitizeMetadata(AssetMetadataMaxPerKey, AssetMetadataMaxPairs, AssetMetadataMaxPerValue, AssetMetadataMaxBytes);
+            asset.Metadata = asset.Metadata?.SanitizeMetadata(
+                AssetMetadataMaxPerKey, AssetMetadataMaxPairs, AssetMetadataMaxPerValue, AssetMetadataMaxBytes, out _);
             asset.Source = asset.Source.Truncate(AssetSourceMax);
             asset.Labels = asset.Labels?
                 .Where(label => label != null && label.ExternalId != null)
@@ -84,7 +85,8 @@ namespace Cognite.Extensions
             if (!asset.ParentExternalId.CheckLength(ExternalIdMax)) return ResourceType.ParentExternalId;
             if (!asset.Description.CheckLength(AssetDescriptionMax)) return ResourceType.Description;
             if (asset.DataSetId != null && asset.DataSetId < 1) return ResourceType.DataSetId;
-            if (!asset.Metadata.VerifyMetadata(AssetMetadataMaxPerKey, AssetMetadataMaxPairs, AssetMetadataMaxPerValue, AssetMetadataMaxBytes))
+            if (!asset.Metadata.VerifyMetadata(AssetMetadataMaxPerKey, AssetMetadataMaxPairs,
+                AssetMetadataMaxPerValue, AssetMetadataMaxBytes, out _))
                 return ResourceType.Metadata;
             if (!asset.Source.CheckLength(AssetSourceMax)) return ResourceType.Source;
             if (asset.Labels != null && (asset.Labels.Count() > AssetLabelsMax || asset.Labels.Any(label => !label.ExternalId.CheckLength(ExternalIdMax))))

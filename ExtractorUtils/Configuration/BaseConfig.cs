@@ -268,6 +268,11 @@ namespace Cognite.Extractor.Utils
         /// Maximum number of events to create or retrieve per request
         /// </summary>
         public int Events { get; set; } = 1_000;
+
+        /// <summary>
+        /// Maximum number of sequences to create or retrieve per request
+        /// </summary>
+        public int Sequences { get; set; } = 1_000;
     }
 
     /// <summary>
@@ -308,6 +313,11 @@ namespace Cognite.Extractor.Utils
         /// Maximum number of parallel requests per events operation
         /// </summary>
         public int Events { get; set; } = 20;
+
+        /// <summary>
+        /// Maximum number of parallel requests per sequence operation
+        /// </summary>
+        public int Sequences { get; set; } = 10;
     }
     /// <summary>
     /// Configure automatic retries on requests to CDF.

@@ -51,7 +51,7 @@ namespace Cognite.Extensions
         /// Sanitize a EventCreate object so that it can be safely sent to CDF.
         /// Requests may still fail due to conflicts or missing ids.
         /// </summary>
-        /// <param name="evt">TimeSeries to sanitize</param>
+        /// <param name="evt">Event to sanitize</param>
         public static void Sanitize(this EventCreate evt)
         {
             if (evt == null) throw new ArgumentNullException(nameof(evt));
@@ -67,7 +67,8 @@ namespace Cognite.Extensions
             if (evt.EndTime < 0) evt.EndTime = 0;
             if (evt.StartTime > evt.EndTime) evt.EndTime = evt.StartTime;
             if (evt.DataSetId < 1) evt.DataSetId = null;
-            evt.Metadata = evt.Metadata.SanitizeMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventMetadataMaxBytes);
+            evt.Metadata = evt.Metadata.SanitizeMetadata(
+                EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventMetadataMaxBytes, out _);
         }
 
         /// <summary>
@@ -87,7 +88,8 @@ namespace Cognite.Extensions
                 || evt.EndTime != null && evt.EndTime < 1
                 || evt.StartTime != null && evt.EndTime != null && evt.StartTime > evt.EndTime) return ResourceType.TimeRange;
             if (evt.DataSetId != null && evt.DataSetId < 1) return ResourceType.DataSetId;
-            if (!evt.Metadata.VerifyMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs, EventMetadataMaxPerValue, EventMetadataMaxBytes))
+            if (!evt.Metadata.VerifyMetadata(EventMetadataMaxPerKey, EventMetadataMaxPairs,
+                EventMetadataMaxPerValue, EventMetadataMaxBytes, out _))
                 return ResourceType.Metadata;
             return null;
         }
