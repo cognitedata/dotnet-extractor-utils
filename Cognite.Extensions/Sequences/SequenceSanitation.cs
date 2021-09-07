@@ -116,6 +116,7 @@ namespace Cognite.Extensions
                         yield return null;
                     }
                 }
+                else yield return val;
             }
         }
 
@@ -172,9 +173,9 @@ namespace Cognite.Extensions
         public static ResourceType? Verify(this SequenceDataCreate seq)
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
-            if (seq.ExternalId == null || !seq.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
+            if (seq.ExternalId == null && seq.Id == null || !seq.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
             if (seq.Columns == null || !seq.Columns.Any()) return ResourceType.SequenceColumns;
-            if (seq.Rows == null || !seq.Rows.Any()) return ResourceType.SequenceRow;
+            if (seq.Rows == null || !seq.Rows.Any()) return ResourceType.SequenceRows;
             return null;
         }
 
@@ -191,6 +192,10 @@ namespace Cognite.Extensions
             if (row.Values.Count() != seq.Columns.Count()) return ResourceType.SequenceRowValues;
             foreach (var val in row.Values)
             {
+                if (row.RowNumber < 0)
+                {
+                    return ResourceType.SequenceRowNumber;
+                }
                 if (val == null) continue;
                 if (val is MultiValue.Double doubleVal)
                 {
@@ -201,10 +206,6 @@ namespace Cognite.Extensions
                 else if (val is MultiValue.String stringVal)
                 {
                     if (!stringVal.Value.CheckLength(CogniteUtils.StringLengthMax)) return ResourceType.SequenceRowValues;
-                }
-                if (row.RowNumber < 0)
-                {
-                    return ResourceType.SequenceRowNumber;
                 }
             }
             return null;
@@ -353,6 +354,8 @@ namespace Cognite.Extensions
             var duplicated = new HashSet<Identity>(comparer);
             var bad = new List<(ResourceType, SequenceDataCreate)>();
 
+            var badRowSequences = new List<(ResourceType, SequenceRowError)>();
+
             foreach (var seq in sequences)
             {
                 var columns = new HashSet<string>();
@@ -463,21 +466,14 @@ namespace Cognite.Extensions
 
                 if (badRows.Any())
                 {
-                    errors.AddRange(badRows.GroupBy(pair => pair.Item1).Select(group => new CogniteError
-                    {
-                        Skipped = group.Select(pair => pair.Item2).ToList(),
-                        Resource = group.Key,
-                        Type = ErrorType.SanitationFailed,
-                        Status = 400,
-                        Data = new []
+                    badRowSequences.AddRange(badRows.GroupBy(pair => pair.Item1).Select(group => (
+                        group.Key,
+                        new SequenceRowError
                         {
-                            new SequenceRowError
-                            {
-                                BadRows = group.Select(pair => pair.Item2).ToList(),
-                                Id = idt
-                            }
+                            Id = idt,
+                            BadRows = group.Select(pair => pair.Item2).ToList()
                         }
-                    }));
+                    )));
                 }
 
                 if (toAdd)
@@ -506,6 +502,17 @@ namespace Cognite.Extensions
                     Resource = group.Key,
                     Type = ErrorType.SanitationFailed,
                     Status = 400
+                }));
+            }
+            if (badRowSequences.Any())
+            {
+                errors.AddRange(badRowSequences.GroupBy(pair => pair.Item1).Select(group => new CogniteError
+                {
+                    Skipped = group.SelectMany(pair => pair.Item2.BadRows),
+                    Resource = group.Key,
+                    Type = ErrorType.SanitationFailed,
+                    Status = 400,
+                    Data = group.Select(pair => pair.Item2)
                 }));
             }
             return (result, errors);

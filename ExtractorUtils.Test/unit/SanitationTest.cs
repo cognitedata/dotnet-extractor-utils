@@ -343,6 +343,95 @@ namespace ExtractorUtils.Test.Unit
             }
             Assert.Null(seq.Verify());
         }
+
+        [Fact]
+        public void TestSanitizeSequenceData()
+        {
+            var rows = Enumerable.Range(0, 100).Select(num => new SequenceRow
+            {
+                RowNumber = num,
+                Values = new MultiValue[]
+                {
+                    new MultiValue.String(new string('æ', 500)),
+                    new MultiValue.Long(123),
+                    new MultiValue.Double(double.PositiveInfinity),
+                    new MultiValue.Double(double.NegativeInfinity),
+                    new MultiValue.Double(double.MinValue),
+                    new MultiValue.Double(double.MaxValue),
+                    new MultiValue.Double(double.NaN),
+                    null
+                }
+            }).ToList();
+            var seq = new SequenceDataCreate
+            {
+                ExternalId = new string('æ', 500),
+                Rows = rows
+            };
+
+            seq.Sanitize();
+
+            Assert.Equal(new string('æ', 255), seq.ExternalId);
+            foreach (var row in rows)
+            {
+                Assert.Equal(new string('æ', 255), (row.Values.ElementAt(0) as MultiValue.String).Value);
+                Assert.Equal(123, (row.Values.ElementAt(1) as MultiValue.Long).Value);
+                Assert.Null(row.Values.ElementAt(2));
+                Assert.Null(row.Values.ElementAt(3));
+                Assert.Equal(-1E100, (row.Values.ElementAt(4) as MultiValue.Double).Value);
+                Assert.Equal(1E100, (row.Values.ElementAt(5) as MultiValue.Double).Value);
+                Assert.Null(row.Values.ElementAt(6));
+                Assert.Null(row.Values.ElementAt(7));
+            }
+        }
+
+        [Fact]
+        public void TestVerifySequenceData()
+        {
+            var removeFields = new[]
+            {
+                ResourceType.ExternalId, ResourceType.ExternalId, ResourceType.SequenceColumns,
+                ResourceType.SequenceColumns, ResourceType.SequenceRows, ResourceType.SequenceRows
+            };
+            var seq = new SequenceDataCreate
+            {
+                Columns = Array.Empty<string>(),
+                Rows = Array.Empty<SequenceRow>(),
+                ExternalId = new string('æ', 300)
+            };
+
+            foreach (var field in removeFields)
+            {
+                var errType = seq.Verify();
+                Assert.Equal(field, errType);
+                switch (errType)
+                {
+                    case ResourceType.ExternalId:
+                        if (seq.ExternalId == null) seq.ExternalId = "test";
+                        else seq.ExternalId = null;
+                        break;
+                    case ResourceType.SequenceColumns:
+                        if (seq.Columns == null) seq.Columns = new[]
+                        {
+                            "test"
+                        };
+                        else seq.Columns = null;
+                        break;
+                    case ResourceType.SequenceRows:
+                        if (seq.Rows == null) seq.Rows = new[]
+                        {
+                            new SequenceRow
+                            {
+                                RowNumber = 1,
+                                Values = new MultiValue[] { null }
+                            }
+                        };
+                        else seq.Rows = null;
+                        break;
+                        
+                }
+            }
+
+        }
         [Theory]
         [InlineData("æææææ", 4)]
         [InlineData("123412341234", 9)]
@@ -465,6 +554,104 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(ResourceType.ColumnExternalId, err.Resource);
             Assert.Single(err.Skipped);
             Assert.Single(err.Values);
+        }
+        [Fact]
+        public void TestSanitizeSequenceDataRequest()
+        {
+            var defCols = new[] { "test" };
+            var defRows = new[] { new SequenceRow { RowNumber = 1, Values = new MultiValue[] { null } } };
+
+            var sequences = new[]
+            {
+                // Duplicate externalId
+                new SequenceDataCreate { ExternalId = "test1", Columns = defCols, Rows = defRows },
+                new SequenceDataCreate { ExternalId = "test1", Columns = defCols, Rows = defRows },
+                // Duplicate internalId
+                new SequenceDataCreate { Id = 1, Columns = defCols, Rows = defRows },
+                new SequenceDataCreate { Id = 1, Columns = defCols, Rows = defRows },
+                // Null columns
+                new SequenceDataCreate { ExternalId = "test2", Columns = null, Rows = defRows },
+                // Null rows
+                new SequenceDataCreate { ExternalId = "test3", Columns = defCols, Rows = null },
+                // Duplicate row numbers
+                new SequenceDataCreate { ExternalId = "test4", Columns = defCols, Rows = new []
+                {
+                    defRows[0], defRows[0]
+                } },
+                // Invalid row due to wrong number of fields
+                new SequenceDataCreate { ExternalId = "test5", Columns = defCols, Rows = new []
+                {
+                    defRows[0], new SequenceRow { RowNumber = 2, Values = new MultiValue[] { null, null } }
+                } },
+                // Invalid row due to failed validation
+                new SequenceDataCreate { ExternalId = "test6", Columns = defCols, Rows = new []
+                {
+                    defRows[0], new SequenceRow {RowNumber = 2, Values = new MultiValue[] { MultiValue.Create(double.NaN) }}
+                } },
+                // Invalid row due to bad row number
+                new SequenceDataCreate { ExternalId = "test7", Columns = defCols, Rows = new []
+                {
+                    defRows[0], new SequenceRow {RowNumber = -50, Values = new MultiValue[] { null }}
+                } },
+                // All rows invalid
+                new SequenceDataCreate { ExternalId = "test8", Columns = defCols, Rows = new []
+                {
+                    new SequenceRow {RowNumber = 2, Values = new MultiValue[] { MultiValue.Create(double.PositiveInfinity) }}
+                } },
+                // Duplicated columns
+                new SequenceDataCreate { ExternalId = "test9", Columns = new [] { "test", "test", "test2" }, Rows = new []
+                {
+                    new SequenceRow { RowNumber = 1, Values = new MultiValue[] { null, null, null } }
+                } }
+            };
+
+            var (result, errors) = Sanitation.CleanSequenceDataRequest(sequences, SanitationMode.Remove);
+            Assert.Equal(6, result.Count());
+            Assert.Equal(7, errors.Count());
+
+            var errs = errors.ToList();
+            
+            var err = errs[0];
+            Assert.Equal(ResourceType.SequenceRowNumber, err.Resource);
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(409, err.Status);
+            Assert.Single(err.Values);
+            Assert.Single(err.Skipped);
+
+            err = errs[1];
+            Assert.Equal(ResourceType.ColumnExternalId, err.Resource);
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(409, err.Status);
+            Assert.Single(err.Values);
+            Assert.Single(err.Skipped);
+
+            err = errs[2];
+            Assert.Equal(ResourceType.Id, err.Resource);
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(409, err.Status);
+            Assert.Equal(2, err.Values.Count());
+
+            err = errs[3];
+            Assert.Equal(ResourceType.SequenceColumns, err.Resource);
+            Assert.Equal(ErrorType.SanitationFailed, err.Type);
+            Assert.Single(err.Skipped);
+
+            err = errs[4];
+            Assert.Equal(ResourceType.SequenceRows, err.Resource);
+            Assert.Equal(ErrorType.SanitationFailed, err.Type);
+            Assert.Equal(2, err.Skipped.Count());
+
+            err = errs[5];
+            Assert.Equal(ResourceType.SequenceRowValues, err.Resource);
+            Assert.Equal(ErrorType.SanitationFailed, err.Type);
+            Assert.Equal(3, err.Skipped.Count());
+            Assert.Equal(3, err.Data.Count());
+
+            err = errs[6];
+            Assert.Equal(ResourceType.SequenceRowNumber, err.Resource);
+            Assert.Equal(ErrorType.SanitationFailed, err.Type);
+            Assert.Single(err.Skipped);
+            Assert.Single(err.Data);
         }
     }
 }
