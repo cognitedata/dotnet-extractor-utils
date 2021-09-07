@@ -26,7 +26,7 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
-        /// Get or create the sequences with the provided <paramref name="externalIds"/> exist in CDF.
+        /// Get or create the sequences with the provided <paramref name="externalIds"/>.
         /// If one or more do not exist, use the <paramref name="buildSequences"/> function to construct
         /// the missing sequence objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
@@ -61,7 +61,7 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
-        /// Get or create the sequences with the provided <paramref name="externalIds"/> exist in CDF.
+        /// Get or create the sequences with the provided <paramref name="externalIds"/>.
         /// If one or more do not exist, use the <paramref name="buildSequences"/> function to construct
         /// the missing sequence objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
