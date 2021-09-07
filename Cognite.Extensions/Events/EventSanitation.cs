@@ -105,6 +105,7 @@ namespace Cognite.Extensions
             IEnumerable<EventCreate> events,
             SanitationMode mode)
         {
+            if (mode == SanitationMode.None) return (events, Enumerable.Empty<CogniteError>());
             if (events == null)
             {
                 throw new ArgumentNullException(nameof(events));

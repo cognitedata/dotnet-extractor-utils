@@ -72,6 +72,10 @@ namespace Cognite.Extensions
                 {
                     ParseSequencesException(rex, result);
                 }
+                else if (type == RequestType.CreateSequenceRows)
+                {
+                    ParseSequenceRowException(rex, result);
+                }
                 return result;
             }
             else
@@ -127,6 +131,7 @@ namespace Cognite.Extensions
         /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
         public static CogniteResult Merge(params CogniteResult[] results)
         {
+            if (results == null) return new CogniteResult(Enumerable.Empty<CogniteError>());
             var errors = new List<CogniteError>();
             foreach (var result in results)
             {
@@ -186,6 +191,7 @@ namespace Cognite.Extensions
         /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
         public static CogniteResult<TResult> Merge(params CogniteResult<TResult>[] results)
         {
+            if (results == null) return new CogniteResult<TResult>(Enumerable.Empty<CogniteError>(), Enumerable.Empty<TResult>());
             var items = new List<TResult>();
             var errors = new List<CogniteError>();
             foreach (var result in results)
@@ -361,9 +367,17 @@ namespace Cognite.Extensions
         /// </summary>
         ColumnMetadata,
         /// <summary>
+        /// Collection of rows when creating in sequence
+        /// </summary>
+        SequenceRows,
+        /// <summary>
         /// Row in a sequence
         /// </summary>
         SequenceRow,
+        /// <summary>
+        /// Values of a sequence row
+        /// </summary>,
+        SequenceRowValues
         /// <summary>
         /// None or unknown
         /// </summary>
@@ -389,7 +403,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create sequences
         /// </summary>
-        CreateSequences
+        CreateSequences,
+        /// <summary>
+        /// Create sequence rows
+        /// </summary>
+        CreateSequenceRows
     }
     
 
