@@ -376,8 +376,12 @@ namespace Cognite.Extensions
         SequenceRow,
         /// <summary>
         /// Values of a sequence row
-        /// </summary>,
-        SequenceRowValues
+        /// </summary>
+        SequenceRowValues,
+        /// <summary>
+        /// Row number of a sequence row
+        /// </summary>
+        SequenceRowNumber,
         /// <summary>
         /// None or unknown
         /// </summary>

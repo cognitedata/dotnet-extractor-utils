@@ -202,6 +202,10 @@ namespace Cognite.Extensions
                 {
                     if (!stringVal.Value.CheckLength(CogniteUtils.StringLengthMax)) return ResourceType.SequenceRowValues;
                 }
+                if (row.RowNumber < 0)
+                {
+                    return ResourceType.SequenceRowNumber;
+                }
             }
             return null;
         }
@@ -376,19 +380,35 @@ namespace Cognite.Extensions
 
                 var badRows = new List<(ResourceType, SequenceRow)>();
 
+                var rowNums = new HashSet<long>();
+                var duplicateRows = new List<SequenceRow>();
+
                 if (seq.Columns != null && seq.Rows != null)
                 {
                     var goodRows = new List<SequenceRow>(seq.Rows.Count());
                     foreach (var row in seq.Rows)
                     {
+                        bool addRow = true;
                         failedField = row.Verify(seq);
                         if (failedField.HasValue)
                         {
                             badRows.Add((failedField.Value, row));
+                            addRow = false;
+                        }
+                        
+                        if (!rowNums.Add(row.RowNumber))
+                        {
+                            duplicateRows.Add(row);
+                            addRow = false;
+                        }
+
+                        if (addRow)
+                        {
+                            goodRows.Add(row);
                         }
                         else
                         {
-                            goodRows.Add(row);
+                            CdfMetrics.SequenceRowsSkipped.Inc();
                         }
                     }
                     seq.Rows = goodRows;
@@ -421,12 +441,43 @@ namespace Cognite.Extensions
                     errors.Add(new CogniteError
                     {
                         Status = 409,
-                        Message = "Duplicate column externalId",
+                        Message = "Duplicate columns",
                         Resource = ResourceType.ColumnExternalId,
                         Type = ErrorType.ItemDuplicated,
                         Values = duplicatedColumns.Select(col => Identity.Create(col)),
                         Skipped = new[] { seq }
                     });
+                }
+                if (duplicateRows.Any())
+                {
+                    errors.Add(new CogniteError
+                    {
+                        Status = 409,
+                        Message = "Duplicate row numbers",
+                        Resource = ResourceType.SequenceRowNumber,
+                        Type = ErrorType.ItemDuplicated,
+                        Values = duplicateRows.Select(row => Identity.Create(row.RowNumber)),
+                        Skipped = duplicateRows
+                    });
+                }
+
+                if (badRows.Any())
+                {
+                    errors.AddRange(badRows.GroupBy(pair => pair.Item1).Select(group => new CogniteError
+                    {
+                        Skipped = group.Select(pair => pair.Item2).ToList(),
+                        Resource = group.Key,
+                        Type = ErrorType.SanitationFailed,
+                        Status = 400,
+                        Data = new []
+                        {
+                            new SequenceRowError
+                            {
+                                BadRows = group.Select(pair => pair.Item2).ToList(),
+                                Id = idt
+                            }
+                        }
+                    }));
                 }
 
                 if (toAdd)
