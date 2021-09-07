@@ -20,7 +20,7 @@ namespace ExtractorUtils.Test.Integration
             {
                 try
                 {
-                    await tester.Destination.CogniteClient.Sequences.DeleteAsync(ids, tester.Source.Token);
+                    await tester.Destination.CogniteClient.Sequences.DeleteAsync(toDelete, tester.Source.Token);
                     break;
                 }
                 catch (ResponseException ex)
@@ -200,8 +200,6 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(ResourceType.ColumnExternalId, errs[0].Resource);
                 Assert.Equal(ErrorType.ItemDuplicated, errs[1].Type);
                 Assert.Equal(ResourceType.ExternalId, errs[1].Resource);
-
-
 
                 Assert.Equal(2, result.Results.Count());
                 Assert.Equal(tester.Prefix + new string('æ', 255 - tester.Prefix.Length), result.Results.First().ExternalId);
