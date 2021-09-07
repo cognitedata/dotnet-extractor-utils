@@ -258,8 +258,8 @@ namespace ExtractorUtils.Test.Unit
             Assert.Null(seq.DataSetId);
             Assert.Equal(new string('æ', 255), seq.ExternalId);
             Assert.Equal(new string('æ', 1000), seq.Description);
-            // 706 chars * 2 bytes * 7 is about 10000 bytes
-            Assert.Equal(7, seq.Metadata.Count);
+            // (600 chars * 2 bytes + 32) * 7 is about 10000 bytes
+            Assert.Equal(8, seq.Metadata.Count);
             Assert.Equal(new string('æ', 255), seq.Name);
             int idx = 0;
             foreach (var col in seq.Columns)
@@ -269,7 +269,7 @@ namespace ExtractorUtils.Test.Unit
                 Assert.Equal(new string('æ', 64), col.Name);
                 if (idx < 9)
                 {
-                    Assert.Equal(7, col.Metadata.Count);
+                    Assert.Equal(8, col.Metadata.Count);
                 }
                 else if (idx == 9)
                 {

@@ -12,7 +12,7 @@ namespace Cognite.Extensions
         {
             if (ex.Missing?.Any() ?? false)
             {
-                if (ex.Message.StartsWith("asset"))
+                if (ex.Message.StartsWith("asset", StringComparison.InvariantCultureIgnoreCase))
                 {
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.AssetId;
@@ -21,7 +21,8 @@ namespace Cognite.Extensions
                         .Where(id => id.HasValue)
                         .Select(id => Identity.Create(id.Value));
                 }
-                else if (ex.Message.StartsWith("dataset"))
+                else if (ex.Message.StartsWith("dataset", StringComparison.InvariantCultureIgnoreCase)
+                    || ex.Message.StartsWith("data set", StringComparison.InvariantCultureIgnoreCase))
                 {
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.DataSetId;

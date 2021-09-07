@@ -19,6 +19,11 @@ namespace Cognite.Extensions
         public const int SequenceDescriptionMax = 1000;
 
         /// <summary>
+        /// Maximum size of key in sequence metadata
+        /// </summary>
+        public const int SequenceMetadataMaxPerKey = 32;
+
+        /// <summary>
         /// Maximum size of sequence metadata in bytes
         /// </summary>
         public const int SequenceMetadataMaxBytes = 10_000;
@@ -61,7 +66,7 @@ namespace Cognite.Extensions
             if (seq.AssetId < 1) seq.AssetId = null;
             seq.Description = seq.Description.Truncate(SequenceDescriptionMax);
             if (seq.DataSetId < 1) seq.DataSetId = null;
-            seq.Metadata = seq.Metadata.SanitizeMetadata(SequenceMetadataMaxBytes, SequenceMetadataMaxBytes,
+            seq.Metadata = seq.Metadata.SanitizeMetadata(SequenceMetadataMaxPerKey, SequenceMetadataMaxBytes,
                 SequenceMetadataMaxBytes, SequenceMetadataMaxBytes, out int totalBytes);
 
             foreach (var col in seq.Columns)
@@ -89,7 +94,7 @@ namespace Cognite.Extensions
             if (seq.AssetId != null && seq.AssetId < 1) return ResourceType.AssetId;
             if (!seq.Description.CheckLength(SequenceDescriptionMax)) return ResourceType.Description;
             if (seq.DataSetId != null && seq.DataSetId < 1) return ResourceType.DataSetId;
-            if (!seq.Metadata.VerifyMetadata(SequenceMetadataMaxBytes, SequenceMetadataMaxBytes,
+            if (!seq.Metadata.VerifyMetadata(SequenceMetadataMaxPerKey, SequenceMetadataMaxBytes,
                 SequenceMetadataMaxBytes, SequenceMetadataMaxBytes, out int totalBytes)) return ResourceType.Metadata;
 
             if (seq.Columns == null || !seq.Columns.Any()) return ResourceType.SequenceColumns;
