@@ -222,6 +222,10 @@ namespace Cognite.Extensions
         /// </summary>
         public IEnumerable<object> Skipped { get; set; }
         /// <summary>
+        /// Further information about the error, for some errors.
+        /// </summary>
+        public IEnumerable<object> Data { get; set; }
+        /// <summary>
         /// Exception that caused this error, if any.
         /// </summary>
         public Exception Exception { get; set; }
@@ -356,6 +360,10 @@ namespace Cognite.Extensions
         /// Metadata of a sequence column
         /// </summary>
         ColumnMetadata,
+        /// <summary>
+        /// Row in a sequence
+        /// </summary>
+        SequenceRow,
         /// <summary>
         /// None or unknown
         /// </summary>

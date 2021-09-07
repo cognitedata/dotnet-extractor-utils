@@ -16,6 +16,8 @@ namespace Cognite.Extensions
             "Number and duration of raw requests to CDF", "endpoint");
         public static Summary Sequences { get; } = Metrics.CreateSummary("extractor_utils_cdf_sequence_requests",
             "Number and duration of sequence requests to CDF", "endpoint");
+        public static Summary SequenceRows { get; } = Metrics.CreateSummary("extractor_utils_cdf_sequence_row_requests",
+            "Number and duration of sequence row requests to CDF", "endpoint");
 
         public static Counter AssetsSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_assets_skipped",
             "Number of assets skipped due to errors");
@@ -25,5 +27,7 @@ namespace Cognite.Extensions
             "Number of events skipped due to errors");
         public static Counter SequencesSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_sequences_skipped",
             "Number of sequences skipped due to errors");
+        public static Counter SequenceRowsSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_sequence_rows_skipped",
+            "Number of sequence rows skipped due to errors");
     }
 }
