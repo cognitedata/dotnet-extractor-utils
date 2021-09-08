@@ -131,7 +131,6 @@ namespace Cognite.Extensions
         /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
         public static CogniteResult Merge(params CogniteResult[] results)
         {
-            if (results == null) return new CogniteResult(Enumerable.Empty<CogniteError>());
             var errors = new List<CogniteError>();
             foreach (var result in results)
             {
@@ -191,7 +190,6 @@ namespace Cognite.Extensions
         /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
         public static CogniteResult<TResult> Merge(params CogniteResult<TResult>[] results)
         {
-            if (results == null) return new CogniteResult<TResult>(Enumerable.Empty<CogniteError>(), Enumerable.Empty<TResult>());
             var items = new List<TResult>();
             var errors = new List<CogniteError>();
             foreach (var result in results)

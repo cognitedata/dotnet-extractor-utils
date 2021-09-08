@@ -128,7 +128,9 @@ namespace Cognite.Extensions
                     return null;
                 }).Where(id => id != null);
             }
-            else if (ex.Message.StartsWith("error in sequence", StringComparison.InvariantCultureIgnoreCase))
+            // Error messages are completely different in greenfield and bluefield
+            else if (ex.Code == 400 && (ex.Message.StartsWith("error in sequence", StringComparison.InvariantCultureIgnoreCase)
+                || ex.Message.StartsWith("expected", StringComparison.InvariantCultureIgnoreCase)))
             {
                 err.Type = ErrorType.SanitationFailed;
                 err.Resource = ResourceType.SequenceRow;
@@ -144,61 +146,27 @@ namespace Cognite.Extensions
 
         /// <summary>
         /// Clean list of SequenceDataCreates based on error.
-        /// If errors concern column contents, this will fetch all sequences
-        /// and identify the rows or sequences that caused the error.
         /// </summary>
-        /// <param name="resource">CogniteSdk Sequences resource</param>
         /// <param name="error">Error to clean from</param>
         /// <param name="creates">Sequence data creates to clean</param>
-        /// <param name="sequencesChunkSize">Chunk size for retrieving sequences</param>
-        /// <param name="sequencesThrottleSize">Number of parallel requests for retrieving sequences</param>
-        /// <param name="token">Cancellation token</param>
         /// <returns>Sequences data creates that did not cause <paramref name="error"/></returns>
-        public static async Task<IEnumerable<SequenceDataCreate>> CleanFromError(
-            SequencesResource resource,
+        public static IEnumerable<SequenceDataCreate> CleanFromError(
             CogniteError error,
-            IEnumerable<SequenceDataCreate> creates,
-            int sequencesChunkSize,
-            int sequencesThrottleSize,
-            CancellationToken token)
+            IEnumerable<SequenceDataCreate> creates)
         {
             if (creates == null) throw new ArgumentNullException(nameof(creates));
             if (error == null) return creates;
 
             var ret = new List<SequenceDataCreate>();
             var skipped = new List<object>();
-            var values = error.Values;
 
-            if (!error.Complete)
-            {
-                await CompleteError(resource, error, creates, sequencesChunkSize, sequencesThrottleSize, token).ConfigureAwait(false);
-
-                var emptySeqs = new List<Identity>();
-                var createMap = creates.ToDictionary(
-                    seq => seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId), new IdentityComparer());
-
-                // Handle bad rows
-                foreach (var rowError in error.Data.OfType<SequenceRowError>())
-                {
-                    skipped.AddRange(rowError.BadRows);
-                    var create = createMap[rowError.Id];
-
-                    create.Rows = create.Rows.Except(rowError.BadRows).ToList();
-
-                    CdfMetrics.SequenceRowsSkipped.Inc(rowError.BadRows.Count());
-
-                    if (!create.Rows.Any()) emptySeqs.Add(rowError.Id);
-                }
-                values = emptySeqs;
-            }
-
-            if (!values?.Any() ?? true)
+            if (!error.Values?.Any() ?? true)
             {
                 error.Values = creates.Select(seq => seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId));
                 return Enumerable.Empty<SequenceDataCreate>();
             }
 
-            var items = new HashSet<Identity>(values, new IdentityComparer());
+            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
 
             foreach (var seq in creates)
             {
@@ -226,37 +194,48 @@ namespace Cognite.Extensions
                 }
             }
 
-            if (skipped.Any())
+            if (error.Skipped == null || !error.Skipped.Any())
             {
-                error.Skipped = skipped;
+                if (skipped.Any())
+                {
+                    error.Skipped = skipped;
+                }
+                else
+                {
+                    error.Skipped = creates;
+                    return Array.Empty<SequenceDataCreate>();
+                }
             }
-            else
-            {
-                error.Skipped = creates;
-                return Array.Empty<SequenceDataCreate>();
-            }
+            
             return ret;
 
         }
 
-        private static async Task CompleteError(
+        /// <summary>
+        /// Ensure that the list of sequence row creates correctly match the corresponding sequences in CDF,
+        /// checks both missing columns and mismatched data types.
+        /// </summary>
+        /// <param name="resource">CogniteSdk Sequences resource</param>
+        /// <param name="creates">SequenceDataCreates to check</param>
+        /// <param name="sequencesChunkSize">Chunk size for reading sequences from CDF</param>
+        /// <param name="sequencesThrottleSize">Number of parallel requests to read sequences from CDF</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Up to two <see cref="CogniteError"/> containing data about failed sequences</returns>
+        public static async Task<IEnumerable<CogniteError>> VerifySequencesFromCDF(
             SequencesResource resource,
-            CogniteError error,
             IEnumerable<SequenceDataCreate> creates,
             int sequencesChunkSize,
             int sequencesThrottleSize,
             CancellationToken token)
         {
-            if (error.Complete) return;
-
             var comparer = new IdentityComparer();
-
             var createMap = creates
                 .ToDictionary(seq => seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId), comparer);
 
             var sequences = await resource
                 .GetByIdsIgnoreErrors(createMap.Keys, sequencesChunkSize, sequencesThrottleSize, token)
                 .ConfigureAwait(false);
+
             var sequenceMap = sequences.ToDictionary(seq =>
             {
                 var idIdt = Identity.Create(seq.Id);
@@ -264,66 +243,93 @@ namespace Cognite.Extensions
                 else return Identity.Create(seq.ExternalId);
             }, comparer);
 
-            var errors = new List<SequenceRowError>();
+            var columnErrors = new List<SequenceRowError>();
+            var rowErrors = new List<SequenceRowError>();
 
             foreach (var kvp in createMap)
             {
                 var foundSeq = sequenceMap[kvp.Key];
                 var create = kvp.Value;
-                if (error.Resource == ResourceType.SequenceRow)
+                var colMap = foundSeq.Columns.ToDictionary(seq => seq.ExternalId);
+
+                var badColumns = create.Columns.Where(col => !colMap.ContainsKey(col)).ToList();
+                if (badColumns.Any())
                 {
-                    var colMap = foundSeq.Columns.ToDictionary(seq => seq.ExternalId);
-                    var orderedColumns = create.Columns
+                    columnErrors.Add(new SequenceRowError
+                    {
+                        BadRows = create.Rows,
+                        BadColumns = badColumns,
+                        Id = kvp.Key
+                    });
+                    create.Rows = Enumerable.Empty<SequenceRow>();
+                    continue;
+                }
+
+                var orderedColumns = create.Columns
                         .Select(col => colMap[col])
                         .ToArray();
 
-                    var badRows = new List<SequenceRow>();
+                var badRows = new List<SequenceRow>();
 
-                    // Verify each row in the sequence
-                    foreach (var row in create.Rows)
+                // Verify each row in the sequence
+                foreach (var row in create.Rows)
+                {
+                    int idx = 0;
+                    var fieldEnum = row.Values.GetEnumerator();
+
+                    while (fieldEnum.MoveNext())
                     {
-                        int idx = 0;
-                        var fieldEnum = row.Values.GetEnumerator();
-
-                        while (fieldEnum.MoveNext())
+                        var column = orderedColumns[idx++];
+                        if (fieldEnum.Current != null && fieldEnum.Current.Type != column.ValueType)
                         {
-                            var column = orderedColumns[idx++];
-                            if (fieldEnum.Current.Type != column.ValueType)
-                            {
-                                badRows.Add(row);
-                                break;
-                            }
+                            badRows.Add(row);
+                            break;
                         }
-                    }
-
-                    if (badRows.Any())
-                    {
-                        errors.Add(new SequenceRowError
-                        {
-                            BadRows = badRows,
-                            Id = kvp.Key
-                        });
                     }
                 }
-                else if (error.Resource == ResourceType.ColumnExternalId)
-                {
-                    var colMap = foundSeq.Columns.ToDictionary(seq => seq.ExternalId);
 
-                    foreach (var col in create.Columns)
+                if (badRows.Any())
+                {
+                    rowErrors.Add(new SequenceRowError
                     {
-                        if (!colMap.ContainsKey(col))
-                        {
-                            errors.Add(new SequenceRowError
-                            {
-                                BadRows = create.Rows,
-                                Id = kvp.Key
-                            });
-                        }
-                    }
+                        BadRows = badRows,
+                        Id = kvp.Key
+                    });
+                    create.Rows = create.Rows.Except(badRows).ToList();
                 }
             }
-            error.Complete = true;
-            error.Data = errors;
+
+            var errors = new List<CogniteError>();
+            if (columnErrors.Any())
+            {
+                errors.Add(new CogniteError
+                {
+                    Message = "Columns missing in sequences",
+                    Status = 404,
+                    Data = columnErrors,
+                    Resource = ResourceType.ColumnExternalId,
+                    Type = ErrorType.ItemMissing,
+                    Skipped = columnErrors.Select(seq => createMap[seq.Id]).ToList(),
+                    Values = columnErrors.Select(seq => seq.Id)
+                });
+            }
+            if (rowErrors.Any())
+            {
+                errors.Add(new CogniteError
+                {
+                    Message = "Error in sequence rows",
+                    Status = 400,
+                    Data = rowErrors,
+                    Resource = ResourceType.SequenceRowValues,
+                    Type = ErrorType.SanitationFailed,
+                    Skipped = rowErrors.SelectMany(seq => seq.BadRows),
+                    Values = rowErrors
+                        .Where(seq => !createMap[seq.Id].Rows.Any())
+                        .Select(seq => seq.Id)
+                        .ToList()
+                });
+            }
+            return errors;
         }
     }
     /// <summary>
@@ -331,6 +337,10 @@ namespace Cognite.Extensions
     /// </summary>
     public class SequenceRowError
     {
+        /// <summary>
+        /// Missing columns, if any
+        /// </summary>
+        public IEnumerable<string> BadColumns { get; set; }
         /// <summary>
         /// Id of skipped sequence
         /// </summary>

@@ -579,7 +579,7 @@ namespace ExtractorUtils.Test.Integration
 
             try
             {
-                var result = await tester.Destination.InsertSequenceRowsAsync(creates1, RetryMode.None, SanitationMode.Remove, tester.Source.Token);
+                var result = await tester.Destination.InsertSequenceRowsAsync(creates1, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
                 var errs = result.Errors.ToArray();
                 Assert.Equal(2, errs.Length);
                 Assert.Equal(ResourceType.ColumnExternalId, errs[0].Resource);
@@ -590,7 +590,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(2, errs[1].Values.Count());
 
                 var creates2 = GetCreates2();
-                result = await tester.Destination.InsertSequenceRowsAsync(creates2, RetryMode.None, SanitationMode.Remove, tester.Source.Token);
+                result = await tester.Destination.InsertSequenceRowsAsync(creates2, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
                 errs = result.Errors.ToArray();
                 Assert.Equal(5, errs.Length);
                 Assert.Equal(ResourceType.SequenceRowNumber, errs[0].Resource);
@@ -615,7 +615,7 @@ namespace ExtractorUtils.Test.Integration
 
                 // The inserts are modified in-place
                 creates2 = GetCreates2();
-                result = await tester.Destination.InsertSequenceRowsAsync(creates2, RetryMode.None, SanitationMode.Clean, tester.Source.Token);
+                result = await tester.Destination.InsertSequenceRowsAsync(creates2, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
                 errs = result.Errors.ToArray();
                 Assert.Equal(5, errs.Length);
                 Assert.Equal(ResourceType.SequenceRowNumber, errs[0].Resource);
@@ -643,7 +643,137 @@ namespace ExtractorUtils.Test.Integration
             {
                 await SafeDelete(ids.Select(id => id.extId).ToArray(), tester);
             }
+        }
 
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestRowsErrorHandling(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+            var ids = await CreateTestSequences(tester);
+
+            var columns = new[] { "col1", "col3", "col2" };
+
+            SequenceRow GetRow(int num, double dVal, long lVal, string sVal)
+            {
+                return new SequenceRow
+                {
+                    RowNumber = num,
+                    Values = new MultiValue[] { MultiValue.Create(dVal), MultiValue.Create(sVal), MultiValue.Create(lVal) }
+                };
+            }
+
+            var creates = new[]
+            {
+                // Mismatched data types
+                new SequenceDataCreate
+                {
+                    ExternalId = ids[0].extId,
+                    Columns = columns,
+                    Rows = new[]
+                    {
+                        new SequenceRow
+                        {
+                            // String for double
+                            RowNumber = 0, Values = new MultiValue[] { MultiValue.Create("string"), null, null }
+                        },
+                        new SequenceRow
+                        {
+                            // string for long
+                            RowNumber = 1, Values = new MultiValue[] { null, MultiValue.Create("string"), null }
+                        },
+                        new SequenceRow
+                        {
+                            // number for string
+                            RowNumber = 2, Values = new MultiValue[] { null, null, MultiValue.Create(123.4) }
+                        },
+                        new SequenceRow
+                        {
+                            // long for double (should be OK)
+                            RowNumber = 3, Values = new MultiValue[] { MultiValue.Create(123), MultiValue.Create(123), null }
+                        },
+                        new SequenceRow
+                        {
+                            // double for long
+                            RowNumber = 4, Values = new MultiValue[] { MultiValue.Create(123.4), MultiValue.Create(123.4), null }
+                        }
+                    }
+                },
+                // Missing columns
+                new SequenceDataCreate
+                {
+                    ExternalId = ids[1].extId,
+                    Columns = new [] { "col1", "col4", "col5" },
+                    Rows = new[]
+                    {
+                        GetRow(0, 123.4, 123, "test"),
+                        GetRow(1, 123.4, 123, "test")
+                    }
+                },
+                // Missing extId
+                new SequenceDataCreate
+                {
+                    ExternalId = "missing-sequence",
+                    Columns = columns,
+                    Rows = new[] { GetRow(0, 123.4, 123, "test") }
+                },
+                // Missing id
+                new SequenceDataCreate
+                {
+                    Id = 123,
+                    Columns = columns,
+                    Rows = new[] { GetRow(0, 123.4, 123, "test") }
+                },
+                // All rows bad
+                new SequenceDataCreate
+                {
+                    ExternalId = ids[2].extId,
+                    Columns = columns,
+                    Rows = new[]
+                    {
+                        new SequenceRow
+                        {
+                            // String for double
+                            RowNumber = 0, Values = new MultiValue[] { MultiValue.Create("string"), null, null }
+                        },
+                        new SequenceRow
+                        {
+                            // string for long
+                            RowNumber = 1, Values = new MultiValue[] { null, MultiValue.Create("string"), null }
+                        }
+                    }
+                },
+            };
+
+            try
+            {
+                var result = await tester.Destination.InsertSequenceRowsAsync(creates, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
+                var errs = result.Errors.ToArray();
+                Assert.Equal(3, errs.Length);
+
+                Assert.Equal(ResourceType.Id, errs[0].Resource);
+                Assert.Equal(ErrorType.ItemMissing, errs[0].Type);
+                Assert.Equal(2, errs[0].Values.Count());
+                Assert.Equal(2, errs[0].Skipped.Count());
+
+                Assert.Equal(ResourceType.ColumnExternalId, errs[1].Resource);
+                Assert.Equal(ErrorType.ItemMissing, errs[1].Type);
+                Assert.Single(errs[1].Skipped);
+                Assert.Single(errs[1].Data);
+                Assert.Equal(2, errs[1].Data.OfType<SequenceRowError>().Sum(err => err.BadRows.Count()));
+                Assert.Equal(2, errs[1].Data.OfType<SequenceRowError>().Sum(err => err.BadColumns.Count()));
+
+                Assert.Equal(ResourceType.SequenceRowValues, errs[2].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
+                Assert.Equal(5, errs[2].Skipped.Count());
+                Assert.Single(errs[2].Values);
+                Assert.Equal(2, errs[2].Data.Count());
+            }
+            finally
+            {
+                await SafeDelete(ids.Select(id => id.extId).ToArray(), tester);
+            }
         }
     }
 }

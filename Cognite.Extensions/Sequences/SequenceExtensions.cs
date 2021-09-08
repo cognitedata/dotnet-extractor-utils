@@ -431,8 +431,8 @@ namespace Cognite.Extensions
                 catch (Exception ex)
                 {
                     _logger.LogDebug("Failed to create rows for {seq} sequences", toCreate.Count());
-                    var error = ResultHandlers.ParseException(ex, RequestType.CreateSequences);
-                    errors.Add(error);
+                    var error = ResultHandlers.ParseException(ex, RequestType.CreateSequenceRows);
+                    if (error.Complete) errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
@@ -442,7 +442,23 @@ namespace Cognite.Extensions
                     else if (retryMode == RetryMode.None) break;
                     else
                     {
-                        toCreate = await ResultHandlers.CleanFromError(sequences, error, toCreate, sequencesChunk, throttleSize, token).ConfigureAwait(false);
+                        if (!error.Complete)
+                        {
+                            var newErrors = await
+                                ResultHandlers.VerifySequencesFromCDF(sequences, toCreate, sequencesChunk, throttleSize, token)
+                                .ConfigureAwait(false);
+                            foreach (var err in newErrors)
+                            {
+                                errors.Add(err);
+                                var cleaned = ResultHandlers.CleanFromError(err, toCreate);
+                                toCreate = toCreate.Intersect(cleaned);
+                            }
+                        }
+                        else
+                        {
+                            toCreate = ResultHandlers.CleanFromError(error, toCreate);
+                        }
+
                     }
                 }
             }
