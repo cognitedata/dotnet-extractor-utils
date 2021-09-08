@@ -273,6 +273,16 @@ namespace Cognite.Extractor.Utils
         /// Maximum number of sequences to create or retrieve per request
         /// </summary>
         public int Sequences { get; set; } = 1_000;
+
+        /// <summary>
+        /// Maximum number of sequences per row insert request.
+        /// </summary>
+        public int SequenceRowSequences { get; set; } = 1000;
+
+        /// <summary>
+        /// Maximum number of rows per sequence per row insert request
+        /// </summary>
+        public int SequenceRows { get; set; } = 10_000;
     }
 
     /// <summary>

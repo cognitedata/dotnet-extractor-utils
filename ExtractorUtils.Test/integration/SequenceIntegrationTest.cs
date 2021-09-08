@@ -330,5 +330,94 @@ namespace ExtractorUtils.Test.Integration
                 await SafeDelete(ids, tester);
             }
         }
+
+
+        private async Task<(string extId, long id)[]> CreateTestSequences(CDFTester tester)
+        {
+            var columns = new[]
+                {
+                    new SequenceColumnWrite
+                    {
+                        ExternalId = "col1",
+                        ValueType = MultiValueType.DOUBLE
+                    },
+                    new SequenceColumnWrite
+                    {
+                        ExternalId = "col2",
+                        ValueType = MultiValueType.LONG
+                    },
+                    new SequenceColumnWrite
+                    {
+                        ExternalId = "col3",
+                        ValueType = MultiValueType.STRING
+                    }
+                };
+
+            var sequences = new[] {
+                new SequenceCreate
+                {
+                    ExternalId = $"{tester.Prefix} test-create-rows-1",
+                    Columns = columns
+                },
+                new SequenceCreate
+                {
+                    ExternalId = $"{tester.Prefix} test-create-rows-2",
+                    Columns = columns
+                },
+                new SequenceCreate
+                {
+                    ExternalId = $"{tester.Prefix} test-create-rows-3",
+                    Columns = columns
+                }
+            };
+            var results = await tester.Destination.EnsureSequencesExistsAsync(sequences, RetryMode.None, SanitationMode.None, tester.Source.Token);
+            return results.Results.Select(seq => (seq.ExternalId, seq.Id)).ToArray();
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestRowsCreate(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+            var ids = await CreateTestSequences(tester);
+            var columns = new[] { "col1", "col3", "col2" };
+            var writes = new[]
+            {
+                new SequenceDataCreate
+                {
+                    Columns = columns,
+                    ExternalId = ids[0].extId,
+                    Rows = Enumerable.Range(0, 10).Select(i =>
+                        new SequenceRow
+                        {
+                            RowNumber = i,
+                            Values = new MultiValue[] { MultiValue.Create(123.2), MultiValue.Create("test"), MultiValue.Create(i) }
+                        }).ToArray()
+                },
+                new SequenceDataCreate
+                {
+                    Columns = columns,
+                    Id = ids[1].id,
+                    Rows = Enumerable.Range(0, 10).Select(i =>
+                        new SequenceRow
+                        {
+                            RowNumber = i,
+                            Values = new MultiValue[] { MultiValue.Create(123.2), MultiValue.Create("test"), MultiValue.Create(i) }
+                        }).ToArray()
+                },
+                new SequenceDataCreate
+                {
+                    Columns = columns,
+                    ExternalId = ids[2].extId,
+                    Rows = Enumerable.Range(0, 10).Select(i =>
+                        new SequenceRow
+                        {
+                            RowNumber = i,
+                            Values = new MultiValue[] { MultiValue.Create(123.2), MultiValue.Create("test"), MultiValue.Create(i) }
+                        }).ToArray()
+                }
+            };
+        }
     }
 }
