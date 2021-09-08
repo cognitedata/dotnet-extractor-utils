@@ -455,5 +455,195 @@ namespace ExtractorUtils.Test.Integration
                 await SafeDelete(ids.Select(id => id.extId).ToArray(), tester);
             }
         }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestRowsSanitation(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+            var ids = await CreateTestSequences(tester);
+
+            var columns = new[] { "col1", "col3", "col2" };
+
+            SequenceRow GetRow(int num, double dVal, long lVal, string sVal)
+            {
+                return new SequenceRow
+                {
+                    RowNumber = num,
+                    Values = new MultiValue[] { MultiValue.Create(dVal), MultiValue.Create(sVal), MultiValue.Create(lVal) }
+                };
+            }
+
+
+            var creates1 = new[]
+            {
+                // Duplicate extId
+                new SequenceDataCreate
+                {
+                    ExternalId = ids[0].extId,
+                    Columns = columns,
+                    Rows = new[]
+                    {
+                        GetRow(0, 123.4, 1, "test")
+                    }
+                },
+                new SequenceDataCreate
+                {
+                    ExternalId = ids[0].extId,
+                    Columns = columns,
+                    Rows = new[]
+                    {
+                        GetRow(0, 123.4, 1, "test")
+                    }
+                },
+                // Duplicate internalId
+                new SequenceDataCreate
+                {
+                    Id = ids[1].id,
+                    Columns = columns,
+                    Rows = new[]
+                    {
+                        GetRow(0, 123.4, 1, "test")
+                    }
+                },
+                new SequenceDataCreate
+                {
+                    Id = ids[1].id,
+                    Columns = columns,
+                    Rows = new[]
+                    {
+                        GetRow(0, 123.4, 1, "test")
+                    }
+                },
+                // Duplicate columns
+                new SequenceDataCreate
+                {
+                    Id = ids[2].id,
+                    Columns = new string[] { columns[0], columns[0], columns[0] },
+                    Rows = new []
+                    {
+                        GetRow(0, 123.4, 1, "test")
+                    }
+                }
+            };
+
+            SequenceDataCreate[] GetCreates2()
+            {
+                return new[]
+                {
+                    // Misc bad rows
+                    new SequenceDataCreate
+                    {
+                        ExternalId = ids[0].extId,
+                        Columns = columns,
+                        Rows = new []
+                        {
+                            // Bad double
+                            GetRow(0, double.NaN, 1, "test"),
+                            // Too large double
+                            GetRow(1, 1E101, 1, "test"),
+                            // Too long string
+                            GetRow(2, 123.4, 1, new string('æ', 300)),
+                            // Duplicate row number
+                            GetRow(3, 123.4, 1, "test"),
+                            GetRow(3, 123.4, 1, "test"),
+                            // Negative row number
+                            GetRow(-1, 123.4, 1, "test"),
+                            // Null values
+                            new SequenceRow { RowNumber = 4, Values = null },
+                            // Too few values
+                            new SequenceRow { RowNumber = 5, Values = new MultiValue[] { null, null } }
+                        }
+                    },
+                    // Null columns
+                    new SequenceDataCreate
+                    {
+                        ExternalId = ids[1].extId,
+                        Columns = null,
+                        Rows = new []
+                        {
+                            GetRow(0, 123.4, 1, "test")
+                        }
+                    },
+                    // Null rows
+                    new SequenceDataCreate
+                    {
+                        ExternalId = ids[2].extId,
+                        Columns = columns,
+                        Rows = null
+                    }
+                };
+            }
+            
+
+            try
+            {
+                var result = await tester.Destination.InsertSequenceRowsAsync(creates1, RetryMode.None, SanitationMode.Remove, tester.Source.Token);
+                var errs = result.Errors.ToArray();
+                Assert.Equal(2, errs.Length);
+                Assert.Equal(ResourceType.ColumnExternalId, errs[0].Resource);
+                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
+                Assert.Single(errs[0].Skipped);
+                Assert.Equal(ResourceType.Id, errs[1].Resource);
+                Assert.Equal(ErrorType.ItemDuplicated, errs[1].Type);
+                Assert.Equal(2, errs[1].Values.Count());
+
+                var creates2 = GetCreates2();
+                result = await tester.Destination.InsertSequenceRowsAsync(creates2, RetryMode.None, SanitationMode.Remove, tester.Source.Token);
+                errs = result.Errors.ToArray();
+                Assert.Equal(5, errs.Length);
+                Assert.Equal(ResourceType.SequenceRowNumber, errs[0].Resource);
+                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
+                Assert.Single(errs[0].Skipped);
+
+                Assert.Equal(ResourceType.SequenceColumns, errs[1].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[1].Type);
+                Assert.Single(errs[1].Skipped);
+
+                Assert.Equal(ResourceType.SequenceRows, errs[2].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
+                Assert.Single(errs[2].Skipped);
+
+                Assert.Equal(ResourceType.SequenceRowValues, errs[3].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[3].Type);
+                Assert.Equal(5, errs[3].Skipped.Count());
+
+                Assert.Equal(ResourceType.SequenceRowNumber, errs[4].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[4].Type);
+                Assert.Single(errs[4].Skipped);
+
+                // The inserts are modified in-place
+                creates2 = GetCreates2();
+                result = await tester.Destination.InsertSequenceRowsAsync(creates2, RetryMode.None, SanitationMode.Clean, tester.Source.Token);
+                errs = result.Errors.ToArray();
+                Assert.Equal(5, errs.Length);
+                Assert.Equal(ResourceType.SequenceRowNumber, errs[0].Resource);
+                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
+                Assert.Single(errs[0].Skipped);
+
+                Assert.Equal(ResourceType.SequenceColumns, errs[1].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[1].Type);
+                Assert.Single(errs[1].Skipped);
+
+                Assert.Equal(ResourceType.SequenceRows, errs[2].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
+                Assert.Single(errs[2].Skipped);
+
+                Assert.Equal(ResourceType.SequenceRowNumber, errs[3].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[3].Type);
+                Assert.Single(errs[3].Skipped);
+
+                // Three of the bad rows have now been cleaned and should not be removed
+                Assert.Equal(ResourceType.SequenceRowValues, errs[4].Resource);
+                Assert.Equal(ErrorType.SanitationFailed, errs[4].Type);
+                Assert.Equal(2, errs[4].Skipped.Count());
+            }
+            finally
+            {
+                await SafeDelete(ids.Select(id => id.extId).ToArray(), tester);
+            }
+
+        }
     }
 }

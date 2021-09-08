@@ -95,6 +95,7 @@ namespace Cognite.Extensions
 
         private static IEnumerable<MultiValue> Sanitize(this IEnumerable<MultiValue> values)
         {
+            if (values == null) yield break;
             foreach (var val in values)
             {
                 if (val == null) yield return null;
@@ -127,7 +128,7 @@ namespace Cognite.Extensions
         /// <param name="row"></param>
         public static void Sanitize(this SequenceRow row)
         {
-            if (row == null) throw new ArgumentNullException(nameof(row));
+            if (row == null) return;
             row.Values = row.Values.Sanitize();
         }
 
@@ -189,6 +190,7 @@ namespace Cognite.Extensions
         {
             if (seq == null) throw new ArgumentNullException(nameof(seq));
             if (row == null) return ResourceType.SequenceRow;
+            if (row.Values == null) return ResourceType.SequenceRowValues;
             if (row.Values.Count() != seq.Columns.Count()) return ResourceType.SequenceRowValues;
             foreach (var val in row.Values)
             {
