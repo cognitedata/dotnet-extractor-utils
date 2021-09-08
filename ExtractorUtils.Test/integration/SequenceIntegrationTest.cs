@@ -418,6 +418,42 @@ namespace ExtractorUtils.Test.Integration
                         }).ToArray()
                 }
             };
+            tester.Config.Cognite.CdfChunking.SequenceRowSequences = 2;
+            tester.Config.Cognite.CdfChunking.SequenceRows = 5;
+
+            try
+            {
+                var result = await tester.Destination.InsertSequenceRowsAsync(writes, RetryMode.None, SanitationMode.None, tester.Source.Token);
+                Assert.Empty(result.Errors);
+
+                bool found = true;
+                int[] counts = new int[3];
+                // Need to potentially wait a while for results to show...
+                // For some reason this is much slower on greenfield
+                for (int i = 0; i < 10; i++)
+                {
+                    found = true;
+                    for (int j = 0; j < 3; j++)
+                    {
+                        var retrieved = await tester.Destination.CogniteClient.Sequences.ListRowsAsync(
+                            new SequenceRowQuery
+                            {
+                                Limit = 1000,
+                                ExternalId = ids[j].extId
+                            }, tester.Source.Token);
+                        found &= retrieved.Rows.Count() == 10;
+                        counts[j] = retrieved.Rows.Count();
+                        Assert.Null(retrieved.NextCursor);
+                    }
+                    if (found) break;
+                    await Task.Delay(1000);
+                }
+                Assert.True(found, string.Join(',', counts));
+            }
+            finally
+            {
+                await SafeDelete(ids.Select(id => id.extId).ToArray(), tester);
+            }
         }
     }
 }
