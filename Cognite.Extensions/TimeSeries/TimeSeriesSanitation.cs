@@ -92,6 +92,7 @@ namespace Cognite.Extensions
             IEnumerable<TimeSeriesCreate> timeseries,
             SanitationMode mode)
         {
+            if (mode == SanitationMode.None) return (timeseries, Enumerable.Empty<CogniteError>());
             if (timeseries == null)
             {
                 throw new ArgumentNullException(nameof(timeseries));

@@ -72,6 +72,10 @@ namespace Cognite.Extensions
                 {
                     ParseSequencesException(rex, result);
                 }
+                else if (type == RequestType.CreateSequenceRows)
+                {
+                    ParseSequenceRowException(rex, result);
+                }
                 return result;
             }
             else
@@ -222,6 +226,10 @@ namespace Cognite.Extensions
         /// </summary>
         public IEnumerable<object> Skipped { get; set; }
         /// <summary>
+        /// Further information about the error, for some errors.
+        /// </summary>
+        public IEnumerable<object> Data { get; set; }
+        /// <summary>
         /// Exception that caused this error, if any.
         /// </summary>
         public Exception Exception { get; set; }
@@ -357,6 +365,22 @@ namespace Cognite.Extensions
         /// </summary>
         ColumnMetadata,
         /// <summary>
+        /// Collection of rows when creating in sequence
+        /// </summary>
+        SequenceRows,
+        /// <summary>
+        /// Row in a sequence
+        /// </summary>
+        SequenceRow,
+        /// <summary>
+        /// Values of a sequence row
+        /// </summary>
+        SequenceRowValues,
+        /// <summary>
+        /// Row number of a sequence row
+        /// </summary>
+        SequenceRowNumber,
+        /// <summary>
         /// None or unknown
         /// </summary>
         None = -1
@@ -381,7 +405,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create sequences
         /// </summary>
-        CreateSequences
+        CreateSequences,
+        /// <summary>
+        /// Create sequence rows
+        /// </summary>
+        CreateSequenceRows
     }
     
 

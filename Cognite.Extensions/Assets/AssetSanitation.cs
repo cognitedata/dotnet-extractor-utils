@@ -105,6 +105,7 @@ namespace Cognite.Extensions
             IEnumerable<AssetCreate> assets,
             SanitationMode mode)
         {
+            if (mode == SanitationMode.None) return (assets, Enumerable.Empty<CogniteError>());
             if (assets == null)
             {
                 throw new ArgumentNullException(nameof(assets));

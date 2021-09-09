@@ -761,6 +761,37 @@ namespace Cognite.Extractor.Utils
                 sanitationMode,
                 token).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Insert the given list of rows into CDF.
+        /// Both individual rows and full sequences can be removed due to mismatched datatypes,
+        /// duplicated externalIds, or similar, by setting <paramref name="retryMode"/>
+        /// and <paramref name="sanitationMode"/>.
+        /// </summary>
+        /// <param name="sequences">Sequences with rows to insert</param>
+        /// <param name="retryMode">How to handle retries. Keeping duplicates is not valid for this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating.
+        /// Errors that are normally handled by sanitation will not be handled if received from CDF.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured during insertion</returns>
+        public async Task<CogniteResult> InsertSequenceRowsAsync(
+            IEnumerable<SequenceDataCreate> sequences,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Inserting {Rows} rows for {Seq} sequences into CDF",
+                sequences.Sum(seq => seq.Rows?.Count() ?? 0), sequences.Count());
+            return await _client.Sequences.InsertAsync(
+                sequences,
+                _config.CdfChunking.SequenceRowSequences,
+                _config.CdfChunking.SequenceRows,
+                _config.CdfChunking.Sequences,
+                _config.CdfThrottling.Sequences,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+        }
         #endregion
     }
 }

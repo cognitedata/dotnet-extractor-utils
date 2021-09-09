@@ -70,6 +70,10 @@ cognite:
         events: 1000
         # Maximum number of sequences per get/create sequences request
         sequences: 1000
+        # Maximum number of sequences per create sequence rows request
+        sequence-row-sequences: 1000
+        # Maximum number of rows per sequence when creating rows
+        sequence-rows: 10000
     # Configure how requests to CDF should be throttled
     cdf-throttling:
         # Maximum number of parallel requests per timeseries operation

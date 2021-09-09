@@ -332,5 +332,138 @@ namespace Cognite.Extensions
             }
             return new CogniteResult<Sequence>(errors, null);
         }
+
+        /// <summary>
+        /// Insert sequence rows into given list of sequences.
+        /// Chunks by both number of sequences per request, and number of rows per sequence.
+        /// Optionally sanitizes the request, and handles errors that occur while running.
+        /// </summary>
+        /// <param name="sequences">CogniteSdk sequence resource object</param>
+        /// <param name="toCreate">List of sequences and rows to create</param>
+        /// <param name="keyChunkSize">Maximum number of sequences in each request</param>
+        /// <param name="valueChunkSize">Maximum number of sequence rows per sequence</param>
+        /// <param name="sequencesChunk">Maximum number of sequences to read at a time if reading to handle errors</param>
+        /// <param name="throttleSize">Maximum number of parallel requests</param>
+        /// <param name="retryMode">How to handle errors</param>
+        /// <param name="sanitationMode">How to sanitize the request before sending</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Result containing optional errors if something went wrong</returns>
+        public static async Task<CogniteResult> InsertAsync(
+            this SequencesResource sequences,
+            IEnumerable<SequenceDataCreate> toCreate,
+            int keyChunkSize,
+            int valueChunkSize,
+            int sequencesChunk,
+            int throttleSize,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            IEnumerable<CogniteError> errors;
+            (toCreate, errors) = Sanitation.CleanSequenceDataRequest(toCreate, sanitationMode);
+
+            var dict = toCreate.ToDictionary(create => create.Id.HasValue ? Identity.Create(create.Id.Value) : Identity.Create(create.ExternalId), new IdentityComparer());
+            var chunks = dict
+                .Select(kvp => (kvp.Key, kvp.Value.Rows))
+                .ChunkBy(keyChunkSize, valueChunkSize)
+                .Select(chunk => chunk
+                    .Select(pair => new SequenceDataCreate
+                    {
+                        Columns = dict[pair.Key].Columns,
+                        Id = pair.Key.Id,
+                        ExternalId = pair.Key.ExternalId,
+                        Rows = pair.Values
+                    }))
+                .ToList();
+
+            int size = chunks.Count + (errors.Any() ? 1 : 0);
+            var results = new CogniteResult[size];
+
+            if (errors.Any())
+            {
+                results[size - 1] = new CogniteResult<Sequence>(errors, null);
+                if (size == 1) return results[size - 1];
+            }
+            if (size == 0) return new CogniteResult<Sequence>(null, null);
+
+            _logger.LogDebug("Inserting sequences rows. Number of sequences: {Number}. Number of chunks: {Chunks}", toCreate.Count(), chunks.Count);
+            var generators = chunks
+                .Select<IEnumerable<SequenceDataCreate>, Func<Task>>(
+                (chunk, idx) => async () => {
+                    var result = await InsertSequenceRowsHandleErrors(sequences, chunk, sequencesChunk, throttleSize, retryMode, token).ConfigureAwait(false);
+                    results[idx] = result;
+                });
+
+            int taskNum = 0;
+            await generators.RunThrottled(
+                throttleSize,
+                (_) => {
+                    if (chunks.Count > 1)
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
+                            nameof(InsertAsync), ++taskNum, chunks.Count);
+                },
+                token).ConfigureAwait(false);
+
+            return CogniteResult.Merge(results);
+        }
+
+        private static async Task<CogniteResult> InsertSequenceRowsHandleErrors(
+            SequencesResource sequences,
+            IEnumerable<SequenceDataCreate> toCreate,
+            int sequencesChunk,
+            int throttleSize,
+            RetryMode retryMode,
+            CancellationToken token)
+        {
+            var errors = new List<CogniteError>();
+            while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
+            {
+                try
+                {
+                    using (CdfMetrics.SequenceRows.WithLabels("create"))
+                    {
+                        await sequences.CreateRowsAsync(toCreate, token).ConfigureAwait(false);
+                    }
+
+                    _logger.LogDebug("Created {rows} rows for {seq} sequences in CDF", toCreate.Sum(seq => seq.Rows.Count()), toCreate.Count());
+                    return new CogniteResult(errors);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogDebug("Failed to create rows for {seq} sequences", toCreate.Count());
+                    var error = ResultHandlers.ParseException(ex, RequestType.CreateSequenceRows);
+                    if (error.Complete) errors.Add(error);
+                    if (error.Type == ErrorType.FatalFailure
+                        && (retryMode == RetryMode.OnFatal
+                            || retryMode == RetryMode.OnFatalKeepDuplicates))
+                    {
+                        await Task.Delay(1000, token).ConfigureAwait(false);
+                    }
+                    else if (retryMode == RetryMode.None) break;
+                    else
+                    {
+                        if (!error.Complete)
+                        {
+                            var newErrors = await
+                                ResultHandlers.VerifySequencesFromCDF(sequences, toCreate, sequencesChunk, throttleSize, token)
+                                .ConfigureAwait(false);
+                            foreach (var err in newErrors)
+                            {
+                                errors.Add(err);
+                                var cleaned = ResultHandlers.CleanFromError(err, toCreate);
+                                toCreate = toCreate.Intersect(cleaned);
+                            }
+                        }
+                        else
+                        {
+                            toCreate = ResultHandlers.CleanFromError(error, toCreate);
+                        }
+
+                    }
+                }
+            }
+
+            return new CogniteResult(errors);
+        }
     }
 }
