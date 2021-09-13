@@ -780,7 +780,7 @@ namespace Cognite.Extractor.Utils
             SanitationMode sanitationMode,
             CancellationToken token)
         {
-            _logger.LogInformation("Inserting {Rows} rows for {Seq} sequences into CDF",
+            _logger.LogDebug("Inserting {Rows} rows for {Seq} sequences into CDF",
                 sequences.Sum(seq => seq.Rows?.Count() ?? 0), sequences.Count());
             return await _client.Sequences.InsertAsync(
                 sequences,
