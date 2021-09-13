@@ -89,6 +89,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.CogniteError.Complete
   nameWithType: CogniteError.Complete
+- uid: Cognite.Extensions.CogniteError.Data
+  name: Data
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Data
+  commentId: P:Cognite.Extensions.CogniteError.Data
+  fullName: Cognite.Extensions.CogniteError.Data
+  nameWithType: CogniteError.Data
+- uid: Cognite.Extensions.CogniteError.Data*
+  name: Data
+  href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Data_
+  commentId: Overload:Cognite.Extensions.CogniteError.Data
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError.Data
+  nameWithType: CogniteError.Data
 - uid: Cognite.Extensions.CogniteError.Exception
   name: Exception
   href: api/Cognite.Extensions.CogniteError.html#Cognite_Extensions_CogniteError_Exception
@@ -1203,6 +1216,18 @@ references:
   commentId: F:Cognite.Extensions.RequestType.CreateEvents
   fullName: Cognite.Extensions.RequestType.CreateEvents
   nameWithType: RequestType.CreateEvents
+- uid: Cognite.Extensions.RequestType.CreateSequenceRows
+  name: CreateSequenceRows
+  href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_CreateSequenceRows
+  commentId: F:Cognite.Extensions.RequestType.CreateSequenceRows
+  fullName: Cognite.Extensions.RequestType.CreateSequenceRows
+  nameWithType: RequestType.CreateSequenceRows
+- uid: Cognite.Extensions.RequestType.CreateSequences
+  name: CreateSequences
+  href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_CreateSequences
+  commentId: F:Cognite.Extensions.RequestType.CreateSequences
+  fullName: Cognite.Extensions.RequestType.CreateSequences
+  nameWithType: RequestType.CreateSequences
 - uid: Cognite.Extensions.RequestType.CreateTimeSeries
   name: CreateTimeSeries
   href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_CreateTimeSeries
@@ -1221,6 +1246,30 @@ references:
   commentId: F:Cognite.Extensions.ResourceType.AssetId
   fullName: Cognite.Extensions.ResourceType.AssetId
   nameWithType: ResourceType.AssetId
+- uid: Cognite.Extensions.ResourceType.ColumnDescription
+  name: ColumnDescription
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_ColumnDescription
+  commentId: F:Cognite.Extensions.ResourceType.ColumnDescription
+  fullName: Cognite.Extensions.ResourceType.ColumnDescription
+  nameWithType: ResourceType.ColumnDescription
+- uid: Cognite.Extensions.ResourceType.ColumnExternalId
+  name: ColumnExternalId
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_ColumnExternalId
+  commentId: F:Cognite.Extensions.ResourceType.ColumnExternalId
+  fullName: Cognite.Extensions.ResourceType.ColumnExternalId
+  nameWithType: ResourceType.ColumnExternalId
+- uid: Cognite.Extensions.ResourceType.ColumnMetadata
+  name: ColumnMetadata
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_ColumnMetadata
+  commentId: F:Cognite.Extensions.ResourceType.ColumnMetadata
+  fullName: Cognite.Extensions.ResourceType.ColumnMetadata
+  nameWithType: ResourceType.ColumnMetadata
+- uid: Cognite.Extensions.ResourceType.ColumnName
+  name: ColumnName
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_ColumnName
+  commentId: F:Cognite.Extensions.ResourceType.ColumnName
+  fullName: Cognite.Extensions.ResourceType.ColumnName
+  nameWithType: ResourceType.ColumnName
 - uid: Cognite.Extensions.ResourceType.DataSetId
   name: DataSetId
   href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_DataSetId
@@ -1287,6 +1336,36 @@ references:
   commentId: F:Cognite.Extensions.ResourceType.ParentId
   fullName: Cognite.Extensions.ResourceType.ParentId
   nameWithType: ResourceType.ParentId
+- uid: Cognite.Extensions.ResourceType.SequenceColumns
+  name: SequenceColumns
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_SequenceColumns
+  commentId: F:Cognite.Extensions.ResourceType.SequenceColumns
+  fullName: Cognite.Extensions.ResourceType.SequenceColumns
+  nameWithType: ResourceType.SequenceColumns
+- uid: Cognite.Extensions.ResourceType.SequenceRow
+  name: SequenceRow
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_SequenceRow
+  commentId: F:Cognite.Extensions.ResourceType.SequenceRow
+  fullName: Cognite.Extensions.ResourceType.SequenceRow
+  nameWithType: ResourceType.SequenceRow
+- uid: Cognite.Extensions.ResourceType.SequenceRowNumber
+  name: SequenceRowNumber
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_SequenceRowNumber
+  commentId: F:Cognite.Extensions.ResourceType.SequenceRowNumber
+  fullName: Cognite.Extensions.ResourceType.SequenceRowNumber
+  nameWithType: ResourceType.SequenceRowNumber
+- uid: Cognite.Extensions.ResourceType.SequenceRows
+  name: SequenceRows
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_SequenceRows
+  commentId: F:Cognite.Extensions.ResourceType.SequenceRows
+  fullName: Cognite.Extensions.ResourceType.SequenceRows
+  nameWithType: ResourceType.SequenceRows
+- uid: Cognite.Extensions.ResourceType.SequenceRowValues
+  name: SequenceRowValues
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_SequenceRowValues
+  commentId: F:Cognite.Extensions.ResourceType.SequenceRowValues
+  fullName: Cognite.Extensions.ResourceType.SequenceRowValues
+  nameWithType: ResourceType.SequenceRowValues
 - uid: Cognite.Extensions.ResourceType.Source
   name: Source
   href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Source
@@ -1341,6 +1420,24 @@ references:
   fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable(Of EventCreate))
   nameWithType: ResultHandlers.CleanFromError(CogniteError, IEnumerable<EventCreate>)
   nameWithType.vb: ResultHandlers.CleanFromError(CogniteError, IEnumerable(Of EventCreate))
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{SequenceCreate})
+  name: CleanFromError(CogniteError, IEnumerable<SequenceCreate>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_IEnumerable_SequenceCreate__
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{SequenceCreate})
+  name.vb: CleanFromError(CogniteError, IEnumerable(Of SequenceCreate))
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable<SequenceCreate>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable(Of SequenceCreate))
+  nameWithType: ResultHandlers.CleanFromError(CogniteError, IEnumerable<SequenceCreate>)
+  nameWithType.vb: ResultHandlers.CleanFromError(CogniteError, IEnumerable(Of SequenceCreate))
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{SequenceDataCreate})
+  name: CleanFromError(CogniteError, IEnumerable<SequenceDataCreate>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_IEnumerable_SequenceDataCreate__
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{SequenceDataCreate})
+  name.vb: CleanFromError(CogniteError, IEnumerable(Of SequenceDataCreate))
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable<SequenceDataCreate>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError, IEnumerable(Of SequenceDataCreate))
+  nameWithType: ResultHandlers.CleanFromError(CogniteError, IEnumerable<SequenceDataCreate>)
+  nameWithType.vb: ResultHandlers.CleanFromError(CogniteError, IEnumerable(Of SequenceDataCreate))
 - uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError,IEnumerable{TimeSeriesCreate})
   name: CleanFromError(CogniteError, IEnumerable<TimeSeriesCreate>)
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_IEnumerable_TimeSeriesCreate__
@@ -1370,6 +1467,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.ResultHandlers.ParseException
   nameWithType: ResultHandlers.ParseException
+- uid: Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF(SequencesResource,IEnumerable{SequenceDataCreate},System.Int32,System.Int32,CancellationToken)
+  name: VerifySequencesFromCDF(SequencesResource, IEnumerable<SequenceDataCreate>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifySequencesFromCDF_SequencesResource_IEnumerable_SequenceDataCreate__System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF(SequencesResource,IEnumerable{SequenceDataCreate},System.Int32,System.Int32,CancellationToken)
+  name.vb: VerifySequencesFromCDF(SequencesResource, IEnumerable(Of SequenceDataCreate), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF(SequencesResource, IEnumerable<SequenceDataCreate>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF(SequencesResource, IEnumerable(Of SequenceDataCreate), System.Int32, System.Int32, CancellationToken)
+  nameWithType: ResultHandlers.VerifySequencesFromCDF(SequencesResource, IEnumerable<SequenceDataCreate>, Int32, Int32, CancellationToken)
+  nameWithType.vb: ResultHandlers.VerifySequencesFromCDF(SequencesResource, IEnumerable(Of SequenceDataCreate), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF*
+  name: VerifySequencesFromCDF
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifySequencesFromCDF_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF
+  nameWithType: ResultHandlers.VerifySequencesFromCDF
 - uid: Cognite.Extensions.RetryMode
   name: RetryMode
   href: api/Cognite.Extensions.RetryMode.html
@@ -1492,6 +1605,38 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.CleanEventRequest
   nameWithType: Sanitation.CleanEventRequest
+- uid: Cognite.Extensions.Sanitation.CleanSequenceDataRequest(IEnumerable{SequenceDataCreate},Cognite.Extensions.SanitationMode)
+  name: CleanSequenceDataRequest(IEnumerable<SequenceDataCreate>, SanitationMode)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanSequenceDataRequest_IEnumerable_SequenceDataCreate__Cognite_Extensions_SanitationMode_
+  commentId: M:Cognite.Extensions.Sanitation.CleanSequenceDataRequest(IEnumerable{SequenceDataCreate},Cognite.Extensions.SanitationMode)
+  name.vb: CleanSequenceDataRequest(IEnumerable(Of SequenceDataCreate), SanitationMode)
+  fullName: Cognite.Extensions.Sanitation.CleanSequenceDataRequest(IEnumerable<SequenceDataCreate>, Cognite.Extensions.SanitationMode)
+  fullName.vb: Cognite.Extensions.Sanitation.CleanSequenceDataRequest(IEnumerable(Of SequenceDataCreate), Cognite.Extensions.SanitationMode)
+  nameWithType: Sanitation.CleanSequenceDataRequest(IEnumerable<SequenceDataCreate>, SanitationMode)
+  nameWithType.vb: Sanitation.CleanSequenceDataRequest(IEnumerable(Of SequenceDataCreate), SanitationMode)
+- uid: Cognite.Extensions.Sanitation.CleanSequenceDataRequest*
+  name: CleanSequenceDataRequest
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanSequenceDataRequest_
+  commentId: Overload:Cognite.Extensions.Sanitation.CleanSequenceDataRequest
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.CleanSequenceDataRequest
+  nameWithType: Sanitation.CleanSequenceDataRequest
+- uid: Cognite.Extensions.Sanitation.CleanSequenceRequest(IEnumerable{SequenceCreate},Cognite.Extensions.SanitationMode)
+  name: CleanSequenceRequest(IEnumerable<SequenceCreate>, SanitationMode)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanSequenceRequest_IEnumerable_SequenceCreate__Cognite_Extensions_SanitationMode_
+  commentId: M:Cognite.Extensions.Sanitation.CleanSequenceRequest(IEnumerable{SequenceCreate},Cognite.Extensions.SanitationMode)
+  name.vb: CleanSequenceRequest(IEnumerable(Of SequenceCreate), SanitationMode)
+  fullName: Cognite.Extensions.Sanitation.CleanSequenceRequest(IEnumerable<SequenceCreate>, Cognite.Extensions.SanitationMode)
+  fullName.vb: Cognite.Extensions.Sanitation.CleanSequenceRequest(IEnumerable(Of SequenceCreate), Cognite.Extensions.SanitationMode)
+  nameWithType: Sanitation.CleanSequenceRequest(IEnumerable<SequenceCreate>, SanitationMode)
+  nameWithType.vb: Sanitation.CleanSequenceRequest(IEnumerable(Of SequenceCreate), SanitationMode)
+- uid: Cognite.Extensions.Sanitation.CleanSequenceRequest*
+  name: CleanSequenceRequest
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanSequenceRequest_
+  commentId: Overload:Cognite.Extensions.Sanitation.CleanSequenceRequest
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.CleanSequenceRequest
+  nameWithType: Sanitation.CleanSequenceRequest
 - uid: Cognite.Extensions.Sanitation.CleanTimeSeriesRequest(IEnumerable{TimeSeriesCreate},Cognite.Extensions.SanitationMode)
   name: CleanTimeSeriesRequest(IEnumerable<TimeSeriesCreate>, SanitationMode)
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanTimeSeriesRequest_IEnumerable_TimeSeriesCreate__Cognite_Extensions_SanitationMode_
@@ -1587,6 +1732,24 @@ references:
   commentId: M:Cognite.Extensions.Sanitation.Sanitize(EventCreate)
   fullName: Cognite.Extensions.Sanitation.Sanitize(EventCreate)
   nameWithType: Sanitation.Sanitize(EventCreate)
+- uid: Cognite.Extensions.Sanitation.Sanitize(SequenceCreate)
+  name: Sanitize(SequenceCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_SequenceCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Sanitize(SequenceCreate)
+  fullName: Cognite.Extensions.Sanitation.Sanitize(SequenceCreate)
+  nameWithType: Sanitation.Sanitize(SequenceCreate)
+- uid: Cognite.Extensions.Sanitation.Sanitize(SequenceDataCreate)
+  name: Sanitize(SequenceDataCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_SequenceDataCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Sanitize(SequenceDataCreate)
+  fullName: Cognite.Extensions.Sanitation.Sanitize(SequenceDataCreate)
+  nameWithType: Sanitation.Sanitize(SequenceDataCreate)
+- uid: Cognite.Extensions.Sanitation.Sanitize(SequenceRow)
+  name: Sanitize(SequenceRow)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_SequenceRow_
+  commentId: M:Cognite.Extensions.Sanitation.Sanitize(SequenceRow)
+  fullName: Cognite.Extensions.Sanitation.Sanitize(SequenceRow)
+  nameWithType: Sanitation.Sanitize(SequenceRow)
 - uid: Cognite.Extensions.Sanitation.Sanitize(TimeSeriesCreate)
   name: Sanitize(TimeSeriesCreate)
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_TimeSeriesCreate_
@@ -1600,15 +1763,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.Sanitize
   nameWithType: Sanitation.Sanitize
-- uid: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
-  name: SanitizeMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
-  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SanitizeMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_
-  commentId: M:Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
-  name.vb: SanitizeMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
-  fullName: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32)
-  fullName.vb: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32)
-  nameWithType: Sanitation.SanitizeMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
-  nameWithType.vb: Sanitation.SanitizeMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
+- uid: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32@)
+  name: SanitizeMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32, out Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SanitizeMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_System_Int32__
+  commentId: M:Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32@)
+  name.vb: SanitizeMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32, ByRef Int32)
+  fullName: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32, out System.Int32)
+  fullName.vb: Cognite.Extensions.Sanitation.SanitizeMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32, ByRef System.Int32)
+  nameWithType: Sanitation.SanitizeMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32, out Int32)
+  nameWithType.vb: Sanitation.SanitizeMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32, ByRef Int32)
 - uid: Cognite.Extensions.Sanitation.SanitizeMetadata*
   name: SanitizeMetadata
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SanitizeMetadata_
@@ -1616,6 +1779,60 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.SanitizeMetadata
   nameWithType: Sanitation.SanitizeMetadata
+- uid: Cognite.Extensions.Sanitation.SequenceColumnDescriptionMax
+  name: SequenceColumnDescriptionMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceColumnDescriptionMax
+  commentId: F:Cognite.Extensions.Sanitation.SequenceColumnDescriptionMax
+  fullName: Cognite.Extensions.Sanitation.SequenceColumnDescriptionMax
+  nameWithType: Sanitation.SequenceColumnDescriptionMax
+- uid: Cognite.Extensions.Sanitation.SequenceColumnMetadataMaxBytes
+  name: SequenceColumnMetadataMaxBytes
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceColumnMetadataMaxBytes
+  commentId: F:Cognite.Extensions.Sanitation.SequenceColumnMetadataMaxBytes
+  fullName: Cognite.Extensions.Sanitation.SequenceColumnMetadataMaxBytes
+  nameWithType: Sanitation.SequenceColumnMetadataMaxBytes
+- uid: Cognite.Extensions.Sanitation.SequenceColumnMetadataMaxPerKey
+  name: SequenceColumnMetadataMaxPerKey
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceColumnMetadataMaxPerKey
+  commentId: F:Cognite.Extensions.Sanitation.SequenceColumnMetadataMaxPerKey
+  fullName: Cognite.Extensions.Sanitation.SequenceColumnMetadataMaxPerKey
+  nameWithType: Sanitation.SequenceColumnMetadataMaxPerKey
+- uid: Cognite.Extensions.Sanitation.SequenceColumnNameMax
+  name: SequenceColumnNameMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceColumnNameMax
+  commentId: F:Cognite.Extensions.Sanitation.SequenceColumnNameMax
+  fullName: Cognite.Extensions.Sanitation.SequenceColumnNameMax
+  nameWithType: Sanitation.SequenceColumnNameMax
+- uid: Cognite.Extensions.Sanitation.SequenceDescriptionMax
+  name: SequenceDescriptionMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceDescriptionMax
+  commentId: F:Cognite.Extensions.Sanitation.SequenceDescriptionMax
+  fullName: Cognite.Extensions.Sanitation.SequenceDescriptionMax
+  nameWithType: Sanitation.SequenceDescriptionMax
+- uid: Cognite.Extensions.Sanitation.SequenceMetadataMaxBytes
+  name: SequenceMetadataMaxBytes
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceMetadataMaxBytes
+  commentId: F:Cognite.Extensions.Sanitation.SequenceMetadataMaxBytes
+  fullName: Cognite.Extensions.Sanitation.SequenceMetadataMaxBytes
+  nameWithType: Sanitation.SequenceMetadataMaxBytes
+- uid: Cognite.Extensions.Sanitation.SequenceMetadataMaxBytesTotal
+  name: SequenceMetadataMaxBytesTotal
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceMetadataMaxBytesTotal
+  commentId: F:Cognite.Extensions.Sanitation.SequenceMetadataMaxBytesTotal
+  fullName: Cognite.Extensions.Sanitation.SequenceMetadataMaxBytesTotal
+  nameWithType: Sanitation.SequenceMetadataMaxBytesTotal
+- uid: Cognite.Extensions.Sanitation.SequenceMetadataMaxPerKey
+  name: SequenceMetadataMaxPerKey
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceMetadataMaxPerKey
+  commentId: F:Cognite.Extensions.Sanitation.SequenceMetadataMaxPerKey
+  fullName: Cognite.Extensions.Sanitation.SequenceMetadataMaxPerKey
+  nameWithType: Sanitation.SequenceMetadataMaxPerKey
+- uid: Cognite.Extensions.Sanitation.SequenceNameMax
+  name: SequenceNameMax
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_SequenceNameMax
+  commentId: F:Cognite.Extensions.Sanitation.SequenceNameMax
+  fullName: Cognite.Extensions.Sanitation.SequenceNameMax
+  nameWithType: Sanitation.SequenceNameMax
 - uid: Cognite.Extensions.Sanitation.TimeSeriesDescriptionMax
   name: TimeSeriesDescriptionMax
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_TimeSeriesDescriptionMax
@@ -1705,6 +1922,24 @@ references:
   commentId: M:Cognite.Extensions.Sanitation.Verify(EventCreate)
   fullName: Cognite.Extensions.Sanitation.Verify(EventCreate)
   nameWithType: Sanitation.Verify(EventCreate)
+- uid: Cognite.Extensions.Sanitation.Verify(SequenceCreate)
+  name: Verify(SequenceCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_SequenceCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Verify(SequenceCreate)
+  fullName: Cognite.Extensions.Sanitation.Verify(SequenceCreate)
+  nameWithType: Sanitation.Verify(SequenceCreate)
+- uid: Cognite.Extensions.Sanitation.Verify(SequenceDataCreate)
+  name: Verify(SequenceDataCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_SequenceDataCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Verify(SequenceDataCreate)
+  fullName: Cognite.Extensions.Sanitation.Verify(SequenceDataCreate)
+  nameWithType: Sanitation.Verify(SequenceDataCreate)
+- uid: Cognite.Extensions.Sanitation.Verify(SequenceRow,SequenceDataCreate)
+  name: Verify(SequenceRow, SequenceDataCreate)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_SequenceRow_SequenceDataCreate_
+  commentId: M:Cognite.Extensions.Sanitation.Verify(SequenceRow,SequenceDataCreate)
+  fullName: Cognite.Extensions.Sanitation.Verify(SequenceRow, SequenceDataCreate)
+  nameWithType: Sanitation.Verify(SequenceRow, SequenceDataCreate)
 - uid: Cognite.Extensions.Sanitation.Verify(TimeSeriesCreate)
   name: Verify(TimeSeriesCreate)
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_TimeSeriesCreate_
@@ -1718,15 +1953,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.Verify
   nameWithType: Sanitation.Verify
-- uid: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
-  name: VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
-  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_
-  commentId: M:Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32)
-  name.vb: VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
-  fullName: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32)
-  fullName.vb: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32)
-  nameWithType: Sanitation.VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32)
-  nameWithType.vb: Sanitation.VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32)
+- uid: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32@)
+  name: VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32, out Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_System_Int32__
+  commentId: M:Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32@)
+  name.vb: VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32, ByRef Int32)
+  fullName: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32, out System.Int32)
+  fullName.vb: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32, ByRef System.Int32)
+  nameWithType: Sanitation.VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32, out Int32)
+  nameWithType.vb: Sanitation.VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32, ByRef Int32)
 - uid: Cognite.Extensions.Sanitation.VerifyMetadata*
   name: VerifyMetadata
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_
@@ -1758,6 +1993,130 @@ references:
   commentId: F:Cognite.Extensions.SanitationMode.Remove
   fullName: Cognite.Extensions.SanitationMode.Remove
   nameWithType: SanitationMode.Remove
+- uid: Cognite.Extensions.SequenceExtensions
+  name: SequenceExtensions
+  href: api/Cognite.Extensions.SequenceExtensions.html
+  commentId: T:Cognite.Extensions.SequenceExtensions
+  fullName: Cognite.Extensions.SequenceExtensions
+  nameWithType: SequenceExtensions
+- uid: Cognite.Extensions.SequenceExtensions.EnsureExistsAsync(SequencesResource,IEnumerable{SequenceCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: EnsureExistsAsync(SequencesResource, IEnumerable<SequenceCreate>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_EnsureExistsAsync_SequencesResource_IEnumerable_SequenceCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.SequenceExtensions.EnsureExistsAsync(SequencesResource,IEnumerable{SequenceCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: EnsureExistsAsync(SequencesResource, IEnumerable(Of SequenceCreate), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.SequenceExtensions.EnsureExistsAsync(SequencesResource, IEnumerable<SequenceCreate>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.SequenceExtensions.EnsureExistsAsync(SequencesResource, IEnumerable(Of SequenceCreate), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: SequenceExtensions.EnsureExistsAsync(SequencesResource, IEnumerable<SequenceCreate>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: SequenceExtensions.EnsureExistsAsync(SequencesResource, IEnumerable(Of SequenceCreate), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.SequenceExtensions.EnsureExistsAsync*
+  name: EnsureExistsAsync
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_EnsureExistsAsync_
+  commentId: Overload:Cognite.Extensions.SequenceExtensions.EnsureExistsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.SequenceExtensions.EnsureExistsAsync
+  nameWithType: SequenceExtensions.EnsureExistsAsync
+- uid: Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource,IEnumerable{Identity},System.Int32,System.Int32,CancellationToken)
+  name: GetByIdsIgnoreErrors(SequencesResource, IEnumerable<Identity>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_GetByIdsIgnoreErrors_SequencesResource_IEnumerable_Identity__System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource,IEnumerable{Identity},System.Int32,System.Int32,CancellationToken)
+  name.vb: GetByIdsIgnoreErrors(SequencesResource, IEnumerable(Of Identity), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource, IEnumerable<Identity>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource, IEnumerable(Of Identity), System.Int32, System.Int32, CancellationToken)
+  nameWithType: SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource, IEnumerable<Identity>, Int32, Int32, CancellationToken)
+  nameWithType.vb: SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource, IEnumerable(Of Identity), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors*
+  name: GetByIdsIgnoreErrors
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_GetByIdsIgnoreErrors_
+  commentId: Overload:Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors
+  isSpec: "True"
+  fullName: Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors
+  nameWithType: SequenceExtensions.GetByIdsIgnoreErrors
+- uid: Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{SequenceCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateAsync(SequencesResource, IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<SequenceCreate>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_SequencesResource_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_SequenceCreate___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{SequenceCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateAsync(SequencesResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of SequenceCreate)), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource, IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<SequenceCreate>>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource, IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of SequenceCreate)), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: SequenceExtensions.GetOrCreateAsync(SequencesResource, IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<SequenceCreate>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: SequenceExtensions.GetOrCreateAsync(SequencesResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of SequenceCreate)), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{SequenceCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateAsync(SequencesResource, IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<SequenceCreate>>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_SequencesResource_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_SequenceCreate____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{SequenceCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateAsync(SequencesResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of SequenceCreate))), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource, IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<SequenceCreate>>>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource, IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of SequenceCreate))), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: SequenceExtensions.GetOrCreateAsync(SequencesResource, IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<SequenceCreate>>>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: SequenceExtensions.GetOrCreateAsync(SequencesResource, IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of SequenceCreate))), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.SequenceExtensions.GetOrCreateAsync*
+  name: GetOrCreateAsync
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_
+  commentId: Overload:Cognite.Extensions.SequenceExtensions.GetOrCreateAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.SequenceExtensions.GetOrCreateAsync
+  nameWithType: SequenceExtensions.GetOrCreateAsync
+- uid: Cognite.Extensions.SequenceExtensions.InsertAsync(SequencesResource,IEnumerable{SequenceDataCreate},System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: InsertAsync(SequencesResource, IEnumerable<SequenceDataCreate>, Int32, Int32, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_InsertAsync_SequencesResource_IEnumerable_SequenceDataCreate__System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.SequenceExtensions.InsertAsync(SequencesResource,IEnumerable{SequenceDataCreate},System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: InsertAsync(SequencesResource, IEnumerable(Of SequenceDataCreate), Int32, Int32, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.SequenceExtensions.InsertAsync(SequencesResource, IEnumerable<SequenceDataCreate>, System.Int32, System.Int32, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.SequenceExtensions.InsertAsync(SequencesResource, IEnumerable(Of SequenceDataCreate), System.Int32, System.Int32, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: SequenceExtensions.InsertAsync(SequencesResource, IEnumerable<SequenceDataCreate>, Int32, Int32, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: SequenceExtensions.InsertAsync(SequencesResource, IEnumerable(Of SequenceDataCreate), Int32, Int32, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.SequenceExtensions.InsertAsync*
+  name: InsertAsync
+  href: api/Cognite.Extensions.SequenceExtensions.html#Cognite_Extensions_SequenceExtensions_InsertAsync_
+  commentId: Overload:Cognite.Extensions.SequenceExtensions.InsertAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.SequenceExtensions.InsertAsync
+  nameWithType: SequenceExtensions.InsertAsync
+- uid: Cognite.Extensions.SequenceRowError
+  name: SequenceRowError
+  href: api/Cognite.Extensions.SequenceRowError.html
+  commentId: T:Cognite.Extensions.SequenceRowError
+  fullName: Cognite.Extensions.SequenceRowError
+  nameWithType: SequenceRowError
+- uid: Cognite.Extensions.SequenceRowError.BadColumns
+  name: BadColumns
+  href: api/Cognite.Extensions.SequenceRowError.html#Cognite_Extensions_SequenceRowError_BadColumns
+  commentId: P:Cognite.Extensions.SequenceRowError.BadColumns
+  fullName: Cognite.Extensions.SequenceRowError.BadColumns
+  nameWithType: SequenceRowError.BadColumns
+- uid: Cognite.Extensions.SequenceRowError.BadColumns*
+  name: BadColumns
+  href: api/Cognite.Extensions.SequenceRowError.html#Cognite_Extensions_SequenceRowError_BadColumns_
+  commentId: Overload:Cognite.Extensions.SequenceRowError.BadColumns
+  isSpec: "True"
+  fullName: Cognite.Extensions.SequenceRowError.BadColumns
+  nameWithType: SequenceRowError.BadColumns
+- uid: Cognite.Extensions.SequenceRowError.BadRows
+  name: BadRows
+  href: api/Cognite.Extensions.SequenceRowError.html#Cognite_Extensions_SequenceRowError_BadRows
+  commentId: P:Cognite.Extensions.SequenceRowError.BadRows
+  fullName: Cognite.Extensions.SequenceRowError.BadRows
+  nameWithType: SequenceRowError.BadRows
+- uid: Cognite.Extensions.SequenceRowError.BadRows*
+  name: BadRows
+  href: api/Cognite.Extensions.SequenceRowError.html#Cognite_Extensions_SequenceRowError_BadRows_
+  commentId: Overload:Cognite.Extensions.SequenceRowError.BadRows
+  isSpec: "True"
+  fullName: Cognite.Extensions.SequenceRowError.BadRows
+  nameWithType: SequenceRowError.BadRows
+- uid: Cognite.Extensions.SequenceRowError.Id
+  name: Id
+  href: api/Cognite.Extensions.SequenceRowError.html#Cognite_Extensions_SequenceRowError_Id
+  commentId: P:Cognite.Extensions.SequenceRowError.Id
+  fullName: Cognite.Extensions.SequenceRowError.Id
+  nameWithType: SequenceRowError.Id
+- uid: Cognite.Extensions.SequenceRowError.Id*
+  name: Id
+  href: api/Cognite.Extensions.SequenceRowError.html#Cognite_Extensions_SequenceRowError_Id_
+  commentId: Overload:Cognite.Extensions.SequenceRowError.Id
+  isSpec: "True"
+  fullName: Cognite.Extensions.SequenceRowError.Id
+  nameWithType: SequenceRowError.Id
 - uid: Cognite.Extensions.TimeSeriesExtensions
   name: TimeSeriesExtensions
   href: api/Cognite.Extensions.TimeSeriesExtensions.html
@@ -4421,6 +4780,45 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ChunkingConfig.RawRowsDelete
   nameWithType: ChunkingConfig.RawRowsDelete
+- uid: Cognite.Extractor.Utils.ChunkingConfig.SequenceRows
+  name: SequenceRows
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_SequenceRows
+  commentId: P:Cognite.Extractor.Utils.ChunkingConfig.SequenceRows
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.SequenceRows
+  nameWithType: ChunkingConfig.SequenceRows
+- uid: Cognite.Extractor.Utils.ChunkingConfig.SequenceRows*
+  name: SequenceRows
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_SequenceRows_
+  commentId: Overload:Cognite.Extractor.Utils.ChunkingConfig.SequenceRows
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.SequenceRows
+  nameWithType: ChunkingConfig.SequenceRows
+- uid: Cognite.Extractor.Utils.ChunkingConfig.SequenceRowSequences
+  name: SequenceRowSequences
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_SequenceRowSequences
+  commentId: P:Cognite.Extractor.Utils.ChunkingConfig.SequenceRowSequences
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.SequenceRowSequences
+  nameWithType: ChunkingConfig.SequenceRowSequences
+- uid: Cognite.Extractor.Utils.ChunkingConfig.SequenceRowSequences*
+  name: SequenceRowSequences
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_SequenceRowSequences_
+  commentId: Overload:Cognite.Extractor.Utils.ChunkingConfig.SequenceRowSequences
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.SequenceRowSequences
+  nameWithType: ChunkingConfig.SequenceRowSequences
+- uid: Cognite.Extractor.Utils.ChunkingConfig.Sequences
+  name: Sequences
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_Sequences
+  commentId: P:Cognite.Extractor.Utils.ChunkingConfig.Sequences
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.Sequences
+  nameWithType: ChunkingConfig.Sequences
+- uid: Cognite.Extractor.Utils.ChunkingConfig.Sequences*
+  name: Sequences
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_Sequences_
+  commentId: Overload:Cognite.Extractor.Utils.ChunkingConfig.Sequences
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.Sequences
+  nameWithType: ChunkingConfig.Sequences
 - uid: Cognite.Extractor.Utils.ChunkingConfig.TimeSeries
   name: TimeSeries
   href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_TimeSeries
@@ -4710,6 +5108,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync
   nameWithType: CogniteDestination.EnsureEventsExistsAsync
+- uid: Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync(IEnumerable{SequenceCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: EnsureSequencesExistsAsync(IEnumerable<SequenceCreate>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureSequencesExistsAsync_IEnumerable_SequenceCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync(IEnumerable{SequenceCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: EnsureSequencesExistsAsync(IEnumerable(Of SequenceCreate), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync(IEnumerable<SequenceCreate>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync(IEnumerable(Of SequenceCreate), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.EnsureSequencesExistsAsync(IEnumerable<SequenceCreate>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.EnsureSequencesExistsAsync(IEnumerable(Of SequenceCreate), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync*
+  name: EnsureSequencesExistsAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureSequencesExistsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync
+  nameWithType: CogniteDestination.EnsureSequencesExistsAsync
 - uid: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(IEnumerable{TimeSeriesCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
   name: EnsureTimeSeriesExistsAsync(IEnumerable<TimeSeriesCreate>, RetryMode, SanitationMode, CancellationToken)
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_IEnumerable_TimeSeriesCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
@@ -4801,6 +5215,31 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync
   nameWithType: CogniteDestination.GetOrCreateEventsAsync
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{SequenceCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateSequencesAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<SequenceCreate>>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_SequenceCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{SequenceCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateSequencesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of SequenceCreate)), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, IEnumerable<SequenceCreate>>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), IEnumerable(Of SequenceCreate)), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateSequencesAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<SequenceCreate>>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetOrCreateSequencesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), IEnumerable(Of SequenceCreate)), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{SequenceCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: GetOrCreateSequencesAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<SequenceCreate>>>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_SequenceCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{SequenceCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: GetOrCreateSequencesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of SequenceCreate))), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(IEnumerable<System.String>, Func<IEnumerable<System.String>, Task<IEnumerable<SequenceCreate>>>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(IEnumerable(Of System.String), Func(Of IEnumerable(Of System.String), Task(Of IEnumerable(Of SequenceCreate))), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateSequencesAsync(IEnumerable<String>, Func<IEnumerable<String>, Task<IEnumerable<SequenceCreate>>>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetOrCreateSequencesAsync(IEnumerable(Of String), Func(Of IEnumerable(Of String), Task(Of IEnumerable(Of SequenceCreate))), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync*
+  name: GetOrCreateSequencesAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync
+  nameWithType: CogniteDestination.GetOrCreateSequencesAsync
 - uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{TimeSeriesCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
   name: GetOrCreateTimeSeriesAsync(IEnumerable<String>, Func<IEnumerable<String>, IEnumerable<TimeSeriesCreate>>, RetryMode, SanitationMode, CancellationToken)
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_TimeSeriesCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
@@ -4896,6 +5335,22 @@ references:
   fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync(Of T)(System.String, System.String, IDictionary(Of System.String, T), JsonSerializerOptions, CancellationToken)
   nameWithType: CogniteDestination.InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, JsonSerializerOptions, CancellationToken)
   nameWithType.vb: CogniteDestination.InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), JsonSerializerOptions, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync(IEnumerable{SequenceDataCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: InsertSequenceRowsAsync(IEnumerable<SequenceDataCreate>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertSequenceRowsAsync_IEnumerable_SequenceDataCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync(IEnumerable{SequenceDataCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: InsertSequenceRowsAsync(IEnumerable(Of SequenceDataCreate), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync(IEnumerable<SequenceDataCreate>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync(IEnumerable(Of SequenceDataCreate), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.InsertSequenceRowsAsync(IEnumerable<SequenceDataCreate>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.InsertSequenceRowsAsync(IEnumerable(Of SequenceDataCreate), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync*
+  name: InsertSequenceRowsAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertSequenceRowsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync
+  nameWithType: CogniteDestination.InsertSequenceRowsAsync
 - uid: Cognite.Extractor.Utils.CogniteDestination.TestCogniteConfig(CancellationToken)
   name: TestCogniteConfig(CancellationToken)
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_TestCogniteConfig_CancellationToken_
@@ -5378,6 +5833,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ThrottlingConfig.Raw
   nameWithType: ThrottlingConfig.Raw
+- uid: Cognite.Extractor.Utils.ThrottlingConfig.Sequences
+  name: Sequences
+  href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_Sequences
+  commentId: P:Cognite.Extractor.Utils.ThrottlingConfig.Sequences
+  fullName: Cognite.Extractor.Utils.ThrottlingConfig.Sequences
+  nameWithType: ThrottlingConfig.Sequences
+- uid: Cognite.Extractor.Utils.ThrottlingConfig.Sequences*
+  name: Sequences
+  href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_Sequences_
+  commentId: Overload:Cognite.Extractor.Utils.ThrottlingConfig.Sequences
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ThrottlingConfig.Sequences
+  nameWithType: ThrottlingConfig.Sequences
 - uid: Cognite.Extractor.Utils.ThrottlingConfig.TimeSeries
   name: TimeSeries
   href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_TimeSeries
