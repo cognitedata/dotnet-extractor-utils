@@ -35,7 +35,7 @@ namespace Cognite.Extractor.Common
     /// Option for shared, asynchronous limits, and using a shared TaskThrottler.
     /// </summary>
     /// <typeparam name="T">Type of item to explore</typeparam>
-    public abstract class TaskScheduler<T> : IDisposable
+    public abstract class OperationScheduler<T> : IDisposable
     {
         private IEnumerable<T> _activeItems;
         private int _numPending;
@@ -57,7 +57,7 @@ namespace Cognite.Extractor.Common
         /// <param name="throttler">TaskThrottler to use. Can be shared with other schedulers</param>
         /// <param name="chunkSize">Maximum number of items per chunk</param>
         /// <param name="token">Cancellation token</param>
-        public TaskScheduler(IEnumerable<T> initialItems, TaskThrottler throttler, int chunkSize, CancellationToken token)
+        public OperationScheduler(IEnumerable<T> initialItems, TaskThrottler throttler, int chunkSize, CancellationToken token)
         {
             _activeItems = initialItems;
             _throttler = throttler;
@@ -203,7 +203,7 @@ namespace Cognite.Extractor.Common
         private void Run()
         {
             var capacity = GetCapacity(_activeItems.Count()).Result;
-            var chunks = GetNextChunks(_activeItems, 0, out _activeItems).ToList();
+            var chunks = GetNextChunks(_activeItems, capacity, out _activeItems).ToList();
             foreach (var chunk in chunks)
             {
                 _numPending += chunk.Items.Count();
@@ -241,18 +241,19 @@ namespace Cognite.Extractor.Common
                 var newItems = new List<T>();
                 foreach (var chunk in finished)
                 {
-                    int count = chunk.Items.Count();
-                    _numRuns += count;
                     int numFinished = 0;
+
+                    var next = HandleTaskResult(chunk, _source.Token);
+                    foreach (var newItem in next)
+                    {
+                        newItems.Add(newItem);
+                        _numTotal++;
+                    }
+
                     foreach (var item in chunk.Items)
                     {
                         _numRuns++;
-                        var next = HandleTaskResult(chunk, _source.Token);
-                        foreach (var newItem in next)
-                        {
-                            newItems.Add(item);
-                            _numTotal++;
-                        }
+                        
                         if (!chunk.Completed(item))
                         {
                             numContinued++;
@@ -263,6 +264,7 @@ namespace Cognite.Extractor.Common
                             numFinished++;
                         }
                     }
+                    
                     // Free any finished items here
                     _numPending -= numFinished;
                     _numFinished += numFinished;
@@ -271,7 +273,7 @@ namespace Cognite.Extractor.Common
 
                 OnIteration(_numPending, _numRuns, _numFinished, _numTotal);
 
-                // Call ToList regularly to not get into LINQ-overload.
+                // Call ToList regularly to not get too many chained LINQ expressions.
                 _activeItems = toContinue.Concat(_activeItems).Concat(newItems).ToList();
 
                 // Do not request capacity for items which have not yet been freed.
