@@ -1,4 +1,5 @@
 ﻿using Cognite.Extensions;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils;
 using Cognite.ExtractorUtils;
 using CogniteSdk;
