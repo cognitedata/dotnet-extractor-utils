@@ -28,15 +28,6 @@ namespace Cognite.Extractor.Utils
         /// <param name="key">The row key</param>
         /// <param name="columns">The row columns</param>
         void EnqueueRow(string key, T columns);
-
-        /// <summary>
-        /// Starts a <see cref="Task"/> to insert rows into CDF Raw at regular intervals. Waiting on the returned 
-        /// task will throw any eventual exceptions. To stop the upload queue, dispose the upload queue object or
-        /// cancel the provided <paramref name="token"/>.
-        /// </summary>
-        /// <param name="token">Cancellation token</param>
-        /// <returns>Upload queue task</returns>
-        Task Start(CancellationToken token);
     }
     class RawUploadQueue<T> : BaseUploadQueue<(string key, T columns)>, IRawUploadQueue<T>
     {

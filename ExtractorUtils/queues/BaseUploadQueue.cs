@@ -9,6 +9,43 @@ using System.Threading.Tasks;
 namespace Cognite.Extractor.Utils
 {
     /// <summary>
+    /// Base interface for upload queue
+    /// </summary>
+    public interface IUploadQueue : IDisposable
+    {
+        /// <summary>
+        /// Start automatically uploading queue entries
+        /// </summary>
+        Task Start(CancellationToken token);
+    }
+
+    /// <summary>
+    /// Interface for generic upload queue
+    /// </summary>
+    /// <typeparam name="T">Type of resource to upload</typeparam>
+    public interface IUploadQueue<T> : IUploadQueue
+    {
+        /// <summary>
+        /// Enqueue a single item in the internal queue.
+        /// </summary>
+        /// <param name="item">Item to enqueue</param>
+        void Enqueue(T item);
+        /// <summary>
+        /// Empty the queue and return the contents
+        /// </summary>
+        /// <returns>Contents of the queue</returns>
+        IEnumerable<T> Dequeue();
+        /// <summary>
+        /// Trigger queue upload and return the result instead of calling the callback.
+        /// Can be used as alternative for callback entirely.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns>A <see cref="QueueUploadResult{T}"/> containing an error or the uploaded entries</returns>
+        Task<QueueUploadResult<T>> Trigger(CancellationToken token);
+    }
+
+
+    /// <summary>
     /// Result of an attempt to upload from an upload queue.
     /// </summary>
     /// <typeparam name="T">Queue item type</typeparam>
@@ -48,7 +85,7 @@ namespace Cognite.Extractor.Utils
     /// Generic base class for upload queues
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class BaseUploadQueue<T> : IDisposable
+    public abstract class BaseUploadQueue<T> : IUploadQueue<T>
     {
         /// <summary>
         /// CogniteDestination to use
@@ -97,10 +134,7 @@ namespace Cognite.Extractor.Utils
             _timer.Elapsed += (sender, e) => _pushEvent.Set();
         }
 
-        /// <summary>
-        /// Enqueue a single item in the internal queue.
-        /// </summary>
-        /// <param name="item">Item to enqueue</param>
+        /// <inheritdoc />
         public virtual void Enqueue(T item)
         {
             _items.Enqueue(item);
@@ -110,10 +144,7 @@ namespace Cognite.Extractor.Utils
             }
         }
 
-        /// <summary>
-        /// Empty the queue and return the contents
-        /// </summary>
-        /// <returns>Contents of the queue</returns>
+        /// <inheritdoc />
         public virtual IEnumerable<T> Dequeue()
         {
             var items = new List<T>();
@@ -124,21 +155,14 @@ namespace Cognite.Extractor.Utils
             return items;
         }
 
-        /// <summary>
-        /// Trigger queue upload and return the result instead of calling the callback.
-        /// Can be used as alternative for callback entirely.
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns>A <see cref="QueueUploadResult{T}"/> containing an error or the uploaded entries</returns>
+        /// <inheritdoc />
         public async Task<QueueUploadResult<T>> Trigger(CancellationToken token)
         {
             var items = Dequeue();
             return await UploadEntries(items, token).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Start automatically uploading queue entries
-        /// </summary>
+        /// <inheritdoc />
         public async Task Start(CancellationToken token)
         {
             _tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
