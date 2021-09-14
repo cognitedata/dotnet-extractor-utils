@@ -31,6 +31,11 @@ namespace Cognite.Extractor.Utils
         /// <param name="item">Item to enqueue</param>
         void Enqueue(T item);
         /// <summary>
+        /// Enqueue a list of items in the internal queue.
+        /// </summary>
+        /// <param name="items">Items to enqueue</param>
+        void Enqueue(IEnumerable<T> items);
+        /// <summary>
         /// Empty the queue and return the contents
         /// </summary>
         /// <returns>Contents of the queue</returns>
@@ -138,6 +143,20 @@ namespace Cognite.Extractor.Utils
         public virtual void Enqueue(T item)
         {
             _items.Enqueue(item);
+            if (_maxSize > 0 && _items.Count >= _maxSize)
+            {
+                _pushEvent.Set();
+            }
+        }
+
+        /// <inheritdoc />
+        public virtual void Enqueue(IEnumerable<T> items)
+        {
+            if (items == null) return;
+            foreach (var item in items)
+            {
+                _items.Enqueue(item);
+            }
             if (_maxSize > 0 && _items.Count >= _maxSize)
             {
                 _pushEvent.Set();

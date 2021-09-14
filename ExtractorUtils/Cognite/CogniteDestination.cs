@@ -422,7 +422,7 @@ namespace Cognite.Extractor.Utils
         /// Creates a Raw upload queue. It can be used to queue DTOs (data type objects) of type <typeparamref name="T"/>
         /// before sending them to CDF Raw. The items are dequeued and uploaded every <paramref name="interval"/>. If <paramref name="maxQueueSize"/> is
         /// greater than zero, the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
-        /// To start the upload loop, use the <see cref="IRawUploadQueue{T}.Start(CancellationToken)"/> method. To stop it, dispose of the queue or
+        /// To start the upload loop, use the <see cref="IUploadQueue.Start(CancellationToken)"/> method. To stop it, dispose of the queue or
         /// cancel the token
         /// </summary>
         /// <param name="database">Raw database name</param>
