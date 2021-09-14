@@ -61,6 +61,21 @@ namespace Cognite.ExtractorUtils
         }
 
         /// <summary>
+        /// Verify that the extractor is configured correctly.
+        /// </summary>
+        /// <returns>Task</returns>
+        public virtual async Task TestConfig()
+        {
+            await Destination.TestCogniteConfig(Source.Token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Method called to start the extractor.
+        /// </summary>
+        /// <returns></returns>
+        public abstract Task Start();
+
+        /// <summary>
         /// Create a raw queue with the given type and name
         /// </summary>
         /// <typeparam name="T">Type of columns in raw queue</typeparam>

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,9 +16,12 @@ namespace Cognite.Extractor.Common
         public TimeSpan Interval { get; }
         public bool Paused { get; set; }
         public bool ShouldRun { get; set; } = true;
-        public PeriodicTask(Func<CancellationToken, Task> operation, TimeSpan interval)
+        public string Name { get; }
+        public PeriodicTask(Func<CancellationToken, Task> operation, TimeSpan interval, string name)
         {
             Operation = operation;
+            Interval = interval;
+            Name = name;
         }
         public void Dispose()
         {
@@ -32,6 +37,9 @@ namespace Cognite.Extractor.Common
         private CancellationTokenSource _source;
         private Dictionary<string, PeriodicTask> _tasks = new Dictionary<string, PeriodicTask>();
         private bool disposedValue;
+        private ManualResetEvent _newTaskEvent = new ManualResetEvent(false);
+        private object _taskListMutex = new object();
+        private Task _internalLoopTask;
 
         /// <summary>
         /// Constructor.
@@ -40,21 +48,44 @@ namespace Cognite.Extractor.Common
         public PeriodicScheduler(CancellationToken token)
         {
             _source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            _internalLoopTask = InternalPendingLoop();
         }
 
         /// <summary>
         /// Schedule a new periodic task to run with interval <paramref name="interval"/>.
-        /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors.
+        /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
+        /// task from WaitForAll should be watched.
         /// </summary>
         /// <param name="name">Name of task, used to refer to it later</param>
         /// <param name="interval">Interval to schedule on</param>
         /// <param name="operation">Function to call on each iteration</param>
         public void SchedulePeriodicTask(string name, TimeSpan interval, Func<CancellationToken, Task> operation)
         {
-            if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
-            var task = new PeriodicTask(operation, interval);
-            task.Task = RunPeriodicTask(task);
-            _tasks[name] = task;
+            lock (_taskListMutex)
+            {
+                if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
+                var task = new PeriodicTask(operation, interval, name);
+                task.Task = Task.Run(async () => await RunPeriodicTask(task).ConfigureAwait(false));
+                _tasks[name] = task;
+            }
+        }
+
+        /// <summary>
+        /// Schedule a new task to run with on the scheduler.
+        /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
+        /// task from WaitForAll should be watched.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="operation"></param>
+        public void ScheduleTask(string name, Func<CancellationToken, Task> operation)
+        {
+            lock (_taskListMutex)
+            {
+                if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
+                var task = new PeriodicTask(operation, TimeSpan.Zero, name);
+                task.Task = Task.Run(async () => await operation(_source.Token).ConfigureAwait(false));
+                _tasks[name] = task;
+            }
         }
 
         /// <summary>
@@ -66,11 +97,30 @@ namespace Cognite.Extractor.Common
         /// <returns>Task which completes once the task has terminated</returns>
         public async Task ExitAndWaitForTermination(string name)
         {
-            if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
-            task.ShouldRun = false;
-            task.Event.Set();
+            PeriodicTask task;
+            lock (_taskListMutex)
+            {
+                if (!_tasks.TryGetValue(name, out task)) throw new InvalidOperationException($"No such task: {name}");
+                task.ShouldRun = false;
+                task.Event.Set();
+            }
             await task.Task.ConfigureAwait(false);
-            _tasks.Remove(name);
+        }
+
+        /// <summary>
+        /// Waits for a task to terminate. If it is periodic this may never happen.
+        /// </summary>
+        /// <param name="name">Name of task to wait for</param>
+        /// <returns></returns>
+        public async Task WaitForTermination(string name)
+        {
+            PeriodicTask task;
+            lock (_taskListMutex)
+            {
+                if (!_tasks.TryGetValue(name, out task)) throw new InvalidOperationException($"No such task: {name}");
+            }
+
+            await task.Task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -79,15 +129,69 @@ namespace Cognite.Extractor.Common
         /// <returns>Task which completes once all tasks are done</returns>
         public async Task ExitAllAndWait()
         {
-            var tasks = new List<Task>(_tasks.Count);
-            foreach (var task in _tasks.Values)
+            var tasks = new List<PeriodicTask>(_tasks.Count);
+            lock (_taskListMutex)
             {
-                task.ShouldRun = false;
-                task.Event.Set();
-                tasks.Add(task.Task);
+                foreach (var task in _tasks.Values)
+                {
+                    task.ShouldRun = false;
+                    task.Event.Set();
+                    tasks.Add(task);
+                }
             }
-            await Task.WhenAll(tasks).ConfigureAwait(false);
-            _tasks.Clear();
+            await Task.WhenAll(tasks.Select(tsk => tsk.Task)).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Returns the internal task monitoring all running tasks.
+        /// It will fail if any internal task fails.
+        /// </summary>
+        /// <returns></returns>
+        public Task WaitForAll()
+        {
+            return _internalLoopTask;
+        }
+
+        /// <summary>
+        /// Cleans up terminated tasks and watches for errors
+        /// </summary>
+        /// <returns></returns>
+        private async Task InternalPendingLoop()
+        {
+            var tasks = new List<Task>();
+            PeriodicTask failedTask = null;
+
+            tasks.Add(WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token));
+
+            while (!_source.IsCancellationRequested)
+            {
+                await Task.WhenAny(tasks).ConfigureAwait(false);
+
+                lock (_taskListMutex)
+                {
+                    failedTask = _tasks.Values.FirstOrDefault(kvp => kvp.Task.IsFaulted);
+
+                    if (failedTask != null) break;
+                    if (_source.IsCancellationRequested) break;
+
+                    if (_newTaskEvent.WaitOne(0))
+                    {
+                        _newTaskEvent.Reset();
+                        tasks = _tasks.Values.Select(task => task.Task).ToList();
+                        tasks.Add(WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token));
+                    }
+                    else
+                    {
+                        var toRemove = _tasks.Values.Where(task => task.Task.IsCompleted).ToList();
+                        foreach (var task in toRemove)
+                        {
+                            _tasks.Remove(task.Name);
+                        }
+                    }
+                }
+            }
+            if (_source.IsCancellationRequested) return;
+            if (failedTask != null) ExceptionDispatchInfo.Capture(failedTask.Task.Exception).Throw();
         }
 
         /// <summary>
@@ -98,8 +202,11 @@ namespace Cognite.Extractor.Common
         /// <param name="paused">True to pause the task, false to unpause</param>
         public void PauseTask(string name, bool paused)
         {
-            if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
-            task.Paused = paused;
+            lock (_taskListMutex)
+            {
+                if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
+                task.Paused = paused;
+            }
         }
         /// <summary>
         /// Manually trigger a task. The task will always run after this, but may run twice if it is about to run due to timeout.
@@ -108,8 +215,12 @@ namespace Cognite.Extractor.Common
         /// <param name="name"></param>
         public void TriggerTask(string name)
         {
-            if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
-            task.Event.Set();
+            lock (_taskListMutex)
+            {
+                if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
+                task.Event.Set();
+            }
+                
         }
 
         private async Task RunPeriodicTask(PeriodicTask task)
