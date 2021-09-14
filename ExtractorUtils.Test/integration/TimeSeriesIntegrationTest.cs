@@ -1,6 +1,7 @@
 ﻿using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using CogniteSdk;
+using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -331,7 +332,15 @@ namespace ExtractorUtils.Test.Integration
                     Items = query
                 };
 
-                var dpsFromCDF = await tester.Destination.CogniteClient.DataPoints.ListAsync(dataPointsQuery, tester.Source.Token);
+                DataPointListResponse dpsFromCDF = null;
+
+                for (int i = 0; i < 20; i++)
+                {
+                    dpsFromCDF = await tester.Destination.CogniteClient.DataPoints.ListAsync(dataPointsQuery, tester.Source.Token);
+                    if (dpsFromCDF.Items.All(item => (item.NumericDatapoints?.Datapoints?.Count() ?? 0) == 20)) break;
+                    await Task.Delay(1000);
+                }
+
                 Assert.Equal(3, dpsFromCDF.Items.Count);
                 foreach (var item in dpsFromCDF.Items)
                 {
