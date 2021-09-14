@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.ExtractorUtils
+namespace Cognite.Extractor.Utils
 {
     /// <summary>
     /// Base class for extractors writing timeseries, events or datapoints.

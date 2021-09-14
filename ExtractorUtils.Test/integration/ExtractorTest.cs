@@ -1,7 +1,5 @@
 ﻿using Cognite.Extensions;
-using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils;
-using Cognite.ExtractorUtils;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -119,14 +117,14 @@ namespace ExtractorUtils.Test.Integration
                 true,
                 false,
                 false,
-                provider =>
+                (provider, token) =>
                 {
                     destination = provider.GetRequiredService<CogniteDestination>();
                     extractor = new TestExtractor(
                         prefix,
                         provider.GetRequiredService<BaseConfig>(),
                         destination,
-                        source.Token);
+                        token);
                     return extractor;
                 },
                 source.Token);

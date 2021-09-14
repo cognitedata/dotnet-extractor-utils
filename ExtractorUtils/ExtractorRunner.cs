@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Cognite.ExtractorUtils
+namespace Cognite.Extractor.Utils
 {
     /// <summary>
     /// Contains utilities for running an extractor based on BaseExtractor
@@ -42,7 +42,7 @@ namespace Cognite.ExtractorUtils
             bool addLogger,
             bool addMetrics,
             bool restart,
-            Func<IServiceProvider, BaseExtractor> builder,
+            Func<IServiceProvider, CancellationToken, BaseExtractor> builder,
             CancellationToken token,
             ServiceCollection services = null)
             where T : VersionedConfig
@@ -73,7 +73,7 @@ namespace Cognite.ExtractorUtils
                     {
                         log = provider.GetRequiredService<ILogger<BaseExtractor>>();
                     }
-                    var extractor = builder(provider);
+                    var extractor = builder(provider, source.Token);
                     DateTime startTime = DateTime.UtcNow;
                     try
                     {
@@ -89,7 +89,11 @@ namespace Cognite.ExtractorUtils
                     }
 
 
-                    if (source.IsCancellationRequested || !restart) break;
+                    if (source.IsCancellationRequested || !restart)
+                    {
+                        log.LogInformation("Quitting extractor");
+                        break;
+                    }
 
                     if (startTime > DateTime.UtcNow - TimeSpan.FromSeconds(600))
                     {
@@ -112,8 +116,7 @@ namespace Cognite.ExtractorUtils
                         break;
                     }
                 }
-            }
-         
+            }         
         }
 
 
