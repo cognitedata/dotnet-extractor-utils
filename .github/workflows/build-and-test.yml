@@ -24,16 +24,6 @@ jobs:
     - name: Unit Test
       run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ --filter ExtractorUtils.Test.Unit. ./ExtractorUtils.Test/
       if: ${{ github.event == 'pull_request' && github.base_ref == 'refs/heads/integration' }}
-      env:
-        TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
-        TEST_PROJECT: "extractor-tests"
-        TEST_HOST: "https://greenfield.cognitedata.com"
-        BF_TEST_PROJECT: "extractor-bluefield-testing"
-        BF_TEST_HOST: "https://bluefield.cognitedata.com"
-        BF_TEST_SCOPE: "https://bluefield.cognitedata.com/.default"
-        BF_TEST_CLIENT_ID: ${{ secrets.BF_TEST_CLIENT_ID }}
-        BF_TEST_TENANT: ${{ secrets.BF_TEST_TENANT }}
-        BF_TEST_SECRET: ${{ secrets.BF_TEST_SECRET }}
     - name: Test
       run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
       if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
