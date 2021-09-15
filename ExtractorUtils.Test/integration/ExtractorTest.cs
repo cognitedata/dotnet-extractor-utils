@@ -87,6 +87,41 @@ namespace ExtractorUtils.Test.Integration
                 return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new [] { dp });
             });
         }
+
+        protected override async Task OnStop()
+        {
+            if (DBName != null)
+            {
+                await Destination.CogniteClient.Raw.DeleteDatabasesAsync(new RawDatabaseDelete
+                {
+                    Items = new[]
+                {
+                        new RawDatabase { Name = DBName }
+                    },
+                    Recursive = true
+                });
+            }
+            if (TSId != null)
+            {
+                await Destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = new[]
+                    {
+                            Identity.Create(TSId)
+                        }
+                });
+            }
+
+            if (CreatedEvents.Any())
+            {
+                await Destination.CogniteClient.Events.DeleteAsync(new EventDelete
+                {
+                    Items = CreatedEvents.Select(Identity.Create),
+                    IgnoreUnknownIds = true
+                });
+            }
+        }
     }
 
 
@@ -181,39 +216,6 @@ namespace ExtractorUtils.Test.Integration
                 await Task.WhenAny(task, Task.Delay(10000));
 
                 System.IO.File.Delete(configPath);
-
-                if (extractor.DBName != null)
-                {
-                    await destination.CogniteClient.Raw.DeleteDatabasesAsync(new RawDatabaseDelete
-                    {
-                        Items = new[]
-                    {
-                        new RawDatabase { Name = extractor.DBName }
-                    },
-                        Recursive = true
-                    });
-                }
-                if (extractor.TSId != null)
-                {
-                    await destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
-                    {
-                        IgnoreUnknownIds = true,
-                        Items = new[]
-                        {
-                            Identity.Create(extractor.TSId)
-                        }
-                    });
-                }
-                
-                if (extractor.CreatedEvents.Any())
-                {
-                    await destination.CogniteClient.Events.DeleteAsync(new EventDelete
-                    {
-                        Items = extractor.CreatedEvents.Select(Identity.Create),
-                        IgnoreUnknownIds = true
-                    });
-                }
-
                 Assert.True(task.IsCompleted);
             }
             

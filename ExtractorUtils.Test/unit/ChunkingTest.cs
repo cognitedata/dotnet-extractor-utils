@@ -265,11 +265,27 @@ namespace ExtractorUtils.Test.Unit
                 singleRuns++;
                 return Task.CompletedTask;
             });
-            Assert.Throws<InvalidOperationException>(() => scheduler.ScheduleTask("periodic", null));
+
+            // Schedule interally looping task
+            bool shouldLoop = true;
+            scheduler.ScheduleTask("intLoop", async token =>
+            {
+                while (shouldLoop)
+                {
+                    await Task.Delay(100);
+                }
+            });
+            Assert.Throws<InvalidOperationException>(() => scheduler.ScheduleTask("intLoop", null));
 
             // Wait for single to terminate
             await scheduler.WaitForTermination("single");
             Assert.Equal(1, singleRuns);
+
+            // Wait for internally looping to terminate
+            var intTask = scheduler.WaitForTermination("intLoop");
+            shouldLoop = false;
+            await intTask;
+
 
             // pause periodic
             await Task.Delay(500);

@@ -67,6 +67,7 @@ namespace Cognite.Extractor.Common
                 var task = new PeriodicTask(operation, interval, name);
                 task.Task = Task.Run(async () => await RunPeriodicTask(task).ConfigureAwait(false));
                 _tasks[name] = task;
+                _newTaskEvent.Set();
             }
         }
 
@@ -85,6 +86,7 @@ namespace Cognite.Extractor.Common
                 var task = new PeriodicTask(operation, TimeSpan.Zero, name);
                 task.Task = Task.Run(async () => await operation(_source.Token).ConfigureAwait(false));
                 _tasks[name] = task;
+                _newTaskEvent.Set();
             }
         }
 
@@ -117,7 +119,7 @@ namespace Cognite.Extractor.Common
             PeriodicTask task;
             lock (_taskListMutex)
             {
-                if (!_tasks.TryGetValue(name, out task)) throw new InvalidOperationException($"No such task: {name}");
+                if (!_tasks.TryGetValue(name, out task)) return;
             }
 
             await task.Task.ConfigureAwait(false);

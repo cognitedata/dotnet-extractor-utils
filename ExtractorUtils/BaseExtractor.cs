@@ -62,7 +62,7 @@ namespace Cognite.Extractor.Utils
         /// Verify that the extractor is configured correctly.
         /// </summary>
         /// <returns>Task</returns>
-        public virtual async Task TestConfig()
+        protected virtual async Task TestConfig()
         {
             await Destination.TestCogniteConfig(Source.Token).ConfigureAwait(false);
         }
@@ -77,8 +77,16 @@ namespace Cognite.Extractor.Utils
             Scheduler?.Dispose();
             Source = CancellationTokenSource.CreateLinkedTokenSource(token);
             Scheduler = new PeriodicScheduler(Source.Token);
-            await Start().ConfigureAwait(false);
-            await Scheduler.WaitForAll().ConfigureAwait(false);
+            await TestConfig().ConfigureAwait(false);
+            try
+            {
+                await Start().ConfigureAwait(false);
+                await Scheduler.WaitForAll().ConfigureAwait(false);
+            }
+            finally
+            {
+                await OnStop().ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -87,6 +95,16 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <returns></returns>
         protected abstract Task Start();
+
+
+        /// <summary>
+        /// Called when the extractor is stopping.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Task OnStop()
+        {
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         /// Create a raw queue with the given type and name

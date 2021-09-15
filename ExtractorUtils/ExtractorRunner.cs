@@ -77,37 +77,39 @@ namespace Cognite.Extractor.Utils
                         appId, userAgent, addStateStore, addLogger, addMetrics);
                     services.AddSingleton<TExtractor>();
                     services.AddSingleton<BaseExtractor>(prov => prov.GetRequiredService<TExtractor>());
-                    var provider = services.BuildServiceProvider();
-                    if (addMetrics)
-                    {
-                        var metrics = provider.GetRequiredService<MetricsService>();
-                    }
-                    ILogger<BaseExtractor> log = new NullLogger<BaseExtractor>();
-                    if (addLogger)
-                    {
-                        log = provider.GetRequiredService<ILogger<BaseExtractor>>();
-                    }
-                    var extractor = provider.GetRequiredService<TExtractor>();
-                    if (onCreateExtractor != null)
-                    {
-                        var destination = provider.GetRequiredService<CogniteDestination>();
-                        onCreateExtractor(destination, extractor);
-                    }
                     DateTime startTime = DateTime.UtcNow;
-                    try
+                    ILogger<BaseExtractor> log;
+                    using (var provider = services.BuildServiceProvider())
                     {
-                        await extractor.Start(source.Token).ConfigureAwait(false);
+                        if (addMetrics)
+                        {
+                            var metrics = provider.GetRequiredService<MetricsService>();
+                        }
+                        log = new NullLogger<BaseExtractor>();
+                        if (addLogger)
+                        {
+                            log = provider.GetRequiredService<ILogger<BaseExtractor>>();
+                        }
+                        var extractor = provider.GetRequiredService<TExtractor>();
+                        if (onCreateExtractor != null)
+                        {
+                            var destination = provider.GetRequiredService<CogniteDestination>();
+                            onCreateExtractor(destination, extractor);
+                        }
+                        try
+                        {
+                            await extractor.Start(source.Token).ConfigureAwait(false);
+                        }
+                        catch (TaskCanceledException) when (source.IsCancellationRequested)
+                        {
+                            log.LogWarning("Extractor stopped manually");
+                        }
+                        catch (Exception ex)
+                        {
+                            log.LogError(ex, "Extractor crashed unexpectedly");
+                        }
                     }
-                    catch (TaskCanceledException) when (source.IsCancellationRequested)
-                    {
-                        log.LogWarning("Extractor stopped manually");
-                    }
-                    catch (Exception ex)
-                    {
-                        log.LogError(ex, "Extractor crashed unexpectedly");
-                    }
-
-
+                        
                     if (source.IsCancellationRequested || !restart)
                     {
                         log.LogInformation("Quitting extractor");
