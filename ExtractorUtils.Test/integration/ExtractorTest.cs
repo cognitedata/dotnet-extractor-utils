@@ -16,6 +16,11 @@ namespace ExtractorUtils.Test.Integration
         public string Field { get; set; }
     }
 
+    class MyConfig : BaseConfig
+    {
+        public string Prefix { get; set; }
+    }
+
     class TestExtractor : BaseExtractor
     {
         public string TSId { get; private set; }
@@ -23,14 +28,12 @@ namespace ExtractorUtils.Test.Integration
         public string DBName { get; private set; }
         public string TableName { get; private set; }
         private string _prefix;
-        public TestExtractor(string prefix, BaseConfig config, CogniteDestination destination, CancellationToken token) 
-            : base(config, destination, token)
+        public TestExtractor(MyConfig config, CogniteDestination destination) : base(config, destination)
         {
-            _prefix = prefix;
+            _prefix = config.Prefix;
         }
 
-
-        public override async Task Start()
+        protected override async Task Start()
         {
             DBName = $"{_prefix}-test-db";
             TableName = $"{_prefix}-test-table";
@@ -83,8 +86,6 @@ namespace ExtractorUtils.Test.Integration
                 var dp = (Identity.Create(TSId), new Datapoint(DateTime.UtcNow, Math.Sin(DateTime.UtcNow.Ticks)));
                 return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new [] { dp });
             });
-
-            await Scheduler.WaitForAll();
         }
     }
 
@@ -96,19 +97,22 @@ namespace ExtractorUtils.Test.Integration
         {
             var configPath = "test-config-base-extractor";
             var config = CDFTester.GetConfig(CogniteHost.BlueField);
-            System.IO.File.WriteAllLines(configPath, config);
 
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             Random random = new Random();
             var prefix = "net-utils-test-" + new string(Enumerable.Repeat(chars, 5)
               .Select(s => s[random.Next(s.Length)]).ToArray());
 
+            config = config.Append($"prefix: {prefix}").ToArray();
+
+            System.IO.File.WriteAllLines(configPath, config);
+
             using var source = new CancellationTokenSource();
 
             TestExtractor extractor = null;
             CogniteDestination destination = null;
 
-            var task = ExtractorRunner.Run<BaseConfig>(
+            var task = ExtractorRunner.Run<MyConfig, TestExtractor>(
                 configPath,
                 null,
                 "base-extractor-test-utils",
@@ -117,17 +121,12 @@ namespace ExtractorUtils.Test.Integration
                 true,
                 false,
                 false,
-                (provider, token) =>
+                source.Token,
+                (dest, ext) =>
                 {
-                    destination = provider.GetRequiredService<CogniteDestination>();
-                    extractor = new TestExtractor(
-                        prefix,
-                        provider.GetRequiredService<BaseConfig>(),
-                        destination,
-                        token);
-                    return extractor;
-                },
-                source.Token);
+                    destination = dest;
+                    extractor = ext;
+                });
 
             try
             {
@@ -183,22 +182,29 @@ namespace ExtractorUtils.Test.Integration
 
                 System.IO.File.Delete(configPath);
 
-                await destination.CogniteClient.Raw.DeleteDatabasesAsync(new RawDatabaseDelete
+                if (extractor.DBName != null)
                 {
-                    Items = new[]
+                    await destination.CogniteClient.Raw.DeleteDatabasesAsync(new RawDatabaseDelete
+                    {
+                        Items = new[]
                     {
                         new RawDatabase { Name = extractor.DBName }
                     },
-                    Recursive = true
-                });
-                await destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
+                        Recursive = true
+                    });
+                }
+                if (extractor.TSId != null)
                 {
-                    IgnoreUnknownIds = true,
-                    Items = new[]
+                    await destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
                     {
-                        Identity.Create(extractor.TSId)
-                    }
-                });
+                        IgnoreUnknownIds = true,
+                        Items = new[]
+                        {
+                            Identity.Create(extractor.TSId)
+                        }
+                    });
+                }
+                
                 if (extractor.CreatedEvents.Any())
                 {
                     await destination.CogniteClient.Events.DeleteAsync(new EventDelete

@@ -2,6 +2,7 @@
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
@@ -18,9 +19,11 @@ namespace Cognite.Extractor.Utils
     public static class ExtractorRunner
     {
         /// <summary>
-        /// Configure and run an extractor with config of type <typeparamref name="T"/>
+        /// Configure and run an extractor with config of type <typeparamref name="TConfig"/>
+        /// and extractor of type <typeparamref name="TExtractor"/>
         /// </summary>
-        /// <typeparam name="T">Type of configuration</typeparam>
+        /// <typeparam name="TConfig">Type of configuration</typeparam>
+        /// <typeparam name="TExtractor">Type of extractor</typeparam>
         /// <param name="configPath">Path to yml config file</param>
         /// <param name="acceptedConfigVersions">List of accepted config versions, null accepts all</param>
         /// <param name="appId">AppId to append to requests to CDF</param>
@@ -29,11 +32,12 @@ namespace Cognite.Extractor.Utils
         /// <param name="addLogger">True to add logging</param>
         /// <param name="addMetrics">True to add metrics</param>
         /// <param name="restart">True to restart extractor if it crashes or terminates, using exponential backoff</param>
-        /// <param name="builder">Method constructing a new extractor using the service provider</param>
         /// <param name="token">Optional cancellation token from external cancellation source</param>
-        /// <param name="services">Optional pre-configured service collection</param>
+        /// <param name="onCreateExtractor">Method called when the extractor is created,
+        /// used to retrieve the extractor and destination objects</param>
+        /// <param name="extServices">Optional pre-configured service collection</param>
         /// <returns>Task which completes when the extractor has run</returns>
-        public static async Task Run<T>(
+        public static async Task Run<TConfig, TExtractor>(
             string configPath,
             int[] acceptedConfigVersions,
             string appId,
@@ -42,16 +46,14 @@ namespace Cognite.Extractor.Utils
             bool addLogger,
             bool addMetrics,
             bool restart,
-            Func<IServiceProvider, CancellationToken, BaseExtractor> builder,
             CancellationToken token,
-            ServiceCollection services = null)
-            where T : VersionedConfig
+            Action<CogniteDestination, TExtractor> onCreateExtractor = null,
+            ServiceCollection extServices = null)
+            where TConfig : VersionedConfig
+            where TExtractor : BaseExtractor
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
-
             int waitRepeats = 1;
 
-            if (services == null) services = new ServiceCollection();
             using (var source = CancellationTokenSource.CreateLinkedTokenSource(token))
             {
                 Console.CancelKeyPress += (sender, eArgs) =>
@@ -61,8 +63,20 @@ namespace Cognite.Extractor.Utils
                 };
                 while (!source.IsCancellationRequested)
                 {
-                    services.AddExtractorDependencies<T>(configPath, acceptedConfigVersions,
+                    var services = new ServiceCollection();
+                       
+                    if (extServices != null)
+                    {
+                        foreach (var service in extServices)
+                        {
+                            services.Add(service);
+                        }
+                    }
+
+                    services.AddExtractorDependencies<TConfig>(configPath, acceptedConfigVersions,
                         appId, userAgent, addStateStore, addLogger, addMetrics);
+                    services.AddSingleton<TExtractor>();
+                    services.AddSingleton<BaseExtractor>(prov => prov.GetRequiredService<TExtractor>());
                     var provider = services.BuildServiceProvider();
                     if (addMetrics)
                     {
@@ -73,11 +87,16 @@ namespace Cognite.Extractor.Utils
                     {
                         log = provider.GetRequiredService<ILogger<BaseExtractor>>();
                     }
-                    var extractor = builder(provider, source.Token);
+                    var extractor = provider.GetRequiredService<TExtractor>();
+                    if (onCreateExtractor != null)
+                    {
+                        var destination = provider.GetRequiredService<CogniteDestination>();
+                        onCreateExtractor(destination, extractor);
+                    }
                     DateTime startTime = DateTime.UtcNow;
                     try
                     {
-                        await extractor.Start().ConfigureAwait(false);
+                        await extractor.Start(source.Token).ConfigureAwait(false);
                     }
                     catch (TaskCanceledException) when (source.IsCancellationRequested)
                     {

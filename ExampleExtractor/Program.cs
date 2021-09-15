@@ -9,12 +9,12 @@ using System.Collections.Generic;
 
 class MyExtractor : BaseExtractor
 {
-    public MyExtractor(BaseConfig config, CogniteDestination destination, CancellationToken token)
-        : base(config, destination, token)
+    public MyExtractor(BaseConfig config, CogniteDestination destination)
+        : base(config, destination)
     {
     }
 
-    public override async Task Start()
+    protected override async Task Start()
     {
         await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
@@ -32,8 +32,6 @@ class MyExtractor : BaseExtractor
             );
             return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new[] { dp });
         });
-        // So that the extractor doesn't terminate immediately
-        await Scheduler.WaitForAll();
     }
 }
 
@@ -42,7 +40,7 @@ class Program
 {
     static void Main()
     {
-        ExtractorRunner.Run<BaseConfig>(
+        ExtractorRunner.Run<BaseConfig, MyExtractor>(
             "config.yml",
             new[] { 1 },
             "my-extractor",
@@ -51,11 +49,6 @@ class Program
             true,
             true,
             true,
-            (provider, token) => new MyExtractor(
-                provider.GetRequiredService<BaseConfig>(),
-                provider.GetRequiredService<CogniteDestination>(),
-                token
-            ),
             CancellationToken.None).Wait();
     }
 }

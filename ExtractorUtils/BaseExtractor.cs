@@ -40,24 +40,22 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Scheduler for running various periodic tasks
         /// </summary>
-        protected PeriodicScheduler Scheduler { get; }
+        protected PeriodicScheduler Scheduler { get; private set; }
         /// <summary>
         /// Cancellation token source
         /// </summary>
-        protected CancellationTokenSource Source { get; }
+        protected CancellationTokenSource Source { get; private set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="config">Configuration object</param>
         /// <param name="destination">Cognite destination</param>
-        /// <param name="token">Cancellation token</param>
-        public BaseExtractor(BaseConfig config, CogniteDestination destination, CancellationToken token)
+        public BaseExtractor(BaseConfig config, CogniteDestination destination)
         {
             Config = config;
             Destination = destination;
-            Source = CancellationTokenSource.CreateLinkedTokenSource(token);
-            Scheduler = new PeriodicScheduler(Source.Token);
+            
         }
 
         /// <summary>
@@ -73,7 +71,22 @@ namespace Cognite.Extractor.Utils
         /// Method called to start the extractor.
         /// </summary>
         /// <returns></returns>
-        public abstract Task Start();
+        public virtual async Task Start(CancellationToken token)
+        {
+            Source?.Dispose();
+            Scheduler?.Dispose();
+            Source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            Scheduler = new PeriodicScheduler(Source.Token);
+            await Start().ConfigureAwait(false);
+            await Scheduler.WaitForAll().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Internal method starting the extractor. Should handle any creation of timeseries,
+        /// setup of source systems, and calls to the various Schedule and Create protected methods.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract Task Start();
 
         /// <summary>
         /// Create a raw queue with the given type and name
