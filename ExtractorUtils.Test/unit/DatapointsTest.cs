@@ -303,7 +303,7 @@ namespace ExtractorUtils.Test.Unit
                 logger.LogInformation("Upload queue disposed");
 
                 Assert.Equal(3 * 23, dpCount);
-                Assert.Equal(11, cbCount);
+                Assert.True(cbCount == 10 || cbCount == 11);
                 foreach (var state in states)
                 {
                     Assert.NotEqual(CogniteTime.DateTimeEpoch, state.DestinationExtractedRange.Last);
