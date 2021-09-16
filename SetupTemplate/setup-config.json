@@ -1,0 +1,13 @@
+{
+	"target_project": "../MyExtractor/MyExtractor.csproj"
+	"target_configuration": "Release",
+	"target_runtime": "win-x64",
+	"product_name": "Cognite MyExtractor",
+	"product_short_name": "MyExtractor",
+	"exe_name": "MyExtractor.exe",
+	"config_dir": "../MyExtractor/config",
+	"service": "true",
+	"service_args": "-s",
+	"upgrade_guid": "PUT-GUID-HERE",
+	"output_name": "MyExtractorSetup"
+}
