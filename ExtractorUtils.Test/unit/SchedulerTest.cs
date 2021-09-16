@@ -28,10 +28,9 @@ namespace ExtractorUtils.Test.Unit
         }
     }
 
-    class TestScheduler : OperationScheduler<SchedulerItem>
+    class TestScheduler : SharedResourceScheduler<SchedulerItem>
     {
         public int Aborted { get; private set; }
-        public int Capacity { get; set; }
         public int Pending { get; set; }
         public int Operations { get; set; }
         public int Finished { get; set; }
@@ -43,9 +42,9 @@ namespace ExtractorUtils.Test.Unit
             IEnumerable<SchedulerItem> initialItems,
             int chunkSize,
             TaskThrottler throttler,
-            CancellationToken token) : base(initialItems, throttler, chunkSize, token)
+            IResourceCounter resource,
+            CancellationToken token) : base(initialItems, throttler, chunkSize, resource, token)
         {
-
         }
 
 
@@ -57,18 +56,6 @@ namespace ExtractorUtils.Test.Unit
         protected override async Task ConsumeChunk(IChunk<SchedulerItem> chunk, CancellationToken token)
         {
             await Task.Delay(10);
-        }
-
-        protected override void FreeCapacity(int freed)
-        {
-            Capacity += freed;
-        }
-
-        protected override Task<int> GetCapacity(int requested)
-        {
-            int toAlloc = Math.Min(Capacity, requested);
-            Capacity -= toAlloc;
-            return Task.FromResult(toAlloc);
         }
 
         protected override IChunk<SchedulerItem> GetChunk(IEnumerable<SchedulerItem> items)
@@ -149,18 +136,36 @@ namespace ExtractorUtils.Test.Unit
             int totalItems = 43 + 1 + 15;
             int totalReads = 43 * 3 + 1 + 15 * 2;
 
-            using var scheduler = new TestScheduler(items, 3, throttler, CancellationToken.None);
-            scheduler.Capacity = 6;
+            var resource = new BlockingResourceCounter(6);
+            using var scheduler = new TestScheduler(items, 3, throttler, resource, CancellationToken.None);
 
             await scheduler.RunAsync();
 
             Assert.True(scheduler.CountChunks >= totalReads / 3);
             Assert.Equal(0, scheduler.Pending);
-            Assert.Equal(6, scheduler.Capacity);
+            Assert.Equal(6, resource.Count);
             Assert.Equal(totalReads, scheduler.Operations);
             Assert.Equal(totalItems, scheduler.CountItems + 3);
             Assert.Equal(totalItems, scheduler.Total);
             Assert.Equal(totalItems, scheduler.Finished);
+        }
+        [Fact]
+        public async Task TestBlockingResource()
+        {
+            var resource = new BlockingResourceCounter(5);
+            Assert.Equal(3, await resource.Take(3, true));
+            Assert.Equal(2, await resource.Take(3, true));
+            Assert.Equal(0, await resource.Take(2, false));
+
+            var task = resource.Take(3, true);
+
+            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100)));
+
+            resource.Free(2);
+
+            Assert.Equal(task, await Task.WhenAny(task, Task.Delay(1000)));
+            Assert.Equal(2, task.Result);
+
         }
     }
 }

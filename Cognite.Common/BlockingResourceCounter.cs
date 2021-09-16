@@ -12,12 +12,16 @@ namespace Cognite.Extractor.Common
     public interface IResourceCounter
     {
         /// <summary>
-        /// Take <paramref name="count"/> instances of the resource.
-        /// Returns at least 1, if there are zero instances available, blocks until there are.
+        /// Take up to <paramref name="count"/> instances of the resource.
+        /// If <paramref name="shouldBlock"/> is true, returns at least 1 and blocks until
+        /// this is possible.
         /// </summary>
         /// <param name="count">Maximum number to take</param>
-        /// <returns>The number of resources granted. At least 1, but no more than <paramref name="count"/></returns>
-        Task<int> Take(int count);
+        /// <param name="shouldBlock">True if this request should block if no resources are available</param>
+        /// <returns>The number of resources granted.
+        /// If <paramref name="shouldBlock"/> is true then at least 1,
+        /// always no more than <paramref name="count"/></returns>
+        Task<int> Take(int count, bool shouldBlock);
         /// <summary>
         /// Releases <paramref name="count"/> resources.
         /// Behavior is not defined if this number was not taken before.
@@ -50,13 +54,13 @@ namespace Cognite.Extractor.Common
         }
 
         /// <inheritdocs />
-        public Task<int> Take(int count)
+        public Task<int> Take(int count, bool shouldBlock)
         {
             return Task.Run(() =>
             {
                 lock (_lock)
                 {
-                    while (Count == 0)
+                    while (Count == 0 && shouldBlock)
                     {
                         Monitor.Wait(_lock);
                     }

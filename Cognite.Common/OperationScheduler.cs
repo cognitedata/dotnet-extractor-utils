@@ -69,11 +69,12 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Request to start reading <paramref name="requested"/> nodes.
         /// Must return a number greater than 0 and less than <paramref name="requested"/>.
-        /// May block if scheduler should wait for resources to be freed elsewhere.
+        /// If <paramref name="shouldBlock"/> is true it may block to wait for resources to be freed elsewhere.
         /// </summary>
         /// <param name="requested">Maximum to request</param>
+        /// <param name="shouldBlock">True if this should block</param>
         /// <returns>Number greater than 0 and less than <paramref name="requested"/></returns>
-        protected abstract Task<int> GetCapacity(int requested);
+        protected abstract Task<int> GetCapacity(int requested, bool shouldBlock);
         /// <summary>
         /// Return used capacity allocated using GetCapacity.
         /// </summary>
@@ -202,7 +203,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         private void Run()
         {
-            var capacity = GetCapacity(_activeItems.Count()).Result;
+            var capacity = GetCapacity(_activeItems.Count(), true).Result;
             var chunks = GetNextChunks(_activeItems, capacity, out _activeItems).ToList();
             foreach (var chunk in chunks)
             {
@@ -280,7 +281,8 @@ namespace Cognite.Extractor.Common
                 int toRequest = _activeItems.Count() - numContinued;
                 if (toRequest > 0)
                 {
-                    capacity = GetCapacity(toRequest).Result;
+                    // If numContinued is not zero we don't need to block.
+                    capacity = GetCapacity(toRequest, numContinued == 0).Result;
                 }
                 else
                 {
