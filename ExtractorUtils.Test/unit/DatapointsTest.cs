@@ -67,16 +67,17 @@ namespace ExtractorUtils.Test.Unit
                 string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringLengthMax), new string('2', CogniteUtils.StringLengthMax + 1), "3"};
                 
                 var datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
-                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
-                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "2")}},
+                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1"), new Datapoint(DateTime.UtcNow, "2") }},
                     { new Identity(1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d))},
                     { new Identity(2), stringPoints.Select(s => new Datapoint(DateTime.UtcNow, s))},
                     { new Identity(3), new Datapoint[] { } },
                     { new Identity(4), new Datapoint[] { new Datapoint(CogniteTime.DateTimeEpoch, 1), new Datapoint(DateTime.MaxValue, 1)}}
                 };
                 _createdDataPoints.Clear();
-                await cogniteDestination.InsertDataPointsAsync(
+                var result = await cogniteDestination.InsertDataPointsAsync(
                     datapoints,
+                    SanitationMode.Clean,
+                    RetryMode.OnError,
                     CancellationToken.None);
                 Assert.False(_createdDataPoints.ContainsKey(3 + "")); // No data points
                 Assert.False(_createdDataPoints.ContainsKey(4 + "")); // Invalid timestamps
@@ -98,14 +99,21 @@ namespace ExtractorUtils.Test.Unit
                     { new Identity("idString1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
                     { new Identity("idMismatched2"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}}
                 };
-                var errors = await cogniteDestination.InsertDataPointsIgnoreErrorsAsync(
+                result = await cogniteDestination.InsertDataPointsAsync(
                     datapoints,
+                    SanitationMode.Clean,
+                    RetryMode.OnError,
                     CancellationToken.None);
+
+                var errs = result.Errors.ToArray();
+                var notFoundErr = errs.Where(err => err.Resource == ResourceType.Id).SelectMany(err => err.Values);
+                var mismatched = errs.Where(err => err.Type == ErrorType.MismatchedType).SelectMany(err => err.Skipped);
+
                 var comparer = new IdentityComparer();
-                Assert.Contains(new Identity("idMissing1"), errors.IdsNotFound, comparer);
-                Assert.Contains(new Identity(-1), errors.IdsNotFound, comparer);
-                Assert.Contains(new Identity("idMismatchedString1"), errors.IdsWithMismatchedData, comparer);
-                Assert.Contains(new Identity("idMismatched2"), errors.IdsWithMismatchedData, comparer);
+                Assert.Contains(new Identity("idMissing1"), notFoundErr, comparer);
+                Assert.Contains(new Identity(-1), notFoundErr, comparer);
+                Assert.Contains(mismatched.OfType<DataPointInsertError>(), err => err.Id.ExternalId == "idMismatchedString1");
+                Assert.Contains(mismatched.OfType<DataPointInsertError>(), err => err.Id.ExternalId == "idMismatched2");
                 Assert.Single(_createdDataPoints["idNumeric1"]);
                 Assert.Single(_createdDataPoints["idNumeric2"]);
                 Assert.Single(_createdDataPoints["idString1"]);

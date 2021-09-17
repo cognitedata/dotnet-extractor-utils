@@ -91,8 +91,6 @@ namespace Cognite.Extensions
             var comparer = new IdentityComparer();
             var result = new Dictionary<Identity, IEnumerable<Datapoint>>(comparer);
 
-            var ids = new HashSet<Identity>(comparer);
-            var duplicateIds = new HashSet<Identity>(comparer);
             var badDpGroups = new List<(ResourceType type, Identity id, IEnumerable<Datapoint> dps)>();
 
             foreach (var kvp in points)
@@ -102,12 +100,6 @@ namespace Cognite.Extensions
 
                 var cleanDps = new List<Datapoint>();
                 var badDps = new List<(ResourceType type, Datapoint point)>();
-
-                if (!ids.Add(id))
-                {
-                    duplicateIds.Add(id);
-                    continue;
-                }
 
                 foreach (var dp in dps)
                 {
@@ -145,18 +137,6 @@ namespace Cognite.Extensions
             }
 
             var errors = new List<CogniteError>();
-
-            if (duplicateIds.Any())
-            {
-                errors.Add(new CogniteError
-                {
-                    Status = 409,
-                    Message = "Conflicting identifiers",
-                    Resource = ResourceType.Id,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicateIds
-                });
-            }
 
             if (badDpGroups.Any())
             {

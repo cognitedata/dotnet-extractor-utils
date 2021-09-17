@@ -126,10 +126,11 @@ namespace Cognite.Extensions
             IEnumerable<CogniteError> errors;
             (points, errors) = Sanitation.CleanDataPointsRequest(points, sanitationMode, nonFiniteReplacement);
 
+            var comparer = new IdentityComparer();
             var chunks = points
                 .Select(p => (p.Key, p.Value))
                 .ChunkBy(valueChunkSize, keyChunkSize)
-                .Select(chunk => chunk.ToDictionary(pair => pair.Key, pair => pair.Values))
+                .Select(chunk => chunk.ToDictionary(pair => pair.Key, pair => pair.Values, comparer))
                 .ToList();
 
             int size = chunks.Count + (errors.Any() ? 1 : 0);
@@ -147,7 +148,7 @@ namespace Cognite.Extensions
                 .Select<IDictionary<Identity, IEnumerable<Datapoint>>, Func<Task>>(
                 (chunk, idx) => async () => {
                     var result = await
-                        InsertDataPointsHandleErrors(client, points, timeseriesChunkSize, timeseriesThrottleSize, retryMode, token)
+                        InsertDataPointsHandleErrors(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, retryMode, token)
                         .ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -209,7 +210,7 @@ namespace Cognite.Extensions
                                 .ConfigureAwait(false);
                         }
                         points = ResultHandlers.CleanFromError(error, points);
-
+                        errors.Add(error);
                     }
                 }
             }

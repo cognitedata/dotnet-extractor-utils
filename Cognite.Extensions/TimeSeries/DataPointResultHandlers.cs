@@ -17,7 +17,7 @@ namespace Cognite.Extensions
             if (ex.Missing?.Any() ?? false)
             {
                 err.Type = ErrorType.ItemMissing;
-                err.Resource = ResourceType.ExternalId;
+                err.Resource = ResourceType.Id;
                 err.Values = ex.Missing.Select(dict =>
                 {
                     if (dict.TryGetValue("id", out var idVal) && idVal is MultiValue.Long longVal)
@@ -53,7 +53,7 @@ namespace Cognite.Extensions
             if (error == null) return datapoints;
             // In this case we've already finished the skipping.
             if (error.Skipped?.Any() ?? false) return datapoints;
-            if (!error.Values.Any())
+            if (!error.Values?.Any() ?? true)
             {
                 error.Skipped = datapoints.Select(kvp => new DataPointInsertError(kvp.Key, kvp.Value)).ToList();
                 error.Values = error.Skipped.Select(pair => ((DataPointInsertError)pair).Id);

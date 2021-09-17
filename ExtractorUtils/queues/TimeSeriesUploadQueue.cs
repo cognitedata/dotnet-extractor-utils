@@ -238,11 +238,11 @@ namespace Cognite.Extractor.Utils
                     };
                     foreach (var err in result.Errors)
                     {
-                        if (err.Values.Any())
+                        if (err.Skipped != null && err.Skipped.Any())
                         {
-                            foreach (var id in err.Values)
+                            foreach (var dpErr in err.Skipped.OfType<DataPointInsertError>())
                             {
-                                dpMap.Remove(id);
+                                dpMap.Remove(dpErr.Id);
                             }
                         }
                     }

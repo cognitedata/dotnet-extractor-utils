@@ -40,36 +40,6 @@ namespace ExtractorUtils.Test.Unit
         };
 
         [Fact]
-        public static void TestTrimDoubles()
-        {
-            var values = _points.TrimValues().ToList();
-            Assert.Equal(_points.Length - 3, values.Count()); // except invalid ones
-            Assert.True(values.All(p => p.NumericValue <= CogniteUtils.NumericValueMax));
-            Assert.True(values.All(p => p.NumericValue >= CogniteUtils.NumericValueMin));
-            Assert.True(!values.Any(p => double.IsNaN(p.NumericValue.Value)));
-        }
-
-
-        [Fact]
-        public static void TestTrimStrings()
-        {
-            var values = _stringPoints.TrimValues().ToList();
-            Assert.Equal(_stringPoints.Count(), values.Count());
-            Assert.True(values.All(p => p.StringValue.Length <= CogniteUtils.StringLengthMax));
-            var payloads = values.Select(v => v.StringValue).ToList();
-            Assert.True(_stringPoints.Select(v => v.StringValue).All(v => payloads.Any(p => v.StartsWith(p))));
-        }
-
-        [Fact]
-        public static void TestRemoveOutOfRangeTimestamps()
-        {
-            var values = _points_timestamp.RemoveOutOfRangeTimestamps();
-            Assert.Equal(_points_timestamp.Count() - 2, values.Count());
-            Assert.Contains(_points_timestamp[1], values);
-            Assert.Contains(_points_timestamp[2], values);
-        }
-
-        [Fact]
         public static void TestIdentityComparer()
         {
             var comparer = new IdentityComparer();
