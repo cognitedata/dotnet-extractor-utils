@@ -242,5 +242,69 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(7, result.Aggregate(0, (seed, res) => seed + res.Count()));
             Assert.Equal(lengths, result.Select(res => res.Count()));
         }
+        [Fact]
+        public static async Task TestPeriodicScheduler()
+        {
+            using var source = new CancellationTokenSource();
+            using var scheduler = new PeriodicScheduler(source.Token);
+
+            int periodicRuns = 0;
+
+            // Schedule periodic
+            scheduler.SchedulePeriodicTask("periodic", TimeSpan.FromMilliseconds(100), token =>
+            {
+                periodicRuns++;
+                return Task.CompletedTask;
+            });
+            Assert.Throws<InvalidOperationException>(() => scheduler.SchedulePeriodicTask("periodic", TimeSpan.Zero, null));
+
+            int singleRuns = 0;
+            // Schedule single
+            scheduler.ScheduleTask("single", token =>
+            {
+                singleRuns++;
+                return Task.CompletedTask;
+            });
+
+            // Schedule interally looping task
+            bool shouldLoop = true;
+            scheduler.ScheduleTask("intLoop", async token =>
+            {
+                while (shouldLoop)
+                {
+                    await Task.Delay(100);
+                }
+            });
+            Assert.Throws<InvalidOperationException>(() => scheduler.ScheduleTask("intLoop", null));
+
+            // Wait for single to terminate
+            await scheduler.WaitForTermination("single");
+            Assert.Equal(1, singleRuns);
+
+            // Wait for internally looping to terminate
+            var intTask = scheduler.WaitForTermination("intLoop");
+            shouldLoop = false;
+            await intTask;
+
+
+            // pause periodic
+            await Task.Delay(500);
+            Assert.True(periodicRuns > 1);
+            scheduler.PauseTask("periodic", true);
+            int numRuns = periodicRuns;
+            await Task.Delay(500);
+            // It might run once more, if it was already scheduled to run
+            Assert.True(periodicRuns <= numRuns + 1);
+
+
+            // Exit periodic and wait
+            await scheduler.ExitAndWaitForTermination("periodic");
+            source.Cancel();
+
+            var task = scheduler.WaitForAll();
+
+            await Task.WhenAll(task, Task.Delay(2000));
+            Assert.True(task.IsCompleted);
+        }
     }
 }

@@ -1,0 +1,13 @@
+version: 1
+logger:
+  console:
+    level: verbose
+cognite:
+  project: ${BF_TEST_PROJECT}
+  host: ${BF_TEST_HOST}
+  idp-authentication:
+    client-id: ${BF_TEST_CLIENT_ID}
+    tenant: ${BF_TEST_TENANT}
+    secret: ${BF_TEST_SECRET}
+    scopes:
+      - ${BF_TEST_SCOPE}
