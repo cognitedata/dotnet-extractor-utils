@@ -267,6 +267,10 @@ namespace Cognite.Extensions
         /// </summary>
         ItemDuplicated,
         /// <summary>
+        /// Field type did not match
+        /// </summary>
+        MismatchedType,
+        /// <summary>
         /// Item does not satisfy CDF field limits
         /// </summary>
         SanitationFailed,
@@ -380,6 +384,14 @@ namespace Cognite.Extensions
         /// Row number of a sequence row
         /// </summary>
         SequenceRowNumber,
+        /// <summary>
+        /// Value of a datapoint
+        /// </summary>
+        DataPointValue,
+        /// <summary>
+        /// Timestamp of a datapoint
+        /// </summary>
+        DataPointTimestamp,
         /// <summary>
         /// None or unknown
         /// </summary>
