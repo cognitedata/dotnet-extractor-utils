@@ -108,7 +108,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Optional replacement for non-finite double values in datapoints
         /// </summary>
-        public double? NonFiniteReplacement { get; set; }
+        public double? NanReplacement { get; set; }
     }
 
     /// <summary>

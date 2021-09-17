@@ -1,4 +1,5 @@
 ﻿using Cognite.Extensions;
+using Cognite.Extractor.Common;
 using CogniteSdk;
 using System;
 using System.Collections.Generic;
@@ -430,8 +431,80 @@ namespace ExtractorUtils.Test.Unit
                         
                 }
             }
-
         }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(321.321)]
+        [InlineData(null)]
+        public void TestSanitizeDataPoints(double? nanRepl)
+        {
+            var dps = new[]
+            {
+                new Datapoint(DateTime.UtcNow, 123.123),
+                new Datapoint(DateTime.UtcNow, "test"),
+                new Datapoint(DateTime.UtcNow, new string('æ', 500)),
+                new Datapoint(DateTime.UtcNow, null),
+                new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
+                new Datapoint(DateTime.UtcNow, double.NegativeInfinity),
+                new Datapoint(DateTime.UtcNow, double.NaN),
+                new Datapoint(DateTime.UtcNow, double.MaxValue),
+                new Datapoint(DateTime.UtcNow, double.MinValue),
+                new Datapoint(DateTime.UtcNow, 1E101),
+                new Datapoint(DateTime.UtcNow, -1E101)
+            };
+
+            var cleanDps = dps.Select(dp => dp.Sanitize(nanRepl)).ToArray();
+
+            Assert.Equal(123.123, cleanDps[0].NumericValue.Value);
+            Assert.Equal("test", cleanDps[1].StringValue);
+            Assert.Equal(new string('æ', 255), cleanDps[2].StringValue);
+            Assert.Equal("", cleanDps[3].StringValue);
+            Assert.Equal(1E100, cleanDps[4].NumericValue.Value);
+            Assert.Equal(-1E100, cleanDps[5].NumericValue.Value);
+            if (nanRepl.HasValue)
+            {
+                Assert.Equal(nanRepl, cleanDps[6].NumericValue.Value);
+            }
+            else
+            {
+                Assert.True(double.IsNaN(cleanDps[6].NumericValue.Value));
+            }
+            Assert.Equal(1E100, cleanDps[7].NumericValue.Value);
+            Assert.Equal(-1E100, cleanDps[8].NumericValue.Value);
+            Assert.Equal(1E100, cleanDps[9].NumericValue.Value);
+            Assert.Equal(-1E100, cleanDps[10].NumericValue.Value);
+        }
+
+        [Fact]
+        public void TestVerifyDataPoint()
+        {
+            var dps = new[]
+            {
+                new Datapoint(DateTime.UtcNow, 123.123),
+                new Datapoint(DateTime.UtcNow, "test"),
+                new Datapoint(DateTime.UtcNow, new string('æ', 500)),
+                new Datapoint(DateTime.UtcNow, null),
+                new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
+                new Datapoint(DateTime.UtcNow, double.NegativeInfinity),
+                new Datapoint(DateTime.UtcNow, double.NaN),
+                new Datapoint(DateTime.UtcNow, double.MaxValue),
+                new Datapoint(DateTime.UtcNow, double.MinValue),
+                new Datapoint(DateTime.UtcNow, 1E101),
+                new Datapoint(DateTime.UtcNow, -1E101),
+                new Datapoint(DateTime.MaxValue, 1),
+                new Datapoint(CogniteTime.DateTimeEpoch, 1)
+            };
+
+            var result = dps.Select(dp => dp.Verify()).ToArray();
+
+            Assert.Null(result[0]);
+            Assert.Null(result[1]);
+            for (int i = 2; i < 11; i++) Assert.Equal(ResourceType.DataPointValue, result[i]);
+            Assert.Equal(ResourceType.DataPointTimestamp, result[11]);
+            Assert.Equal(ResourceType.DataPointTimestamp, result[12]);
+        }
+
         [Theory]
         [InlineData("æææææ", 4)]
         [InlineData("123412341234", 9)]

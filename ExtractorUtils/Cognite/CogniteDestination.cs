@@ -286,7 +286,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.TimeSeries,
                 sanitationMode,
                 retryMode,
-                _config.NonFiniteReplacement,
+                _config.NanReplacement,
                 token).ConfigureAwait(false);
         }
 

@@ -9,35 +9,34 @@ namespace Cognite.Extensions
     {
         /// <summary>
         /// Sanitize this datapoint so that its value is safe for CDF consumption.
-        /// May return null if <paramref name="nonFiniteReplacement"/> is not set.
         /// This does not touch timestamp.
         /// </summary>
         /// <param name="point">Datapoint to sanitize</param>
-        /// <param name="nonFiniteReplacement">Replacement for Infinite or NaN values</param>
+        /// <param name="nanReplacement">Replacement for Infinite or NaN values</param>
         /// <returns>Sanitized datapoint. Same datapoint object if nothing required changing</returns>
-        public static Datapoint Sanitize(this Datapoint point, double? nonFiniteReplacement)
+        public static Datapoint Sanitize(this Datapoint point, double? nanReplacement)
         {
-            if (point.StringValue != null)
+            if (point.IsString)
             {
-                if (point.StringValue.Length > CogniteUtils.StringLengthMax)
+                if (point.StringValue == null || point.StringValue.Length > CogniteUtils.StringLengthMax)
                 {
-                    return new Datapoint(point.Timestamp, point.StringValue.Truncate(CogniteUtils.StringLengthMax));
+                    return new Datapoint(point.Timestamp, point.StringValue.Truncate(CogniteUtils.StringLengthMax) ?? "");
                 }
                 return point;
             }
-            else if (point.NumericValue.HasValue)
+            else
             {
                 double value = point.NumericValue.Value;
-                if (!double.IsNaN(value) && !double.IsInfinity(value))
+                if (!double.IsNaN(value))
                 {
                     value = Math.Max(CogniteUtils.NumericValueMin, value);
                     value = Math.Min(CogniteUtils.NumericValueMax, value);
                     return value == point.NumericValue.Value ? point :
                         new Datapoint(point.Timestamp, value);
                 }
-                else if (nonFiniteReplacement.HasValue)
+                else if (nanReplacement.HasValue)
                 {
-                    return new Datapoint(point.Timestamp, nonFiniteReplacement.Value);
+                    return new Datapoint(point.Timestamp, nanReplacement.Value);
                 }
             }
             return point;
@@ -49,11 +48,14 @@ namespace Cognite.Extensions
         /// <returns>Either DataPointValue or DataPointTimestamp if these are wrong, else null</returns>
         public static ResourceType? Verify(this Datapoint point)
         {
-            if (point.StringValue != null && point.StringValue.Length > CogniteUtils.StringLengthMax)
+            if (point.IsString)
             {
-                return ResourceType.DataPointValue;
+                if (point.StringValue == null || point.StringValue.Length > CogniteUtils.StringLengthMax)
+                {
+                    return ResourceType.DataPointValue;
+                }
             }
-            else if (point.NumericValue.HasValue)
+            else
             {
                 double value = point.NumericValue.Value;
                 if (double.IsNaN(value)

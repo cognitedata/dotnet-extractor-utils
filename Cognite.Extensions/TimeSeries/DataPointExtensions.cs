@@ -107,7 +107,7 @@ namespace Cognite.Extensions
         /// <param name="timeseriesThrottleSize">Maximum number of parallel requests to retrieve timeseries</param>
         /// <param name="sanitationMode">How to sanitize datapoints</param>
         /// <param name="retryMode">How to handle retries</param>
-        /// <param name="nonFiniteReplacement">Optional replacement for NaN or Infinite double values</param>
+        /// <param name="nanReplacement">Optional replacement for NaN double values</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Result with a list of errors</returns>
         public static async Task<CogniteResult> InsertAsync(
@@ -120,11 +120,11 @@ namespace Cognite.Extensions
             int timeseriesThrottleSize,
             SanitationMode sanitationMode,
             RetryMode retryMode,
-            double? nonFiniteReplacement,
+            double? nanReplacement,
             CancellationToken token)
         {
             IEnumerable<CogniteError> errors;
-            (points, errors) = Sanitation.CleanDataPointsRequest(points, sanitationMode, nonFiniteReplacement);
+            (points, errors) = Sanitation.CleanDataPointsRequest(points, sanitationMode, nanReplacement);
 
             var comparer = new IdentityComparer();
             var chunks = points
