@@ -76,6 +76,10 @@ namespace Cognite.Extensions
                 {
                     ParseSequenceRowException(rex, result);
                 }
+                else if (type == RequestType.CreateDatapoints)
+                {
+                    ParseDatapointsException(rex, result);
+                }
                 return result;
             }
             else
@@ -421,7 +425,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create sequence rows
         /// </summary>
-        CreateSequenceRows
+        CreateSequenceRows,
+        /// <summary>
+        /// Create timeseries datapoints
+        /// </summary>
+        CreateDatapoints
     }
     
 
