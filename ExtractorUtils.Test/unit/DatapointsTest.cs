@@ -277,7 +277,7 @@ namespace ExtractorUtils.Test.Unit
                 logger.LogInformation("Upload queue disposed");
 
                 Assert.Equal(3 * 13, dpCount);
-                Assert.True(cbCount <= 4);
+                Assert.True(cbCount >= 2, $"Got {cbCount}");
                 cbCount = 0;
 
                 // queue with maximum size

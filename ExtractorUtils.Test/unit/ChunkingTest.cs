@@ -242,6 +242,13 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(7, result.Aggregate(0, (seed, res) => seed + res.Count()));
             Assert.Equal(lengths, result.Select(res => res.Count()));
         }
+
+        private static async Task RunWithTimeout(Task task, int timeoutMs)
+        {
+            await Task.WhenAny(task, Task.Delay(timeoutMs));
+            Assert.True(task.IsCompleted);
+        }
+
         [Fact(Timeout = 10000)]
         public static async Task TestPeriodicScheduler()
         {
@@ -278,13 +285,13 @@ namespace ExtractorUtils.Test.Unit
             Assert.Throws<InvalidOperationException>(() => scheduler.ScheduleTask("intLoop", null));
 
             // Wait for single to terminate
-            await scheduler.WaitForTermination("single");
+            await RunWithTimeout(scheduler.WaitForTermination("single"), 1000);
             Assert.Equal(1, singleRuns);
 
             // Wait for internally looping to terminate
             var intTask = scheduler.WaitForTermination("intLoop");
             shouldLoop = false;
-            await intTask;
+            await RunWithTimeout(intTask, 1000);
 
 
             // pause periodic
@@ -298,13 +305,10 @@ namespace ExtractorUtils.Test.Unit
 
 
             // Exit periodic and wait
-            await scheduler.ExitAndWaitForTermination("periodic");
+            await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
             source.Cancel();
 
-            var task = scheduler.WaitForAll();
-
-            await Task.WhenAll(task, Task.Delay(2000));
-            Assert.True(task.IsCompleted);
+            await RunWithTimeout(scheduler.WaitForAll(), 1000);
         }
     }
 }
