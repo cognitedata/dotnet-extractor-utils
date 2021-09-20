@@ -81,11 +81,11 @@ namespace ExtractorUtils.Test.Unit
                     CancellationToken.None);
                 Assert.False(_createdDataPoints.ContainsKey(3 + "")); // No data points
                 Assert.False(_createdDataPoints.ContainsKey(4 + "")); // Invalid timestamps
-                Assert.Equal(6, _createdDataPoints[1 + ""].Count());
+                Assert.Equal(7, _createdDataPoints[1 + ""].Count());
                 Assert.Equal(2, _createdDataPoints["A"].Count());
                 Assert.Empty(_createdDataPoints[1 + ""]
                     .Where(dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity));
-                Assert.Equal(5, _createdDataPoints[2 + ""].Count());
+                Assert.Equal(6, _createdDataPoints[2 + ""].Count());
                 Assert.Empty(_createdDataPoints[2 + ""]
                     .Where(dp => dp.StringValue == null || dp.StringValue.Length > CogniteUtils.StringLengthMax));
 

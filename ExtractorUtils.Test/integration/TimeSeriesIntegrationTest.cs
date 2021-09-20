@@ -475,7 +475,8 @@ namespace ExtractorUtils.Test.Integration
                     { Identity.Create(tss[1].extId), new []
                     {
                         new Datapoint(DateTime.UtcNow, new string('æ', 400)),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(1), "test")
+                        new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
+                        new Datapoint(DateTime.UtcNow, null)
                     } },
                     { Identity.Create(tss[2].id), new[]
                     {
@@ -509,7 +510,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(5, iErr.DataPoints.Count());
                 Assert.Equal(tss[0].extId, iErr.Id.ExternalId);
                 iErr = insertErrs[1];
-                Assert.Single(iErr.DataPoints);
+                Assert.Equal(2, iErr.DataPoints.Count());
                 Assert.Equal(tss[1].extId, iErr.Id.ExternalId);
                 iErr = insertErrs[2];
                 Assert.Single(iErr.DataPoints);
