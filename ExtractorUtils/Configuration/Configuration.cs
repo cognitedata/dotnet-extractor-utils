@@ -10,9 +10,9 @@ namespace Cognite.Extractor.Utils
     /// <summary>
     /// Extension utilities for configuration.
     /// </summary>
-    public static class ConfigurationExtensions 
+    public static class ConfigurationExtensions
     {
-        
+
         /// <summary>
         /// Read the config of type <typeparamref name="T"/> from the yaml file in <paramref name="path"/>
         /// and adds it as a singleton to the service collection <paramref name="services"/>
@@ -28,14 +28,48 @@ namespace Cognite.Extractor.Utils
         /// <returns>An instance of the configuration object</returns>
         public static T AddConfig<T>(this IServiceCollection services,
                                         string path,
-                                        params int[] acceptedConfigVersions) where T : VersionedConfig 
+                                        params int[] acceptedConfigVersions) where T : VersionedConfig
         {
             var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
-            services.AddConfig<T>(config, typeof(CogniteConfig), typeof(LoggerConfig), typeof(MetricsConfig), typeof(StateStoreConfig));
+            services.AddConfig<T>(config,
+                typeof(CogniteConfig), typeof(LoggerConfig), typeof(MetricsConfig), typeof(StateStoreConfig), typeof(BaseConfig));
+            return config;
+        }
+
+        /// <summary>
+        /// Configure dependencies for the BaseExtractor, adding metrics, logging, state store and cognite client.
+        /// Short for AddConfig, AddCogniteClient, AddStateStore, AddMetrics and AddLogger.
+        /// </summary>
+        /// <typeparam name="T">Type of config object</typeparam>
+        /// <param name="services">Servicecollection to add to</param>
+        /// <param name="configPath">Path to config file</param>
+        /// <param name="acceptedConfigVersions">Valid config versions. Can be null to allow all.</param>
+        /// <param name="appId">AppId added to requests to CDF</param>
+        /// <param name="userAgent">User agent on form Product/Version</param>
+        /// <param name="addStateStore">True to add state store, used if extractor reads history</param>
+        /// <param name="addLogger">True to add logger</param>
+        /// <param name="addMetrics">True to add metrics</param>
+        /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
+        /// the yaml file is not found or in case of yaml parsing error</exception>
+        /// <returns>Configuration object</returns>
+        public static T AddExtractorDependencies<T>(
+            this IServiceCollection services,
+            string configPath,
+            int[] acceptedConfigVersions,
+            string appId,
+            string userAgent,
+            bool addStateStore,
+            bool addLogger = true,
+            bool addMetrics = true) where T : VersionedConfig
+        {
+            var config = services.AddConfig<T>(configPath, acceptedConfigVersions);
+            services.AddCogniteClient(appId, userAgent, addLogger, addMetrics);
+            if (addStateStore) services.AddStateStore();
+            if (addLogger) services.AddLogger();
+            if (addMetrics) services.AddMetrics();
             return config;
         }
     }
-
 }
 

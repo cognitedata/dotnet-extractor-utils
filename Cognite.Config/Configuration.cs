@@ -192,6 +192,15 @@ namespace Cognite.Extractor.Configuration
         public static void AddConfig<T>(this IServiceCollection services, T config, params Type[] types)
         {
             if (!types.Any()) return;
+            foreach (var type in types)
+            {
+                if (type.IsAssignableFrom(typeof(T)))
+                {
+                    services.AddSingleton(typeof(T), config);
+                    break;
+                }
+            }
+
             foreach (var prop in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 if (!prop.CanRead) continue;

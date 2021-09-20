@@ -260,7 +260,6 @@ namespace ExtractorUtils.Test.Integration
         }
 
         [Theory]
-        [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUploadQueue(CogniteHost host)
         {
@@ -321,8 +320,6 @@ namespace ExtractorUtils.Test.Integration
                     var queryItem = new DataPointsQueryItem()
                     {
                         ExternalId = ts.ExternalId,
-                        Start = $"{startTime.ToUnixTimeMilliseconds()}",
-                        End = $"{DateTime.UtcNow.ToUnixTimeMilliseconds() + 1}",
                         Limit = 100
                     };
                     query.Add(queryItem);
