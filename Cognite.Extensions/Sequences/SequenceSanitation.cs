@@ -221,15 +221,15 @@ namespace Cognite.Extensions
         /// <param name="sequences">SequenceCreate request to clean</param>
         /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned create request and optional errors if any ids were duplicated</returns>
-        public static (IEnumerable<SequenceCreate>, IEnumerable<CogniteError>) CleanSequenceRequest(
+        public static (IEnumerable<SequenceCreate>, IEnumerable<CogniteError<SequenceCreate>>) CleanSequenceRequest(
             IEnumerable<SequenceCreate> sequences,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (sequences, Enumerable.Empty<CogniteError>());
+            if (mode == SanitationMode.None) return (sequences, Enumerable.Empty<CogniteError<SequenceCreate>>());
             if (sequences == null) throw new ArgumentNullException(nameof(sequences));
 
             var result = new List<SequenceCreate>();
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<SequenceCreate>>();
 
             var ids = new HashSet<string>();
             var duplicated = new HashSet<string>();
@@ -289,7 +289,7 @@ namespace Cognite.Extensions
                 }
                 if (duplicatedColumns.Any())
                 {
-                    errors.Add(new CogniteError
+                    errors.Add(new CogniteError<SequenceCreate>
                     {
                         Status = 409,
                         Message = "Duplicate column externalId",
@@ -309,7 +309,7 @@ namespace Cognite.Extensions
 
             if (duplicated.Any())
             {
-                errors.Add(new CogniteError
+                errors.Add(new CogniteError<SequenceCreate>
                 {
                     Status = 409,
                     Message = "Duplicate external ids",
@@ -320,7 +320,7 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError
+                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceCreate>
                 {
                     Skipped = group.Select(pair => pair.Item2).ToList(),
                     Resource = group.Key,
@@ -340,15 +340,15 @@ namespace Cognite.Extensions
         /// <param name="sequences">SequenceCreate request to clean</param>
         /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned create request and optional errors if any ids were duplicated</returns>
-        public static (IEnumerable<SequenceDataCreate>, IEnumerable<CogniteError>) CleanSequenceDataRequest(
+        public static (IEnumerable<SequenceDataCreate>, IEnumerable<CogniteError<SequenceRowError>>) CleanSequenceDataRequest(
             IEnumerable<SequenceDataCreate> sequences,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (sequences, Enumerable.Empty<CogniteError>());
+            if (mode == SanitationMode.None) return (sequences, Enumerable.Empty<CogniteError<SequenceRowError>>());
             if (sequences == null) throw new ArgumentNullException(nameof(sequences));
 
             var result = new List<SequenceDataCreate>();
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<SequenceRowError>>();
 
             var ids = new HashSet<Identity>();
             var duplicated = new HashSet<Identity>();
@@ -441,26 +441,31 @@ namespace Cognite.Extensions
 
                 if (duplicatedColumns.Any())
                 {
-                    errors.Add(new CogniteError
+                    errors.Add(new CogniteError<SequenceRowError>
                     {
                         Status = 409,
                         Message = "Duplicate columns",
                         Resource = ResourceType.ColumnExternalId,
                         Type = ErrorType.ItemDuplicated,
                         Values = duplicatedColumns.Select(col => Identity.Create(col)),
-                        Skipped = new[] { seq }
+                        Skipped = new[] { new SequenceRowError {
+                            Id = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId)
+                        } }
                     });
                 }
                 if (duplicateRows.Any())
                 {
-                    errors.Add(new CogniteError
+                    errors.Add(new CogniteError<SequenceRowError>
                     {
                         Status = 409,
                         Message = "Duplicate row numbers",
                         Resource = ResourceType.SequenceRowNumber,
                         Type = ErrorType.ItemDuplicated,
                         Values = duplicateRows.Select(row => Identity.Create(row.RowNumber)),
-                        Skipped = duplicateRows
+                        Skipped = new[] { new SequenceRowError {
+                            Id = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId),
+                            SkippedRows = duplicateRows
+                        } }
                     });
                 }
 
@@ -471,7 +476,7 @@ namespace Cognite.Extensions
                         new SequenceRowError
                         {
                             Id = idt,
-                            BadRows = group.Select(pair => pair.Item2).ToList()
+                            SkippedRows = group.Select(pair => pair.Item2).ToList()
                         }
                     )));
                 }
@@ -485,7 +490,7 @@ namespace Cognite.Extensions
 
             if (duplicated.Any())
             {
-                errors.Add(new CogniteError
+                errors.Add(new CogniteError<SequenceRowError>
                 {
                     Status = 409,
                     Message = "Duplicate internal or external ids",
@@ -496,9 +501,12 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError
+                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceRowError>
                 {
-                    Skipped = group.Select(pair => pair.Item2).ToList(),
+                    Skipped = group.Select(pair => new SequenceRowError {
+                        Id = pair.Item2.Id.HasValue ? Identity.Create(pair.Item2.Id.Value) : Identity.Create(pair.Item2.ExternalId),
+                        SkippedRows = pair.Item2.Rows
+                    }).ToList(),
                     Resource = group.Key,
                     Type = ErrorType.SanitationFailed,
                     Status = 400
@@ -506,13 +514,12 @@ namespace Cognite.Extensions
             }
             if (badRowSequences.Any())
             {
-                errors.AddRange(badRowSequences.GroupBy(pair => pair.Item1).Select(group => new CogniteError
+                errors.AddRange(badRowSequences.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceRowError>
                 {
-                    Skipped = group.SelectMany(pair => pair.Item2.BadRows),
+                    Skipped = group.Select(pair => pair.Item2),
                     Resource = group.Key,
                     Type = ErrorType.SanitationFailed,
                     Status = 400,
-                    Data = group.Select(pair => pair.Item2)
                 }));
             }
             return (result, errors);

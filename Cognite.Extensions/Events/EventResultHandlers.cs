@@ -48,7 +48,7 @@ namespace Cognite.Extensions
         /// <param name="events">Events to clean</param>
         /// <returns>Events that are not affected by the error</returns>
         public static IEnumerable<EventCreate> CleanFromError(
-            CogniteError error,
+            CogniteError<EventCreate> error,
             IEnumerable<EventCreate> events)
         {
             if (events == null)
@@ -65,7 +65,7 @@ namespace Cognite.Extensions
             var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<EventCreate>();
-            var skipped = new List<object>();
+            var skipped = new List<EventCreate>();
 
             foreach (var evt in events)
             {

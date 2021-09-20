@@ -22,8 +22,8 @@ namespace Cognite.Extensions
         /// <param name="ignoreExisting">True to not log errors caused by items already present in CDF</param>
         /// <param name="handledLevel">Log level of errors that were handled by the utils</param>
         /// <param name="fatalLevel">Log level of errors that could not be handled and caused the request to fail</param>
-        public static void LogCogniteError(this ILogger logger,
-            CogniteError error,
+        public static void LogCogniteError<TError>(this ILogger logger,
+            CogniteError<TError> error,
             RequestType requestType,
             bool ignoreExisting,
             LogLevel handledLevel = LogLevel.Debug,
@@ -84,8 +84,8 @@ namespace Cognite.Extensions
         }
 
 
-        private static void LogCommon<T>(ILogger logger,
-            CogniteResult<T> result,
+        private static void LogCommon<TResult, TError>(ILogger logger,
+            CogniteResult<TResult, TError> result,
             RequestType requestType,
             LogLevel infoLevel,
             LogLevel handledErrorLevel,
@@ -110,7 +110,8 @@ namespace Cognite.Extensions
         /// <summary>
         /// Log the CogniteResult object and all its errors.
         /// </summary>
-        /// <typeparam name="T">Type of result</typeparam>
+        /// <typeparam name="TResult">Type of result</typeparam>
+        /// <typeparam name="TError">Type of reported error</typeparam>
         /// <param name="logger">Logger to write to</param>
         /// <param name="result">Result to log</param>
         /// <param name="requestType">Request type</param>
@@ -118,8 +119,8 @@ namespace Cognite.Extensions
         /// <param name="infoLevel">Level for summary information about the request</param>
         /// <param name="handledErrorLevel">Log level of errors that were handled by the utils</param>
         /// <param name="fatalLevel">Log level of errors that could not be handled and caused the request to fail</param>
-        public static void LogResult<T>(this ILogger logger,
-            CogniteResult<T> result,
+        public static void LogResult<TResult, TError>(this ILogger logger,
+            CogniteResult<TResult, TError> result,
             RequestType requestType,
             bool ignoreExisting,
             LogLevel infoLevel = LogLevel.Information,

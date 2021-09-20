@@ -56,7 +56,7 @@ namespace Cognite.Extensions
         /// <param name="sequences">Sequences to clean</param>
         /// <returns>Sequences that are not affected by the error</returns>
         public static IEnumerable<SequenceCreate> CleanFromError(
-            CogniteError error,
+            CogniteError<SequenceCreate> error,
             IEnumerable<SequenceCreate> sequences)
         {
             if (sequences == null) throw new ArgumentNullException(nameof(sequences));
@@ -70,7 +70,7 @@ namespace Cognite.Extensions
             var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<SequenceCreate>();
-            var skipped = new List<object>();
+            var skipped = new List<SequenceCreate>();
 
             foreach (var seq in sequences)
             {
@@ -151,14 +151,14 @@ namespace Cognite.Extensions
         /// <param name="creates">Sequence data creates to clean</param>
         /// <returns>Sequences data creates that did not cause <paramref name="error"/></returns>
         public static IEnumerable<SequenceDataCreate> CleanFromError(
-            CogniteError error,
+            CogniteError<SequenceRowError> error,
             IEnumerable<SequenceDataCreate> creates)
         {
             if (creates == null) throw new ArgumentNullException(nameof(creates));
             if (error == null) return creates;
 
             var ret = new List<SequenceDataCreate>();
-            var skipped = new List<object>();
+            var skipped = new List<SequenceRowError>();
 
             if (!error.Values?.Any() ?? true)
             {
@@ -190,7 +190,11 @@ namespace Cognite.Extensions
                 }
                 else
                 {
-                    skipped.Add(seq);
+                    skipped.Add(new SequenceRowError
+                    {
+                        Id = idt,
+                        SkippedRows = seq.Rows
+                    });
                 }
             }
 
@@ -202,7 +206,11 @@ namespace Cognite.Extensions
                 }
                 else
                 {
-                    error.Skipped = creates;
+                    error.Skipped = creates.Select(seq => new SequenceRowError
+                    {
+                        Id = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId),
+                        SkippedRows = seq.Rows
+                    });
                     return Array.Empty<SequenceDataCreate>();
                 }
             }
@@ -221,7 +229,7 @@ namespace Cognite.Extensions
         /// <param name="sequencesThrottleSize">Number of parallel requests to read sequences from CDF</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Up to two <see cref="CogniteError"/> containing data about failed sequences</returns>
-        public static async Task<IEnumerable<CogniteError>> VerifySequencesFromCDF(
+        public static async Task<IEnumerable<CogniteError<SequenceRowError>>> VerifySequencesFromCDF(
             SequencesResource resource,
             IEnumerable<SequenceDataCreate> creates,
             int sequencesChunkSize,
@@ -256,7 +264,7 @@ namespace Cognite.Extensions
                 {
                     columnErrors.Add(new SequenceRowError
                     {
-                        BadRows = create.Rows,
+                        SkippedRows = create.Rows,
                         BadColumns = badColumns,
                         Id = kvp.Key
                     });
@@ -291,37 +299,35 @@ namespace Cognite.Extensions
                 {
                     rowErrors.Add(new SequenceRowError
                     {
-                        BadRows = badRows,
+                        SkippedRows = badRows,
                         Id = kvp.Key
                     });
                     create.Rows = create.Rows.Except(badRows).ToList();
                 }
             }
 
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<SequenceRowError>>();
             if (columnErrors.Any())
             {
-                errors.Add(new CogniteError
+                errors.Add(new CogniteError<SequenceRowError>
                 {
                     Message = "Columns missing in sequences",
                     Status = 404,
-                    Data = columnErrors,
+                    Skipped = columnErrors,
                     Resource = ResourceType.ColumnExternalId,
                     Type = ErrorType.ItemMissing,
-                    Skipped = columnErrors.Select(seq => createMap[seq.Id]).ToList(),
                     Values = columnErrors.Select(seq => seq.Id)
                 });
             }
             if (rowErrors.Any())
             {
-                errors.Add(new CogniteError
+                errors.Add(new CogniteError<SequenceRowError>
                 {
                     Message = "Error in sequence rows",
                     Status = 400,
-                    Data = rowErrors,
+                    Skipped = rowErrors,
                     Resource = ResourceType.SequenceRowValues,
                     Type = ErrorType.SanitationFailed,
-                    Skipped = rowErrors.SelectMany(seq => seq.BadRows),
                     Values = rowErrors
                         .Where(seq => !createMap[seq.Id].Rows.Any())
                         .Select(seq => seq.Id)
@@ -341,12 +347,12 @@ namespace Cognite.Extensions
         /// </summary>
         public IEnumerable<string> BadColumns { get; set; }
         /// <summary>
-        /// Id of skipped sequence
+        /// Id of sequence
         /// </summary>
         public Identity Id { get; set; }
         /// <summary>
         /// Bad rows
         /// </summary>
-        public IEnumerable<SequenceRow> BadRows { get; set; }
+        public IEnumerable<SequenceRow> SkippedRows { get; set; }
     }
 }

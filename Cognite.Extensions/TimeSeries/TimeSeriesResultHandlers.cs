@@ -62,7 +62,7 @@ namespace Cognite.Extensions
         /// <param name="timeseries">Timeseries to clean</param>
         /// <returns>TimeSeries that are not affected by the error</returns>
         public static IEnumerable<TimeSeriesCreate> CleanFromError(
-            CogniteError error,
+            CogniteError<TimeSeriesCreate> error,
             IEnumerable<TimeSeriesCreate> timeseries)
         {
             if (timeseries == null)
@@ -79,7 +79,7 @@ namespace Cognite.Extensions
             var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<TimeSeriesCreate>();
-            var skipped = new List<object>();
+            var skipped = new List<TimeSeriesCreate>();
 
             foreach (var ts in timeseries)
             {

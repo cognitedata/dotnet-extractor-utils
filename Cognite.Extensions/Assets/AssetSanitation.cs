@@ -101,17 +101,17 @@ namespace Cognite.Extensions
         /// <param name="assets">AssetCreate request to clean</param>
         /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned create request and an optional error if any ids were duplicated</returns>
-        public static (IEnumerable<AssetCreate>, IEnumerable<CogniteError>) CleanAssetRequest(
+        public static (IEnumerable<AssetCreate>, IEnumerable<CogniteError<AssetCreate>>) CleanAssetRequest(
             IEnumerable<AssetCreate> assets,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (assets, Enumerable.Empty<CogniteError>());
+            if (mode == SanitationMode.None) return (assets, Enumerable.Empty<CogniteError<AssetCreate>>());
             if (assets == null)
             {
                 throw new ArgumentNullException(nameof(assets));
             }
             var result = new List<AssetCreate>();
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<AssetCreate>>();
 
             var ids = new HashSet<string>();
             var duplicated = new HashSet<string>();
@@ -154,7 +154,7 @@ namespace Cognite.Extensions
             }
             if (duplicated.Any())
             {
-                errors.Add(new CogniteError
+                errors.Add(new CogniteError<AssetCreate>
                 {
                     Status = 409,
                     Message = "Duplicate external ids",
@@ -165,7 +165,7 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError
+                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<AssetCreate>
                 {
                     Skipped = group.Select(pair => pair.Item2).ToList(),
                     Resource = group.Key,

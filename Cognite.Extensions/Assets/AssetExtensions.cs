@@ -39,8 +39,8 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
-        public static Task<CogniteResult<Asset>> GetOrCreateAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found assets</returns>
+        public static Task<CogniteResult<Asset, AssetCreate>> GetOrCreateAsync(
             this AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
@@ -72,8 +72,8 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
-        public static async Task<CogniteResult<Asset>> GetOrCreateAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found assets</returns>
+        public static async Task<CogniteResult<Asset, AssetCreate>> GetOrCreateAsync(
             this AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
@@ -86,9 +86,9 @@ namespace Cognite.Extensions
             var chunks = externalIds
                 .ChunkBy(chunkSize)
                 .ToList();
-            if (!chunks.Any()) return new CogniteResult<Asset>(null, null);
+            if (!chunks.Any()) return new CogniteResult<Asset, AssetCreate>(null, null);
 
-            var results = new CogniteResult<Asset>[chunks.Count];
+            var results = new CogniteResult<Asset, AssetCreate>[chunks.Count];
 
             _logger.LogDebug("Getting or creating assets. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
@@ -108,7 +108,7 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
                  
-            return CogniteResult<Asset>.Merge(results);
+            return CogniteResult<Asset, AssetCreate>.Merge(results);
         }
         /// <summary>
         /// Ensures that all assets in <paramref name="assetsToEnsure"/> exist in CDF.
@@ -126,8 +126,8 @@ namespace Cognite.Extensions
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created assets</returns>
-        public static async Task<CogniteResult<Asset>> EnsureExistsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created assets</returns>
+        public static async Task<CogniteResult<Asset, AssetCreate>> EnsureExistsAsync(
             this AssetsResource assets,
             IEnumerable<AssetCreate> assetsToEnsure,
             int chunkSize,
@@ -136,7 +136,7 @@ namespace Cognite.Extensions
             SanitationMode sanitationMode,
             CancellationToken token)
         {
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<AssetCreate>> errors;
             (assetsToEnsure, errors) = Sanitation.CleanAssetRequest(assetsToEnsure, sanitationMode);
 
             var chunks = assetsToEnsure
@@ -144,13 +144,13 @@ namespace Cognite.Extensions
                 .ToList();
             _logger.LogDebug("Ensuring assets. Number of assets: {Number}. Number of chunks: {Chunks}", assetsToEnsure.Count(), chunks.Count);
             int size = chunks.Count + (errors.Any() ? 1 : 0);
-            var results = new CogniteResult<Asset>[size];
+            var results = new CogniteResult<Asset, AssetCreate>[size];
             if (errors.Any())
             {
-                results[size - 1] = new CogniteResult<Asset>(errors, null);
+                results[size - 1] = new CogniteResult<Asset, AssetCreate>(errors, null);
                 if (size == 1) return results[size - 1];
             }
-            if (size == 0) return new CogniteResult<Asset>(null, null);
+            if (size == 0) return new CogniteResult<Asset, AssetCreate>(null, null);
 
             var generators = chunks
                 .Select<IEnumerable<AssetCreate>, Func<Task>>(
@@ -169,10 +169,10 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return CogniteResult<Asset>.Merge(results);
+            return CogniteResult<Asset, AssetCreate>.Merge(results);
         }
 
-        private static async Task<CogniteResult<Asset>> GetOrCreateAssetsChunk(
+        private static async Task<CogniteResult<Asset, AssetCreate>> GetOrCreateAssetsChunk(
             AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
@@ -192,13 +192,13 @@ namespace Cognite.Extensions
 
             if (!missing.Any())
             {
-                return new CogniteResult<Asset>(null, found);
+                return new CogniteResult<Asset, AssetCreate>(null, found);
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} assets. Attempting to create the missing ones", missing.Count, externalIds.Count());
             var toCreate = await buildAssets(missing).ConfigureAwait(false);
 
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<AssetCreate>> errors;
             (toCreate, errors) = Sanitation.CleanAssetRequest(toCreate, sanitationMode);
 
             var result = await CreateAssetsHandleErrors(assets, toCreate, retryMode, token).ConfigureAwait(false);
@@ -285,13 +285,13 @@ namespace Cognite.Extensions
             return result;
         }
 
-        private static async Task<CogniteResult<Asset>> CreateAssetsHandleErrors(
+        private static async Task<CogniteResult<Asset, AssetCreate>> CreateAssetsHandleErrors(
             AssetsResource assets,
             IEnumerable<AssetCreate> toCreate,
             RetryMode retryMode,
             CancellationToken token)
         {
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<AssetCreate>>();
             while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
             {
                 try
@@ -305,13 +305,13 @@ namespace Cognite.Extensions
                     }
 
                     _logger.LogDebug("Created {New} new assets in CDF", newAssets.Count());
-                    return new CogniteResult<Asset>(errors, newAssets);
+                    return new CogniteResult<Asset, AssetCreate>(errors, newAssets);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogDebug("Failed to create {cnt} assets: {msg}",
                         toCreate.Count(), ex.Message);
-                    var error = ResultHandlers.ParseException(ex, RequestType.CreateAssets);
+                    var error = ResultHandlers.ParseException<AssetCreate>(ex, RequestType.CreateAssets);
                     errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
@@ -328,7 +328,7 @@ namespace Cognite.Extensions
                     }
                 }
             }
-            return new CogniteResult<Asset>(errors, null);
+            return new CogniteResult<Asset, AssetCreate>(errors, null);
         }
     }
 }

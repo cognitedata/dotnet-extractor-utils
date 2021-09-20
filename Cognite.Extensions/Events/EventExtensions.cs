@@ -40,8 +40,8 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
-        public static Task<CogniteResult<Event>> GetOrCreateAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found events</returns>
+        public static Task<CogniteResult<Event, EventCreate>> GetOrCreateAsync(
             this EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
@@ -73,8 +73,8 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
-        public static async Task<CogniteResult<Event>> GetOrCreateAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found events</returns>
+        public static async Task<CogniteResult<Event, EventCreate>> GetOrCreateAsync(
             this EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
@@ -87,9 +87,9 @@ namespace Cognite.Extensions
             var chunks = externalIds
                 .ChunkBy(chunkSize)
                 .ToList();
-            if (!chunks.Any()) return new CogniteResult<Event>(null, null);
+            if (!chunks.Any()) return new CogniteResult<Event, EventCreate>(null, null);
 
-            var results = new CogniteResult<Event>[chunks.Count];
+            var results = new CogniteResult<Event, EventCreate>[chunks.Count];
 
             _logger.LogDebug("Getting or creating events. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
@@ -109,7 +109,7 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return CogniteResult<Event>.Merge(results);
+            return CogniteResult<Event, EventCreate>.Merge(results);
         }
 
         /// <summary>
@@ -128,8 +128,8 @@ namespace Cognite.Extensions
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created events</returns>
-        public static async Task<CogniteResult<Event>> EnsureExistsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created events</returns>
+        public static async Task<CogniteResult<Event, EventCreate>> EnsureExistsAsync(
             this EventsResource resource,
             IEnumerable<EventCreate> events,
             int chunkSize,
@@ -138,7 +138,7 @@ namespace Cognite.Extensions
             SanitationMode sanitationMode,
             CancellationToken token)
         {
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<EventCreate>> errors;
             (events, errors) = Sanitation.CleanEventRequest(events, sanitationMode);
 
             var chunks = events
@@ -148,13 +148,13 @@ namespace Cognite.Extensions
             _logger.LogDebug("Ensuring events. Number of events: {Number}. Number of chunks: {Chunks}", events.Count(), chunks.Count);
 
             int size = chunks.Count + (errors.Any() ? 1 : 0);
-            var results = new CogniteResult<Event>[size];
+            var results = new CogniteResult<Event, EventCreate>[size];
             if (errors.Any())
             {
-                results[size - 1] = new CogniteResult<Event>(errors, null);
+                results[size - 1] = new CogniteResult<Event, EventCreate>(errors, null);
                 if (size == 1) return results[size - 1];
             }
-            if (!results.Any()) return new CogniteResult<Event>(null, null);
+            if (!results.Any()) return new CogniteResult<Event, EventCreate>(null, null);
 
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
@@ -173,10 +173,10 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return CogniteResult<Event>.Merge(results);
+            return CogniteResult<Event, EventCreate>.Merge(results);
         }
 
-        private static async Task<CogniteResult<Event>> GetOrCreateEventsChunk(
+        private static async Task<CogniteResult<Event, EventCreate>> GetOrCreateEventsChunk(
             EventsResource resource,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
@@ -196,13 +196,13 @@ namespace Cognite.Extensions
 
             if (!missing.Any())
             {
-                return new CogniteResult<Event>(null, found);
+                return new CogniteResult<Event, EventCreate>(null, found);
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} events. Attempting to create the missing ones", missing.Count, externalIds.Count());
             var toCreate = await buildEvents(missing).ConfigureAwait(false);
 
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<EventCreate>> errors;
             (toCreate, errors) = Sanitation.CleanEventRequest(toCreate, sanitationMode);
 
             var result = await CreateEventsHandleErrors(resource, toCreate, retryMode, token).ConfigureAwait(false);
@@ -245,13 +245,13 @@ namespace Cognite.Extensions
             return result;
         }
 
-        private static async Task<CogniteResult<Event>> CreateEventsHandleErrors(
+        private static async Task<CogniteResult<Event, EventCreate>> CreateEventsHandleErrors(
             EventsResource events,
             IEnumerable<EventCreate> toCreate,
             RetryMode retryMode,
             CancellationToken token)
         {
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<EventCreate>>();
             while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
             {
                 try
@@ -263,13 +263,13 @@ namespace Cognite.Extensions
                     }
 
                     _logger.LogDebug("Created {New} new events in CDF", newEvents.Count());
-                    return new CogniteResult<Event>(errors, newEvents);
+                    return new CogniteResult<Event, EventCreate>(errors, newEvents);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogDebug("Failed to create {cnt} events: {msg}",
                         toCreate.Count(), ex.Message);
-                    var error = ResultHandlers.ParseException(ex, RequestType.CreateEvents);
+                    var error = ResultHandlers.ParseException<EventCreate>(ex, RequestType.CreateEvents);
                     errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
@@ -284,7 +284,7 @@ namespace Cognite.Extensions
                     }
                 }
             }
-            return new CogniteResult<Event>(errors, null);
+            return new CogniteResult<Event, EventCreate>(errors, null);
         }
     }
 }

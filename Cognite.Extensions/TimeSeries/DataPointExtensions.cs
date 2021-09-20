@@ -110,7 +110,7 @@ namespace Cognite.Extensions
         /// <param name="nanReplacement">Optional replacement for NaN double values</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Result with a list of errors</returns>
-        public static async Task<CogniteResult> InsertAsync(
+        public static async Task<CogniteResult<DataPointInsertError>> InsertAsync(
             Client client,
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             int keyChunkSize,
@@ -123,7 +123,7 @@ namespace Cognite.Extensions
             double? nanReplacement,
             CancellationToken token)
         {
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<DataPointInsertError>> errors;
             (points, errors) = Sanitation.CleanDataPointsRequest(points, sanitationMode, nanReplacement);
 
             var chunks = points
@@ -133,14 +133,14 @@ namespace Cognite.Extensions
                 .ToList();
 
             int size = chunks.Count + (errors.Any() ? 1 : 0);
-            var results = new CogniteResult[size];
+            var results = new CogniteResult<DataPointInsertError>[size];
 
             if (errors.Any())
             {
-                results[size - 1] = new CogniteResult(errors);
+                results[size - 1] = new CogniteResult<DataPointInsertError>(errors);
                 if (size == 1) return results[size - 1];
             }
-            if (size == 0) return new CogniteResult(null);
+            if (size == 0) return new CogniteResult<DataPointInsertError>(null);
 
             _logger.LogDebug("Inserting timeseries datapoints. Number of timeseries: {Number}. Number of chunks: {Chunks}", points.Count, chunks.Count);
             var generators = chunks
@@ -162,10 +162,10 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return CogniteResult.Merge(results);
+            return CogniteResult<DataPointInsertError>.Merge(results);
         }
 
-        private static async Task<CogniteResult> InsertDataPointsHandleErrors(
+        private static async Task<CogniteResult<DataPointInsertError>> InsertDataPointsHandleErrors(
             Client client,
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             int timeseriesChunkSize,
@@ -173,7 +173,7 @@ namespace Cognite.Extensions
             RetryMode retryMode,
             CancellationToken token)
         {
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<DataPointInsertError>>();
             while (points != null && points.Any() && !token.IsCancellationRequested)
             {
                 var request = points.ToInsertRequest();
@@ -185,12 +185,12 @@ namespace Cognite.Extensions
                     }
 
                     _logger.LogDebug("Created {rows} datapoints for {seq} timeseries in CDF", points.Sum(ts => ts.Value.Count()), points.Count);
-                    return new CogniteResult(errors);
+                    return new CogniteResult<DataPointInsertError>(errors);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogDebug("Failed to create datapoints for {seq} timeseries", points.Count);
-                    var error = ResultHandlers.ParseException(ex, RequestType.CreateDatapoints);
+                    var error = ResultHandlers.ParseException<DataPointInsertError>(ex, RequestType.CreateDatapoints);
                     if (error.Complete) errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
@@ -214,7 +214,7 @@ namespace Cognite.Extensions
                 }
             }
 
-            return new CogniteResult(errors);
+            return new CogniteResult<DataPointInsertError>(errors);
         }
 
         /// <summary>
