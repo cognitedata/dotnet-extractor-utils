@@ -242,7 +242,7 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(7, result.Aggregate(0, (seed, res) => seed + res.Count()));
             Assert.Equal(lengths, result.Select(res => res.Count()));
         }
-        [Fact]
+        [Fact(Timeout = 10000)]
         public static async Task TestPeriodicScheduler()
         {
             using var source = new CancellationTokenSource();
