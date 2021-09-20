@@ -208,9 +208,9 @@ namespace Cognite.Extensions
                                 .VerifyDatapointsFromCDF(client.TimeSeries, error,
                                     points, timeseriesChunkSize, timeseriesThrottleSize, token)
                                 .ConfigureAwait(false);
+                            errors.Add(error);
                         }
                         points = ResultHandlers.CleanFromError(error, points);
-                        errors.Add(error);
                     }
                 }
             }

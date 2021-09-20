@@ -726,5 +726,51 @@ namespace ExtractorUtils.Test.Unit
             Assert.Single(err.Skipped);
             Assert.Single(err.Data);
         }
+        [Fact]
+        public void SanitizeDataPointRequest()
+        {
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer())
+            {
+                { Identity.Create("all-bad-ts"), new[] {
+                    new Datapoint(DateTime.MaxValue, 1.0),
+                    new Datapoint(CogniteTime.DateTimeEpoch, 2.0)
+                } },
+                { Identity.Create("all-bad-value"), new[]
+                {
+                    new Datapoint(DateTime.UtcNow, double.NaN)
+                } },
+                { Identity.Create("all-bad-mixed"), new[]
+                {
+                    new Datapoint(DateTime.MaxValue, 1.0),
+                    new Datapoint(DateTime.UtcNow, double.NaN)
+                } },
+                { Identity.Create("some-bad"), new[]
+                {
+                    new Datapoint(DateTime.UtcNow, double.NaN),
+                    new Datapoint(DateTime.UtcNow, 2.0),
+                    new Datapoint(DateTime.UtcNow, double.PositiveInfinity)
+                } },
+                { Identity.Create("all-good"), new[]
+                {
+                    new Datapoint(DateTime.UtcNow, "test"),
+                    new Datapoint(DateTime.UtcNow, "test2"),
+                    new Datapoint(DateTime.UtcNow, "test3")
+                } }
+            };
+
+            var (result, errors) = Sanitation.CleanDataPointsRequest(dps, SanitationMode.Clean, null);
+            Assert.Equal(2, result.Count());
+            Assert.True(result.TryGetValue(Identity.Create("some-bad"), out var ts));
+            Assert.Equal(2, ts.Count());
+            Assert.True(result.TryGetValue(Identity.Create("all-good"), out ts));
+            Assert.Equal(3, ts.Count());
+
+            Assert.Equal(2, errors.Count());
+            var err = errors.First(e => e.Resource == ResourceType.DataPointTimestamp);
+            Assert.Equal(2, err.Skipped.Count());
+
+            err = errors.First(e => e.Resource == ResourceType.DataPointValue);
+            Assert.Equal(3, err.Skipped.Count());
+        }
     }
 }

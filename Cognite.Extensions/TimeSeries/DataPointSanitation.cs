@@ -138,20 +138,26 @@ namespace Cognite.Extensions
                 }
             }
 
-            var errors = new List<CogniteError>();
+            IEnumerable<CogniteError> errors;
 
             if (badDpGroups.Any())
             {
-                errors.AddRange(badDpGroups.GroupBy(group => group.type).Select(group =>
-                    new CogniteError
-                    {
-                        Status = 400,
-                        Message = "Sanitation failed",
-                        Resource = group.Key,
-                        Type = ErrorType.SanitationFailed,
-                        Skipped = group.Select(g => new DataPointInsertError(g.id, g.dps)).ToList(),
-                    }
-                ));
+                errors = badDpGroups
+                    .GroupBy(group => group.type)
+                    .Select(group =>
+                        new CogniteError
+                        {
+                            Status = 400,
+                            Message = "Sanitation failed",
+                            Resource = group.Key,
+                            Type = ErrorType.SanitationFailed,
+                            Skipped = group.Select(g => new DataPointInsertError(g.id, g.dps)).ToList(),
+                        }
+                    ).ToList();
+            }
+            else
+            {
+                errors = Enumerable.Empty<CogniteError>();
             }
 
             return (result, errors);
