@@ -112,6 +112,35 @@ namespace Cognite.Extensions
         {
             Errors = errors;
         }
+
+        /// <summary>
+        /// Combine all non-fatal errors with the same resource and type
+        /// </summary>
+        public void MergeErrors()
+        {
+            if (Errors == null || !Errors.Any()) return;
+            var result = new List<CogniteError<TError>>();
+            var groups = Errors.GroupBy(err => (err.Type, err.Resource));
+            foreach (var group in groups)
+            {
+                if (group.Key.Type == ErrorType.FatalFailure)
+                {
+                    result.AddRange(group);
+                    continue;
+                }
+
+                if (group.Count() == 1)
+                {
+                    result.Add(group.Single());
+                }
+                else
+                {
+                    result.Add(CogniteError<TError>.Merge(group));
+                }
+            }
+            Errors = result;
+        }
+
         /// <summary>
         /// Return a new CogniteResult that contains errors from both
         /// </summary>
@@ -142,7 +171,9 @@ namespace Cognite.Extensions
                 if (result == null) continue;
                 if (result.Errors != null) errors.AddRange(result.Errors);
             }
-            return new CogniteResult<TError>(errors);
+            var err = new CogniteResult<TError>(errors);
+            err.MergeErrors();
+            return err;
         }
     }
 
@@ -168,6 +199,9 @@ namespace Cognite.Extensions
         {
             Results = results;
         }
+
+        
+
         /// <summary>
         /// Return a new CogniteResult that contains errors and results from both
         /// </summary>
@@ -186,7 +220,9 @@ namespace Cognite.Extensions
             else if (other.Errors == null) errors = Errors;
             else errors = Errors.Concat(other.Errors);
 
-            return new CogniteResult<TResult, TError>(errors, results);
+            var err = new CogniteResult<TResult, TError>(errors, results);
+            err.MergeErrors();
+            return err;
         }
 
         /// <summary>
@@ -204,7 +240,10 @@ namespace Cognite.Extensions
                 if (result.Results != null) items.AddRange(result.Results);
                 if (result.Errors != null) errors.AddRange(result.Errors);
             }
-            return new CogniteResult<TResult, TError>(errors, items);
+
+            var err = new CogniteResult<TResult, TError>(errors, items);
+            err.MergeErrors();
+            return err;
         }
     }
 
@@ -251,12 +290,39 @@ namespace Cognite.Extensions
     /// Represents an error that occured on a push to CDF, or
     /// in pre-push sanitation.
     /// </summary>
-    public class CogniteError<T> : CogniteError
+    public class CogniteError<TError> : CogniteError
     {
         /// <summary>
         /// Input items skipped if the request was cleaned using this error.
         /// </summary>
-        public IEnumerable<T> Skipped { get; set; }
+        public IEnumerable<TError> Skipped { get; set; }
+        /// <summary>
+        /// Merge a list of errors. Note that the other errors should have the same
+        /// ResourceType and ErrorType as this one, for meaningful results.
+        /// </summary>
+        /// <param name="errs"></param>
+        /// <returns>Merged error</returns>
+        public static CogniteError<TError> Merge(IEnumerable<CogniteError<TError>> errs)
+        {
+            if (!errs.Any()) throw new InvalidOperationException("List of errors is empty");
+            var initial = errs.First();
+
+            var skipped = initial.Skipped?.ToList() ?? new List<TError>();
+            var values = initial.Values?.ToList() ?? new List<Identity>();
+
+            foreach (var err in errs.Skip(1))
+            {
+                if (err.Exception != null && initial.Exception == null)
+                {
+                    initial.Exception = err.Exception;
+                    initial.Message = err.Message;
+                }
+                if (err.Skipped != null) skipped.AddRange(err.Skipped);
+                if (err.Values != null) values.AddRange(err.Values);
+            }
+
+            return initial;
+        }
     }
 
     /// <summary>
