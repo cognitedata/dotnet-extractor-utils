@@ -327,7 +327,7 @@ namespace Cognite.Extensions
                     Status = 400,
                     Skipped = rowErrors,
                     Resource = ResourceType.SequenceRowValues,
-                    Type = ErrorType.SanitationFailed,
+                    Type = ErrorType.MismatchedType,
                     Values = rowErrors
                         .Where(seq => !createMap[seq.Id].Rows.Any())
                         .Select(seq => seq.Id)

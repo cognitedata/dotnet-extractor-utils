@@ -33,6 +33,12 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(error));
             }
+            string cogniteString = null;
+            if (error.Exception != null && error.Exception is ResponseException rex)
+            {
+                cogniteString = $" RequestId: {rex.RequestId}, CDF Message: {rex.Message}";
+            }
+
             string valueString = null;
             if (error.Values != null && error.Values.Any())
             {
@@ -50,6 +56,15 @@ namespace Cognite.Extensions
                 case RequestType.CreateTimeSeries:
                     resourceName = "timeseries";
                     break;
+                case RequestType.CreateDatapoints:
+                    resourceName = "datapoint timeseries";
+                    break;
+                case RequestType.CreateSequences:
+                    resourceName = "sequences";
+                    break;
+                case RequestType.CreateSequenceRows:
+                    resourceName = "sequence row sequences";
+                    break;
                 default:
                     resourceName = "unknown";
                     break;
@@ -57,28 +72,34 @@ namespace Cognite.Extensions
             switch (error.Type)
             {
                 case ErrorType.FatalFailure:
-                    logger.Log(fatalLevel, "Fatal error in request of type {type}: {msg}", requestType, error.Message);
+                    logger.Log(fatalLevel, "Fatal error in request of type {type}: {msg}. {cdf}",
+                        requestType, error.Message, cogniteString);
                     break;
                 case ErrorType.ItemDuplicated:
                     logger.Log(handledLevel, "The following {resource}s were duplicated in the request: {values}, " +
-                        "resulting in the removal of {cnt} {name} from the request",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName);
+                        "resulting in the full or partial removal of {cnt} {name} from the request.{cdf}",
+                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
                 case ErrorType.ItemExists:
                     if (ignoreExisting) return;
                     logger.Log(handledLevel, "The following {resource}s already existed in CDF: {values}, " +
-                        "resulting in the removal of {cnt} {name} from the request",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName);
+                        "resulting in the removal of {cnt} {name} from the request.{cdf}",
+                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
                 case ErrorType.ItemMissing:
                     logger.Log(handledLevel, "The following {resource}s were missing in CDF: {values}, " +
-                        "resulting in the removal of {cnt} {name} from the request",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName);
+                        "resulting in the removal of {cnt} {name} from the request.{cdf}",
+                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
+                    break;
+                case ErrorType.MismatchedType:
+                    logger.Log(handledLevel, "Values of {resource} were of mismatched type in " +
+                        "{cnt} {name}, resulting in their full or partial removal from the request.{cdf}",
+                        error.Resource, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
                 case ErrorType.SanitationFailed:
                     logger.Log(handledLevel, "Sanitation of {resource} with values: {values} failed, " +
-                        "resulting in the removal of {cnt} {name} from the request",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName);
+                        "resulting in the full or partial removal of {cnt} {name} from the request.{cdf}",
+                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
             }
         }
