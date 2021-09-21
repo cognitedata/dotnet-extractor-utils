@@ -234,11 +234,11 @@ namespace Cognite.Extensions
             var ids = new HashSet<string>();
             var duplicated = new HashSet<string>();
             var bad = new List<(ResourceType, SequenceCreate)>();
+            var withDupColumns = new List<SequenceCreate>();
 
             foreach (var seq in sequences)
             {
                 var columns = new HashSet<string>();
-                var duplicatedColumns = new HashSet<string>();
                 bool toAdd = true;
                 if (mode == SanitationMode.Remove)
                 {
@@ -282,22 +282,11 @@ namespace Cognite.Extensions
                         }
                         if (!columns.Add(col.ExternalId))
                         {
-                            duplicatedColumns.Add(col.ExternalId);
+                            withDupColumns.Add(seq);
                             toAdd = false;
+                            break;
                         }
                     }
-                }
-                if (duplicatedColumns.Any())
-                {
-                    errors.Add(new CogniteError<SequenceCreate>
-                    {
-                        Status = 409,
-                        Message = "Duplicate column externalId",
-                        Resource = ResourceType.ColumnExternalId,
-                        Type = ErrorType.ItemDuplicated,
-                        Values = duplicatedColumns.Select(col => Identity.Create(col)),
-                        Skipped = new[] { seq }
-                    });
                 }
 
                 if (toAdd)
@@ -306,6 +295,17 @@ namespace Cognite.Extensions
                 }
             }
 
+            if (withDupColumns.Any())
+            {
+                errors.Add(new CogniteError<SequenceCreate>
+                {
+                    Status = 409,
+                    Message = "Duplicate column externalId",
+                    Resource = ResourceType.ColumnExternalId,
+                    Type = ErrorType.ItemDuplicated,
+                    Skipped = withDupColumns
+                });
+            }
 
             if (duplicated.Any())
             {
@@ -355,6 +355,9 @@ namespace Cognite.Extensions
             var bad = new List<(ResourceType, SequenceDataCreate)>();
 
             var badRowSequences = new List<(ResourceType, SequenceRowError)>();
+            var dupRowErrors = new List<SequenceRowError>();
+            var dupColumnErrors = new List<SequenceRowError>();
+
 
             foreach (var seq in sequences)
             {
@@ -429,6 +432,7 @@ namespace Cognite.Extensions
                         if (col == null)
                         {
                             bad.Add((ResourceType.ColumnExternalId, seq));
+                            toAdd = false;
                             break;
                         }
                         if (!columns.Add(col))
@@ -441,31 +445,19 @@ namespace Cognite.Extensions
 
                 if (duplicatedColumns.Any())
                 {
-                    errors.Add(new CogniteError<SequenceRowError>
+                    dupColumnErrors.Add(new SequenceRowError
                     {
-                        Status = 409,
-                        Message = "Duplicate columns",
-                        Resource = ResourceType.ColumnExternalId,
-                        Type = ErrorType.ItemDuplicated,
-                        Values = duplicatedColumns.Select(col => Identity.Create(col)),
-                        Skipped = new[] { new SequenceRowError {
-                            Id = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId)
-                        } }
+                        BadColumns = duplicatedColumns,
+                        Id = idt,
+                        SkippedRows = seq.Rows
                     });
                 }
                 if (duplicateRows.Any())
                 {
-                    errors.Add(new CogniteError<SequenceRowError>
+                    dupRowErrors.Add(new SequenceRowError
                     {
-                        Status = 409,
-                        Message = "Duplicate row numbers",
-                        Resource = ResourceType.SequenceRowNumber,
-                        Type = ErrorType.ItemDuplicated,
-                        Values = duplicateRows.Select(row => Identity.Create(row.RowNumber)),
-                        Skipped = new[] { new SequenceRowError {
-                            Id = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId),
-                            SkippedRows = duplicateRows
-                        } }
+                        Id = idt,
+                        SkippedRows = duplicateRows
                     });
                 }
 
@@ -486,6 +478,30 @@ namespace Cognite.Extensions
                     result.Add(seq);
                 }
 
+            }
+
+            if (dupColumnErrors.Any())
+            {
+                errors.Add(new CogniteError<SequenceRowError>
+                {
+                    Status = 409,
+                    Message = "Duplicate columns in request",
+                    Resource = ResourceType.ColumnExternalId,
+                    Type = ErrorType.ItemDuplicated,
+                    Skipped = dupColumnErrors
+                });
+            }
+
+            if (dupRowErrors.Any())
+            {
+                errors.Add(new CogniteError<SequenceRowError>
+                {
+                    Status = 409,
+                    Message = "Duplicate row numbers",
+                    Resource = ResourceType.SequenceRowNumber,
+                    Type = ErrorType.ItemDuplicated,
+                    Skipped = dupRowErrors
+                });
             }
 
             if (duplicated.Any())
