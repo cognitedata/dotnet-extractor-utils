@@ -71,8 +71,12 @@ namespace Cognite.Extractor.Utils
             while (!_source.IsCancellationRequested)
             {
                 var waitTask = Task.Delay(delay, _source.Token);
-                await Report(ExtPipeRunStatus.seen, false, null, _source.Token).ConfigureAwait(false);
-                await waitTask.ConfigureAwait(false);
+                try
+                {
+                    await Report(ExtPipeRunStatus.seen, false, null, _source.Token).ConfigureAwait(false);
+                    await waitTask.ConfigureAwait(false);
+                }
+                catch (TaskCanceledException) {}
             }
         }
 
@@ -118,7 +122,7 @@ namespace Cognite.Extractor.Utils
         public async ValueTask DisposeAsync()
         {
             if (_finished) return;
-            await Report(ExtPipeRunStatus.success, true, "Finished without error", _source.Token).ConfigureAwait(false);
+            await Report(ExtPipeRunStatus.success, true, "Finished without error", CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

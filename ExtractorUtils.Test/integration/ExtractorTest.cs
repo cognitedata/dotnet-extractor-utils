@@ -2,6 +2,7 @@
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -219,6 +220,87 @@ namespace ExtractorUtils.Test.Integration
                 Assert.True(task.IsCompleted);
             }
             
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestExtractionPipeline(CogniteHost host)
+        {
+            var tester = new CDFTester(host);
+            // We just need some dataset
+            var datasets = await tester.Destination.CogniteClient.DataSets.ListAsync(new DataSetQuery
+            {
+                Limit = 1
+            });
+            var dataset = datasets.Items.First();
+
+            var id = $"{tester.Prefix} ext-pipe";
+
+            await tester.Destination.CogniteClient.ExtPipes.CreateAsync(new[]
+            {
+                new ExtPipeCreate
+                {
+                    DataSetId = dataset.Id,
+                    ExternalId = id,
+                    Name = "utils-test-pipeline"
+                }
+            });
+
+            try
+            {
+                var run = new ExtractionRun(new ExtractionRunConfig
+                {
+                    Frequency = 1,
+                    PipelineId = id
+                }, tester.Destination, tester.Provider.GetService<ILogger<ExtractionRun>>());
+
+                await Task.Delay(1000);
+
+                ItemsWithCursor<ExtPipeRun> runs = null;
+                for (int i = 0; i < 10; i++)
+                {
+                    runs = await tester.Destination.CogniteClient.ExtPipes.ListRunsAsync(new ExtPipeRunQuery
+                    {
+                        Filter = new ExtPipeRunFilter
+                        {
+                            ExternalId = id
+                        }
+                    });
+                    if (runs.Items.Count() > 1) break;
+                    await Task.Delay(1000);
+                }
+
+                Assert.True(runs.Items.Count() > 1);
+
+                await run.Report(ExtPipeRunStatus.failure, false, "Some failure");
+                await run.DisposeAsync();
+
+                runs = null;
+                for (int i = 0; i < 10; i++)
+                {
+                    runs = await tester.Destination.CogniteClient.ExtPipes.ListRunsAsync(new ExtPipeRunQuery
+                    {
+                        Filter = new ExtPipeRunFilter
+                        {
+                            ExternalId = id
+                        }
+                    });
+                    if (runs.Items.Count() > 3 && runs.Items.Any(run => run.Status == ExtPipeRunStatus.failure)
+                        && runs.Items.Any(run => run.Status == ExtPipeRunStatus.success)) break;
+                    await Task.Delay(1000);
+                }
+
+                Assert.True(runs.Items.Count() > 3 && runs.Items.Any(run => run.Status == ExtPipeRunStatus.failure)
+                        && runs.Items.Any(run => run.Status == ExtPipeRunStatus.success));
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new ExtPipeDelete
+                {
+                    Items = new[] { Identity.Create(id) }
+                });
+            }
         }
     }
 }
