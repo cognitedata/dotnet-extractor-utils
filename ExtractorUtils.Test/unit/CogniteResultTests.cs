@@ -293,6 +293,49 @@ namespace ExtractorUtils.Test.Unit
                 Assert.Equal(exceptions[i].Message, errors[i].Message);
             }
         }
-
+        [Fact]
+        public void TestThrowOnError()
+        {
+            var result = new CogniteResult<AssetCreate>(null);
+            result.Throw();
+            result.ThrowOnFatal();
+            result.Errors = Enumerable.Empty<CogniteError<AssetCreate>>();
+            result.Throw();
+            result.ThrowOnFatal();
+            // One non-fatal
+            result.Errors = new[]
+            {
+                new CogniteError<AssetCreate> { Exception = new Exception("Test"), Type = ErrorType.SanitationFailed }
+            };
+            Assert.Throws<CogniteErrorException>(() => result.Throw());
+            result.ThrowOnFatal();
+            // Multiple non-fatal
+            result.Errors = new[]
+            {
+                new CogniteError<AssetCreate> { Exception = new Exception("Test"), Type = ErrorType.SanitationFailed },
+                new CogniteError<AssetCreate> { Exception = new Exception("Test2"), Type = ErrorType.ItemDuplicated }
+            };
+            Assert.Throws<AggregateException>(() => result.Throw());
+            result.ThrowOnFatal();
+            // One fatal, multiple non-fatal
+            result.Errors = new[]
+            {
+                new CogniteError<AssetCreate> { Exception = new Exception("Test"), Type = ErrorType.SanitationFailed },
+                new CogniteError<AssetCreate> { Exception = new Exception("Test2"), Type = ErrorType.ItemDuplicated },
+                new CogniteError<AssetCreate> { Exception = new Exception("Test3"), Type = ErrorType.FatalFailure }
+            };
+            Assert.Throws<AggregateException>(() => result.Throw());
+            Assert.Throws<CogniteErrorException>(() => result.ThrowOnFatal());
+            // Multiple fatal, multiple non-fatal
+            result.Errors = new[]
+            {
+                new CogniteError<AssetCreate> { Exception = new Exception("Test"), Type = ErrorType.SanitationFailed },
+                new CogniteError<AssetCreate> { Exception = new Exception("Test2"), Type = ErrorType.ItemDuplicated },
+                new CogniteError<AssetCreate> { Exception = new Exception("Test3"), Type = ErrorType.FatalFailure },
+                new CogniteError<AssetCreate> { Exception = new Exception("Test3"), Type = ErrorType.FatalFailure }
+            };
+            Assert.Throws<AggregateException>(() => result.Throw());
+            Assert.Throws<AggregateException>(() => result.ThrowOnFatal());
+        }
     }
 }

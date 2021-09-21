@@ -114,6 +114,39 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
+        /// Throw exception if there are any fatal errors
+        /// </summary>
+        public void ThrowOnFatal()
+        {
+            if (Errors == null || !Errors.Any()) return;
+            var fatal = Errors.Where(err => err.Type == ErrorType.FatalFailure);
+            if (fatal.Count() > 1)
+            {
+                throw new AggregateException(fatal.Select(err => new CogniteErrorException(err)).ToList());
+            }
+            else if (fatal.Count() == 1)
+            {
+                throw new CogniteErrorException(fatal.Single());
+            }
+        }
+
+        /// <summary>
+        /// Throw exception if there are any errors at all.
+        /// </summary>
+        public void Throw()
+        {
+            if (Errors == null || !Errors.Any()) return;
+            if (Errors.Count() == 1)
+            {
+                throw new CogniteErrorException(Errors.Single());
+            }
+            else
+            {
+                throw new AggregateException(Errors.Select(err => new CogniteErrorException(err)).ToList());
+            }
+        }
+
+        /// <summary>
         /// Combine all non-fatal errors with the same resource and type
         /// </summary>
         public void MergeErrors()
@@ -327,6 +360,44 @@ namespace Cognite.Extensions
             initial.Values = values;
 
             return initial;
+        }
+    }
+
+    /// <summary>
+    /// Exception triggered by a <see cref="CogniteError"/>
+    /// </summary>
+    public class CogniteErrorException : Exception
+    {
+        /// <summary>
+        /// Constructor taking a <see cref="CogniteError"/>
+        /// </summary>
+        /// <param name="err"></param>
+        public CogniteErrorException(CogniteError err)
+            : this($"CogniteError. Resource: {err?.Resource}, Type: {err?.Type}: {err?.Message}", err?.Exception)
+        {
+        }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public CogniteErrorException()
+        {
+        }
+
+        /// <summary>
+        /// Constructor taking a message
+        /// </summary>
+        /// <param name="message">String message</param>
+        public CogniteErrorException(string message) : base(message)
+        {
+        }
+
+        /// <summary>
+        /// Constructor taking a message and inner exception
+        /// </summary>
+        /// <param name="message">String message</param>
+        /// <param name="innerException">Inner exception</param>
+        public CogniteErrorException(string message, Exception innerException) : base(message, innerException)
+        {
         }
     }
 
