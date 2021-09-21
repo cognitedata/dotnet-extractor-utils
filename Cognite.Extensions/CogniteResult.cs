@@ -155,7 +155,9 @@ namespace Cognite.Extensions
             else if (other.Errors == null) errors = Errors;
             else errors = Errors.Concat(other.Errors);
 
-            return new CogniteResult<TError>(errors);
+            var result = new CogniteResult<TError>(errors);
+            result.MergeErrors();
+            return result;
         }
 
         /// <summary>
@@ -171,9 +173,9 @@ namespace Cognite.Extensions
                 if (result == null) continue;
                 if (result.Errors != null) errors.AddRange(result.Errors);
             }
-            var err = new CogniteResult<TError>(errors);
-            err.MergeErrors();
-            return err;
+            var res = new CogniteResult<TError>(errors);
+            res.MergeErrors();
+            return res;
         }
     }
 
@@ -220,9 +222,9 @@ namespace Cognite.Extensions
             else if (other.Errors == null) errors = Errors;
             else errors = Errors.Concat(other.Errors);
 
-            var err = new CogniteResult<TResult, TError>(errors, results);
-            err.MergeErrors();
-            return err;
+            var result = new CogniteResult<TResult, TError>(errors, results);
+            result.MergeErrors();
+            return result;
         }
 
         /// <summary>
@@ -241,9 +243,9 @@ namespace Cognite.Extensions
                 if (result.Errors != null) errors.AddRange(result.Errors);
             }
 
-            var err = new CogniteResult<TResult, TError>(errors, items);
-            err.MergeErrors();
-            return err;
+            var res = new CogniteResult<TResult, TError>(errors, items);
+            res.MergeErrors();
+            return res;
         }
     }
 
@@ -320,6 +322,9 @@ namespace Cognite.Extensions
                 if (err.Skipped != null) skipped.AddRange(err.Skipped);
                 if (err.Values != null) values.AddRange(err.Values);
             }
+
+            initial.Skipped = skipped;
+            initial.Values = values;
 
             return initial;
         }

@@ -29,7 +29,7 @@ namespace ExtractorUtils.Test.Unit
         public void ParseUnknownException()
         {
             var ex = new Exception("Some error");
-            var error = ResultHandlers.ParseException(ex, RequestType.CreateAssets);
+            var error = ResultHandlers.ParseException<AssetCreate>(ex, RequestType.CreateAssets);
             Assert.Equal(0, error.Status);
             Assert.Equal(ex, error.Exception);
             Assert.Equal("Some error", error.Message);
@@ -41,7 +41,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 Code = 500
             };
-            var error = ResultHandlers.ParseException(ex, RequestType.CreateAssets);
+            var error = ResultHandlers.ParseException<AssetCreate>(ex, RequestType.CreateAssets);
             Assert.Equal(500, error.Status);
             Assert.Equal(ex, error.Exception);
             Assert.Equal("Something bad happened", error.Message);
@@ -106,7 +106,7 @@ namespace ExtractorUtils.Test.Unit
             var errors = new List<CogniteError>();
             for (int i = 0; i < exceptions.Length; i++)
             {
-                var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateAssets);
+                var error = ResultHandlers.ParseException<AssetCreate>(exceptions[i], RequestType.CreateAssets);
                 logger.LogCogniteError(error, RequestType.CreateAssets, false, LogLevel.Debug, LogLevel.Warning);
                 assets = (await ResultHandlers.CleanFromError(null, error, assets, 1000, 1, CancellationToken.None))
                     .ToArray();
@@ -202,8 +202,8 @@ namespace ExtractorUtils.Test.Unit
             var errors = new List<CogniteError>();
             for (int i = 0; i < exceptions.Length; i++)
             {
-                var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateTimeSeries);
-                logger.LogCogniteError(error, RequestType.CreateAssets, false, LogLevel.Debug, LogLevel.Warning);
+                var error = ResultHandlers.ParseException<TimeSeriesCreate>(exceptions[i], RequestType.CreateTimeSeries);
+                logger.LogCogniteError(error, RequestType.CreateTimeSeries, false, LogLevel.Debug, LogLevel.Warning);
                 timeseries = (ResultHandlers.CleanFromError(error, timeseries))
                     .ToArray();
                 Assert.Equal(9 - i * 2 - 2, timeseries.Count());
@@ -276,8 +276,8 @@ namespace ExtractorUtils.Test.Unit
             var errors = new List<CogniteError>();
             for (int i = 0; i < exceptions.Length; i++)
             {
-                var error = ResultHandlers.ParseException(exceptions[i], RequestType.CreateEvents);
-                logger.LogCogniteError(error, RequestType.CreateAssets, false, LogLevel.Debug, LogLevel.Warning);
+                var error = ResultHandlers.ParseException<EventCreate>(exceptions[i], RequestType.CreateEvents);
+                logger.LogCogniteError(error, RequestType.CreateEvents, false, LogLevel.Debug, LogLevel.Warning);
                 events = (ResultHandlers.CleanFromError(error, events))
                     .ToArray();
                 Assert.Equal(7 - i * 2 - 2, events.Count());
