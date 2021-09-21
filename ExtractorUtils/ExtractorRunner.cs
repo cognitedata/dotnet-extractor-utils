@@ -1,13 +1,10 @@
 ﻿using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Metrics;
-using Cognite.Extractor.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -79,34 +76,39 @@ namespace Cognite.Extractor.Utils
                     services.AddSingleton<BaseExtractor>(prov => prov.GetRequiredService<TExtractor>());
                     DateTime startTime = DateTime.UtcNow;
                     ILogger<BaseExtractor> log;
-                    using (var provider = services.BuildServiceProvider())
+                    await using var provider = services.BuildServiceProvider();
+
+                    if (addMetrics)
                     {
-                        if (addMetrics)
+                        var metrics = provider.GetRequiredService<MetricsService>();
+                    }
+                    log = new NullLogger<BaseExtractor>();
+                    if (addLogger)
+                    {
+                        log = provider.GetRequiredService<ILogger<BaseExtractor>>();
+                    }
+                    var extractor = provider.GetRequiredService<TExtractor>();
+                    if (onCreateExtractor != null)
+                    {
+                        var destination = provider.GetRequiredService<CogniteDestination>();
+                        onCreateExtractor(destination, extractor);
+                    }
+                    var run = provider.GetService<ExtractionRun>();
+                    try
+                    {
+                        await extractor.Start(source.Token).ConfigureAwait(false);
+                    }
+                    catch (TaskCanceledException) when (source.IsCancellationRequested)
+                    {
+                        log.LogWarning("Extractor stopped manually");
+                    }
+                    catch (Exception ex)
+                    {
+                        log.LogError(ex, "Extractor crashed unexpectedly");
+                        if (run != null)
                         {
-                            var metrics = provider.GetRequiredService<MetricsService>();
-                        }
-                        log = new NullLogger<BaseExtractor>();
-                        if (addLogger)
-                        {
-                            log = provider.GetRequiredService<ILogger<BaseExtractor>>();
-                        }
-                        var extractor = provider.GetRequiredService<TExtractor>();
-                        if (onCreateExtractor != null)
-                        {
-                            var destination = provider.GetRequiredService<CogniteDestination>();
-                            onCreateExtractor(destination, extractor);
-                        }
-                        try
-                        {
-                            await extractor.Start(source.Token).ConfigureAwait(false);
-                        }
-                        catch (TaskCanceledException) when (source.IsCancellationRequested)
-                        {
-                            log.LogWarning("Extractor stopped manually");
-                        }
-                        catch (Exception ex)
-                        {
-                            log.LogError(ex, "Extractor crashed unexpectedly");
+                            await run.Report(CogniteSdk.ExtPipeRunStatus.failure, true,
+                                $"Error: {ex.Message}\n{ex.StackTrace}").ConfigureAwait(false);
                         }
                     }
                         

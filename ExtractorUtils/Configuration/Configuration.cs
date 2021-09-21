@@ -3,6 +3,7 @@ using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.StateStorage;
+using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
 {
@@ -33,7 +34,12 @@ namespace Cognite.Extractor.Utils
             var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
             services.AddConfig<T>(config,
-                typeof(CogniteConfig), typeof(LoggerConfig), typeof(MetricsConfig), typeof(StateStoreConfig), typeof(BaseConfig));
+                typeof(CogniteConfig),
+                typeof(LoggerConfig),
+                typeof(MetricsConfig),
+                typeof(StateStoreConfig),
+                typeof(BaseConfig),
+                typeof(ExtractionRunConfig));
             return config;
         }
 
@@ -68,7 +74,26 @@ namespace Cognite.Extractor.Utils
             if (addStateStore) services.AddStateStore();
             if (addLogger) services.AddLogger();
             if (addMetrics) services.AddMetrics();
+            services.AddExtractionRun(addLogger);
             return config;
+        }
+
+        /// <summary>
+        /// Add an <see cref="ExtractionRun"/> object as singleton dependency.
+        /// </summary>
+        /// <param name="services">Service collection to add to</param>
+        /// <param name="setLogger">True to set a logger</param>
+        public static void AddExtractionRun(this IServiceCollection services, bool setLogger)
+        {
+            services.AddSingleton(provider =>
+            {
+                var logger = setLogger ?
+                    provider.GetRequiredService<ILogger<ExtractionRun>>() : null;
+                var destination = provider.GetRequiredService<CogniteDestination>();
+                var config = provider.GetService<ExtractionRunConfig>();
+                if (config == null || config.PipelineId == null) return null;
+                return new ExtractionRun(config, destination, logger);
+            });
         }
     }
 }

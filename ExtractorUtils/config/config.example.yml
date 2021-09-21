@@ -138,3 +138,10 @@ metrics:
           job:
           username:
           password:
+
+# Configure an extraction pipeline manager
+extraction-pipeline:
+    # ExternalId of extraction pipeline
+    # pipeline-id: 
+    # Frequency to report "Seen", in seconds. Less than or equal to zero will not report automatically.
+    # frequency:

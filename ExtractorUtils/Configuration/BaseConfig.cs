@@ -48,6 +48,11 @@ namespace Cognite.Extractor.Utils
             if (Logger == null) Logger = new LoggerConfig();
             if (StateStore == null) StateStore = new StateStoreConfig();
         }
+
+        /// <summary>
+        /// Configuration for automatically reporting extraction pipeline runs.
+        /// </summary>
+        public ExtractionRunConfig ExtractionPipeline { get; set; }
     }
 
     #region Cognite configuration
