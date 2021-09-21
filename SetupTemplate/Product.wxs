@@ -110,7 +110,7 @@
                 <ServiceConfig DelayedAutoStart="yes" OnInstall="yes" OnReinstall="yes" />
               </ServiceInstall>
             <?endif?>
-            <ServiceControl Id="StartService" Stop="both" Remove="uninstall" Name="OpcuaExtractor" Wait="no" />
+            <ServiceControl Id="StartService" Stop="both" Remove="uninstall" Name="$(var.product_short_name)" Wait="no" />
             <!-- This EventSource Name need to match whats being used as event source in the service. -->
             <util:EventSource Name="$(var.product_short_name)" Log="Application" EventMessageFile="%SystemRoot%\Microsoft.NET\Framework\v2.0.50727\EventLogMessages.dll" />
             <RegistryKey Id="ProductKey" Action="createAndRemoveOnUninstall" Root="HKLM" Key="Software\Cognite\$(var.product_short_name)">
