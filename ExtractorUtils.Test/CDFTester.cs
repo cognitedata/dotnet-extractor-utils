@@ -25,6 +25,7 @@ namespace ExtractorUtils.Test
         public string Project { get; private set; }
         public string Host { get; private set; }
         public string Prefix { get; private set; }
+        public BaseConfig Config { get; }
         private readonly string _configPath;
 
         public CDFTester(string[] config)
@@ -33,7 +34,7 @@ namespace ExtractorUtils.Test
             _configPath = $"test-config-{Interlocked.Increment(ref _configIdx)}";
             System.IO.File.WriteAllLines(_configPath, config);
             var services = new ServiceCollection();
-            services.AddConfig<BaseConfig>(_configPath, 2);
+            Config = services.AddConfig<BaseConfig>(_configPath, 2);
             services.AddLogger();
             services.AddCogniteClient("net-extractor-utils-test", userAgent: "Utils-Tests/v1.0.0 (Test)");
             Provider = services.BuildServiceProvider();
@@ -85,10 +86,14 @@ namespace ExtractorUtils.Test
                 "    time-series: 20",
                 "    assets: 20",
                 "    events: 20",
+                "    sequences: 10",
+                "    sequence-row-sequences: 10",
+                "    sequence-rows: 100",
                 "  cdf-throttling:",
                 "    time-series: 2",
                 "    assets: 2",
-                "    events: 2"
+                "    events: 2",
+                "    sequences: 2"
             }).ToList();
             return config.ToArray();
         }

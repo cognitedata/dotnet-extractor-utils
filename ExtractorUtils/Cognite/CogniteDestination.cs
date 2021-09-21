@@ -422,7 +422,7 @@ namespace Cognite.Extractor.Utils
         /// Creates a Raw upload queue. It can be used to queue DTOs (data type objects) of type <typeparamref name="T"/>
         /// before sending them to CDF Raw. The items are dequeued and uploaded every <paramref name="interval"/>. If <paramref name="maxQueueSize"/> is
         /// greater than zero, the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
-        /// To start the upload loop, use the <see cref="IRawUploadQueue{T}.Start(CancellationToken)"/> method. To stop it, dispose of the queue or
+        /// To start the upload loop, use the <see cref="IUploadQueue.Start(CancellationToken)"/> method. To stop it, dispose of the queue or
         /// cancel the token
         /// </summary>
         /// <param name="database">Raw database name</param>
@@ -660,6 +660,134 @@ namespace Cognite.Extractor.Utils
                 events,
                 _config.CdfChunking.Events,
                 _config.CdfThrottling.Events,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+        }
+        #endregion
+
+        #region sequences
+        /// <summary>
+        /// Ensures the the sequences with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildSequences"/> function to construct
+        /// the missing sequence objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF
+        /// If any items fail to be pushed due to missing assetId, missing dataset, or duplicated externalId
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>
+        /// </summary>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildSequences">Function that builds CogniteSdk SequenceCreate objects</param>
+        /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found sequences</returns>
+        public async Task<CogniteResult<Sequence>> GetOrCreateSequencesAsync(
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, IEnumerable<SequenceCreate>> buildSequences,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Getting or creating {Number} sequences in CDF", externalIds.Count());
+            return await _client.Sequences.GetOrCreateAsync(
+                externalIds,
+                buildSequences,
+                _config.CdfChunking.Sequences,
+                _config.CdfThrottling.Sequences,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+        }
+        /// <summary>
+        /// Ensures the the sequences with the provided <paramref name="externalIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildSequences"/> function to construct
+        /// the missing sequence objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF
+        /// If any items fail to be pushed due to missing assetId, missing dataset, or duplicated externalId
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>
+        /// </summary>
+        /// <param name="externalIds">External Ids</param>
+        /// <param name="buildSequences">Async function that builds CogniteSdk SequenceCreate objects</param>
+        /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found sequences</returns>
+        public async Task<CogniteResult<Sequence>> GetOrCreateSequencesAsync(
+            IEnumerable<string> externalIds,
+            Func<IEnumerable<string>, Task<IEnumerable<SequenceCreate>>> buildSequences,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Getting or creating {Number} sequences in CDF", externalIds.Count());
+            return await _client.Sequences.GetOrCreateAsync(
+                externalIds,
+                buildSequences,
+                _config.CdfChunking.Sequences,
+                _config.CdfThrottling.Sequences,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Ensures that all sequences in <paramref name="sequences"/> exist in CDF.
+        /// Tries to create the sequences and returns when all are created or removed
+        /// due to issues with the request.
+        /// If any items fail to be pushed due to missing assetId, missing dataset, or duplicated externalId
+        /// they can be removed before retrying by setting <paramref name="retryMode"/>
+        /// Sequences will be returned in the same order as given in <paramref name="sequences"/>.
+        /// </summary>
+        /// <param name="sequences">List of CogniteSdk SequenceCreate objects</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
+        /// this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created sequences</returns>
+        public async Task<CogniteResult<Sequence>> EnsureSequencesExistsAsync(
+            IEnumerable<SequenceCreate> sequences,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Ensuring that {Number} events exist in CDF", sequences.Count());
+            return await _client.Sequences.EnsureExistsAsync(
+                sequences,
+                _config.CdfChunking.Sequences,
+                _config.CdfThrottling.Sequences,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Insert the given list of rows into CDF.
+        /// Both individual rows and full sequences can be removed due to mismatched datatypes,
+        /// duplicated externalIds, or similar, by setting <paramref name="retryMode"/>
+        /// and <paramref name="sanitationMode"/>.
+        /// </summary>
+        /// <param name="sequences">Sequences with rows to insert</param>
+        /// <param name="retryMode">How to handle retries. Keeping duplicates is not valid for this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating.
+        /// Errors that are normally handled by sanitation will not be handled if received from CDF.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult"/> containing errors that occured during insertion</returns>
+        public async Task<CogniteResult> InsertSequenceRowsAsync(
+            IEnumerable<SequenceDataCreate> sequences,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Inserting {Rows} rows for {Seq} sequences into CDF",
+                sequences.Sum(seq => seq.Rows?.Count() ?? 0), sequences.Count());
+            return await _client.Sequences.InsertAsync(
+                sequences,
+                _config.CdfChunking.SequenceRowSequences,
+                _config.CdfChunking.SequenceRows,
+                _config.CdfChunking.Sequences,
+                _config.CdfThrottling.Sequences,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);

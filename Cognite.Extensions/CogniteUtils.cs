@@ -685,6 +685,7 @@ namespace Cognite.Extensions
             TimeSeriesExtensions.SetLogger(logger);
             RawExtensions.SetLogger(logger);
             EventExtensions.SetLogger(logger);
+            SequenceExtensions.SetLogger(logger);
         }
     }
 

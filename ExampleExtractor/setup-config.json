@@ -1,0 +1,14 @@
+{
+	"target_project": "../ExampleExtractor/ExampleExtractor.csproj",
+	"target_configuration": "Release",
+	"target_runtime": "win-x64",
+	"product_name": "Cognite Example Extractor",
+	"product_short_name": "ExampleExtractor",
+	"exe_name": "ExampleExtractor.exe",
+	"config_dir": "../ExtractorUtils/config",
+	"service": "true",
+	"service_args": "-s",
+	"upgrade_guid": "E86B5018-8786-4BA2-B151-0675EF39A5F6",
+	"output_name": "ExampleExtractorSetup",
+	"setup_project": "SetupTemplate/SetupTemplate.wixproj"
+}

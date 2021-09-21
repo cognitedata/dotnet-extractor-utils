@@ -11,7 +11,7 @@ namespace Cognite.Extensions
     /// <summary>
     /// Class containing static methods to parse errors from the SDK and clean request objects
     /// </summary>
-    public static class ResultHandlers
+    public static partial class ResultHandlers
     {
         private static CogniteError ParseCommonErrors(ResponseException ex)
         {
@@ -32,139 +32,6 @@ namespace Cognite.Extensions
                 }
             }
             return ids;
-        }
-
-        private static void ParseAssetException(ResponseException ex, CogniteError err)
-        {
-            if (ex.Missing?.Any() ?? false)
-            {
-                err.Type = ErrorType.ItemMissing;
-                err.Resource = ResourceType.Labels;
-                err.Values = ex.Missing.Select(dict =>
-                    (dict["externalId"] as MultiValue.String)?.Value)
-                    .Where(id => id != null)
-                    .Select(Identity.Create);
-            }
-            else if (ex.Duplicated?.Any() ?? false)
-            {
-                // Only externalIds may be duplicated when creating assets
-                err.Type = ErrorType.ItemExists;
-                err.Resource = ResourceType.ExternalId;
-                err.Values = ex.Duplicated.Select(dict =>
-                    (dict["externalId"] as MultiValue.String)?.Value)
-                    .Where(id => id != null)
-                    .Select(Identity.Create);
-            }
-            else if (ex.Code == 400)
-            {
-                if (ex.Message.StartsWith("Reference to unknown parent with externalId", StringComparison.InvariantCulture))
-                {
-                    // Missing parentExternalId only returns one value for some reason.
-                    var missingId = ex.Message.Replace("Reference to unknown parent with externalId ", "");
-                    err.Complete = false;
-                    err.Type = ErrorType.ItemMissing;
-                    err.Resource = ResourceType.ParentExternalId;
-                    err.Values = new[] { Identity.Create(missingId) };
-                }
-                else if (ex.Message.StartsWith("The given parent ids do not exist", StringComparison.InvariantCulture))
-                {
-                    var idString = ex.Message.Replace("The given parent ids do not exist: ", "");
-                    err.Type = ErrorType.ItemMissing;
-                    err.Resource = ResourceType.ParentId;
-                    err.Values = ParseIdString(idString);
-                }
-                else if (ex.Message.StartsWith("Invalid dataSetIds", StringComparison.InvariantCulture))
-                {
-                    var idString = ex.Message.Replace("Invalid dataSetIds: ", "");
-                    err.Type = ErrorType.ItemMissing;
-                    err.Resource = ResourceType.DataSetId;
-                    err.Values = ParseIdString(idString);
-                }
-            }
-        }
-
-        private static void ParseTimeSeriesException(ResponseException ex, CogniteError err)
-        {
-            if (ex.Missing?.Any() ?? false)
-            {
-                if (ex.Message.StartsWith("Asset ids not found", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    err.Type = ErrorType.ItemMissing;
-                    err.Resource = ResourceType.AssetId;
-                    err.Values = ex.Missing.Select(dict
-                        => (dict["id"] as MultiValue.Long)?.Value)
-                        .Where(id => id.HasValue)
-                        .Select(id => Identity.Create(id.Value));
-                }
-                else if (ex.Message.StartsWith("Datasets ids not found", StringComparison.InvariantCultureIgnoreCase)
-                        || ex.Message.StartsWith("Data set ids not found", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    err.Type = ErrorType.ItemMissing;
-                    err.Resource = ResourceType.DataSetId;
-                    err.Values = ex.Missing.Select(dict
-                        => (dict["id"] as MultiValue.Long)?.Value)
-                        .Where(id => id.HasValue)
-                        .Select(id => Identity.Create(id.Value));
-                }
-            }
-            else if (ex.Duplicated?.Any() ?? false)
-            {
-                if (ex.Duplicated.First().ContainsKey("legacyName"))
-                {
-                    //TODO: legacyName will be ignored when the 0.5 api is removed. 
-                    // Should remove this check then.
-                    err.Type = ErrorType.ItemExists;
-                    err.Resource = ResourceType.LegacyName;
-                    err.Values = ex.Duplicated.Select(dict
-                        => (dict["legacyName"] as MultiValue.String)?.Value)
-                        .Where(id => id != null)
-                        .Select(Identity.Create);
-                }
-                else if (ex.Duplicated.First().ContainsKey("externalId"))
-                {
-                    err.Type = ErrorType.ItemExists;
-                    err.Resource = ResourceType.ExternalId;
-                    err.Values = ex.Duplicated.Select(dict
-                        => (dict["externalId"] as MultiValue.String)?.Value)
-                        .Where(id => id != null)
-                        .Select(Identity.Create);
-                }
-            }
-        }
-
-        private static void ParseEventException(ResponseException ex, CogniteError err)
-        {
-            if (ex.Missing?.Any() ?? false)
-            {
-                if (ex.Message.StartsWith("Asset ids not found", StringComparison.InvariantCulture))
-                {
-                    err.Type = ErrorType.ItemMissing;
-                    err.Resource = ResourceType.AssetId;
-                    err.Values = ex.Missing.Select(dict =>
-                        (dict["id"] as MultiValue.Long)?.Value)
-                        .Where(id => id.HasValue)
-                        .Select(id => Identity.Create(id.Value));
-                }
-            }
-            else if (ex.Duplicated?.Any() ?? false)
-            {
-                err.Type = ErrorType.ItemExists;
-                err.Resource = ResourceType.ExternalId;
-                err.Values = ex.Duplicated.Select(dict =>
-                    (dict["externalId"] as MultiValue.String)?.Value)
-                    .Where(id => id != null)
-                    .Select(Identity.Create);
-            }
-            else if (ex.Code == 400)
-            {
-                if (ex.Message.StartsWith("Invalid dataSetIds", StringComparison.InvariantCulture))
-                {
-                    var idString = ex.Message.Replace("Invalid dataSetIds: ", "");
-                    err.Type = ErrorType.ItemMissing;
-                    err.Resource = ResourceType.DataSetId;
-                    err.Values = ParseIdString(idString);
-                }
-            }
         }
 
         /// <summary>
@@ -201,274 +68,19 @@ namespace Cognite.Extensions
                 {
                     ParseEventException(rex, result);
                 }
+                else if (type == RequestType.CreateSequences)
+                {
+                    ParseSequencesException(rex, result);
+                }
+                else if (type == RequestType.CreateSequenceRows)
+                {
+                    ParseSequenceRowException(rex, result);
+                }
                 return result;
             }
             else
             {
                 return new CogniteError { Message = ex.Message, Exception = ex };
-            }
-        }
-
-        /// <summary>
-        /// Clean list of AssetCreate objects based on CogniteError object
-        /// </summary>
-        /// <param name="resource">CogniteSdk assets resource</param>
-        /// <param name="error">Error that occured with a previous push</param>
-        /// <param name="assets">Assets to clean</param>
-        /// <param name="assetChunkSize">Maximum number of ids per asset read</param>
-        /// <param name="assetThrottleSize">Maximum number of parallel asset read requests</param>
-        /// <param name="token"></param>
-        /// <returns>Assets that are not affected by the error</returns>
-        public static async Task<IEnumerable<AssetCreate>> CleanFromError(
-            AssetsResource resource,
-            CogniteError error,
-            IEnumerable<AssetCreate> assets,
-            int assetChunkSize,
-            int assetThrottleSize,
-            CancellationToken token)
-        {
-            if (assets == null)
-            {
-                throw new ArgumentNullException(nameof(assets));
-            }
-            if (error == null) 
-            {
-                return assets;
-            }
-            // This is mostly to avoid infinite loops. If there are no bad values then
-            // there is no way to correctly clean the request, so there must be something
-            // else wrong
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = assets.Where(asset => asset.ExternalId != null).Select(asset => Identity.Create(asset.ExternalId));
-                return Array.Empty<AssetCreate>();
-            }
-
-            if (!error.Complete)
-            {
-                await CompleteError(resource, error, assets, assetChunkSize, assetThrottleSize, token).ConfigureAwait(false);
-            }
-
-            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
-
-            var ret = new List<AssetCreate>();
-            var skipped = new List<object>();
-
-            foreach (var asset in assets)
-            {
-                bool added = false;
-                switch (error.Resource)
-                {
-                    case ResourceType.DataSetId:
-                        if (!asset.DataSetId.HasValue || !items.Contains(Identity.Create(asset.DataSetId.Value))) added = true;
-                        break;
-                    case ResourceType.ExternalId:
-                        if (asset.ExternalId == null || !items.Contains(Identity.Create(asset.ExternalId))) added = true;
-                        break;
-                    case ResourceType.ParentExternalId:
-                        if (asset.ParentExternalId == null || !items.Contains(Identity.Create(asset.ParentExternalId))) added = true;
-                        break;
-                    case ResourceType.ParentId:
-                        if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) added = true;
-                        break;
-                    case ResourceType.Labels:
-                        if (asset.Labels == null || !asset.Labels.Any(label => items.Contains(Identity.Create(label.ExternalId)))) added = true;
-                        break;
-                }
-                if (added)
-                {
-                    ret.Add(asset);
-                }
-                else
-                {
-                    CdfMetrics.AssetsSkipped.Inc();
-                    skipped.Add(asset);
-                }
-            }
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = assets;
-                return Array.Empty<AssetCreate>();
-            }
-            return ret;
-        }
-
-        /// <summary>
-        /// Clean list of TimeSeriesCreate objects based on CogniteError
-        /// </summary>
-        /// <param name="error">Error that occured with a previous push</param>
-        /// <param name="timeseries">Timeseries to clean</param>
-        /// <returns>TimeSeries that are not affected by the error</returns>
-        public static IEnumerable<TimeSeriesCreate> CleanFromError(
-            CogniteError error,
-            IEnumerable<TimeSeriesCreate> timeseries)
-        {
-            if (timeseries == null)
-            {
-                throw new ArgumentNullException(nameof(timeseries));
-            }
-            if (error == null) return timeseries;
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = timeseries.Where(ts => ts.ExternalId != null).Select(ts => Identity.Create(ts.ExternalId));
-                return Array.Empty<TimeSeriesCreate>();
-            }
-
-            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
-
-            var ret = new List<TimeSeriesCreate>();
-            var skipped = new List<object>();
-
-            foreach (var ts in timeseries)
-            {
-                bool added = false;
-                switch (error.Resource)
-                {
-                    case ResourceType.DataSetId:
-                        if (!ts.DataSetId.HasValue || !items.Contains(Identity.Create(ts.DataSetId.Value))) added = true;
-                        break;
-                    case ResourceType.ExternalId:
-                        if (ts.ExternalId == null || !items.Contains(Identity.Create(ts.ExternalId))) added = true;
-                        break;
-                    case ResourceType.AssetId:
-                        if (!ts.AssetId.HasValue || !items.Contains(Identity.Create(ts.AssetId.Value))) added = true;
-                        break;
-                    case ResourceType.LegacyName:
-                        if (ts.LegacyName == null || !items.Contains(Identity.Create(ts.LegacyName))) added = true;
-                        break;
-                }
-                if (added)
-                {
-                    ret.Add(ts);
-                }
-                else
-                {
-                    CdfMetrics.TimeSeriesSkipped.Inc();
-                    skipped.Add(ts);
-                }
-            }
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = timeseries;
-                return Array.Empty<TimeSeriesCreate>();
-            }
-            return ret;
-        }
-
-        /// <summary>
-        /// Clean list of EventCreate objects based on CogniteError
-        /// </summary>
-        /// <param name="error">Error that occurred with a previous push</param>
-        /// <param name="events">Events to clean</param>
-        /// <returns>Events that are not affected by the error</returns>
-        public static IEnumerable<EventCreate> CleanFromError(
-            CogniteError error,
-            IEnumerable<EventCreate> events)
-        {
-            if (events == null)
-            {
-                throw new ArgumentNullException(nameof(events));
-            }
-            if (error == null) return events;
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = events.Where(evt => evt.ExternalId != null).Select(evt => Identity.Create(evt.ExternalId));
-                return Array.Empty<EventCreate>();
-            }
-
-            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
-
-            var ret = new List<EventCreate>();
-            var skipped = new List<object>();
-
-            foreach (var evt in events)
-            {
-                bool added = false;
-                switch (error.Resource)
-                {
-                    case ResourceType.DataSetId:
-                        if (!evt.DataSetId.HasValue || !items.Contains(Identity.Create(evt.DataSetId.Value))) added = true;
-                        else CdfMetrics.EventsSkipped.Inc();
-                        break;
-                    case ResourceType.ExternalId:
-                        if (evt.ExternalId == null || !items.Contains(Identity.Create(evt.ExternalId))) added = true;
-                        else CdfMetrics.EventsSkipped.Inc();
-                        break;
-                    case ResourceType.AssetId:
-                        if (evt.AssetIds == null || !evt.AssetIds.Any(id => items.Contains(Identity.Create(id)))) added = true;
-                        break;
-                }
-                if (added)
-                {
-                    ret.Add(evt);
-                }
-                else
-                {
-                    CdfMetrics.EventsSkipped.Inc();
-                    skipped.Add(evt);
-                }
-            }
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = events;
-                return Array.Empty<EventCreate>();
-            }
-            return ret;
-        }
-
-        private static async Task CompleteError(
-            AssetsResource resource,
-            CogniteError error,
-            IEnumerable<AssetCreate> assets,
-            int assetChunkSize,
-            int assetThrottleSize,
-            CancellationToken token)
-        {
-            if (error.Complete) return;
-
-            if (error.Resource == ResourceType.ParentExternalId)
-            {
-                var comparer = new IdentityComparer();
-                var ids = assets.Select(asset => asset.ParentExternalId)
-                    .Where(id => id != null)
-                    .Distinct()
-                    .Select(Identity.Create)
-                    .Except(error.Values, comparer);
-
-                if (!ids.Any())
-                {
-                    error.Complete = true;
-                    return;
-                }
-
-                try
-                {
-                    var parents = await resource
-                        .GetAssetsByIdsIgnoreErrors(ids, assetChunkSize, assetThrottleSize, token)
-                        .ConfigureAwait(false);
-
-                    error.Complete = true;
-                    error.Values = ids
-                        .Except(parents.Select(asset => Identity.Create(asset.ExternalId)), comparer)
-                        .Concat(error.Values)
-                        .Distinct(comparer);
-                }
-                catch
-                {
-                    return;
-                }
             }
         }
     }
@@ -614,6 +226,10 @@ namespace Cognite.Extensions
         /// </summary>
         public IEnumerable<object> Skipped { get; set; }
         /// <summary>
+        /// Further information about the error, for some errors.
+        /// </summary>
+        public IEnumerable<object> Data { get; set; }
+        /// <summary>
         /// Exception that caused this error, if any.
         /// </summary>
         public Exception Exception { get; set; }
@@ -729,6 +345,42 @@ namespace Cognite.Extensions
         /// </summary>
         Unit,
         /// <summary>
+        /// The Columns field on a sequence
+        /// </summary>
+        SequenceColumns,
+        /// <summary>
+        /// Name of a sequence column
+        /// </summary>
+        ColumnName,
+        /// <summary>
+        /// Description of a sequence column
+        /// </summary>
+        ColumnDescription,
+        /// <summary>
+        /// ExternalId of a sequence column
+        /// </summary>
+        ColumnExternalId,
+        /// <summary>
+        /// Metadata of a sequence column
+        /// </summary>
+        ColumnMetadata,
+        /// <summary>
+        /// Collection of rows when creating in sequence
+        /// </summary>
+        SequenceRows,
+        /// <summary>
+        /// Row in a sequence
+        /// </summary>
+        SequenceRow,
+        /// <summary>
+        /// Values of a sequence row
+        /// </summary>
+        SequenceRowValues,
+        /// <summary>
+        /// Row number of a sequence row
+        /// </summary>
+        SequenceRowNumber,
+        /// <summary>
         /// None or unknown
         /// </summary>
         None = -1
@@ -749,7 +401,15 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create events
         /// </summary>
-        CreateEvents
+        CreateEvents,
+        /// <summary>
+        /// Create sequences
+        /// </summary>
+        CreateSequences,
+        /// <summary>
+        /// Create sequence rows
+        /// </summary>
+        CreateSequenceRows
     }
     
 

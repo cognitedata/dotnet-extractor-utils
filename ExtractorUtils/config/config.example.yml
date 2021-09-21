@@ -68,6 +68,12 @@ cognite:
         raw-rows: 10000
         # Maximum number of events per get/create events request
         events: 1000
+        # Maximum number of sequences per get/create sequences request
+        sequences: 1000
+        # Maximum number of sequences per create sequence rows request
+        sequence-row-sequences: 1000
+        # Maximum number of rows per sequence when creating rows
+        sequence-rows: 10000
     # Configure how requests to CDF should be throttled
     cdf-throttling:
         # Maximum number of parallel requests per timeseries operation
@@ -82,6 +88,8 @@ cognite:
         ranges: 20
         # Maximum number of parallel requests per events operation
         events: 20
+        # Maximum number of parallel requests per sequences operation
+        sequences: 10
     # Configure if the SDK should do logging of requests
     sdk-logging:
         # True to disable logging from the SDK
