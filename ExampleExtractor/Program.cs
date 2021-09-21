@@ -16,13 +16,14 @@ class MyExtractor : BaseExtractor
 
     protected override async Task Start()
     {
-        await Destination.EnsureTimeSeriesExistsAsync(new[]
+        var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
             new TimeSeriesCreate {
                 ExternalId = "sine-wave",
                 Name = "Sine Wave"
             }
         }, RetryMode.OnError, SanitationMode.Clean, Source.Token);
+        result.Throw();
         CreateTimeseriesQueue(1000, TimeSpan.FromSeconds(1), null);
         ScheduleDatapointsRun("datapoints", TimeSpan.FromMilliseconds(100), token =>
         {
