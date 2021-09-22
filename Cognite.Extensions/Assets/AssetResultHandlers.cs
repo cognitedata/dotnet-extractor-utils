@@ -100,7 +100,7 @@ namespace Cognite.Extensions
                 await CompleteError(resource, error, assets, assetChunkSize, assetThrottleSize, token).ConfigureAwait(false);
             }
 
-            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
+            var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<AssetCreate>();
             var skipped = new List<object>();
@@ -159,12 +159,11 @@ namespace Cognite.Extensions
 
             if (error.Resource == ResourceType.ParentExternalId)
             {
-                var comparer = new IdentityComparer();
                 var ids = assets.Select(asset => asset.ParentExternalId)
                     .Where(id => id != null)
                     .Distinct()
                     .Select(Identity.Create)
-                    .Except(error.Values, comparer);
+                    .Except(error.Values);
 
                 if (!ids.Any())
                 {
@@ -180,9 +179,9 @@ namespace Cognite.Extensions
 
                     error.Complete = true;
                     error.Values = ids
-                        .Except(parents.Select(asset => Identity.Create(asset.ExternalId)), comparer)
+                        .Except(parents.Select(asset => Identity.Create(asset.ExternalId)))
                         .Concat(error.Values)
-                        .Distinct(comparer);
+                        .Distinct();
                 }
                 catch
                 {

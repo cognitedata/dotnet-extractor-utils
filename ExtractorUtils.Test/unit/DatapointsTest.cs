@@ -67,8 +67,7 @@ namespace ExtractorUtils.Test.Unit
                 string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringLengthMax), new string('2', CogniteUtils.StringLengthMax + 1), "3"};
                 
                 var datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
-                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
-                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "2")}},
+                    { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1"), new Datapoint(DateTime.UtcNow, "2") }},
                     { new Identity(1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d))},
                     { new Identity(2), stringPoints.Select(s => new Datapoint(DateTime.UtcNow, s))},
                     { new Identity(3), new Datapoint[] { } },
@@ -101,11 +100,10 @@ namespace ExtractorUtils.Test.Unit
                 var errors = await cogniteDestination.InsertDataPointsIgnoreErrorsAsync(
                     datapoints,
                     CancellationToken.None);
-                var comparer = new IdentityComparer();
-                Assert.Contains(new Identity("idMissing1"), errors.IdsNotFound, comparer);
-                Assert.Contains(new Identity(-1), errors.IdsNotFound, comparer);
-                Assert.Contains(new Identity("idMismatchedString1"), errors.IdsWithMismatchedData, comparer);
-                Assert.Contains(new Identity("idMismatched2"), errors.IdsWithMismatchedData, comparer);
+                Assert.Contains(new Identity("idMissing1"), errors.IdsNotFound);
+                Assert.Contains(new Identity(-1), errors.IdsNotFound);
+                Assert.Contains(new Identity("idMismatchedString1"), errors.IdsWithMismatchedData);
+                Assert.Contains(new Identity("idMismatched2"), errors.IdsWithMismatchedData);
                 Assert.Single(_createdDataPoints["idNumeric1"]);
                 Assert.Single(_createdDataPoints["idNumeric2"]);
                 Assert.Single(_createdDataPoints["idString1"]);
@@ -230,7 +228,7 @@ namespace ExtractorUtils.Test.Unit
                     new BaseExtractionState("idString1")
             };
             foreach (var state in states) state.InitExtractedRange(CogniteTime.DateTimeEpoch, CogniteTime.DateTimeEpoch);
-            var stateMap = states.ToDictionary(state => Identity.Create(state.Id), new IdentityComparer());
+            var stateMap = states.ToDictionary(state => Identity.Create(state.Id));
 
             var stateStore = new DummyExtractionStore();
 

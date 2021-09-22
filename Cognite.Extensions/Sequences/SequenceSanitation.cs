@@ -350,10 +350,8 @@ namespace Cognite.Extensions
             var result = new List<SequenceDataCreate>();
             var errors = new List<CogniteError>();
 
-            var comparer = new IdentityComparer();
-
-            var ids = new HashSet<Identity>(comparer);
-            var duplicated = new HashSet<Identity>(comparer);
+            var ids = new HashSet<Identity>();
+            var duplicated = new HashSet<Identity>();
             var bad = new List<(ResourceType, SequenceDataCreate)>();
 
             var badRowSequences = new List<(ResourceType, SequenceRowError)>();

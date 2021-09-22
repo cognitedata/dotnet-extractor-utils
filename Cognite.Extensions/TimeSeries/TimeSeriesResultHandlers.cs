@@ -76,7 +76,7 @@ namespace Cognite.Extensions
                 return Array.Empty<TimeSeriesCreate>();
             }
 
-            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
+            var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<TimeSeriesCreate>();
             var skipped = new List<object>();

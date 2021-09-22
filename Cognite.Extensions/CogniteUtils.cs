@@ -251,7 +251,7 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            var ret = new Dictionary<Identity, List<Datapoint>>(new IdentityComparer());
+            var ret = new Dictionary<Identity, List<Datapoint>>();
 
             var idSizeBuffer = new byte[sizeof(ushort)];
 
@@ -305,7 +305,7 @@ namespace Cognite.Extensions
                 }
             }
 
-            return ret.ToDictionary(kvp => kvp.Key, kvp => (IEnumerable<Datapoint>)kvp.Value, new IdentityComparer());
+            return ret.ToDictionary(kvp => kvp.Key, kvp => (IEnumerable<Datapoint>)kvp.Value);
         }
 
         /// <summary>
@@ -540,56 +540,6 @@ namespace Cognite.Extensions
         /// <param name="innerException"></param>
         public CogniteUtilsException(string message, Exception innerException) : base(message, innerException)
         {
-        }
-    }
-
-    /// <summary>
-    /// Comparer for CogniteSdk Identity objects
-    /// </summary>
-    public class IdentityComparer : IEqualityComparer<Identity>
-    {
-        /// <summary>
-        /// Determine if two CogniteSdk Identity objects are equal:
-        /// They have the same Id or ExternalId
-        /// </summary>
-        /// <param name="x">Identity</param>
-        /// <param name="y">Identity</param>
-        /// <returns></returns>
-        public bool Equals(Identity x, Identity y)
-        {
-            if (Object.ReferenceEquals(x, y)) return true;
-
-            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) return false;
-
-            if (x.Id.HasValue && y.Id.HasValue && x.Id.Value == y.Id.Value)
-            {
-                return true;
-            }
-            if (x.ExternalId.TrimToNull() != null && y.ExternalId.TrimToNull() != null && x.ExternalId == y.ExternalId)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Get a hash code based on the identity Id or ExternalId
-        /// </summary>
-        /// <param name="obj">Identity</param>
-        /// <returns></returns>
-        public int GetHashCode(Identity obj)
-        {
-            if (Object.ReferenceEquals(obj, null)) return 0;
-
-            if (obj.Id.HasValue)
-            {
-                return obj.Id.Value.GetHashCode();
-            }
-            if (string.IsNullOrWhiteSpace(obj.ExternalId))
-            {
-                return 0;
-            }
-            return obj.ExternalId.GetHashCode();
         }
     }
 
