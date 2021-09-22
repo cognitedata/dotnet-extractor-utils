@@ -67,7 +67,7 @@ namespace Cognite.Extensions
                 return Enumerable.Empty<SequenceCreate>();
             }
 
-            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
+            var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<SequenceCreate>();
             var skipped = new List<object>();
@@ -166,7 +166,7 @@ namespace Cognite.Extensions
                 return Enumerable.Empty<SequenceDataCreate>();
             }
 
-            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
+            var items = new HashSet<Identity>(error.Values);
 
             foreach (var seq in creates)
             {
@@ -228,9 +228,8 @@ namespace Cognite.Extensions
             int sequencesThrottleSize,
             CancellationToken token)
         {
-            var comparer = new IdentityComparer();
             var createMap = creates
-                .ToDictionary(seq => seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId), comparer);
+                .ToDictionary(seq => seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId));
 
             var sequences = await resource
                 .GetByIdsIgnoreErrors(createMap.Keys, sequencesChunkSize, sequencesThrottleSize, token)
@@ -241,7 +240,7 @@ namespace Cognite.Extensions
                 var idIdt = Identity.Create(seq.Id);
                 if (createMap.ContainsKey(idIdt)) return idIdt;
                 else return Identity.Create(seq.ExternalId);
-            }, comparer);
+            });
 
             var columnErrors = new List<SequenceRowError>();
             var rowErrors = new List<SequenceRowError>();

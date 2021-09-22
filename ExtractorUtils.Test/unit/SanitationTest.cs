@@ -729,7 +729,7 @@ namespace ExtractorUtils.Test.Unit
         [Fact]
         public void SanitizeDataPointRequest()
         {
-            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer())
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
                 { Identity.Create("all-bad-ts"), new[] {
                     new Datapoint(DateTime.MaxValue, 1.0),

@@ -126,11 +126,10 @@ namespace Cognite.Extensions
             IEnumerable<CogniteError> errors;
             (points, errors) = Sanitation.CleanDataPointsRequest(points, sanitationMode, nanReplacement);
 
-            var comparer = new IdentityComparer();
             var chunks = points
                 .Select(p => (p.Key, p.Value))
                 .ChunkBy(valueChunkSize, keyChunkSize)
-                .Select(chunk => chunk.ToDictionary(pair => pair.Key, pair => pair.Values, comparer))
+                .Select(chunk => chunk.ToDictionary(pair => pair.Key, pair => pair.Values))
                 .ToList();
 
             int size = chunks.Count + (errors.Any() ? 1 : 0);
@@ -265,7 +264,7 @@ namespace Cognite.Extensions
                 .ChunkBy(deleteChunkSize)
                 .ToList(); // Maximum number of items in the /timeseries/data/delete endpoint.
 
-            var missing = new HashSet<Identity>(new IdentityComparer());
+            var missing = new HashSet<Identity>();
             var mutex = new object();
 
             var generators = chunks
@@ -311,7 +310,7 @@ namespace Cognite.Extensions
                 .ChunkBy(listChunkSize)
                 .ToList(); // Maximum number of items in the /timeseries/data/list endpoint.
 
-            var notVerified = new HashSet<Identity>(new IdentityComparer());
+            var notVerified = new HashSet<Identity>();
             var verifyGenerators = queryChunks
                 .Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
                     c => async () =>
@@ -338,7 +337,7 @@ namespace Cognite.Extensions
             IEnumerable<IdentityWithRange> chunks,
             CancellationToken token)
         {
-            var missing = new HashSet<Identity>(new IdentityComparer());
+            var missing = new HashSet<Identity>();
             var deleteQuery = new DataPointsDelete()
             {
                 Items = chunks
@@ -372,7 +371,7 @@ namespace Cognite.Extensions
             };
 
             int tries = 0;
-            var notVerified = new HashSet<Identity>(new IdentityComparer());
+            var notVerified = new HashSet<Identity>();
             while (count > 0 && tries < _maxNumOfVerifyRequests)
             {
                 notVerified.Clear();
@@ -435,9 +434,8 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
-            var comparer = new IdentityComparer();
-            var ret = new ConcurrentDictionary<Identity, DateTime>(comparer);
-            var idSet = new HashSet<Identity>(ids.Select(id => id.id), comparer);
+            var ret = new ConcurrentDictionary<Identity, DateTime>();
+            var idSet = new HashSet<Identity>(ids.Select(id => id.id));
 
             var chunks = ids
                 .Select((pair) =>
@@ -513,10 +511,8 @@ namespace Cognite.Extensions
             int throttleSize,
             CancellationToken token)
         {
-            var comparer = new IdentityComparer();
-            var ret = new ConcurrentDictionary<Identity, DateTime>(comparer);
-
-            var idSet = new HashSet<Identity>(ids.Select(id => id.id), comparer);
+            var ret = new ConcurrentDictionary<Identity, DateTime>();
+            var idSet = new HashSet<Identity>(ids.Select(id => id.id));
 
             var chunks = ids
                 .Select((pair) =>
@@ -620,9 +616,7 @@ namespace Cognite.Extensions
 
             if (latest && earliest) throttleSize = Math.Max(1, throttleSize / 2);
 
-            var comparer = new IdentityComparer();
-
-            var ranges = ids.ToDictionary(pair => pair.id, pair => TimeRange.Empty, comparer);
+            var ranges = ids.ToDictionary(pair => pair.id, pair => TimeRange.Empty);
             var tasks = new List<Task<IDictionary<Identity, DateTime>>>();
             if (latest)
             {

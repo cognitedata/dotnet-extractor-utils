@@ -62,7 +62,7 @@ namespace Cognite.Extensions
                 return Array.Empty<EventCreate>();
             }
 
-            var items = new HashSet<Identity>(error.Values, new IdentityComparer());
+            var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<EventCreate>();
             var skipped = new List<object>();

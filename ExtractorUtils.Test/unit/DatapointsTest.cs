@@ -109,11 +109,11 @@ namespace ExtractorUtils.Test.Unit
                 var notFoundErr = errs.Where(err => err.Resource == ResourceType.Id).SelectMany(err => err.Values);
                 var mismatched = errs.Where(err => err.Type == ErrorType.MismatchedType).SelectMany(err => err.Skipped);
 
-                var comparer = new IdentityComparer();
-                Assert.Contains(new Identity("idMissing1"), notFoundErr, comparer);
-                Assert.Contains(new Identity(-1), notFoundErr, comparer);
+                Assert.Contains(new Identity("idMissing1"), notFoundErr);
+                Assert.Contains(new Identity(-1), notFoundErr);
                 Assert.Contains(mismatched.OfType<DataPointInsertError>(), err => err.Id.ExternalId == "idMismatchedString1");
                 Assert.Contains(mismatched.OfType<DataPointInsertError>(), err => err.Id.ExternalId == "idMismatched2");
+
                 Assert.Single(_createdDataPoints["idNumeric1"]);
                 Assert.Single(_createdDataPoints["idNumeric2"]);
                 Assert.Single(_createdDataPoints["idString1"]);
@@ -238,7 +238,7 @@ namespace ExtractorUtils.Test.Unit
                     new BaseExtractionState("idString1")
             };
             foreach (var state in states) state.InitExtractedRange(CogniteTime.DateTimeEpoch, CogniteTime.DateTimeEpoch);
-            var stateMap = states.ToDictionary(state => Identity.Create(state.Id), new IdentityComparer());
+            var stateMap = states.ToDictionary(state => Identity.Create(state.Id));
 
             var stateStore = new DummyExtractionStore();
 

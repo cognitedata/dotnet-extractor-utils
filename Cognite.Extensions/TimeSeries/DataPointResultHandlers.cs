@@ -58,7 +58,7 @@ namespace Cognite.Extensions
             {
                 error.Skipped = datapoints.Select(kvp => new DataPointInsertError(kvp.Key, kvp.Value)).ToList();
                 error.Values = error.Skipped.Select(pair => ((DataPointInsertError)pair).Id);
-                return new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer());
+                return new Dictionary<Identity, IEnumerable<Datapoint>>();
             }
 
             var skipped = new List<object>();
@@ -79,7 +79,7 @@ namespace Cognite.Extensions
             else
             {
                 error.Skipped = datapoints.Select(kvp => new DataPointInsertError(kvp.Key, kvp.Value)).ToList();
-                return new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer());
+                return new Dictionary<Identity, IEnumerable<Datapoint>>();
             }
 
             return datapoints;
@@ -115,7 +115,7 @@ namespace Cognite.Extensions
             }
 
             var badDps = new List<DataPointInsertError>();
-            var result = new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer());
+            var result = new Dictionary<Identity, IEnumerable<Datapoint>>();
 
             foreach (var ts in timeseries)
             {

@@ -11,7 +11,7 @@ namespace Cognite.Extractor.Logging
         /// Logging to console (optional)
         /// </summary>
         /// <value>A <see cref="LogConfig"/> config object</value>
-        public LogConfig Console { get; set; }
+        public ConsoleConfig Console { get; set; }
         
         /// <summary>
         /// Logging to file (optional)
@@ -37,6 +37,18 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <value>One of 'verbose', 'debug', 'information', 'warning', 'error', 'fatal'</value>
         public string Level { get; set; }
+    }
+
+    /// <summary>
+    /// Configuration for console logging.
+    /// </summary>
+    public class ConsoleConfig : LogConfig
+    {
+        /// <summary>
+        /// Minimum logging level to output to standard error.
+        /// </summary>
+        /// <value>One of 'verbose', 'debug', 'information', 'warning', 'error', 'fatal'</value>
+        public string StderrLevel { get; set; }
     }
 
     /// <summary>

@@ -23,13 +23,13 @@ namespace ExtractorUtils.Test.Unit
             var t4 = t3.AddDays(1);
             // Illegal combinations doesn't matter in this test, it's just to check that serialization goes
             // well for any combination
-            var dps1 = new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer()) {
+            var dps1 = new Dictionary<Identity, IEnumerable<Datapoint>>() {
                 // To check if it handles non utf8 symbols...
                 { Identity.Create("idæøå1"), new[] { new Datapoint(t1, 123.123), new Datapoint(t2, "123") } },
                 { Identity.Create(123), new [] {new Datapoint(t1, "321"), new Datapoint(t2, 321.321) } },
                 { Identity.Create("empty"), Array.Empty<Datapoint>() }
             };
-            var dps2 = new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer()) {
+            var dps2 = new Dictionary<Identity, IEnumerable<Datapoint>>() {
                 { Identity.Create("idæøå1"), new[] { new Datapoint(t3, 123.123), new Datapoint(t4, "123") } },
                 { Identity.Create(234), new [] {new Datapoint(t3, "321"), new Datapoint(t4, 321.321) } },
                 { Identity.Create("empty"), Array.Empty<Datapoint>() }

@@ -90,8 +90,7 @@ namespace Cognite.Extensions
             if (mode == SanitationMode.None) return (points, Enumerable.Empty<CogniteError>());
             if (points == null) throw new ArgumentNullException(nameof(points));
 
-            var comparer = new IdentityComparer();
-            var result = new Dictionary<Identity, IEnumerable<Datapoint>>(comparer);
+            var result = new Dictionary<Identity, IEnumerable<Datapoint>>();
 
             var badDpGroups = new List<(ResourceType type, Identity id, IEnumerable<Datapoint> dps)>();
 

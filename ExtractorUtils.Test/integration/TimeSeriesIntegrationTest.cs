@@ -400,7 +400,7 @@ namespace ExtractorUtils.Test.Integration
 
             var tss = await CreateTestTimeSeries(tester);
 
-            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer())
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
                 { Identity.Create(tss[0].extId), Enumerable.Range(0, 10)
                     .Select(i => new Datapoint(DateTime.UtcNow.AddSeconds(i), i)).ToList() },
@@ -459,7 +459,7 @@ namespace ExtractorUtils.Test.Integration
 
             Dictionary<Identity, IEnumerable<Datapoint>> GetCreates()
             {
-                return new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer())
+                return new Dictionary<Identity, IEnumerable<Datapoint>>()
                 {
                     { Identity.Create(tss[0].extId), new []
                     {
@@ -549,7 +549,7 @@ namespace ExtractorUtils.Test.Integration
 
             var tss = await CreateTestTimeSeries(tester);
 
-            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>(new IdentityComparer())
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
                 // All mismatched
                 { Identity.Create(tss[0].extId), new [] {
