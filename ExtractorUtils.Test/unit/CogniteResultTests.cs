@@ -20,7 +20,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton(new LoggerConfig
             {
-                Console = new LogConfig { Level = "debug" }
+                Console = new ConsoleConfig { Level = "debug" }
             });
             services.AddLogging();
             logger = services.BuildServiceProvider().GetRequiredService<ILogger<CogniteResultTests>>();

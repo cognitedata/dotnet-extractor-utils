@@ -45,6 +45,7 @@ namespace Cognite.Extractor.Logging
             }
             var logToConsole = Enum.TryParse(config.Console?.Level, true, out LogEventLevel consoleLevel);
             var logToFile = Enum.TryParse(config.File?.Level, true, out LogEventLevel fileLevel);
+            var logToStderr = Enum.TryParse(config.Console?.StderrLevel, true, out LogEventLevel stderrLevel);
 
             var logConfig = new LoggerConfiguration();
             logConfig
@@ -55,8 +56,9 @@ namespace Cognite.Extractor.Logging
 
             if (logToConsole)
             {
-                logConfig.WriteTo.Console(consoleLevel, consoleLevel <= LogEventLevel.Debug 
-                    ? _logTemplateWithContext : _logTemplate);
+                logConfig.WriteTo.Console(consoleLevel,
+                    consoleLevel <= LogEventLevel.Debug ? _logTemplateWithContext : _logTemplate,
+                    standardErrorFromLevel: logToStderr ? (LogEventLevel?)stderrLevel : null);
             }
 
             if (logToFile && config.File.Path != null)
