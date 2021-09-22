@@ -41,10 +41,9 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(other));
             }
-            var comparer = new IdentityComparer();
-            var idsNotFound = new HashSet<Identity>(IdsNotFound, comparer);
+            var idsNotFound = new HashSet<Identity>(IdsNotFound);
             idsNotFound.UnionWith(other.IdsNotFound);
-            var idsWithMismatchedData = new HashSet<Identity>(IdsWithMismatchedData, comparer);
+            var idsWithMismatchedData = new HashSet<Identity>(IdsWithMismatchedData);
             idsWithMismatchedData.UnionWith(other.IdsWithMismatchedData);
             return new InsertError(idsNotFound, idsWithMismatchedData);
         }

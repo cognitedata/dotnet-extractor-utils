@@ -362,7 +362,7 @@ namespace Cognite.Extensions
             IEnumerable<CogniteError> errors;
             (toCreate, errors) = Sanitation.CleanSequenceDataRequest(toCreate, sanitationMode);
 
-            var dict = toCreate.ToDictionary(create => create.Id.HasValue ? Identity.Create(create.Id.Value) : Identity.Create(create.ExternalId), new IdentityComparer());
+            var dict = toCreate.ToDictionary(create => create.Id.HasValue ? Identity.Create(create.Id.Value) : Identity.Create(create.ExternalId));
             var chunks = dict
                 .Select(kvp => (kvp.Key, kvp.Value.Rows))
                 .ChunkBy(keyChunkSize, valueChunkSize)
