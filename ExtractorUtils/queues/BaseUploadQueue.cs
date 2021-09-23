@@ -11,7 +11,7 @@ namespace Cognite.Extractor.Utils
     /// <summary>
     /// Base interface for upload queue
     /// </summary>
-    public interface IUploadQueue : IDisposable
+    public interface IUploadQueue : IDisposable, IAsyncDisposable
     {
         /// <summary>
         /// Start automatically uploading queue entries
@@ -234,8 +234,6 @@ namespace Cognite.Extractor.Utils
         protected abstract Task<QueueUploadResult<T>> UploadEntries(IEnumerable<T> items, CancellationToken token);
 
         #region IDisposable Support
-        private bool disposedValue; // To detect redundant calls
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Fine to wait in the same context")]
         private async Task FinalizeQueue()
         {
@@ -283,18 +281,13 @@ namespace Cognite.Extractor.Utils
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Fine to wait in the same context")]
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    Task.Run(async () => await FinalizeQueue()).Wait();
-                    _pushEvent.Dispose();
-                    _timer?.Close();
-                    _tokenSource.Dispose();
-                    _internalSource.Dispose();
-                }
-
-                disposedValue = true;
+                Task.Run(async () => await FinalizeQueue()).Wait();
+                _pushEvent.Dispose();
+                _timer?.Close();
+                _tokenSource.Dispose();
+                _internalSource.Dispose();
             }
         }
 
@@ -304,6 +297,28 @@ namespace Cognite.Extractor.Utils
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Internal method to dispose asynchronously.
+        /// </summary>
+        protected async ValueTask DisposeAsyncCore()
+        {
+            await FinalizeQueue().ConfigureAwait(false);
+            _pushEvent.Dispose();
+            _timer?.Close();
+            _tokenSource.Dispose();
+            _internalSource.Dispose();
+        }
+
+        /// <summary>
+        /// Dispose of the queue, uploading all remaining entries
+        /// </summary>
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore().ConfigureAwait(false);
+            Dispose(false);
             GC.SuppressFinalize(this);
         }
         #endregion
