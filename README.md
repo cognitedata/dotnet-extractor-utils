@@ -64,12 +64,12 @@ using CogniteSdk;
 
 class MyExtractor : BaseExtractor
 {
-    public MyExtractor(BaseConfig config, CogniteDestination destination, CancellationToken token)
-        : base(config, destination, token)
+    public MyExtractor(BaseConfig config, CogniteDestination destination)
+        : base(config, destination)
     {
     }
     
-    public override async Task Start() 
+    protected override async Task Start() 
     {
         await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
@@ -87,8 +87,6 @@ class MyExtractor : BaseExtractor
             );
             return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new [] { dp });
         });
-        // So that the extractor doesn't terminate immediately
-        await Scheduler.WaitForAll();
     }
 }
 
