@@ -141,7 +141,17 @@ namespace Cognite.Extractor.Common
                     tasks.Add(task);
                 }
             }
-            await Task.WhenAll(tasks.Select(tsk => tsk.Task)).ConfigureAwait(false);
+            try
+            {
+                await Task.WhenAll(tasks.Select(tsk => tsk.Task)).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException) { }
+            catch (AggregateException aex)
+            {
+                if (aex.Flatten().InnerExceptions.First() is TaskCanceledException) return;
+                throw aex.Flatten();
+            }
+            
         }
 
         /// <summary>

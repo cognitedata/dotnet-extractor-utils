@@ -9,8 +9,8 @@ using System.Collections.Generic;
 
 class MyExtractor : BaseExtractor
 {
-    public MyExtractor(BaseConfig config, CogniteDestination destination)
-        : base(config, destination)
+    public MyExtractor(BaseConfig config, CogniteDestination destination, IServiceProvider provider)
+        : base(config, destination, provider)
     {
     }
 
@@ -22,7 +22,7 @@ class MyExtractor : BaseExtractor
                 ExternalId = "sine-wave",
                 Name = "Sine Wave"
             }
-        }, RetryMode.OnError, SanitationMode.Clean, Source.Token);
+        }, RetryMode.OnError, SanitationMode.Clean, Source.Token).ConfigureAwait(false);
         CreateTimeseriesQueue(1000, TimeSpan.FromSeconds(1), null);
         ScheduleDatapointsRun("datapoints", TimeSpan.FromMilliseconds(100), token =>
         {
