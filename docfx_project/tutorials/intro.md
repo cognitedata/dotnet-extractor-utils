@@ -27,43 +27,54 @@ The library is intended to be used with dependency injection, In ```Program.cs``
 
 ```c#
 using Microsoft.Extensions.DependencyInjection;
-using Cognite.Extractor.Configuration;
-using Cognite.Extractor.Logging;
-using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
+using Cognite.Extensions;
+using CogniteSdk;
+
+class MyExtractor : BaseExtractor
+{
+    public MyExtractor(BaseConfig config, CogniteDestination destination)
+        : base(config, destination)
+    {
+    }
+    
+    protected override async Task Start() 
+    {
+        await Destination.EnsureTimeSeriesExistsAsync(new[]
+        {
+            new TimeSeriesCreate {
+                ExternalId = "sine-wave",
+                Name = "Sine Wave"
+            }
+        }, RetryMode.OnError, SanitationMode.Clean, Source.Token);
+        CreateTimeseriesQueue(1000, TimeSpan.FromSeconds(1), null);
+        ScheduleDatapointsRun("datapoints", TimeSpan.FromMilliseconds(100), token =>
+        {
+            var dp = (
+                Identity.Create("sine-wave"),
+                new Datapoint(DateTime.UtcNow, Math.Sin(DateTime.UtcNow.Ticks))
+            );
+            return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new [] { dp });
+        });
+    }
+}
 
 // Then, in the Main() method:
-var services = new ServiceCollection();
-services.AddConfig<BaseConfig>("./config.yml", 1);
-services.AddLogger();
-services.AddMetrics();
-services.AddCogniteClient("MyExtractor", true, true);
-
-// Create a service provider and resolve the required services
-using (var provider = services.BuildServiceProvider()) {
-    // Resolve a logger for this class
-    var logger = provider.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Hello Extractor");
-
-    // Resolve the metrics service and start it
-    var metrics = provider.GetRequiredService<MetricsService>();
-    metrics.Start();
-    
-    // Resolve the cognite destination
-    var destination = provider.GetRequiredService<CogniteDestination>();
-    await destination.TestCogniteConfig(cancellationToken);
-    
-    // Use the Cognite destination to create time series and insert data points.
-    // For instance: The line below gets or create the time series. The buildTimeSeriesObjects is a callback function that creates
-    // TimeSeriesCreate objects for any missing time series.
-    var ts = await destination.GetOrCreateTimeSeriesAsync(
-        externalIds,
-        buildTimeSeriesObjects,
-        cancellationToken
-    );
-    
-    // Stops the metrics service
-    await metrics.Stop();
+class Program
+{
+    static void Main()
+    {
+        ExtractorRunner.Run<BaseConfig>(
+            "config.yml",
+            new[] { 1 },
+            "my-extractor",
+            "myextractor/1.0.0",
+            false,
+            true,
+            true,
+            true,
+            CancellationToken.None).Wait();
+    }
 }
 ```
 
