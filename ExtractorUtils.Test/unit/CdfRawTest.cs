@@ -117,7 +117,7 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<CdfRawTest>>();
                 // queue with 1 sec upload interval
-                using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromSeconds(1)))
+                await using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromSeconds(1)))
                 {
                     var enqueueTask = Task.Run(async () => {
                         while (index < 13)
@@ -145,7 +145,7 @@ namespace ExtractorUtils.Test.Unit
                         ItExpr.IsAny<CancellationToken>());
 
                 // queue with maximum size
-                using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromMinutes(10), 5))
+                await using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromMinutes(10), 5))
                 {
                     var enqueueTask = Task.Run(async () => {
                         while (index < 23)

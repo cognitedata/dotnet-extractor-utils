@@ -76,72 +76,73 @@ namespace Cognite.Extractor.Utils
                     services.AddSingleton<BaseExtractor>(prov => prov.GetRequiredService<TExtractor>());
                     DateTime startTime = DateTime.UtcNow;
                     ILogger<BaseExtractor> log;
-                    await using var provider = services.BuildServiceProvider();
 
-                    if (addMetrics)
+                    var provider = services.BuildServiceProvider();
+                    await using (provider.ConfigureAwait(false))
                     {
-                        var metrics = provider.GetRequiredService<MetricsService>();
-                    }
-                    log = new NullLogger<BaseExtractor>();
-                    if (addLogger)
-                    {
-                        log = provider.GetRequiredService<ILogger<BaseExtractor>>();
-                    }
-                    var extractor = provider.GetRequiredService<TExtractor>();
-                    if (onCreateExtractor != null)
-                    {
-                        var destination = provider.GetRequiredService<CogniteDestination>();
-                        onCreateExtractor(destination, extractor);
-                    }
-                    var run = provider.GetService<ExtractionRun>();
-                    try
-                    {
-                        await extractor.Start(source.Token).ConfigureAwait(false);
-                    }
-                    catch (TaskCanceledException) when (source.IsCancellationRequested)
-                    {
-                        log.LogWarning("Extractor stopped manually");
-                    }
-                    catch (Exception ex)
-                    {
-                        log.LogError(ex, "Extractor crashed unexpectedly");
-                        if (run != null)
+                        if (addMetrics)
                         {
-                            await run.Report(CogniteSdk.ExtPipeRunStatus.failure, true,
-                                $"Error: {ex.Message}\n{ex.StackTrace}").ConfigureAwait(false);
+                            var metrics = provider.GetRequiredService<MetricsService>();
                         }
-                    }
-                        
-                    if (source.IsCancellationRequested || !restart)
-                    {
-                        log.LogInformation("Quitting extractor");
-                        break;
-                    }
+                        log = new NullLogger<BaseExtractor>();
+                        if (addLogger)
+                        {
+                            log = provider.GetRequiredService<ILogger<BaseExtractor>>();
+                        }
+                        var extractor = provider.GetRequiredService<TExtractor>();
+                        if (onCreateExtractor != null)
+                        {
+                            var destination = provider.GetRequiredService<CogniteDestination>();
+                            onCreateExtractor(destination, extractor);
+                        }
+                        var run = provider.GetService<ExtractionRun>();
+                        try
+                        {
+                            await extractor.Start(source.Token).ConfigureAwait(false);
+                        }
+                        catch (TaskCanceledException) when (source.IsCancellationRequested)
+                        {
+                            log.LogWarning("Extractor stopped manually");
+                        }
+                        catch (Exception ex)
+                        {
+                            log.LogError(ex, "Extractor crashed unexpectedly");
+                            if (run != null)
+                            {
+                                await run.Report(CogniteSdk.ExtPipeRunStatus.failure, true,
+                                    $"Error: {ex.Message}\n{ex.StackTrace}").ConfigureAwait(false);
+                            }
+                        }
 
-                    if (startTime > DateTime.UtcNow - TimeSpan.FromSeconds(600))
-                    {
-                        waitRepeats++;
-                    }
-                    else
-                    {
-                        waitRepeats = 1;
-                    }
+                        if (source.IsCancellationRequested || !restart)
+                        {
+                            log.LogInformation("Quitting extractor");
+                            break;
+                        }
 
-                    try
-                    {
-                        var sleepTime = TimeSpan.FromSeconds(Math.Pow(2, Math.Min(waitRepeats, 9)));
-                        log.LogInformation("Sleeping for {time}", sleepTime);
-                        Task.Delay(sleepTime, source.Token).Wait();
-                    }
-                    catch (Exception)
-                    {
-                        log.LogWarning("Extractor stopped manually");
-                        break;
+                        if (startTime > DateTime.UtcNow - TimeSpan.FromSeconds(600))
+                        {
+                            waitRepeats++;
+                        }
+                        else
+                        {
+                            waitRepeats = 1;
+                        }
+
+                        try
+                        {
+                            var sleepTime = TimeSpan.FromSeconds(Math.Pow(2, Math.Min(waitRepeats, 9)));
+                            log.LogInformation("Sleeping for {time}", sleepTime);
+                            Task.Delay(sleepTime, source.Token).Wait();
+                        }
+                        catch (Exception)
+                        {
+                            log.LogWarning("Extractor stopped manually");
+                            break;
+                        }
                     }
                 }
             }         
         }
-
-
     }
 }

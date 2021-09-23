@@ -241,7 +241,7 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
                 // queue with 1 sec upload interval
-                using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
+                await using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
                     dpCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;
@@ -271,7 +271,7 @@ namespace ExtractorUtils.Test.Unit
                 cbCount = 0;
 
                 // queue with maximum size
-                using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
+                await using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
                 {
                     dpCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;
@@ -355,7 +355,7 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
                 // queue that will not upload automatically.
-                using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.Zero, 0, null, "dp-buffer.bin"))
+                await using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.Zero, 0, null, "dp-buffer.bin"))
                 {
                     var _ = queue.Start(CancellationToken.None);
                     for (int i = 0; i < 10; i++)

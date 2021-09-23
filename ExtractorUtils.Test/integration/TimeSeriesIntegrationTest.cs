@@ -288,7 +288,7 @@ namespace ExtractorUtils.Test.Integration
                 var result = await tester.Destination.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
                 tester.Logger.LogResult(result, RequestType.CreateTimeSeries, false);
 
-                using (var queue = tester.Destination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
+                await using (var queue = tester.Destination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
                     dpCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;

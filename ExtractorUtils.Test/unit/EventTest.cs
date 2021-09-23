@@ -155,7 +155,7 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<EventTest>>();
                 // queue with 1 sec upload interval
-                using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
+                await using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
                     evtCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;
@@ -188,7 +188,7 @@ namespace ExtractorUtils.Test.Unit
                 cbCount = 0;
 
                 // queue with maximum size
-                using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
+                await using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
                 {
                     evtCount += res.Uploaded?.Count() ?? 0;
                     cbCount++;
@@ -262,7 +262,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<EventTest>>();
-                using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.Zero, 0, null, "event-buffer.bin"))
+                await using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.Zero, 0, null, "event-buffer.bin"))
                 {
                     var _ = queue.Start(source.Token);
                     for (int i = 0; i < 10; i++)
