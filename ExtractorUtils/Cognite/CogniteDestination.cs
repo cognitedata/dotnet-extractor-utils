@@ -284,6 +284,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.DataPoints,
                 _config.CdfChunking.TimeSeries,
                 _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.DataPointsGzipLimit,
                 sanitationMode,
                 retryMode,
                 _config.NanReplacement,
