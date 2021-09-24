@@ -256,60 +256,38 @@ namespace Cognite.Extractor.Utils
         /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the
         /// <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
         /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
+        /// 
+        /// On error, the offending timeseries/datapoints can optionally be removed.
         /// </summary>
         /// <param name="points">Data points</param>
+        /// <param name="sanitationMode"></param>
+        /// <param name="retryMode"></param>
         /// <param name="token">Cancellation token</param>
-        public async Task InsertDataPointsAsync(
+        public async Task<CogniteResult> InsertDataPointsAsync(
             IDictionary<Identity, IEnumerable<Datapoint>> points,
+            SanitationMode sanitationMode,
+            RetryMode retryMode,
             CancellationToken token)
         {
             if (points == null || !points.Any())
             {
-                return;
+                return null;
             }
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
-            await _client.DataPoints.InsertAsync(
+            return await DataPointExtensions.InsertAsync(
+                _client,
                 points,
                 _config.CdfChunking.DataPointTimeSeries,
                 _config.CdfChunking.DataPoints,
                 _config.CdfThrottling.DataPoints,
-                token).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Tries to insert the data points into CDF. If any time series are not
-        /// found, or if the time series is of wrong type (Inserting numeric data
-        /// into a string time series), the errors are ignored and the missing/mismatched 
-        /// ids are returned
-        /// </summary>
-        /// <param name="points">Data points</param>
-        /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
-        public async Task<InsertError> InsertDataPointsIgnoreErrorsAsync(
-            IDictionary<Identity, IEnumerable<Datapoint>> points,
-            CancellationToken token)
-        {
-            if (points == null || !points.Any())
-            {
-                return new InsertError(new List<Identity>(), new List<Identity>());
-            }
-            _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
-                points.Values.Select(dp => dp.Count()).Sum(),
-                points.Keys.Count);
-            var errors = await _client.InsertDataPointsIgnoreErrorsAsync(
-                points,
-                _config.CdfChunking.DataPointTimeSeries,
-                _config.CdfChunking.DataPoints,
                 _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.DataPoints,
+                _config.CdfThrottling.TimeSeries,
+                sanitationMode,
+                retryMode,
+                _config.NanReplacement,
                 token).ConfigureAwait(false);
-            if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any()) {
-                    _logger.LogDebug("Found {NumMissing} missing ids and {NumMismatched} mismatched time series", 
-                errors.IdsNotFound.Count(), errors.IdsWithMismatchedData.Count());
-			}
-            return errors;
         }
 
         /// <summary>

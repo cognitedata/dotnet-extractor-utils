@@ -104,6 +104,11 @@ namespace Cognite.Extractor.Utils
         /// Leaving this empty also disables.
         /// </summary>
         public SdkLoggingConfig SdkLogging { get; set; }
+
+        /// <summary>
+        /// Optional replacement for non-finite double values in datapoints
+        /// </summary>
+        public double? NanReplacement { get; set; }
     }
 
     /// <summary>

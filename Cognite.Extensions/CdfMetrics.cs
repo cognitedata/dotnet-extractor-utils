@@ -29,5 +29,9 @@ namespace Cognite.Extensions
             "Number of sequences skipped due to errors");
         public static Counter SequenceRowsSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_sequence_rows_skipped",
             "Number of sequence rows skipped due to errors");
+        public static Counter DatapointTimeseriesSkipped { get; } = Metrics.CreateCounter("extractor_utils_datapoint_timeseries_skipped",
+            "Number of whole timeseries skipped while pushing datapoints");
+        public static Counter DatapointsSkipped { get; } = Metrics.CreateCounter("extractor_utils_datapoints_skipped",
+            "Number of datapoints skipped due to errors");
     }
 }

@@ -381,10 +381,10 @@ namespace Cognite.Extensions
 
             if (errors.Any())
             {
-                results[size - 1] = new CogniteResult<Sequence>(errors, null);
+                results[size - 1] = new CogniteResult(errors);
                 if (size == 1) return results[size - 1];
             }
-            if (size == 0) return new CogniteResult<Sequence>(null, null);
+            if (size == 0) return new CogniteResult(null);
 
             _logger.LogDebug("Inserting sequences rows. Number of sequences: {Number}. Number of chunks: {Chunks}", toCreate.Count(), chunks.Count);
             var generators = chunks
