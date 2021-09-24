@@ -8,6 +8,7 @@ using Prometheus;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -105,6 +106,7 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Maximum number of parallel request</param>
         /// <param name="timeseriesChunkSize">Maximum number of timeseries to retrieve per request</param>
         /// <param name="timeseriesThrottleSize">Maximum number of parallel requests to retrieve timeseries</param>
+        /// <param name="gzipCountLimit">Number of datapoints total before using gzip compression.</param>
         /// <param name="sanitationMode">How to sanitize datapoints</param>
         /// <param name="retryMode">How to handle retries</param>
         /// <param name="nanReplacement">Optional replacement for NaN double values</param>
@@ -118,6 +120,7 @@ namespace Cognite.Extensions
             int throttleSize,
             int timeseriesChunkSize,
             int timeseriesThrottleSize,
+            int gzipCountLimit,
             SanitationMode sanitationMode,
             RetryMode retryMode,
             double? nanReplacement,
@@ -147,7 +150,7 @@ namespace Cognite.Extensions
                 .Select<IDictionary<Identity, IEnumerable<Datapoint>>, Func<Task>>(
                 (chunk, idx) => async () => {
                     var result = await
-                        InsertDataPointsHandleErrors(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, retryMode, token)
+                        InsertDataPointsHandleErrors(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, retryMode, token)
                         .ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -170,6 +173,7 @@ namespace Cognite.Extensions
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             int timeseriesChunkSize,
             int timeseriesThrottleSize,
+            int gzipCountLimit,
             RetryMode retryMode,
             CancellationToken token)
         {
@@ -179,10 +183,32 @@ namespace Cognite.Extensions
                 var request = points.ToInsertRequest();
                 try
                 {
-                    using (CdfMetrics.Datapoints.WithLabels("create"))
+                    bool useGzip = false;
+                    if (gzipCountLimit >= 0)
                     {
-                        await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                        int count = points.Sum(kvp => kvp.Value.Count());
+                        if (count >= gzipCountLimit)
+                        {
+                            useGzip = true;
+                        }
                     }
+
+                    if (useGzip)
+                    {
+                        using (CdfMetrics.Datapoints.WithLabels("create"))
+                        {
+                            await client.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                        }
+                    }
+                    else
+                    {
+                        using (CdfMetrics.Datapoints.WithLabels("create"))
+                        {
+                            await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                        }
+                    }
+
+                    
 
                     _logger.LogDebug("Created {rows} datapoints for {seq} timeseries in CDF", points.Sum(ts => ts.Value.Count()), points.Count);
                     return new CogniteResult(errors);
