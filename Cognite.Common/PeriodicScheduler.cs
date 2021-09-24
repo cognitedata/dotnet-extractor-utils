@@ -65,7 +65,42 @@ namespace Cognite.Extractor.Common
             {
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, interval, name);
-                task.Task = Task.Run(async () => await RunPeriodicTask(task).ConfigureAwait(false));
+                task.Task = Task.Run(async () => await RunPeriodicTaskAsync(task).ConfigureAwait(false));
+                _tasks[name] = task;
+                _newTaskEvent.Set();
+            }
+        }
+
+        /// <summary>
+        /// Schedule a new periodic task to run with interval <paramref name="interval"/>.
+        /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
+        /// task from WaitForAll should be watched.
+        /// </summary>
+        /// <param name="name">Name of task, used to refer to it later</param>
+        /// <param name="interval">Interval to schedule on</param>
+        /// <param name="operation">Function to call on each iteration</param>
+        public void SchedulePeriodicTask(string name, TimeSpan interval, Action<CancellationToken> operation)
+        {
+            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None));
+        }
+
+        /// <summary>
+        /// Schedule a new task to run with on the scheduler.
+        /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
+        /// task from WaitForAll should be watched. Note that this method waits on <paramref name="operation"/> to yield,
+        /// so make sure that it does not contain too much synchronous code.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="operation"></param>
+        public void ScheduleTask(string name, Func<CancellationToken, Task> operation)
+        {
+            if (operation == null) throw new ArgumentNullException(nameof(operation));
+            lock (_taskListMutex)
+            {
+                if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
+                var task = new PeriodicTask(operation, TimeSpan.Zero, name);
+                var tcs = new TaskCompletionSource<int>();
+                task.Task = operation(_source.Token);
                 _tasks[name] = task;
                 _newTaskEvent.Set();
             }
@@ -74,20 +109,14 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Schedule a new task to run with on the scheduler.
         /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
-        /// task from WaitForAll should be watched.
+        /// task from WaitForAll should be watched. Note that this method waits on <paramref name="operation"/> to yield,
+        /// so make sure that it does not contain too much synchronous code.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="operation"></param>
-        public void ScheduleTask(string name, Func<CancellationToken, Task> operation)
+        public void ScheduleTask(string name, Action<CancellationToken> operation)
         {
-            lock (_taskListMutex)
-            {
-                if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
-                var task = new PeriodicTask(operation, TimeSpan.Zero, name);
-                task.Task = Task.Run(async () => await operation(_source.Token).ConfigureAwait(false));
-                _tasks[name] = task;
-                _newTaskEvent.Set();
-            }
+            ScheduleTask(name, token => Task.Run(() => operation(token), CancellationToken.None));
         }
 
         /// <summary>
@@ -121,7 +150,6 @@ namespace Cognite.Extractor.Common
             {
                 if (!_tasks.TryGetValue(name, out task)) return;
             }
-
             await task.Task.ConfigureAwait(false);
         }
 
@@ -225,7 +253,7 @@ namespace Cognite.Extractor.Common
                 
         }
 
-        private async Task RunPeriodicTask(PeriodicTask task)
+        private async Task RunPeriodicTaskAsync(PeriodicTask task)
         {
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {

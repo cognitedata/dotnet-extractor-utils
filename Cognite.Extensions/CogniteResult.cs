@@ -76,6 +76,10 @@ namespace Cognite.Extensions
                 {
                     ParseSequenceRowException(rex, result);
                 }
+                else if (type == RequestType.CreateDatapoints)
+                {
+                    ParseDatapointsException(rex, result);
+                }
                 return result;
             }
             else
@@ -267,6 +271,10 @@ namespace Cognite.Extensions
         /// </summary>
         ItemDuplicated,
         /// <summary>
+        /// Field type did not match
+        /// </summary>
+        MismatchedType,
+        /// <summary>
         /// Item does not satisfy CDF field limits
         /// </summary>
         SanitationFailed,
@@ -381,6 +389,14 @@ namespace Cognite.Extensions
         /// </summary>
         SequenceRowNumber,
         /// <summary>
+        /// Value of a datapoint
+        /// </summary>
+        DataPointValue,
+        /// <summary>
+        /// Timestamp of a datapoint
+        /// </summary>
+        DataPointTimestamp,
+        /// <summary>
         /// None or unknown
         /// </summary>
         None = -1
@@ -409,7 +425,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create sequence rows
         /// </summary>
-        CreateSequenceRows
+        CreateSequenceRows,
+        /// <summary>
+        /// Create timeseries datapoints
+        /// </summary>
+        CreateDatapoints
     }
     
 
