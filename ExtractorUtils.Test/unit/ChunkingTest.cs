@@ -5,17 +5,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Cognite.Extractor.Common;
-using Cognite.Extractor.Utils;
 using Xunit.Sdk;
 using Cognite.Extensions;
 using CogniteSdk;
 
 namespace ExtractorUtils.Test.Unit
 {
-    public static class ChunkingTest {
-
+    public class ChunkingTest
+    {
         [Fact]
-        public static async Task RunThrottledOK()
+        public async Task RunThrottledOK()
         {
             var completed = new List<int>();
             var token = CancellationToken.None;
@@ -35,7 +34,7 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public static async Task RunThrottledException()
+        public async Task RunThrottledException()
         {
             var completed = new List<int>();
             var token = CancellationToken.None;
@@ -69,7 +68,7 @@ namespace ExtractorUtils.Test.Unit
         [InlineData(10_000, 100_000)]
         [InlineData(10_000, 123_456)]
         [InlineData(999, 1_000_000)]
-        public static void TestEnumerableChunkBy(int chunkSize, int datapoints)
+        public void TestEnumerableChunkBy(int chunkSize, int datapoints)
         {
             var left = datapoints % chunkSize;
             var numChunks = datapoints/chunkSize + (left > 0 ? 1 : 0);
@@ -97,7 +96,7 @@ namespace ExtractorUtils.Test.Unit
         [InlineData(100_000, 10_000, 200, 10000, 20, 10, 100000)]
         [InlineData(100_000, 10_000, 20000, 5, 2, 10000, 50000)]
         [InlineData(100, 10_000, 1, 10_000, 100, 1, 100)]
-        public static void TestDictionaryChunking(
+        public void TestDictionaryChunking(
             int dpChunk, int tsChunk,
             int timeseries, int datapoints,
             int expChunks, int expTimeseriesMax, int expDatapointsMax)
@@ -144,7 +143,7 @@ namespace ExtractorUtils.Test.Unit
         [InlineData(0, 2, 50)]
         [InlineData(5, 0, 0)]
         [InlineData(2, 2, 50)]
-        public static async Task TestTaskThrottler(int maxParallelism, int maxPerUnit, int timespanMs)
+        public async Task TestTaskThrottler(int maxParallelism, int maxPerUnit, int timespanMs)
         {
             // Running this test in github actions is pretty unreliable...
             for (int i = 0; i < 5; i++)
@@ -186,7 +185,7 @@ namespace ExtractorUtils.Test.Unit
             }
         }
         [Fact]
-        public static async Task TestTaskThrottlerResults()
+        public async Task TestTaskThrottlerResults()
         {
             using var throttler = new TaskThrottler(0);
             static Task okGenerator() => Task.Delay(100);
@@ -226,7 +225,7 @@ namespace ExtractorUtils.Test.Unit
         [InlineData(5, new[] { 5, 2 })]
         [InlineData(6, new[] { 6, 1 })]
         [InlineData(7, new[] { 7 })]
-        public static void TestChunkByHierarchy(int maxSize, int[] lengths)
+        public void TestChunkByHierarchy(int maxSize, int[] lengths)
         {
             var assets = new List<AssetCreate>()
             {
@@ -242,8 +241,16 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(7, result.Aggregate(0, (seed, res) => seed + res.Count()));
             Assert.Equal(lengths, result.Select(res => res.Count()));
         }
-        [Fact]
-        public static async Task TestPeriodicScheduler()
+
+        private async Task RunWithTimeout(Task task, int timeoutMs)
+        {
+            await Task.WhenAny(task, Task.Delay(timeoutMs));
+            Assert.True(task.IsCompleted);
+            // Assert.False(task.IsFaulted);
+        }
+
+        [Fact(Timeout = 20000)]
+        public async Task TestPeriodicScheduler()
         {
             using var source = new CancellationTokenSource();
             using var scheduler = new PeriodicScheduler(source.Token);
@@ -254,16 +261,16 @@ namespace ExtractorUtils.Test.Unit
             scheduler.SchedulePeriodicTask("periodic", TimeSpan.FromMilliseconds(100), token =>
             {
                 periodicRuns++;
-                return Task.CompletedTask;
             });
-            Assert.Throws<InvalidOperationException>(() => scheduler.SchedulePeriodicTask("periodic", TimeSpan.Zero, null));
+            Assert.Throws<InvalidOperationException>(() =>
+                scheduler.SchedulePeriodicTask("periodic", TimeSpan.Zero, token => Task.CompletedTask));
 
             int singleRuns = 0;
             // Schedule single
-            scheduler.ScheduleTask("single", token =>
+            scheduler.ScheduleTask("single", async token =>
             {
                 singleRuns++;
-                return Task.CompletedTask;
+                await Task.Delay(1000);
             });
 
             // Schedule interally looping task
@@ -275,16 +282,17 @@ namespace ExtractorUtils.Test.Unit
                     await Task.Delay(100);
                 }
             });
-            Assert.Throws<InvalidOperationException>(() => scheduler.ScheduleTask("intLoop", null));
+            Assert.Throws<InvalidOperationException>(() => scheduler.ScheduleTask("intLoop", token => Task.CompletedTask));
 
+            await Task.Delay(500);
             // Wait for single to terminate
-            await scheduler.WaitForTermination("single");
+            await RunWithTimeout(scheduler.WaitForTermination("single"), 5000);
             Assert.Equal(1, singleRuns);
 
             // Wait for internally looping to terminate
             var intTask = scheduler.WaitForTermination("intLoop");
             shouldLoop = false;
-            await intTask;
+            await RunWithTimeout(intTask, 1000);
 
 
             // pause periodic
@@ -298,13 +306,10 @@ namespace ExtractorUtils.Test.Unit
 
 
             // Exit periodic and wait
-            await scheduler.ExitAndWaitForTermination("periodic");
+            await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
             source.Cancel();
 
-            var task = scheduler.WaitForAll();
-
-            await Task.WhenAll(task, Task.Delay(2000));
-            Assert.True(task.IsCompleted);
+            await RunWithTimeout(scheduler.WaitForAll(), 1000);
         }
     }
 }

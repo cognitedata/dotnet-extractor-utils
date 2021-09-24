@@ -89,11 +89,14 @@ namespace ExtractorUtils.Test
                 "    sequences: 10",
                 "    sequence-row-sequences: 10",
                 "    sequence-rows: 100",
+                "    data-point-time-series: 10",
+                "    data-points: 100",
                 "  cdf-throttling:",
                 "    time-series: 2",
                 "    assets: 2",
                 "    events: 2",
-                "    sequences: 2"
+                "    sequences: 2",
+                "    data-points: 2"
             }).ToList();
             return config.ToArray();
         }

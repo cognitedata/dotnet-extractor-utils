@@ -128,7 +128,7 @@ namespace ExtractorUtils.Test.Integration
 
     public class ExtractorTest
     {
-        [Fact]
+        [Fact(Timeout = 30000)]
         public async Task TestExtractorRun()
         {
             var configPath = "test-config-base-extractor";

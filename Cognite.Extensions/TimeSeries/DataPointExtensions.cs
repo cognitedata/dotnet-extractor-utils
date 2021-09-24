@@ -4,12 +4,12 @@ using CogniteSdk.Resources;
 using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Polly.Timeout;
 using Prometheus;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
@@ -17,191 +17,51 @@ using TimeRange = Cognite.Extractor.Common.TimeRange;
 namespace Cognite.Extensions
 {
     /// <summary>
-    /// Extension utility methods for <see cref="Client"/>
+    /// Extensions to datapoints
     /// </summary>
-    public static class DatapointExtensions
+    public static class DataPointExtensions
     {
-        private static ILogger _logger = new NullLogger<Client>();
         private const int _maxNumOfVerifyRequests = 10;
+        private static ILogger _logger = new NullLogger<Client>();
 
         internal static void SetLogger(ILogger logger)
         {
             _logger = logger;
         }
 
-        private static readonly Counter _numberDataPoints = Prometheus.Metrics.CreateCounter(
-            "extractor_utils_cdf_datapoints", "Number of data points uploaded to CDF");
-        private static readonly Counter _invalidTimeDataPoints = Prometheus.Metrics.CreateCounter(
-            "extractor_utils_cdf_invalid_data_points", "Number of skipped data points with timestamps not supported by CDF");
         /// <summary>
-        /// Insert the provided data points into CDF. The data points are chunked
-        /// according to <paramref name="keyChunkSize"/> and <paramref name="valueChunkSize"/>.
-        /// The data points are trimmed according to the <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
-        /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
+        /// Create a protobuf insertion request from dictionary
         /// </summary>
-        /// <param name="dataPoints">Cognite client</param>
-        /// <param name="points">Data points</param>
-        /// <param name="keyChunkSize">Dictionary key chunk size</param>
-        /// <param name="valueChunkSize">Dictionary value chunk size</param>
-        /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
-        public static async Task InsertAsync(
-            this DataPointsResource dataPoints,
-            IDictionary<Identity, IEnumerable<Datapoint>> points,
-            int keyChunkSize,
-            int valueChunkSize,
-            int throttleSize,
-            CancellationToken token)
+        /// <param name="dps">Datapoints to insert</param>
+        /// <returns>Converted request</returns>
+        public static DataPointInsertionRequest ToInsertRequest(this IDictionary<Identity, IEnumerable<Datapoint>> dps)
         {
-            if (points is null)
-            {
-                throw new ArgumentNullException(nameof(points));
-            }
-            var trimmedDict = GetTrimmedDataPoints(points);
-            var chunks = trimmedDict
-                .Select(p => (p.Key, p.Value))
-                .ChunkBy(valueChunkSize, keyChunkSize)
-                .ToList();
-
-            var generators = chunks
-                .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
-                    chunk => async () => await InsertDataPointsChunk(dataPoints, chunk, token).ConfigureAwait(false));
-
-            int taskNum = 0;
-            await generators.RunThrottled(
-                throttleSize,
-                (_) => {
-                    if (chunks.Count > 1)
-                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(InsertAsync), ++taskNum, chunks.Count);
-                },
-                token).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Tries to insert the data points into CDF. If any time series are not
-        /// found, or if the time series is of wrong type (Inserting numeric data
-        /// into a string time series), the errors are ignored and the missing/mismatched 
-        /// ids are returned
-        /// </summary>
-        /// <param name="client">Cognite client</param>
-        /// <param name="points">Data points</param>
-        /// <param name="keyChunkSize">Dictionary key (timeseries id) chunk size</param>
-        /// <param name="valueChunkSize">Dictionary value (datapoint) chunk size</param>
-        /// <param name="timeSeriesChunk">Chuck size for requests to the timeseries endpoint</param>
-        /// <param name="throttleSize">Throttle size</param>
-        /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
-        public static async Task<InsertError> InsertDataPointsIgnoreErrorsAsync(
-            this Client client,
-            IDictionary<Identity, IEnumerable<Datapoint>> points,
-            int keyChunkSize,
-            int valueChunkSize,
-            int timeSeriesChunk,
-            int throttleSize,
-            CancellationToken token)
-        {
-            if (points == null)
-            {
-                throw new ArgumentNullException(nameof(points));
-            }
-            var trimmedDict = GetTrimmedDataPoints(points);
-            var chunks = trimmedDict
-                .Select(p => (p.Key, p.Value))
-                .ChunkBy(valueChunkSize, keyChunkSize)
-                .ToList();
-
-            var errors = new List<InsertError>();
-            object mutex = new object();
-
-            var generators = chunks
-                .Select<IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)>, Func<Task>>(
-                    chunk => async () => {
-                        var error = await InsertDataPointsIgnoreErrorsChunk(client, chunk, timeSeriesChunk, token).ConfigureAwait(false);
-                        lock (mutex)
-                        {
-                            errors.Add(error);
-                        }
-                    });
-            int taskNum = 0;
-            await generators.RunThrottled(
-                throttleSize,
-                (_) => {
-                    if (chunks.Count > 1)
-                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(InsertDataPointsIgnoreErrorsAsync), ++taskNum, chunks.Count);
-                },
-                token).ConfigureAwait(false);
-            InsertError errorsFound = new InsertError(Enumerable.Empty<Identity>(), Enumerable.Empty<Identity>());
-            foreach (var err in errors)
-            {
-                errorsFound = errorsFound.UnionWith(err);
-            }
-            return errorsFound;
-        }
-
-        private static Dictionary<Identity, IEnumerable<Datapoint>> GetTrimmedDataPoints(IDictionary<Identity, IEnumerable<Datapoint>> points)
-        {
-            Dictionary<Identity, IEnumerable<Datapoint>> trimmedDict = new Dictionary<Identity, IEnumerable<Datapoint>>();
-            foreach (var key in points.Keys)
-            {
-                var trimmedDps = points[key].TrimValues().ToList();
-                var validDps = trimmedDps.RemoveOutOfRangeTimestamps().ToList();
-                var difference = trimmedDps.Count - validDps.Count;
-                if (difference > 0)
-                {
-                    _invalidTimeDataPoints.Inc(difference);
-                    _logger.LogWarning("Time series {Name}: Discarding {Num} data points outside valid CDF timestamp range", key.ToString(), difference);
-                }
-                if (validDps.Any())
-                {
-                    if (trimmedDict.ContainsKey(key))
-                    {
-                        var existing = trimmedDict[key].ToList();
-                        existing.AddRange(validDps);
-                        trimmedDict[key] = existing;
-                    }
-                    else
-                    {
-                        trimmedDict.Add(key, validDps);
-                    }
-                }
-            }
-
-            return trimmedDict;
-        }
-
-        private static async Task InsertDataPointsChunk(
-            this DataPointsResource dataPoints,
-            IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)> points,
-            CancellationToken token)
-        {
-            if (!points.Any()) return;
+            if (dps == null) throw new ArgumentNullException(nameof(dps));
             var request = new DataPointInsertionRequest();
             var dataPointCount = 0;
-            foreach (var entry in points)
+            foreach (var kvp in dps)
             {
                 var item = new DataPointInsertionItem();
-                if (entry.id.Id.HasValue)
+                if (kvp.Key.Id.HasValue)
                 {
-                    item.Id = entry.id.Id.Value;
+                    item.Id = kvp.Key.Id.Value;
                 }
                 else
                 {
-                    item.ExternalId = entry.id.ExternalId.ToString();
+                    item.ExternalId = kvp.Key.ExternalId.ToString();
                 }
-                if (!entry.dataPoints.Any())
+                if (!kvp.Value.Any())
                 {
                     continue;
                 }
-                var stringPoints = entry.dataPoints
+                var stringPoints = kvp.Value
                     .Where(dp => dp.StringValue != null)
                     .Select(dp => new StringDatapoint
                     {
                         Timestamp = dp.Timestamp,
                         Value = dp.StringValue
                     });
-                var numericPoints = entry.dataPoints
+                var numericPoints = kvp.Value
                     .Where(dp => dp.NumericValue.HasValue)
                     .Select(dp => new NumericDatapoint
                     {
@@ -231,85 +91,130 @@ namespace Cognite.Extensions
                     }
                 }
             }
-            try
-            {
-                using (CdfMetrics.Datapoints.WithLabels("insert").NewTimer())
-                {
-                    await dataPoints.CreateAsync(request, token).ConfigureAwait(false);
-                }
-                _numberDataPoints.Inc(dataPointCount);
-            }
-            catch (TimeoutRejectedException)
-            {
-                _logger.LogWarning("Uploading data points to CDF timed out. Consider reducing the chunking sizes in the config file");
-                throw;
-            }
+            return request;
         }
 
-        private static async Task<InsertError> InsertDataPointsIgnoreErrorsChunk(
-            this Client client,
-            IEnumerable<(Identity id, IEnumerable<Datapoint> dataPoints)> points,
-            int timeSeriesChunk,
+        /// <summary>
+        /// Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+        /// and can optionally handle errors.
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="points">Datapoints to insert</param>
+        /// <param name="keyChunkSize">Maximum number of timeseries per chunk</param>
+        /// <param name="valueChunkSize">Maximum number of datapoints per timeseries</param>
+        /// <param name="throttleSize">Maximum number of parallel request</param>
+        /// <param name="timeseriesChunkSize">Maximum number of timeseries to retrieve per request</param>
+        /// <param name="timeseriesThrottleSize">Maximum number of parallel requests to retrieve timeseries</param>
+        /// <param name="sanitationMode">How to sanitize datapoints</param>
+        /// <param name="retryMode">How to handle retries</param>
+        /// <param name="nanReplacement">Optional replacement for NaN double values</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Result with a list of errors</returns>
+        public static async Task<CogniteResult> InsertAsync(
+            Client client,
+            IDictionary<Identity, IEnumerable<Datapoint>> points,
+            int keyChunkSize,
+            int valueChunkSize,
+            int throttleSize,
+            int timeseriesChunkSize,
+            int timeseriesThrottleSize,
+            SanitationMode sanitationMode,
+            RetryMode retryMode,
+            double? nanReplacement,
             CancellationToken token)
         {
-            if (!points.Any()) return new InsertError(Enumerable.Empty<Identity>(), Enumerable.Empty<Identity>());
-            var missing = new HashSet<Identity>();
-            var mismatched = new HashSet<Identity>();
-            try
+            IEnumerable<CogniteError> errors;
+            (points, errors) = Sanitation.CleanDataPointsRequest(points, sanitationMode, nanReplacement);
+
+            var chunks = points
+                .Select(p => (p.Key, p.Value))
+                .ChunkBy(valueChunkSize, keyChunkSize)
+                .Select(chunk => chunk.ToDictionary(pair => pair.Key, pair => pair.Values))
+                .ToList();
+
+            int size = chunks.Count + (errors.Any() ? 1 : 0);
+            var results = new CogniteResult[size];
+
+            if (errors.Any())
             {
-                await InsertDataPointsChunk(client.DataPoints, points, token).ConfigureAwait(false);
+                results[size - 1] = new CogniteResult(errors);
+                if (size == 1) return results[size - 1];
             }
-            catch (ResponseException e) when (e.Code == 400)
+            if (size == 0) return new CogniteResult(null);
+
+            _logger.LogDebug("Inserting timeseries datapoints. Number of timeseries: {Number}. Number of chunks: {Chunks}", points.Count, chunks.Count);
+            var generators = chunks
+                .Select<IDictionary<Identity, IEnumerable<Datapoint>>, Func<Task>>(
+                (chunk, idx) => async () => {
+                    var result = await
+                        InsertDataPointsHandleErrors(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, retryMode, token)
+                        .ConfigureAwait(false);
+                    results[idx] = result;
+                });
+
+            int taskNum = 0;
+            await generators.RunThrottled(
+                throttleSize,
+                (_) => {
+                    if (chunks.Count > 1)
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
+                            nameof(InsertAsync), ++taskNum, chunks.Count);
+                },
+                token).ConfigureAwait(false);
+
+            return CogniteResult.Merge(results);
+        }
+
+        private static async Task<CogniteResult> InsertDataPointsHandleErrors(
+            Client client,
+            IDictionary<Identity, IEnumerable<Datapoint>> points,
+            int timeseriesChunkSize,
+            int timeseriesThrottleSize,
+            RetryMode retryMode,
+            CancellationToken token)
+        {
+            var errors = new List<CogniteError>();
+            while (points != null && points.Any() && !token.IsCancellationRequested)
             {
-                if (e.Missing != null && e.Missing.Any())
+                var request = points.ToInsertRequest();
+                try
                 {
-                    CogniteUtils.ExtractMissingFromResponseException(missing, e);
-                }
-                else if (e.Message == "Expected string value for datapoint" || e.Message == "Expected numeric value for datapoint")
-                {
-                    // The error message does not specify which time series caused the error.
-                    // Need to fetch all time series in the chunk and check...
-                    IEnumerable<TimeSeries> timeseries;
-                    using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
+                    using (CdfMetrics.Datapoints.WithLabels("create"))
                     {
-                        timeseries = await client.TimeSeries
-                            .GetTimeSeriesByIdsIgnoreErrors(points.Select(p => p.id), timeSeriesChunk, 1, token)
-                            .ConfigureAwait(false);
+                        await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
                     }
-                    foreach (var entry in points)
+
+                    _logger.LogDebug("Created {rows} datapoints for {seq} timeseries in CDF", points.Sum(ts => ts.Value.Count()), points.Count);
+                    return new CogniteResult(errors);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogDebug("Failed to create datapoints for {seq} timeseries", points.Count);
+                    var error = ResultHandlers.ParseException(ex, RequestType.CreateDatapoints);
+                    if (error.Complete) errors.Add(error);
+                    if (error.Type == ErrorType.FatalFailure
+                        && (retryMode == RetryMode.OnFatal
+                            || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
-                        var ts = timeseries
-                            .Where(t => entry.id.ExternalId == t.ExternalId || entry.id.Id == t.Id)
-                            .FirstOrDefault();
-                        if (ts != null)
+                        await Task.Delay(1000, token).ConfigureAwait(false);
+                    }
+                    else if (retryMode == RetryMode.None) break;
+                    else
+                    {
+                        if (!error.Complete)
                         {
-                            if (ts.IsString && entry.dataPoints.Any(dp => dp.NumericValue.HasValue))
-                            {
-                                mismatched.Add(entry.id);
-                            }
-                            else if (!ts.IsString && entry.dataPoints.Any(dp => dp.StringValue != null))
-                            {
-                                mismatched.Add(entry.id);
-                            }
+                            (error, points) = await ResultHandlers
+                                .VerifyDatapointsFromCDF(client.TimeSeries, error,
+                                    points, timeseriesChunkSize, timeseriesThrottleSize, token)
+                                .ConfigureAwait(false);
+                            errors.Add(error);
                         }
-                    }
-                    if (!mismatched.Any())
-                    {
-                        _logger.LogError("Trying to insert data points of the wrong type, but cannot determine in which time series");
-                        throw;
+                        points = ResultHandlers.CleanFromError(error, points);
                     }
                 }
-                else
-                {
-                    throw;
-                }
-                var toInsert = points
-                    .Where(p => !missing.Contains(p.id) && !mismatched.Contains(p.id));
-                var errors = await InsertDataPointsIgnoreErrorsChunk(client, toInsert, timeSeriesChunk, token).ConfigureAwait(false);
-                missing.UnionWith(errors.IdsNotFound);
-                mismatched.UnionWith(errors.IdsWithMismatchedData);
             }
-            return new InsertError(missing, mismatched);
+
+            return new CogniteResult(errors);
         }
 
         /// <summary>
@@ -340,9 +245,9 @@ namespace Cognite.Extensions
                 throw new ArgumentNullException(nameof(ranges));
             }
             var toDelete = new List<IdentityWithRange>();
-            foreach(var kvp in ranges)
+            foreach (var kvp in ranges)
             {
-                _logger.LogTrace("Deleting data points from time series {Name}. Ranges: {Ranges}", 
+                _logger.LogTrace("Deleting data points from time series {Name}. Ranges: {Ranges}",
                     kvp.Key.ToString(), string.Join(", ", kvp.Value.Select(v => v.ToString())));
                 toDelete.AddRange(kvp.Value.Select(r =>
                     new IdentityWithRange
@@ -376,10 +281,10 @@ namespace Cognite.Extensions
             var taskNum = 0;
             await generators.RunThrottled(
                 deleteThrottleSize,
-                (_) => { 
-                    if (chunks.Count > 1) 
-                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", 
-                            nameof(DeleteIgnoreErrorsAsync), ++taskNum, chunks.Count); 
+                (_) => {
+                    if (chunks.Count > 1)
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
+                            nameof(DeleteIgnoreErrorsAsync), ++taskNum, chunks.Count);
                 },
                 token).ConfigureAwait(false);
             _logger.LogDebug("Deletion completed. Verifying that data points were removed from CDF");
@@ -456,7 +361,7 @@ namespace Cognite.Extensions
 
         private static async Task<HashSet<Identity>> VerifyDataPointsDeletion(
             DataPointsResource dataPoints,
-            IEnumerable<DataPointsQueryItem> query, 
+            IEnumerable<DataPointsQueryItem> query,
             CancellationToken token)
         {
             int count = 1;
@@ -477,7 +382,7 @@ namespace Cognite.Extensions
                 }
                 count = 0;
                 var queries = dataPointsQuery.Items.ToList();
-                var remaining = new List<DataPointsQueryItem>(); 
+                var remaining = new List<DataPointsQueryItem>();
                 for (int i = 0; i < results.Items.Count; ++i)
                 {
                     // The query and response have items in the same order
@@ -501,8 +406,8 @@ namespace Cognite.Extensions
             }
             if (tries == _maxNumOfVerifyRequests && count > 0)
             {
-                _logger.LogWarning("Failed to verify the deletion of data points after {NumAttempts} attempts. Ids: {Ids}", 
-                    _maxNumOfVerifyRequests, 
+                _logger.LogWarning("Failed to verify the deletion of data points after {NumAttempts} attempts. Ids: {Ids}",
+                    _maxNumOfVerifyRequests,
                     dataPointsQuery.Items.Select(q => q.Id.HasValue ? q.Id.ToString() : q.ExternalId.ToString()));
             }
             else
@@ -559,7 +464,7 @@ namespace Cognite.Extensions
                                 Items = chunk
                             }, token).ConfigureAwait(false);
                     }
-                        
+
                     foreach (var dp in dps)
                     {
                         if (dp.DataPoints.Any())
@@ -644,7 +549,7 @@ namespace Cognite.Extensions
                                 Limit = 1
                             }, token).ConfigureAwait(false);
                     }
-                   
+
                     foreach (var dp in dps.Items)
                     {
                         Identity id;
@@ -674,7 +579,7 @@ namespace Cognite.Extensions
                 });
             int numTasks = 0;
             await generators
-                .RunThrottled(throttleSize, (_) => 
+                .RunThrottled(throttleSize, (_) =>
                     _logger.LogDebug("First timestamp from CDF: {num}/{total}", ++numTasks, chunks.Count), token)
                 .ConfigureAwait(false);
             return ret;
