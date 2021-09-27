@@ -79,7 +79,7 @@ namespace ExtractorUtils.Test.Integration
 
             var totalUploaded = 0;
             try {
-                using (var queue = tester.Destination.CreateRawUploadQueue<TestDto>(dbName, tableName, TimeSpan.FromSeconds(1), 0, res => {
+                await using (var queue = tester.Destination.CreateRawUploadQueue<TestDto>(dbName, tableName, TimeSpan.FromSeconds(1), 0, res => {
                     var numUploaded = res.Uploaded?.Count() ?? 0;
                     totalUploaded += numUploaded;
                     tester.Logger.LogInformation("Sent {Num} raw rows to CDF", numUploaded);
