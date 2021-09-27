@@ -106,6 +106,13 @@ cognite:
         # Format of the log message
         format: "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms"
 
+    # Configure an extraction pipeline manager
+    extraction-pipeline:
+        # ExternalId of extraction pipeline
+        # pipeline-id: 
+        # Frequency to report "Seen", in seconds. Less than or equal to zero will not report automatically.
+        # frequency: 600
+
 
 # Store state in a local database or in CDF raw to speed up starting, by not having to read state from destinations
 state-store:
