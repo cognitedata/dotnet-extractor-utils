@@ -12,10 +12,8 @@ namespace Cognite.Extractor.Utils
     /// <summary>
     /// Base class for extractors writing timeseries, events or datapoints.
     /// </summary>
-    public abstract class BaseExtractor : IDisposable
+    public abstract class BaseExtractor : IDisposable, IAsyncDisposable
     {
-        private bool disposedValue;
-
         /// <summary>
         /// Configuration object
         /// </summary>
@@ -259,29 +257,42 @@ namespace Cognite.Extractor.Utils
         /// <param name="disposing">True if disposing</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (disposing)
             {
-                if (disposing)
+                try
                 {
-                    try
-                    {
-                        // Cannot be allowed to fail here
-                        Scheduler.ExitAllAndWait().Wait();
-                    } catch { }
-                    Scheduler.Dispose();
-                    EventUploadQueue?.Dispose();
-                    TSUploadQueue?.Dispose();
-                    foreach (var queue in RawUploadQueues.Values)
-                    {
-                        queue.Dispose();
-                    }
-                    RawUploadQueues.Clear();
-                    Source.Cancel();
-                    Source.Dispose();
+                    // Cannot be allowed to fail here
+                    Scheduler.ExitAllAndWait().Wait();
+                } catch { }
+                Scheduler.Dispose();
+                EventUploadQueue?.Dispose();
+                TSUploadQueue?.Dispose();
+                foreach (var queue in RawUploadQueues.Values)
+                {
+                    queue.Dispose();
                 }
-
-                disposedValue = true;
+                RawUploadQueues.Clear();
+                Source.Cancel();
+                Source.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Internal method to dispose asynchronously. Preferred.
+        /// </summary>
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            await Scheduler.ExitAllAndWait().ConfigureAwait(false);
+            Scheduler.Dispose();
+            if (EventUploadQueue != null) await EventUploadQueue.DisposeAsync().ConfigureAwait(false);
+            if (TSUploadQueue != null) await TSUploadQueue.DisposeAsync().ConfigureAwait(false);
+            foreach (var queue in RawUploadQueues.Values)
+            {
+                if (queue != null) await queue.DisposeAsync().ConfigureAwait(false);
+            }
+            RawUploadQueues.Clear();
+            Source.Cancel();
+            Source.Dispose();
         }
 
         /// <summary>
@@ -292,6 +303,18 @@ namespace Cognite.Extractor.Utils
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose extractor asynchronously. Preferred.
+        /// </summary>
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore().ConfigureAwait(false);
+            Dispose(false);
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
+            GC.SuppressFinalize(this);
+#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         }
     }
 }
