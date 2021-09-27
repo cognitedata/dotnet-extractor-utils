@@ -47,15 +47,20 @@ namespace Cognite.Extractor.Utils
         protected CancellationTokenSource Source { get; private set; }
 
         /// <summary>
+        /// Access to the service provider this extractor was built from
+        /// </summary>
+        protected IServiceProvider Provider { get; private set; }
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="config">Configuration object</param>
         /// <param name="destination">Cognite destination</param>
-        public BaseExtractor(BaseConfig config, CogniteDestination destination)
+        /// <param name="provider">Service provider</param>
+        public BaseExtractor(BaseConfig config, CogniteDestination destination, IServiceProvider provider)
         {
             Config = config;
             Destination = destination;
-            
+            Provider = provider;
         }
 
         /// <summary>
@@ -258,7 +263,11 @@ namespace Cognite.Extractor.Utils
             {
                 if (disposing)
                 {
-                    Scheduler.ExitAllAndWait().Wait();
+                    try
+                    {
+                        // Cannot be allowed to fail here
+                        Scheduler.ExitAllAndWait().Wait();
+                    } catch { }
                     Scheduler.Dispose();
                     EventUploadQueue?.Dispose();
                     TSUploadQueue?.Dispose();
