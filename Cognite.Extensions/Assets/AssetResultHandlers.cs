@@ -72,7 +72,7 @@ namespace Cognite.Extensions
         /// <returns>Assets that are not affected by the error</returns>
         public static async Task<IEnumerable<AssetCreate>> CleanFromError(
             AssetsResource resource,
-            CogniteError error,
+            CogniteError<AssetCreate> error,
             IEnumerable<AssetCreate> assets,
             int assetChunkSize,
             int assetThrottleSize,
@@ -103,7 +103,7 @@ namespace Cognite.Extensions
             var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<AssetCreate>();
-            var skipped = new List<object>();
+            var skipped = new List<AssetCreate>();
 
             foreach (var asset in assets)
             {

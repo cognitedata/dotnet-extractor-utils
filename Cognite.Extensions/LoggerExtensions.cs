@@ -22,8 +22,8 @@ namespace Cognite.Extensions
         /// <param name="ignoreExisting">True to not log errors caused by items already present in CDF</param>
         /// <param name="handledLevel">Log level of errors that were handled by the utils</param>
         /// <param name="fatalLevel">Log level of errors that could not be handled and caused the request to fail</param>
-        public static void LogCogniteError(this ILogger logger,
-            CogniteError error,
+        public static void LogCogniteError<TError>(this ILogger logger,
+            CogniteError<TError> error,
             RequestType requestType,
             bool ignoreExisting,
             LogLevel handledLevel = LogLevel.Debug,
@@ -33,6 +33,12 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(error));
             }
+            string cogniteString = null;
+            if (error.Exception != null && error.Exception is ResponseException rex)
+            {
+                cogniteString = $" RequestId: {rex.RequestId}, CDF Message: {rex.Message}";
+            }
+
             string valueString = null;
             if (error.Values != null && error.Values.Any())
             {
@@ -50,6 +56,15 @@ namespace Cognite.Extensions
                 case RequestType.CreateTimeSeries:
                     resourceName = "timeseries";
                     break;
+                case RequestType.CreateDatapoints:
+                    resourceName = "datapoint timeseries";
+                    break;
+                case RequestType.CreateSequences:
+                    resourceName = "sequences";
+                    break;
+                case RequestType.CreateSequenceRows:
+                    resourceName = "sequence row sequences";
+                    break;
                 default:
                     resourceName = "unknown";
                     break;
@@ -57,35 +72,41 @@ namespace Cognite.Extensions
             switch (error.Type)
             {
                 case ErrorType.FatalFailure:
-                    logger.Log(fatalLevel, "Fatal error in request of type {type}: {msg}", requestType, error.Message);
+                    logger.Log(fatalLevel, "Fatal error in request of type {type}: {msg}. {cdf}",
+                        requestType, error.Message, cogniteString);
                     break;
                 case ErrorType.ItemDuplicated:
                     logger.Log(handledLevel, "The following {resource}s were duplicated in the request: {values}, " +
-                        "resulting in the removal of {cnt} {name} from the request",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName);
+                        "resulting in the full or partial removal of {cnt} {name} from the request.{cdf}",
+                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
                 case ErrorType.ItemExists:
                     if (ignoreExisting) return;
                     logger.Log(handledLevel, "The following {resource}s already existed in CDF: {values}, " +
-                        "resulting in the removal of {cnt} {name} from the request",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName);
+                        "resulting in the removal of {cnt} {name} from the request.{cdf}",
+                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
                 case ErrorType.ItemMissing:
                     logger.Log(handledLevel, "The following {resource}s were missing in CDF: {values}, " +
-                        "resulting in the removal of {cnt} {name} from the request",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName);
+                        "resulting in the removal of {cnt} {name} from the request.{cdf}",
+                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
+                    break;
+                case ErrorType.MismatchedType:
+                    logger.Log(handledLevel, "Values of {resource} were of mismatched type in " +
+                        "{cnt} {name}, resulting in their full or partial removal from the request.{cdf}",
+                        error.Resource, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
                 case ErrorType.SanitationFailed:
                     logger.Log(handledLevel, "Sanitation of {resource} with values: {values} failed, " +
-                        "resulting in the removal of {cnt} {name} from the request",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName);
+                        "resulting in the full or partial removal of {cnt} {name} from the request.{cdf}",
+                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
             }
         }
 
 
-        private static void LogCommon<T>(ILogger logger,
-            CogniteResult<T> result,
+        private static void LogCommon<TResult, TError>(ILogger logger,
+            CogniteResult<TResult, TError> result,
             RequestType requestType,
             LogLevel infoLevel,
             LogLevel handledErrorLevel,
@@ -110,7 +131,8 @@ namespace Cognite.Extensions
         /// <summary>
         /// Log the CogniteResult object and all its errors.
         /// </summary>
-        /// <typeparam name="T">Type of result</typeparam>
+        /// <typeparam name="TResult">Type of result</typeparam>
+        /// <typeparam name="TError">Type of reported error</typeparam>
         /// <param name="logger">Logger to write to</param>
         /// <param name="result">Result to log</param>
         /// <param name="requestType">Request type</param>
@@ -118,8 +140,8 @@ namespace Cognite.Extensions
         /// <param name="infoLevel">Level for summary information about the request</param>
         /// <param name="handledErrorLevel">Log level of errors that were handled by the utils</param>
         /// <param name="fatalLevel">Log level of errors that could not be handled and caused the request to fail</param>
-        public static void LogResult<T>(this ILogger logger,
-            CogniteResult<T> result,
+        public static void LogResult<TResult, TError>(this ILogger logger,
+            CogniteResult<TResult, TError> result,
             RequestType requestType,
             bool ignoreExisting,
             LogLevel infoLevel = LogLevel.Information,

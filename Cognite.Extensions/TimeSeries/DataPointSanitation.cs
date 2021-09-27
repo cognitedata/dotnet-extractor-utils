@@ -82,12 +82,12 @@ namespace Cognite.Extensions
         /// <param name="mode">Sanitation mode</param>
         /// <param name="nonFiniteReplacement">Optional replacement for non-finite values</param>
         /// <returns>Cleaned request and optional list of errors</returns>
-        public static (IDictionary<Identity, IEnumerable<Datapoint>>, IEnumerable<CogniteError>) CleanDataPointsRequest(
+        public static (IDictionary<Identity, IEnumerable<Datapoint>>, IEnumerable<CogniteError<DataPointInsertError>>) CleanDataPointsRequest(
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             SanitationMode mode,
             double? nonFiniteReplacement)
         {
-            if (mode == SanitationMode.None) return (points, Enumerable.Empty<CogniteError>());
+            if (mode == SanitationMode.None) return (points, Enumerable.Empty<CogniteError<DataPointInsertError>>());
             if (points == null) throw new ArgumentNullException(nameof(points));
 
             var result = new Dictionary<Identity, IEnumerable<Datapoint>>();
@@ -137,14 +137,14 @@ namespace Cognite.Extensions
                 }
             }
 
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<DataPointInsertError>> errors;
 
             if (badDpGroups.Any())
             {
                 errors = badDpGroups
                     .GroupBy(group => group.type)
                     .Select(group =>
-                        new CogniteError
+                        new CogniteError<DataPointInsertError>
                         {
                             Status = 400,
                             Message = "Sanitation failed",
@@ -156,7 +156,7 @@ namespace Cognite.Extensions
             }
             else
             {
-                errors = Enumerable.Empty<CogniteError>();
+                errors = Enumerable.Empty<CogniteError<DataPointInsertError>>();
             }
 
             return (result, errors);

@@ -579,34 +579,19 @@ namespace ExtractorUtils.Test.Integration
 
                 var errs = result.Errors.ToArray();
                 // Greenfield reports missing twice, once for each id type.
-                CogniteError err;
-                if (host == CogniteHost.BlueField)
-                {
-                    Assert.Equal(2, errs.Length);
-                    err = errs[0];
-                    Assert.Equal(ResourceType.Id, err.Resource);
-                    Assert.Equal(ErrorType.ItemMissing, err.Type);
-                    Assert.Equal(2, err.Values.Count());
-                    err = errs[1];
-                }
-                else
-                {
-                    Assert.Equal(3, errs.Length);
-                    err = errs[0];
-                    Assert.Equal(ResourceType.Id, err.Resource);
-                    Assert.Equal(ErrorType.ItemMissing, err.Type);
-                    Assert.Single(err.Values);
-                    err = errs[1];
-                    Assert.Equal(ResourceType.Id, err.Resource);
-                    Assert.Equal(ErrorType.ItemMissing, err.Type);
-                    Assert.Single(err.Values);
-                    err = errs[2];
-                }
+                CogniteError<DataPointInsertError> err;
+
+                Assert.Equal(2, errs.Length);
+                err = errs[0];
+                Assert.Equal(ResourceType.Id, err.Resource);
+                Assert.Equal(ErrorType.ItemMissing, err.Type);
+                Assert.Equal(2, err.Values.Count());
+                err = errs[1];
 
                 Assert.Equal(ResourceType.DataPointValue, err.Resource);
                 Assert.Equal(ErrorType.MismatchedType, err.Type);
                 Assert.Equal(3, err.Skipped.Count());
-                var insertErrs = err.Skipped.OfType<DataPointInsertError>().ToArray();
+                var insertErrs = err.Skipped.ToArray();
                 Assert.Equal(2, insertErrs[0].DataPoints.Count());
                 Assert.Equal(2, insertErrs[1].DataPoints.Count());
                 Assert.Equal(2, insertErrs[2].DataPoints.Count());

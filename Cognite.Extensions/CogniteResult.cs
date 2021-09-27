@@ -13,11 +13,11 @@ namespace Cognite.Extensions
     /// </summary>
     public static partial class ResultHandlers
     {
-        private static CogniteError ParseCommonErrors(ResponseException ex)
+        private static CogniteError<TError> ParseCommonErrors<TError>(ResponseException ex)
         {
             // Handle any common behavior here
             if (ex.Code >= 500 || ex.Code != 400 && ex.Code != 422 && ex.Code != 409)
-                return new CogniteError { Message = ex.Message, Status = ex.Code, Exception = ex };
+                return new CogniteError<TError> { Message = ex.Message, Status = ex.Code, Exception = ex };
             return null;
         }
 
@@ -40,7 +40,7 @@ namespace Cognite.Extensions
         /// <param name="ex">Exception to parse</param>
         /// <param name="type">Request type</param>
         /// <returns>CogniteError representation of the exception</returns>
-        public static CogniteError ParseException(Exception ex, RequestType type)
+        public static CogniteError<TError> ParseException<TError>(Exception ex, RequestType type)
         {
             if (ex == null)
             {
@@ -48,8 +48,8 @@ namespace Cognite.Extensions
             }
             if (ex is ResponseException rex)
             {
-                var result = ParseCommonErrors(rex);
-                if (result == null) result = new CogniteError
+                var result = ParseCommonErrors<TError>(rex);
+                if (result == null) result = new CogniteError<TError>
                 {
                     Status = rex.Code,
                     Message = rex.Message,
@@ -84,21 +84,22 @@ namespace Cognite.Extensions
             }
             else
             {
-                return new CogniteError { Message = ex.Message, Exception = ex };
+                return new CogniteError<TError> { Message = ex.Message, Exception = ex };
             }
         }
     }
+
 
     /// <summary>
     /// Represents the result of one or more pushes to CDF.
     /// Contains a list of errors, one for each failed push, and potentially pre-push santiation.
     /// </summary>
-    public class CogniteResult
+    public class CogniteResult<TError>
     {
         /// <summary>
         /// Errors that have occured in this series of requests
         /// </summary>
-        public IEnumerable<CogniteError> Errors { get; set; }
+        public IEnumerable<CogniteError<TError>> Errors { get; set; }
         /// <summary>
         /// True if nothing went wrong
         /// </summary>
@@ -107,25 +108,89 @@ namespace Cognite.Extensions
         /// Constructor
         /// </summary>
         /// <param name="errors">Initial list of errors</param>
-        public CogniteResult(IEnumerable<CogniteError> errors)
+        public CogniteResult(IEnumerable<CogniteError<TError>> errors)
         {
             Errors = errors;
         }
+
+        /// <summary>
+        /// Throw exception if there are any fatal errors
+        /// </summary>
+        public void ThrowOnFatal()
+        {
+            if (Errors == null || !Errors.Any()) return;
+            var fatal = Errors.Where(err => err.Type == ErrorType.FatalFailure);
+            if (fatal.Count() > 1)
+            {
+                throw new AggregateException(fatal.Select(err => new CogniteErrorException(err)).ToList());
+            }
+            else if (fatal.Count() == 1)
+            {
+                throw new CogniteErrorException(fatal.Single());
+            }
+        }
+
+        /// <summary>
+        /// Throw exception if there are any errors at all.
+        /// </summary>
+        public void Throw()
+        {
+            if (Errors == null || !Errors.Any()) return;
+            if (Errors.Count() == 1)
+            {
+                throw new CogniteErrorException(Errors.Single());
+            }
+            else
+            {
+                throw new AggregateException(Errors.Select(err => new CogniteErrorException(err)).ToList());
+            }
+        }
+
+        /// <summary>
+        /// Combine all non-fatal errors with the same resource and type
+        /// </summary>
+        public void MergeErrors()
+        {
+            if (Errors == null || !Errors.Any()) return;
+            var result = new List<CogniteError<TError>>();
+            var groups = Errors.GroupBy(err => (err.Type, err.Resource));
+            foreach (var group in groups)
+            {
+                if (group.Key.Type == ErrorType.FatalFailure)
+                {
+                    result.AddRange(group);
+                    continue;
+                }
+
+                if (group.Count() == 1)
+                {
+                    result.Add(group.Single());
+                }
+                else
+                {
+                    result.Add(CogniteError<TError>.Merge(group));
+                }
+            }
+            Errors = result;
+        }
+
         /// <summary>
         /// Return a new CogniteResult that contains errors from both
         /// </summary>
         /// <param name="other">CogniteResult to merge with</param>
         /// <returns>A new result containing the CogniteErrors from both results</returns>
-        public CogniteResult Merge(CogniteResult other)
+        public CogniteResult<TError> Merge(CogniteResult<TError> other)
         {
             if (other == null) return this;
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<TError>> errors;
 
             if (Errors == null) errors = other.Errors;
             else if (other.Errors == null) errors = Errors;
             else errors = Errors.Concat(other.Errors);
 
-            return new CogniteResult(errors);
+            var result = new CogniteResult<TError>(errors);
+            result.MergeErrors();
+            return result;
         }
 
         /// <summary>
@@ -133,15 +198,17 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="results">List of CogniteResult to merge with</param>
         /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
-        public static CogniteResult Merge(params CogniteResult[] results)
+        public static CogniteResult<TError> Merge(params CogniteResult<TError>[] results)
         {
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<TError>>();
             foreach (var result in results)
             {
                 if (result == null) continue;
                 if (result.Errors != null) errors.AddRange(result.Errors);
             }
-            return new CogniteResult(errors);
+            var res = new CogniteResult<TError>(errors);
+            res.MergeErrors();
+            return res;
         }
     }
 
@@ -151,7 +218,8 @@ namespace Cognite.Extensions
     /// as well as a list of result objects.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public class CogniteResult<TResult> : CogniteResult
+    /// <typeparam name="TError">Type of skipped data in error</typeparam>
+    public class CogniteResult<TResult, TError> : CogniteResult<TError>
     {
         /// <summary>
         /// A list of results
@@ -162,19 +230,22 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="errors">Initial list of errors</param>
         /// <param name="results">Initial list of results</param>
-        public CogniteResult(IEnumerable<CogniteError> errors, IEnumerable<TResult> results) : base(errors)
+        public CogniteResult(IEnumerable<CogniteError<TError>> errors, IEnumerable<TResult> results) : base(errors)
         {
             Results = results;
         }
+
+        
+
         /// <summary>
         /// Return a new CogniteResult that contains errors and results from both
         /// </summary>
         /// <param name="other">CogniteResult to merge with</param>
         /// <returns>A new result containing errors and results from both</returns>
-        public CogniteResult<TResult> Merge(CogniteResult<TResult> other)
+        public CogniteResult<TResult, TError> Merge(CogniteResult<TResult, TError> other)
         {
             if (other == null) return this;
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<TError>> errors;
             IEnumerable<TResult> results;
             if (Results == null) results = other.Results;
             else if (other.Results == null) results = Results;
@@ -184,7 +255,9 @@ namespace Cognite.Extensions
             else if (other.Errors == null) errors = Errors;
             else errors = Errors.Concat(other.Errors);
 
-            return new CogniteResult<TResult>(errors, results);
+            var result = new CogniteResult<TResult, TError>(errors, results);
+            result.MergeErrors();
+            return result;
         }
 
         /// <summary>
@@ -192,17 +265,20 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="results">List of CogniteResult to merge with</param>
         /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
-        public static CogniteResult<TResult> Merge(params CogniteResult<TResult>[] results)
+        public static CogniteResult<TResult, TError> Merge(params CogniteResult<TResult, TError>[] results)
         {
             var items = new List<TResult>();
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<TError>>();
             foreach (var result in results)
             {
                 if (result == null) continue;
                 if (result.Results != null) items.AddRange(result.Results);
                 if (result.Errors != null) errors.AddRange(result.Errors);
             }
-            return new CogniteResult<TResult>(errors, items);
+
+            var res = new CogniteResult<TResult, TError>(errors, items);
+            res.MergeErrors();
+            return res;
         }
     }
 
@@ -226,14 +302,6 @@ namespace Cognite.Extensions
         /// </summary>
         public IEnumerable<Identity> Values { get; set; }
         /// <summary>
-        /// Input items skipped if the request was cleaned using this error.
-        /// </summary>
-        public IEnumerable<object> Skipped { get; set; }
-        /// <summary>
-        /// Further information about the error, for some errors.
-        /// </summary>
-        public IEnumerable<object> Data { get; set; }
-        /// <summary>
         /// Exception that caused this error, if any.
         /// </summary>
         public Exception Exception { get; set; }
@@ -251,6 +319,86 @@ namespace Cognite.Extensions
         /// information.
         /// </summary>
         public bool Complete { get; set; } = true;
+    }
+
+    /// <summary>
+    /// Represents an error that occured on a push to CDF, or
+    /// in pre-push sanitation.
+    /// </summary>
+    public class CogniteError<TError> : CogniteError
+    {
+        /// <summary>
+        /// Input items skipped if the request was cleaned using this error.
+        /// </summary>
+        public IEnumerable<TError> Skipped { get; set; }
+        /// <summary>
+        /// Merge a list of errors. Note that the other errors should have the same
+        /// ResourceType and ErrorType as this one, for meaningful results.
+        /// </summary>
+        /// <param name="errs"></param>
+        /// <returns>Merged error</returns>
+        public static CogniteError<TError> Merge(IEnumerable<CogniteError<TError>> errs)
+        {
+            if (!errs.Any()) throw new InvalidOperationException("List of errors is empty");
+            var initial = errs.First();
+
+            var skipped = initial.Skipped?.ToList() ?? new List<TError>();
+            var values = initial.Values?.ToList() ?? new List<Identity>();
+
+            foreach (var err in errs.Skip(1))
+            {
+                if (err.Exception != null && initial.Exception == null)
+                {
+                    initial.Exception = err.Exception;
+                    initial.Message = err.Message;
+                }
+                if (err.Skipped != null) skipped.AddRange(err.Skipped);
+                if (err.Values != null) values.AddRange(err.Values);
+            }
+
+            initial.Skipped = skipped;
+            initial.Values = values;
+
+            return initial;
+        }
+    }
+
+    /// <summary>
+    /// Exception triggered by a <see cref="CogniteError"/>
+    /// </summary>
+    public class CogniteErrorException : Exception
+    {
+        /// <summary>
+        /// Constructor taking a <see cref="CogniteError"/>
+        /// </summary>
+        /// <param name="err"></param>
+        public CogniteErrorException(CogniteError err)
+            : this($"CogniteError. Resource: {err?.Resource}, Type: {err?.Type}: {err?.Message}", err?.Exception)
+        {
+        }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public CogniteErrorException()
+        {
+        }
+
+        /// <summary>
+        /// Constructor taking a message
+        /// </summary>
+        /// <param name="message">String message</param>
+        public CogniteErrorException(string message) : base(message)
+        {
+        }
+
+        /// <summary>
+        /// Constructor taking a message and inner exception
+        /// </summary>
+        /// <param name="message">String message</param>
+        /// <param name="innerException">Inner exception</param>
+        public CogniteErrorException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 
     /// <summary>
