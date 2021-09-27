@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Using the installer template </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Using the installer template ">
+    <meta name="generator" content="docfx 2.51.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="using-the-installer-template">Using the installer template</h1>
+
+<p>The installer template is mostly configured from the command live and the config .json file, but more advanced changes may require modifying the project files. Feel free to copy the installer project and modifying it to your needs. The following instructions produce a single file executable for a .NET core project. It assumes that you have a config file named <code>config.example.yml</code> somewhere.</p>
+<ul>
+<li>Update the <code>setup-config.json</code> file to suit your needs. The default fields are described below. All config fields except for <code>setup_project</code> is injected as a build property with msbuild into the <code>.wixproj</code> file.</li>
+<li>Modify the <code>InstBanner.bmp</code> file in <code>Resources</code>, adding your extractor name to the blue field.</li>
+<li>Modify or replace the <code>License.rtf</code> with a license adapted to your project.</li>
+<li>(Optional) Add any new additional config files at the bottom of the <code>Product.wxs</code> file, by adding new <code>Component</code> blocks after the one for <code>config.example.yml</code></li>
+<li>(Optional) Add a cognite icon to your extractor by adding <code>Resources/black32x32.ico</code> to the folder for your actual extractor, and adding <code>&lt;ApplicationIcon&gt;black32x32.ico&lt;/ApplicationIcon&gt;</code> to its .csproj file.</li>
+<li>Compile the installer in a windows environment with Wix utils and msbuild installed, using something like the following command:</li>
+</ul>
+<p><code>build.ps1 -b Path\To\MSBuild.exe -v 1.0.0 -d &quot;some description&quot; -c Path\To\setup-config.json</code></p>
+<ul>
+<li><code>-v</code> or <code>-version</code> is embedded as InformationalVersion when compiling, and can be retrieved at runtime. It is also used for the installer version, so it is required. A good way to retrieve this in a build environment is using a git tag, this way a github release can also be created based on tags.</li>
+<li><code>-b</code> or <code>-build</code> is the path to your MSBuild.exe.</li>
+<li><code>-d</code> or <code>-description</code> is embedded as Description when compiling. It must be set, either to something static, or something like the current git commit + git commit time.</li>
+<li><code>-c</code> or <code>-config</code> is the path to the json configuration file.</li>
+</ul>
+<p>The following configuration parameters are used by default:</p>
+<ul>
+<li><code>target_project</code> is the csproj file for your extractor. Note that all paths are relative to the .wixproj file.</li>
+<li><code>target_configuration</code> is generally Release.</li>
+<li><code>target_runtime</code> is most likely either win-x64 or win-x86</li>
+<li><code>product_name</code> full display name of your product. This is used both in the installer and in the installed programs registry on the target computer.</li>
+<li><code>product_short_name</code> a short version of the product name without spaces. Should not contain &quot;Cognite&quot;. It is used for registry keys and folder names.</li>
+<li><code>exe_name</code> the name of the final executable.</li>
+<li><code>config_dir</code> the path to the config.example.yml folder. This is also relative to the .wixproj folder.</li>
+<li><code>service</code> can be left out. If <code>true</code>, the installer will add and configure a windows service for the extractor.</li>
+<li><code>service-args</code> can be left out. Arguments to specify to the extractor when running it as a service. This is useful if the standalone and service versions use the same executable, but with different command line parameters.</li>
+<li><code>upgrade-guid</code> is a unique upper case GUID which you must generate yourself. It identifies the project when upgrading.</li>
+<li><code>setup-project</code> is the path to the .wixproj file used to build.</li>
+<li><code>output-name</code> is the name of the output msi, like <code>MyExtractorSetup</code>.</li>
+</ul>
+<p>See the ExampleExtractorSetup project in this repository for a full example.</p>
+<p>In general the setup template assumes that this is a cognite product, but changing this is no more difficult than replacing instances of <code>Cognite</code> in <code>Product.wxs</code> with whatever suits your purposes.</p>
+<h2 id="modifying-the-installer-template">Modifying the installer template</h2>
+<p>Adding to the installer template is relatively easy. New builds can be added in the <code>&lt;Target Name=&quot;BeforeBuild&quot;&gt;</code> block in <code>SetupTemplate.wixproj</code>, these should output to new folders. New files going in the <code>bin/</code> folder can be added to <code>&lt;ComponentGroup Id=&quot;ExecutableComponentGroup&quot;&gt;</code>. Note that the executable is duplicated here due to conditionals on <code>service</code>. New components can be added after <code>&lt;?endif?&gt;</code>.</p>
+<p>New folders can be added by adding new <code>Directory</code> tags in the first <code>Fragment</code>, a new <code>ComponentGroupRef</code> at the bottom of <code>Product</code>, and a new <code>ComponentGroup</code> somewhere in the last <code>Fragment</code>.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/docfx_project/tutorials/setup-template.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

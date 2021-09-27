@@ -90,6 +90,9 @@ The token is cached and renewed if it expired</p>
       <section><p>Base configuration object for extractors.
 The config should have a version property, so that versioning and compatibility can be tracked by the extractor.</p>
 </section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.BaseExtractor.html">BaseExtractor</a></h4>
+      <section><p>Base class for extractors writing timeseries, events or datapoints.</p>
+</section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html">BaseUploadQueue&lt;T&gt;</a></h4>
       <section><p>Generic base class for upload queues</p>
 </section>
@@ -116,6 +119,15 @@ requests against the client</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.EventUploadQueue.html">EventUploadQueue</a></h4>
       <section><p>Queue for uploading events to CDF.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.ExtractionRun.html">ExtractionRun</a></h4>
+      <section><p>Container for reporting to the ExtPipes endpoint in CDF.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.ExtractionRunConfig.html">ExtractionRunConfig</a></h4>
+      <section><p>Configuration for extraction pipeline run</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.ExtractorRunner.html">ExtractorRunner</a></h4>
+      <section><p>Contains utilities for running an extractor based on BaseExtractor</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.MsalAuthenticator.html">MsalAuthenticator</a></h4>
       <section><p>Uses Microsoft Authentication Library (MSAL) to acquire tokens from the identity provider endpoint
@@ -144,6 +156,12 @@ defined in the <a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig
       <h4><a class="xref" href="Cognite.Extractor.Utils.IRawUploadQueue-1.html">IRawUploadQueue&lt;T&gt;</a></h4>
       <section><p>Interface to CDF Raw upload queues. The items in the queue are
 DTOs (data type objects) of type <code data-dev-comment-type="typeparamref" class="typeparamref">T</code>.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.IUploadQueue.html">IUploadQueue</a></h4>
+      <section><p>Base interface for upload queue</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.IUploadQueue-1.html">IUploadQueue&lt;T&gt;</a></h4>
+      <section><p>Interface for generic upload queue</p>
 </section>
     <h3 id="enums">Enums
   </h3>

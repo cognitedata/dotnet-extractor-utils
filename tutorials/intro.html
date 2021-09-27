@@ -89,43 +89,54 @@ cognite:
 <p>Set the <code>COGNITE_PROJECT</code> and <code>COGNITE_API_KEY</code> environment variables. Set the <code>metrics</code> tag, only if collecting metrics is required by the extractor. If using a <a href="https://prometheus.io/docs/practices/pushing/">Prometheus pushgateway</a>, set <code>host</code>to a valid endpoint.</p>
 <p>The library is intended to be used with dependency injection, In <code>Program.cs</code>:</p>
 <pre><code class="lang-c#">using Microsoft.Extensions.DependencyInjection;
-using Cognite.Extractor.Configuration;
-using Cognite.Extractor.Logging;
-using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
+using Cognite.Extensions;
+using CogniteSdk;
+
+class MyExtractor : BaseExtractor
+{
+    public MyExtractor(BaseConfig config, CogniteDestination destination)
+        : base(config, destination)
+    {
+    }
+    
+    protected override async Task Start() 
+    {
+        await Destination.EnsureTimeSeriesExistsAsync(new[]
+        {
+            new TimeSeriesCreate {
+                ExternalId = &quot;sine-wave&quot;,
+                Name = &quot;Sine Wave&quot;
+            }
+        }, RetryMode.OnError, SanitationMode.Clean, Source.Token);
+        CreateTimeseriesQueue(1000, TimeSpan.FromSeconds(1), null);
+        ScheduleDatapointsRun(&quot;datapoints&quot;, TimeSpan.FromMilliseconds(100), token =&gt;
+        {
+            var dp = (
+                Identity.Create(&quot;sine-wave&quot;),
+                new Datapoint(DateTime.UtcNow, Math.Sin(DateTime.UtcNow.Ticks))
+            );
+            return Task.FromResult&lt;IEnumerable&lt;(Identity, Datapoint)&gt;&gt;(new [] { dp });
+        });
+    }
+}
 
 // Then, in the Main() method:
-var services = new ServiceCollection();
-services.AddConfig&lt;BaseConfig&gt;(&quot;./config.yml&quot;, 1);
-services.AddLogger();
-services.AddMetrics();
-services.AddCogniteClient(&quot;MyExtractor&quot;, true, true);
-
-// Create a service provider and resolve the required services
-using (var provider = services.BuildServiceProvider()) {
-    // Resolve a logger for this class
-    var logger = provider.GetRequiredService&lt;ILogger&lt;Program&gt;&gt;();
-    logger.LogInformation(&quot;Hello Extractor&quot;);
-
-    // Resolve the metrics service and start it
-    var metrics = provider.GetRequiredService&lt;MetricsService&gt;();
-    metrics.Start();
-    
-    // Resolve the cognite destination
-    var destination = provider.GetRequiredService&lt;CogniteDestination&gt;();
-    await destination.TestCogniteConfig(cancellationToken);
-    
-    // Use the Cognite destination to create time series and insert data points.
-    // For instance: The line below gets or create the time series. The buildTimeSeriesObjects is a callback function that creates
-    // TimeSeriesCreate objects for any missing time series.
-    var ts = await destination.GetOrCreateTimeSeriesAsync(
-        externalIds,
-        buildTimeSeriesObjects,
-        cancellationToken
-    );
-    
-    // Stops the metrics service
-    await metrics.Stop();
+class Program
+{
+    static void Main()
+    {
+        ExtractorRunner.Run&lt;BaseConfig&gt;(
+            &quot;config.yml&quot;,
+            new[] { 1 },
+            &quot;my-extractor&quot;,
+            &quot;myextractor/1.0.0&quot;,
+            false,
+            true,
+            true,
+            true,
+            CancellationToken.None).Wait();
+    }
 }
 </code></pre>
 <p>Using the <code>destination</code> you can now push data from your source system to CDF.</p>
@@ -157,7 +168,7 @@ if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any())
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/docfx_project/tutorials/intro.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/docfx_project/tutorials/intro.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

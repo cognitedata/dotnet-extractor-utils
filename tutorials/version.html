@@ -70,37 +70,28 @@
 <h1 id="embedding-version-information">Embedding version information</h1>
 
 <p>When deploying an extractor it is very useful to be able to show the version number in both the metrics and the log. The extractor has some utilities to help with this, using git tags.</p>
-<p>In order to use embedded version information, add the following code to your <code>.csproj</code> file:</p>
-<pre><code class="lang-xml">  &lt;ItemGroup&gt;
-    &lt;EmbeddedResource Include=&quot;Properties\GitCommitHash&quot;&gt;
-      &lt;CopyToOutputDirectory&gt;Always&lt;/CopyToOutputDirectory&gt;
-    &lt;/EmbeddedResource&gt;
-    &lt;EmbeddedResource Include=&quot;Properties\GitCommitTime&quot;&gt;
-      &lt;CopyToOutputDirectory&gt;Always&lt;/CopyToOutputDirectory&gt;
-    &lt;/EmbeddedResource&gt;
-  &lt;/ItemGroup&gt;
-  &lt;PropertyGroup&gt;
-    &lt;PreBuildEvent&gt;
-      mkdir &quot;$(MSBuildProjectDirectory)/Properties&quot;
-      git describe --tags --dirty &amp;gt; &quot;$(MSBuildProjectDirectory)/Properties/GitCommitHash&quot;
-      git log -1  --format=&quot;%25%25ai&quot; &amp;gt; &quot;$(MSBuildProjectDirectory)/Properties/GitCommitTime&quot;
-    &lt;/PreBuildEvent&gt;
-  &lt;/PropertyGroup&gt;
+<p>In order to use embedded version information, compile with the following options:</p>
+<pre><code>    /p:InformationalVersion=&quot;1.0.0&quot;
+    /p:Description=&quot;Description&quot;
 </code></pre>
-<p>The calls to <code>git log</code> and <code>git describe</code> can be replaced or expanded if desired.</p>
-<p>Now version can be read during execution by calling</p>
-<pre><code class="lang-c#">string version = Cognite.Extractor.Metrics.Version.GetVersion();
-string status = Cognite.Extractor.Metrics.Version.Status();
-log.Information(&quot;Revision information: {status}&quot;, status);
-
-// One way to parse version for a cleaner output, for pure tags on the form x.x.x...
-// If the last version was 1.0.0 three commits ago, this outputs 1.0.0-pre.03
-// It might need to be replaced if your tags are on a different form.
-string parsedVersion = new Regex(@&quot;-(\d+)-*.*&quot;).Replace(version, &quot;-pre.$1&quot;, 1);
-log.Information(&quot;My Extractor. Version: {version}&quot;, parsedVersion);
-
-Cognite.Extractor.Metrics.CommonMetrics.SetInfo(&quot;My Extractor&quot;, parsedVersion);
+<p>Typically, these can be obtained from git tags, using something along these lines:</p>
+<pre><code>    version = git describe --tags HEAD
+    version = version.replace(/-(\d+)-.*/, '-pre.$1')
+    description = sh('git describe --tags --dirty')
+    time = git log -1 --format=%ai
+    
+    dotnet publish /p:InformationalVersion=&quot;$version&quot; /p:Description=&quot;$description $time&quot;
 </code></pre>
+<p>That way we get last tag as version, modified so that if the current commit is not tagged, you get <code>1.0.0-pre.05</code> where 05 indicates that there has been five commits since the last tag.</p>
+<p>Description is here set to the last commit and last commit time.</p>
+<p>When starting the extractor we would typically log</p>
+<pre><code>log.Information(&quot;Starting My Extractor. Version: {version}&quot;, Version.GetVersion(Assembly.GetExecutingAssembly()));
+log.Information(&quot;Revision information: {status}&quot;, Version.GetDescription(Assembly.GetExecutingAssembly()));
+
+Cognite.Extractor.Metrics.CommonMetrics.SetInfo(&quot;My Extractor&quot;, version);
+</code></pre>
+<p>If using the SetupTemplate, these parameters are passed to the build from the command line.</p>
+<p><code>build.ps1 -b Path\To\MSBuild.exe -v $version -d $description -c Path\To\setup-config.json</code></p>
 </article>
           </div>
           
@@ -109,7 +100,7 @@ Cognite.Extractor.Metrics.CommonMetrics.SetInfo(&quot;My Extractor&quot;, parsed
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/docfx_project/tutorials/version.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/docfx_project/tutorials/version.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

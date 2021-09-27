@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Deploying extractor as windows servie </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Deploying extractor as windows servie ">
+    <meta name="generator" content="docfx 2.51.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="deploying-extractor-as-windows-servie">Deploying extractor as windows servie</h1>
+
+<p>The installer template has built in support for creating a windows service using the same executable as the standalone version. This requires some setup, as the extractor must report its status to windows.</p>
+<p>This setup requires the following packages:</p>
+<ul>
+<li><code>Microsoft.Extensions.Hosting</code></li>
+<li><code>Microsoft.Extensions.Hosting.WindowsServices</code></li>
+<li><code>Microsoft.Extensions.Logging.EventLog</code></li>
+</ul>
+<p>It might also be useful to use <code>System.CommandLine</code> for parsing command line arguments, though that will not be covered here.</p>
+<p>The idea is to launch the extractor as a service if passed a specific command line argument, like <code>--service</code>, and launch it as standalone otherwise. The code could be as follows:</p>
+<pre><code class="lang-c#">public class Worker : BackgroundService
+{
+    private readonly ILogger&lt;Worker&gt; _eventLog;
+    
+    public Worker(ILogger&lt;Worker&gt; eventLog)
+    {
+        _eventLog = eventLog;
+    }
+    
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        await ExtractorRunner.Run(
+            &quot;config.yml&quot;,
+            null,
+            &quot;myExtractor&quot;,
+            &quot;myExtractor/1.0.0&quot;,
+            false,
+            true,
+            true,
+            true, // We don't really want the service to die too quickly
+            stoppingToken,
+            null,
+            null,
+            null,
+            _eventLog // Pass the eventlog as startup logger
+        );
+    }
+}
+
+public static class Program
+{
+    static void Main(string[] args)
+    {
+        if (args[0] == '--service')
+        {
+            RunService();
+        }
+        else
+        {
+            RunStandalone();
+        }
+    }
+    
+    private static void RunService()
+    {
+        var builder = Host.CreateDefaultBuilder()
+            .ConfigureServices((hostContext, services) =&gt;
+            {
+                services.AddHostedService&lt;Worker&gt;();
+            });
+        if (OperatingSystem.IsWindows())
+        {
+            builder = builder
+                .ConfigureLogging(loggerFactory =&gt; loggerFactory.AddEventLog())
+                // It is very important that this is equal to &quot;product_short_name&quot; in the installer template
+                .UseWindowsService(options =&gt; options.ServiceName == &quot;MyExtractor&quot;);
+        }
+        builder.Build().Run();
+    }
+    
+    private static void RunStandalone()
+    {
+        // Run extractor as usual.
+    }
+}
+</code></pre>
+<p>In the installer template config file, set</p>
+<ul>
+<li><code>product_short_name</code> equal to &quot;MyExtractor&quot; (the same as you used for the service name)</li>
+<li><code>service</code> to <code>true</code></li>
+<li><code>service_args</code> to <code>--service</code> (the argument to run as service)</li>
+</ul>
+<h2 id="running-multiple-service-instances">Running multiple service instances</h2>
+<p>The easiest way to run multiple service instances is to add an argument <code>--working-dir</code> which indicates where the extractor should look for the config file, then pass that to <code>Run</code>.</p>
+<p>Services can then be created using something like</p>
+<p><code>sc create myextractor1 binPath=&quot;path/to/exe --service --working-dir path/to/config&quot; DisplayName=&quot;My Extractor 1&quot;</code></p>
+<h2 id="running-services-on-linux">Running services on Linux.</h2>
+<p>Technically any application can run as a service with no extra setup, but it is good practice to run the extractor as a daemon. Fortunately this is simple using <code>Microsoft.Extensions.Hosting.Systemd</code>. Just add</p>
+<pre><code class="lang-c#">else if (OperatingSystem.IsLinux())
+{
+    builder = builder.UseSystemd();
+}
+</code></pre>
+<p>to <code>RunService()</code>.</p>
+<p>Next, add a file <code>my-extractor.service</code> to <code>/etc/systemd/system/</code> which should look something like this:</p>
+<pre><code>[Unit]
+Description=MyExtractor Service
+After=network.target # Network is a fine dependency for most extractors
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=/path/to/extractor --service --working-dir path/to/config
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<p>To start you should now be able to do <code>sudo systemctl start my-extractor</code>.</p>
+<h3 id="running-multiple-services-on-linux">Running multiple services on linux</h3>
+<p>On linux running multiple extractors can be done trivially using service templates.</p>
+<p>Add another file to <code>/etc/systemd/system/</code> named <code>my-extractor@.service</code>.</p>
+<pre><code>[Unit]
+Description=MyExtractor Service (%I)
+After=network.target # Network is a fine dependency for most extractors
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStartPre= mkdir -p /path/to/config/%i/
+ExecStart=/path/to/extractor --service --working-dir path/to/config/%i/
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+<p>Very similar to the normal version, except now we take an extra argument as a parameter and create a named folder for each instance of the extractor containing the working directory.</p>
+<h3 id="installing-on-linux">Installing on linux</h3>
+<p>It is worth mentioning the proper way to install system applications on linux. Unlike windows having a single &quot;working directory&quot; is not considered normal or good practice. Instead, you should use the following directories:</p>
+<ul>
+<li><code>/etc/company/myextractor</code> for configuration files.</li>
+<li><code>/var/log/company/myextractor</code> for logs.</li>
+<li><code>/var/lib/company/myextractor</code> for the working directory, if you need one. This can contain temporary files and symlinks to logs and config files.</li>
+<li><code>/usr/bin</code> for the executable.</li>
+</ul>
+<p>Setup of the extractor might be the following:</p>
+<pre><code>mkdir -p /var/lib/company/myextractor/
+mkdir -p /var/log/company/myextractor/
+mkdir -p /etc/company/myextractor/
+ln -sfn /etc/company/myextractor/ /var/lib/company/myextractor/config
+ln -sfn /var/log/company/myextractor/ /var/lib/company/myextractor/logs
+/usr/bin/my-extractor --service --working-dir /var/lib/company/myextractor/
+</code></pre>
+<p>To actually create installers, you will typically create both RPM and DEB installers, which are the two most common types.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/docfx_project/tutorials/service.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -73,7 +73,7 @@
   
   <h1 id="Cognite_Extractor_Metrics_Version" data-uid="Cognite.Extractor.Metrics.Version" class="text-break">Class Version
   </h1>
-  <div class="markdown level0 summary"><p>Utility class for reading version information from properties.
+  <div class="markdown level0 summary"><p>Utility class for reading version information from attributes.
 In order to use this, version information has to be added to the assembly.
 See the online documentation for an example.</p>
 </div>
@@ -93,50 +93,19 @@ See the online documentation for an example.</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Metrics_Version_GetVersion.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Metrics.Version.GetVersion%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Metrics_Version_GetDescription_Assembly_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Metrics.Version.GetDescription(Assembly%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Metrics/Version.cs/#L49">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Metrics/Version.cs/#L19">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Metrics_Version_GetVersion_" data-uid="Cognite.Extractor.Metrics.Version.GetVersion*"></a>
-  <h4 id="Cognite_Extractor_Metrics_Version_GetVersion" data-uid="Cognite.Extractor.Metrics.Version.GetVersion">GetVersion()</h4>
-  <div class="markdown level1 summary"><p>Get the version, just the GitCommitHash. This can be parsed further to produce a readable string.</p>
+  <a id="Cognite_Extractor_Metrics_Version_GetDescription_" data-uid="Cognite.Extractor.Metrics.Version.GetDescription*"></a>
+  <h4 id="Cognite_Extractor_Metrics_Version_GetDescription_Assembly_System_String_" data-uid="Cognite.Extractor.Metrics.Version.GetDescription(Assembly,System.String)">GetDescription(Assembly, String)</h4>
+  <div class="markdown level1 summary"><p>Get the AssemblyDescription set at compile time</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string GetVersion()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Metrics_Version_Read_System_String_Assembly_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Metrics.Version.Read(System.String%2CAssembly)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Metrics/Version.cs/#L19">View Source</a>
-  </span>
-  <a id="Cognite_Extractor_Metrics_Version_Read_" data-uid="Cognite.Extractor.Metrics.Version.Read*"></a>
-  <h4 id="Cognite_Extractor_Metrics_Version_Read_System_String_Assembly_" data-uid="Cognite.Extractor.Metrics.Version.Read(System.String,Assembly)">Read(String, Assembly)</h4>
-  <div class="markdown level1 summary"><p>Read a property from the calling assembly.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string Read(string property, Assembly assembly = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static string GetDescription(Assembly assembly, string def = &quot;Unknown&quot;)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -149,15 +118,15 @@ See the online documentation for an example.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">property</span></td>
-        <td><p>Property to read</p>
+        <td><span class="xref">Assembly</span></td>
+        <td><span class="parametername">assembly</span></td>
+        <td><p>Assembly to get version from</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Assembly</span></td>
-        <td><span class="parametername">assembly</span></td>
-        <td><p>Assembly to use, default is the assembly that calls this method.</p>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">def</span></td>
+        <td><p>Default value</p>
 </td>
       </tr>
     </tbody>
@@ -173,27 +142,51 @@ See the online documentation for an example.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><p>null or the value of the property in the assembly</p>
+        <td><p>Value of the description attribute</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Metrics_Version_Status.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Metrics.Version.Status%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Metrics_Version_GetVersion_Assembly_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Metrics.Version.GetVersion(Assembly%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Metrics/Version.cs/#L39">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Metrics/Version.cs/#L30">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Metrics_Version_Status_" data-uid="Cognite.Extractor.Metrics.Version.Status*"></a>
-  <h4 id="Cognite_Extractor_Metrics_Version_Status" data-uid="Cognite.Extractor.Metrics.Version.Status">Status()</h4>
-  <div class="markdown level1 summary"><p>Get status on the form [GitCommitHash] [GitCommitTime].</p>
+  <a id="Cognite_Extractor_Metrics_Version_GetVersion_" data-uid="Cognite.Extractor.Metrics.Version.GetVersion*"></a>
+  <h4 id="Cognite_Extractor_Metrics_Version_GetVersion_Assembly_System_String_" data-uid="Cognite.Extractor.Metrics.Version.GetVersion(Assembly,System.String)">GetVersion(Assembly, String)</h4>
+  <div class="markdown level1 summary"><p>Get the AssemblyInformationalVersion set at compile time</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string Status()</code></pre>
+    <pre><code class="lang-csharp hljs">public static string GetVersion(Assembly assembly, string def = &quot;1.0.0&quot;)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Assembly</span></td>
+        <td><span class="parametername">assembly</span></td>
+        <td><p>Assembly to get version from</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">def</span></td>
+        <td><p>Default value</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -205,7 +198,8 @@ See the online documentation for an example.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>Value of the verison attribute or default</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -217,10 +211,10 @@ See the online documentation for an example.</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Metrics_Version.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Metrics.Version%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Metrics_Version.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Metrics.Version%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Metrics/Version.cs/#L11" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Metrics/Version.cs/#L11" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

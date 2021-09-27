@@ -78,7 +78,7 @@ private class ColumnsDto
 }
 
 // Creates an queue that uploads rows to Raw every 5 seconds (or when the queue size reaches 1.000)
-using (var queue = destination.CreateRawUploadQueue&lt;ColumnsDto&gt;(&quot;myDb&quot;, &quot;myTable&quot;, TimeSpan.FromSeconds(5), 1_000,
+await using (var queue = destination.CreateRawUploadQueue&lt;ColumnsDto&gt;(&quot;myDb&quot;, &quot;myTable&quot;, TimeSpan.FromSeconds(5), 1_000,
     result =&gt; { handle result of upload here }))
 {
     // Task to generate rows at regular intervals
@@ -108,7 +108,7 @@ using (var queue = destination.CreateRawUploadQueue&lt;ColumnsDto&gt;(&quot;myDb
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/docfx_project/tutorials/raw-queue.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/docfx_project/tutorials/raw-queue.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

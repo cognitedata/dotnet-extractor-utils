@@ -82,6 +82,13 @@
     <div class="level1"><a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html">BaseUploadQueue</a>&lt;<span class="xref">System.ValueTuple</span>&lt;<span class="xref">Identity</span>, <a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</div>
     <div class="level2"><span class="xref">TimeSeriesUploadQueue</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Cognite.Extractor.Utils.IUploadQueue-1.html">IUploadQueue</a>&lt;<span class="xref">System.ValueTuple</span>&lt;<span class="xref">Identity</span>, <a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</div>
+    <div><a class="xref" href="Cognite.Extractor.Utils.IUploadQueue.html">IUploadQueue</a></div>
+    <div><span class="xref">IDisposable</span></div>
+    <div><span class="xref">IAsyncDisposable</span></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -95,6 +102,9 @@
     </div>
     <div>
       <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Enqueue__0_">BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;.Enqueue(ValueTuple&lt;Identity, Datapoint&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Enqueue_IEnumerable__0__">BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;.Enqueue(IEnumerable&lt;ValueTuple&lt;Identity, Datapoint&gt;&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dequeue">BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;.Dequeue()</a>
@@ -112,23 +122,29 @@
       <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dispose_System_Boolean_">BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;.Dispose(Boolean)</a>
     </div>
     <div>
+      <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_DisposeAsyncCore">BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;.DisposeAsyncCore()</a>
+    </div>
+    <div>
       <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Dispose">BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_DisposeAsync">BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;.DisposeAsync()</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.Extractor.Utils.html">Cognite.Extractor.Utils</a></h6>
   <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
   <h5 id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class TimeSeriesUploadQueue : BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public class TimeSeriesUploadQueue : BaseUploadQueue&lt;(Identity id, Datapoint dp)&gt;, IUploadQueue&lt;(Identity id, Datapoint dp)&gt;, IUploadQueue, IDisposable, IAsyncDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_Cognite_Extractor_Utils_CogniteDestination_TimeSpan_System_Int32_ILogger_Cognite_Extractor_Utils_CogniteDestination__Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.%23ctor(Cognite.Extractor.Utils.CogniteDestination%2CTimeSpan%2CSystem.Int32%2CILogger%7BCognite.Extractor.Utils.CogniteDestination%7D%2CFunc%7BCognite.Extractor.Utils.QueueUploadResult%7BSystem.ValueTuple%7BIdentity%2CCognite.Extensions.Datapoint%7D%7D%2CTask%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_Cognite_Extractor_Utils_CogniteDestination_TimeSpan_System_Int32_ILogger_Cognite_Extractor_Utils_CogniteDestination__Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.%23ctor(Cognite.Extractor.Utils.CogniteDestination%2CTimeSpan%2CSystem.Int32%2CILogger%7BCognite.Extractor.Utils.CogniteDestination%7D%2CFunc%7BCognite.Extractor.Utils.QueueUploadResult%7BSystem.ValueTuple%7BIdentity%2CCognite.Extensions.Datapoint%7D%7D%2CTask%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L43">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L43">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor*"></a>
   <h4 id="Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_Cognite_Extractor_Utils_CogniteDestination_TimeSpan_System_Int32_ILogger_Cognite_Extractor_Utils_CogniteDestination__Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task},System.String)">TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger&lt;CogniteDestination&gt;, Func&lt;QueueUploadResult&lt;(Identity id, Datapoint dp)&gt;, Task&gt;, String)</h4>
@@ -191,10 +207,10 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_AddStateStorage_IDictionary_Identity_Cognite_Extractor_StateStorage_BaseExtractionState__Cognite_Extractor_StateStorage_IExtractionStateStore_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage(IDictionary%7BIdentity%2CCognite.Extractor.StateStorage.BaseExtractionState%7D%2CCognite.Extractor.StateStorage.IExtractionStateStore%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_AddStateStorage_IDictionary_Identity_Cognite_Extractor_StateStorage_BaseExtractionState__Cognite_Extractor_StateStorage_IExtractionStateStore_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage(IDictionary%7BIdentity%2CCognite.Extractor.StateStorage.BaseExtractionState%7D%2CCognite.Extractor.StateStorage.IExtractionStateStore%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L99">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L99">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_AddStateStorage_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage*"></a>
   <h4 id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_AddStateStorage_IDictionary_Identity_Cognite_Extractor_StateStorage_BaseExtractionState__Cognite_Extractor_StateStorage_IExtractionStateStore_System_String_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.AddStateStorage(IDictionary{Identity,Cognite.Extractor.StateStorage.BaseExtractionState},Cognite.Extractor.StateStorage.IExtractionStateStore,System.String)">AddStateStorage(IDictionary&lt;Identity, BaseExtractionState&gt;, IExtractionStateStore, String)</h4>
@@ -237,10 +253,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_Identity_Cognite_Extensions_Datapoint_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(Identity%2CCognite.Extensions.Datapoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_Identity_Cognite_Extensions_Datapoint_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(Identity%2CCognite.Extensions.Datapoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L78">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L78">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue*"></a>
   <h4 id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_Identity_Cognite_Extensions_Datapoint_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(Identity,Cognite.Extensions.Datapoint)">Enqueue(Identity, Datapoint)</h4>
@@ -277,10 +293,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_System_Int64_Cognite_Extensions_Datapoint_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.Int64%2CCognite.Extensions.Datapoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_System_Int64_Cognite_Extensions_Datapoint_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.Int64%2CCognite.Extensions.Datapoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L88">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L88">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue*"></a>
   <h4 id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_System_Int64_Cognite_Extensions_Datapoint_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.Int64,Cognite.Extensions.Datapoint)">Enqueue(Int64, Datapoint)</h4>
@@ -317,10 +333,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_System_String_Cognite_Extensions_Datapoint_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.String%2CCognite.Extensions.Datapoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_System_String_Cognite_Extensions_Datapoint_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.String%2CCognite.Extensions.Datapoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L69">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L69">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue*"></a>
   <h4 id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_Enqueue_System_String_Cognite_Extensions_Datapoint_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.Enqueue(System.String,Cognite.Extensions.Datapoint)">Enqueue(String, Datapoint)</h4>
@@ -357,10 +373,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_UploadEntries_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries(IEnumerable%7BSystem.ValueTuple%7BIdentity%2CCognite.Extensions.Datapoint%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue_UploadEntries_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries(IEnumerable%7BSystem.ValueTuple%7BIdentity%2CCognite.Extensions.Datapoint%7D%7D%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L184">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L189">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_UploadEntries_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries*"></a>
   <h4 id="Cognite_Extractor_Utils_TimeSeriesUploadQueue_UploadEntries_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___CancellationToken_" data-uid="Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries(IEnumerable{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},CancellationToken)">UploadEntries(IEnumerable&lt;(Identity id, Datapoint dp)&gt;, CancellationToken)</h4>
@@ -412,6 +428,19 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">Cognite.Extractor.Utils.BaseUploadQueue&lt;System.ValueTuple&lt;Identity, Cognite.Extensions.Datapoint&gt;&gt;.UploadEntries(IEnumerable&lt;System.ValueTuple&lt;Identity, Cognite.Extensions.Datapoint&gt;&gt;, CancellationToken)</span></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Cognite.Extractor.Utils.IUploadQueue-1.html">IUploadQueue&lt;T&gt;</a>
+  </div>
+  <div>
+      <a class="xref" href="Cognite.Extractor.Utils.IUploadQueue.html">IUploadQueue</a>
+  </div>
+  <div>
+      <span class="xref">IDisposable</span>
+  </div>
+  <div>
+      <span class="xref">IAsyncDisposable</span>
+  </div>
 </article>
           </div>
           
@@ -420,10 +449,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extractor_Utils_TimeSeriesUploadQueue.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.TimeSeriesUploadQueue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L19" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/ExtractorUtils/queues/TimeSeriesUploadQueue.cs/#L19" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

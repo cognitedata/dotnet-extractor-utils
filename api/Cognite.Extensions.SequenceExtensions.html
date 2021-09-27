@@ -91,10 +91,10 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_EnsureExistsAsync_SequencesResource_IEnumerable_SequenceCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.EnsureExistsAsync(SequencesResource%2CIEnumerable%7BSequenceCreate%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_EnsureExistsAsync_SequencesResource_IEnumerable_SequenceCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.EnsureExistsAsync(SequencesResource%2CIEnumerable%7BSequenceCreate%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L135">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L135">View Source</a>
   </span>
   <a id="Cognite_Extensions_SequenceExtensions_EnsureExistsAsync_" data-uid="Cognite.Extensions.SequenceExtensions.EnsureExistsAsync*"></a>
   <h4 id="Cognite_Extensions_SequenceExtensions_EnsureExistsAsync_SequencesResource_IEnumerable_SequenceCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_" data-uid="Cognite.Extensions.SequenceExtensions.EnsureExistsAsync(SequencesResource,IEnumerable{SequenceCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)">EnsureExistsAsync(SequencesResource, IEnumerable&lt;SequenceCreate&gt;, Int32, Int32, RetryMode, SanitationMode, CancellationToken)</h4>
@@ -108,7 +108,7 @@ Sequences will be returned in the same order as given in <code data-dev-comment-
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;Sequence&gt;&gt; EnsureExistsAsync(this SequencesResource sequences, IEnumerable&lt;SequenceCreate&gt; sequencesToEnsure, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;Sequence, SequenceCreate&gt;&gt; EnsureExistsAsync(this SequencesResource sequences, IEnumerable&lt;SequenceCreate&gt; sequencesToEnsure, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -175,18 +175,18 @@ this method.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>&gt;&gt;</td>
-        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult.html">CogniteResult</a> containing errors that occured and a list of the created sequences</p>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>, <span class="xref">SequenceCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created sequences</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_GetByIdsIgnoreErrors_SequencesResource_IEnumerable_Identity__System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource%2CIEnumerable%7BIdentity%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_GetByIdsIgnoreErrors_SequencesResource_IEnumerable_Identity__System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource%2CIEnumerable%7BIdentity%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L192">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L192">View Source</a>
   </span>
   <a id="Cognite_Extensions_SequenceExtensions_GetByIdsIgnoreErrors_" data-uid="Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors*"></a>
   <h4 id="Cognite_Extensions_SequenceExtensions_GetByIdsIgnoreErrors_SequencesResource_IEnumerable_Identity__System_Int32_System_Int32_CancellationToken_" data-uid="Cognite.Extensions.SequenceExtensions.GetByIdsIgnoreErrors(SequencesResource,IEnumerable{Identity},System.Int32,System.Int32,CancellationToken)">GetByIdsIgnoreErrors(SequencesResource, IEnumerable&lt;Identity&gt;, Int32, Int32, CancellationToken)</h4>
@@ -257,10 +257,10 @@ unknown ids</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_SequencesResource_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_SequenceCreate___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource%2CIEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CIEnumerable%7BSequenceCreate%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_SequencesResource_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_SequenceCreate___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource%2CIEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CIEnumerable%7BSequenceCreate%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L45">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L45">View Source</a>
   </span>
   <a id="Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_" data-uid="Cognite.Extensions.SequenceExtensions.GetOrCreateAsync*"></a>
   <h4 id="Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_SequencesResource_IEnumerable_System_String__Func_IEnumerable_System_String__IEnumerable_SequenceCreate___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_" data-uid="Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource,IEnumerable{System.String},Func{IEnumerable{System.String},IEnumerable{SequenceCreate}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)">GetOrCreateAsync(SequencesResource, IEnumerable&lt;String&gt;, Func&lt;IEnumerable&lt;String&gt;, IEnumerable&lt;SequenceCreate&gt;&gt;, Int32, Int32, RetryMode, SanitationMode, CancellationToken)</h4>
@@ -274,7 +274,7 @@ or missing dataSetId, they can be removed before retrying by setting <code data-
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;Sequence&gt;&gt; GetOrCreateAsync(this SequencesResource sequences, IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;SequenceCreate&gt;&gt; buildSequences, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;Sequence, SequenceCreate&gt;&gt; GetOrCreateAsync(this SequencesResource sequences, IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;SequenceCreate&gt;&gt; buildSequences, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -346,18 +346,18 @@ or missing dataSetId, they can be removed before retrying by setting <code data-
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>&gt;&gt;</td>
-        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult.html">CogniteResult</a> containing errors that occured and a list of the created and found sequences</p>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>, <span class="xref">SequenceCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found sequences</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_SequencesResource_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_SequenceCreate____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource%2CIEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CTask%7BIEnumerable%7BSequenceCreate%7D%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_SequencesResource_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_SequenceCreate____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource%2CIEnumerable%7BSystem.String%7D%2CFunc%7BIEnumerable%7BSystem.String%7D%2CTask%7BIEnumerable%7BSequenceCreate%7D%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L80">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L80">View Source</a>
   </span>
   <a id="Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_" data-uid="Cognite.Extensions.SequenceExtensions.GetOrCreateAsync*"></a>
   <h4 id="Cognite_Extensions_SequenceExtensions_GetOrCreateAsync_SequencesResource_IEnumerable_System_String__Func_IEnumerable_System_String__Task_IEnumerable_SequenceCreate____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_" data-uid="Cognite.Extensions.SequenceExtensions.GetOrCreateAsync(SequencesResource,IEnumerable{System.String},Func{IEnumerable{System.String},Task{IEnumerable{SequenceCreate}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)">GetOrCreateAsync(SequencesResource, IEnumerable&lt;String&gt;, Func&lt;IEnumerable&lt;String&gt;, Task&lt;IEnumerable&lt;SequenceCreate&gt;&gt;&gt;, Int32, Int32, RetryMode, SanitationMode, CancellationToken)</h4>
@@ -371,7 +371,7 @@ or missing dataSetId, they can be removed before retrying by setting <code data-
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;Sequence&gt;&gt; GetOrCreateAsync(this SequencesResource sequences, IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;SequenceCreate&gt;&gt;&gt; buildSequences, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;Sequence, SequenceCreate&gt;&gt; GetOrCreateAsync(this SequencesResource sequences, IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;SequenceCreate&gt;&gt;&gt; buildSequences, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -443,18 +443,18 @@ or missing dataSetId, they can be removed before retrying by setting <code data-
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>&gt;&gt;</td>
-        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult.html">CogniteResult</a> containing errors that occured and a list of the created and found sequences</p>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>, <span class="xref">SequenceCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found sequences</p>
 </td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_InsertAsync_SequencesResource_IEnumerable_SequenceDataCreate__System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.InsertAsync(SequencesResource%2CIEnumerable%7BSequenceDataCreate%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions_InsertAsync_SequencesResource_IEnumerable_SequenceDataCreate__System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions.InsertAsync(SequencesResource%2CIEnumerable%7BSequenceDataCreate%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L351">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L351">View Source</a>
   </span>
   <a id="Cognite_Extensions_SequenceExtensions_InsertAsync_" data-uid="Cognite.Extensions.SequenceExtensions.InsertAsync*"></a>
   <h4 id="Cognite_Extensions_SequenceExtensions_InsertAsync_SequencesResource_IEnumerable_SequenceDataCreate__System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_" data-uid="Cognite.Extensions.SequenceExtensions.InsertAsync(SequencesResource,IEnumerable{SequenceDataCreate},System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)">InsertAsync(SequencesResource, IEnumerable&lt;SequenceDataCreate&gt;, Int32, Int32, Int32, Int32, RetryMode, SanitationMode, CancellationToken)</h4>
@@ -465,7 +465,7 @@ Optionally sanitizes the request, and handles errors that occur while running.</
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&gt; InsertAsync(this SequencesResource sequences, IEnumerable&lt;SequenceDataCreate&gt; toCreate, int keyChunkSize, int valueChunkSize, int sequencesChunk, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;SequenceRowError&gt;&gt; InsertAsync(this SequencesResource sequences, IEnumerable&lt;SequenceDataCreate&gt; toCreate, int keyChunkSize, int valueChunkSize, int sequencesChunk, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -543,7 +543,7 @@ Optionally sanitizes the request, and handles errors that occur while running.</
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult.html">CogniteResult</a>&gt;</td>
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.SequenceRowError.html">SequenceRowError</a>&gt;&gt;</td>
         <td><p>Result containing optional errors if something went wrong</p>
 </td>
       </tr>
@@ -557,10 +557,10 @@ Optionally sanitizes the request, and handles errors that occur while running.</
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/b14225804677c5c6ad080c573a90fe3fea1bf064/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/apiSpec/new?filename=Cognite_Extensions_SequenceExtensions.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L19" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/Cognite.Extensions/Sequences/SequenceExtensions.cs/#L19" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

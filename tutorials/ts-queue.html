@@ -72,7 +72,7 @@
 <p>Timeseries upload queues buffer datapoints and sends them to CDF at a fixed interval, or whenever the queue reaches a certain size. Automatic uploads can be disabled entirely.</p>
 <p>If inserting into CDF fails with a timeout or 5xx response code, datapoints can optionally be written to a local file, then read once the queue is able to push again. The path to a file is passed to <code>CreateTimeSeriesUploadQueue</code>. Multiple queues can not use the same buffer file.</p>
 <pre><code class="lang-c#">// Creates a queue that uploads datapoints to CDF every 5 seconds (or when the queue size reaches 1.000)
-using (var queue = destination.CreateTimeSeriesUploadQueue&lt;ColumnsDto&gt;(TimeSpan.FromSeconds(5), 1_000,
+await using (var queue = destination.CreateTimeSeriesUploadQueue&lt;ColumnsDto&gt;(TimeSpan.FromSeconds(5), 1_000,
     result =&gt; { handle result of upload here }, &quot;some-path.bin&quot;))
 {
     // Task to generate datapoints at regular intervals
@@ -95,7 +95,7 @@ using (var queue = destination.CreateTimeSeriesUploadQueue&lt;ColumnsDto&gt;(Tim
 } // disposing the queue will upload any datapoints left and stop the upload loop
 </code></pre>
 <h2 id="state-storage">State storage</h2>
-<p>Call <a class="xref" href="../api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html">AddStateStorage</a> in with a dictionary of states in order to enable automatically updating extracted ranges after pushing.</p>
+<p>Call <a class="xref" href="../api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html">AddStateStorage</a> with a dictionary of states in order to enable automatically updating extracted ranges after pushing.</p>
 <pre><code class="lang-c#">var myStateMap = new Dictionary&lt;Identity, BaseExtractionState&gt;(new IdentityComparer());
 
 queue.AddStateStorage(states, provider.GetRequiredService&lt;IExtractionStateStore&gt;(), &quot;some-timeseries-collection-name&quot;);
@@ -109,7 +109,7 @@ queue.AddStateStorage(states, provider.GetRequiredService&lt;IExtractionStateSto
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/docfx_project/tutorials/ts-queue.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/docfx_project/tutorials/ts-queue.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

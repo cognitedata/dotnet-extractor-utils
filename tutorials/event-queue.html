@@ -72,7 +72,7 @@
 <p>Event upload queues buffer events and sends them to CDF at a fixed interval, or whenever the queue reaches a certain size. Automatic uploads can be disabled entirely.</p>
 <p>If inserting into CDF fails with a timeout or 5xx response code, datapoints can optionally be written to a local file, then read once the queue is able to push again. The path to a file is passed to <code>CreateEventUploadQueue</code>. Multiple queues can not use the same buffer file.</p>
 <pre><code class="lang-c#">// Creates a queue that uploads events to CDF every 5 seconds (or when the queue size reaches 1.000)
-using (var queue = destination.CreateTimeSeriesUploadQueue&lt;ColumnsDto&gt;(TimeSpan.FromSeconds(5), 1_000,
+await using (var queue = destination.CreateTimeSeriesUploadQueue&lt;ColumnsDto&gt;(TimeSpan.FromSeconds(5), 1_000,
     result =&gt; { handle result of upload here }, &quot;some-path.bin&quot;))
 {
     // Task to generate events at regular intervals
@@ -102,7 +102,7 @@ using (var queue = destination.CreateTimeSeriesUploadQueue&lt;ColumnsDto&gt;(Tim
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/b14225804677c5c6ad080c573a90fe3fea1bf064/docfx_project/tutorials/event-queue.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/e67cdd26d20a230248d10b5ec7877b98bfb7a5cb/docfx_project/tutorials/event-queue.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
