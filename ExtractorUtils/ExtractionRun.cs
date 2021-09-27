@@ -21,7 +21,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Frequency of extraction pipeline updates in seconds.
         /// </summary>
-        public int Frequency { get; set; }
+        public int Frequency { get; set; } = 600;
     }
 
     /// <summary>

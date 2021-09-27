@@ -48,11 +48,6 @@ namespace Cognite.Extractor.Utils
             if (Logger == null) Logger = new LoggerConfig();
             if (StateStore == null) StateStore = new StateStoreConfig();
         }
-
-        /// <summary>
-        /// Configuration for automatically reporting extraction pipeline runs.
-        /// </summary>
-        public ExtractionRunConfig ExtractionPipeline { get; set; }
     }
 
     #region Cognite configuration
@@ -114,6 +109,11 @@ namespace Cognite.Extractor.Utils
         /// Optional replacement for non-finite double values in datapoints
         /// </summary>
         public double? NanReplacement { get; set; }
+
+        /// <summary>
+        /// Configuration for automatically reporting extraction pipeline runs.
+        /// </summary>
+        public ExtractionRunConfig ExtractionPipeline { get; set; }
     }
 
     /// <summary>

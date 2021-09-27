@@ -38,8 +38,7 @@ namespace Cognite.Extractor.Utils
                 typeof(LoggerConfig),
                 typeof(MetricsConfig),
                 typeof(StateStoreConfig),
-                typeof(BaseConfig),
-                typeof(ExtractionRunConfig));
+                typeof(BaseConfig));
             return config;
         }
 
@@ -90,9 +89,10 @@ namespace Cognite.Extractor.Utils
                 var logger = setLogger ?
                     provider.GetRequiredService<ILogger<ExtractionRun>>() : null;
                 var destination = provider.GetRequiredService<CogniteDestination>();
-                var config = provider.GetService<ExtractionRunConfig>();
-                if (config == null || config.PipelineId == null) return null;
-                return new ExtractionRun(config, destination, logger);
+                var config = provider.GetService<CogniteConfig>();
+
+                if (config?.ExtractionPipeline == null || config.ExtractionPipeline.PipelineId == null) return null;
+                return new ExtractionRun(config.ExtractionPipeline, destination, logger);
             });
         }
     }
