@@ -183,7 +183,12 @@ namespace Cognite.Extractor.Utils
                                 log.LogError(ex, "Extractor crashed unexpectedly");
                             }
                         }
+                        if (run != null)
+                        {
+                            await run.DisposeAsync().ConfigureAwait(false);
+                        }
                     }
+                    
                         
                     if (source.IsCancellationRequested || !restart)
                     {
