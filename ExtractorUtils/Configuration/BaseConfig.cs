@@ -104,6 +104,11 @@ namespace Cognite.Extractor.Utils
         /// Leaving this empty also disables.
         /// </summary>
         public SdkLoggingConfig SdkLogging { get; set; }
+
+        /// <summary>
+        /// Optional replacement for non-finite double values in datapoints
+        /// </summary>
+        public double? NanReplacement { get; set; }
     }
 
     /// <summary>
@@ -246,6 +251,11 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>Maximum chunk size</value>
         public int DataPoints { get; set; } = 100_000;
+
+        /// <summary>
+        /// Minimum number of datapoints in a request before gzip should be used.
+        /// </summary>
+        public int DataPointsGzipLimit { get; set; } = 5_000;
 
         /// <summary>
         /// Maximum number of rows per Raw row insert request

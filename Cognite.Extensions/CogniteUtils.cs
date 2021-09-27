@@ -75,45 +75,6 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
-        /// Trim values to accepted CDF limits and filter out invalid double values (NaN and Infinity) 
-        /// </summary>
-        /// <param name="points">Data points</param>
-        /// <returns></returns>
-        public static IEnumerable<Datapoint> TrimValues(this IEnumerable<Datapoint> points)
-        {
-            foreach (var point in points)
-            {
-                // reduce GC pressure by re-using object if ok
-                if (point.StringValue != null)
-                {
-                    yield return point.StringValue.Length < StringLengthMax ? point :
-                        new Datapoint(CogniteTime.FromUnixTimeMilliseconds(point.Timestamp), point.StringValue.Substring(0, StringLengthMax));
-                }
-                else if (point.NumericValue.HasValue)
-                {
-                    double value = point.NumericValue.Value;
-                    if (!double.IsNaN(value) && !double.IsInfinity(value))
-                    {
-                        value = Math.Max(NumericValueMin, value);
-                        value = Math.Min(NumericValueMax, value);
-                        yield return value == point.NumericValue.Value ? point : 
-                            new Datapoint(CogniteTime.FromUnixTimeMilliseconds(point.Timestamp), value);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Remove data points from <paramref name="points"/> that contain timestamps outside the
-        /// supported range in Cognite: from 1971 to 2050.
-        /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        public static IEnumerable<Datapoint> RemoveOutOfRangeTimestamps(this IEnumerable<Datapoint> points)
-        {
-            return points.Where(p => p.Timestamp >= TimestampMin && p.Timestamp <= TimestampMax);
-        }
-        /// <summary>
         /// Turn string into an array of bytes on the format [unsigned short length][string].
         /// </summary>
         /// <param name="str">String to transform</param>
@@ -631,7 +592,7 @@ namespace Cognite.Extensions
         {
             var logger = provider.GetService<ILogger<Client>>();
             AssetExtensions.SetLogger(logger);
-            DatapointExtensions.SetLogger(logger);
+            DataPointExtensions.SetLogger(logger);
             TimeSeriesExtensions.SetLogger(logger);
             RawExtensions.SetLogger(logger);
             EventExtensions.SetLogger(logger);
