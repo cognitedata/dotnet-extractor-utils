@@ -253,6 +253,7 @@ namespace Cognite.Extractor.Utils
 
         /// <summary>
         /// Dispose of extractor, waiting for running tasks and pushing everything pending to CDF.
+        /// Use DisposeAsync instead if possible.
         /// </summary>
         /// <param name="disposing">True if disposing</param>
         protected virtual void Dispose(bool disposing)
@@ -278,7 +279,7 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Internal method to dispose asynchronously. Preferred.
+        /// Internal method to dispose asynchronously.
         /// </summary>
         protected virtual async ValueTask DisposeAsyncCore()
         {
@@ -296,7 +297,7 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Dispose extractor.
+        /// Dispose extractor. Use DisposeAsync instead if possible.
         /// </summary>
         public void Dispose()
         {
@@ -306,7 +307,7 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Dispose extractor asynchronously. Preferred.
+        /// Dispose extractor asynchronously. Preferred over synchronous dispose.
         /// </summary>
         public async ValueTask DisposeAsync()
         {

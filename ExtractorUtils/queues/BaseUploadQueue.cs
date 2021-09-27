@@ -305,7 +305,7 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Dispose of the queue, uploading all remaining entries.
+        /// Dispose of the queue, uploading all remaining entries. Use DisposeAsync instead if possible.
         /// </summary>
         public void Dispose()
         {
@@ -314,7 +314,7 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Dispose of the queue, uploading all remaining entries
+        /// Dispose of the queue, uploading all remaining entries. Preferred over synchronous dispose.
         /// </summary>
         public async ValueTask DisposeAsync()
         {
