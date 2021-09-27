@@ -258,6 +258,11 @@ namespace Cognite.Extractor.Utils
         public int DataPoints { get; set; } = 100_000;
 
         /// <summary>
+        /// Minimum number of datapoints in a request before gzip should be used.
+        /// </summary>
+        public int DataPointsGzipLimit { get; set; } = 5_000;
+
+        /// <summary>
         /// Maximum number of rows per Raw row insert request
         /// </summary>
         /// <value>Maximum chunk size</value>
