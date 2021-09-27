@@ -6,7 +6,7 @@ If inserting into CDF fails with a timeout or 5xx response code, datapoints can 
 
 ```c#
 // Creates a queue that uploads datapoints to CDF every 5 seconds (or when the queue size reaches 1.000)
-using (var queue = destination.CreateTimeSeriesUploadQueue<ColumnsDto>(TimeSpan.FromSeconds(5), 1_000,
+await using (var queue = destination.CreateTimeSeriesUploadQueue<ColumnsDto>(TimeSpan.FromSeconds(5), 1_000,
     result => { handle result of upload here }, "some-path.bin"))
 {
     // Task to generate datapoints at regular intervals
@@ -31,7 +31,7 @@ using (var queue = destination.CreateTimeSeriesUploadQueue<ColumnsDto>(TimeSpan.
 
 ## State storage
 
-Call [AddStateStorage](xref:Cognite.Extractor.Utils.TimeSeriesUploadQueue) in with a dictionary of states in order to enable automatically updating extracted ranges after pushing.
+Call [AddStateStorage](xref:Cognite.Extractor.Utils.TimeSeriesUploadQueue) with a dictionary of states in order to enable automatically updating extracted ranges after pushing.
 
 ```c#
 var myStateMap = new Dictionary<Identity, BaseExtractionState>(new IdentityComparer());
