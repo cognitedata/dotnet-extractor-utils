@@ -12,6 +12,7 @@ using Xunit;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
+using System.Reflection;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -228,8 +229,10 @@ namespace ExtractorUtils.Test.Unit
         [Fact]
         public void TestVersion()
         {
-            string version = Cognite.Extractor.Metrics.Version.GetVersion();
-            string desc = Cognite.Extractor.Metrics.Version.Status();
+            var assembly = Assembly.GetExecutingAssembly();
+
+            string version = Cognite.Extractor.Metrics.Version.GetVersion(assembly);
+            string desc = Cognite.Extractor.Metrics.Version.GetDescription(assembly);
             // This test does not pass in CI, because github actions does not provide proper access
             // Assert.False(string.IsNullOrWhiteSpace(version));
             // Assert.False(string.IsNullOrWhiteSpace(desc));
