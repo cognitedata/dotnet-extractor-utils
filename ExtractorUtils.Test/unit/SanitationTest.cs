@@ -605,13 +605,13 @@ namespace ExtractorUtils.Test.Unit
             var (result, errors) = Sanitation.CleanSequenceRequest(sequences, SanitationMode.Clean);
             var errs = errors.ToList();
             Assert.Equal(4, result.Count());
-            Assert.Equal(4, errors.Count());
-            var err = errs[2];
+            Assert.Equal(3, errors.Count());
+            var err = errs[1];
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);
             Assert.Equal(ResourceType.ExternalId, err.Resource);
             Assert.Equal(2, err.Values.Count());
 
-            err = errs[3];
+            err = errs[2];
             Assert.Equal(ErrorType.SanitationFailed, err.Type);
             Assert.Equal(ResourceType.SequenceColumns, err.Resource);
             Assert.Equal(2, err.Skipped.Count());
@@ -619,14 +619,7 @@ namespace ExtractorUtils.Test.Unit
             err = errs[0];
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);
             Assert.Equal(ResourceType.ColumnExternalId, err.Resource);
-            Assert.Single(err.Skipped);
-            Assert.Single(err.Values);
-
-            err = errs[1];
-            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
-            Assert.Equal(ResourceType.ColumnExternalId, err.Resource);
-            Assert.Single(err.Skipped);
-            Assert.Single(err.Values);
+            Assert.Equal(2, err.Skipped.Count());
         }
         [Fact]
         public void TestSanitizeSequenceDataRequest()
@@ -684,18 +677,16 @@ namespace ExtractorUtils.Test.Unit
 
             var errs = errors.ToList();
             
-            var err = errs[0];
+            var err = errs[1];
             Assert.Equal(ResourceType.SequenceRowNumber, err.Resource);
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);
             Assert.Equal(409, err.Status);
-            Assert.Single(err.Values);
             Assert.Single(err.Skipped);
 
-            err = errs[1];
+            err = errs[0];
             Assert.Equal(ResourceType.ColumnExternalId, err.Resource);
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);
             Assert.Equal(409, err.Status);
-            Assert.Single(err.Values);
             Assert.Single(err.Skipped);
 
             err = errs[2];
@@ -718,13 +709,11 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(ResourceType.SequenceRowValues, err.Resource);
             Assert.Equal(ErrorType.SanitationFailed, err.Type);
             Assert.Equal(3, err.Skipped.Count());
-            Assert.Equal(3, err.Data.Count());
 
             err = errs[6];
             Assert.Equal(ResourceType.SequenceRowNumber, err.Resource);
             Assert.Equal(ErrorType.SanitationFailed, err.Type);
             Assert.Single(err.Skipped);
-            Assert.Single(err.Data);
         }
         [Fact]
         public void SanitizeDataPointRequest()

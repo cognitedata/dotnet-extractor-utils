@@ -101,17 +101,17 @@ namespace Cognite.Extensions
         /// <param name="events">EventCreate request to clean</param>
         /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned request and optional error if any ids were duplicated</returns>
-        public static (IEnumerable<EventCreate>, IEnumerable<CogniteError>) CleanEventRequest(
+        public static (IEnumerable<EventCreate>, IEnumerable<CogniteError<EventCreate>>) CleanEventRequest(
             IEnumerable<EventCreate> events,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (events, Enumerable.Empty<CogniteError>());
+            if (mode == SanitationMode.None) return (events, Enumerable.Empty<CogniteError<EventCreate>>());
             if (events == null)
             {
                 throw new ArgumentNullException(nameof(events));
             }
             var result = new List<EventCreate>();
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<EventCreate>>();
 
             var ids = new HashSet<string>();
             var duplicated = new HashSet<string>();
@@ -149,7 +149,7 @@ namespace Cognite.Extensions
             }
             if (duplicated.Any())
             {
-                errors.Add(new CogniteError
+                errors.Add(new CogniteError<EventCreate>
                 {
                     Status = 409,
                     Message = "ExternalIds duplicated",
@@ -160,7 +160,7 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError
+                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<EventCreate>
                 {
                     Skipped = group.Select(pair => pair.Item2).ToList(),
                     Resource = group.Key,

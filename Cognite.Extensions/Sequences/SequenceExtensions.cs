@@ -41,8 +41,8 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found sequences</returns>
-        public static Task<CogniteResult<Sequence>> GetOrCreateAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found sequences</returns>
+        public static Task<CogniteResult<Sequence, SequenceCreate>> GetOrCreateAsync(
             this SequencesResource sequences,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<SequenceCreate>> buildSequences,
@@ -76,8 +76,8 @@ namespace Cognite.Extensions
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found sequences</returns>
-        public static async Task<CogniteResult<Sequence>> GetOrCreateAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found sequences</returns>
+        public static async Task<CogniteResult<Sequence, SequenceCreate>> GetOrCreateAsync(
             this SequencesResource sequences,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<SequenceCreate>>> buildSequences,
@@ -90,9 +90,9 @@ namespace Cognite.Extensions
             var chunks = externalIds
                 .ChunkBy(chunkSize)
                 .ToList();
-            if (!chunks.Any()) return new CogniteResult<Sequence>(null, null);
+            if (!chunks.Any()) return new CogniteResult<Sequence, SequenceCreate>(null, null);
 
-            var results = new CogniteResult<Sequence>[chunks.Count];
+            var results = new CogniteResult<Sequence, SequenceCreate>[chunks.Count];
 
             _logger.LogDebug("Getting or creating sequences. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
@@ -113,7 +113,7 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return CogniteResult<Sequence>.Merge(results);
+            return CogniteResult<Sequence, SequenceCreate>.Merge(results);
         }
         /// <summary>
         /// Ensures that all sequences in <paramref name="sequencesToEnsure"/> exist in CDF.
@@ -131,8 +131,8 @@ namespace Cognite.Extensions
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created sequences</returns>
-        public static async Task<CogniteResult<Sequence>> EnsureExistsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created sequences</returns>
+        public static async Task<CogniteResult<Sequence, SequenceCreate>> EnsureExistsAsync(
             this SequencesResource sequences,
             IEnumerable<SequenceCreate> sequencesToEnsure,
             int chunkSize,
@@ -141,7 +141,7 @@ namespace Cognite.Extensions
             SanitationMode sanitationMode,
             CancellationToken token)
         {
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<SequenceCreate>> errors;
             (sequencesToEnsure, errors) = Sanitation.CleanSequenceRequest(sequencesToEnsure, sanitationMode);
 
             var chunks = sequencesToEnsure
@@ -149,14 +149,14 @@ namespace Cognite.Extensions
                 .ToList();
 
             int size = chunks.Count + (errors.Any() ? 1 : 0);
-            var results = new CogniteResult<Sequence>[size];
+            var results = new CogniteResult<Sequence, SequenceCreate>[size];
 
             if (errors.Any())
             {
-                results[size - 1] = new CogniteResult<Sequence>(errors, null);
+                results[size - 1] = new CogniteResult<Sequence, SequenceCreate>(errors, null);
                 if (size == 1) return results[size - 1];
             }
-            if (size == 0) return new CogniteResult<Sequence>(null, null);
+            if (size == 0) return new CogniteResult<Sequence, SequenceCreate>(null, null);
 
             _logger.LogDebug("Ensuring sequences. Number of sequences: {Number}. Number of chunks: {Chunks}", sequencesToEnsure.Count(), chunks.Count);
             var generators = chunks
@@ -176,7 +176,7 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return CogniteResult<Sequence>.Merge(results);
+            return CogniteResult<Sequence, SequenceCreate>.Merge(results);
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace Cognite.Extensions
             return result;
         }
 
-        private static async Task<CogniteResult<Sequence>> GetOrCreateSequencesChunk(
+        private static async Task<CogniteResult<Sequence, SequenceCreate>> GetOrCreateSequencesChunk(
             SequencesResource client,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<SequenceCreate>>> buildSequences,
@@ -243,13 +243,13 @@ namespace Cognite.Extensions
 
             if (!missing.Any())
             {
-                return new CogniteResult<Sequence>(null, found);
+                return new CogniteResult<Sequence, SequenceCreate>(null, found);
             }
 
             _logger.LogDebug("Could not fetch {Missing} out of {Found} sequences. Attempting to create the missing ones", missing.Count, externalIds.Count());
             var toCreate = await buildSequences(missing).ConfigureAwait(false);
 
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<SequenceCreate>> errors;
             (toCreate, errors) = Sanitation.CleanSequenceRequest(toCreate, sanitationMode);
 
             var result = await CreateSequencesHandleErrors(client, toCreate, retryMode, token).ConfigureAwait(false);
@@ -291,13 +291,13 @@ namespace Cognite.Extensions
             return result;
         }
 
-        private static async Task<CogniteResult<Sequence>> CreateSequencesHandleErrors(
+        private static async Task<CogniteResult<Sequence, SequenceCreate>> CreateSequencesHandleErrors(
             SequencesResource sequences,
             IEnumerable<SequenceCreate> toCreate,
             RetryMode retryMode,
             CancellationToken token)
         {
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<SequenceCreate>>();
             while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
             {
                 try
@@ -309,13 +309,13 @@ namespace Cognite.Extensions
                     }
 
                     _logger.LogDebug("Created {New} new sequences in CDF", newSequences.Count());
-                    return new CogniteResult<Sequence>(errors, newSequences);
+                    return new CogniteResult<Sequence, SequenceCreate>(errors, newSequences);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogDebug("Failed to create {cnt} sequences: {msg}",
                         toCreate.Count(), ex.Message);
-                    var error = ResultHandlers.ParseException(ex, RequestType.CreateSequences);
+                    var error = ResultHandlers.ParseException<SequenceCreate>(ex, RequestType.CreateSequences);
                     errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
@@ -330,7 +330,7 @@ namespace Cognite.Extensions
                     }
                 }
             }
-            return new CogniteResult<Sequence>(errors, null);
+            return new CogniteResult<Sequence, SequenceCreate>(errors, null);
         }
 
         /// <summary>
@@ -348,7 +348,7 @@ namespace Cognite.Extensions
         /// <param name="sanitationMode">How to sanitize the request before sending</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Result containing optional errors if something went wrong</returns>
-        public static async Task<CogniteResult> InsertAsync(
+        public static async Task<CogniteResult<SequenceRowError>> InsertAsync(
             this SequencesResource sequences,
             IEnumerable<SequenceDataCreate> toCreate,
             int keyChunkSize,
@@ -359,7 +359,7 @@ namespace Cognite.Extensions
             SanitationMode sanitationMode,
             CancellationToken token)
         {
-            IEnumerable<CogniteError> errors;
+            IEnumerable<CogniteError<SequenceRowError>> errors;
             (toCreate, errors) = Sanitation.CleanSequenceDataRequest(toCreate, sanitationMode);
 
             var dict = toCreate.ToDictionary(create => create.Id.HasValue ? Identity.Create(create.Id.Value) : Identity.Create(create.ExternalId));
@@ -377,14 +377,14 @@ namespace Cognite.Extensions
                 .ToList();
 
             int size = chunks.Count + (errors.Any() ? 1 : 0);
-            var results = new CogniteResult[size];
+            var results = new CogniteResult<SequenceRowError>[size];
 
             if (errors.Any())
             {
-                results[size - 1] = new CogniteResult(errors);
+                results[size - 1] = new CogniteResult<SequenceRowError>(errors);
                 if (size == 1) return results[size - 1];
             }
-            if (size == 0) return new CogniteResult(null);
+            if (size == 0) return new CogniteResult<SequenceRowError>(null);
 
             _logger.LogDebug("Inserting sequences rows. Number of sequences: {Number}. Number of chunks: {Chunks}", toCreate.Count(), chunks.Count);
             var generators = chunks
@@ -404,10 +404,10 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return CogniteResult.Merge(results);
+            return CogniteResult<SequenceRowError>.Merge(results);
         }
 
-        private static async Task<CogniteResult> InsertSequenceRowsHandleErrors(
+        private static async Task<CogniteResult<SequenceRowError>> InsertSequenceRowsHandleErrors(
             SequencesResource sequences,
             IEnumerable<SequenceDataCreate> toCreate,
             int sequencesChunk,
@@ -415,7 +415,7 @@ namespace Cognite.Extensions
             RetryMode retryMode,
             CancellationToken token)
         {
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<SequenceRowError>>();
             while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
             {
                 try
@@ -426,12 +426,12 @@ namespace Cognite.Extensions
                     }
 
                     _logger.LogDebug("Created {rows} rows for {seq} sequences in CDF", toCreate.Sum(seq => seq.Rows.Count()), toCreate.Count());
-                    return new CogniteResult(errors);
+                    return new CogniteResult<SequenceRowError>(errors);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogDebug("Failed to create rows for {seq} sequences", toCreate.Count());
-                    var error = ResultHandlers.ParseException(ex, RequestType.CreateSequenceRows);
+                    var error = ResultHandlers.ParseException<SequenceRowError>(ex, RequestType.CreateSequenceRows);
                     if (error.Complete) errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
@@ -463,7 +463,7 @@ namespace Cognite.Extensions
                 }
             }
 
-            return new CogniteResult(errors);
+            return new CogniteResult<SequenceRowError>(errors);
         }
     }
 }

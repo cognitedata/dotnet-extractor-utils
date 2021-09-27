@@ -88,17 +88,17 @@ namespace Cognite.Extensions
         /// <param name="timeseries">TimeSeriesCreate request to clean</param>
         /// <param name="mode">The type of sanitation to apply</param>
         /// <returns>Cleaned create request and optional errors for duplicated ids and legacyNames</returns>
-        public static (IEnumerable<TimeSeriesCreate>, IEnumerable<CogniteError>) CleanTimeSeriesRequest(
+        public static (IEnumerable<TimeSeriesCreate>, IEnumerable<CogniteError<TimeSeriesCreate>>) CleanTimeSeriesRequest(
             IEnumerable<TimeSeriesCreate> timeseries,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (timeseries, Enumerable.Empty<CogniteError>());
+            if (mode == SanitationMode.None) return (timeseries, Enumerable.Empty<CogniteError<TimeSeriesCreate>>());
             if (timeseries == null)
             {
                 throw new ArgumentNullException(nameof(timeseries));
             }
             var result = new List<TimeSeriesCreate>();
-            var errors = new List<CogniteError>();
+            var errors = new List<CogniteError<TimeSeriesCreate>>();
 
             var ids = new HashSet<string>();
             var duplicatedIds = new HashSet<string>();
@@ -148,7 +148,7 @@ namespace Cognite.Extensions
             }
             if (duplicatedIds.Any())
             {
-                errors.Add(new CogniteError
+                errors.Add(new CogniteError<TimeSeriesCreate>
                 {
                     Status = 409,
                     Message = "Conflicting identifiers",
@@ -159,7 +159,7 @@ namespace Cognite.Extensions
             }
             if (duplicatedNames.Any())
             {
-                errors.Add(new CogniteError
+                errors.Add(new CogniteError<TimeSeriesCreate>
                 {
                     Status = 409,
                     Message = "Duplicated metric names in request",
@@ -170,7 +170,7 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError
+                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<TimeSeriesCreate>
                 {
                     Skipped = group.Select(pair => pair.Item2).ToList(),
                     Resource = group.Key,

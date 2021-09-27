@@ -47,7 +47,7 @@ namespace Cognite.Extensions
         /// <param name="datapoints">Datapoints to remove</param>
         /// <returns>A modified version of <paramref name="datapoints"/> or an empty dictionary</returns>
         public static IDictionary<Identity, IEnumerable<Datapoint>> CleanFromError(
-            CogniteError error,
+            CogniteError<DataPointInsertError> error,
             IDictionary<Identity, IEnumerable<Datapoint>> datapoints)
         {
             if (datapoints == null) throw new ArgumentNullException(nameof(datapoints));
@@ -57,11 +57,12 @@ namespace Cognite.Extensions
             if (!error.Values?.Any() ?? true)
             {
                 error.Skipped = datapoints.Select(kvp => new DataPointInsertError(kvp.Key, kvp.Value)).ToList();
-                error.Values = error.Skipped.Select(pair => ((DataPointInsertError)pair).Id);
+
+                error.Values = error.Skipped.Select(pair => pair.Id);
                 return new Dictionary<Identity, IEnumerable<Datapoint>>();
             }
 
-            var skipped = new List<object>();
+            var skipped = new List<DataPointInsertError>();
 
             foreach (var idt in error.Values)
             {
@@ -96,9 +97,9 @@ namespace Cognite.Extensions
         /// <param name="timeseriesThrottleSize">Maximum number of parallel requests for timeseries</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Verified datapoint insertions and optional error</returns>
-        public static async Task<(CogniteError, IDictionary<Identity, IEnumerable<Datapoint>>)> VerifyDatapointsFromCDF(
+        public static async Task<(CogniteError<DataPointInsertError>, IDictionary<Identity, IEnumerable<Datapoint>>)> VerifyDatapointsFromCDF(
             TimeSeriesResource resource,
-            CogniteError error,
+            CogniteError<DataPointInsertError> error,
             IDictionary<Identity, IEnumerable<Datapoint>> datapoints,
             int timeseriesChunkSize,
             int timeseriesThrottleSize,
@@ -148,7 +149,7 @@ namespace Cognite.Extensions
 
             if (badDps.Any())
             {
-                if (error == null) error = new CogniteError { Message = "Mismatched timeseries" };
+                if (error == null) error = new CogniteError<DataPointInsertError> { Message = "Mismatched timeseries" };
                 error.Type = ErrorType.MismatchedType;
                 error.Resource = ResourceType.DataPointValue;
                 error.Skipped = badDps;

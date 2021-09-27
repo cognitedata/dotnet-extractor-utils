@@ -69,8 +69,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occurred and a list of the created and found timeseries</returns>
-        public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occurred and a list of the created and found timeseries</returns>
+        public async Task<CogniteResult<TimeSeries, TimeSeriesCreate>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> buildTimeSeries,
             RetryMode retryMode,
@@ -102,8 +102,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found timeseries</returns>
-        public async Task<CogniteResult<TimeSeries>> GetOrCreateTimeSeriesAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found timeseries</returns>
+        public async Task<CogniteResult<TimeSeries, TimeSeriesCreate>> GetOrCreateTimeSeriesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<TimeSeriesCreate>>> buildTimeSeries,
             RetryMode retryMode,
@@ -135,8 +135,8 @@ namespace Cognite.Extractor.Utils
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created timeseries</returns>
-        public async Task<CogniteResult<TimeSeries>> EnsureTimeSeriesExistsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
+        public async Task<CogniteResult<TimeSeries, TimeSeriesCreate>> EnsureTimeSeriesExistsAsync(
             IEnumerable<TimeSeriesCreate> timeSeries,
             RetryMode retryMode,
             SanitationMode sanitationMode,
@@ -168,8 +168,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
-        public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found assets</returns>
+        public async Task<CogniteResult<Asset, AssetCreate>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<AssetCreate>> buildAssets,
             RetryMode retryMode,
@@ -200,8 +200,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found assets</returns>
-        public async Task<CogniteResult<Asset>> GetOrCreateAssetsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found assets</returns>
+        public async Task<CogniteResult<Asset, AssetCreate>> GetOrCreateAssetsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
             RetryMode retryMode,
@@ -232,8 +232,8 @@ namespace Cognite.Extractor.Utils
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to assets before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created assets</returns>
-        public async Task<CogniteResult<Asset>> EnsureAssetsExistsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created assets</returns>
+        public async Task<CogniteResult<Asset, AssetCreate>> EnsureAssetsExistsAsync(
             IEnumerable<AssetCreate> assets,
             RetryMode retryMode,
             SanitationMode sanitationMode,
@@ -263,7 +263,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="sanitationMode"></param>
         /// <param name="retryMode"></param>
         /// <param name="token">Cancellation token</param>
-        public async Task<CogniteResult> InsertDataPointsAsync(
+        public async Task<CogniteResult<DataPointInsertError>> InsertDataPointsAsync(
             IDictionary<Identity, IEnumerable<Datapoint>> points,
             SanitationMode sanitationMode,
             RetryMode retryMode,
@@ -563,8 +563,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
-        public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found events</returns>
+        public async Task<CogniteResult<Event, EventCreate>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<EventCreate>> buildEvents,
             RetryMode retryMode,
@@ -595,8 +595,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found events</returns>
-        public async Task<CogniteResult<Event>> GetOrCreateEventsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found events</returns>
+        public async Task<CogniteResult<Event, EventCreate>> GetOrCreateEventsAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<EventCreate>>> buildEvents,
             RetryMode retryMode,
@@ -627,8 +627,8 @@ namespace Cognite.Extractor.Utils
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to events before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created events</returns>
-        public async Task<CogniteResult<Event>> EnsureEventsExistsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created events</returns>
+        public async Task<CogniteResult<Event, EventCreate>> EnsureEventsExistsAsync(
             IEnumerable<EventCreate> events,
             RetryMode retryMode,
             SanitationMode sanitationMode,
@@ -660,8 +660,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found sequences</returns>
-        public async Task<CogniteResult<Sequence>> GetOrCreateSequencesAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found sequences</returns>
+        public async Task<CogniteResult<Sequence, SequenceCreate>> GetOrCreateSequencesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, IEnumerable<SequenceCreate>> buildSequences,
             RetryMode retryMode,
@@ -692,8 +692,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created and found sequences</returns>
-        public async Task<CogniteResult<Sequence>> GetOrCreateSequencesAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found sequences</returns>
+        public async Task<CogniteResult<Sequence, SequenceCreate>> GetOrCreateSequencesAsync(
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<SequenceCreate>>> buildSequences,
             RetryMode retryMode,
@@ -724,8 +724,8 @@ namespace Cognite.Extractor.Utils
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured and a list of the created sequences</returns>
-        public async Task<CogniteResult<Sequence>> EnsureSequencesExistsAsync(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created sequences</returns>
+        public async Task<CogniteResult<Sequence, SequenceCreate>> EnsureSequencesExistsAsync(
             IEnumerable<SequenceCreate> sequences,
             RetryMode retryMode,
             SanitationMode sanitationMode,
@@ -752,8 +752,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="sanitationMode">The type of sanitation to apply to sequences before creating.
         /// Errors that are normally handled by sanitation will not be handled if received from CDF.</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult"/> containing errors that occured during insertion</returns>
-        public async Task<CogniteResult> InsertSequenceRowsAsync(
+        /// <returns>A <see cref="CogniteResult{TError}"/> containing errors that occured during insertion</returns>
+        public async Task<CogniteResult<SequenceRowError>> InsertSequenceRowsAsync(
             IEnumerable<SequenceDataCreate> sequences,
             RetryMode retryMode,
             SanitationMode sanitationMode,

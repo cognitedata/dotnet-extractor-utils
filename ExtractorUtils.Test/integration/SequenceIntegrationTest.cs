@@ -607,7 +607,8 @@ namespace ExtractorUtils.Test.Integration
 
                 Assert.Equal(ResourceType.SequenceRowValues, errs[3].Resource);
                 Assert.Equal(ErrorType.SanitationFailed, errs[3].Type);
-                Assert.Equal(5, errs[3].Skipped.Count());
+                Assert.Single(errs[3].Skipped);
+                Assert.Equal(5, errs[3].Skipped.First().SkippedRows.Count());
 
                 Assert.Equal(ResourceType.SequenceRowNumber, errs[4].Resource);
                 Assert.Equal(ErrorType.SanitationFailed, errs[4].Type);
@@ -637,7 +638,8 @@ namespace ExtractorUtils.Test.Integration
                 // Three of the bad rows have now been cleaned and should not be removed
                 Assert.Equal(ResourceType.SequenceRowValues, errs[4].Resource);
                 Assert.Equal(ErrorType.SanitationFailed, errs[4].Type);
-                Assert.Equal(2, errs[4].Skipped.Count());
+                Assert.Single(errs[4].Skipped);
+                Assert.Equal(2, errs[4].Skipped.First().SkippedRows.Count());
             }
             finally
             {
@@ -760,15 +762,13 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(ResourceType.ColumnExternalId, errs[1].Resource);
                 Assert.Equal(ErrorType.ItemMissing, errs[1].Type);
                 Assert.Single(errs[1].Skipped);
-                Assert.Single(errs[1].Data);
-                Assert.Equal(2, errs[1].Data.OfType<SequenceRowError>().Sum(err => err.BadRows.Count()));
-                Assert.Equal(2, errs[1].Data.OfType<SequenceRowError>().Sum(err => err.BadColumns.Count()));
+                Assert.Equal(2, errs[1].Skipped.Sum(err => err.SkippedRows.Count()));
 
                 Assert.Equal(ResourceType.SequenceRowValues, errs[2].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
-                Assert.Equal(5, errs[2].Skipped.Count());
+                Assert.Equal(ErrorType.MismatchedType, errs[2].Type);
+                Assert.Equal(2, errs[2].Skipped.Count());
+                Assert.Equal(5, errs[2].Skipped.Sum(err => err.SkippedRows.Count()));
                 Assert.Single(errs[2].Values);
-                Assert.Equal(2, errs[2].Data.Count());
             }
             finally
             {
