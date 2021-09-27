@@ -137,7 +137,12 @@ namespace Cognite.Extractor.Utils
                         dps = await CogniteUtils.ReadDatapointsAsync(stream, token, 1_000_000);
                         if (dps.Any())
                         {
-                            await Destination.InsertDataPointsIgnoreErrorsAsync(dps, token);
+                            var result = await Destination.InsertDataPointsAsync(dps, SanitationMode.Clean, RetryMode.OnError, token);
+                            var fatal = result.Errors.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
+                            if (fatal != null) throw fatal.Exception ?? new ResponseException(fatal.Message)
+                            {
+                                Code = fatal.Status
+                            };
                             await HandleUploadResult(dps, token);
                             if (Callback != null) await Callback(new QueueUploadResult<(Identity id, Datapoint dp)>(
                                 dps.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList()));
@@ -220,14 +225,25 @@ namespace Cognite.Extractor.Utils
 
             try
             {
-                var err = await Destination.InsertDataPointsIgnoreErrorsAsync(dpMap, token);
-                if (err.IdsNotFound?.Any() ?? false)
+                var result = await Destination.InsertDataPointsAsync(dpMap, SanitationMode.Clean, RetryMode.OnError, token);
+                
+                if (result.Errors != null)
                 {
-                    foreach (var id in err.IdsNotFound) dpMap.Remove(id);
-                }
-                if (err.IdsWithMismatchedData?.Any() ?? false)
-                {
-                    foreach (var id in err.IdsWithMismatchedData) dpMap.Remove(id);
+                    var fatal = result.Errors.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
+                    if (fatal != null) throw fatal.Exception ?? new ResponseException(fatal.Message)
+                    {
+                        Code = fatal.Status
+                    };
+                    foreach (var err in result.Errors)
+                    {
+                        if (err.Skipped != null && err.Skipped.Any())
+                        {
+                            foreach (var dpErr in err.Skipped.OfType<DataPointInsertError>())
+                            {
+                                dpMap.Remove(dpErr.Id);
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)

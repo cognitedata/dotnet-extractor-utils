@@ -74,16 +74,18 @@ namespace ExtractorUtils.Test.Unit
                     { new Identity(4), new Datapoint[] { new Datapoint(CogniteTime.DateTimeEpoch, 1), new Datapoint(DateTime.MaxValue, 1)}}
                 };
                 _createdDataPoints.Clear();
-                await cogniteDestination.InsertDataPointsAsync(
+                var result = await cogniteDestination.InsertDataPointsAsync(
                     datapoints,
+                    SanitationMode.Clean,
+                    RetryMode.OnError,
                     CancellationToken.None);
                 Assert.False(_createdDataPoints.ContainsKey(3 + "")); // No data points
                 Assert.False(_createdDataPoints.ContainsKey(4 + "")); // Invalid timestamps
-                Assert.Equal(6, _createdDataPoints[1 + ""].Count());
+                Assert.Equal(7, _createdDataPoints[1 + ""].Count());
                 Assert.Equal(2, _createdDataPoints["A"].Count());
                 Assert.Empty(_createdDataPoints[1 + ""]
                     .Where(dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity));
-                Assert.Equal(5, _createdDataPoints[2 + ""].Count());
+                Assert.Equal(6, _createdDataPoints[2 + ""].Count());
                 Assert.Empty(_createdDataPoints[2 + ""]
                     .Where(dp => dp.StringValue == null || dp.StringValue.Length > CogniteUtils.StringLengthMax));
 
@@ -97,13 +99,21 @@ namespace ExtractorUtils.Test.Unit
                     { new Identity("idString1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
                     { new Identity("idMismatched2"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}}
                 };
-                var errors = await cogniteDestination.InsertDataPointsIgnoreErrorsAsync(
+                result = await cogniteDestination.InsertDataPointsAsync(
                     datapoints,
+                    SanitationMode.Clean,
+                    RetryMode.OnError,
                     CancellationToken.None);
-                Assert.Contains(new Identity("idMissing1"), errors.IdsNotFound);
-                Assert.Contains(new Identity(-1), errors.IdsNotFound);
-                Assert.Contains(new Identity("idMismatchedString1"), errors.IdsWithMismatchedData);
-                Assert.Contains(new Identity("idMismatched2"), errors.IdsWithMismatchedData);
+
+                var errs = result.Errors.ToArray();
+                var notFoundErr = errs.Where(err => err.Resource == ResourceType.Id).SelectMany(err => err.Values);
+                var mismatched = errs.Where(err => err.Type == ErrorType.MismatchedType).SelectMany(err => err.Skipped);
+
+                Assert.Contains(new Identity("idMissing1"), notFoundErr);
+                Assert.Contains(new Identity(-1), notFoundErr);
+                Assert.Contains(mismatched.OfType<DataPointInsertError>(), err => err.Id.ExternalId == "idMismatchedString1");
+                Assert.Contains(mismatched.OfType<DataPointInsertError>(), err => err.Id.ExternalId == "idMismatched2");
+
                 Assert.Single(_createdDataPoints["idNumeric1"]);
                 Assert.Single(_createdDataPoints["idNumeric2"]);
                 Assert.Single(_createdDataPoints["idString1"]);
@@ -267,7 +277,7 @@ namespace ExtractorUtils.Test.Unit
                 logger.LogInformation("Upload queue disposed");
 
                 Assert.Equal(3 * 13, dpCount);
-                Assert.True(cbCount <= 4);
+                Assert.True(cbCount >= 2, $"Got {cbCount}");
                 cbCount = 0;
 
                 // queue with maximum size

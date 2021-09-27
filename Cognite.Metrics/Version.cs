@@ -4,51 +4,33 @@ using System.Reflection;
 namespace Cognite.Extractor.Metrics
 {
     /// <summary>
-    /// Utility class for reading version information from properties.
+    /// Utility class for reading version information from attributes.
     /// In order to use this, version information has to be added to the assembly.
     /// See the online documentation for an example.
     /// </summary>
     public static class Version
     {
         /// <summary>
-        /// Read a property from the calling assembly.
+        /// Get the AssemblyDescription set at compile time
         /// </summary>
-        /// <param name="property">Property to read</param>
-        /// <param name="assembly">Assembly to use, default is the assembly that calls this method.</param>
-        /// <returns>null or the value of the property in the assembly</returns>
-        public static string Read(string property, Assembly assembly = null)
+        /// <param name="assembly">Assembly to get version from</param>
+        /// <param name="def">Default value</param>
+        /// <returns>Value of the description attribute</returns>
+        public static string GetDescription(Assembly assembly, string def = "Unknown")
         {
-            if (assembly == null)
-            {
-                assembly = Assembly.GetCallingAssembly();
-            }
-            using (var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Properties.{property}"))
-            {
-                if (stream == null) return null;
-                using (var reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd().Trim();
-                }
-            }
+            return assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description ?? def;
         }
 
         /// <summary>
-        /// Get status on the form [GitCommitHash] [GitCommitTime].
+        /// Get the AssemblyInformationalVersion set at compile time
         /// </summary>
-        /// <returns></returns>
-        public static string Status()
+        /// <param name="assembly">Assembly to get version from</param>
+        /// <param name="def">Default value</param>
+        /// <returns>Value of the verison attribute or default</returns>
+        public static string GetVersion(Assembly assembly, string def = "1.0.0")
         {
-            string hash = Read("GitCommitHash", Assembly.GetCallingAssembly());
-            string time = Read("GitCommitTime", Assembly.GetCallingAssembly());
-            return $"{hash} {time}";
-        }
-        /// <summary>
-        /// Get the version, just the GitCommitHash. This can be parsed further to produce a readable string.
-        /// </summary>
-        /// <returns></returns>
-        public static string GetVersion()
-        {
-            return Read("GitCommitHash", Assembly.GetCallingAssembly());
+            return assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                ?.InformationalVersion ?? def;
         }
     }
 }

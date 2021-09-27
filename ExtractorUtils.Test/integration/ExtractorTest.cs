@@ -29,7 +29,7 @@ namespace ExtractorUtils.Test.Integration
         public string DBName { get; private set; }
         public string TableName { get; private set; }
         private string _prefix;
-        public TestExtractor(MyConfig config, CogniteDestination destination) : base(config, destination)
+        public TestExtractor(MyConfig config, CogniteDestination destination, IServiceProvider provider) : base(config, destination, provider)
         {
             _prefix = config.Prefix;
         }
@@ -128,7 +128,7 @@ namespace ExtractorUtils.Test.Integration
 
     public class ExtractorTest
     {
-        [Fact]
+        [Fact(Timeout = 30000)]
         public async Task TestExtractorRun()
         {
             var configPath = "test-config-base-extractor";

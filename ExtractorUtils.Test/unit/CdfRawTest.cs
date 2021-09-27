@@ -140,7 +140,7 @@ namespace ExtractorUtils.Test.Unit
                 mockHttpMessageHandler.Protected()
                     .Verify<Task<HttpResponseMessage>>(
                         "SendAsync", 
-                        Times.AtMost(4),
+                        Times.AtMost(5),
                         ItExpr.IsAny<HttpRequestMessage>(),
                         ItExpr.IsAny<CancellationToken>());
 

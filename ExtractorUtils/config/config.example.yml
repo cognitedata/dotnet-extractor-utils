@@ -58,6 +58,13 @@ cognite:
         data-point-time-series: 10000
         # Maximum number of datapoints per datapoint create request
         data-points: 100000
+        # Minimum number of datapoints in request to switch to using gzip.
+        # Set to -1 to disable, and 0 to always enable (not recommended)
+        # The minimum HTTP packet size is generally 1500 bytes, so this should never be
+        # set below 100, at least for numeric datapoints. Even for larger packages gzip is efficient enough
+        # that packages are compressed below 1500 bytes which is costly. At 5000 it is always a performance gain.
+        # It can be set lower if bandwith is a major issue.
+        data-points-gzip-limit: 5000
         # Maximum number of ranges per delete datapoints request
         data-point-delete: 10000
         # Maximum number of timeseries per datapoint read request, used when getting the first point in a timeseries
@@ -98,6 +105,13 @@ cognite:
         level: debug
         # Format of the log message
         format: "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms"
+
+    # Configure an extraction pipeline manager
+    extraction-pipeline:
+        # ExternalId of extraction pipeline
+        # pipeline-id: 
+        # Frequency to report "Seen", in seconds. Less than or equal to zero will not report automatically.
+        # frequency: 600
 
 
 # Store state in a local database or in CDF raw to speed up starting, by not having to read state from destinations
