@@ -17,3 +17,5 @@
   href: setup-template.md
 - name: Version Metrics
   href: version.md
+- name: Running as service
+  href: service.md

@@ -4,19 +4,19 @@ When deploying an extractor it is very useful to be able to show the version num
 In order to use embedded version information, compile with the following options:
 
 ```
-	/p:InformationalVersion="1.0.0"
-	/p:Description="Description"
+    /p:InformationalVersion="1.0.0"
+    /p:Description="Description"
 ```
 
 Typically, these can be obtained from git tags, using something along these lines:
 
 ```
-	version = git describe --tags HEAD
-	version = version.replace(/-(\d+)-.*/, '-pre.$1')
-	description = sh('git describe --tags --dirty')
-	time = git log -1 --format=%ai
-	
-	dotnet publish /p:InformationalVersion="$version" /p:Description="$description $time"
+    version = git describe --tags HEAD
+    version = version.replace(/-(\d+)-.*/, '-pre.$1')
+    description = sh('git describe --tags --dirty')
+    time = git log -1 --format=%ai
+    
+    dotnet publish /p:InformationalVersion="$version" /p:Description="$description $time"
 ```
 
 That way we get last tag as version, modified so that if the current commit is not tagged, you get `1.0.0-pre.05` where 05 indicates that there has been five commits since the last tag.
