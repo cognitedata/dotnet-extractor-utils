@@ -8,11 +8,16 @@ using Cognite.Extractor.Common;
 using Xunit.Sdk;
 using Cognite.Extensions;
 using CogniteSdk;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {
-    public class ChunkingTest
+    public class ChunkingTest : ConsoleWrapper
     {
+        public ChunkingTest(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Fact]
         public async Task RunThrottledOK()
         {
@@ -244,12 +249,12 @@ namespace ExtractorUtils.Test.Unit
 
         private async Task RunWithTimeout(Task task, int timeoutMs)
         {
-            await Task.WhenAny(task, Task.Delay(timeoutMs));
+            var retTask = await Task.WhenAny(task, Task.Delay(timeoutMs));
+            Assert.Equal(task, retTask);
             Assert.True(task.IsCompleted);
-            // Assert.False(task.IsFaulted);
         }
 
-        [Fact(Timeout = 20000)]
+        [Fact(Timeout = 200000)]
         public async Task TestPeriodicScheduler()
         {
             using var source = new CancellationTokenSource();
@@ -258,9 +263,10 @@ namespace ExtractorUtils.Test.Unit
             int periodicRuns = 0;
 
             // Schedule periodic
-            scheduler.SchedulePeriodicTask("periodic", TimeSpan.FromMilliseconds(100), token =>
+            scheduler.SchedulePeriodicTask("periodic", TimeSpan.FromMilliseconds(100), async token =>
             {
                 periodicRuns++;
+                await Task.Yield();
             });
             Assert.Throws<InvalidOperationException>(() =>
                 scheduler.SchedulePeriodicTask("periodic", TimeSpan.Zero, token => Task.CompletedTask));
@@ -304,11 +310,22 @@ namespace ExtractorUtils.Test.Unit
             // It might run once more, if it was already scheduled to run
             Assert.True(periodicRuns <= numRuns + 1);
 
+            // Test waiting to run
+            int infRuns = 0;
+            scheduler.SchedulePeriodicTask("infinitePeriodic", Timeout.InfiniteTimeSpan, token =>
+            {
+                infRuns++;
+            }, false);
 
-            // Exit periodic and wait
+            await Task.Delay(400);
+            Assert.Equal(0, infRuns);
+            scheduler.TriggerTask("infinitePeriodic");
+            await Task.Delay(400);
+            Assert.Equal(1, infRuns);
+
             await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
-            source.Cancel();
 
+            source.Cancel();
             await RunWithTimeout(scheduler.WaitForAll(), 1000);
         }
     }

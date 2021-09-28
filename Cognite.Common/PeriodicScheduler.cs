@@ -59,14 +59,17 @@ namespace Cognite.Extractor.Common
         /// <param name="name">Name of task, used to refer to it later</param>
         /// <param name="interval">Interval to schedule on</param>
         /// <param name="operation">Function to call on each iteration</param>
-        public void SchedulePeriodicTask(string name, TimeSpan interval, Func<CancellationToken, Task> operation)
+        /// <param name="runImmediately">True to execute the periodic task immediately, false to first
+        /// wait until triggered by interval or manually</param>
+        public void SchedulePeriodicTask(string name, TimeSpan interval,
+            Func<CancellationToken, Task> operation, bool runImmediately = true)
         {
             lock (_taskListMutex)
             {
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, interval, name);
-                task.Task = Task.Run(async () => await RunPeriodicTaskAsync(task).ConfigureAwait(false));
                 _tasks[name] = task;
+                task.Task = RunPeriodicTaskAsync(task, runImmediately);
                 _newTaskEvent.Set();
             }
         }
@@ -79,9 +82,12 @@ namespace Cognite.Extractor.Common
         /// <param name="name">Name of task, used to refer to it later</param>
         /// <param name="interval">Interval to schedule on</param>
         /// <param name="operation">Function to call on each iteration</param>
-        public void SchedulePeriodicTask(string name, TimeSpan interval, Action<CancellationToken> operation)
+        /// <param name="runImmediately">True to execute the periodic task immediately, false to first
+        /// wait until triggered by interval or manually</param>
+        public void SchedulePeriodicTask(string name, TimeSpan interval,
+            Action<CancellationToken> operation, bool runImmediately = true)
         {
-            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None));
+            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
         }
 
         /// <summary>
@@ -99,9 +105,8 @@ namespace Cognite.Extractor.Common
             {
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, TimeSpan.Zero, name);
-                var tcs = new TaskCompletionSource<int>();
-                task.Task = operation(_source.Token);
                 _tasks[name] = task;
+                task.Task = operation(_source.Token);
                 _newTaskEvent.Set();
             }
         }
@@ -126,7 +131,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="name">Name of task to cancel</param>
         /// <returns>Task which completes once the task has terminated</returns>
-        public async Task ExitAndWaitForTermination(string name)
+        public Task ExitAndWaitForTermination(string name)
         {
             PeriodicTask task;
             lock (_taskListMutex)
@@ -135,7 +140,7 @@ namespace Cognite.Extractor.Common
                 task.ShouldRun = false;
                 task.Event.Set();
             }
-            await task.Task.ConfigureAwait(false);
+            return task.Task;
         }
 
         /// <summary>
@@ -217,17 +222,14 @@ namespace Cognite.Extractor.Common
                     if (_newTaskEvent.WaitOne(0))
                     {
                         _newTaskEvent.Reset();
-                        tasks = _tasks.Values.Select(task => task.Task).ToList();
                         tasks.Add(WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token));
                     }
-                    else
+                    var toRemove = _tasks.Values.Where(task => task.Task.IsCompleted).ToList();
+                    foreach (var task in toRemove)
                     {
-                        var toRemove = _tasks.Values.Where(task => task.Task.IsCompleted).ToList();
-                        foreach (var task in toRemove)
-                        {
-                            _tasks.Remove(task.Name);
-                        }
+                        _tasks.Remove(task.Name);
                     }
+                    tasks = _tasks.Values.Select(task => task.Task).ToList();
                 }
             }
             if (_source.IsCancellationRequested) return;
@@ -237,6 +239,7 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Set the paused state of the named task. In this state it will only trigger
         /// when manually triggered. Same as setting the timespan to infinite when creating the task.
+        /// The task will trigger when unpaused.
         /// </summary>
         /// <param name="name">Name of task to pause</param>
         /// <param name="paused">True to pause the task, false to unpause</param>
@@ -245,7 +248,13 @@ namespace Cognite.Extractor.Common
             lock (_taskListMutex)
             {
                 if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
+                if (task.Paused && !paused)
+                {
+                    task.Paused = paused;
+                    task.Event.Set();
+                }
                 task.Paused = paused;
+                
             }
         }
         /// <summary>
@@ -260,55 +269,49 @@ namespace Cognite.Extractor.Common
                 if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
                 task.Event.Set();
             }
-                
         }
 
-        private async Task RunPeriodicTaskAsync(PeriodicTask task)
+        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately)
         {
+            bool shouldRunNow = runImmediately;
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : task.Interval;
-                var waitTask = WaitAsync(task.Event, task.Interval, _source.Token);
-                if (!task.Paused) await task.Operation(_source.Token).ConfigureAwait(false);
-                await waitTask.ConfigureAwait(false);
+                var waitTask = WaitAsync(task.Event, task.Interval, _source.Token).ConfigureAwait(false);
+                if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
+                shouldRunNow = true;
+                await waitTask;
                 task.Event.Reset();
             }
         }
 
-
-
         /// <summary>
         /// Convenient method to efficiently wait for a wait handle and cancellation token with timeout
-        /// asynchronously. From https://thomaslevesque.com/2015/06/04/async-and-cancellation-support-for-wait-handles/.
+        /// asynchronously.
         /// </summary>
         /// <param name="handle">WaitHandle to wait for</param>
         /// <param name="timeout">Wait timeout</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>True if wait handle or cancellation token was triggered, false otherwise</returns>
-        private static async Task<bool> WaitAsync(WaitHandle handle, TimeSpan timeout, CancellationToken token)
+        private static Task<bool> WaitAsync(WaitHandle handle, TimeSpan timeout, CancellationToken token)
         {
-            RegisteredWaitHandle registeredHandle = null;
-            CancellationTokenRegistration tokenRegistration = default(CancellationTokenRegistration);
-            try
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var registeredHandle = ThreadPool.RegisterWaitForSingleObject(
+                handle,
+                (state, timedOut) => tcs.TrySetResult(!timedOut),
+                null,
+                timeout,
+                true);
+            var tokenRegistration = token.Register(
+                state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
+                tcs);
+            var task = tcs.Task;
+            tcs.Task.ContinueWith(t =>
             {
-                var tcs = new TaskCompletionSource<bool>();
-                registeredHandle = ThreadPool.RegisterWaitForSingleObject(
-                    handle,
-                    (state, timedOut) => ((TaskCompletionSource<bool>)state).TrySetResult(!timedOut),
-                    tcs,
-                    timeout,
-                    true);
-                tokenRegistration = token.Register(
-                    state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
-                    tcs);
-                return await tcs.Task.ConfigureAwait(true);
-            }
-            finally
-            {
-                if (registeredHandle != null)
-                    registeredHandle.Unregister(null);
+                if (registeredHandle != null) registeredHandle.Unregister(null);
                 tokenRegistration.Dispose();
-            }
+            }, TaskScheduler.Current);
+            return task;
         }
 
         /// <summary>
