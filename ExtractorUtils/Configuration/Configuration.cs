@@ -55,6 +55,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="addStateStore">True to add state store, used if extractor reads history</param>
         /// <param name="addLogger">True to add logger</param>
         /// <param name="addMetrics">True to add metrics</param>
+        /// <param name="config">Optional pre-defined config object to use instead of reading from file</param>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error</exception>
         /// <returns>Configuration object</returns>
@@ -66,9 +67,23 @@ namespace Cognite.Extractor.Utils
             string userAgent,
             bool addStateStore,
             bool addLogger = true,
-            bool addMetrics = true) where T : VersionedConfig
+            bool addMetrics = true,
+            T config = null) where T : VersionedConfig
         {
-            var config = services.AddConfig<T>(configPath, acceptedConfigVersions);
+            if (config != null)
+            {
+                services.AddSingleton(config);
+                services.AddConfig(config,
+                    typeof(CogniteConfig),
+                    typeof(LoggerConfig),
+                    typeof(MetricsConfig),
+                    typeof(StateStoreConfig),
+                    typeof(BaseConfig));
+            }
+            else if (configPath != null)
+            {
+                config = services.AddConfig<T>(configPath, acceptedConfigVersions);
+            }
             services.AddCogniteClient(appId, userAgent, addLogger, addMetrics);
             if (addStateStore) services.AddStateStore();
             if (addLogger) services.AddLogger();
