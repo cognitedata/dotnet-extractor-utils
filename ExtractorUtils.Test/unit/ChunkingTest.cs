@@ -305,7 +305,6 @@ namespace ExtractorUtils.Test.Unit
             Assert.True(periodicRuns <= numRuns + 1);
 
             // Exit periodic and wait
-            await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
 
             // Test waiting to run
             int infRuns = 0;
@@ -319,6 +318,8 @@ namespace ExtractorUtils.Test.Unit
             scheduler.TriggerTask("infinitePeriodic");
             await Task.Delay(400);
             Assert.Equal(1, infRuns);
+
+            await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
 
             source.Cancel();
             await RunWithTimeout(scheduler.WaitForAll(), 1000);

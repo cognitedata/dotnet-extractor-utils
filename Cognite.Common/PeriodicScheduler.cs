@@ -299,30 +299,27 @@ namespace Cognite.Extractor.Common
         /// <param name="timeout">Wait timeout</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>True if wait handle or cancellation token was triggered, false otherwise</returns>
-        private static async Task<bool> WaitAsync(WaitHandle handle, TimeSpan timeout, CancellationToken token)
+        private static Task<bool> WaitAsync(WaitHandle handle, TimeSpan timeout, CancellationToken token)
         {
             RegisteredWaitHandle registeredHandle = null;
             CancellationTokenRegistration tokenRegistration = default(CancellationTokenRegistration);
-            try
+            var tcs = new TaskCompletionSource<bool>();
+            registeredHandle = ThreadPool.RegisterWaitForSingleObject(
+                handle,
+                (state, timedOut) => ((TaskCompletionSource<bool>)state).TrySetResult(!timedOut),
+                tcs,
+                timeout,
+                true);
+            tokenRegistration = token.Register(
+                state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
+                tcs);
+            var task = tcs.Task;
+            tcs.Task.ContinueWith(t =>
             {
-                var tcs = new TaskCompletionSource<bool>();
-                registeredHandle = ThreadPool.RegisterWaitForSingleObject(
-                    handle,
-                    (state, timedOut) => ((TaskCompletionSource<bool>)state).TrySetResult(!timedOut),
-                    tcs,
-                    timeout,
-                    true);
-                tokenRegistration = token.Register(
-                    state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
-                    tcs);
-                return await tcs.Task.ConfigureAwait(true);
-            }
-            finally
-            {
-                if (registeredHandle != null)
-                    registeredHandle.Unregister(null);
+                if (registeredHandle != null) registeredHandle.Unregister(null);
                 tokenRegistration.Dispose();
-            }
+            }, TaskScheduler.Current);
+            return task;
         }
 
         /// <summary>
