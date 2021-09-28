@@ -244,7 +244,8 @@ namespace ExtractorUtils.Test.Unit
 
         private async Task RunWithTimeout(Task task, int timeoutMs)
         {
-            await Task.WhenAny(task, Task.Delay(timeoutMs));
+            await Task.WhenAny(task, Task.Delay(timeoutMs)).ConfigureAwait(false);
+            await Task.Delay(1000);
             Assert.True(task.IsCompleted);
             // Assert.False(task.IsFaulted);
         }
@@ -258,9 +259,10 @@ namespace ExtractorUtils.Test.Unit
             int periodicRuns = 0;
 
             // Schedule periodic
-            scheduler.SchedulePeriodicTask("periodic", TimeSpan.FromMilliseconds(100), token =>
+            scheduler.SchedulePeriodicTask("periodic", TimeSpan.FromMilliseconds(100), async token =>
             {
                 periodicRuns++;
+                await Task.Yield();
             });
             Assert.Throws<InvalidOperationException>(() =>
                 scheduler.SchedulePeriodicTask("periodic", TimeSpan.Zero, token => Task.CompletedTask));
@@ -304,8 +306,6 @@ namespace ExtractorUtils.Test.Unit
             // It might run once more, if it was already scheduled to run
             Assert.True(periodicRuns <= numRuns + 1);
 
-            // Exit periodic and wait
-            await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
 
             // Test waiting to run
             int infRuns = 0;
@@ -319,6 +319,9 @@ namespace ExtractorUtils.Test.Unit
             scheduler.TriggerTask("infinitePeriodic");
             await Task.Delay(400);
             Assert.Equal(1, infRuns);
+
+            // Exit periodic and wait
+            await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
 
             source.Cancel();
             await RunWithTimeout(scheduler.WaitForAll(), 1000);

@@ -10,14 +10,15 @@ namespace Cognite.Extractor.Common
 {
     internal sealed class PeriodicTask : IDisposable
     {
-        public Task Task { get; set; }
+        public Task Task => TCS.Task;
         public Func<CancellationToken, Task> Operation { get; }
         public ManualResetEvent Event { get; } = new ManualResetEvent(false);
         public TimeSpan Interval { get; }
         public bool Paused { get; set; }
         public bool ShouldRun { get; set; } = true;
         public string Name { get; }
-        public PeriodicTask(Func<CancellationToken, Task> operation, TimeSpan interval, string name)
+        public TaskCompletionSource<bool> TCS { get; }
+        public PeriodicTask(Func<CancellationToken, Task> operation, TimeSpan interval, string name, TaskCompletionSource<bool> tcs)
         {
             Operation = operation;
             Interval = interval;
@@ -67,9 +68,10 @@ namespace Cognite.Extractor.Common
             lock (_taskListMutex)
             {
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
-                var task = new PeriodicTask(operation, interval, name);
-                task.Task = RunPeriodicTaskAsync(task, runImmediately);
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                var task = new PeriodicTask(operation, interval, name, tcs);
                 _tasks[name] = task;
+                _ = RunPeriodicTaskAsync(task, runImmediately, tcs);
                 _newTaskEvent.Set();
             }
         }
@@ -104,9 +106,13 @@ namespace Cognite.Extractor.Common
             lock (_taskListMutex)
             {
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
-                var task = new PeriodicTask(operation, TimeSpan.Zero, name);
-                task.Task = operation(_source.Token);
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                var task = new PeriodicTask(operation, TimeSpan.Zero, name, tcs);
                 _tasks[name] = task;
+                _ = operation(_source.Token).ContinueWith(t =>
+                {
+                    tcs.TrySetResult(true);
+                }, TaskScheduler.Default);
                 _newTaskEvent.Set();
             }
         }
@@ -140,7 +146,7 @@ namespace Cognite.Extractor.Common
                 task.ShouldRun = false;
                 task.Event.Set();
             }
-            await task.Task.ConfigureAwait(true);
+            await task.Task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -272,10 +278,9 @@ namespace Cognite.Extractor.Common
                 if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
                 task.Event.Set();
             }
-                
         }
 
-        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately)
+        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately, TaskCompletionSource<bool> tcs)
         {
             bool shouldRunNow = runImmediately;
             while (!_source.IsCancellationRequested && task.ShouldRun)
@@ -287,6 +292,7 @@ namespace Cognite.Extractor.Common
                 await waitTask.ConfigureAwait(false);
                 task.Event.Reset();
             }
+            tcs.TrySetResult(true);
         }
 
 
@@ -305,7 +311,7 @@ namespace Cognite.Extractor.Common
             CancellationTokenRegistration tokenRegistration = default(CancellationTokenRegistration);
             try
             {
-                var tcs = new TaskCompletionSource<bool>();
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 registeredHandle = ThreadPool.RegisterWaitForSingleObject(
                     handle,
                     (state, timedOut) => ((TaskCompletionSource<bool>)state).TrySetResult(!timedOut),
@@ -315,7 +321,7 @@ namespace Cognite.Extractor.Common
                 tokenRegistration = token.Register(
                     state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
                     tcs);
-                return await tcs.Task.ConfigureAwait(true);
+                return await tcs.Task.ConfigureAwait(false);
             }
             finally
             {
