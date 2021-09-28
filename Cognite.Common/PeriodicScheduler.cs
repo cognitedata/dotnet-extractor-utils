@@ -131,7 +131,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="name">Name of task to cancel</param>
         /// <returns>Task which completes once the task has terminated</returns>
-        public async Task ExitAndWaitForTermination(string name)
+        public Task ExitAndWaitForTermination(string name)
         {
             PeriodicTask task;
             lock (_taskListMutex)
@@ -140,7 +140,7 @@ namespace Cognite.Extractor.Common
                 task.ShouldRun = false;
                 task.Event.Set();
             }
-            await task.Task.ConfigureAwait(true);
+            return task.Task;
         }
 
         /// <summary>
@@ -222,17 +222,14 @@ namespace Cognite.Extractor.Common
                     if (_newTaskEvent.WaitOne(0))
                     {
                         _newTaskEvent.Reset();
-                        tasks = _tasks.Values.Select(task => task.Task).ToList();
                         tasks.Add(WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token));
                     }
-                    else
+                    var toRemove = _tasks.Values.Where(task => task.Task.IsCompleted).ToList();
+                    foreach (var task in toRemove)
                     {
-                        var toRemove = _tasks.Values.Where(task => task.Task.IsCompleted).ToList();
-                        foreach (var task in toRemove)
-                        {
-                            _tasks.Remove(task.Name);
-                        }
+                        _tasks.Remove(task.Name);
                     }
+                    tasks = _tasks.Values.Select(task => task.Task).ToList();
                 }
             }
             if (_source.IsCancellationRequested) return;
@@ -281,19 +278,17 @@ namespace Cognite.Extractor.Common
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : task.Interval;
-                var waitTask = WaitAsync(task.Event, task.Interval, _source.Token);
+                var waitTask = WaitAsync(task.Event, task.Interval, _source.Token).ConfigureAwait(false);
                 if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
                 shouldRunNow = true;
-                await waitTask.ConfigureAwait(false);
+                await waitTask;
                 task.Event.Reset();
             }
         }
 
-
-
         /// <summary>
         /// Convenient method to efficiently wait for a wait handle and cancellation token with timeout
-        /// asynchronously. From https://thomaslevesque.com/2015/06/04/async-and-cancellation-support-for-wait-handles/.
+        /// asynchronously.
         /// </summary>
         /// <param name="handle">WaitHandle to wait for</param>
         /// <param name="timeout">Wait timeout</param>
@@ -301,16 +296,14 @@ namespace Cognite.Extractor.Common
         /// <returns>True if wait handle or cancellation token was triggered, false otherwise</returns>
         private static Task<bool> WaitAsync(WaitHandle handle, TimeSpan timeout, CancellationToken token)
         {
-            RegisteredWaitHandle registeredHandle = null;
-            CancellationTokenRegistration tokenRegistration = default(CancellationTokenRegistration);
-            var tcs = new TaskCompletionSource<bool>();
-            registeredHandle = ThreadPool.RegisterWaitForSingleObject(
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var registeredHandle = ThreadPool.RegisterWaitForSingleObject(
                 handle,
-                (state, timedOut) => ((TaskCompletionSource<bool>)state).TrySetResult(!timedOut),
-                tcs,
+                (state, timedOut) => tcs.TrySetResult(!timedOut),
+                null,
                 timeout,
                 true);
-            tokenRegistration = token.Register(
+            var tokenRegistration = token.Register(
                 state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
                 tcs);
             var task = tcs.Task;

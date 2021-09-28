@@ -8,11 +8,16 @@ using Cognite.Extractor.Common;
 using Xunit.Sdk;
 using Cognite.Extensions;
 using CogniteSdk;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {
-    public class ChunkingTest
+    public class ChunkingTest : ConsoleWrapper
     {
+        public ChunkingTest(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Fact]
         public async Task RunThrottledOK()
         {
@@ -244,9 +249,9 @@ namespace ExtractorUtils.Test.Unit
 
         private async Task RunWithTimeout(Task task, int timeoutMs)
         {
-            await Task.WhenAny(task, Task.Delay(timeoutMs));
+            var retTask = await Task.WhenAny(task, Task.Delay(timeoutMs));
+            Assert.Equal(task, retTask);
             Assert.True(task.IsCompleted);
-            // Assert.False(task.IsFaulted);
         }
 
         [Fact(Timeout = 200000)]
@@ -319,7 +324,7 @@ namespace ExtractorUtils.Test.Unit
             await Task.Delay(400);
             Assert.Equal(1, infRuns);
 
-            await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
+            await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 5000);
 
             source.Cancel();
             await RunWithTimeout(scheduler.WaitForAll(), 1000);
