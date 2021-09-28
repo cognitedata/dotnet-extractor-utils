@@ -8,11 +8,16 @@ using Cognite.Extractor.Common;
 using Xunit.Sdk;
 using Cognite.Extensions;
 using CogniteSdk;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {
-    public class ChunkingTest
+    public class ChunkingTest : ConsoleWrapper
     {
+        public ChunkingTest(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Fact]
         public async Task RunThrottledOK()
         {
@@ -244,10 +249,9 @@ namespace ExtractorUtils.Test.Unit
 
         private async Task RunWithTimeout(Task task, int timeoutMs)
         {
-            await Task.WhenAny(task, Task.Delay(timeoutMs)).ConfigureAwait(false);
-            await Task.Delay(1000);
+            var retTask = await Task.WhenAny(task, Task.Delay(timeoutMs));
+            Assert.Equal(task, retTask);
             Assert.True(task.IsCompleted);
-            // Assert.False(task.IsFaulted);
         }
 
         [Fact(Timeout = 200000)]
@@ -306,7 +310,6 @@ namespace ExtractorUtils.Test.Unit
             // It might run once more, if it was already scheduled to run
             Assert.True(periodicRuns <= numRuns + 1);
 
-
             // Test waiting to run
             int infRuns = 0;
             scheduler.SchedulePeriodicTask("infinitePeriodic", Timeout.InfiniteTimeSpan, token =>
@@ -320,7 +323,6 @@ namespace ExtractorUtils.Test.Unit
             await Task.Delay(400);
             Assert.Equal(1, infRuns);
 
-            // Exit periodic and wait
             await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
 
             source.Cancel();

@@ -6,6 +6,7 @@ using System.Threading;
 using Cognite.Extensions;
 using System;
 using System.Collections.Generic;
+using Cognite.Extractor.Common;
 
 class MyExtractor : BaseExtractor
 {
@@ -39,9 +40,9 @@ class MyExtractor : BaseExtractor
 // Then, in the Main() method:
 class Program
 {
-    static void Main()
+    static async Task Main()
     {
-        ExtractorRunner.Run<BaseConfig, MyExtractor>(
+        await ExtractorRunner.Run<BaseConfig, MyExtractor>(
             "config.yml",
             new[] { 1 },
             "my-extractor",
@@ -50,6 +51,6 @@ class Program
             true,
             true,
             true,
-            CancellationToken.None).Wait();
+            CancellationToken.None).ConfigureAwait(true);
     }
 }
