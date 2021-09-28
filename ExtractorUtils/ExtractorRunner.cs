@@ -23,7 +23,8 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <typeparam name="TConfig">Type of configuration</typeparam>
         /// <typeparam name="TExtractor">Type of extractor</typeparam>
-        /// <param name="configPath">Path to yml config file</param>
+        /// <param name="configPath">Path to yml config file. Can be null to not load config, in this case
+        /// <paramref name="config" /> must be set, or the config must be added to <paramref name="extServices"/></param>
         /// <param name="acceptedConfigVersions">List of accepted config versions, null accepts all</param>
         /// <param name="appId">AppId to append to requests to CDF</param>
         /// <param name="userAgent">User agent on form Product/Version</param>
@@ -39,6 +40,7 @@ namespace Cognite.Extractor.Utils
         /// invalid</param>
         /// <param name="extServices">Optional pre-configured service collection</param>
         /// <param name="startupLogger">Optional logger to use before config has been loaded, to report configuration issues</param>
+        /// <param name="config">Optional pre-existing config object, can be used instead of config path.</param>
         /// <returns>Task which completes when the extractor has run</returns>
         public static async Task Run<TConfig, TExtractor>(
             string configPath,
@@ -53,7 +55,8 @@ namespace Cognite.Extractor.Utils
             Action<CogniteDestination, TExtractor> onCreateExtractor = null,
             Action<TConfig> configCallback = null,
             ServiceCollection extServices = null,
-            ILogger startupLogger = null)
+            ILogger startupLogger = null,
+            TConfig config = null)
             where TConfig : VersionedConfig
             where TExtractor : BaseExtractor
         {
@@ -87,7 +90,7 @@ namespace Cognite.Extractor.Utils
                     ConfigurationException exception = null;
                     try
                     {
-                        var config = services.AddExtractorDependencies<TConfig>(configPath, acceptedConfigVersions,
+                        config = services.AddExtractorDependencies<TConfig>(configPath, acceptedConfigVersions,
                             appId, userAgent, addStateStore, addLogger, addMetrics);
                         configCallback?.Invoke(config);
                     }
