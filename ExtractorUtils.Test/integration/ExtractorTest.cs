@@ -193,7 +193,7 @@ namespace ExtractorUtils.Test.Integration
                         }
                         });
 
-                        if (dps.Items.First().NumericDatapoints.Datapoints.Count < 10) timeseriesOk = false;
+                        if ((dps.Items.First().NumericDatapoints?.Datapoints?.Count ?? 0) < 10) timeseriesOk = false;
 
                         var rows = await destination.CogniteClient.Raw.ListRowsAsync(extractor.DBName, extractor.TableName);
                         if (rows.Items.Count() < 10) rawOk = false;

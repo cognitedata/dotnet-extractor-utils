@@ -23,6 +23,7 @@ namespace Cognite.Extractor.Common
             Operation = operation;
             Interval = interval;
             Name = name;
+            TCS = tcs;
         }
         public void Dispose()
         {
@@ -111,7 +112,14 @@ namespace Cognite.Extractor.Common
                 _tasks[name] = task;
                 _ = operation(_source.Token).ContinueWith(t =>
                 {
-                    tcs.TrySetResult(true);
+                    if (t.Exception != null)
+                    {
+                        tcs.TrySetException(t.Exception);
+                    }
+                    else
+                    {
+                        tcs.TrySetResult(true);
+                    }
                 }, TaskScheduler.Default);
                 _newTaskEvent.Set();
             }
@@ -282,15 +290,22 @@ namespace Cognite.Extractor.Common
 
         private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately, TaskCompletionSource<bool> tcs)
         {
-            bool shouldRunNow = runImmediately;
-            while (!_source.IsCancellationRequested && task.ShouldRun)
+            try
             {
-                var timeout = task.Paused ? Timeout.InfiniteTimeSpan : task.Interval;
-                var waitTask = WaitAsync(task.Event, task.Interval, _source.Token);
-                if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
-                shouldRunNow = true;
-                await waitTask.ConfigureAwait(false);
-                task.Event.Reset();
+                bool shouldRunNow = runImmediately;
+                while (!_source.IsCancellationRequested && task.ShouldRun)
+                {
+                    var timeout = task.Paused ? Timeout.InfiniteTimeSpan : task.Interval;
+                    var waitTask = WaitAsync(task.Event, task.Interval, _source.Token);
+                    if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
+                    shouldRunNow = true;
+                    await waitTask.ConfigureAwait(false);
+                    task.Event.Reset();
+                }
+            }
+            catch (Exception e)
+            {
+                tcs.TrySetException(e);
             }
             tcs.TrySetResult(true);
         }
