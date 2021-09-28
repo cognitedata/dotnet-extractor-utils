@@ -59,13 +59,16 @@ namespace Cognite.Extractor.Common
         /// <param name="name">Name of task, used to refer to it later</param>
         /// <param name="interval">Interval to schedule on</param>
         /// <param name="operation">Function to call on each iteration</param>
-        public void SchedulePeriodicTask(string name, TimeSpan interval, Func<CancellationToken, Task> operation)
+        /// <param name="runImmediately">True to execute the periodic task immediately, false to first
+        /// wait until triggered by interval or manually</param>
+        public void SchedulePeriodicTask(string name, TimeSpan interval,
+            Func<CancellationToken, Task> operation, bool runImmediately = true)
         {
             lock (_taskListMutex)
             {
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, interval, name);
-                task.Task = Task.Run(async () => await RunPeriodicTaskAsync(task).ConfigureAwait(false));
+                task.Task = RunPeriodicTaskAsync(task, runImmediately);
                 _tasks[name] = task;
                 _newTaskEvent.Set();
             }
@@ -79,9 +82,12 @@ namespace Cognite.Extractor.Common
         /// <param name="name">Name of task, used to refer to it later</param>
         /// <param name="interval">Interval to schedule on</param>
         /// <param name="operation">Function to call on each iteration</param>
-        public void SchedulePeriodicTask(string name, TimeSpan interval, Action<CancellationToken> operation)
+        /// <param name="runImmediately">True to execute the periodic task immediately, false to first
+        /// wait until triggered by interval or manually</param>
+        public void SchedulePeriodicTask(string name, TimeSpan interval,
+            Action<CancellationToken> operation, bool runImmediately = true)
         {
-            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None));
+            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
         }
 
         /// <summary>
@@ -99,7 +105,6 @@ namespace Cognite.Extractor.Common
             {
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, TimeSpan.Zero, name);
-                var tcs = new TaskCompletionSource<int>();
                 task.Task = operation(_source.Token);
                 _tasks[name] = task;
                 _newTaskEvent.Set();
@@ -135,7 +140,7 @@ namespace Cognite.Extractor.Common
                 task.ShouldRun = false;
                 task.Event.Set();
             }
-            await task.Task.ConfigureAwait(false);
+            await task.Task.ConfigureAwait(true);
         }
 
         /// <summary>
@@ -237,6 +242,7 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Set the paused state of the named task. In this state it will only trigger
         /// when manually triggered. Same as setting the timespan to infinite when creating the task.
+        /// The task will trigger when unpaused.
         /// </summary>
         /// <param name="name">Name of task to pause</param>
         /// <param name="paused">True to pause the task, false to unpause</param>
@@ -245,7 +251,13 @@ namespace Cognite.Extractor.Common
             lock (_taskListMutex)
             {
                 if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
+                if (task.Paused && !paused)
+                {
+                    task.Paused = paused;
+                    task.Event.Set();
+                }
                 task.Paused = paused;
+                
             }
         }
         /// <summary>
@@ -263,13 +275,15 @@ namespace Cognite.Extractor.Common
                 
         }
 
-        private async Task RunPeriodicTaskAsync(PeriodicTask task)
+        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately)
         {
+            bool shouldRunNow = runImmediately;
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : task.Interval;
                 var waitTask = WaitAsync(task.Event, task.Interval, _source.Token);
-                if (!task.Paused) await task.Operation(_source.Token).ConfigureAwait(false);
+                if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
+                shouldRunNow = true;
                 await waitTask.ConfigureAwait(false);
                 task.Event.Reset();
             }

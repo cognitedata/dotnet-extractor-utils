@@ -249,7 +249,7 @@ namespace ExtractorUtils.Test.Unit
             // Assert.False(task.IsFaulted);
         }
 
-        [Fact(Timeout = 20000)]
+        [Fact(Timeout = 200000)]
         public async Task TestPeriodicScheduler()
         {
             using var source = new CancellationTokenSource();
@@ -304,11 +304,23 @@ namespace ExtractorUtils.Test.Unit
             // It might run once more, if it was already scheduled to run
             Assert.True(periodicRuns <= numRuns + 1);
 
-
             // Exit periodic and wait
             await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
-            source.Cancel();
 
+            // Test waiting to run
+            int infRuns = 0;
+            scheduler.SchedulePeriodicTask("infinitePeriodic", Timeout.InfiniteTimeSpan, token =>
+            {
+                infRuns++;
+            }, false);
+
+            await Task.Delay(400);
+            Assert.Equal(0, infRuns);
+            scheduler.TriggerTask("infinitePeriodic");
+            await Task.Delay(400);
+            Assert.Equal(1, infRuns);
+
+            source.Cancel();
             await RunWithTimeout(scheduler.WaitForAll(), 1000);
         }
     }
