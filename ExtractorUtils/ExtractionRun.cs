@@ -22,6 +22,10 @@ namespace Cognite.Extractor.Utils
         /// Frequency of extraction pipeline updates in seconds.
         /// </summary>
         public int Frequency { get; set; } = 600;
+        /// <summary>
+        /// True if this is a continuous extractor. This means that it should report success after the extractor is started.
+        /// </summary>
+        public bool Continuous { get; set; }
     }
 
     /// <summary>
@@ -51,6 +55,13 @@ namespace Cognite.Extractor.Utils
                 _log.LogInformation("Pipeline Id not set, extractor will not report status");
                 return;
             }
+        }
+
+        /// <summary>
+        /// Begin reporting, will report a success if Continuous is true.
+        /// </summary>
+        public void Start()
+        {
             _runTask = Run();
         }
         
@@ -63,6 +74,15 @@ namespace Cognite.Extractor.Utils
                 _log.LogError("Did not find extraction pipeline with ExternalId: {id}, this extractor will not report status",
                     _config.PipelineId);
                 return;
+            }
+
+            if (_config.Continuous)
+            {
+                try
+                {
+                    await Report(ExtPipeRunStatus.success, false, "Extractor started", _source.Token).ConfigureAwait(false);
+                }
+                catch (TaskCanceledException) { }
             }
 
             if (_config.Frequency <= 0) return;

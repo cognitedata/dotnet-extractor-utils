@@ -128,97 +128,92 @@ namespace Cognite.Extractor.Utils
                     services.AddSingleton<BaseExtractor>(prov => prov.GetRequiredService<TExtractor>());
                     DateTime startTime = DateTime.UtcNow;
                     ILogger<BaseExtractor> log;
-                    await using var provider = services.BuildServiceProvider();
 
-                    log = new NullLogger<BaseExtractor>();
-                    TExtractor extractor = null;
-                    try
+                    var provider = services.BuildServiceProvider();
+                    await using (provider.ConfigureAwait(false))
                     {
-                        if (addMetrics)
-                        {
-                            var metrics = provider.GetRequiredService<MetricsService>();
-                            metrics.Start();
-                        }
-                        if (addLogger)
-                        {
-                            log = provider.GetRequiredService<ILogger<BaseExtractor>>();
-                            Serilog.Log.Logger = provider.GetRequiredService<Serilog.ILogger>();
-                        }
-                        extractor = provider.GetRequiredService<TExtractor>();
-                        if (onCreateExtractor != null)
-                        {
-                            var destination = provider.GetRequiredService<CogniteDestination>();
-                            onCreateExtractor(destination, extractor);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        log.LogError("Failed to build extractor: " + ex.Message);
-                    }
-
-                    if (extractor != null)
-                    {
-                        var run = provider.GetService<ExtractionRun>();
+                        log = new NullLogger<BaseExtractor>();
+                        TExtractor extractor = null;
                         try
                         {
-                            await extractor.Start(source.Token).ConfigureAwait(false);
-                        }
-                        catch (TaskCanceledException) when (source.IsCancellationRequested)
-                        {
-                            log.LogWarning("Extractor stopped manually");
+                            if (addMetrics)
+                            {
+                                var metrics = provider.GetRequiredService<MetricsService>();
+                                metrics.Start();
+                            }
+                            if (addLogger)
+                            {
+                                log = provider.GetRequiredService<ILogger<BaseExtractor>>();
+                                Serilog.Log.Logger = provider.GetRequiredService<Serilog.ILogger>();
+                            }
+                            extractor = provider.GetRequiredService<TExtractor>();
+                            if (onCreateExtractor != null)
+                            {
+                                var destination = provider.GetRequiredService<CogniteDestination>();
+                                onCreateExtractor(destination, extractor);
+                            }
                         }
                         catch (Exception ex)
                         {
-                            // Make the stack trace a little cleaner. We generally don't need the whole task stack.
-                            if (ex is AggregateException aex) ex = aex.Flatten().InnerExceptions.First();
+                            log.LogError("Failed to build extractor: " + ex.Message);
+                        }
 
-                            if (source.IsCancellationRequested)
+                        if (extractor != null)
+                        {
+                            try
+                            {
+                                await extractor.Start(source.Token).ConfigureAwait(false);
+                            }
+                            catch (TaskCanceledException) when (source.IsCancellationRequested)
                             {
                                 log.LogWarning("Extractor stopped manually");
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                if (run != null)
+                                // Make the stack trace a little cleaner. We generally don't need the whole task stack.
+                                if (ex is AggregateException aex) ex = aex.Flatten().InnerExceptions.First();
+
+                                if (source.IsCancellationRequested)
                                 {
-                                    await run.Report(CogniteSdk.ExtPipeRunStatus.failure, true,
-                                        $"Error: {ex.Message}\n{ex.StackTrace}").ConfigureAwait(false);
+                                    log.LogWarning("Extractor stopped manually");
                                 }
-                                log.LogError(ex, "Extractor crashed unexpectedly");
+                                else
+                                {
+                                    log.LogError(ex, "Extractor crashed unexpectedly");
+                                }
                             }
                         }
-                        if (run != null)
+
+
+                        if (source.IsCancellationRequested || !restart)
                         {
-                            await run.DisposeAsync().ConfigureAwait(false);
+                            log.LogInformation("Quitting extractor");
+                            break;
+                        }
+
+                        if (startTime > DateTime.UtcNow - TimeSpan.FromSeconds(600))
+                        {
+                            waitRepeats++;
+                        }
+                        else
+                        {
+                            waitRepeats = 1;
+                        }
+
+                        try
+                        {
+                            var sleepTime = TimeSpan.FromSeconds(Math.Pow(2, Math.Min(waitRepeats, 9)));
+                            log.LogInformation("Sleeping for {time}", sleepTime);
+                            Task.Delay(sleepTime, source.Token).Wait();
+                        }
+                        catch (Exception)
+                        {
+                            log.LogWarning("Extractor stopped manually");
+                            break;
                         }
                     }
+
                     
-                        
-                    if (source.IsCancellationRequested || !restart)
-                    {
-                        log.LogInformation("Quitting extractor");
-                        break;
-                    }
-
-                    if (startTime > DateTime.UtcNow - TimeSpan.FromSeconds(600))
-                    {
-                        waitRepeats++;
-                    }
-                    else
-                    {
-                        waitRepeats = 1;
-                    }
-
-                    try
-                    {
-                        var sleepTime = TimeSpan.FromSeconds(Math.Pow(2, Math.Min(waitRepeats, 9)));
-                        log.LogInformation("Sleeping for {time}", sleepTime);
-                        Task.Delay(sleepTime, source.Token).Wait();
-                    }
-                    catch (Exception)
-                    {
-                        log.LogWarning("Extractor stopped manually");
-                        break;
-                    }
                 }
                 Console.CancelKeyPress -= CancelKeyPressHandler;
             }

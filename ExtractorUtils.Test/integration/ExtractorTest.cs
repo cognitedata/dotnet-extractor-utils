@@ -254,7 +254,7 @@ namespace ExtractorUtils.Test.Integration
                     Frequency = 1,
                     PipelineId = id
                 }, tester.Destination, tester.Provider.GetService<ILogger<ExtractionRun>>());
-
+                run.Start();
                 await Task.Delay(1000);
 
                 ItemsWithCursor<ExtPipeRun> runs = null;
