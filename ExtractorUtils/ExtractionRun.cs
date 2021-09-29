@@ -22,10 +22,6 @@ namespace Cognite.Extractor.Utils
         /// Frequency of extraction pipeline updates in seconds.
         /// </summary>
         public int Frequency { get; set; } = 600;
-        /// <summary>
-        /// True if this is a continuous extractor. This means that it should report success after the extractor is started.
-        /// </summary>
-        public bool Continuous { get; set; }
     }
 
     /// <summary>
@@ -39,6 +35,12 @@ namespace Cognite.Extractor.Utils
         private CancellationTokenSource _source = new CancellationTokenSource();
         private CogniteDestination _destination;
         private ILogger<ExtractionRun> _log = new NullLogger<ExtractionRun>();
+
+        /// <summary>
+        /// True if this is a continuous extractor. This means that it should report success after the extractor is started.
+        /// </summary>
+        public bool Continuous { get; set; }
+
         /// <summary>
         /// Constructor, can be called from dependency injection if <see cref="ExtractionRunConfig"/> has been injected.
         /// </summary>
@@ -76,7 +78,7 @@ namespace Cognite.Extractor.Utils
                 return;
             }
 
-            if (_config.Continuous)
+            if (Continuous)
             {
                 try
                 {

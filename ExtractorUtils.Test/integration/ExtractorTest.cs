@@ -254,6 +254,7 @@ namespace ExtractorUtils.Test.Integration
                     Frequency = 1,
                     PipelineId = id
                 }, tester.Destination, tester.Provider.GetService<ILogger<ExtractionRun>>());
+                run.Continuous = true;
                 run.Start();
                 await Task.Delay(1000);
 
@@ -267,11 +268,11 @@ namespace ExtractorUtils.Test.Integration
                             ExternalId = id
                         }
                     });
-                    if (runs.Items.Count() > 1) break;
+                    if (runs.Items.Count() > 1 && runs.Items.Any(item => item.Status == ExtPipeRunStatus.success)) break;
                     await Task.Delay(1000);
                 }
 
-                Assert.True(runs.Items.Count() > 1);
+                Assert.True(runs.Items.Count() > 1 && runs.Items.Any(item => item.Status == ExtPipeRunStatus.success));
 
                 await run.Report(ExtPipeRunStatus.failure, false, "Some failure");
                 await run.DisposeAsync();
@@ -287,7 +288,7 @@ namespace ExtractorUtils.Test.Integration
                         }
                     });
                     if (runs.Items.Count() > 3 && runs.Items.Any(run => run.Status == ExtPipeRunStatus.failure)
-                        && runs.Items.Any(run => run.Status == ExtPipeRunStatus.success)) break;
+                        && runs.Items.Count(run => run.Status == ExtPipeRunStatus.success) > 1) break;
                     await Task.Delay(1000);
                 }
 
