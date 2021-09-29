@@ -3063,24 +3063,24 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.PeriodicScheduler.PauseTask
   nameWithType: PeriodicScheduler.PauseTask
-- uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Action{System.Threading.CancellationToken})
-  name: SchedulePeriodicTask(String, TimeSpan, Action<CancellationToken>)
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Action_System_Threading_CancellationToken__
-  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Action{System.Threading.CancellationToken})
-  name.vb: SchedulePeriodicTask(String, TimeSpan, Action(Of CancellationToken))
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, System.TimeSpan, System.Action<System.Threading.CancellationToken>)
-  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, System.TimeSpan, System.Action(Of System.Threading.CancellationToken))
-  nameWithType: PeriodicScheduler.SchedulePeriodicTask(String, TimeSpan, Action<CancellationToken>)
-  nameWithType.vb: PeriodicScheduler.SchedulePeriodicTask(String, TimeSpan, Action(Of CancellationToken))
-- uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task})
-  name: SchedulePeriodicTask(String, TimeSpan, Func<CancellationToken, Task>)
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__
-  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task})
-  name.vb: SchedulePeriodicTask(String, TimeSpan, Func(Of CancellationToken, Task))
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, System.TimeSpan, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>)
-  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, System.TimeSpan, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task))
-  nameWithType: PeriodicScheduler.SchedulePeriodicTask(String, TimeSpan, Func<CancellationToken, Task>)
-  nameWithType.vb: PeriodicScheduler.SchedulePeriodicTask(String, TimeSpan, Func(Of CancellationToken, Task))
+- uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Action{System.Threading.CancellationToken},System.Boolean)
+  name: SchedulePeriodicTask(String, TimeSpan, Action<CancellationToken>, Boolean)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Action_System_Threading_CancellationToken__System_Boolean_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Action{System.Threading.CancellationToken},System.Boolean)
+  name.vb: SchedulePeriodicTask(String, TimeSpan, Action(Of CancellationToken), Boolean)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, System.TimeSpan, System.Action<System.Threading.CancellationToken>, System.Boolean)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, System.TimeSpan, System.Action(Of System.Threading.CancellationToken), System.Boolean)
+  nameWithType: PeriodicScheduler.SchedulePeriodicTask(String, TimeSpan, Action<CancellationToken>, Boolean)
+  nameWithType.vb: PeriodicScheduler.SchedulePeriodicTask(String, TimeSpan, Action(Of CancellationToken), Boolean)
+- uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Boolean)
+  name: SchedulePeriodicTask(String, TimeSpan, Func<CancellationToken, Task>, Boolean)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Boolean_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Boolean)
+  name.vb: SchedulePeriodicTask(String, TimeSpan, Func(Of CancellationToken, Task), Boolean)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, System.TimeSpan, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>, System.Boolean)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, System.TimeSpan, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task), System.Boolean)
+  nameWithType: PeriodicScheduler.SchedulePeriodicTask(String, TimeSpan, Func<CancellationToken, Task>, Boolean)
+  nameWithType.vb: PeriodicScheduler.SchedulePeriodicTask(String, TimeSpan, Func(Of CancellationToken, Task), Boolean)
 - uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask*
   name: SchedulePeriodicTask
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_
@@ -6536,15 +6536,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies
   nameWithType: ConfigurationExtensions.AddExtractorDependencies
-- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean)
-  name: AddExtractorDependencies<T>(IServiceCollection, String, Int32[], String, String, Boolean, Boolean, Boolean)
-  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractorDependencies__1_IServiceCollection_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_
-  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean)
-  name.vb: AddExtractorDependencies(Of T)(IServiceCollection, String, Int32(), String, String, Boolean, Boolean, Boolean)
-  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean)
-  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean)
-  nameWithType: ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, String, Int32[], String, String, Boolean, Boolean, Boolean)
-  nameWithType.vb: ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, String, Int32(), String, String, Boolean, Boolean, Boolean)
+- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,``0)
+  name: AddExtractorDependencies<T>(IServiceCollection, String, Int32[], String, String, Boolean, Boolean, Boolean, T)
+  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractorDependencies__1_IServiceCollection_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean___0_
+  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,``0)
+  name.vb: AddExtractorDependencies(Of T)(IServiceCollection, String, Int32(), String, String, Boolean, Boolean, Boolean, T)
+  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, T)
+  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, T)
+  nameWithType: ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, String, Int32[], String, String, Boolean, Boolean, Boolean, T)
+  nameWithType.vb: ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, String, Int32(), String, String, Boolean, Boolean, Boolean, T)
 - uid: Cognite.Extractor.Utils.DestinationUtils
   name: DestinationUtils
   href: api/Cognite.Extractor.Utils.DestinationUtils.html
@@ -6724,15 +6724,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ExtractorRunner.Run
   nameWithType: ExtractorRunner.Run
-- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger)
-  name: Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger)
-  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_CancellationToken_Action_Cognite_Extractor_Utils_CogniteDestination___1__Action___0__ServiceCollection_ILogger_
-  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger)
-  name.vb: Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger)
-  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action<Cognite.Extractor.Utils.CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger)
-  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action(Of Cognite.Extractor.Utils.CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger)
-  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger)
-  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger)
+- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger,``0)
+  name: Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig)
+  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_CancellationToken_Action_Cognite_Extractor_Utils_CogniteDestination___1__Action___0__ServiceCollection_ILogger___0_
+  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger,``0)
+  name.vb: Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig)
+  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action<Cognite.Extractor.Utils.CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig)
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action(Of Cognite.Extractor.Utils.CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig)
+  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig)
+  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig)
 - uid: Cognite.Extractor.Utils.IAuthenticator
   name: IAuthenticator
   href: api/Cognite.Extractor.Utils.IAuthenticator.html
