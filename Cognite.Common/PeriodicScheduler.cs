@@ -46,6 +46,8 @@ namespace Cognite.Extractor.Common
         /// </summary>
         public int Count => _tasks.Count;
 
+        private int _anonymousCounter;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -71,11 +73,25 @@ namespace Cognite.Extractor.Common
         {
             lock (_taskListMutex)
             {
+                if (name == null) name = $"anonymous-periodic{_anonymousCounter++}";
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, interval, name);
                 _tasks[name] = task;
                 task.Task = RunPeriodicTaskAsync(task, runImmediately);
                 _newTaskEvent.Set();
+            }
+        }
+
+        /// <summary>
+        /// Returns true if a task with the given name exists
+        /// </summary>
+        /// <param name="name">Task to check</param>
+        /// <returns>True if task identified by <paramref name="name"/> exists</returns>
+        public bool ContainsTask(string name)
+        {
+            lock (_taskListMutex)
+            {
+                return _tasks.ContainsKey(name);
             }
         }
 
@@ -108,6 +124,7 @@ namespace Cognite.Extractor.Common
             if (operation == null) throw new ArgumentNullException(nameof(operation));
             lock (_taskListMutex)
             {
+                if (name == null) name = $"anonymous{_anonymousCounter++}";
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, TimeSpan.Zero, name);
                 _tasks[name] = task;

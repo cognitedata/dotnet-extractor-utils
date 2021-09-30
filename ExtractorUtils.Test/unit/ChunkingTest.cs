@@ -271,12 +271,24 @@ namespace ExtractorUtils.Test.Unit
             Assert.Throws<InvalidOperationException>(() =>
                 scheduler.SchedulePeriodicTask("periodic", TimeSpan.Zero, token => Task.CompletedTask));
 
+            // Schedule anonymous periodic
+            scheduler.SchedulePeriodicTask(null, TimeSpan.FromMilliseconds(100), async token =>
+            {
+                await Task.Yield();
+            });
+
             int singleRuns = 0;
             // Schedule single
             scheduler.ScheduleTask("single", async token =>
             {
                 singleRuns++;
                 await Task.Delay(1000);
+            });
+
+            // Schedule anonymous single
+            scheduler.ScheduleTask(null, async token =>
+            {
+                await Task.Delay(100);
             });
 
             // Schedule interally looping task
@@ -304,7 +316,7 @@ namespace ExtractorUtils.Test.Unit
             // pause periodic
             await Task.Delay(500);
             Assert.True(periodicRuns > 1);
-            scheduler.PauseTask("periodic", true);
+            scheduler.TryPauseTask("periodic", true);
             int numRuns = periodicRuns;
             await Task.Delay(500);
             // It might run once more, if it was already scheduled to run
@@ -322,6 +334,9 @@ namespace ExtractorUtils.Test.Unit
             scheduler.TryTriggerTask("infinitePeriodic");
             await Task.Delay(400);
             Assert.Equal(1, infRuns);
+
+            Assert.True(scheduler.ContainsTask("periodic"));
+            Assert.Equal(3, scheduler.Count);
 
             await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
 
