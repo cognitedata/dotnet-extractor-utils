@@ -238,7 +238,6 @@ namespace Cognite.Extractor.Common
                 {
                     failedTask = _tasks.Values.FirstOrDefault(kvp => kvp.Task.IsFaulted);
 
-                    Console.WriteLine("Failing: " + failedTask?.Name);
                     if (failedTask != null) break;
                     if (_source.IsCancellationRequested) break;
 
