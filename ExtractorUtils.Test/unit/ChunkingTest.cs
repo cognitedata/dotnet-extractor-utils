@@ -319,14 +319,22 @@ namespace ExtractorUtils.Test.Unit
 
             await Task.Delay(400);
             Assert.Equal(0, infRuns);
-            scheduler.TriggerTask("infinitePeriodic");
+            scheduler.TryTriggerTask("infinitePeriodic");
             await Task.Delay(400);
             Assert.Equal(1, infRuns);
 
             await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
 
+            scheduler.ScheduleTask("failing", async token =>
+            {
+                await Task.Delay(100);
+                throw new CogniteUtilsException();
+            });
+
+            var ex = await Assert.ThrowsAsync<AggregateException>(async () => await scheduler.WaitForAll());
+            Assert.IsType<CogniteUtilsException>(ex.InnerException);
+
             source.Cancel();
-            await RunWithTimeout(scheduler.WaitForAll(), 1000);
         }
     }
 }

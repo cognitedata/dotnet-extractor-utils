@@ -42,6 +42,11 @@ namespace Cognite.Extractor.Common
         private Task _internalLoopTask;
 
         /// <summary>
+        /// Number of currently active tasks
+        /// </summary>
+        public int Count => _tasks.Count;
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="token">Cancellation token linked to all running tasks</param>
@@ -136,7 +141,7 @@ namespace Cognite.Extractor.Common
             PeriodicTask task;
             lock (_taskListMutex)
             {
-                if (!_tasks.TryGetValue(name, out task)) throw new InvalidOperationException($"No such task: {name}");
+                if (!_tasks.TryGetValue(name, out task)) return Task.CompletedTask;
                 task.ShouldRun = false;
                 task.Event.Set();
             }
@@ -216,20 +221,21 @@ namespace Cognite.Extractor.Common
                 {
                     failedTask = _tasks.Values.FirstOrDefault(kvp => kvp.Task.IsFaulted);
 
+                    Console.WriteLine("Failing: " + failedTask?.Name);
                     if (failedTask != null) break;
                     if (_source.IsCancellationRequested) break;
 
-                    if (_newTaskEvent.WaitOne(0))
-                    {
-                        _newTaskEvent.Reset();
-                        tasks.Add(WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token));
-                    }
                     var toRemove = _tasks.Values.Where(task => task.Task.IsCompleted).ToList();
                     foreach (var task in toRemove)
                     {
                         _tasks.Remove(task.Name);
                     }
                     tasks = _tasks.Values.Select(task => task.Task).ToList();
+                    if (_newTaskEvent.WaitOne(0))
+                    {
+                        _newTaskEvent.Reset();
+                        tasks.Add(WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token));
+                    }
                 }
             }
             if (_source.IsCancellationRequested) return;
@@ -243,18 +249,19 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="name">Name of task to pause</param>
         /// <param name="paused">True to pause the task, false to unpause</param>
-        public void PauseTask(string name, bool paused)
+        /// <returns>True if the task was paused</returns>
+        public bool TryPauseTask(string name, bool paused)
         {
             lock (_taskListMutex)
             {
-                if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
+                if (!_tasks.TryGetValue(name, out var task)) return false;
                 if (task.Paused && !paused)
                 {
                     task.Paused = paused;
                     task.Event.Set();
                 }
                 task.Paused = paused;
-                
+                return true;
             }
         }
         /// <summary>
@@ -262,12 +269,14 @@ namespace Cognite.Extractor.Common
         /// Either way the task will always run after this.  
         /// </summary>
         /// <param name="name"></param>
-        public void TriggerTask(string name)
+        /// <returns>True if the task was triggered</returns>
+        public bool TryTriggerTask(string name)
         {
             lock (_taskListMutex)
             {
-                if (!_tasks.TryGetValue(name, out var task)) throw new InvalidOperationException($"No such task: {name}");
+                if (!_tasks.TryGetValue(name, out var task)) return false;
                 task.Event.Set();
+                return true;
             }
         }
 
