@@ -3005,6 +3005,32 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.PeriodicScheduler.PeriodicScheduler
   nameWithType: PeriodicScheduler.PeriodicScheduler
+- uid: Cognite.Extractor.Common.PeriodicScheduler.ContainsTask(System.String)
+  name: ContainsTask(String)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ContainsTask_System_String_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.ContainsTask(System.String)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.ContainsTask(System.String)
+  nameWithType: PeriodicScheduler.ContainsTask(String)
+- uid: Cognite.Extractor.Common.PeriodicScheduler.ContainsTask*
+  name: ContainsTask
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ContainsTask_
+  commentId: Overload:Cognite.Extractor.Common.PeriodicScheduler.ContainsTask
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.ContainsTask
+  nameWithType: PeriodicScheduler.ContainsTask
+- uid: Cognite.Extractor.Common.PeriodicScheduler.Count
+  name: Count
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_Count
+  commentId: P:Cognite.Extractor.Common.PeriodicScheduler.Count
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.Count
+  nameWithType: PeriodicScheduler.Count
+- uid: Cognite.Extractor.Common.PeriodicScheduler.Count*
+  name: Count
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_Count_
+  commentId: Overload:Cognite.Extractor.Common.PeriodicScheduler.Count
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.Count
+  nameWithType: PeriodicScheduler.Count
 - uid: Cognite.Extractor.Common.PeriodicScheduler.Dispose
   name: Dispose()
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_Dispose
@@ -3050,19 +3076,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.PeriodicScheduler.ExitAndWaitForTermination
   nameWithType: PeriodicScheduler.ExitAndWaitForTermination
-- uid: Cognite.Extractor.Common.PeriodicScheduler.PauseTask(System.String,System.Boolean)
-  name: PauseTask(String, Boolean)
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_PauseTask_System_String_System_Boolean_
-  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.PauseTask(System.String,System.Boolean)
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.PauseTask(System.String, System.Boolean)
-  nameWithType: PeriodicScheduler.PauseTask(String, Boolean)
-- uid: Cognite.Extractor.Common.PeriodicScheduler.PauseTask*
-  name: PauseTask
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_PauseTask_
-  commentId: Overload:Cognite.Extractor.Common.PeriodicScheduler.PauseTask
-  isSpec: "True"
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.PauseTask
-  nameWithType: PeriodicScheduler.PauseTask
 - uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Action{System.Threading.CancellationToken},System.Boolean)
   name: SchedulePeriodicTask(String, TimeSpan, Action<CancellationToken>, Boolean)
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Action_System_Threading_CancellationToken__System_Boolean_
@@ -3113,19 +3126,32 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask
   nameWithType: PeriodicScheduler.ScheduleTask
-- uid: Cognite.Extractor.Common.PeriodicScheduler.TriggerTask(System.String)
-  name: TriggerTask(String)
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_TriggerTask_System_String_
-  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.TriggerTask(System.String)
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.TriggerTask(System.String)
-  nameWithType: PeriodicScheduler.TriggerTask(String)
-- uid: Cognite.Extractor.Common.PeriodicScheduler.TriggerTask*
-  name: TriggerTask
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_TriggerTask_
-  commentId: Overload:Cognite.Extractor.Common.PeriodicScheduler.TriggerTask
+- uid: Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask(System.String,System.Boolean)
+  name: TryPauseTask(String, Boolean)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_TryPauseTask_System_String_System_Boolean_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask(System.String,System.Boolean)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask(System.String, System.Boolean)
+  nameWithType: PeriodicScheduler.TryPauseTask(String, Boolean)
+- uid: Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask*
+  name: TryPauseTask
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_TryPauseTask_
+  commentId: Overload:Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask
   isSpec: "True"
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.TriggerTask
-  nameWithType: PeriodicScheduler.TriggerTask
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask
+  nameWithType: PeriodicScheduler.TryPauseTask
+- uid: Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask(System.String)
+  name: TryTriggerTask(String)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_TryTriggerTask_System_String_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask(System.String)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask(System.String)
+  nameWithType: PeriodicScheduler.TryTriggerTask(String)
+- uid: Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask*
+  name: TryTriggerTask
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_TryTriggerTask_
+  commentId: Overload:Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask
+  nameWithType: PeriodicScheduler.TryTriggerTask
 - uid: Cognite.Extractor.Common.PeriodicScheduler.WaitForAll
   name: WaitForAll()
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_WaitForAll
