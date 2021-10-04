@@ -116,7 +116,10 @@ namespace Cognite.Extractor.Utils
             finally
             {
                 await OnStop().ConfigureAwait(false);
-                await Run.DisposeAsync().ConfigureAwait(false);
+                if (Run != null)
+                {
+                    await Run.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
