@@ -48,17 +48,29 @@ namespace Cognite.Extractor.Utils
         /// Access to the service provider this extractor was built from
         /// </summary>
         protected IServiceProvider Provider { get; private set; }
+
+        /// <summary>
+        /// Extraction run for reporting to an extraction pipeline in CDF.
+        /// </summary>
+        protected ExtractionRun Run { get; }
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="config">Configuration object</param>
         /// <param name="destination">Cognite destination</param>
         /// <param name="provider">Service provider</param>
-        public BaseExtractor(BaseConfig config, CogniteDestination destination, IServiceProvider provider)
+        /// <param name="run">Optional extraction run</param>
+        public BaseExtractor(
+            BaseConfig config,
+            CogniteDestination destination,
+            IServiceProvider provider,
+            ExtractionRun run = null)
         {
             Config = config;
             Destination = destination;
             Provider = provider;
+            Run = run;
         }
 
         /// <summary>
@@ -73,6 +85,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Method called to start the extractor.
         /// </summary>
+        /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public virtual async Task Start(CancellationToken token)
         {
@@ -84,17 +97,37 @@ namespace Cognite.Extractor.Utils
             try
             {
                 await Start().ConfigureAwait(false);
+                if (Run != null)
+                {
+                    Run.Start();
+                }
                 await Scheduler.WaitForAll().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                if (token.IsCancellationRequested) return;
+                if (Run != null)
+                {
+                    await Run.Report(ExtPipeRunStatus.failure, true,
+                        $"Error: {ex.Message}\n{ex.StackTrace}", token).ConfigureAwait(false);
+                }
+                throw;
             }
             finally
             {
                 await OnStop().ConfigureAwait(false);
+                if (Run != null)
+                {
+                    await Run.DisposeAsync().ConfigureAwait(false);
+                }
             }
         }
 
         /// <summary>
         /// Internal method starting the extractor. Should handle any creation of timeseries,
         /// setup of source systems, and calls to the various Schedule and Create protected methods.
+        /// Should not be the actual extraction. Start should return once the extractor has successfully started.
+        /// Other tasks can be scheduled in the PeriodicScheduler.
         /// </summary>
         /// <returns></returns>
         protected abstract Task Start();

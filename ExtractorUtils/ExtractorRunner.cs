@@ -62,74 +62,76 @@ namespace Cognite.Extractor.Utils
         {
             int waitRepeats = 1;
 
-            using (var source = CancellationTokenSource.CreateLinkedTokenSource(token))
+            using var source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            void CancelKeyPressHandler(object sender, ConsoleCancelEventArgs eArgs)
             {
-                void CancelKeyPressHandler(object sender, ConsoleCancelEventArgs eArgs)
+                eArgs.Cancel = true;
+                try
                 {
-                    eArgs.Cancel = true;
-                    try
+                    source?.Cancel();
+                }
+                catch { }
+            }
+
+            Console.CancelKeyPress += CancelKeyPressHandler;
+            while (!source.IsCancellationRequested)
+            {
+                var services = new ServiceCollection();
+
+                if (extServices != null)
+                {
+                    foreach (var service in extServices)
                     {
-                        source?.Cancel();
+                        services.Add(service);
                     }
-                    catch { }
                 }
 
-                Console.CancelKeyPress += CancelKeyPressHandler;
-                while (!source.IsCancellationRequested)
+                ConfigurationException exception = null;
+                try
                 {
-                    var services = new ServiceCollection();
-                       
-                    if (extServices != null)
-                    {
-                        foreach (var service in extServices)
-                        {
-                            services.Add(service);
-                        }
-                    }
+                    config = services.AddExtractorDependencies<TConfig>(configPath, acceptedConfigVersions,
+                        appId, userAgent, addStateStore, addLogger, addMetrics);
+                    configCallback?.Invoke(config);
+                }
+                catch (AggregateException ex)
+                {
+                    exception = ex.Flatten().InnerExceptions.OfType<ConfigurationException>().First();
+                }
+                catch (ConfigurationException ex)
+                {
+                    exception = ex;
+                }
 
-                    ConfigurationException exception = null;
+                if (exception != null)
+                {
+                    if (startupLogger != null)
+                    {
+                        startupLogger.LogError("Invalid configuration file: {msg}", exception.Message);
+                        if (!restart) startupLogger.LogInformation("Sleeping for 30 seconds");
+                    }
+                    else
+                    {
+                        Serilog.Log.Logger = LoggingUtils.GetSerilogDefault();
+                        Serilog.Log.Error("Invalid configuration file: " + exception.Message);
+                        if (!restart) Serilog.Log.Information("Sleeping for 30 seconds");
+                    }
+                    if (!restart) break;
                     try
                     {
-                        config = services.AddExtractorDependencies<TConfig>(configPath, acceptedConfigVersions,
-                            appId, userAgent, addStateStore, addLogger, addMetrics);
-                        configCallback?.Invoke(config);
+                        await Task.Delay(30_000, source.Token).ConfigureAwait(false);
                     }
-                    catch (AggregateException ex)
-                    {
-                        exception = ex.Flatten().InnerExceptions.OfType<ConfigurationException>().First();
-                    }
-                    catch (ConfigurationException ex)
-                    {
-                        exception = ex;
-                    }
+                    catch { }
+                    continue;
+                }
 
-                    if (exception != null)
-                    {
-                        if (startupLogger != null)
-                        {
-                            startupLogger.LogError("Invalid configuration file: " + exception.Message);
-                            if (!restart) startupLogger.LogInformation("Sleeping for 30 seconds");
-                        }
-                        else
-                        {
-                            Serilog.Log.Logger = LoggingUtils.GetSerilogDefault();
-                            Serilog.Log.Error("Invalid configuration file: " + exception.Message);
-                            if (!restart) Serilog.Log.Information("Sleeping for 30 seconds");
-                        }
-                        if (!restart) break;
-                        try
-                        {
-                            await Task.Delay(30_000, source.Token).ConfigureAwait(false);
-                        } catch { }
-                        continue;
-                    }
+                services.AddSingleton<TExtractor>();
+                services.AddSingleton<BaseExtractor>(prov => prov.GetRequiredService<TExtractor>());
+                DateTime startTime = DateTime.UtcNow;
+                ILogger<BaseExtractor> log;
 
-                    services.AddSingleton<TExtractor>();
-                    services.AddSingleton<BaseExtractor>(prov => prov.GetRequiredService<TExtractor>());
-                    DateTime startTime = DateTime.UtcNow;
-                    ILogger<BaseExtractor> log;
-                    await using var provider = services.BuildServiceProvider();
-
+                var provider = services.BuildServiceProvider();
+                await using (provider.ConfigureAwait(false))
+                {
                     log = new NullLogger<BaseExtractor>();
                     TExtractor extractor = null;
                     try
@@ -153,12 +155,11 @@ namespace Cognite.Extractor.Utils
                     }
                     catch (Exception ex)
                     {
-                        log.LogError("Failed to build extractor: " + ex.Message);
+                        log.LogError("Failed to build extractor: {msg}", ex.Message);
                     }
 
                     if (extractor != null)
                     {
-                        var run = provider.GetService<ExtractionRun>();
                         try
                         {
                             await extractor.Start(source.Token).ConfigureAwait(false);
@@ -178,21 +179,12 @@ namespace Cognite.Extractor.Utils
                             }
                             else
                             {
-                                if (run != null)
-                                {
-                                    await run.Report(CogniteSdk.ExtPipeRunStatus.failure, true,
-                                        $"Error: {ex.Message}\n{ex.StackTrace}").ConfigureAwait(false);
-                                }
                                 log.LogError(ex, "Extractor crashed unexpectedly");
                             }
                         }
-                        if (run != null)
-                        {
-                            await run.DisposeAsync().ConfigureAwait(false);
-                        }
                     }
-                    
-                        
+
+
                     if (source.IsCancellationRequested || !restart)
                     {
                         log.LogInformation("Quitting extractor");
@@ -220,8 +212,10 @@ namespace Cognite.Extractor.Utils
                         break;
                     }
                 }
-                Console.CancelKeyPress -= CancelKeyPressHandler;
+
+
             }
+            Console.CancelKeyPress -= CancelKeyPressHandler;
         }
 
 
