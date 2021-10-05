@@ -302,21 +302,33 @@ namespace Cognite.Extractor.Utils
         {
             if (disposing)
             {
-                try
+                if (Scheduler != null)
                 {
-                    // Cannot be allowed to fail here
-                    Scheduler.ExitAllAndWait().Wait();
-                } catch { }
-                Scheduler.Dispose();
+                    try
+                    {
+                        // Cannot be allowed to fail here
+                        Scheduler.ExitAllAndWait().Wait();
+                    }
+                    catch { }
+                    Scheduler.Dispose();
+                    Scheduler = null;
+                }
                 EventUploadQueue?.Dispose();
+                EventUploadQueue = null;
                 TSUploadQueue?.Dispose();
+                TSUploadQueue = null;
                 foreach (var queue in RawUploadQueues.Values)
                 {
                     queue.Dispose();
                 }
                 RawUploadQueues.Clear();
-                Source.Cancel();
-                Source.Dispose();
+
+                if (Source != null)
+                {
+                    Source.Cancel();
+                    Source.Dispose();
+                    Source = null;
+                }
             }
         }
 
@@ -325,17 +337,27 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         protected virtual async ValueTask DisposeAsyncCore()
         {
-            await Scheduler.ExitAllAndWait().ConfigureAwait(false);
-            Scheduler.Dispose();
+            if (Scheduler != null)
+            {
+                await Scheduler.ExitAllAndWait().ConfigureAwait(false);
+                Scheduler.Dispose();
+            }
+            
             if (EventUploadQueue != null) await EventUploadQueue.DisposeAsync().ConfigureAwait(false);
+            EventUploadQueue = null;
             if (TSUploadQueue != null) await TSUploadQueue.DisposeAsync().ConfigureAwait(false);
+            TSUploadQueue = null;
             foreach (var queue in RawUploadQueues.Values)
             {
                 if (queue != null) await queue.DisposeAsync().ConfigureAwait(false);
             }
             RawUploadQueues.Clear();
-            Source.Cancel();
-            Source.Dispose();
+            if (Source != null)
+            {
+                Source.Cancel();
+                Source.Dispose();
+                Source = null;
+            }
         }
 
         /// <summary>
