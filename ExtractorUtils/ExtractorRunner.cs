@@ -82,10 +82,7 @@ namespace Cognite.Extractor.Utils
 
                 if (extServices != null)
                 {
-                    foreach (var service in extServices)
-                    {
-                        services.Add(service);
-                    }
+                    services.Add(extServices);
                 }
 
                 ConfigurationException exception = null;
