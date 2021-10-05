@@ -10,8 +10,8 @@ using Cognite.Extractor.Common;
 
 class MyExtractor : BaseExtractor
 {
-    public MyExtractor(BaseConfig config, CogniteDestination destination, IServiceProvider provider)
-        : base(config, destination, provider)
+    public MyExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination)
+        : base(config, provider, destination)
     {
     }
 

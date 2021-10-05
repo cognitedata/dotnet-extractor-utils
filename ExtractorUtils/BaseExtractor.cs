@@ -63,12 +63,15 @@ namespace Cognite.Extractor.Utils
         /// <param name="run">Optional extraction run</param>
         public BaseExtractor(
             BaseConfig config,
-            CogniteDestination destination,
             IServiceProvider provider,
+            CogniteDestination destination = null,
             ExtractionRun run = null)
         {
             Config = config;
-            Destination = destination;
+            if (destination?.CogniteClient != null)
+            {
+                Destination = destination;
+            }
             Provider = provider;
             Run = run;
         }
@@ -79,7 +82,10 @@ namespace Cognite.Extractor.Utils
         /// <returns>Task</returns>
         protected virtual async Task TestConfig()
         {
-            await Destination.TestCogniteConfig(Source.Token).ConfigureAwait(false);
+            if (Destination != null)
+            {
+                await Destination.TestCogniteConfig(Source.Token).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -158,6 +164,7 @@ namespace Cognite.Extractor.Utils
             TimeSpan uploadInterval,
             Func<QueueUploadResult<(string key, T columns)>, Task> callback)
         {
+            if (Destination == null) throw new InvalidOperationException("Creating queues requires Destination");
             string name = $"{dbName}-{tableName}";
             if (RawUploadQueues.ContainsKey(($"{name}", typeof(T))))
                 throw new InvalidOperationException($"Upload queue with type {typeof(T)}" +
@@ -215,6 +222,7 @@ namespace Cognite.Extractor.Utils
             Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback,
             string bufferPath = null)
         {
+            if (Destination == null) throw new InvalidOperationException("Creating queues requires Destination");
             if (TSUploadQueue != null) throw new InvalidOperationException("Timeseries upload queue already created");
             TSUploadQueue = Destination.CreateTimeSeriesUploadQueue(
                 uploadInterval,
@@ -256,6 +264,7 @@ namespace Cognite.Extractor.Utils
             Func<QueueUploadResult<EventCreate>, Task> callback,
             string bufferPath = null)
         {
+            if (Destination == null) throw new InvalidOperationException("Creating queues requires Destination");
             if (EventUploadQueue != null) throw new InvalidOperationException("Event upload queue already created");
             EventUploadQueue = Destination.CreateEventUploadQueue(
                 uploadInterval,
