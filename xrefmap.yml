@@ -5273,12 +5273,12 @@ references:
   commentId: T:Cognite.Extractor.Utils.BaseExtractor
   fullName: Cognite.Extractor.Utils.BaseExtractor
   nameWithType: BaseExtractor
-- uid: Cognite.Extractor.Utils.BaseExtractor.#ctor(Cognite.Extractor.Utils.BaseConfig,Cognite.Extractor.Utils.CogniteDestination,IServiceProvider)
-  name: BaseExtractor(BaseConfig, CogniteDestination, IServiceProvider)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor__ctor_Cognite_Extractor_Utils_BaseConfig_Cognite_Extractor_Utils_CogniteDestination_IServiceProvider_
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.#ctor(Cognite.Extractor.Utils.BaseConfig,Cognite.Extractor.Utils.CogniteDestination,IServiceProvider)
-  fullName: Cognite.Extractor.Utils.BaseExtractor.BaseExtractor(Cognite.Extractor.Utils.BaseConfig, Cognite.Extractor.Utils.CogniteDestination, IServiceProvider)
-  nameWithType: BaseExtractor.BaseExtractor(BaseConfig, CogniteDestination, IServiceProvider)
+- uid: Cognite.Extractor.Utils.BaseExtractor.#ctor(Cognite.Extractor.Utils.BaseConfig,Cognite.Extractor.Utils.CogniteDestination,IServiceProvider,Cognite.Extractor.Utils.ExtractionRun)
+  name: BaseExtractor(BaseConfig, CogniteDestination, IServiceProvider, ExtractionRun)
+  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor__ctor_Cognite_Extractor_Utils_BaseConfig_Cognite_Extractor_Utils_CogniteDestination_IServiceProvider_Cognite_Extractor_Utils_ExtractionRun_
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor.#ctor(Cognite.Extractor.Utils.BaseConfig,Cognite.Extractor.Utils.CogniteDestination,IServiceProvider,Cognite.Extractor.Utils.ExtractionRun)
+  fullName: Cognite.Extractor.Utils.BaseExtractor.BaseExtractor(Cognite.Extractor.Utils.BaseConfig, Cognite.Extractor.Utils.CogniteDestination, IServiceProvider, Cognite.Extractor.Utils.ExtractionRun)
+  nameWithType: BaseExtractor.BaseExtractor(BaseConfig, CogniteDestination, IServiceProvider, ExtractionRun)
 - uid: Cognite.Extractor.Utils.BaseExtractor.#ctor*
   name: BaseExtractor
   href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor__ctor_
@@ -5457,6 +5457,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues
   nameWithType: BaseExtractor.RawUploadQueues
+- uid: Cognite.Extractor.Utils.BaseExtractor.Run
+  name: Run
+  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Run
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor.Run
+  fullName: Cognite.Extractor.Utils.BaseExtractor.Run
+  nameWithType: BaseExtractor.Run
+- uid: Cognite.Extractor.Utils.BaseExtractor.Run*
+  name: Run
+  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Run_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Run
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseExtractor.Run
+  nameWithType: BaseExtractor.Run
 - uid: Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}}}})
   name: ScheduleDatapointsRun(String, TimeSpan, Func<CancellationToken, Task<IEnumerable<(Identity id, Datapoint dp)>>>)
   href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_ScheduleDatapointsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint_____
@@ -6679,6 +6692,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ExtractionRun.ExtractionRun
   nameWithType: ExtractionRun.ExtractionRun
+- uid: Cognite.Extractor.Utils.ExtractionRun.Continuous
+  name: Continuous
+  href: api/Cognite.Extractor.Utils.ExtractionRun.html#Cognite_Extractor_Utils_ExtractionRun_Continuous
+  commentId: P:Cognite.Extractor.Utils.ExtractionRun.Continuous
+  fullName: Cognite.Extractor.Utils.ExtractionRun.Continuous
+  nameWithType: ExtractionRun.Continuous
+- uid: Cognite.Extractor.Utils.ExtractionRun.Continuous*
+  name: Continuous
+  href: api/Cognite.Extractor.Utils.ExtractionRun.html#Cognite_Extractor_Utils_ExtractionRun_Continuous_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractionRun.Continuous
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractionRun.Continuous
+  nameWithType: ExtractionRun.Continuous
 - uid: Cognite.Extractor.Utils.ExtractionRun.DisposeAsync
   name: DisposeAsync()
   href: api/Cognite.Extractor.Utils.ExtractionRun.html#Cognite_Extractor_Utils_ExtractionRun_DisposeAsync
@@ -6705,6 +6731,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ExtractionRun.Report
   nameWithType: ExtractionRun.Report
+- uid: Cognite.Extractor.Utils.ExtractionRun.Start
+  name: Start()
+  href: api/Cognite.Extractor.Utils.ExtractionRun.html#Cognite_Extractor_Utils_ExtractionRun_Start
+  commentId: M:Cognite.Extractor.Utils.ExtractionRun.Start
+  fullName: Cognite.Extractor.Utils.ExtractionRun.Start()
+  nameWithType: ExtractionRun.Start()
+- uid: Cognite.Extractor.Utils.ExtractionRun.Start*
+  name: Start
+  href: api/Cognite.Extractor.Utils.ExtractionRun.html#Cognite_Extractor_Utils_ExtractionRun_Start_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractionRun.Start
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractionRun.Start
+  nameWithType: ExtractionRun.Start
 - uid: Cognite.Extractor.Utils.ExtractionRunConfig
   name: ExtractionRunConfig
   href: api/Cognite.Extractor.Utils.ExtractionRunConfig.html
