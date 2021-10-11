@@ -295,11 +295,8 @@ namespace ExtractorUtils.Test.Unit
 
             Assert.Equal(4, scheduler.Count);
 
-            for (int i = 0; i < 10; i++)
-            {
-                if (scheduler.Count == 2) break;
-                await Task.Delay(100);
-            }
+            await TestUtilities.WaitForCondition(() => scheduler.Count == 2, 1);
+
             Assert.Equal(2, scheduler.Count);
 
             // Schedule interally looping task
