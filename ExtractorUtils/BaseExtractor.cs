@@ -2,10 +2,12 @@
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cognite.Extractor.Utils
 {
@@ -54,6 +56,8 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         protected ExtractionRun Run { get; }
 
+        private readonly ILogger<BaseExtractor> _logger;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -71,6 +75,7 @@ namespace Cognite.Extractor.Utils
             Destination = destination;
             Provider = provider;
             Run = run;
+            _logger = provider.GetService<ILogger<BaseExtractor>>();
         }
 
         /// <summary>
@@ -316,7 +321,14 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         protected virtual async ValueTask DisposeAsyncCore()
         {
-            await Scheduler.ExitAllAndWait().ConfigureAwait(false);
+            try
+            {
+                await Scheduler.ExitAllAndWait().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error terminating scheduler: {msg}", ex.Message);
+            }
             Scheduler.Dispose();
             if (EventUploadQueue != null) await EventUploadQueue.DisposeAsync().ConfigureAwait(false);
             if (TSUploadQueue != null) await TSUploadQueue.DisposeAsync().ConfigureAwait(false);
@@ -344,7 +356,14 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsyncCore().ConfigureAwait(false);
+            try
+            {
+                await DisposeAsyncCore().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Failed to dispose of extractor: ", ex.Message);
+            }
             Dispose(false);
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
             GC.SuppressFinalize(this);
