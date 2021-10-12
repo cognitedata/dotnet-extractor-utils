@@ -259,14 +259,14 @@ namespace ExtractorUtils.Test.Unit
         {
             using var source = new CancellationTokenSource();
             using var scheduler = new PeriodicScheduler(source.Token);
-
+            var loopTask = scheduler.WaitForAll();
             int periodicRuns = 0;
 
             // Schedule periodic
             scheduler.SchedulePeriodicTask("periodic", TimeSpan.FromMilliseconds(100), async token =>
             {
                 periodicRuns++;
-                await Task.Yield();
+                await Task.Delay(100);
             });
             Assert.Throws<InvalidOperationException>(() =>
                 scheduler.SchedulePeriodicTask("periodic", TimeSpan.Zero, token => Task.CompletedTask));
@@ -274,15 +274,17 @@ namespace ExtractorUtils.Test.Unit
             // Schedule anonymous periodic
             scheduler.SchedulePeriodicTask(null, TimeSpan.FromMilliseconds(100), async token =>
             {
-                await Task.Yield();
+                await Task.Delay(100);
             });
+
+            Assert.Equal(2, scheduler.Count);
 
             int singleRuns = 0;
             // Schedule single
             scheduler.ScheduleTask("single", async token =>
             {
                 singleRuns++;
-                await Task.Delay(1000);
+                await Task.Delay(500);
             });
 
             // Schedule anonymous single
@@ -290,6 +292,12 @@ namespace ExtractorUtils.Test.Unit
             {
                 await Task.Delay(100);
             });
+
+            Assert.Equal(4, scheduler.Count);
+
+            await TestUtilities.WaitForCondition(() => scheduler.Count == 2, 1);
+
+            Assert.Equal(2, scheduler.Count);
 
             // Schedule interally looping task
             bool shouldLoop = true;
@@ -340,13 +348,18 @@ namespace ExtractorUtils.Test.Unit
 
             await RunWithTimeout(scheduler.ExitAndWaitForTermination("periodic"), 1000);
 
+            scheduler.SchedulePeriodicTask(null, TimeSpan.FromSeconds(1), async token =>
+            {
+                await Task.Delay(100);
+            });
+
             scheduler.ScheduleTask("failing", async token =>
             {
                 await Task.Delay(100);
                 throw new CogniteUtilsException();
             });
 
-            var ex = await Assert.ThrowsAsync<AggregateException>(async () => await scheduler.WaitForAll());
+            var ex = await Assert.ThrowsAsync<AggregateException>(async () => await loopTask);
             Assert.IsType<CogniteUtilsException>(ex.InnerException);
 
             source.Cancel();
