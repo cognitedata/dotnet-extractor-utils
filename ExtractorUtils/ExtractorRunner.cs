@@ -41,6 +41,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="extServices">Optional pre-configured service collection</param>
         /// <param name="startupLogger">Optional logger to use before config has been loaded, to report configuration issues</param>
         /// <param name="config">Optional pre-existing config object, can be used instead of config path.</param>
+        /// <param name="requireDestination">Default true, whether to fail if a destination cannot be configured</param>
         /// <returns>Task which completes when the extractor has run</returns>
         public static async Task Run<TConfig, TExtractor>(
             string configPath,
@@ -56,7 +57,8 @@ namespace Cognite.Extractor.Utils
             Action<TConfig> configCallback = null,
             ServiceCollection extServices = null,
             ILogger startupLogger = null,
-            TConfig config = null)
+            TConfig config = null,
+            bool requireDestination = true)
             where TConfig : VersionedConfig
             where TExtractor : BaseExtractor
         {
@@ -80,17 +82,14 @@ namespace Cognite.Extractor.Utils
 
                 if (extServices != null)
                 {
-                    foreach (var service in extServices)
-                    {
-                        services.Add(service);
-                    }
+                    services.Add(extServices);
                 }
 
                 ConfigurationException exception = null;
                 try
                 {
-                    config = services.AddExtractorDependencies<TConfig>(configPath, acceptedConfigVersions,
-                        appId, userAgent, addStateStore, addLogger, addMetrics);
+                    config = services.AddExtractorDependencies(configPath, acceptedConfigVersions,
+                        appId, userAgent, addStateStore, addLogger, addMetrics, requireDestination, config);
                     configCallback?.Invoke(config);
                 }
                 catch (AggregateException ex)

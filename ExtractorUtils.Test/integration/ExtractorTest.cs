@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {
@@ -29,7 +30,7 @@ namespace ExtractorUtils.Test.Integration
         public string DBName { get; private set; }
         public string TableName { get; private set; }
         private string _prefix;
-        public TestExtractor(MyConfig config, CogniteDestination destination, IServiceProvider provider) : base(config, destination, provider)
+        public TestExtractor(MyConfig config, CogniteDestination destination, IServiceProvider provider) : base(config, provider, destination)
         {
             _prefix = config.Prefix;
         }
@@ -125,9 +126,30 @@ namespace ExtractorUtils.Test.Integration
         }
     }
 
-
-    public class ExtractorTest
+    class NoCdfExtractor : BaseExtractor
     {
+        public bool Started { get; private set; }
+        public int Iter { get; private set; }
+        public NoCdfExtractor(MyConfig config, IServiceProvider provider) : base(config, provider)
+        {
+        }
+
+        protected override Task Start()
+        {
+            Started = true;
+            Scheduler.SchedulePeriodicTask(null, TimeSpan.FromMilliseconds(100), token => Iter++);
+            Assert.Null(Destination);
+            return Task.CompletedTask;
+        }
+    }
+
+    public class ExtractorTest : ConsoleWrapper
+    {
+        public ExtractorTest(ITestOutputHelper output) : base(output)
+        {
+
+        }
+
         [Fact(Timeout = 30000)]
         public async Task TestExtractorRun()
         {
@@ -302,6 +324,49 @@ namespace ExtractorUtils.Test.Integration
                     Items = new[] { Identity.Create(id) }
                 });
             }
+        }
+
+        [Fact]
+        public async Task TestExtractorWithoutCDF()
+        {
+            var cfg = new MyConfig();
+            cfg.GenerateDefaults();
+
+            NoCdfExtractor ext = null;
+
+            using var source = new CancellationTokenSource();
+
+            var task = ExtractorRunner.Run<MyConfig, NoCdfExtractor>(
+                null,
+                null,
+                null,
+                null,
+                true,
+                true,
+                true,
+                false,
+                source.Token,
+                (dest, extractor) =>
+                {
+                    Assert.Null(dest.CogniteClient);
+                    ext = extractor;
+                },
+                null,
+                null,
+                null,
+                cfg,
+                false
+                );
+
+            await Task.Delay(500);
+
+            Assert.NotNull(ext);
+            Assert.True(ext.Started);
+            Assert.True(ext.Iter > 2);
+
+            source.Cancel();
+
+            await task;
         }
     }
 }

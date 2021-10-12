@@ -29,12 +29,14 @@ namespace Cognite.Extractor.Utils
         /// to report metrics on the number and duration of API requests</param>
         /// <param name="setHttpClient">Default true. If false CogniteSdk Client.Builder is not added to the
         /// <see cref="ServiceCollection"/>. If this is false it must be added before this method is called.</param>
+        /// <param name="required">True to fail if cognite configuration is missing</param>
         public static void AddCogniteClient(this IServiceCollection services,
                                             string appId,
                                             string userAgent = null,
                                             bool setLogger = false,
                                             bool setMetrics = false,
-                                            bool setHttpClient = true)
+                                            bool setHttpClient = true,
+                                            bool required = true)
         {
             if (setHttpClient)
             {
@@ -42,7 +44,7 @@ namespace Cognite.Extractor.Utils
                     .AddPolicyHandler((provider, message) =>
                     {
                         var retryConfig = provider.GetService<CogniteConfig>()?.CdfRetries;
-                        return CogniteExtensions.GetRetryPolicy(provider.GetRequiredService<ILogger<Client>>(),
+                        return CogniteExtensions.GetRetryPolicy(provider.GetService<ILogger<Client>>(),
                             retryConfig?.MaxRetries, retryConfig?.MaxDelay);
 
                     })
@@ -86,9 +88,10 @@ namespace Cognite.Extractor.Utils
             services.AddSingleton<IMetrics, CdfMetricCollector>();
             services.AddTransient(provider =>
             {
-                var cdfBuilder = provider.GetRequiredService<Client.Builder>();
                 var conf = provider.GetService<CogniteConfig>();
+                if ((conf == null || conf.Project?.TrimToNull() == null) && !required) return null;
                 var auth = provider.GetService<IAuthenticator>();
+                var cdfBuilder = provider.GetRequiredService<Client.Builder>();
                 var logger = setLogger ?
                     provider.GetRequiredService<ILogger<Client>>() : null;
                 CogniteExtensions.AddExtensionLoggers(provider);

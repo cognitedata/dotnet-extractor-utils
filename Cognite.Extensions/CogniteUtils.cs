@@ -13,6 +13,7 @@ using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extensions
 {
@@ -545,6 +546,7 @@ namespace Cognite.Extensions
             int? maxRetries,
             int? maxDelay)
         {
+            logger = logger ?? new NullLogger<Client>();
             int numRetries = maxRetries ?? 5;
             int delay = maxDelay ?? 5_000;
             if (maxDelay < 0) maxDelay = int.MaxValue;

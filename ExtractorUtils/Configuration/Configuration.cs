@@ -55,6 +55,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="addStateStore">True to add state store, used if extractor reads history</param>
         /// <param name="addLogger">True to add logger</param>
         /// <param name="addMetrics">True to add metrics</param>
+        /// <param name="requireDestination">True to fail if a destination cannot be configured</param>
         /// <param name="config">Optional pre-defined config object to use instead of reading from file</param>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error</exception>
@@ -68,6 +69,7 @@ namespace Cognite.Extractor.Utils
             bool addStateStore,
             bool addLogger = true,
             bool addMetrics = true,
+            bool requireDestination = true,
             T config = null) where T : VersionedConfig
         {
             if (config != null)
@@ -84,7 +86,7 @@ namespace Cognite.Extractor.Utils
             {
                 config = services.AddConfig<T>(configPath, acceptedConfigVersions);
             }
-            services.AddCogniteClient(appId, userAgent, addLogger, addMetrics);
+            services.AddCogniteClient(appId, userAgent, addLogger, addMetrics, true, requireDestination);
             if (addStateStore) services.AddStateStore();
             if (addLogger) services.AddLogger();
             if (addMetrics) services.AddMetrics();
@@ -103,9 +105,9 @@ namespace Cognite.Extractor.Utils
             {
                 var logger = setLogger ?
                     provider.GetRequiredService<ILogger<ExtractionRun>>() : null;
-                var destination = provider.GetRequiredService<CogniteDestination>();
+                var destination = provider.GetService<CogniteDestination>();
                 var config = provider.GetService<CogniteConfig>();
-
+                if (config == null || destination == null) return null;
                 if (config?.ExtractionPipeline == null || config.ExtractionPipeline.PipelineId == null) return null;
                 return new ExtractionRun(config.ExtractionPipeline, destination, logger);
             });
