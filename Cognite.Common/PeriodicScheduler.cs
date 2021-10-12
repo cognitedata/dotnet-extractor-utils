@@ -228,7 +228,8 @@ namespace Cognite.Extractor.Common
             var tasks = new List<Task>();
             PeriodicTask failedTask = null;
 
-            tasks.Add(WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token));
+            var waitTask = WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token);
+            tasks.Add(waitTask);
 
             while (!_source.IsCancellationRequested)
             {
@@ -246,12 +247,17 @@ namespace Cognite.Extractor.Common
                     {
                         _tasks.Remove(task.Name);
                     }
-                    tasks = _tasks.Values.Select(task => task.Task).ToList();
+                    tasks.Clear();
+                    foreach (var task in _tasks.Values)
+                    {
+                        tasks.Add(task.Task);
+                    }
                     if (_newTaskEvent.WaitOne(0))
                     {
                         _newTaskEvent.Reset();
-                        tasks.Add(WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token));
+                        waitTask = WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token);
                     }
+                    tasks.Add(waitTask);
                 }
             }
             if (_source.IsCancellationRequested) return;
