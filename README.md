@@ -62,7 +62,7 @@ using Cognite.Extractor.Utils;
 using Cognite.Extensions;
 using CogniteSdk;
 
-class MyExtractor : BaseExtractor
+class MyExtractor : BaseExtractor<BaseConfig>
 {
     public MyExtractor(BaseConfig config, CogniteDestination destination)
         : base(config, destination)
@@ -95,7 +95,7 @@ class Program
 {
     static void Main()
     {
-        ExtractorRunner.Run<BaseConfig>(
+        ExtractorRunner.Run<BaseConfig, MyExtractor>(
             "config.yml",
             new[] { 1 },
             "my-extractor",
