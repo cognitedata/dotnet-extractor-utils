@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using Cognite.Extractor.Common;
 
-class MyExtractor : BaseExtractor
+class MyExtractor : BaseExtractor<BaseConfig>
 {
     public MyExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination)
         : base(config, provider, destination)

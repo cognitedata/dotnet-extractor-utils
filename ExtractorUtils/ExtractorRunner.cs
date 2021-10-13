@@ -60,7 +60,7 @@ namespace Cognite.Extractor.Utils
             TConfig config = null,
             bool requireDestination = true)
             where TConfig : VersionedConfig
-            where TExtractor : BaseExtractor
+            where TExtractor : BaseExtractor<TConfig>
         {
             int waitRepeats = 1;
 
@@ -124,14 +124,14 @@ namespace Cognite.Extractor.Utils
                 }
 
                 services.AddSingleton<TExtractor>();
-                services.AddSingleton<BaseExtractor>(prov => prov.GetRequiredService<TExtractor>());
+                services.AddSingleton<BaseExtractor<TConfig>>(prov => prov.GetRequiredService<TExtractor>());
                 DateTime startTime = DateTime.UtcNow;
-                ILogger<BaseExtractor> log;
+                ILogger<BaseExtractor<TConfig>> log;
 
                 var provider = services.BuildServiceProvider();
                 await using (provider.ConfigureAwait(false))
                 {
-                    log = new NullLogger<BaseExtractor>();
+                    log = new NullLogger<BaseExtractor<TConfig>>();
                     TExtractor extractor = null;
                     try
                     {
@@ -142,7 +142,7 @@ namespace Cognite.Extractor.Utils
                         }
                         if (addLogger)
                         {
-                            log = provider.GetRequiredService<ILogger<BaseExtractor>>();
+                            log = provider.GetRequiredService<ILogger<BaseExtractor<TConfig>>>();
                             Serilog.Log.Logger = provider.GetRequiredService<Serilog.ILogger>();
                         }
                         extractor = provider.GetRequiredService<TExtractor>();

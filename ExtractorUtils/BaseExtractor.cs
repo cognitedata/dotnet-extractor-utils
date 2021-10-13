@@ -1,5 +1,6 @@
 ﻿using Cognite.Extensions;
 using Cognite.Extractor.Common;
+using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Microsoft.Extensions.Logging;
@@ -14,12 +15,13 @@ namespace Cognite.Extractor.Utils
     /// <summary>
     /// Base class for extractors writing timeseries, events or datapoints.
     /// </summary>
-    public abstract class BaseExtractor : IDisposable, IAsyncDisposable
+    public abstract class BaseExtractor<TConfig> : IDisposable, IAsyncDisposable
+        where TConfig : VersionedConfig
     {
         /// <summary>
         /// Configuration object
         /// </summary>
-        protected BaseConfig Config { get; }
+        protected TConfig Config { get; }
         /// <summary>
         /// CDF destination
         /// </summary>
@@ -56,7 +58,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         protected ExtractionRun Run { get; }
 
-        private readonly ILogger<BaseExtractor> _logger;
+        private readonly ILogger<BaseExtractor<TConfig>> _logger;
 
         /// <summary>
         /// Constructor
@@ -66,7 +68,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="provider">Service provider</param>
         /// <param name="run">Optional extraction run</param>
         public BaseExtractor(
-            BaseConfig config,
+            TConfig config,
             IServiceProvider provider,
             CogniteDestination destination = null,
             ExtractionRun run = null)
@@ -78,7 +80,7 @@ namespace Cognite.Extractor.Utils
             }
             Provider = provider;
             Run = run;
-            _logger = provider.GetService<ILogger<BaseExtractor>>();
+            _logger = provider.GetService<ILogger<BaseExtractor<TConfig>>>();
         }
 
         /// <summary>
