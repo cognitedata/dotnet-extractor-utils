@@ -23,7 +23,7 @@ namespace ExtractorUtils.Test.Integration
         public string Prefix { get; set; }
     }
 
-    class TestExtractor : BaseExtractor
+    class TestExtractor : BaseExtractor<MyConfig>
     {
         public string TSId { get; private set; }
         public List<string> CreatedEvents { get; private set; }
@@ -126,7 +126,7 @@ namespace ExtractorUtils.Test.Integration
         }
     }
 
-    class NoCdfExtractor : BaseExtractor
+    class NoCdfExtractor : BaseExtractor<MyConfig>
     {
         public bool Started { get; private set; }
         public int Iter { get; private set; }
