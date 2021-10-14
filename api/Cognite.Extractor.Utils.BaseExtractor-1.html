@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class BaseExtractor
+    <title>Class BaseExtractor&lt;TConfig&gt;
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class BaseExtractor
+    <meta name="title" content="Class BaseExtractor&lt;TConfig&gt;
    ">
     <meta name="generator" content="docfx 2.51.0.0">
     
@@ -68,10 +68,10 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Utils.BaseExtractor">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Utils.BaseExtractor`1">
   
   
-  <h1 id="Cognite_Extractor_Utils_BaseExtractor" data-uid="Cognite.Extractor.Utils.BaseExtractor" class="text-break">Class BaseExtractor
+  <h1 id="Cognite_Extractor_Utils_BaseExtractor_1" data-uid="Cognite.Extractor.Utils.BaseExtractor`1" class="text-break">Class BaseExtractor&lt;TConfig&gt;
   </h1>
   <div class="markdown level0 summary"><p>Base class for extractors writing timeseries, events or datapoints.</p>
 </div>
@@ -79,7 +79,7 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">BaseExtractor</span></div>
+    <div class="level1"><span class="xref">BaseExtractor&lt;TConfig&gt;</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -87,27 +87,42 @@
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.Extractor.Utils.html">Cognite.Extractor.Utils</a></h6>
   <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
-  <h5 id="Cognite_Extractor_Utils_BaseExtractor_syntax">Syntax</h5>
+  <h5 id="Cognite_Extractor_Utils_BaseExtractor_1_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class BaseExtractor : IDisposable, IAsyncDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class BaseExtractor&lt;TConfig&gt; : IDisposable, IAsyncDisposable where TConfig : VersionedConfig</code></pre>
   </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TConfig</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="constructors">Constructors
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor__ctor_Cognite_Extractor_Utils_BaseConfig_IServiceProvider_Cognite_Extractor_Utils_CogniteDestination_Cognite_Extractor_Utils_ExtractionRun_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.%23ctor(Cognite.Extractor.Utils.BaseConfig%2CIServiceProvider%2CCognite.Extractor.Utils.CogniteDestination%2CCognite.Extractor.Utils.ExtractionRun)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1__ctor__0_IServiceProvider_Cognite_Extractor_Utils_CogniteDestination_Cognite_Extractor_Utils_ExtractionRun_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.%23ctor(%600%2CIServiceProvider%2CCognite.Extractor.Utils.CogniteDestination%2CCognite.Extractor.Utils.ExtractionRun)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L68">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L70">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor__ctor_" data-uid="Cognite.Extractor.Utils.BaseExtractor.#ctor*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor__ctor_Cognite_Extractor_Utils_BaseConfig_IServiceProvider_Cognite_Extractor_Utils_CogniteDestination_Cognite_Extractor_Utils_ExtractionRun_" data-uid="Cognite.Extractor.Utils.BaseExtractor.#ctor(Cognite.Extractor.Utils.BaseConfig,IServiceProvider,Cognite.Extractor.Utils.CogniteDestination,Cognite.Extractor.Utils.ExtractionRun)">BaseExtractor(BaseConfig, IServiceProvider, CogniteDestination, ExtractionRun)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1__ctor_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.#ctor*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1__ctor__0_IServiceProvider_Cognite_Extractor_Utils_CogniteDestination_Cognite_Extractor_Utils_ExtractionRun_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.#ctor(`0,IServiceProvider,Cognite.Extractor.Utils.CogniteDestination,Cognite.Extractor.Utils.ExtractionRun)">BaseExtractor(TConfig, IServiceProvider, CogniteDestination, ExtractionRun)</h4>
   <div class="markdown level1 summary"><p>Constructor</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public BaseExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination = null, ExtractionRun run = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public BaseExtractor(TConfig config, IServiceProvider provider, CogniteDestination destination = null, ExtractionRun run = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -120,7 +135,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Cognite.Extractor.Utils.BaseConfig.html">BaseConfig</a></td>
+        <td><span class="xref">TConfig</span></td>
         <td><span class="parametername">config</span></td>
         <td><p>Configuration object</p>
 </td>
@@ -149,19 +164,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Config.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Config%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Config.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Config%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L22">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L24">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Config_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Config*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Config" data-uid="Cognite.Extractor.Utils.BaseExtractor.Config">Config</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Config_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Config*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Config" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Config">Config</h4>
   <div class="markdown level1 summary"><p>Configuration object</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected BaseConfig Config { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">protected TConfig Config { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -173,20 +188,20 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Cognite.Extractor.Utils.BaseConfig.html">BaseConfig</a></td>
+        <td><span class="xref">TConfig</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Destination.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Destination%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Destination.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Destination%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L26">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L28">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Destination_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Destination*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Destination" data-uid="Cognite.Extractor.Utils.BaseExtractor.Destination">Destination</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Destination_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Destination*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Destination" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Destination">Destination</h4>
   <div class="markdown level1 summary"><p>CDF destination</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -211,13 +226,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_EventUploadQueue.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_EventUploadQueue.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.EventUploadQueue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L34">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L36">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_EventUploadQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_EventUploadQueue" data-uid="Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue">EventUploadQueue</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_EventUploadQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.EventUploadQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_EventUploadQueue" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.EventUploadQueue">EventUploadQueue</h4>
   <div class="markdown level1 summary"><p>Event upload queue</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -242,13 +257,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Provider.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Provider%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Provider.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Provider%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L52">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L54">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Provider_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Provider*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Provider" data-uid="Cognite.Extractor.Utils.BaseExtractor.Provider">Provider</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Provider_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Provider*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Provider" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Provider">Provider</h4>
   <div class="markdown level1 summary"><p>Access to the service provider this extractor was built from</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -273,13 +288,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_RawUploadQueues.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_RawUploadQueues.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.RawUploadQueues%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L38">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L40">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_RawUploadQueues_" data-uid="Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_RawUploadQueues" data-uid="Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues">RawUploadQueues</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_RawUploadQueues_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.RawUploadQueues*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_RawUploadQueues" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.RawUploadQueues">RawUploadQueues</h4>
   <div class="markdown level1 summary"><p>Raw upload queues, by dbName-tableName and type.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -304,13 +319,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Run.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Run%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Run.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Run%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L57">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L59">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Run_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Run*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Run" data-uid="Cognite.Extractor.Utils.BaseExtractor.Run">Run</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Run_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Run*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Run" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Run">Run</h4>
   <div class="markdown level1 summary"><p>Extraction run for reporting to an extraction pipeline in CDF.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -335,13 +350,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Scheduler.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Scheduler%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Scheduler.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Scheduler%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L43">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L45">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Scheduler_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Scheduler*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Scheduler" data-uid="Cognite.Extractor.Utils.BaseExtractor.Scheduler">Scheduler</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Scheduler_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Scheduler*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Scheduler" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Scheduler">Scheduler</h4>
   <div class="markdown level1 summary"><p>Scheduler for running various periodic tasks</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -366,13 +381,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Source.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Source%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Source.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Source%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L47">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L49">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Source_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Source*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Source" data-uid="Cognite.Extractor.Utils.BaseExtractor.Source">Source</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Source_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Source*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Source" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Source">Source</h4>
   <div class="markdown level1 summary"><p>Cancellation token source</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -397,13 +412,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_TSUploadQueue.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_TSUploadQueue.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.TSUploadQueue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L30">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L32">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_TSUploadQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_TSUploadQueue" data-uid="Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue">TSUploadQueue</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_TSUploadQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.TSUploadQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_TSUploadQueue" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.TSUploadQueue">TSUploadQueue</h4>
   <div class="markdown level1 summary"><p>Timeseries upload queue</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -430,13 +445,13 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_CreateEventQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_EventCreate__Task__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue(System.Int32%2CTimeSpan%2CFunc%7BCognite.Extractor.Utils.QueueUploadResult%7BEventCreate%7D%2CTask%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_CreateEventQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_EventCreate__Task__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.CreateEventQueue(System.Int32%2CTimeSpan%2CFunc%7BCognite.Extractor.Utils.QueueUploadResult%7BEventCreate%7D%2CTask%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L266">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L268">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_CreateEventQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_CreateEventQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_EventCreate__Task__System_String_" data-uid="Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)">CreateEventQueue(Int32, TimeSpan, Func&lt;QueueUploadResult&lt;EventCreate&gt;, Task&gt;, String)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_CreateEventQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.CreateEventQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_CreateEventQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_EventCreate__Task__System_String_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.CreateEventQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)">CreateEventQueue(Int32, TimeSpan, Func&lt;QueueUploadResult&lt;EventCreate&gt;, Task&gt;, String)</h4>
   <div class="markdown level1 summary"><p>Set the EventUploadQueue value to a new event queue.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -482,13 +497,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_CreateRawQueue__1_System_String_System_String_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___Task__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue%60%601(System.String%2CSystem.String%2CSystem.Int32%2CTimeSpan%2CFunc%7BCognite.Extractor.Utils.QueueUploadResult%7BSystem.ValueTuple%7BSystem.String%2C%60%600%7D%7D%2CTask%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_CreateRawQueue__1_System_String_System_String_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___Task__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.CreateRawQueue%60%601(System.String%2CSystem.String%2CSystem.Int32%2CTimeSpan%2CFunc%7BCognite.Extractor.Utils.QueueUploadResult%7BSystem.ValueTuple%7BSystem.String%2C%60%600%7D%7D%2CTask%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L165">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L167">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_CreateRawQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_CreateRawQueue__1_System_String_System_String_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___Task__" data-uid="Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue``1(System.String,System.String,System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},Task})">CreateRawQueue&lt;T&gt;(String, String, Int32, TimeSpan, Func&lt;QueueUploadResult&lt;(String key, T columns)&gt;, Task&gt;)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_CreateRawQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.CreateRawQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_CreateRawQueue__1_System_String_System_String_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___Task__" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.CreateRawQueue``1(System.String,System.String,System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},Task})">CreateRawQueue&lt;T&gt;(String, String, Int32, TimeSpan, Func&lt;QueueUploadResult&lt;(String key, T columns)&gt;, Task&gt;)</h4>
   <div class="markdown level1 summary"><p>Create a raw queue with the given type and name</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -556,13 +571,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_CreateTimeseriesQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue(System.Int32%2CTimeSpan%2CFunc%7BCognite.Extractor.Utils.QueueUploadResult%7BSystem.ValueTuple%7BIdentity%2CCognite.Extensions.Datapoint%7D%7D%2CTask%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_CreateTimeseriesQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.CreateTimeseriesQueue(System.Int32%2CTimeSpan%2CFunc%7BCognite.Extractor.Utils.QueueUploadResult%7BSystem.ValueTuple%7BIdentity%2CCognite.Extensions.Datapoint%7D%7D%2CTask%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L224">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L226">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_CreateTimeseriesQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_CreateTimeseriesQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_" data-uid="Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task},System.String)">CreateTimeseriesQueue(Int32, TimeSpan, Func&lt;QueueUploadResult&lt;(Identity id, Datapoint dp)&gt;, Task&gt;, String)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_CreateTimeseriesQueue_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.CreateTimeseriesQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_CreateTimeseriesQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.CreateTimeseriesQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task},System.String)">CreateTimeseriesQueue(Int32, TimeSpan, Func&lt;QueueUploadResult&lt;(Identity id, Datapoint dp)&gt;, Task&gt;, String)</h4>
   <div class="markdown level1 summary"><p>Set the TSUploadQueue value to a new timeseries queue.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -608,13 +623,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Dispose.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Dispose%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Dispose.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Dispose%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L377">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L379">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Dispose_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Dispose*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Dispose" data-uid="Cognite.Extractor.Utils.BaseExtractor.Dispose">Dispose()</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Dispose_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Dispose*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Dispose" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Dispose">Dispose()</h4>
   <div class="markdown level1 summary"><p>Dispose extractor. Use DisposeAsync instead if possible.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -624,13 +639,13 @@
   </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Dispose(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Dispose(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L306">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L308">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Dispose_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Dispose*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Dispose_System_Boolean_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Dispose(System.Boolean)">Dispose(Boolean)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Dispose_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Dispose*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Dispose_System_Boolean_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Dispose(System.Boolean)">Dispose(Boolean)</h4>
   <div class="markdown level1 summary"><p>Dispose of extractor, waiting for running tasks and pushing everything pending to CDF.
 Use DisposeAsync instead if possible.</p>
 </div>
@@ -659,13 +674,13 @@ Use DisposeAsync instead if possible.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_DisposeAsync.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.DisposeAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsync.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.DisposeAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L387">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L389">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_DisposeAsync_" data-uid="Cognite.Extractor.Utils.BaseExtractor.DisposeAsync*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_DisposeAsync" data-uid="Cognite.Extractor.Utils.BaseExtractor.DisposeAsync">DisposeAsync()</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsync_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsync" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsync">DisposeAsync()</h4>
   <div class="markdown level1 summary"><p>Dispose extractor asynchronously. Preferred over synchronous dispose.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -690,13 +705,13 @@ Use DisposeAsync instead if possible.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_DisposeAsyncCore.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsyncCore.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.DisposeAsyncCore%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L343">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L345">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_DisposeAsyncCore_" data-uid="Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_DisposeAsyncCore" data-uid="Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore">DisposeAsyncCore()</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsyncCore_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsyncCore*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsyncCore" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsyncCore">DisposeAsyncCore()</h4>
   <div class="markdown level1 summary"><p>Internal method to dispose asynchronously.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -721,13 +736,13 @@ Use DisposeAsync instead if possible.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_OnStop.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.OnStop%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_OnStop.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.OnStop%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L151">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L153">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_OnStop_" data-uid="Cognite.Extractor.Utils.BaseExtractor.OnStop*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_OnStop" data-uid="Cognite.Extractor.Utils.BaseExtractor.OnStop">OnStop()</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_OnStop_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.OnStop*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_OnStop" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.OnStop">OnStop()</h4>
   <div class="markdown level1 summary"><p>Called when the extractor is stopping.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -752,13 +767,13 @@ Use DisposeAsync instead if possible.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_ScheduleDatapointsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint_____.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun(System.String%2CTimeSpan%2CFunc%7BCancellationToken%2CTask%7BIEnumerable%7BSystem.ValueTuple%7BIdentity%2CCognite.Extensions.Datapoint%7D%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_ScheduleDatapointsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint_____.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.ScheduleDatapointsRun(System.String%2CTimeSpan%2CFunc%7BCancellationToken%2CTask%7BIEnumerable%7BSystem.ValueTuple%7BIdentity%2CCognite.Extensions.Datapoint%7D%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L246">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L248">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_ScheduleDatapointsRun_" data-uid="Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_ScheduleDatapointsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint_____" data-uid="Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}}}})">ScheduleDatapointsRun(String, TimeSpan, Func&lt;CancellationToken, Task&lt;IEnumerable&lt;(Identity id, Datapoint dp)&gt;&gt;&gt;)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_ScheduleDatapointsRun_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.ScheduleDatapointsRun*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_ScheduleDatapointsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint_____" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.ScheduleDatapointsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}}}})">ScheduleDatapointsRun(String, TimeSpan, Func&lt;CancellationToken, Task&lt;IEnumerable&lt;(Identity id, Datapoint dp)&gt;&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Schedule a periodic run retrieving datapoints from source systems.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -798,13 +813,13 @@ Use DisposeAsync instead if possible.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_ScheduleEventsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_EventCreate____.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun(System.String%2CTimeSpan%2CFunc%7BCancellationToken%2CTask%7BIEnumerable%7BEventCreate%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_ScheduleEventsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_EventCreate____.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.ScheduleEventsRun(System.String%2CTimeSpan%2CFunc%7BCancellationToken%2CTask%7BIEnumerable%7BEventCreate%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L288">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L290">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_ScheduleEventsRun_" data-uid="Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_ScheduleEventsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_EventCreate____" data-uid="Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{EventCreate}}})">ScheduleEventsRun(String, TimeSpan, Func&lt;CancellationToken, Task&lt;IEnumerable&lt;EventCreate&gt;&gt;&gt;)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_ScheduleEventsRun_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.ScheduleEventsRun*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_ScheduleEventsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_EventCreate____" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.ScheduleEventsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{EventCreate}}})">ScheduleEventsRun(String, TimeSpan, Func&lt;CancellationToken, Task&lt;IEnumerable&lt;EventCreate&gt;&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Schedule a periodic run retrieving events from source systems.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -844,13 +859,13 @@ Use DisposeAsync instead if possible.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_ScheduleRawRun__1_System_String_System_String_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_System_String___0_____.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun%60%601(System.String%2CSystem.String%2CSystem.String%2CTimeSpan%2CFunc%7BCancellationToken%2CTask%7BIEnumerable%7BSystem.ValueTuple%7BSystem.String%2C%60%600%7D%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_ScheduleRawRun__1_System_String_System_String_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_System_String___0_____.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.ScheduleRawRun%60%601(System.String%2CSystem.String%2CSystem.String%2CTimeSpan%2CFunc%7BCancellationToken%2CTask%7BIEnumerable%7BSystem.ValueTuple%7BSystem.String%2C%60%600%7D%7D%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L197">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L199">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_ScheduleRawRun_" data-uid="Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_ScheduleRawRun__1_System_String_System_String_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_System_String___0_____" data-uid="Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun``1(System.String,System.String,System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{System.String,``0}}}})">ScheduleRawRun&lt;T&gt;(String, String, String, TimeSpan, Func&lt;CancellationToken, Task&lt;IEnumerable&lt;(String key, T columns)&gt;&gt;&gt;)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_ScheduleRawRun_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.ScheduleRawRun*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_ScheduleRawRun__1_System_String_System_String_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_System_String___0_____" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.ScheduleRawRun``1(System.String,System.String,System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{System.String,``0}}}})">ScheduleRawRun&lt;T&gt;(String, String, String, TimeSpan, Func&lt;CancellationToken, Task&lt;IEnumerable&lt;(String key, T columns)&gt;&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Schedule a periodic run with the given type and name.
 Requires a raw queue with matching type and db/table to be created first.</p>
 </div>
@@ -919,13 +934,13 @@ Requires a raw queue with matching type and db/table to be created first.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Start.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Start%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Start.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Start%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L144">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L146">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Start_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Start*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Start" data-uid="Cognite.Extractor.Utils.BaseExtractor.Start">Start()</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Start_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Start*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Start" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Start">Start()</h4>
   <div class="markdown level1 summary"><p>Internal method starting the extractor. Should handle any creation of timeseries,
 setup of source systems, and calls to the various Schedule and Create protected methods.
 Should not be the actual extraction. Start should return once the extractor has successfully started.
@@ -953,13 +968,13 @@ Other tasks can be scheduled in the PeriodicScheduler.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_Start_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.Start(CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_Start_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.Start(CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L101">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L103">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_Start_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Start*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_Start_CancellationToken_" data-uid="Cognite.Extractor.Utils.BaseExtractor.Start(CancellationToken)">Start(CancellationToken)</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_Start_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Start*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_Start_CancellationToken_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.Start(CancellationToken)">Start(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Method called to start the extractor.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1002,13 +1017,13 @@ Other tasks can be scheduled in the PeriodicScheduler.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_TestConfig.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor.TestConfig%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1_TestConfig.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601.TestConfig%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L88">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L90">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_BaseExtractor_TestConfig_" data-uid="Cognite.Extractor.Utils.BaseExtractor.TestConfig*"></a>
-  <h4 id="Cognite_Extractor_Utils_BaseExtractor_TestConfig" data-uid="Cognite.Extractor.Utils.BaseExtractor.TestConfig">TestConfig()</h4>
+  <a id="Cognite_Extractor_Utils_BaseExtractor_1_TestConfig_" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.TestConfig*"></a>
+  <h4 id="Cognite_Extractor_Utils_BaseExtractor_1_TestConfig" data-uid="Cognite.Extractor.Utils.BaseExtractor`1.TestConfig">TestConfig()</h4>
   <div class="markdown level1 summary"><p>Verify that the extractor is configured correctly.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1044,10 +1059,10 @@ Other tasks can be scheduled in the PeriodicScheduler.</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/65e28f74aee34d5e3020b6d90200eb0dd19b1867/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/9297bb3d06e8049fd0a8ba5103c293045d29e67a/apiSpec/new?filename=Cognite_Extractor_Utils_BaseExtractor_1.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.BaseExtractor%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/ExtractorUtils/BaseExtractor.cs/#L17" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/ExtractorUtils/BaseExtractor.cs/#L18" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

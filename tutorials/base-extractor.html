@@ -75,7 +75,7 @@ using Cognite.Extractor.Utils;
 using Cognite.Extensions;
 using CogniteSdk;
 
-class MyExtractor : BaseExtractor
+class MyExtractor : BaseExtractor&lt;BaseConfig&gt;
 {
     public MyExtractor(BaseConfig config, CogniteDestination destination)
         : base(config, destination)
@@ -115,7 +115,7 @@ class Program
 {
     static async Task Main()
     {
-        await ExtractorRunner.Run&lt;BaseConfig&gt;(
+        await ExtractorRunner.Run&lt;BaseConfig, MyExtractor&gt;(
             &quot;config.yml&quot;,
             new[] { 1 },
             &quot;my-extractor&quot;,
@@ -138,7 +138,7 @@ class Program
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/65e28f74aee34d5e3020b6d90200eb0dd19b1867/docfx_project/tutorials/base-extractor.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/9297bb3d06e8049fd0a8ba5103c293045d29e67a/docfx_project/tutorials/base-extractor.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

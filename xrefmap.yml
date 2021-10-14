@@ -5267,328 +5267,411 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.BaseConfig.StateStore
   nameWithType: BaseConfig.StateStore
-- uid: Cognite.Extractor.Utils.BaseExtractor
+- uid: Cognite.Extractor.Utils.BaseExtractor`1
+  name: BaseExtractor<TConfig>
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html
+  commentId: T:Cognite.Extractor.Utils.BaseExtractor`1
+  name.vb: BaseExtractor(Of TConfig)
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig)
+  nameWithType: BaseExtractor<TConfig>
+  nameWithType.vb: BaseExtractor(Of TConfig)
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.#ctor(`0,IServiceProvider,Cognite.Extractor.Utils.CogniteDestination,Cognite.Extractor.Utils.ExtractionRun)
+  name: BaseExtractor(TConfig, IServiceProvider, CogniteDestination, ExtractionRun)
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1__ctor__0_IServiceProvider_Cognite_Extractor_Utils_CogniteDestination_Cognite_Extractor_Utils_ExtractionRun_
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.#ctor(`0,IServiceProvider,Cognite.Extractor.Utils.CogniteDestination,Cognite.Extractor.Utils.ExtractionRun)
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.BaseExtractor(TConfig, IServiceProvider, Cognite.Extractor.Utils.CogniteDestination, Cognite.Extractor.Utils.ExtractionRun)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).BaseExtractor(TConfig, IServiceProvider, Cognite.Extractor.Utils.CogniteDestination, Cognite.Extractor.Utils.ExtractionRun)
+  nameWithType: BaseExtractor<TConfig>.BaseExtractor(TConfig, IServiceProvider, CogniteDestination, ExtractionRun)
+  nameWithType.vb: BaseExtractor(Of TConfig).BaseExtractor(TConfig, IServiceProvider, CogniteDestination, ExtractionRun)
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.#ctor*
   name: BaseExtractor
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html
-  commentId: T:Cognite.Extractor.Utils.BaseExtractor
-  fullName: Cognite.Extractor.Utils.BaseExtractor
-  nameWithType: BaseExtractor
-- uid: Cognite.Extractor.Utils.BaseExtractor.#ctor(Cognite.Extractor.Utils.BaseConfig,IServiceProvider,Cognite.Extractor.Utils.CogniteDestination,Cognite.Extractor.Utils.ExtractionRun)
-  name: BaseExtractor(BaseConfig, IServiceProvider, CogniteDestination, ExtractionRun)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor__ctor_Cognite_Extractor_Utils_BaseConfig_IServiceProvider_Cognite_Extractor_Utils_CogniteDestination_Cognite_Extractor_Utils_ExtractionRun_
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.#ctor(Cognite.Extractor.Utils.BaseConfig,IServiceProvider,Cognite.Extractor.Utils.CogniteDestination,Cognite.Extractor.Utils.ExtractionRun)
-  fullName: Cognite.Extractor.Utils.BaseExtractor.BaseExtractor(Cognite.Extractor.Utils.BaseConfig, IServiceProvider, Cognite.Extractor.Utils.CogniteDestination, Cognite.Extractor.Utils.ExtractionRun)
-  nameWithType: BaseExtractor.BaseExtractor(BaseConfig, IServiceProvider, CogniteDestination, ExtractionRun)
-- uid: Cognite.Extractor.Utils.BaseExtractor.#ctor*
-  name: BaseExtractor
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor__ctor_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.#ctor
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.#ctor
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.BaseExtractor
-  nameWithType: BaseExtractor.BaseExtractor
-- uid: Cognite.Extractor.Utils.BaseExtractor.Config
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.BaseExtractor
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).BaseExtractor
+  nameWithType: BaseExtractor<TConfig>.BaseExtractor
+  nameWithType.vb: BaseExtractor(Of TConfig).BaseExtractor
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Config
   name: Config
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Config
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.Config
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Config
-  nameWithType: BaseExtractor.Config
-- uid: Cognite.Extractor.Utils.BaseExtractor.Config*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Config
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.Config
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Config
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Config
+  nameWithType: BaseExtractor<TConfig>.Config
+  nameWithType.vb: BaseExtractor(Of TConfig).Config
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Config*
   name: Config
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Config_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Config
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Config_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Config
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Config
-  nameWithType: BaseExtractor.Config
-- uid: Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Config
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Config
+  nameWithType: BaseExtractor<TConfig>.Config
+  nameWithType.vb: BaseExtractor(Of TConfig).Config
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.CreateEventQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)
   name: CreateEventQueue(Int32, TimeSpan, Func<QueueUploadResult<EventCreate>, Task>, String)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_CreateEventQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_EventCreate__Task__System_String_
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_CreateEventQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_EventCreate__Task__System_String_
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.CreateEventQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{EventCreate},Task},System.String)
   name.vb: CreateEventQueue(Int32, TimeSpan, Func(Of QueueUploadResult(Of EventCreate), Task), String)
-  fullName: Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue(System.Int32, TimeSpan, Func<Cognite.Extractor.Utils.QueueUploadResult<EventCreate>, Task>, System.String)
-  fullName.vb: Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue(System.Int32, TimeSpan, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of EventCreate), Task), System.String)
-  nameWithType: BaseExtractor.CreateEventQueue(Int32, TimeSpan, Func<QueueUploadResult<EventCreate>, Task>, String)
-  nameWithType.vb: BaseExtractor.CreateEventQueue(Int32, TimeSpan, Func(Of QueueUploadResult(Of EventCreate), Task), String)
-- uid: Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue*
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.CreateEventQueue(System.Int32, TimeSpan, Func<Cognite.Extractor.Utils.QueueUploadResult<EventCreate>, Task>, System.String)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).CreateEventQueue(System.Int32, TimeSpan, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of EventCreate), Task), System.String)
+  nameWithType: BaseExtractor<TConfig>.CreateEventQueue(Int32, TimeSpan, Func<QueueUploadResult<EventCreate>, Task>, String)
+  nameWithType.vb: BaseExtractor(Of TConfig).CreateEventQueue(Int32, TimeSpan, Func(Of QueueUploadResult(Of EventCreate), Task), String)
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.CreateEventQueue*
   name: CreateEventQueue
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_CreateEventQueue_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_CreateEventQueue_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.CreateEventQueue
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.CreateEventQueue
-  nameWithType: BaseExtractor.CreateEventQueue
-- uid: Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue*
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.CreateEventQueue
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).CreateEventQueue
+  nameWithType: BaseExtractor<TConfig>.CreateEventQueue
+  nameWithType.vb: BaseExtractor(Of TConfig).CreateEventQueue
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.CreateRawQueue*
   name: CreateRawQueue
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_CreateRawQueue_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_CreateRawQueue_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.CreateRawQueue
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue
-  nameWithType: BaseExtractor.CreateRawQueue
-- uid: Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue``1(System.String,System.String,System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},Task})
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.CreateRawQueue
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).CreateRawQueue
+  nameWithType: BaseExtractor<TConfig>.CreateRawQueue
+  nameWithType.vb: BaseExtractor(Of TConfig).CreateRawQueue
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.CreateRawQueue``1(System.String,System.String,System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},Task})
   name: CreateRawQueue<T>(String, String, Int32, TimeSpan, Func<QueueUploadResult<(String key, T columns)>, Task>)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_CreateRawQueue__1_System_String_System_String_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___Task__
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue``1(System.String,System.String,System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},Task})
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_CreateRawQueue__1_System_String_System_String_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___Task__
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.CreateRawQueue``1(System.String,System.String,System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},Task})
   name.vb: CreateRawQueue(Of T)(String, String, Int32, TimeSpan, Func(Of QueueUploadResult(Of (key As String, columns As T)), Task))
-  fullName: Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue<T>(System.String, System.String, System.Int32, TimeSpan, Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<System.String, T>>, Task>)
-  fullName.vb: Cognite.Extractor.Utils.BaseExtractor.CreateRawQueue(Of T)(System.String, System.String, System.Int32, TimeSpan, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of System.String, T)), Task))
-  nameWithType: BaseExtractor.CreateRawQueue<T>(String, String, Int32, TimeSpan, Func<QueueUploadResult<(String key, T columns)>, Task>)
-  nameWithType.vb: BaseExtractor.CreateRawQueue(Of T)(String, String, Int32, TimeSpan, Func(Of QueueUploadResult(Of (key As String, columns As T)), Task))
-- uid: Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task},System.String)
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.CreateRawQueue<T>(System.String, System.String, System.Int32, TimeSpan, Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<System.String, T>>, Task>)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).CreateRawQueue(Of T)(System.String, System.String, System.Int32, TimeSpan, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of System.String, T)), Task))
+  nameWithType: BaseExtractor<TConfig>.CreateRawQueue<T>(String, String, Int32, TimeSpan, Func<QueueUploadResult<(String key, T columns)>, Task>)
+  nameWithType.vb: BaseExtractor(Of TConfig).CreateRawQueue(Of T)(String, String, Int32, TimeSpan, Func(Of QueueUploadResult(Of (key As String, columns As T)), Task))
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.CreateTimeseriesQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task},System.String)
   name: CreateTimeseriesQueue(Int32, TimeSpan, Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>, String)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_CreateTimeseriesQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task},System.String)
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_CreateTimeseriesQueue_System_Int32_TimeSpan_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task__System_String_
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.CreateTimeseriesQueue(System.Int32,TimeSpan,Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task},System.String)
   name.vb: CreateTimeseriesQueue(Int32, TimeSpan, Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task), String)
-  fullName: Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue(System.Int32, TimeSpan, Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<Identity, Cognite.Extensions.Datapoint>>, Task>, System.String)
-  fullName.vb: Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue(System.Int32, TimeSpan, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of Identity, Cognite.Extensions.Datapoint)), Task), System.String)
-  nameWithType: BaseExtractor.CreateTimeseriesQueue(Int32, TimeSpan, Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>, String)
-  nameWithType.vb: BaseExtractor.CreateTimeseriesQueue(Int32, TimeSpan, Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task), String)
-- uid: Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue*
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.CreateTimeseriesQueue(System.Int32, TimeSpan, Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<Identity, Cognite.Extensions.Datapoint>>, Task>, System.String)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).CreateTimeseriesQueue(System.Int32, TimeSpan, Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of Identity, Cognite.Extensions.Datapoint)), Task), System.String)
+  nameWithType: BaseExtractor<TConfig>.CreateTimeseriesQueue(Int32, TimeSpan, Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>, String)
+  nameWithType.vb: BaseExtractor(Of TConfig).CreateTimeseriesQueue(Int32, TimeSpan, Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task), String)
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.CreateTimeseriesQueue*
   name: CreateTimeseriesQueue
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_CreateTimeseriesQueue_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_CreateTimeseriesQueue_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.CreateTimeseriesQueue
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.CreateTimeseriesQueue
-  nameWithType: BaseExtractor.CreateTimeseriesQueue
-- uid: Cognite.Extractor.Utils.BaseExtractor.Destination
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.CreateTimeseriesQueue
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).CreateTimeseriesQueue
+  nameWithType: BaseExtractor<TConfig>.CreateTimeseriesQueue
+  nameWithType.vb: BaseExtractor(Of TConfig).CreateTimeseriesQueue
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Destination
   name: Destination
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Destination
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.Destination
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Destination
-  nameWithType: BaseExtractor.Destination
-- uid: Cognite.Extractor.Utils.BaseExtractor.Destination*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Destination
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.Destination
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Destination
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Destination
+  nameWithType: BaseExtractor<TConfig>.Destination
+  nameWithType.vb: BaseExtractor(Of TConfig).Destination
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Destination*
   name: Destination
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Destination_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Destination
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Destination_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Destination
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Destination
-  nameWithType: BaseExtractor.Destination
-- uid: Cognite.Extractor.Utils.BaseExtractor.Dispose
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Destination
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Destination
+  nameWithType: BaseExtractor<TConfig>.Destination
+  nameWithType.vb: BaseExtractor(Of TConfig).Destination
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Dispose
   name: Dispose()
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Dispose
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.Dispose
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Dispose()
-  nameWithType: BaseExtractor.Dispose()
-- uid: Cognite.Extractor.Utils.BaseExtractor.Dispose(System.Boolean)
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Dispose
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.Dispose
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Dispose()
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Dispose()
+  nameWithType: BaseExtractor<TConfig>.Dispose()
+  nameWithType.vb: BaseExtractor(Of TConfig).Dispose()
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Dispose(System.Boolean)
   name: Dispose(Boolean)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Dispose_System_Boolean_
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.Dispose(System.Boolean)
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Dispose(System.Boolean)
-  nameWithType: BaseExtractor.Dispose(Boolean)
-- uid: Cognite.Extractor.Utils.BaseExtractor.Dispose*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Dispose_System_Boolean_
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.Dispose(System.Boolean)
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Dispose(System.Boolean)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Dispose(System.Boolean)
+  nameWithType: BaseExtractor<TConfig>.Dispose(Boolean)
+  nameWithType.vb: BaseExtractor(Of TConfig).Dispose(Boolean)
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Dispose*
   name: Dispose
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Dispose_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Dispose
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Dispose_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Dispose
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Dispose
-  nameWithType: BaseExtractor.Dispose
-- uid: Cognite.Extractor.Utils.BaseExtractor.DisposeAsync
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Dispose
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Dispose
+  nameWithType: BaseExtractor<TConfig>.Dispose
+  nameWithType.vb: BaseExtractor(Of TConfig).Dispose
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsync
   name: DisposeAsync()
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_DisposeAsync
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.DisposeAsync
-  fullName: Cognite.Extractor.Utils.BaseExtractor.DisposeAsync()
-  nameWithType: BaseExtractor.DisposeAsync()
-- uid: Cognite.Extractor.Utils.BaseExtractor.DisposeAsync*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsync
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsync
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.DisposeAsync()
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).DisposeAsync()
+  nameWithType: BaseExtractor<TConfig>.DisposeAsync()
+  nameWithType.vb: BaseExtractor(Of TConfig).DisposeAsync()
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsync*
   name: DisposeAsync
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_DisposeAsync_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.DisposeAsync
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsync_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsync
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.DisposeAsync
-  nameWithType: BaseExtractor.DisposeAsync
-- uid: Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.DisposeAsync
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).DisposeAsync
+  nameWithType: BaseExtractor<TConfig>.DisposeAsync
+  nameWithType.vb: BaseExtractor(Of TConfig).DisposeAsync
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsyncCore
   name: DisposeAsyncCore()
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_DisposeAsyncCore
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore
-  fullName: Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore()
-  nameWithType: BaseExtractor.DisposeAsyncCore()
-- uid: Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsyncCore
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsyncCore
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.DisposeAsyncCore()
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).DisposeAsyncCore()
+  nameWithType: BaseExtractor<TConfig>.DisposeAsyncCore()
+  nameWithType.vb: BaseExtractor(Of TConfig).DisposeAsyncCore()
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsyncCore*
   name: DisposeAsyncCore
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_DisposeAsyncCore_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_DisposeAsyncCore_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.DisposeAsyncCore
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.DisposeAsyncCore
-  nameWithType: BaseExtractor.DisposeAsyncCore
-- uid: Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.DisposeAsyncCore
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).DisposeAsyncCore
+  nameWithType: BaseExtractor<TConfig>.DisposeAsyncCore
+  nameWithType.vb: BaseExtractor(Of TConfig).DisposeAsyncCore
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.EventUploadQueue
   name: EventUploadQueue
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_EventUploadQueue
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue
-  fullName: Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue
-  nameWithType: BaseExtractor.EventUploadQueue
-- uid: Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_EventUploadQueue
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.EventUploadQueue
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.EventUploadQueue
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).EventUploadQueue
+  nameWithType: BaseExtractor<TConfig>.EventUploadQueue
+  nameWithType.vb: BaseExtractor(Of TConfig).EventUploadQueue
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.EventUploadQueue*
   name: EventUploadQueue
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_EventUploadQueue_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_EventUploadQueue_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.EventUploadQueue
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.EventUploadQueue
-  nameWithType: BaseExtractor.EventUploadQueue
-- uid: Cognite.Extractor.Utils.BaseExtractor.OnStop
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.EventUploadQueue
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).EventUploadQueue
+  nameWithType: BaseExtractor<TConfig>.EventUploadQueue
+  nameWithType.vb: BaseExtractor(Of TConfig).EventUploadQueue
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.OnStop
   name: OnStop()
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_OnStop
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.OnStop
-  fullName: Cognite.Extractor.Utils.BaseExtractor.OnStop()
-  nameWithType: BaseExtractor.OnStop()
-- uid: Cognite.Extractor.Utils.BaseExtractor.OnStop*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_OnStop
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.OnStop
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.OnStop()
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).OnStop()
+  nameWithType: BaseExtractor<TConfig>.OnStop()
+  nameWithType.vb: BaseExtractor(Of TConfig).OnStop()
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.OnStop*
   name: OnStop
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_OnStop_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.OnStop
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_OnStop_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.OnStop
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.OnStop
-  nameWithType: BaseExtractor.OnStop
-- uid: Cognite.Extractor.Utils.BaseExtractor.Provider
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.OnStop
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).OnStop
+  nameWithType: BaseExtractor<TConfig>.OnStop
+  nameWithType.vb: BaseExtractor(Of TConfig).OnStop
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Provider
   name: Provider
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Provider
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.Provider
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Provider
-  nameWithType: BaseExtractor.Provider
-- uid: Cognite.Extractor.Utils.BaseExtractor.Provider*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Provider
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.Provider
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Provider
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Provider
+  nameWithType: BaseExtractor<TConfig>.Provider
+  nameWithType.vb: BaseExtractor(Of TConfig).Provider
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Provider*
   name: Provider
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Provider_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Provider
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Provider_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Provider
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Provider
-  nameWithType: BaseExtractor.Provider
-- uid: Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Provider
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Provider
+  nameWithType: BaseExtractor<TConfig>.Provider
+  nameWithType.vb: BaseExtractor(Of TConfig).Provider
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.RawUploadQueues
   name: RawUploadQueues
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_RawUploadQueues
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues
-  fullName: Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues
-  nameWithType: BaseExtractor.RawUploadQueues
-- uid: Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_RawUploadQueues
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.RawUploadQueues
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.RawUploadQueues
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).RawUploadQueues
+  nameWithType: BaseExtractor<TConfig>.RawUploadQueues
+  nameWithType.vb: BaseExtractor(Of TConfig).RawUploadQueues
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.RawUploadQueues*
   name: RawUploadQueues
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_RawUploadQueues_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_RawUploadQueues_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.RawUploadQueues
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.RawUploadQueues
-  nameWithType: BaseExtractor.RawUploadQueues
-- uid: Cognite.Extractor.Utils.BaseExtractor.Run
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.RawUploadQueues
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).RawUploadQueues
+  nameWithType: BaseExtractor<TConfig>.RawUploadQueues
+  nameWithType.vb: BaseExtractor(Of TConfig).RawUploadQueues
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Run
   name: Run
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Run
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.Run
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Run
-  nameWithType: BaseExtractor.Run
-- uid: Cognite.Extractor.Utils.BaseExtractor.Run*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Run
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.Run
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Run
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Run
+  nameWithType: BaseExtractor<TConfig>.Run
+  nameWithType.vb: BaseExtractor(Of TConfig).Run
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Run*
   name: Run
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Run_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Run
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Run_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Run
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Run
-  nameWithType: BaseExtractor.Run
-- uid: Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}}}})
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Run
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Run
+  nameWithType: BaseExtractor<TConfig>.Run
+  nameWithType.vb: BaseExtractor(Of TConfig).Run
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.ScheduleDatapointsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}}}})
   name: ScheduleDatapointsRun(String, TimeSpan, Func<CancellationToken, Task<IEnumerable<(Identity id, Datapoint dp)>>>)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_ScheduleDatapointsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint_____
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}}}})
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_ScheduleDatapointsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_Identity_Cognite_Extensions_Datapoint_____
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.ScheduleDatapointsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}}}})
   name.vb: ScheduleDatapointsRun(String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of (id As Identity, dp As Datapoint)))))
-  fullName: Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun(System.String, TimeSpan, Func<CancellationToken, Task<IEnumerable<System.ValueTuple<Identity, Cognite.Extensions.Datapoint>>>>)
-  fullName.vb: Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun(System.String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of System.ValueTuple(Of Identity, Cognite.Extensions.Datapoint)))))
-  nameWithType: BaseExtractor.ScheduleDatapointsRun(String, TimeSpan, Func<CancellationToken, Task<IEnumerable<(Identity id, Datapoint dp)>>>)
-  nameWithType.vb: BaseExtractor.ScheduleDatapointsRun(String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of (id As Identity, dp As Datapoint)))))
-- uid: Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun*
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.ScheduleDatapointsRun(System.String, TimeSpan, Func<CancellationToken, Task<IEnumerable<System.ValueTuple<Identity, Cognite.Extensions.Datapoint>>>>)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).ScheduleDatapointsRun(System.String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of System.ValueTuple(Of Identity, Cognite.Extensions.Datapoint)))))
+  nameWithType: BaseExtractor<TConfig>.ScheduleDatapointsRun(String, TimeSpan, Func<CancellationToken, Task<IEnumerable<(Identity id, Datapoint dp)>>>)
+  nameWithType.vb: BaseExtractor(Of TConfig).ScheduleDatapointsRun(String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of (id As Identity, dp As Datapoint)))))
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.ScheduleDatapointsRun*
   name: ScheduleDatapointsRun
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_ScheduleDatapointsRun_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_ScheduleDatapointsRun_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.ScheduleDatapointsRun
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.ScheduleDatapointsRun
-  nameWithType: BaseExtractor.ScheduleDatapointsRun
-- uid: Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{EventCreate}}})
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.ScheduleDatapointsRun
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).ScheduleDatapointsRun
+  nameWithType: BaseExtractor<TConfig>.ScheduleDatapointsRun
+  nameWithType.vb: BaseExtractor(Of TConfig).ScheduleDatapointsRun
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.ScheduleEventsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{EventCreate}}})
   name: ScheduleEventsRun(String, TimeSpan, Func<CancellationToken, Task<IEnumerable<EventCreate>>>)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_ScheduleEventsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_EventCreate____
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{EventCreate}}})
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_ScheduleEventsRun_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_EventCreate____
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.ScheduleEventsRun(System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{EventCreate}}})
   name.vb: ScheduleEventsRun(String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of EventCreate))))
-  fullName: Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun(System.String, TimeSpan, Func<CancellationToken, Task<IEnumerable<EventCreate>>>)
-  fullName.vb: Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun(System.String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of EventCreate))))
-  nameWithType: BaseExtractor.ScheduleEventsRun(String, TimeSpan, Func<CancellationToken, Task<IEnumerable<EventCreate>>>)
-  nameWithType.vb: BaseExtractor.ScheduleEventsRun(String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of EventCreate))))
-- uid: Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun*
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.ScheduleEventsRun(System.String, TimeSpan, Func<CancellationToken, Task<IEnumerable<EventCreate>>>)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).ScheduleEventsRun(System.String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of EventCreate))))
+  nameWithType: BaseExtractor<TConfig>.ScheduleEventsRun(String, TimeSpan, Func<CancellationToken, Task<IEnumerable<EventCreate>>>)
+  nameWithType.vb: BaseExtractor(Of TConfig).ScheduleEventsRun(String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of EventCreate))))
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.ScheduleEventsRun*
   name: ScheduleEventsRun
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_ScheduleEventsRun_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_ScheduleEventsRun_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.ScheduleEventsRun
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.ScheduleEventsRun
-  nameWithType: BaseExtractor.ScheduleEventsRun
-- uid: Cognite.Extractor.Utils.BaseExtractor.Scheduler
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.ScheduleEventsRun
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).ScheduleEventsRun
+  nameWithType: BaseExtractor<TConfig>.ScheduleEventsRun
+  nameWithType.vb: BaseExtractor(Of TConfig).ScheduleEventsRun
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Scheduler
   name: Scheduler
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Scheduler
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.Scheduler
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Scheduler
-  nameWithType: BaseExtractor.Scheduler
-- uid: Cognite.Extractor.Utils.BaseExtractor.Scheduler*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Scheduler
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.Scheduler
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Scheduler
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Scheduler
+  nameWithType: BaseExtractor<TConfig>.Scheduler
+  nameWithType.vb: BaseExtractor(Of TConfig).Scheduler
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Scheduler*
   name: Scheduler
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Scheduler_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Scheduler
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Scheduler_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Scheduler
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Scheduler
-  nameWithType: BaseExtractor.Scheduler
-- uid: Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun*
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Scheduler
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Scheduler
+  nameWithType: BaseExtractor<TConfig>.Scheduler
+  nameWithType.vb: BaseExtractor(Of TConfig).Scheduler
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.ScheduleRawRun*
   name: ScheduleRawRun
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_ScheduleRawRun_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_ScheduleRawRun_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.ScheduleRawRun
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun
-  nameWithType: BaseExtractor.ScheduleRawRun
-- uid: Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun``1(System.String,System.String,System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{System.String,``0}}}})
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.ScheduleRawRun
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).ScheduleRawRun
+  nameWithType: BaseExtractor<TConfig>.ScheduleRawRun
+  nameWithType.vb: BaseExtractor(Of TConfig).ScheduleRawRun
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.ScheduleRawRun``1(System.String,System.String,System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{System.String,``0}}}})
   name: ScheduleRawRun<T>(String, String, String, TimeSpan, Func<CancellationToken, Task<IEnumerable<(String key, T columns)>>>)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_ScheduleRawRun__1_System_String_System_String_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_System_String___0_____
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun``1(System.String,System.String,System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{System.String,``0}}}})
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_ScheduleRawRun__1_System_String_System_String_System_String_TimeSpan_Func_CancellationToken_Task_IEnumerable_System_ValueTuple_System_String___0_____
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.ScheduleRawRun``1(System.String,System.String,System.String,TimeSpan,Func{CancellationToken,Task{IEnumerable{System.ValueTuple{System.String,``0}}}})
   name.vb: ScheduleRawRun(Of T)(String, String, String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of (key As String, columns As T)))))
-  fullName: Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun<T>(System.String, System.String, System.String, TimeSpan, Func<CancellationToken, Task<IEnumerable<System.ValueTuple<System.String, T>>>>)
-  fullName.vb: Cognite.Extractor.Utils.BaseExtractor.ScheduleRawRun(Of T)(System.String, System.String, System.String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of System.ValueTuple(Of System.String, T)))))
-  nameWithType: BaseExtractor.ScheduleRawRun<T>(String, String, String, TimeSpan, Func<CancellationToken, Task<IEnumerable<(String key, T columns)>>>)
-  nameWithType.vb: BaseExtractor.ScheduleRawRun(Of T)(String, String, String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of (key As String, columns As T)))))
-- uid: Cognite.Extractor.Utils.BaseExtractor.Source
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.ScheduleRawRun<T>(System.String, System.String, System.String, TimeSpan, Func<CancellationToken, Task<IEnumerable<System.ValueTuple<System.String, T>>>>)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).ScheduleRawRun(Of T)(System.String, System.String, System.String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of System.ValueTuple(Of System.String, T)))))
+  nameWithType: BaseExtractor<TConfig>.ScheduleRawRun<T>(String, String, String, TimeSpan, Func<CancellationToken, Task<IEnumerable<(String key, T columns)>>>)
+  nameWithType.vb: BaseExtractor(Of TConfig).ScheduleRawRun(Of T)(String, String, String, TimeSpan, Func(Of CancellationToken, Task(Of IEnumerable(Of (key As String, columns As T)))))
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Source
   name: Source
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Source
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.Source
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Source
-  nameWithType: BaseExtractor.Source
-- uid: Cognite.Extractor.Utils.BaseExtractor.Source*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Source
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.Source
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Source
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Source
+  nameWithType: BaseExtractor<TConfig>.Source
+  nameWithType.vb: BaseExtractor(Of TConfig).Source
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Source*
   name: Source
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Source_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Source
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Source_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Source
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Source
-  nameWithType: BaseExtractor.Source
-- uid: Cognite.Extractor.Utils.BaseExtractor.Start
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Source
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Source
+  nameWithType: BaseExtractor<TConfig>.Source
+  nameWithType.vb: BaseExtractor(Of TConfig).Source
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Start
   name: Start()
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Start
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.Start
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Start()
-  nameWithType: BaseExtractor.Start()
-- uid: Cognite.Extractor.Utils.BaseExtractor.Start(CancellationToken)
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Start
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.Start
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Start()
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Start()
+  nameWithType: BaseExtractor<TConfig>.Start()
+  nameWithType.vb: BaseExtractor(Of TConfig).Start()
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Start(CancellationToken)
   name: Start(CancellationToken)
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Start_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.Start(CancellationToken)
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Start(CancellationToken)
-  nameWithType: BaseExtractor.Start(CancellationToken)
-- uid: Cognite.Extractor.Utils.BaseExtractor.Start*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Start_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.Start(CancellationToken)
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Start(CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Start(CancellationToken)
+  nameWithType: BaseExtractor<TConfig>.Start(CancellationToken)
+  nameWithType.vb: BaseExtractor(Of TConfig).Start(CancellationToken)
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Start*
   name: Start
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_Start_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.Start
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Start_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Start
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.Start
-  nameWithType: BaseExtractor.Start
-- uid: Cognite.Extractor.Utils.BaseExtractor.TestConfig
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Start
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Start
+  nameWithType: BaseExtractor<TConfig>.Start
+  nameWithType.vb: BaseExtractor(Of TConfig).Start
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.TestConfig
   name: TestConfig()
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_TestConfig
-  commentId: M:Cognite.Extractor.Utils.BaseExtractor.TestConfig
-  fullName: Cognite.Extractor.Utils.BaseExtractor.TestConfig()
-  nameWithType: BaseExtractor.TestConfig()
-- uid: Cognite.Extractor.Utils.BaseExtractor.TestConfig*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_TestConfig
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.TestConfig
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.TestConfig()
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).TestConfig()
+  nameWithType: BaseExtractor<TConfig>.TestConfig()
+  nameWithType.vb: BaseExtractor(Of TConfig).TestConfig()
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.TestConfig*
   name: TestConfig
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_TestConfig_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.TestConfig
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_TestConfig_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.TestConfig
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.TestConfig
-  nameWithType: BaseExtractor.TestConfig
-- uid: Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.TestConfig
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).TestConfig
+  nameWithType: BaseExtractor<TConfig>.TestConfig
+  nameWithType.vb: BaseExtractor(Of TConfig).TestConfig
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.TSUploadQueue
   name: TSUploadQueue
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_TSUploadQueue
-  commentId: P:Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue
-  fullName: Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue
-  nameWithType: BaseExtractor.TSUploadQueue
-- uid: Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue*
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_TSUploadQueue
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.TSUploadQueue
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.TSUploadQueue
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).TSUploadQueue
+  nameWithType: BaseExtractor<TConfig>.TSUploadQueue
+  nameWithType.vb: BaseExtractor(Of TConfig).TSUploadQueue
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.TSUploadQueue*
   name: TSUploadQueue
-  href: api/Cognite.Extractor.Utils.BaseExtractor.html#Cognite_Extractor_Utils_BaseExtractor_TSUploadQueue_
-  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_TSUploadQueue_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.TSUploadQueue
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.BaseExtractor.TSUploadQueue
-  nameWithType: BaseExtractor.TSUploadQueue
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.TSUploadQueue
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).TSUploadQueue
+  nameWithType: BaseExtractor<TConfig>.TSUploadQueue
+  nameWithType.vb: BaseExtractor(Of TConfig).TSUploadQueue
 - uid: Cognite.Extractor.Utils.BaseUploadQueue`1
   name: BaseUploadQueue<T>
   href: api/Cognite.Extractor.Utils.BaseUploadQueue-1.html
