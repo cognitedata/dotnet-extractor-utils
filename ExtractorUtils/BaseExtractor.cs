@@ -74,10 +74,7 @@ namespace Cognite.Extractor.Utils
             ExtractionRun run = null)
         {
             Config = config;
-            if (destination?.CogniteClient != null)
-            {
-                Destination = destination;
-            }
+            Destination = destination;
             Provider = provider;
             Run = run;
             _logger = provider.GetService<ILogger<BaseExtractor<TConfig>>>();

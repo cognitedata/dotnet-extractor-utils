@@ -348,7 +348,7 @@ namespace ExtractorUtils.Test.Integration
                 source.Token,
                 (dest, extractor) =>
                 {
-                    Assert.Null(dest.CogniteClient);
+                    Assert.Null(dest);
                     ext = extractor;
                 },
                 null,
