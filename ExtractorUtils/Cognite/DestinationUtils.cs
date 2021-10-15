@@ -9,6 +9,7 @@ using Cognite.Extractor.StateStorage;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extractor.Utils
 {
@@ -17,6 +18,16 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class DestinationUtils
     {
+        private static CogniteDestination GetCogniteDestination(IServiceProvider provider)
+        {
+            var client = provider.GetService<Client>();
+            var logger = provider.GetService<ILogger<CogniteDestination>>();
+            var config = provider.GetService<CogniteConfig>();
+            if (client == null || config == null) return null;
+            return new CogniteDestination(client, logger ?? new NullLogger<CogniteDestination>(), config);
+        }
+
+
         /// <summary>
         /// Adds a configured Cognite client to the <paramref name="services"/> collection as a transient service
         /// </summary>
@@ -100,8 +111,8 @@ namespace Cognite.Extractor.Utils
                 var client = cdfBuilder.Configure(conf, appId, userAgent, auth, logger, metrics).Build();
                 return client;
             });
-            services.AddTransient<CogniteDestination>();
-            services.AddTransient<IRawDestination, CogniteDestination>();
+            services.AddTransient(GetCogniteDestination);
+            services.AddTransient<IRawDestination, CogniteDestination>(GetCogniteDestination);
         }
 
 

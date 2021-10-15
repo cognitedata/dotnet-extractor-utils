@@ -169,7 +169,7 @@ namespace Cognite.Extractor.Utils
                         extractor = provider.GetRequiredService<TExtractor>();
                         if (onCreateExtractor != null)
                         {
-                            var destination = provider.GetRequiredService<CogniteDestination>();
+                            var destination = provider.GetService<CogniteDestination>();
                             onCreateExtractor(destination, extractor);
                         }
                     }
