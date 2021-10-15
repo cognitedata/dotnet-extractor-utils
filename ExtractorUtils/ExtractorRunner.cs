@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -92,13 +93,33 @@ namespace Cognite.Extractor.Utils
                         appId, userAgent, addStateStore, addLogger, addMetrics, requireDestination, config);
                     configCallback?.Invoke(config);
                 }
+                catch (TargetInvocationException ex)
+                {
+                    if (ex.InnerException is ConfigurationException cex) exception = cex;
+                    else if (ex.InnerException is AggregateException aex)
+                    {
+                        exception = aex.Flatten().InnerExceptions.OfType<ConfigurationException>().FirstOrDefault();
+                    }
+                    if (exception == null)
+                    {
+                        exception = new ConfigurationException("Failed to load config file: ", ex);
+                    }
+                }
                 catch (AggregateException ex)
                 {
-                    exception = ex.Flatten().InnerExceptions.OfType<ConfigurationException>().First();
+                    exception = ex.Flatten().InnerExceptions.OfType<ConfigurationException>().FirstOrDefault();
+                    if (exception == null)
+                    {
+                        exception = new ConfigurationException("Failed to load config file: ", ex);
+                    }
                 }
                 catch (ConfigurationException ex)
                 {
                     exception = ex;
+                }
+                catch (Exception ex)
+                {
+                    exception = new ConfigurationException("Failed to load config file: ", ex);
                 }
 
                 if (exception != null)
