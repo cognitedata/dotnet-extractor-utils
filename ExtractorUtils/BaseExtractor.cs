@@ -42,11 +42,11 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Scheduler for running various periodic tasks
         /// </summary>
-        protected PeriodicScheduler Scheduler { get; private set; }
+        protected PeriodicScheduler Scheduler { get; set; }
         /// <summary>
         /// Cancellation token source
         /// </summary>
-        protected CancellationTokenSource Source { get; private set; }
+        protected CancellationTokenSource Source { get; set; }
 
         /// <summary>
         /// Access to the service provider this extractor was built from
@@ -74,10 +74,7 @@ namespace Cognite.Extractor.Utils
             ExtractionRun run = null)
         {
             Config = config;
-            if (destination?.CogniteClient != null)
-            {
-                Destination = destination;
-            }
+            Destination = destination;
             Provider = provider;
             Run = run;
             _logger = provider.GetService<ILogger<BaseExtractor<TConfig>>>();
@@ -96,16 +93,26 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
+        /// Called before Start() and TestConfig(), by default initializes just
+        /// Source and Scheduler.
+        /// </summary>
+        /// <param name="token"></param>
+        protected virtual void Init(CancellationToken token)
+        {
+            Source?.Dispose();
+            Scheduler?.Dispose();
+            Source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            Scheduler = new PeriodicScheduler(Source.Token);
+        }
+
+        /// <summary>
         /// Method called to start the extractor.
         /// </summary>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public virtual async Task Start(CancellationToken token)
         {
-            Source?.Dispose();
-            Scheduler?.Dispose();
-            Source = CancellationTokenSource.CreateLinkedTokenSource(token);
-            Scheduler = new PeriodicScheduler(Source.Token);
+            Init(token);
             await TestConfig().ConfigureAwait(false);
             try
             {

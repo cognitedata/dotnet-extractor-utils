@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,6 +18,12 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class ExtractorRunner
     {
+        private static void LogException(ILogger log, Exception ex, string message)
+        {
+            log.LogError(ex, "{msg}: {exMsg}", message, ex.Message);
+        }
+
+
         /// <summary>
         /// Configure and run an extractor with config of type <typeparamref name="TConfig"/>
         /// and extractor of type <typeparamref name="TExtractor"/>
@@ -42,6 +49,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="startupLogger">Optional logger to use before config has been loaded, to report configuration issues</param>
         /// <param name="config">Optional pre-existing config object, can be used instead of config path.</param>
         /// <param name="requireDestination">Default true, whether to fail if a destination cannot be configured</param>
+        /// <param name="logException">Method called to log exceptions. Useful if special handling is desired.</param>
         /// <returns>Task which completes when the extractor has run</returns>
         public static async Task Run<TConfig, TExtractor>(
             string configPath,
@@ -58,10 +66,13 @@ namespace Cognite.Extractor.Utils
             ServiceCollection extServices = null,
             ILogger startupLogger = null,
             TConfig config = null,
-            bool requireDestination = true)
+            bool requireDestination = true,
+            Action<ILogger, Exception, string> logException = null)
             where TConfig : VersionedConfig
             where TExtractor : BaseExtractor<TConfig>
         {
+            if (logException == null) logException = LogException;
+
             int waitRepeats = 1;
 
             using var source = CancellationTokenSource.CreateLinkedTokenSource(token);
@@ -92,13 +103,33 @@ namespace Cognite.Extractor.Utils
                         appId, userAgent, addStateStore, addLogger, addMetrics, requireDestination, config);
                     configCallback?.Invoke(config);
                 }
+                catch (TargetInvocationException ex)
+                {
+                    if (ex.InnerException is ConfigurationException cex) exception = cex;
+                    else if (ex.InnerException is AggregateException aex)
+                    {
+                        exception = aex.Flatten().InnerExceptions.OfType<ConfigurationException>().FirstOrDefault();
+                    }
+                    if (exception == null)
+                    {
+                        exception = new ConfigurationException("Failed to load config file: ", ex);
+                    }
+                }
                 catch (AggregateException ex)
                 {
-                    exception = ex.Flatten().InnerExceptions.OfType<ConfigurationException>().First();
+                    exception = ex.Flatten().InnerExceptions.OfType<ConfigurationException>().FirstOrDefault();
+                    if (exception == null)
+                    {
+                        exception = new ConfigurationException("Failed to load config file: ", ex);
+                    }
                 }
                 catch (ConfigurationException ex)
                 {
                     exception = ex;
+                }
+                catch (Exception ex)
+                {
+                    exception = new ConfigurationException("Failed to load config file: ", ex);
                 }
 
                 if (exception != null)
@@ -148,7 +179,7 @@ namespace Cognite.Extractor.Utils
                         extractor = provider.GetRequiredService<TExtractor>();
                         if (onCreateExtractor != null)
                         {
-                            var destination = provider.GetRequiredService<CogniteDestination>();
+                            var destination = provider.GetService<CogniteDestination>();
                             onCreateExtractor(destination, extractor);
                         }
                     }
@@ -178,7 +209,7 @@ namespace Cognite.Extractor.Utils
                             }
                             else
                             {
-                                log.LogError(ex, "Extractor crashed unexpectedly");
+                                logException(log, ex, "Extractor crashed unexpectedly");
                             }
                         }
                     }
