@@ -5457,6 +5457,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).EventUploadQueue
   nameWithType: BaseExtractor<TConfig>.EventUploadQueue
   nameWithType.vb: BaseExtractor(Of TConfig).EventUploadQueue
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Init(CancellationToken)
+  name: Init(CancellationToken)
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Init_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.BaseExtractor`1.Init(CancellationToken)
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Init(CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Init(CancellationToken)
+  nameWithType: BaseExtractor<TConfig>.Init(CancellationToken)
+  nameWithType.vb: BaseExtractor(Of TConfig).Init(CancellationToken)
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.Init*
+  name: Init
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Init_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.Init
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.Init
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Init
+  nameWithType: BaseExtractor<TConfig>.Init
+  nameWithType.vb: BaseExtractor(Of TConfig).Init
 - uid: Cognite.Extractor.Utils.BaseExtractor`1.OnStop
   name: OnStop()
   href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_OnStop
@@ -6872,15 +6889,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ExtractorRunner.Run
   nameWithType: ExtractorRunner.Run
-- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger,``0,System.Boolean)
-  name: Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, Boolean)
-  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_CancellationToken_Action_Cognite_Extractor_Utils_CogniteDestination___1__Action___0__ServiceCollection_ILogger___0_System_Boolean_
-  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger,``0,System.Boolean)
-  name.vb: Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, Boolean)
-  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action<Cognite.Extractor.Utils.CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, System.Boolean)
-  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action(Of Cognite.Extractor.Utils.CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, System.Boolean)
-  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, Boolean)
-  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, Boolean)
+- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger,``0,System.Boolean,Action{ILogger,Exception,System.String})
+  name: Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, Boolean, Action<ILogger, Exception, String>)
+  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_CancellationToken_Action_Cognite_Extractor_Utils_CogniteDestination___1__Action___0__ServiceCollection_ILogger___0_System_Boolean_Action_ILogger_Exception_System_String__
+  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger,``0,System.Boolean,Action{ILogger,Exception,System.String})
+  name.vb: Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, Boolean, Action(Of ILogger, Exception, String))
+  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action<Cognite.Extractor.Utils.CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, System.Boolean, Action<ILogger, Exception, System.String>)
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action(Of Cognite.Extractor.Utils.CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, System.Boolean, Action(Of ILogger, Exception, System.String))
+  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, Boolean, Action<ILogger, Exception, String>)
+  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, Boolean, Action(Of ILogger, Exception, String))
 - uid: Cognite.Extractor.Utils.IAuthenticator
   name: IAuthenticator
   href: api/Cognite.Extractor.Utils.IAuthenticator.html
