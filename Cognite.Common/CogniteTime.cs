@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System;
+using System.Text.RegularExpressions;
 
 namespace Cognite.Extractor.Common
 {
@@ -120,5 +121,53 @@ namespace Cognite.Extractor.Common
             return t1 < t2 ? t1 : t2;
         }
 
+        private static Regex timestampStringRegex = new Regex("^([0-9]+)([w|d|h|m|s])-ago$");
+
+        /// <summary>
+        /// Parse Cognite timestamp string.
+        /// The format is N[timeunit]-ago where timeunit is w,d,h,m,s. Example: '2d-ago'
+        /// returns a timestamp two days ago.
+        /// Time can also be specified in milliseconds since epoch.
+        /// </summary>
+        /// <param name="t">Timestamp string</param>
+        /// <param name="relative">Set time relative to this if -ago syntax is used</param>
+        /// <returns>DateTime or null if the input is invalid</returns>
+        public static DateTime? ParseTimestampString(string t, DateTime? relative = null)
+        {
+            var now = relative ?? DateTime.UtcNow;
+            var match = timestampStringRegex.Match(t);
+            if (match.Success)
+            {
+                var rawUnit = match.Groups[2].Value;
+                var rawValue = match.Groups[1].Value;
+                long value;
+                try
+                {
+                    value = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    return null;
+                }
+                switch (rawUnit)
+                {
+                    case "w": return now.AddDays(-value * 7);
+                    case "d": return now.AddDays(-value);
+                    case "h": return now.AddHours(-value);
+                    case "m": return now.AddMinutes(-value);
+                    case "s": return now.AddSeconds(-value);
+                    default: return null;
+                }
+            }
+
+            try
+            {
+                return FromUnixTimeMilliseconds(Convert.ToInt64(t, CultureInfo.InvariantCulture));
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

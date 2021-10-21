@@ -174,5 +174,40 @@ namespace ExtractorUtils.Test.Unit
             var r4 = r2.Contract(r1);
             Assert.Equal(r1, r4);
         }
+        [Theory]
+        [InlineData("2w-ago", false)]
+        [InlineData("14d-ago", false)]
+        [InlineData("336h-ago", false)]
+        [InlineData("20160m-ago", false)]
+        [InlineData("1209600s-ago", false)]
+        [InlineData("bleh", true)]
+        [InlineData("1234s-ag", true)]
+        [InlineData("123456s", true)]
+        public static void TestParseTime(string input, bool resultNull)
+        {
+            var time = DateTime.UtcNow;
+            var result = time.AddDays(-14);
+
+            var converted = CogniteTime.ParseTimestampString(input, time);
+
+            if (resultNull)
+            {
+                Assert.Null(converted);
+            }
+            else
+            {
+                Assert.NotNull(converted);
+                Assert.Equal(result, converted);
+            }
+        }
+
+        [Fact]
+        public static void TestParseTimeAbsolute()
+        {
+            var time = DateTime.UtcNow.AddDays(-6);
+            var raw = CogniteTime.ToUnixTimeMilliseconds(time);
+
+            Assert.Equal(raw, CogniteTime.ParseTimestampString(raw.ToString(), time)?.ToUnixTimeMilliseconds());
+        }
     }
 }
