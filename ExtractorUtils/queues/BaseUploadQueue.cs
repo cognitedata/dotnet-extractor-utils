@@ -202,7 +202,7 @@ namespace Cognite.Extractor.Utils
                         // stop waiting if the source token gets cancelled, but do not
                         // cancel the upload task
                         _uploadTask.Wait(_tokenSource.Token);
-                        _pushEvent.Reset();
+                        _pushEvent?.Reset();
                         _timer.Start();
                     }
                 }
