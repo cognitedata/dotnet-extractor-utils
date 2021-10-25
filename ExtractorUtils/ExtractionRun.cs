@@ -90,6 +90,7 @@ namespace Cognite.Extractor.Utils
                 return;
             }
 
+            _log.LogInformation("Begin reporting extraction runs to pipeline with id {id}. Continuous: {cont}", _config.PipelineId, Continuous);
             if (Continuous)
             {
                 try
