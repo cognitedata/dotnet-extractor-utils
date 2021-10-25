@@ -183,6 +183,8 @@ namespace ExtractorUtils.Test.Unit
         [InlineData("bleh", true)]
         [InlineData("1234s-ag", true)]
         [InlineData("123456s", true)]
+        [InlineData("1234s-agoooo", true)]
+        [InlineData("1234k-ago", true)]
         public static void TestParseTime(string input, bool resultNull)
         {
             var time = DateTime.UtcNow;
