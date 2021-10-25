@@ -14,6 +14,81 @@ using System.Threading.Tasks;
 namespace Cognite.Extractor.Utils
 {
     /// <summary>
+    /// Parameters for launching an extractor. Can be modified
+    /// after config is loaded by defining a ConfigCallback.
+    /// </summary>
+    /// <typeparam name="TConfig">Type of config object</typeparam>
+    /// <typeparam name="TExtractor">Type of extractor object</typeparam>
+    public class ExtractorRunnerParams<TConfig, TExtractor>
+        where TConfig : VersionedConfig
+        where TExtractor : BaseExtractor<TConfig>
+    {
+        /// <summary>
+        /// Path to config file
+        /// </summary>
+        public string ConfigPath { get; set; }
+        /// <summary>
+        /// List of accepted config versions.
+        /// Can be set to null to ignore.
+        /// </summary>
+        public int[] AcceptedConfigVersions { get; set; }
+        /// <summary>
+        /// AppId to use if CDF destination is defined
+        /// </summary>
+        public string AppId { get; set; }
+        /// <summary>
+        /// User agent to use if CDF destination is defined
+        /// </summary>
+        public string UserAgent { get; set; }
+        /// <summary>
+        /// True if the extractor uses a state store
+        /// </summary>
+        public bool AddStateStore { get; set; }
+        /// <summary>
+        /// True to add logging
+        /// </summary>
+        public bool AddLogger { get; set; } = true;
+        /// <summary>
+        /// True to add metrics
+        /// </summary>
+        public bool AddMetrics { get; set; }
+        /// <summary>
+        /// True to restart if the extractor fails.
+        /// </summary>
+        public bool Restart { get; set; }
+        /// <summary>
+        /// Called when the extractor has been built.
+        /// </summary>
+        public Action<CogniteDestination, TExtractor> OnCreateExtractor { get; set; }
+        /// <summary>
+        /// Called after config has been read. Can be used to modify the runner params and config object based on
+        /// external parameters.
+        /// </summary>
+        public Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>> ConfigCallback { get; set; }
+        /// <summary>
+        /// Predefined list of services.
+        /// </summary>
+        public ServiceCollection ExtServices { get; set; }
+        /// <summary>
+        /// Logger to use before config has been loaded.
+        /// </summary>
+        public ILogger StartupLogger { get; set; }
+        /// <summary>
+        /// Predefined config object, used instead of defining a config path.
+        /// </summary>
+        public TConfig Config { get; set; }
+        /// <summary>
+        /// True to require a CogniteDestination to be set.
+        /// </summary>
+        public bool RequireDestination { get; set; }
+        /// <summary>
+        /// Method to log exceptions. Default is just a simple log message with the exception.
+        /// </summary>
+        public Action<ILogger, Exception, string> LogException { get; set; }
+    }
+
+
+    /// <summary>
     /// Contains utilities for running an extractor based on BaseExtractor
     /// </summary>
     public static class ExtractorRunner
@@ -62,7 +137,7 @@ namespace Cognite.Extractor.Utils
             bool restart,
             CancellationToken token,
             Action<CogniteDestination, TExtractor> onCreateExtractor = null,
-            Action<TConfig> configCallback = null,
+            Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>> configCallback = null,
             ServiceCollection extServices = null,
             ILogger startupLogger = null,
             TConfig config = null,
@@ -71,7 +146,43 @@ namespace Cognite.Extractor.Utils
             where TConfig : VersionedConfig
             where TExtractor : BaseExtractor<TConfig>
         {
-            if (logException == null) logException = LogException;
+            await Run(new ExtractorRunnerParams<TConfig, TExtractor>
+            {
+                ConfigPath = configPath,
+                AcceptedConfigVersions = acceptedConfigVersions,
+                AppId = appId,
+                UserAgent = userAgent,
+                AddStateStore = addStateStore,
+                AddLogger = addLogger,
+                AddMetrics = addMetrics,
+                Restart = restart,
+                OnCreateExtractor = onCreateExtractor,
+                ConfigCallback = configCallback,
+                ExtServices = extServices,
+                StartupLogger = startupLogger,
+                Config = config,
+                RequireDestination = requireDestination,
+                LogException = logException
+            }, token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Configure and run an extractor with config of type <typeparamref name="TConfig"/>
+        /// and extractor of type <typeparamref name="TExtractor"/>
+        /// </summary>
+        /// <typeparam name="TConfig">Type of configuration</typeparam>
+        /// <typeparam name="TExtractor">Type of extractor</typeparam>
+        /// <param name="options">Parameter object</param>
+        /// <param name="token">Cancellation token</param>
+        /// <exception cref="ArgumentNullException">If options is not set</exception>
+        public static async Task Run<TConfig, TExtractor>(
+            ExtractorRunnerParams<TConfig, TExtractor> options,
+            CancellationToken token)
+            where TConfig : VersionedConfig
+            where TExtractor : BaseExtractor<TConfig>
+        {
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            if (options.LogException == null) options.LogException = LogException;
 
             int waitRepeats = 1;
 
@@ -91,17 +202,25 @@ namespace Cognite.Extractor.Utils
             {
                 var services = new ServiceCollection();
 
-                if (extServices != null)
+                if (options.ExtServices != null)
                 {
-                    services.Add(extServices);
+                    services.Add(options.ExtServices);
                 }
 
                 ConfigurationException exception = null;
                 try
                 {
-                    config = services.AddExtractorDependencies(configPath, acceptedConfigVersions,
-                        appId, userAgent, addStateStore, addLogger, addMetrics, requireDestination, config);
-                    configCallback?.Invoke(config);
+                    options.Config = services.AddExtractorDependencies(
+                        options.ConfigPath,
+                        options.AcceptedConfigVersions,
+                        options.AppId,
+                        options.UserAgent,
+                        options.AddStateStore,
+                        options.AddLogger,
+                        options.AddMetrics, 
+                        options.RequireDestination,
+                        options.Config);
+                    options.ConfigCallback?.Invoke(options.Config, options);
                 }
                 catch (TargetInvocationException ex)
                 {
@@ -134,18 +253,18 @@ namespace Cognite.Extractor.Utils
 
                 if (exception != null)
                 {
-                    if (startupLogger != null)
+                    if (options.StartupLogger != null)
                     {
-                        startupLogger.LogError("Invalid configuration file: {msg}", exception.Message);
-                        if (!restart) startupLogger.LogInformation("Sleeping for 30 seconds");
+                        options.StartupLogger.LogError("Invalid configuration file: {msg}", exception.Message);
+                        if (!options.Restart) options.StartupLogger.LogInformation("Sleeping for 30 seconds");
                     }
                     else
                     {
                         Serilog.Log.Logger = LoggingUtils.GetSerilogDefault();
                         Serilog.Log.Error("Invalid configuration file: " + exception.Message);
-                        if (!restart) Serilog.Log.Information("Sleeping for 30 seconds");
+                        if (!options.Restart) Serilog.Log.Information("Sleeping for 30 seconds");
                     }
-                    if (!restart) break;
+                    if (!options.Restart) break;
                     try
                     {
                         await Task.Delay(30_000, source.Token).ConfigureAwait(false);
@@ -166,21 +285,21 @@ namespace Cognite.Extractor.Utils
                     TExtractor extractor = null;
                     try
                     {
-                        if (addMetrics)
+                        if (options.AddMetrics)
                         {
                             var metrics = provider.GetRequiredService<MetricsService>();
                             metrics.Start();
                         }
-                        if (addLogger)
+                        if (options.AddLogger)
                         {
                             log = provider.GetRequiredService<ILogger<BaseExtractor<TConfig>>>();
                             Serilog.Log.Logger = provider.GetRequiredService<Serilog.ILogger>();
                         }
                         extractor = provider.GetRequiredService<TExtractor>();
-                        if (onCreateExtractor != null)
+                        if (options.OnCreateExtractor != null)
                         {
                             var destination = provider.GetService<CogniteDestination>();
-                            onCreateExtractor(destination, extractor);
+                            options.OnCreateExtractor(destination, extractor);
                         }
                     }
                     catch (Exception ex)
@@ -209,13 +328,13 @@ namespace Cognite.Extractor.Utils
                             }
                             else
                             {
-                                logException(log, ex, "Extractor crashed unexpectedly");
+                                options.LogException(log, ex, "Extractor crashed unexpectedly");
                             }
                         }
                     }
 
 
-                    if (source.IsCancellationRequested || !restart)
+                    if (source.IsCancellationRequested || !options.Restart)
                     {
                         log.LogInformation("Quitting extractor");
                         break;
@@ -234,7 +353,7 @@ namespace Cognite.Extractor.Utils
                     {
                         var sleepTime = TimeSpan.FromSeconds(Math.Pow(2, Math.Min(waitRepeats, 9)));
                         log.LogInformation("Sleeping for {time}", sleepTime);
-                        Task.Delay(sleepTime, source.Token).Wait();
+                        await Task.Delay(sleepTime, source.Token).ConfigureAwait(false);
                     }
                     catch (Exception)
                     {
