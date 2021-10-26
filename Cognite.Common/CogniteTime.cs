@@ -121,13 +121,30 @@ namespace Cognite.Extractor.Common
             return t1 < t2 ? t1 : t2;
         }
 
-        private static Regex timestampStringRegex = new Regex("^([0-9]+)([w|d|h|m|s])-ago$");
+        private static TimeSpan? GetSpan(string type, long value)
+        {
+            switch (type)
+            {
+                case "w": return TimeSpan.FromDays(7 * value);
+                case "d": return TimeSpan.FromDays(value);
+                case "h": return TimeSpan.FromHours(value);
+                case "m": return TimeSpan.FromMinutes(value);
+                case "s": return TimeSpan.FromSeconds(value);
+                case "ms": return TimeSpan.FromMilliseconds(value);
+            }
+            return null;
+        }
+
+
+        private static readonly Regex timestampStringRegex = new Regex("^([0-9]+)(ms?|w|d|h|s)-ago$");
+        private static readonly Regex timespanStringRegex = new Regex("^([0-9]+)(ms?|w|d|h|s)$");
 
         /// <summary>
         /// Parse Cognite timestamp string.
         /// The format is N[timeunit]-ago where timeunit is w,d,h,m,s. Example: '2d-ago'
         /// returns a timestamp two days ago.
-        /// Time can also be specified in milliseconds since epoch.
+        /// If the format is N[timeunit], without -ago, it is set to the future, or after <paramref name="relative"/>
+        /// Without timeunit, it is converted to a datetime in milliseconds since epoch.
         /// </summary>
         /// <param name="t">Timestamp string</param>
         /// <param name="relative">Set time relative to this if -ago syntax is used</param>
@@ -149,15 +166,12 @@ namespace Cognite.Extractor.Common
                 {
                     return null;
                 }
-                switch (rawUnit)
-                {
-                    case "w": return now.AddDays(-value * 7);
-                    case "d": return now.AddDays(-value);
-                    case "h": return now.AddHours(-value);
-                    case "m": return now.AddMinutes(-value);
-                    case "s": return now.AddSeconds(-value);
-                    default: return null;
-                }
+                return now.Add(-GetSpan(rawUnit, value).Value);
+            }
+            else
+            {
+                var span = ParseTimeSpanString(t);
+                if (span != null) return now.Add(span.Value);
             }
 
             try
@@ -168,6 +182,50 @@ namespace Cognite.Extractor.Common
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Parse cognite timestamp into timespan.
+        /// Format is N[timeunit].
+        /// If timeunit is left out, then <paramref name="defaultUnit"/> can be specified
+        /// and if t is a whole number it can be converted using that.
+        /// </summary>
+        /// <param name="t">Raw input</param>
+        /// <param name="defaultUnit">Default unit to use if no unit is specified</param>
+        /// <returns>TimeSpan or null if input is invalid</returns>
+        public static TimeSpan? ParseTimeSpanString(string t, string defaultUnit = null)
+        {
+            var match = timespanStringRegex.Match(t);
+            if (match.Success)
+            {
+                var rawUnit = match.Groups[2].Value;
+                var rawValue = match.Groups[1].Value;
+                long value;
+                try
+                {
+                    value = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    return null;
+                }
+                return GetSpan(rawUnit, value);
+            }
+
+            if (defaultUnit != null)
+            {
+                try
+                {
+                    var value = Convert.ToInt64(t, CultureInfo.InvariantCulture);
+                    return GetSpan(defaultUnit, value);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+            return null;
         }
     }
 }
