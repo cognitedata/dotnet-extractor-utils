@@ -184,13 +184,10 @@ namespace Cognite.Extensions
                 try
                 {
                     bool useGzip = false;
-                    if (gzipCountLimit >= 0)
+                    int count = points.Sum(kvp => kvp.Value.Count());
+                    if (gzipCountLimit >= 0 && count >= gzipCountLimit)
                     {
-                        int count = points.Sum(kvp => kvp.Value.Count());
-                        if (count >= gzipCountLimit)
-                        {
-                            useGzip = true;
-                        }
+                        useGzip = true;
                     }
 
                     if (useGzip)
@@ -208,9 +205,9 @@ namespace Cognite.Extensions
                         }
                     }
 
-                    
+                    CdfMetrics.NumberDatapoints.Inc(count);
 
-                    _logger.LogDebug("Created {rows} datapoints for {seq} timeseries in CDF", points.Sum(ts => ts.Value.Count()), points.Count);
+                    _logger.LogDebug("Created {cnt} datapoints for {ts} timeseries in CDF", count, points.Count);
                     return new CogniteResult<DataPointInsertError>(errors);
                 }
                 catch (Exception ex)
