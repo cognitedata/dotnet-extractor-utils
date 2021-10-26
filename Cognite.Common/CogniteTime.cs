@@ -157,15 +157,9 @@ namespace Cognite.Extractor.Common
             {
                 var rawUnit = match.Groups[2].Value;
                 var rawValue = match.Groups[1].Value;
-                long value;
-                try
-                {
-                    value = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
-                }
-                catch
-                {
-                    return null;
-                }
+
+                long value = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
+
                 return now.Add(-GetSpan(rawUnit, value).Value);
             }
             else
@@ -200,15 +194,9 @@ namespace Cognite.Extractor.Common
             {
                 var rawUnit = match.Groups[2].Value;
                 var rawValue = match.Groups[1].Value;
-                long value;
-                try
-                {
-                    value = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
-                }
-                catch
-                {
-                    return null;
-                }
+                
+                long value = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
+
                 return GetSpan(rawUnit, value);
             }
 
