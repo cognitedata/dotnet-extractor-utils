@@ -2533,6 +2533,35 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.CogniteTime.NanosecondsSinceEpoch
   nameWithType: CogniteTime.NanosecondsSinceEpoch
+- uid: Cognite.Extractor.Common.CogniteTime.ParseTimeSpanString(System.String,System.String)
+  name: ParseTimeSpanString(String, String)
+  href: api/Cognite.Extractor.Common.CogniteTime.html#Cognite_Extractor_Common_CogniteTime_ParseTimeSpanString_System_String_System_String_
+  commentId: M:Cognite.Extractor.Common.CogniteTime.ParseTimeSpanString(System.String,System.String)
+  fullName: Cognite.Extractor.Common.CogniteTime.ParseTimeSpanString(System.String, System.String)
+  nameWithType: CogniteTime.ParseTimeSpanString(String, String)
+- uid: Cognite.Extractor.Common.CogniteTime.ParseTimeSpanString*
+  name: ParseTimeSpanString
+  href: api/Cognite.Extractor.Common.CogniteTime.html#Cognite_Extractor_Common_CogniteTime_ParseTimeSpanString_
+  commentId: Overload:Cognite.Extractor.Common.CogniteTime.ParseTimeSpanString
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.CogniteTime.ParseTimeSpanString
+  nameWithType: CogniteTime.ParseTimeSpanString
+- uid: Cognite.Extractor.Common.CogniteTime.ParseTimestampString(System.String,System.Nullable{System.DateTime})
+  name: ParseTimestampString(String, Nullable<DateTime>)
+  href: api/Cognite.Extractor.Common.CogniteTime.html#Cognite_Extractor_Common_CogniteTime_ParseTimestampString_System_String_System_Nullable_System_DateTime__
+  commentId: M:Cognite.Extractor.Common.CogniteTime.ParseTimestampString(System.String,System.Nullable{System.DateTime})
+  name.vb: ParseTimestampString(String, Nullable(Of DateTime))
+  fullName: Cognite.Extractor.Common.CogniteTime.ParseTimestampString(System.String, System.Nullable<System.DateTime>)
+  fullName.vb: Cognite.Extractor.Common.CogniteTime.ParseTimestampString(System.String, System.Nullable(Of System.DateTime))
+  nameWithType: CogniteTime.ParseTimestampString(String, Nullable<DateTime>)
+  nameWithType.vb: CogniteTime.ParseTimestampString(String, Nullable(Of DateTime))
+- uid: Cognite.Extractor.Common.CogniteTime.ParseTimestampString*
+  name: ParseTimestampString
+  href: api/Cognite.Extractor.Common.CogniteTime.html#Cognite_Extractor_Common_CogniteTime_ParseTimestampString_
+  commentId: Overload:Cognite.Extractor.Common.CogniteTime.ParseTimestampString
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.CogniteTime.ParseTimestampString
+  nameWithType: CogniteTime.ParseTimestampString
 - uid: Cognite.Extractor.Common.CogniteTime.TicksSinceEpoch(System.DateTime)
   name: TicksSinceEpoch(DateTime)
   href: api/Cognite.Extractor.Common.CogniteTime.html#Cognite_Extractor_Common_CogniteTime_TicksSinceEpoch_System_DateTime_
@@ -6889,15 +6918,288 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ExtractorRunner.Run
   nameWithType: ExtractorRunner.Run
-- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger,``0,System.Boolean,Action{ILogger,Exception,System.String})
-  name: Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, Boolean, Action<ILogger, Exception, String>)
-  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_CancellationToken_Action_Cognite_Extractor_Utils_CogniteDestination___1__Action___0__ServiceCollection_ILogger___0_System_Boolean_Action_ILogger_Exception_System_String__
-  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0},ServiceCollection,ILogger,``0,System.Boolean,Action{ILogger,Exception,System.String})
-  name.vb: Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, Boolean, Action(Of ILogger, Exception, String))
-  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action<Cognite.Extractor.Utils.CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, System.Boolean, Action<ILogger, Exception, System.String>)
-  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action(Of Cognite.Extractor.Utils.CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, System.Boolean, Action(Of ILogger, Exception, System.String))
-  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig>, ServiceCollection, ILogger, TConfig, Boolean, Action<ILogger, Exception, String>)
-  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig), ServiceCollection, ILogger, TConfig, Boolean, Action(Of ILogger, Exception, String))
+- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(Cognite.Extractor.Utils.ExtractorRunnerParams{``0,``1},CancellationToken)
+  name: Run<TConfig, TExtractor>(ExtractorRunnerParams<TConfig, TExtractor>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_Cognite_Extractor_Utils_ExtractorRunnerParams___0___1__CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(Cognite.Extractor.Utils.ExtractorRunnerParams{``0,``1},CancellationToken)
+  name.vb: Run(Of TConfig, TExtractor)(ExtractorRunnerParams(Of TConfig, TExtractor), CancellationToken)
+  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor), CancellationToken)
+  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(ExtractorRunnerParams<TConfig, TExtractor>, CancellationToken)
+  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(ExtractorRunnerParams(Of TConfig, TExtractor), CancellationToken)
+- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0,Cognite.Extractor.Utils.ExtractorRunnerParams{``0,``1}},ServiceCollection,ILogger,``0,System.Boolean,Action{ILogger,Exception,System.String})
+  name: Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>>, ServiceCollection, ILogger, TConfig, Boolean, Action<ILogger, Exception, String>)
+  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_CancellationToken_Action_Cognite_Extractor_Utils_CogniteDestination___1__Action___0_Cognite_Extractor_Utils_ExtractorRunnerParams___0___1___ServiceCollection_ILogger___0_System_Boolean_Action_ILogger_Exception_System_String__
+  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,Action{Cognite.Extractor.Utils.CogniteDestination,``1},Action{``0,Cognite.Extractor.Utils.ExtractorRunnerParams{``0,``1}},ServiceCollection,ILogger,``0,System.Boolean,Action{ILogger,Exception,System.String})
+  name.vb: Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig, ExtractorRunnerParams(Of TConfig, TExtractor)), ServiceCollection, ILogger, TConfig, Boolean, Action(Of ILogger, Exception, String))
+  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action<Cognite.Extractor.Utils.CogniteDestination, TExtractor>, Action<TConfig, Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>>, ServiceCollection, ILogger, TConfig, System.Boolean, Action<ILogger, Exception, System.String>)
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, Action(Of Cognite.Extractor.Utils.CogniteDestination, TExtractor), Action(Of TConfig, Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor)), ServiceCollection, ILogger, TConfig, System.Boolean, Action(Of ILogger, Exception, System.String))
+  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action<CogniteDestination, TExtractor>, Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>>, ServiceCollection, ILogger, TConfig, Boolean, Action<ILogger, Exception, String>)
+  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Action(Of CogniteDestination, TExtractor), Action(Of TConfig, ExtractorRunnerParams(Of TConfig, TExtractor)), ServiceCollection, ILogger, TConfig, Boolean, Action(Of ILogger, Exception, String))
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2
+  name: ExtractorRunnerParams<TConfig, TExtractor>
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html
+  commentId: T:Cognite.Extractor.Utils.ExtractorRunnerParams`2
+  name.vb: ExtractorRunnerParams(Of TConfig, TExtractor)
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor)
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor)
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AcceptedConfigVersions
+  name: AcceptedConfigVersions
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AcceptedConfigVersions
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AcceptedConfigVersions
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AcceptedConfigVersions
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AcceptedConfigVersions
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AcceptedConfigVersions
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AcceptedConfigVersions
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AcceptedConfigVersions*
+  name: AcceptedConfigVersions
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AcceptedConfigVersions_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AcceptedConfigVersions
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AcceptedConfigVersions
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AcceptedConfigVersions
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AcceptedConfigVersions
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AcceptedConfigVersions
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddLogger
+  name: AddLogger
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AddLogger
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddLogger
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AddLogger
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AddLogger
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AddLogger
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AddLogger
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddLogger*
+  name: AddLogger
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AddLogger_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddLogger
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AddLogger
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AddLogger
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AddLogger
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AddLogger
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddMetrics
+  name: AddMetrics
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AddMetrics
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddMetrics
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AddMetrics
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AddMetrics
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AddMetrics
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AddMetrics
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddMetrics*
+  name: AddMetrics
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AddMetrics_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddMetrics
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AddMetrics
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AddMetrics
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AddMetrics
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AddMetrics
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddStateStore
+  name: AddStateStore
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AddStateStore
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddStateStore
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AddStateStore
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AddStateStore
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AddStateStore
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AddStateStore
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddStateStore*
+  name: AddStateStore
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AddStateStore_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AddStateStore
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AddStateStore
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AddStateStore
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AddStateStore
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AddStateStore
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AppId
+  name: AppId
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AppId
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AppId
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AppId
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AppId
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AppId
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AppId
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.AppId*
+  name: AppId
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_AppId_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.AppId
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.AppId
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AppId
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AppId
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AppId
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.Config
+  name: Config
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_Config
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.Config
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.Config
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).Config
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.Config
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).Config
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.Config*
+  name: Config
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_Config_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.Config
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.Config
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).Config
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.Config
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).Config
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigCallback
+  name: ConfigCallback
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ConfigCallback
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigCallback
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.ConfigCallback
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ConfigCallback
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ConfigCallback
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ConfigCallback
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigCallback*
+  name: ConfigCallback
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ConfigCallback_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigCallback
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.ConfigCallback
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ConfigCallback
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ConfigCallback
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ConfigCallback
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigPath
+  name: ConfigPath
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ConfigPath
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigPath
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.ConfigPath
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ConfigPath
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ConfigPath
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ConfigPath
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigPath*
+  name: ConfigPath
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ConfigPath_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigPath
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.ConfigPath
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ConfigPath
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ConfigPath
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ConfigPath
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ExtServices
+  name: ExtServices
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ExtServices
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.ExtServices
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.ExtServices
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ExtServices
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ExtServices
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ExtServices
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ExtServices*
+  name: ExtServices
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ExtServices_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.ExtServices
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.ExtServices
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ExtServices
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ExtServices
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ExtServices
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.LogException
+  name: LogException
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_LogException
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.LogException
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.LogException
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).LogException
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.LogException
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).LogException
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.LogException*
+  name: LogException
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_LogException_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.LogException
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.LogException
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).LogException
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.LogException
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).LogException
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.OnCreateExtractor
+  name: OnCreateExtractor
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_OnCreateExtractor
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.OnCreateExtractor
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.OnCreateExtractor
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).OnCreateExtractor
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.OnCreateExtractor
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).OnCreateExtractor
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.OnCreateExtractor*
+  name: OnCreateExtractor
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_OnCreateExtractor_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.OnCreateExtractor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.OnCreateExtractor
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).OnCreateExtractor
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.OnCreateExtractor
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).OnCreateExtractor
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.RequireDestination
+  name: RequireDestination
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_RequireDestination
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.RequireDestination
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.RequireDestination
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).RequireDestination
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.RequireDestination
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).RequireDestination
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.RequireDestination*
+  name: RequireDestination
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_RequireDestination_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.RequireDestination
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.RequireDestination
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).RequireDestination
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.RequireDestination
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).RequireDestination
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.Restart
+  name: Restart
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_Restart
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.Restart
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.Restart
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).Restart
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.Restart
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).Restart
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.Restart*
+  name: Restart
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_Restart_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.Restart
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.Restart
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).Restart
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.Restart
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).Restart
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.StartupLogger
+  name: StartupLogger
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_StartupLogger
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.StartupLogger
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.StartupLogger
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).StartupLogger
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.StartupLogger
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).StartupLogger
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.StartupLogger*
+  name: StartupLogger
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_StartupLogger_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.StartupLogger
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.StartupLogger
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).StartupLogger
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.StartupLogger
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).StartupLogger
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.UserAgent
+  name: UserAgent
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_UserAgent
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.UserAgent
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.UserAgent
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.UserAgent
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.UserAgent*
+  name: UserAgent
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_UserAgent_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.UserAgent
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.UserAgent
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.UserAgent
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
 - uid: Cognite.Extractor.Utils.IAuthenticator
   name: IAuthenticator
   href: api/Cognite.Extractor.Utils.IAuthenticator.html
