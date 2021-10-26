@@ -3,6 +3,7 @@ using CogniteSdk;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,8 +70,19 @@ namespace Cognite.Extractor.Utils
         
         private async Task Run()
         {
-            var pipe = await _destination.CogniteClient.ExtPipes.RetrieveAsync(
-                new[] { Identity.Create(_config.PipelineId) }, true, _source.Token).ConfigureAwait(false);
+            IEnumerable<ExtPipe> pipe;
+            try
+            {
+                pipe = await _destination.CogniteClient.ExtPipes.RetrieveAsync(
+                    new[] { Identity.Create(_config.PipelineId) }, true, _source.Token).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Failed to fetch extraction pipeline with ExternalId: {id}, this extractor will not report status: {msg}",
+                    _config.PipelineId, ex.Message);
+                return;
+            }
+            
             if (!pipe.Any())
             {
                 _log.LogError("Did not find extraction pipeline with ExternalId: {id}, this extractor will not report status",
@@ -78,6 +90,7 @@ namespace Cognite.Extractor.Utils
                 return;
             }
 
+            _log.LogInformation("Begin reporting extraction runs to pipeline with id {id}. Continuous: {cont}", _config.PipelineId, Continuous);
             if (Continuous)
             {
                 try
