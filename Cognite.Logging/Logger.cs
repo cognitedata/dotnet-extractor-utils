@@ -61,7 +61,7 @@ namespace Cognite.Extractor.Logging
                     standardErrorFromLevel: logToStderr ? (LogEventLevel?)stderrLevel : null);
             }
 
-            if (logToFile && config.File.Path != null)
+            if (logToFile && config.File!.Path != null)
             {
                 RollingInterval ri = RollingInterval.Day;
                 if (config.File.RollingInterval == "hour") {
@@ -118,15 +118,15 @@ namespace Cognite.Extractor.Logging
    /// </summary>
    public class LoggerTraceListener : TraceListener
     {
-        private readonly Microsoft.Extensions.Logging.ILogger<LoggerTraceListener> _logger;
-        private readonly string _level;
+        private readonly ILogger<LoggerTraceListener> _logger;
+        private readonly string? _level;
 
         /// <summary>
         /// Creates a new listener using the logger and configuration passed as parameters
         /// </summary>
         /// <param name="logger">Logger</param>
         /// <param name="config">Logger configuration</param>
-        public LoggerTraceListener(Microsoft.Extensions.Logging.ILogger<LoggerTraceListener> logger, LoggerConfig config)
+        public LoggerTraceListener(ILogger<LoggerTraceListener> logger, LoggerConfig config)
         {
             if (config == null)
             {
@@ -155,6 +155,7 @@ namespace Cognite.Extractor.Logging
         /// <param name="message">Trace message</param>
         public override void WriteLine(string message)
         {
+            if (_level is null) return;
             switch(_level){
                 case "verbose":
                     _logger.LogTrace(message);

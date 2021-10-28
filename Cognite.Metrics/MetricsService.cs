@@ -24,10 +24,10 @@ namespace Cognite.Extractor.Metrics
     {
         internal const string HttpClientName = "prometheus-httpclient";
         private readonly IHttpClientFactory _clientFactory;
-        private readonly MetricsConfig _config;
+        private readonly MetricsConfig? _config;
         private readonly ILogger<MetricsService> _logger;
         private readonly IList<MetricPusher> _pushers;
-        private MetricServer _server;
+        private MetricServer? _server;
 
         /// <summary>
         /// Initialized the metrics service with the given <paramref name="config"/> object.
@@ -35,7 +35,7 @@ namespace Cognite.Extractor.Metrics
         /// <param name="clientFactory">A pre-configured http client factory</param>
         /// <param name="config">Configuration object</param>
         /// <param name="logger">Logger</param>
-        public MetricsService(IHttpClientFactory clientFactory, ILogger<MetricsService> logger, MetricsConfig config = null) {
+        public MetricsService(IHttpClientFactory clientFactory, ILogger<MetricsService> logger, MetricsConfig? config = null) {
             _clientFactory = clientFactory;
             _config = config;
             _logger = logger;
@@ -88,7 +88,7 @@ namespace Cognite.Extractor.Metrics
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000: Dispose objects before losing scope", Justification = "StopAsync() will dispose of the pusher")]
-        private MetricPusher StartPusher(PushGatewayConfig config) {
+        private MetricPusher? StartPusher(PushGatewayConfig config) {
             if (config.Host.TrimToNull() == null || config.Job.TrimToNull() == null)
             {
                 _logger.LogWarning("Invalid metrics push destination (missing Host or Job)");
@@ -146,14 +146,14 @@ namespace Cognite.Extractor.Metrics
             return client;
         }
 
-        private MetricServer StartServer(MetricsServerConfig config)
+        private MetricServer? StartServer(MetricsServerConfig config)
         {
             if (config.Host.TrimToNull() == null || config.Port <= 0)
             {
                 _logger.LogWarning("Invalid metrics server (missing Host or Port)");
                 return null;
             }
-            var server = new MetricServer(hostname: config.Host, port: config.Port);
+            var server = new MetricServer(hostname: config.Host!, port: config.Port);
             server.Start();
             _logger.LogInformation("Metrics server started at {MetricsServerHost}:{MetricsServerPort}", config.Host, config.Port);
             return server;
