@@ -13,9 +13,9 @@ namespace Cognite.Extractor.Common
         /// Trim this string object to null.
         /// </summary>
         /// <returns>A string without leading or trailing whitespace, or null.</returns>
-        public static string TrimToNull(this string @this)
+        public static string? TrimToNull(this string? @this)
         {
-            string s = @this?.Trim() ?? null;
+            string? s = @this?.Trim() ?? null;
             return string.IsNullOrEmpty(s) ? null : s;
         }
 
@@ -63,7 +63,7 @@ namespace Cognite.Extractor.Common
                 if (val.CompareTo(max) > 0) max = val;
             }
             if (!hasValue) throw new InvalidOperationException("Enumerable is empty");
-            return (min, max);
+            return (min!, max!);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Cognite.Extractor.Common
         /// <param name="comparer">Optional element comparer</param>
         /// <returns>Entries of the source enumerable, where all elements have distinct results of <paramref name="selector"/></returns>
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source,
-            Func<TSource, TKey> selector, IEqualityComparer<TKey> comparer = null)
+            Func<TSource, TKey> selector, IEqualityComparer<TKey>? comparer = null)
         {
             if (selector == null)
             {
