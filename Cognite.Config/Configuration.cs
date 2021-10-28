@@ -191,7 +191,7 @@ namespace Cognite.Extractor.Configuration
         /// <param name="types">List of types that should be added</param>
         public static void AddConfig<T>(this IServiceCollection services, T config, params Type[] types)
         {
-            if (!types.Any()) return;
+            if (types == null || !types.Any() || config is null) return;
             foreach (var type in types)
             {
                 if (type.IsAssignableFrom(typeof(T)))
@@ -230,7 +230,7 @@ namespace Cognite.Extractor.Configuration
             return tc >= TypeCode.SByte && tc <= TypeCode.Decimal;
         }
 
-        bool INodeDeserializer.Deserialize(IParser parser, Type expectedType, Func<IParser, Type, object> nestedObjectDeserializer, out object value)
+        bool INodeDeserializer.Deserialize(IParser parser, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
         {
             if (expectedType != typeof(string) && !IsNumericType(expectedType))
             {
