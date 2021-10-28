@@ -16,10 +16,10 @@ namespace Cognite.Extractor.Utils
     public class MsalAuthenticator : IAuthenticator
     {
         // Injected properties
-        private readonly AuthenticatorConfig _config;
-        private readonly ILogger<IAuthenticator> _logger;
+        private readonly AuthenticatorConfig? _config;
+        private readonly ILogger<IAuthenticator>? _logger;
 
-        private readonly IConfidentialClientApplication _app;
+        private readonly IConfidentialClientApplication? _app;
         private DateTimeOffset _lastTokenTime;
 
         /// <summary>
@@ -51,14 +51,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancellation token</param>
         /// <returns>A valid bearer access token</returns>
         /// <exception cref="CogniteUtilsException">Thrown when it was not possible to obtain an authentication token.</exception>
-        public async Task<string> GetToken(CancellationToken token = default)
+        public async Task<string?> GetToken(CancellationToken token = default)
         {
-            if (_config == null) {
+            if (_config == null || _app == null) {
                 _logger.LogInformation("OIDC authentication disabled.");
                 return null;
             }
 
-            AuthenticationResult result = null;
+            AuthenticationResult result;
             try
             {
                 result = await _app.AcquireTokenForClient(_config.Scopes)
@@ -79,7 +79,7 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException($"Could not obtain OIDC token: {ex.ErrorCode} {ex.Message}");
             }
 
-            return result?.AccessToken;
+            return result.AccessToken;
         }
     }
 

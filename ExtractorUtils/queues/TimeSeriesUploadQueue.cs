@@ -18,9 +18,9 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public class TimeSeriesUploadQueue : BaseUploadQueue<(Identity id, Datapoint dp)>
     {
-        private IExtractionStateStore _store;
-        private IDictionary<Identity, BaseExtractionState> _states;
-        private string _collection;
+        private IExtractionStateStore? _store;
+        private IDictionary<Identity, BaseExtractionState>? _states;
+        private string? _collection;
 
 
         private static readonly Counter _numberPoints = Prometheus.Metrics.CreateCounter("extractor_utils_queue_datapoints",
@@ -28,7 +28,7 @@ namespace Cognite.Extractor.Utils
         private static readonly Gauge _queueSize = Prometheus.Metrics.CreateGauge("extractor_utils_datapoints_queue_size",
             "Number of datapoints in the upload queue to CDF");
 
-        private readonly string _bufferPath;
+        private readonly string? _bufferPath;
         private bool _bufferEnabled;
         private bool _bufferAny;
         /// <summary>
@@ -45,8 +45,8 @@ namespace Cognite.Extractor.Utils
             TimeSpan interval,
             int maxSize,
             ILogger<CogniteDestination> logger,
-            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback,
-            string bufferPath) : base(destination, interval, maxSize, logger, callback)
+            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>? callback,
+            string? bufferPath) : base(destination, interval, maxSize, logger, callback)
         {
             _bufferPath = bufferPath;
             if (!string.IsNullOrWhiteSpace(_bufferPath))
@@ -174,7 +174,7 @@ namespace Cognite.Extractor.Utils
                 }
                 if (_store != null && !string.IsNullOrWhiteSpace(_collection) && states.Any())
                 {
-                    await _store.StoreExtractionState(states, _collection, token);
+                    await _store.StoreExtractionState(states, _collection!, token);
                 }
             }
         }

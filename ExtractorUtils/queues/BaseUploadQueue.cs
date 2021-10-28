@@ -59,7 +59,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// List of items to be uploaded, may be null if upload failed, or empty if no objects were uploaded.
         /// </summary>
-        public IEnumerable<T> Uploaded { get; }
+        public IEnumerable<T>? Uploaded { get; }
         /// <summary>
         /// True if upload failed completely.
         /// </summary>
@@ -67,7 +67,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Exception if upload failed completely.
         /// </summary>
-        public Exception Exception { get; }
+        public Exception? Exception { get; }
         /// <summary>
         /// Constructor for successfull or empty upload.
         /// </summary>
@@ -80,7 +80,7 @@ namespace Cognite.Extractor.Utils
         /// Constructor for failed upload.
         /// </summary>
         /// <param name="ex">Fatal exception</param>
-        public QueueUploadResult(Exception ex)
+        public QueueUploadResult(Exception? ex)
         {
             Exception = ex;
         }
@@ -99,7 +99,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Callback on upload
         /// </summary>
-        protected Func<QueueUploadResult<T>, Task> Callback { get; private set; }
+        protected Func<QueueUploadResult<T>, Task>? Callback { get; private set; }
 
         /// <summary>
         /// Logger to use
@@ -109,18 +109,18 @@ namespace Cognite.Extractor.Utils
         private readonly ConcurrentQueue<T> _items;
         private readonly int _maxSize;
         private readonly ManualResetEventSlim _pushEvent;
-        private readonly System.Timers.Timer _timer;
-        private CancellationTokenSource _tokenSource;
-        private CancellationTokenSource _internalSource;
-        private Task _uploadLoopTask;
-        private Task _uploadTask;
+        private readonly System.Timers.Timer? _timer;
+        private CancellationTokenSource? _tokenSource;
+        private CancellationTokenSource? _internalSource;
+        private Task? _uploadLoopTask;
+        private Task? _uploadTask;
 
         internal BaseUploadQueue(
             CogniteDestination destination,
             TimeSpan interval,
             int maxSize,
             ILogger<CogniteDestination> logger,
-            Func<QueueUploadResult<T>, Task> callback)
+            Func<QueueUploadResult<T>, Task>? callback)
         {
             _maxSize = maxSize;
             Destination = destination;
@@ -197,13 +197,13 @@ namespace Cognite.Extractor.Utils
                 {
                     while (!_tokenSource.IsCancellationRequested)
                     {
-                        _pushEvent.Wait(_tokenSource.Token);
+                        _pushEvent?.Wait(_tokenSource.Token);
                         _uploadTask = TriggerUploadAndCallback(_internalSource.Token);
                         // stop waiting if the source token gets cancelled, but do not
                         // cancel the upload task
                         _uploadTask.Wait(_tokenSource.Token);
                         _pushEvent?.Reset();
-                        _timer.Start();
+                        _timer?.Start();
                     }
                 }
                 catch (OperationCanceledException)
@@ -242,7 +242,7 @@ namespace Cognite.Extractor.Utils
             {
                 _timer?.Stop();
                 
-                if (!_tokenSource.IsCancellationRequested)
+                if (_tokenSource != null && !_tokenSource.IsCancellationRequested)
                 {
                     _tokenSource.Cancel();
                 }
@@ -257,7 +257,7 @@ namespace Cognite.Extractor.Utils
                 }
 
                 // If there is anything left in the queue, push it,
-                await WaitOrTimeout(TriggerUploadAndCallback(_internalSource.Token));
+                await WaitOrTimeout(TriggerUploadAndCallback(CancellationToken.None));
             }
             catch (Exception ex)
             {
@@ -287,8 +287,8 @@ namespace Cognite.Extractor.Utils
                 Task.Run(async () => await FinalizeQueue()).Wait();
                 _pushEvent.Dispose();
                 _timer?.Close();
-                _tokenSource.Dispose();
-                _internalSource.Dispose();
+                _tokenSource?.Dispose();
+                _internalSource?.Dispose();
             }
         }
 
@@ -300,8 +300,8 @@ namespace Cognite.Extractor.Utils
             await FinalizeQueue().ConfigureAwait(false);
             _pushEvent.Dispose();
             _timer?.Close();
-            _tokenSource.Dispose();
-            _internalSource.Dispose();
+            _tokenSource?.Dispose();
+            _internalSource?.Dispose();
         }
 
         /// <summary>

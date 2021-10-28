@@ -542,7 +542,7 @@ namespace Cognite.Extensions
         /// <param name="maxRetries">Maximum number of retries</param>
         /// <param name="maxDelay">Maximum delay between each retry in milliseconds, negative for no upper limit</param>
         /// <returns></returns>
-        public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger logger,
+        public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger? logger,
             int? maxRetries,
             int? maxDelay)
         {

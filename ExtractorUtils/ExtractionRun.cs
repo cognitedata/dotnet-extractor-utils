@@ -18,7 +18,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// ExternalId of extraction pipeline.
         /// </summary>
-        public string PipelineId { get; set; }
+        public string? PipelineId { get; set; }
         /// <summary>
         /// Frequency of extraction pipeline updates in seconds.
         /// </summary>
@@ -32,7 +32,7 @@ namespace Cognite.Extractor.Utils
     {
         private bool _finished;
         private ExtractionRunConfig _config;
-        private Task _runTask;
+        private Task? _runTask;
         private CancellationTokenSource _source = new CancellationTokenSource();
         private CogniteDestination _destination;
         private ILogger<ExtractionRun> _log = new NullLogger<ExtractionRun>();
@@ -48,7 +48,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="config">Extraction run config object</param>
         /// <param name="destination">Cognite</param>
         /// <param name="log"></param>
-        public ExtractionRun(ExtractionRunConfig config, CogniteDestination destination, ILogger<ExtractionRun> log = null)
+        public ExtractionRun(ExtractionRunConfig config, CogniteDestination destination, ILogger<ExtractionRun>? log = null)
         {
             _config = config;
             _destination = destination;
@@ -123,7 +123,7 @@ namespace Cognite.Extractor.Utils
         /// If this is false, the run will continue to report "Seen"</param>
         /// <param name="message">Optional message</param>
         /// <param name="token">Optional token</param>
-        public async Task Report(ExtPipeRunStatus status, bool final, string message = null, CancellationToken token = default)
+        public async Task Report(ExtPipeRunStatus status, bool final, string? message = null, CancellationToken token = default)
         {
             if (final)
             {

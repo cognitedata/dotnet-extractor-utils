@@ -134,7 +134,7 @@ namespace Cognite.Extractor.Configuration
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error.</exception>
-        public static T TryReadConfigFromFile<T>(string path, params int[] acceptedConfigVersions) where T : VersionedConfig
+        public static T TryReadConfigFromFile<T>(string path, params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
             int configVersion = ConfigurationUtils.GetVersionFromFile(path);
             CheckVersion(configVersion, acceptedConfigVersions);
@@ -156,7 +156,7 @@ namespace Cognite.Extractor.Configuration
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code", Justification = "Other methods using this can still pass null as parameter")]
-        private static void CheckVersion(int version, params int[] acceptedConfigVersions) {
+        private static void CheckVersion(int version, params int[]? acceptedConfigVersions) {
             if (acceptedConfigVersions == null || acceptedConfigVersions.Length == 0)
             {
                 return;

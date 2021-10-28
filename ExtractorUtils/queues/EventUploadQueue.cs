@@ -21,7 +21,7 @@ namespace Cognite.Extractor.Utils
         private static readonly Gauge _queueSize = Prometheus.Metrics.CreateGauge("extractor_utils_events_queue_size",
             "Number of events in the upload queue to CDF");
 
-        private readonly string _bufferPath;
+        private readonly string? _bufferPath;
         private bool _bufferEnabled;
         private bool _bufferAny;
         /// <summary>
@@ -38,8 +38,8 @@ namespace Cognite.Extractor.Utils
             TimeSpan interval,
             int maxSize,
             ILogger<CogniteDestination> logger,
-            Func<QueueUploadResult<EventCreate>, Task> callback,
-            string bufferPath) : base(destination, interval, maxSize, logger, callback)
+            Func<QueueUploadResult<EventCreate>, Task>? callback,
+            string? bufferPath) : base(destination, interval, maxSize, logger, callback)
         {
             _bufferPath = bufferPath;
             if (!string.IsNullOrWhiteSpace(_bufferPath))

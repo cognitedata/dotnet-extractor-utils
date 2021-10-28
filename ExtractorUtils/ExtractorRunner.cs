@@ -26,20 +26,20 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Path to config file
         /// </summary>
-        public string ConfigPath { get; set; }
+        public string? ConfigPath { get; set; }
         /// <summary>
         /// List of accepted config versions.
         /// Can be set to null to ignore.
         /// </summary>
-        public int[] AcceptedConfigVersions { get; set; }
+        public int[]? AcceptedConfigVersions { get; set; }
         /// <summary>
         /// AppId to use if CDF destination is defined
         /// </summary>
-        public string AppId { get; set; }
+        public string? AppId { get; set; }
         /// <summary>
         /// User agent to use if CDF destination is defined
         /// </summary>
-        public string UserAgent { get; set; }
+        public string? UserAgent { get; set; }
         /// <summary>
         /// True if the extractor uses a state store
         /// </summary>
@@ -59,24 +59,24 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Called when the extractor has been built.
         /// </summary>
-        public Action<CogniteDestination, TExtractor> OnCreateExtractor { get; set; }
+        public Action<CogniteDestination?, TExtractor>? OnCreateExtractor { get; set; }
         /// <summary>
         /// Called after config has been read. Can be used to modify the runner params and config object based on
         /// external parameters.
         /// </summary>
-        public Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>> ConfigCallback { get; set; }
+        public Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>>? ConfigCallback { get; set; }
         /// <summary>
         /// Predefined list of services.
         /// </summary>
-        public ServiceCollection ExtServices { get; set; }
+        public ServiceCollection? ExtServices { get; set; }
         /// <summary>
         /// Logger to use before config has been loaded.
         /// </summary>
-        public ILogger StartupLogger { get; set; }
+        public ILogger? StartupLogger { get; set; }
         /// <summary>
         /// Predefined config object, used instead of defining a config path.
         /// </summary>
-        public TConfig Config { get; set; }
+        public TConfig? Config { get; set; }
         /// <summary>
         /// True to require a CogniteDestination to be set.
         /// </summary>
@@ -84,7 +84,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Method to log exceptions. Default is just a simple log message with the exception.
         /// </summary>
-        public Action<ILogger, Exception, string> LogException { get; set; }
+        public Action<ILogger, Exception, string>? LogException { get; set; }
     }
 
 
@@ -136,13 +136,13 @@ namespace Cognite.Extractor.Utils
             bool addMetrics,
             bool restart,
             CancellationToken token,
-            Action<CogniteDestination, TExtractor> onCreateExtractor = null,
-            Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>> configCallback = null,
-            ServiceCollection extServices = null,
-            ILogger startupLogger = null,
-            TConfig config = null,
+            Action<CogniteDestination?, TExtractor>? onCreateExtractor = null,
+            Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>>? configCallback = null,
+            ServiceCollection? extServices = null,
+            ILogger? startupLogger = null,
+            TConfig? config = null,
             bool requireDestination = true,
-            Action<ILogger, Exception, string> logException = null)
+            Action<ILogger, Exception, string>? logException = null)
             where TConfig : VersionedConfig
             where TExtractor : BaseExtractor<TConfig>
         {
@@ -207,7 +207,7 @@ namespace Cognite.Extractor.Utils
                     services.Add(options.ExtServices);
                 }
 
-                ConfigurationException exception = null;
+                ConfigurationException? exception = null;
                 try
                 {
                     options.Config = services.AddExtractorDependencies(
@@ -282,7 +282,7 @@ namespace Cognite.Extractor.Utils
                 await using (provider.ConfigureAwait(false))
                 {
                     log = new NullLogger<BaseExtractor<TConfig>>();
-                    TExtractor extractor = null;
+                    TExtractor? extractor = null;
                     try
                     {
                         if (options.AddMetrics)

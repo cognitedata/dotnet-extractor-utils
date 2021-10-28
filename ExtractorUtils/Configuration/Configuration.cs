@@ -29,7 +29,7 @@ namespace Cognite.Extractor.Utils
         /// <returns>An instance of the configuration object</returns>
         public static T AddConfig<T>(this IServiceCollection services,
                                         string path,
-                                        params int[] acceptedConfigVersions) where T : VersionedConfig
+                                        params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
             var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
@@ -62,15 +62,15 @@ namespace Cognite.Extractor.Utils
         /// <returns>Configuration object</returns>
         public static T AddExtractorDependencies<T>(
             this IServiceCollection services,
-            string configPath,
-            int[] acceptedConfigVersions,
-            string appId,
-            string userAgent,
+            string? configPath,
+            int[]? acceptedConfigVersions,
+            string? appId,
+            string? userAgent,
             bool addStateStore,
             bool addLogger = true,
             bool addMetrics = true,
             bool requireDestination = true,
-            T config = null) where T : VersionedConfig
+            T? config = null) where T : VersionedConfig
         {
             if (config != null)
             {
@@ -85,6 +85,10 @@ namespace Cognite.Extractor.Utils
             else if (configPath != null)
             {
                 config = services.AddConfig<T>(configPath, acceptedConfigVersions);
+            }
+            else
+            {
+                throw new ConfigurationException("No configuration path specified");
             }
             services.AddCogniteClient(appId, userAgent, addLogger, addMetrics, true, requireDestination);
             if (addStateStore) services.AddStateStore();
@@ -107,8 +111,8 @@ namespace Cognite.Extractor.Utils
                     provider.GetRequiredService<ILogger<ExtractionRun>>() : null;
                 var destination = provider.GetService<CogniteDestination>();
                 var config = provider.GetService<CogniteConfig>();
-                if (config == null || destination == null) return null;
-                if (config?.ExtractionPipeline == null || config.ExtractionPipeline.PipelineId == null) return null;
+                if (config == null || destination == null) return null!;
+                if (config?.ExtractionPipeline == null || config.ExtractionPipeline.PipelineId == null) return null!;
                 return new ExtractionRun(config.ExtractionPipeline, destination, logger);
             });
         }
