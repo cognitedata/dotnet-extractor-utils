@@ -67,7 +67,7 @@ namespace Cognite.Extensions
                     .Select(dp => new NumericDatapoint
                     {
                         Timestamp = dp.Timestamp,
-                        Value = dp.NumericValue.Value
+                        Value = dp.NumericValue!.Value
                     });
                 if (stringPoints.Any())
                 {
@@ -464,7 +464,7 @@ namespace Cognite.Extensions
                 .Select((pair) =>
                 {
                     var id = pair.id;
-                    IdentityWithBefore idt = id.ExternalId == null ? IdentityWithBefore.Create(id.Id.Value) : IdentityWithBefore.Create(id.ExternalId);
+                    IdentityWithBefore idt = id.ExternalId == null ? IdentityWithBefore.Create(id.Id!.Value) : IdentityWithBefore.Create(id.ExternalId);
                     if (pair.before != DateTime.MaxValue)
                     {
                         idt.Before = pair.before.ToUnixTimeMilliseconds().ToString();

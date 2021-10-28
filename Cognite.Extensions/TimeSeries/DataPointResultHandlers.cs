@@ -28,7 +28,7 @@ namespace Cognite.Extensions
                     {
                         return Identity.Create(stringVal.Value);
                     }
-                    return null;
+                    return null!;
                 }).Where(id => id != null);
             }
             else if (ex.Message.StartsWith("Expected string value", StringComparison.InvariantCultureIgnoreCase)
@@ -54,7 +54,7 @@ namespace Cognite.Extensions
             if (error == null) return datapoints;
             // In this case we've already finished the skipping.
             if (error.Skipped?.Any() ?? false) return datapoints;
-            if (!error.Values?.Any() ?? true)
+            if (error.Values == null || !error.Values.Any())
             {
                 error.Skipped = datapoints.Select(kvp => new DataPointInsertError(kvp.Key, kvp.Value)).ToList();
 

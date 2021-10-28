@@ -93,7 +93,7 @@ namespace Cognite.Extensions
             foreach (var row in seq.Rows) row.Sanitize();
         }
 
-        private static IEnumerable<MultiValue> Sanitize(this IEnumerable<MultiValue> values)
+        private static IEnumerable<MultiValue?> Sanitize(this IEnumerable<MultiValue?> values)
         {
             if (values == null) yield break;
             foreach (var val in values)
@@ -445,31 +445,18 @@ namespace Cognite.Extensions
 
                 if (duplicatedColumns.Any())
                 {
-                    dupColumnErrors.Add(new SequenceRowError
-                    {
-                        BadColumns = duplicatedColumns,
-                        Id = idt,
-                        SkippedRows = seq.Rows
-                    });
+                    dupColumnErrors.Add(new SequenceRowError(seq.Rows!, duplicatedColumns, idt));
                 }
                 if (duplicateRows.Any())
                 {
-                    dupRowErrors.Add(new SequenceRowError
-                    {
-                        Id = idt,
-                        SkippedRows = duplicateRows
-                    });
+                    dupRowErrors.Add(new SequenceRowError(duplicateRows, idt));
                 }
 
                 if (badRows.Any())
                 {
                     badRowSequences.AddRange(badRows.GroupBy(pair => pair.Item1).Select(group => (
                         group.Key,
-                        new SequenceRowError
-                        {
-                            Id = idt,
-                            SkippedRows = group.Select(pair => pair.Item2).ToList()
-                        }
+                        new SequenceRowError(group.Select(pair => pair.Item2).ToList(), idt)
                     )));
                 }
 
@@ -519,10 +506,10 @@ namespace Cognite.Extensions
             {
                 errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceRowError>
                 {
-                    Skipped = group.Select(pair => new SequenceRowError {
-                        Id = pair.Item2.Id.HasValue ? Identity.Create(pair.Item2.Id.Value) : Identity.Create(pair.Item2.ExternalId),
-                        SkippedRows = pair.Item2.Rows
-                    }).ToList(),
+                    Skipped = group.Select(pair => new SequenceRowError(
+                        pair.Item2.Rows,
+                        pair.Item2.Id.HasValue ? Identity.Create(pair.Item2.Id.Value) : Identity.Create(pair.Item2.ExternalId)
+                    )).ToList(),
                     Resource = group.Key,
                     Type = ErrorType.SanitationFailed,
                     Status = 400

@@ -33,13 +33,13 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(error));
             }
-            string cogniteString = null;
+            string? cogniteString = null;
             if (error.Exception != null && error.Exception is ResponseException rex)
             {
                 cogniteString = $" RequestId: {rex.RequestId}, CDF Message: {rex.Message}";
             }
 
-            string valueString = null;
+            string? valueString = null;
             if (error.Values != null && error.Values.Any())
             {
                 valueString = string.Join(", ", error.Values.Select(idt => idt.ExternalId ?? idt.Id.ToString()));

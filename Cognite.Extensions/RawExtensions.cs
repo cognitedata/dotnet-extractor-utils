@@ -47,7 +47,7 @@ namespace Cognite.Extensions
             int chunkSize, 
             int throttleSize,
             CancellationToken token,
-            JsonSerializerOptions options = null)
+            JsonSerializerOptions? options = null)
         {
             var chunks = rows
                 .Select(kvp =>  new RawRowCreateJson() { Key = kvp.Key, Columns = DtoToJson(kvp.Value, options) })
@@ -70,7 +70,7 @@ namespace Cognite.Extensions
                 .ConfigureAwait(false);
         }
 
-        internal static JsonElement DtoToJson<T>(T dto, JsonSerializerOptions options)
+        internal static JsonElement DtoToJson<T>(T dto, JsonSerializerOptions? options)
         {
             if (dto is JsonElement) return (JsonElement)(object)dto;
             var bytes = JsonSerializer.SerializeToUtf8Bytes(dto, options);
@@ -96,7 +96,7 @@ namespace Cognite.Extensions
         {
             // This might be able to be improved with the ability to pre-fetch cursors for parallel read. Missing from the SDK.
             var result = new Dictionary<string, IDictionary<string, JsonElement>>();
-            string cursor = null;
+            string? cursor = null;
             do
             {
                 var query = new RawRowQuery

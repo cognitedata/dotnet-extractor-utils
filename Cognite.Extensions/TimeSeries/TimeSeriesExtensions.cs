@@ -273,7 +273,7 @@ namespace Cognite.Extensions
             {
                 foreach (var error in duplicateErrors)
                 {
-                    if (!error.Values?.Any() ?? false) continue;
+                    if (error.Values == null || !error.Values.Any()) continue;
                     foreach (var idt in error.Values) duplicatedIds.Add(idt.ExternalId);
                 }
             }

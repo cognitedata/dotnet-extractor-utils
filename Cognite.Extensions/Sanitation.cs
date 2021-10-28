@@ -23,15 +23,15 @@ namespace Cognite.Extensions
         /// <param name="str">String to be shortened</param>
         /// <param name="maxLength">Maximum length of final string</param>
         /// <returns>String which contains the first <paramref name="maxLength"/> characters of the passed string.</returns>
-        public static string Truncate(this string str, int maxLength)
+        public static string? Truncate(this string? str, int maxLength)
         {
-            if (string.IsNullOrEmpty(str) || str.Length <= maxLength) return str;
+            if (string.IsNullOrEmpty(str) || str!.Length <= maxLength) return str;
             return str.Substring(0, maxLength);
         }
 
-        private static bool CheckLength(this string str, int maxLength)
+        private static bool CheckLength(this string? str, int maxLength)
         {
-            return string.IsNullOrEmpty(str) || str.Length <= maxLength;
+            return string.IsNullOrEmpty(str) || str!.Length <= maxLength;
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Cognite.Extensions
         /// <param name="id">CogniteExternalId to be shortened</param>
         /// <param name="maxLength">Maximum length of final string</param>
         /// <returns>CogniteExternalId which contains the first <paramref name="maxLength"/> characters of the passed value.</returns>
-        public static CogniteExternalId Truncate(this CogniteExternalId id, int maxLength)
+        public static CogniteExternalId? Truncate(this CogniteExternalId? id, int maxLength)
         {
             if (id == null) return id;
             var str = id.ExternalId;
@@ -85,7 +85,7 @@ namespace Cognite.Extensions
             this IEnumerable<TInput> input,
             Func<TInput, TKey> keySelector,
             Func<TInput, TValue> valueSelector,
-            IEqualityComparer<TKey> comparer = null)
+            IEqualityComparer<TKey>? comparer = null)
         {
             if (input == null) 
             {
@@ -125,7 +125,7 @@ namespace Cognite.Extensions
         /// <param name="maxBytes">Maximum number of total bytes</param>
         /// <param name="bytes">Total number of bytes in returned metadata</param>
         /// <returns>A sanitized dictionary</returns>
-        public static Dictionary<string, string> SanitizeMetadata(this Dictionary<string, string> data,
+        public static Dictionary<string, string>? SanitizeMetadata(this Dictionary<string, string>? data,
             int maxPerKey,
             int maxKeys,
             int maxPerValue,
