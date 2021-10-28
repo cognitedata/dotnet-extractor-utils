@@ -12,6 +12,6 @@ namespace Cognite.Extractor.StateStorage
         /// Unique identifier for the state in the destination storage
         /// </summary>
         [BsonId]
-        public string Id { get; set; }
+        public string Id { get; set; } = null!;
     }
 }

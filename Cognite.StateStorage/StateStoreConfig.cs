@@ -9,7 +9,7 @@
         /// Path to database file used by litedb.
         /// </summary>
         /// <value>Some path, ex ./my/database/file.db </value>
-        public string Location { get; set; }
+        public string? Location { get; set; }
         /// <summary>
         /// Enum for storage type in litedb
         /// </summary>

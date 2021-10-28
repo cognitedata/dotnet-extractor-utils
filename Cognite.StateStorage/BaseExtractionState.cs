@@ -42,7 +42,7 @@ namespace Cognite.Extractor.StateStorage
                 _destinationExtractedRange = value;
             }
         }
-        private TimeRange _destinationExtractedRange;
+        private TimeRange _destinationExtractedRange = TimeRange.Empty;
 
         /// <summary>
         /// Last time the destination range was modified.
