@@ -36,6 +36,8 @@ cognite:
         # MSAL (recommended) - Microsoft Authentication Library, Works only with authority/tenant
         # Basic - Post to authentication endpoint and parse JSON response, works with both authority/tenant and token-url
         # Default is MSAL
+        audience:
+        # Audience
         implementation: MSAL
         # Minimum time-to-live in seconds for the token (optional)
         min-ttl: 30

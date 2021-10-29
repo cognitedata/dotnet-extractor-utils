@@ -210,6 +210,12 @@ namespace Cognite.Extractor.Utils
         public IList<string>? Scopes { get; set; }
 
         /// <summary>
+        /// Audience
+        /// </summary>
+        /// <value>Audience</value>
+        public string? Audience { get; set; }
+
+        /// <summary>
         /// Minimum time-to-live for the token in seconds (optional)
         /// </summary>
         /// <value>Minimum TTL</value>
