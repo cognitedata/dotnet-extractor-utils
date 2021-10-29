@@ -87,14 +87,102 @@
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class SequenceRowError : object</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extensions_SequenceRowError__ctor_IEnumerable_SequenceRow__Identity_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError.%23ctor(IEnumerable%7BSequenceRow%7D%2CIdentity)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L348">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_SequenceRowError__ctor_" data-uid="Cognite.Extensions.SequenceRowError.#ctor*"></a>
+  <h4 id="Cognite_Extensions_SequenceRowError__ctor_IEnumerable_SequenceRow__Identity_" data-uid="Cognite.Extensions.SequenceRowError.#ctor(IEnumerable{SequenceRow},Identity)">SequenceRowError(IEnumerable&lt;SequenceRow&gt;, Identity)</h4>
+  <div class="markdown level1 summary"><p>Constructor for skipped rows</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SequenceRowError(IEnumerable&lt;SequenceRow&gt; skippedRows, Identity id)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">SequenceRow</span>&gt;</td>
+        <td><span class="parametername">skippedRows</span></td>
+        <td><p>Rows skipped due to this error</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">Identity</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Id of offending sequence</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extensions_SequenceRowError__ctor_IEnumerable_SequenceRow__IEnumerable_System_String__Identity_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError.%23ctor(IEnumerable%7BSequenceRow%7D%2CIEnumerable%7BSystem.String%7D%2CIdentity)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L336">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_SequenceRowError__ctor_" data-uid="Cognite.Extensions.SequenceRowError.#ctor*"></a>
+  <h4 id="Cognite_Extensions_SequenceRowError__ctor_IEnumerable_SequenceRow__IEnumerable_System_String__Identity_" data-uid="Cognite.Extensions.SequenceRowError.#ctor(IEnumerable{SequenceRow},IEnumerable{System.String},Identity)">SequenceRowError(IEnumerable&lt;SequenceRow&gt;, IEnumerable&lt;String&gt;, Identity)</h4>
+  <div class="markdown level1 summary"><p>Constructor for missing columns</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SequenceRowError(IEnumerable&lt;SequenceRow&gt; skippedRows, IEnumerable&lt;string&gt; badColumns, Identity id)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">SequenceRow</span>&gt;</td>
+        <td><span class="parametername">skippedRows</span></td>
+        <td><p>Rows skipped due to this error</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">badColumns</span></td>
+        <td><p>Bad columns</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">Identity</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Id of offending sequence</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/0eeb6e9515623d0f303947880a357932e6efac84/apiSpec/new?filename=Cognite_Extensions_SequenceRowError_BadColumns.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError.BadColumns%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extensions_SequenceRowError_BadColumns.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError.BadColumns%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/0eeb6e9515623d0f303947880a357932e6efac84/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L348">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L357">View Source</a>
   </span>
   <a id="Cognite_Extensions_SequenceRowError_BadColumns_" data-uid="Cognite.Extensions.SequenceRowError.BadColumns*"></a>
   <h4 id="Cognite_Extensions_SequenceRowError_BadColumns" data-uid="Cognite.Extensions.SequenceRowError.BadColumns">BadColumns</h4>
@@ -103,7 +191,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IEnumerable&lt;string&gt; BadColumns { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;string&gt;? BadColumns { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -115,17 +203,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/0eeb6e9515623d0f303947880a357932e6efac84/apiSpec/new?filename=Cognite_Extensions_SequenceRowError_Id.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError.Id%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extensions_SequenceRowError_Id.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError.Id%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/0eeb6e9515623d0f303947880a357932e6efac84/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L352">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L361">View Source</a>
   </span>
   <a id="Cognite_Extensions_SequenceRowError_Id_" data-uid="Cognite.Extensions.SequenceRowError.Id*"></a>
   <h4 id="Cognite_Extensions_SequenceRowError_Id" data-uid="Cognite.Extensions.SequenceRowError.Id">Id</h4>
@@ -134,7 +222,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Identity Id { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Identity Id { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -153,10 +241,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/0eeb6e9515623d0f303947880a357932e6efac84/apiSpec/new?filename=Cognite_Extensions_SequenceRowError_SkippedRows.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError.SkippedRows%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extensions_SequenceRowError_SkippedRows.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError.SkippedRows%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/0eeb6e9515623d0f303947880a357932e6efac84/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L356">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L365">View Source</a>
   </span>
   <a id="Cognite_Extensions_SequenceRowError_SkippedRows_" data-uid="Cognite.Extensions.SequenceRowError.SkippedRows*"></a>
   <h4 id="Cognite_Extensions_SequenceRowError_SkippedRows" data-uid="Cognite.Extensions.SequenceRowError.SkippedRows">SkippedRows</h4>
@@ -165,7 +253,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IEnumerable&lt;SequenceRow&gt; SkippedRows { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;SequenceRow&gt; SkippedRows { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -190,10 +278,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/0eeb6e9515623d0f303947880a357932e6efac84/apiSpec/new?filename=Cognite_Extensions_SequenceRowError.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extensions_SequenceRowError.md&amp;value=---%0Auid%3A%20Cognite.Extensions.SequenceRowError%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/0eeb6e9515623d0f303947880a357932e6efac84/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L343" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L328" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

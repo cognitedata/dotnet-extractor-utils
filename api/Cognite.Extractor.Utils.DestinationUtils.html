@@ -91,19 +91,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/0eeb6e9515623d0f303947880a357932e6efac84/apiSpec/new?filename=Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_IServiceCollection_System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection%2CSystem.String%2CSystem.String%2CSystem.Boolean%2CSystem.Boolean%2CSystem.Boolean%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_IServiceCollection_System_Nullable_System_String__System_Nullable_System_String__System_Boolean_System_Boolean_System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection%2CSystem.Nullable%7BSystem.String%7D%2CSystem.Nullable%7BSystem.String%7D%2CSystem.Boolean%2CSystem.Boolean%2CSystem.Boolean%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/0eeb6e9515623d0f303947880a357932e6efac84/ExtractorUtils/Cognite/DestinationUtils.cs/#L44">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/ExtractorUtils/Cognite/DestinationUtils.cs/#L44">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_" data-uid="Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient*"></a>
-  <h4 id="Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_IServiceCollection_System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_" data-uid="Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection,System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">AddCogniteClient(IServiceCollection, String, String, Boolean, Boolean, Boolean, Boolean)</h4>
+  <h4 id="Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_IServiceCollection_System_Nullable_System_String__System_Nullable_System_String__System_Boolean_System_Boolean_System_Boolean_System_Boolean_" data-uid="Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(IServiceCollection,System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean)">AddCogniteClient(IServiceCollection, Nullable&lt;String&gt;, Nullable&lt;String&gt;, Boolean, Boolean, Boolean, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds a configured Cognite client to the <code data-dev-comment-type="paramref" class="paramref">services</code> collection as a transient service</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void AddCogniteClient(this IServiceCollection services, string appId, string userAgent = null, bool setLogger = false, bool setMetrics = false, bool setHttpClient = true, bool required = true)</code></pre>
+    <pre><code class="lang-csharp hljs">public static void AddCogniteClient(this IServiceCollection services, string? appId, string? userAgent = null, bool setLogger = false, bool setMetrics = false, bool setHttpClient = true, bool required = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -122,13 +122,13 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">appId</span></td>
         <td><p>Identifier of the application using the Cognite API</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">userAgent</span></td>
         <td><p>User-Agent header. If added, should conform to RFC 7231: 'Product/Version (Optional comment)'</p>
 </td>
@@ -164,19 +164,19 @@ to report metrics on the number and duration of API requests</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/0eeb6e9515623d0f303947880a357932e6efac84/apiSpec/new?filename=Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_String_System_String_Cognite_Extractor_Utils_IAuthenticator_ILogger_Client__IMetrics_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder%2CCognite.Extractor.Utils.CogniteConfig%2CSystem.String%2CSystem.String%2CCognite.Extractor.Utils.IAuthenticator%2CILogger%7BClient%7D%2CIMetrics)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_Nullable_System_String__System_Nullable_System_String__Cognite_Extractor_Utils_IAuthenticator_System_Nullable_ILogger_Client___System_Nullable_IMetrics__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder%2CCognite.Extractor.Utils.CogniteConfig%2CSystem.Nullable%7BSystem.String%7D%2CSystem.Nullable%7BSystem.String%7D%2CCognite.Extractor.Utils.IAuthenticator%2CSystem.Nullable%7BILogger%7BClient%7D%7D%2CSystem.Nullable%7BIMetrics%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/0eeb6e9515623d0f303947880a357932e6efac84/ExtractorUtils/Cognite/DestinationUtils.cs/#L135">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/ExtractorUtils/Cognite/DestinationUtils.cs/#L135">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_DestinationUtils_Configure_" data-uid="Cognite.Extractor.Utils.DestinationUtils.Configure*"></a>
-  <h4 id="Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_String_System_String_Cognite_Extractor_Utils_IAuthenticator_ILogger_Client__IMetrics_" data-uid="Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.String,System.String,Cognite.Extractor.Utils.IAuthenticator,ILogger{Client},IMetrics)">Configure(Client.Builder, CogniteConfig, String, String, IAuthenticator, ILogger&lt;Client&gt;, IMetrics)</h4>
+  <h4 id="Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_Nullable_System_String__System_Nullable_System_String__Cognite_Extractor_Utils_IAuthenticator_System_Nullable_ILogger_Client___System_Nullable_IMetrics__" data-uid="Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.Nullable{System.String},System.Nullable{System.String},Cognite.Extractor.Utils.IAuthenticator,System.Nullable{ILogger{Client}},System.Nullable{IMetrics})">Configure(Client.Builder, CogniteConfig, Nullable&lt;String&gt;, Nullable&lt;String&gt;, IAuthenticator, Nullable&lt;ILogger&lt;Client&gt;&gt;, Nullable&lt;IMetrics&gt;)</h4>
   <div class="markdown level1 summary"><p>Configure a CogniteSdk Client.Builder according to the <code data-dev-comment-type="paramref" class="paramref">config</code> object</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Client.Builder Configure(this Client.Builder clientBuilder, CogniteConfig config, string appId, string userAgent = null, IAuthenticator auth = null, ILogger&lt;Client&gt; logger = null, IMetrics metrics = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Client.Builder Configure(this Client.Builder clientBuilder, CogniteConfig config, string? appId, string? userAgent = null, IAuthenticator auth = null, ILogger&lt;Client&gt;? logger = null, IMetrics? metrics = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -201,13 +201,13 @@ to report metrics on the number and duration of API requests</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">appId</span></td>
         <td><p>Identifier of the application using the Cognite API</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">userAgent</span></td>
         <td><p>User-agent header</p>
 </td>
@@ -220,14 +220,14 @@ If null, API keys are used for authentication</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ILogger</span>&lt;<span class="xref">Client</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">ILogger</span>&lt;<span class="xref">Client</span>&gt;&gt;</td>
         <td><span class="parametername">logger</span></td>
         <td><p>A <see cref="!:ILogger"></see> logger that the client can use to log calls to the
 Cognite API (enabled in debug mode)</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IMetrics</span></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IMetrics</span>&gt;</td>
         <td><span class="parametername">metrics</span></td>
         <td><p>A <see cref="!:IMetrics"></see> metrics collector, that the client can use
 to report metrics on the number and duration of API requests</p>
@@ -276,10 +276,10 @@ the configured project is empty</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/0eeb6e9515623d0f303947880a357932e6efac84/apiSpec/new?filename=Cognite_Extractor_Utils_DestinationUtils.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.DestinationUtils%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/491afcc4c97817762b7d992df9e40ca083be3ad4/apiSpec/new?filename=Cognite_Extractor_Utils_DestinationUtils.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.DestinationUtils%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/0eeb6e9515623d0f303947880a357932e6efac84/ExtractorUtils/Cognite/DestinationUtils.cs/#L19" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/491afcc4c97817762b7d992df9e40ca083be3ad4/ExtractorUtils/Cognite/DestinationUtils.cs/#L19" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>
