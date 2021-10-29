@@ -23,7 +23,7 @@ namespace Cognite.Extractor.Utils
             var client = provider.GetService<Client>();
             var logger = provider.GetService<ILogger<CogniteDestination>>();
             var config = provider.GetService<CogniteConfig>();
-            if (client == null || config == null) return null;
+            if (client == null || config == null) return null!;
             return new CogniteDestination(client, logger ?? new NullLogger<CogniteDestination>(), config);
         }
 
@@ -42,8 +42,8 @@ namespace Cognite.Extractor.Utils
         /// <see cref="ServiceCollection"/>. If this is false it must be added before this method is called.</param>
         /// <param name="required">True to fail if cognite configuration is missing</param>
         public static void AddCogniteClient(this IServiceCollection services,
-                                            string appId,
-                                            string userAgent = null,
+                                            string? appId,
+                                            string? userAgent = null,
                                             bool setLogger = false,
                                             bool setMetrics = false,
                                             bool setHttpClient = true,
@@ -80,7 +80,7 @@ namespace Cognite.Extractor.Utils
             {
                 var conf = provider.GetService<CogniteConfig>();
                 if (conf?.IdpAuthentication == null)
-                    return null;
+                    return null!;
                 var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
                 var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
                 if (conf.IdpAuthentication.Implementation == AuthenticatorConfig.AuthenticatorImplementation.MSAL)
@@ -100,7 +100,7 @@ namespace Cognite.Extractor.Utils
             services.AddTransient(provider =>
             {
                 var conf = provider.GetService<CogniteConfig>();
-                if ((conf == null || conf.Project?.TrimToNull() == null) && !required) return null;
+                if ((conf == null || conf.Project?.TrimToNull() == null) && !required) return null!;
                 var auth = provider.GetService<IAuthenticator>();
                 var cdfBuilder = provider.GetRequiredService<Client.Builder>();
                 var logger = setLogger ?
@@ -108,7 +108,7 @@ namespace Cognite.Extractor.Utils
                 CogniteExtensions.AddExtensionLoggers(provider);
                 var metrics = setMetrics ?
                     provider.GetRequiredService<IMetrics>() : null;
-                var client = cdfBuilder.Configure(conf, appId, userAgent, auth, logger, metrics).Build();
+                var client = cdfBuilder.Configure(conf!, appId, userAgent, auth, logger, metrics).Build();
                 return client;
             });
             services.AddTransient(GetCogniteDestination);
@@ -135,11 +135,11 @@ namespace Cognite.Extractor.Utils
         public static Client.Builder Configure(
             this Client.Builder clientBuilder,
             CogniteConfig config,
-            string appId,
-            string userAgent = null,
-            IAuthenticator auth = null,
-            ILogger<Client> logger = null,
-            IMetrics metrics = null)
+            string? appId,
+            string? userAgent = null,
+            IAuthenticator? auth = null,
+            ILogger<Client>? logger = null,
+            IMetrics? metrics = null)
         {
             if (config == null)
             {

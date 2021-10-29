@@ -15,11 +15,11 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Executed task. Null if not completed.
         /// </summary>
-        public Task Task { get; }
+        public Task? Task { get; }
         /// <summary>
         /// Triggered exception. Null if the task completed successfully or if it is not complete.
         /// </summary>
-        public Exception Exception { get; private set; }
+        public Exception? Exception { get; set; }
         /// <summary>
         /// Time of completion. Null if the task has not completed.
         /// </summary>
@@ -36,7 +36,7 @@ namespace Cognite.Extractor.Common
         /// True if the task has completed.
         /// </summary>
         public bool IsCompleted => CompletionTime.HasValue;
-        internal TaskResult(DateTime startTime, int index, Task task)
+        internal TaskResult(DateTime startTime, int index, Task? task)
         {
             Task = task;
             StartTime = startTime;
@@ -45,7 +45,13 @@ namespace Cognite.Extractor.Common
 
         internal void ReportResult()
         {
-            Exception = Task.Exception;
+            Exception = Task!.Exception;
+            CompletionTime = DateTime.UtcNow;
+        }
+
+        internal void ReportResult(Exception ex)
+        {
+            Exception = ex;
             CompletionTime = DateTime.UtcNow;
         }
     }
@@ -127,11 +133,28 @@ namespace Cognite.Extractor.Common
             }
             TaskResult wrappedGenerator()
             {
-                var result = generator();
-                var taskResult = new TaskResult(DateTime.UtcNow, localIndex, result);
+                Task? result = null;
+                TaskResult taskResult;
+                try
+                {
+                    result = generator();
+                    taskResult = new TaskResult(DateTime.UtcNow, localIndex, result);
+                }
+                catch (Exception ex)
+                {
+                    taskResult = new TaskResult(DateTime.UtcNow, localIndex, null);
+                    taskResult.ReportResult(ex);
+                }
+
                 lock (_lock)
                 {
                     _results.Add(taskResult);
+                }
+
+                if (result == null)
+                {
+                    _taskCompletionEvent.Set();
+                    return taskResult;
                 }
 
                 result.ContinueWith(task =>
@@ -154,7 +177,7 @@ namespace Cognite.Extractor.Common
         {
             using (var localCompletionEvent = new ManualResetEvent(false))
             {
-                TaskResult localResult = null;
+                TaskResult? localResult = null;
                 int localIndex;
                 lock (_lock)
                 {
@@ -162,13 +185,28 @@ namespace Cognite.Extractor.Common
                 }
                 TaskResult wrappedGenerator()
                 {
-                    var result = generator();
-                    localResult = new TaskResult(DateTime.UtcNow, localIndex, result);
+                    Task? result = null;
+                    try
+                    {
+                        result = generator();
+                        localResult = new TaskResult(DateTime.UtcNow, localIndex, result);
+                    }
+                    catch (Exception ex)
+                    {
+                        localResult = new TaskResult(DateTime.UtcNow, localIndex, null);
+                        localResult.ReportResult(ex);
+                    }
                     lock (_lock)
                     {
                         _results.Add(localResult);
                     }
 
+                    if (result == null)
+                    {
+                        _taskCompletionEvent.Set();
+                        localCompletionEvent.Set();
+                        return localResult;
+                    }
                     result.ContinueWith(task =>
                     {
                         localResult.ReportResult();
@@ -180,11 +218,11 @@ namespace Cognite.Extractor.Common
 
                 _generators.Add(wrappedGenerator);
                 await ToTask(localCompletionEvent).ConfigureAwait(false);
-                if (_quitOnFailure && localResult.Exception != null)
+                if (_quitOnFailure && localResult!.Exception != null)
                 {
                     throw new AggregateException("Failure in TaskThrottler", localResult.Exception);
                 }
-                return localResult;
+                return localResult!;
             }
         }
 
@@ -245,7 +283,7 @@ namespace Cognite.Extractor.Common
 
                 lock (_lock)
                 {
-                    if (_quitOnFailure && _runningTasks.Any(result => result.Task.IsFaulted)) break;
+                    if (_quitOnFailure && _runningTasks.Any(result => result.Task != null && result.Task.IsFaulted)) break;
                 }
 
                 if (_source.IsCancellationRequested || _generators.IsCompleted)
@@ -256,7 +294,8 @@ namespace Cognite.Extractor.Common
                 lock (_lock)
                 {
                     var toRemove = _runningTasks.Where(result =>
-                        result.Task.IsCompleted
+                        result.Task == null
+                        || result.Task.IsCompleted
                         || result.Task.IsCanceled
                         || result.Task.IsFaulted).ToList();
                     foreach (var task in toRemove)

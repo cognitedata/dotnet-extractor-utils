@@ -93,7 +93,7 @@ namespace Cognite.Extensions
             foreach (var row in seq.Rows) row.Sanitize();
         }
 
-        private static IEnumerable<MultiValue> Sanitize(this IEnumerable<MultiValue> values)
+        private static IEnumerable<MultiValue?> Sanitize(this IEnumerable<MultiValue?> values)
         {
             if (values == null) yield break;
             foreach (var val in values)
@@ -352,7 +352,7 @@ namespace Cognite.Extensions
 
             var ids = new HashSet<Identity>();
             var duplicated = new HashSet<Identity>();
-            var bad = new List<(ResourceType, SequenceDataCreate)>();
+            var bad = new List<(ResourceType Type, SequenceDataCreate Seq)>();
 
             var badRowSequences = new List<(ResourceType, SequenceRowError)>();
             var dupRowErrors = new List<SequenceRowError>();
@@ -384,7 +384,7 @@ namespace Cognite.Extensions
                     toAdd = false;
                 }
 
-                var badRows = new List<(ResourceType, SequenceRow)>();
+                var badRows = new List<(ResourceType Type, SequenceRow Row)>();
 
                 var rowNums = new HashSet<long>();
                 var duplicateRows = new List<SequenceRow>();
@@ -445,31 +445,18 @@ namespace Cognite.Extensions
 
                 if (duplicatedColumns.Any())
                 {
-                    dupColumnErrors.Add(new SequenceRowError
-                    {
-                        BadColumns = duplicatedColumns,
-                        Id = idt,
-                        SkippedRows = seq.Rows
-                    });
+                    dupColumnErrors.Add(new SequenceRowError(seq.Rows!, duplicatedColumns, idt));
                 }
                 if (duplicateRows.Any())
                 {
-                    dupRowErrors.Add(new SequenceRowError
-                    {
-                        Id = idt,
-                        SkippedRows = duplicateRows
-                    });
+                    dupRowErrors.Add(new SequenceRowError(duplicateRows, idt));
                 }
 
                 if (badRows.Any())
                 {
-                    badRowSequences.AddRange(badRows.GroupBy(pair => pair.Item1).Select(group => (
+                    badRowSequences.AddRange(badRows.GroupBy(pair => pair.Type).Select(group => (
                         group.Key,
-                        new SequenceRowError
-                        {
-                            Id = idt,
-                            SkippedRows = group.Select(pair => pair.Item2).ToList()
-                        }
+                        new SequenceRowError(group.Select(pair => pair.Row).ToList(), idt)
                     )));
                 }
 
@@ -517,12 +504,12 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceRowError>
+                errors.AddRange(bad.GroupBy(pair => pair.Type).Select(group => new CogniteError<SequenceRowError>
                 {
-                    Skipped = group.Select(pair => new SequenceRowError {
-                        Id = pair.Item2.Id.HasValue ? Identity.Create(pair.Item2.Id.Value) : Identity.Create(pair.Item2.ExternalId),
-                        SkippedRows = pair.Item2.Rows
-                    }).ToList(),
+                    Skipped = group.Select(pair => new SequenceRowError(
+                        pair.Seq.Rows,
+                        pair.Seq.Id.HasValue ? Identity.Create(pair.Seq.Id.Value) : Identity.Create(pair.Seq.ExternalId)
+                    )).ToList(),
                     Resource = group.Key,
                     Type = ErrorType.SanitationFailed,
                     Status = 400

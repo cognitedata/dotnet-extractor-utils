@@ -269,10 +269,8 @@ namespace Cognite.Extractor.Utils
             RetryMode retryMode,
             CancellationToken token)
         {
-            if (points == null || !points.Any())
-            {
-                return null;
-            }
+            if (points == null || !points.Any()) return new CogniteResult<DataPointInsertError>(null);
+
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
@@ -412,7 +410,7 @@ namespace Cognite.Extractor.Utils
         /// <typeparam name="T">Type of the DTO</typeparam>
         /// <returns>An upload queue object</returns>
         public IRawUploadQueue<T> CreateRawUploadQueue<T>(string database, string table,
-            TimeSpan interval, int maxQueueSize = 0, Func<QueueUploadResult<(string key, T columns)>, Task> callback = null)
+            TimeSpan interval, int maxQueueSize = 0, Func<QueueUploadResult<(string key, T columns)>, Task>? callback = null)
         {
             return new RawUploadQueue<T>(database, table, this, interval, maxQueueSize, _logger, callback);
         }
@@ -432,7 +430,7 @@ namespace Cognite.Extractor.Utils
         /// a local file if inserting times out or fails with status >= 500</param>
         /// <returns>An upload queue object</returns>
         public TimeSeriesUploadQueue CreateTimeSeriesUploadQueue(TimeSpan interval, int maxQueueSize = 0,
-            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback = null, string bufferPath = null)
+            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>? callback = null, string? bufferPath = null)
         {
             return new TimeSeriesUploadQueue(this, interval, maxQueueSize, _logger, callback, bufferPath);
         }
@@ -452,7 +450,7 @@ namespace Cognite.Extractor.Utils
         /// a local file if inserting times out or fails with status >= 500</param>
         /// <returns>An upload queue object</returns>
         public EventUploadQueue CreateEventUploadQueue(TimeSpan interval, int maxQueueSize = 0,
-            Func<QueueUploadResult<EventCreate>, Task> callback = null, string bufferPath = null)
+            Func<QueueUploadResult<EventCreate>, Task>? callback = null, string? bufferPath = null)
         {
             return new EventUploadQueue(this, interval, maxQueueSize, _logger, callback, bufferPath);
         }

@@ -10,7 +10,7 @@ namespace Cognite.Extractor.Common
 {
     internal sealed class PeriodicTask : IDisposable
     {
-        public Task Task { get; set; }
+        public Task Task { get; set; } = null!;
         public Func<CancellationToken, Task> Operation { get; }
         public ManualResetEvent Event { get; } = new ManualResetEvent(false);
         public TimeSpan Interval { get; }
@@ -226,7 +226,7 @@ namespace Cognite.Extractor.Common
         private async Task InternalPendingLoop()
         {
             var tasks = new List<Task>();
-            PeriodicTask failedTask = null;
+            PeriodicTask? failedTask = null;
 
             var waitTask = WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token);
             tasks.Add(waitTask);

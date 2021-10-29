@@ -11,19 +11,19 @@ namespace Cognite.Extractor.Logging
         /// Logging to console (optional)
         /// </summary>
         /// <value>A <see cref="LogConfig"/> config object</value>
-        public ConsoleConfig Console { get; set; }
+        public ConsoleConfig? Console { get; set; }
         
         /// <summary>
         /// Logging to file (optional)
         /// </summary>
         /// <value>A <see cref="FileConfig"/> config object</value>
-        public FileConfig File { get; set; }
+        public FileConfig? File { get; set; }
 
         /// <summary>
         /// Adds a listener that uses the configured logger to output <see cref="System.Diagnostics.Trace"/> messages
         /// </summary>
         /// <value></value>
-        public TraceListenerConfig TraceListener { get; set; }
+        public TraceListenerConfig? TraceListener { get; set; }
         
     }
 
@@ -36,7 +36,7 @@ namespace Cognite.Extractor.Logging
         /// Logging level.
         /// </summary>
         /// <value>One of 'verbose', 'debug', 'information', 'warning', 'error', 'fatal'</value>
-        public string Level { get; set; }
+        public string? Level { get; set; }
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ namespace Cognite.Extractor.Logging
         /// Minimum logging level to output to standard error.
         /// </summary>
         /// <value>One of 'verbose', 'debug', 'information', 'warning', 'error', 'fatal'</value>
-        public string StderrLevel { get; set; }
+        public string? StderrLevel { get; set; }
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ namespace Cognite.Extractor.Logging
         /// and <c>txt</c> as extension in the <c>logs</c> folder.
         /// </summary>
         /// <value>Path to file</value>
-        public string Path { get; set; }
+        public string? Path { get; set; }
         
         /// <summary>
         /// The maximum number of log files that will be retained in the log folder.

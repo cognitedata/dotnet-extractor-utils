@@ -80,7 +80,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="str">String to transform</param>
         /// <returns>Storable bytes</returns>
-        public static byte[] StringToStorable(string str)
+        public static byte[] StringToStorable(string? str)
         {
             if (str == null)
             {
@@ -101,7 +101,7 @@ namespace Cognite.Extensions
         /// <param name="stream">Stream to read from</param>
         /// <param name="size">Optional size, if this is non-null, skip reading size from the stream</param>
         /// <returns>Resulting parsed string</returns>
-        public static string StringFromStream(Stream stream, ushort? size = null)
+        public static string? StringFromStream(Stream stream, ushort? size = null)
         {
             if (stream is null)
             {
@@ -234,7 +234,7 @@ namespace Cognite.Extensions
                 }
                 else
                 {
-                    string extId = StringFromStream(stream, size);
+                    string? extId = StringFromStream(stream, size);
                     if (extId == null) break;
                     id = Identity.Create(extId);
                 }
@@ -335,7 +335,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="stream">Stream to read from</param>
         /// <returns></returns>
-        public static EventCreate EventFromStream(Stream stream)
+        public static EventCreate? EventFromStream(Stream stream)
         {
             if (stream == null)
             {
@@ -542,7 +542,7 @@ namespace Cognite.Extensions
         /// <param name="maxRetries">Maximum number of retries</param>
         /// <param name="maxDelay">Maximum delay between each retry in milliseconds, negative for no upper limit</param>
         /// <returns></returns>
-        public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger logger,
+        public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger? logger,
             int? maxRetries,
             int? maxDelay)
         {
@@ -593,6 +593,7 @@ namespace Cognite.Extensions
         public static void AddExtensionLoggers(this IServiceProvider provider)
         {
             var logger = provider.GetService<ILogger<Client>>();
+            if (logger == null) logger = new NullLogger<Client>();
             AssetExtensions.SetLogger(logger);
             DataPointExtensions.SetLogger(logger);
             TimeSeriesExtensions.SetLogger(logger);
@@ -609,7 +610,7 @@ namespace Cognite.Extensions
     {
         private readonly long _timestamp;
         private readonly double? _numericValue;
-        private readonly string _stringValue;
+        private readonly string? _stringValue;
         
         /// <summary>
         /// Timestamp in Unix time milliseconds
@@ -619,7 +620,7 @@ namespace Cognite.Extensions
         /// <summary>
         /// Optional string value
         /// </summary>
-        public string StringValue => _stringValue;
+        public string? StringValue => _stringValue;
 
         /// <summary>
         /// Optional double value
@@ -671,7 +672,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="stringValue">string value</param>
-        public Datapoint(long timestamp, string stringValue)
+        public Datapoint(long timestamp, string? stringValue)
         {
             _timestamp = timestamp;
             _numericValue = null;
@@ -694,7 +695,7 @@ namespace Cognite.Extensions
             }
             else
             {
-                valBytes = BitConverter.GetBytes(_numericValue.Value);
+                valBytes = BitConverter.GetBytes(_numericValue!.Value);
             }
             size += (ushort)valBytes.Length;
 
@@ -713,7 +714,7 @@ namespace Cognite.Extensions
         /// Initializes Datapoint by reading from a stream. Requires that the next bytes in the stream represent a datapoint.
         /// </summary>
         /// <param name="stream">Stream to read from</param>
-        public static Datapoint FromStream(Stream stream)
+        public static Datapoint? FromStream(Stream stream)
         {
             if (stream is null)
             {
@@ -728,7 +729,7 @@ namespace Cognite.Extensions
 
             if (isString)
             {
-                string value = CogniteUtils.StringFromStream(stream);
+                string? value = CogniteUtils.StringFromStream(stream);
                 return new Datapoint(timestamp, value);
             }
             else

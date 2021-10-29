@@ -16,22 +16,25 @@ namespace Cognite.Extensions
         /// Maximum length of External ID
         /// </summary>
         public const int ExternalIdMax = 255;
-        
+
         /// <summary>
         /// Reduce the length of given string to maxLength, if it is longer.
         /// </summary>
         /// <param name="str">String to be shortened</param>
         /// <param name="maxLength">Maximum length of final string</param>
         /// <returns>String which contains the first <paramref name="maxLength"/> characters of the passed string.</returns>
-        public static string Truncate(this string str, int maxLength)
+#if NETSTANDARD2_1_OR_GREATER
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("str")]
+#endif
+        public static string? Truncate(this string? str, int maxLength)
         {
-            if (string.IsNullOrEmpty(str) || str.Length <= maxLength) return str;
+            if (string.IsNullOrEmpty(str) || str!.Length <= maxLength) return str;
             return str.Substring(0, maxLength);
         }
 
-        private static bool CheckLength(this string str, int maxLength)
+        private static bool CheckLength(this string? str, int maxLength)
         {
-            return string.IsNullOrEmpty(str) || str.Length <= maxLength;
+            return string.IsNullOrEmpty(str) || str!.Length <= maxLength;
         }
 
         /// <summary>
@@ -40,7 +43,10 @@ namespace Cognite.Extensions
         /// <param name="id">CogniteExternalId to be shortened</param>
         /// <param name="maxLength">Maximum length of final string</param>
         /// <returns>CogniteExternalId which contains the first <paramref name="maxLength"/> characters of the passed value.</returns>
-        public static CogniteExternalId Truncate(this CogniteExternalId id, int maxLength)
+#if NETSTANDARD2_1_OR_GREATER
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("id")]
+#endif
+        public static CogniteExternalId? Truncate(this CogniteExternalId? id, int maxLength)
         {
             if (id == null) return id;
             var str = id.ExternalId;
@@ -54,7 +60,10 @@ namespace Cognite.Extensions
         /// <param name="str">String to truncate</param>
         /// <param name="n">Maximum number of UTF8 bytes in the final string</param>
         /// <returns>A truncated string, may be the same if no truncating was necessary</returns>
-        public static string LimitUtf8ByteCount(this string str, int n)
+#if NETSTANDARD2_1_OR_GREATER
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("str")]
+#endif
+        public static string? LimitUtf8ByteCount(this string? str, int n)
         {
             if (SafeByteCount(str) <= n) return str;
 
@@ -85,7 +94,7 @@ namespace Cognite.Extensions
             this IEnumerable<TInput> input,
             Func<TInput, TKey> keySelector,
             Func<TInput, TValue> valueSelector,
-            IEqualityComparer<TKey> comparer = null)
+            IEqualityComparer<TKey>? comparer = null)
         {
             if (input == null) 
             {
@@ -107,7 +116,7 @@ namespace Cognite.Extensions
             return ret;
         }
 
-        private static int SafeByteCount(string str)
+        private static int SafeByteCount(string? str)
         {
             if (string.IsNullOrEmpty(str)) return 0;
 
@@ -125,7 +134,10 @@ namespace Cognite.Extensions
         /// <param name="maxBytes">Maximum number of total bytes</param>
         /// <param name="bytes">Total number of bytes in returned metadata</param>
         /// <returns>A sanitized dictionary</returns>
-        public static Dictionary<string, string> SanitizeMetadata(this Dictionary<string, string> data,
+#if NETSTANDARD2_1_OR_GREATER
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("str")]
+#endif
+        public static Dictionary<string, string>? SanitizeMetadata(this Dictionary<string, string>? data,
             int maxPerKey,
             int maxKeys,
             int maxPerValue,
@@ -150,7 +162,7 @@ namespace Cognite.Extensions
                     }
                     return false;
                 })
-                .ToDictionarySafe(pair => pair.Item1, pair => pair.Item2);
+                .ToDictionarySafe(pair => pair.Item1!, pair => pair.Item2);
             bytes = byteCount;
             return result;
         }

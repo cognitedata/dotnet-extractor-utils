@@ -21,6 +21,7 @@ namespace Cognite.Extractor.StateStorage
 
         public RawStateStore(StateStoreConfig config, IRawDestination destination, ILogger logger)
         {
+            if (config.Location == null) throw new ArgumentException("config.Location is required");
             _destination = destination;
             _config = config;
             _logger = logger;

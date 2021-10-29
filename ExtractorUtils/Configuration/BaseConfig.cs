@@ -19,24 +19,24 @@ namespace Cognite.Extractor.Utils
         /// Logging configuration (optional)
         /// </summary>
         /// <value>A <see cref="LoggerConfig"/> config object</value>
-        public LoggerConfig Logger { get; set; }
+        public LoggerConfig Logger { get; set; } = null!;
 
         /// <summary>
         /// Metrics configuration (optional)
         /// </summary>
         /// <value>A <see cref="MetricsConfig"/> config object</value>
-        public MetricsConfig Metrics { get; set; }
+        public MetricsConfig Metrics { get; set; } = null!;
 
         /// <summary>
         /// Cognite configuration (optional)
         /// </summary>
         /// <value>A <see cref="CogniteConfig"/> config object</value>
-        public CogniteConfig Cognite { get; set; }
+        public CogniteConfig Cognite { get; set; } = null!;
 
         /// <summary>
         /// Configuration for extraction state storage (optional)
         /// </summary>
-        public StateStoreConfig StateStore { get; set; }
+        public StateStoreConfig StateStore { get; set; } = null!;
         /// <summary>
         /// Generate default configuration objects if the corresponding tags are not
         /// present in the yaml config file/string
@@ -61,19 +61,19 @@ namespace Cognite.Extractor.Utils
         /// The project name
         /// </summary>
         /// <value>project name</value>
-        public string Project { get; set; }
+        public string? Project { get; set; }
 
         /// <summary>
         /// API key for authentication (optional)
         /// </summary>
         /// <value>API key</value>
-        public string ApiKey { get; set; }
+        public string? ApiKey { get; set; }
 
         /// <summary>
         /// Authenticator config, if a bearer access token is to be used for authentication (optional)
         /// </summary>
         /// <value>Authenticator</value>
-        public AuthenticatorConfig IdpAuthentication { get; set; }
+        public AuthenticatorConfig? IdpAuthentication { get; set; }
 
         /// <summary>
         /// API host
@@ -103,7 +103,7 @@ namespace Cognite.Extractor.Utils
         /// Enables logging of Cognite Sdk operations. Enabled by default.
         /// Leaving this empty also disables.
         /// </summary>
-        public SdkLoggingConfig SdkLogging { get; set; }
+        public SdkLoggingConfig? SdkLogging { get; set; }
 
         /// <summary>
         /// Optional replacement for non-finite double values in datapoints
@@ -113,7 +113,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Configuration for automatically reporting extraction pipeline runs.
         /// </summary>
-        public ExtractionRunConfig ExtractionPipeline { get; set; }
+        public ExtractionRunConfig? ExtractionPipeline { get; set; }
     }
 
     /// <summary>
@@ -171,43 +171,43 @@ namespace Cognite.Extractor.Utils
         /// Identity provider authority endpoint (optional)
         /// </summary>
         /// <value>URI</value>
-        public string Authority { get; set; } = "https://login.microsoftonline.com/";
+        public string? Authority { get; set; } = "https://login.microsoftonline.com/";
 
         /// <summary>
         /// The application (client) Id
         /// </summary>
         /// <value>Client Id</value>
-        public string ClientId { get; set; }
+        public string? ClientId { get; set; }
 
         /// <summary>
         /// The directory tenant. Either this or TokenUrl must be set.
         /// </summary>
         /// <value>Tenant</value>
-        public string Tenant { get; set; }
+        public string? Tenant { get; set; }
 
         /// <summary>
         /// URL to fetch tokens from. Either this or Auhtority / Tenant must be set.
         /// </summary>
         /// <value>Tenant</value>
-        public string TokenUrl { get; set; }
+        public string? TokenUrl { get; set; }
 
         /// <summary>
         /// The client secret
         /// </summary>
         /// <value>Secret</value>
-        public string Secret { get; set; }
+        public string? Secret { get; set; }
 
         /// <summary>
         /// Resource (optional, only valid for Basic implementation)
         /// </summary>
         /// <value>Secret</value>
-        public string Resource { get; set; }
+        public string? Resource { get; set; }
 
         /// <summary>
         /// Resource scopes
         /// </summary>
         /// <value>Scope</value>
-        public IList<string> Scopes { get; set; }
+        public IList<string>? Scopes { get; set; }
 
         /// <summary>
         /// Minimum time-to-live for the token in seconds (optional)

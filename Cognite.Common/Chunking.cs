@@ -141,7 +141,7 @@ namespace Cognite.Extractor.Common
             int maxSize,
             Func<T, K> idSelector,
             Func<T, K> parentIdSelector,
-            IEqualityComparer<K> comparer = null)
+            IEqualityComparer<K>? comparer = null)
         {
             if (idSelector == null)
             {
@@ -164,7 +164,7 @@ namespace Cognite.Extractor.Common
             foreach (var el in input)
             {
                 var parentId = parentIdSelector(el);
-                if (eqComparer.Equals(parentId, default) || !nodeSet.Contains(parentId))
+                if (eqComparer.Equals(parentId, default!) || !nodeSet.Contains(parentId))
                 {
                     // This is the first layer, we can recursively traverse the tree using this later.
                     layer.Add(el);
@@ -271,7 +271,7 @@ namespace Cognite.Extractor.Common
         public static async Task RunThrottled(
             this IEnumerable<Func<Task>> generators,
             int parallelism,
-            Action<Task> taskCompletedCallback,
+            Action<Task>? taskCompletedCallback,
             CancellationToken token)
         {
             List<Task> tasks = new List<Task>();

@@ -195,7 +195,7 @@ namespace Cognite.Extractor.StateStorage
             services.AddSingleton<IExtractionStateStore>(provider =>
             {
                 var config = provider.GetRequiredService<StateStoreConfig>();
-                if (string.IsNullOrWhiteSpace(config.Location)) return null;
+                if (string.IsNullOrWhiteSpace(config.Location)) return null!;
                 if (config.Database == StateStoreConfig.StorageType.LiteDb && !bannedTypes.Contains(StateStoreConfig.StorageType.LiteDb))
                 {
                     var logger = provider.GetRequiredService<ILogger<LiteDBStateStore>>();
@@ -209,7 +209,7 @@ namespace Cognite.Extractor.StateStorage
                 }
                 else
                 {
-                    return null;
+                    return null!;
                 }
 
             });

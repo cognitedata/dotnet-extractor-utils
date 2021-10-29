@@ -160,7 +160,7 @@ namespace Cognite.Extractor.Common
 
                 long value = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
 
-                return now.Add(-GetSpan(rawUnit, value).Value);
+                return now.Add(-GetSpan(rawUnit, value)!.Value);
             }
             else
             {
@@ -187,7 +187,7 @@ namespace Cognite.Extractor.Common
         /// <param name="t">Raw input</param>
         /// <param name="defaultUnit">Default unit to use if no unit is specified</param>
         /// <returns>TimeSpan or null if input is invalid</returns>
-        public static TimeSpan? ParseTimeSpanString(string t, string defaultUnit = null)
+        public static TimeSpan? ParseTimeSpanString(string t, string? defaultUnit = null)
         {
             var match = timespanStringRegex.Match(t);
             if (match.Success)

@@ -26,7 +26,7 @@ namespace Cognite.Extensions
             }
             else
             {
-                double value = point.NumericValue.Value;
+                double value = point.NumericValue!.Value;
                 if (!double.IsNaN(value))
                 {
                     value = Math.Max(CogniteUtils.NumericValueMin, value);
@@ -57,7 +57,7 @@ namespace Cognite.Extensions
             }
             else
             {
-                double value = point.NumericValue.Value;
+                double value = point.NumericValue!.Value;
                 if (double.IsNaN(value)
                     || double.IsInfinity(value)
                     || value > CogniteUtils.NumericValueMax

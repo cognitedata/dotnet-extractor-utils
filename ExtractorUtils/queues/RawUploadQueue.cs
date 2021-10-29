@@ -40,7 +40,7 @@ namespace Cognite.Extractor.Utils
             TimeSpan interval,
             int maxSize,
             ILogger<CogniteDestination> logger,
-            Func<QueueUploadResult<(string key, T columns)>, Task> callback) : base(destination, interval, maxSize, logger, callback)
+            Func<QueueUploadResult<(string key, T columns)>, Task>? callback) : base(destination, interval, maxSize, logger, callback)
         {
             _db = db;
             _table = table;

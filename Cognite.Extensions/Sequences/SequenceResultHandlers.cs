@@ -22,7 +22,7 @@ namespace Cognite.Extensions
                     err.Values = ex.Missing.Select(dict
                         => (dict["id"] as MultiValue.Long)?.Value)
                         .Where(id => id.HasValue)
-                        .Select(id => Identity.Create(id.Value));
+                        .Select(id => Identity.Create(id!.Value));
                 }
                 else if (ex.Message.StartsWith("dataset", StringComparison.InvariantCultureIgnoreCase)
                     || ex.Message.StartsWith("data set", StringComparison.InvariantCultureIgnoreCase))
@@ -32,7 +32,7 @@ namespace Cognite.Extensions
                     err.Values = ex.Missing.Select(dict
                         => (dict["id"] as MultiValue.Long)?.Value)
                         .Where(id => id.HasValue)
-                        .Select(id => Identity.Create(id.Value));
+                        .Select(id => Identity.Create(id!.Value));
                 }
             }
             else if (ex.Duplicated?.Any() ?? false)
@@ -125,7 +125,7 @@ namespace Cognite.Extensions
                     {
                         return Identity.Create(stringVal.Value);
                     }
-                    return null;
+                    return null!;
                 }).Where(id => id != null);
             }
             // Error messages are completely different in greenfield and bluefield
@@ -190,11 +190,7 @@ namespace Cognite.Extensions
                 }
                 else
                 {
-                    skipped.Add(new SequenceRowError
-                    {
-                        Id = idt,
-                        SkippedRows = seq.Rows
-                    });
+                    skipped.Add(new SequenceRowError(seq.Rows, idt));
                 }
             }
 
@@ -206,11 +202,9 @@ namespace Cognite.Extensions
                 }
                 else
                 {
-                    error.Skipped = creates.Select(seq => new SequenceRowError
-                    {
-                        Id = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId),
-                        SkippedRows = seq.Rows
-                    });
+                    error.Skipped = creates.Select(seq => new SequenceRowError(
+                        seq.Rows,
+                        seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId)));
                     return Array.Empty<SequenceDataCreate>();
                 }
             }
@@ -262,12 +256,7 @@ namespace Cognite.Extensions
                 var badColumns = create.Columns.Where(col => !colMap.ContainsKey(col)).ToList();
                 if (badColumns.Any())
                 {
-                    columnErrors.Add(new SequenceRowError
-                    {
-                        SkippedRows = create.Rows,
-                        BadColumns = badColumns,
-                        Id = kvp.Key
-                    });
+                    columnErrors.Add(new SequenceRowError(create.Rows, badColumns, kvp.Key));
                     create.Rows = Enumerable.Empty<SequenceRow>();
                     continue;
                 }
@@ -297,11 +286,7 @@ namespace Cognite.Extensions
 
                 if (badRows.Any())
                 {
-                    rowErrors.Add(new SequenceRowError
-                    {
-                        SkippedRows = badRows,
-                        Id = kvp.Key
-                    });
+                    rowErrors.Add(new SequenceRowError(badRows, kvp.Key));
                     create.Rows = create.Rows.Except(badRows).ToList();
                 }
             }
@@ -316,7 +301,7 @@ namespace Cognite.Extensions
                     Skipped = columnErrors,
                     Resource = ResourceType.ColumnExternalId,
                     Type = ErrorType.ItemMissing,
-                    Values = columnErrors.Select(seq => seq.Id)
+                    Values = columnErrors.Select(seq => seq.Id!)
                 });
             }
             if (rowErrors.Any())
@@ -343,16 +328,40 @@ namespace Cognite.Extensions
     public class SequenceRowError
     {
         /// <summary>
+        /// Constructor for missing columns
+        /// </summary>
+        /// <param name="skippedRows">Rows skipped due to this error</param>
+        /// <param name="badColumns">Bad columns</param>
+        /// <param name="id">Id of offending sequence</param>
+        public SequenceRowError(IEnumerable<SequenceRow> skippedRows, IEnumerable<string> badColumns, Identity id)
+        {
+            SkippedRows = skippedRows;
+            BadColumns = badColumns;
+            Id = id;
+        }
+
+        /// <summary>
+        /// Constructor for skipped rows
+        /// </summary>
+        /// <param name="skippedRows">Rows skipped due to this error</param>
+        /// <param name="id">Id of offending sequence</param>
+        public SequenceRowError(IEnumerable<SequenceRow> skippedRows, Identity id)
+        {
+            SkippedRows = skippedRows;
+            Id = id;
+        }
+
+        /// <summary>
         /// Missing columns, if any
         /// </summary>
-        public IEnumerable<string> BadColumns { get; set; }
+        public IEnumerable<string>? BadColumns { get; }
         /// <summary>
         /// Id of sequence
         /// </summary>
-        public Identity Id { get; set; }
+        public Identity Id { get; }
         /// <summary>
         /// Bad rows
         /// </summary>
-        public IEnumerable<SequenceRow> SkippedRows { get; set; }
+        public IEnumerable<SequenceRow> SkippedRows { get; }
     }
 }

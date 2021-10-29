@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extractor.Utils
 {
@@ -25,15 +26,15 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// CDF destination
         /// </summary>
-        protected CogniteDestination Destination { get; }
+        protected CogniteDestination? Destination { get; }
         /// <summary>
         /// Timeseries upload queue
         /// </summary>
-        protected TimeSeriesUploadQueue TSUploadQueue { get; private set; }
+        protected TimeSeriesUploadQueue? TSUploadQueue { get; private set; }
         /// <summary>
         /// Event upload queue
         /// </summary>
-        protected EventUploadQueue EventUploadQueue { get; private set; }
+        protected EventUploadQueue? EventUploadQueue { get; private set; }
         /// <summary>
         /// Raw upload queues, by dbName-tableName and type.
         /// </summary>
@@ -42,11 +43,11 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Scheduler for running various periodic tasks
         /// </summary>
-        protected PeriodicScheduler Scheduler { get; set; }
+        protected PeriodicScheduler Scheduler { get; set; } = null!;
         /// <summary>
         /// Cancellation token source
         /// </summary>
-        protected CancellationTokenSource Source { get; set; }
+        protected CancellationTokenSource Source { get; set; } = null!;
 
         /// <summary>
         /// Access to the service provider this extractor was built from
@@ -56,7 +57,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Extraction run for reporting to an extraction pipeline in CDF.
         /// </summary>
-        protected ExtractionRun Run { get; }
+        protected ExtractionRun? Run { get; }
 
         private readonly ILogger<BaseExtractor<TConfig>> _logger;
 
@@ -70,14 +71,14 @@ namespace Cognite.Extractor.Utils
         public BaseExtractor(
             TConfig config,
             IServiceProvider provider,
-            CogniteDestination destination = null,
-            ExtractionRun run = null)
+            CogniteDestination? destination = null,
+            ExtractionRun? run = null)
         {
             Config = config;
             Destination = destination;
             Provider = provider;
             Run = run;
-            _logger = provider.GetService<ILogger<BaseExtractor<TConfig>>>();
+            _logger = provider.GetService<ILogger<BaseExtractor<TConfig>>>() ?? new NullLogger<BaseExtractor<TConfig>>();
         }
 
         /// <summary>
@@ -233,8 +234,8 @@ namespace Cognite.Extractor.Utils
         protected void CreateTimeseriesQueue(
             int maxSize,
             TimeSpan uploadInterval,
-            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task> callback,
-            string bufferPath = null)
+            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>? callback,
+            string? bufferPath = null)
         {
             if (Destination == null) throw new InvalidOperationException("Creating queues requires Destination");
             if (TSUploadQueue != null) throw new InvalidOperationException("Timeseries upload queue already created");
@@ -275,8 +276,8 @@ namespace Cognite.Extractor.Utils
         protected void CreateEventQueue(
             int maxSize,
             TimeSpan uploadInterval,
-            Func<QueueUploadResult<EventCreate>, Task> callback,
-            string bufferPath = null)
+            Func<QueueUploadResult<EventCreate>, Task>? callback,
+            string? bufferPath = null)
         {
             if (Destination == null) throw new InvalidOperationException("Creating queues requires Destination");
             if (EventUploadQueue != null) throw new InvalidOperationException("Event upload queue already created");
@@ -325,7 +326,7 @@ namespace Cognite.Extractor.Utils
                     }
                     catch { }
                     Scheduler.Dispose();
-                    Scheduler = null;
+                    Scheduler = null!;
                 }
                 EventUploadQueue?.Dispose();
                 EventUploadQueue = null;
@@ -341,7 +342,7 @@ namespace Cognite.Extractor.Utils
                 {
                     Source.Cancel();
                     Source.Dispose();
-                    Source = null;
+                    Source = null!;
                 }
             }
         }
@@ -361,7 +362,7 @@ namespace Cognite.Extractor.Utils
                     _logger?.LogError(ex, "Error terminating scheduler: {msg}", ex.Message);
                 }
                 Scheduler.Dispose();
-                Scheduler = null;
+                Scheduler = null!;
             }
             if (EventUploadQueue != null) await EventUploadQueue.DisposeAsync().ConfigureAwait(false);
             EventUploadQueue = null;
@@ -376,7 +377,7 @@ namespace Cognite.Extractor.Utils
             {
                 Source.Cancel();
                 Source.Dispose();
-                Source = null;
+                Source = null!;
             }
         }
 

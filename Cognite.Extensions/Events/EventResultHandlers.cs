@@ -18,7 +18,7 @@ namespace Cognite.Extensions
                     err.Values = ex.Missing.Select(dict =>
                         (dict["id"] as MultiValue.Long)?.Value)
                         .Where(id => id.HasValue)
-                        .Select(id => Identity.Create(id.Value));
+                        .Select(id => Identity.Create(id!.Value));
                 }
             }
             else if (ex.Duplicated?.Any() ?? false)

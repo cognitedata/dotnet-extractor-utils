@@ -23,7 +23,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="token">Cancellation token</param>
         /// <returns>A valid token</returns>
-        Task<string> GetToken(CancellationToken token = default);
+        Task<string?> GetToken(CancellationToken token = default);
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ namespace Cognite.Extractor.Utils
 #pragma warning restore CA1812
         {
             [JsonPropertyName("access_token")]
-            public string AccessToken { get; set; }
+            public string? AccessToken { get; set; }
 
             [JsonPropertyName("expires_in")]
             public int ExpiresIn { get; set; }
@@ -50,13 +50,13 @@ namespace Cognite.Extractor.Utils
 #pragma warning restore CA1812
         {
             [JsonPropertyName("error")]
-            public string Error { get; set; }
+            public string? Error { get; set; }
 
             [JsonPropertyName("error_description")]
-            public string ErrorDescription { get; set; }
+            public string? ErrorDescription { get; set; }
 
             [JsonPropertyName("error_uri")]
-            public string ErrorDUri { get; set; }
+            public string? ErrorDUri { get; set; }
         }
 
         // Injected properties
@@ -66,7 +66,7 @@ namespace Cognite.Extractor.Utils
 
         private readonly Uri _tokenUri;
 
-        private ResponseDTO _response;
+        private ResponseDTO? _response;
         private DateTime _requestTime;
 
         /// <summary>
@@ -106,15 +106,15 @@ namespace Cognite.Extractor.Utils
         {
             var form = new Dictionary<string, string>
             {
-                { "client_id", _config.ClientId },
-                { "client_secret", _config.Secret },
+                { "client_id", _config.ClientId! },
+                { "client_secret", _config.Secret! },
                 { "scope", string.Join(" ", _config.Scopes) },
                 { "grant_type", "client_credentials" }
             };
 
             if (!string.IsNullOrWhiteSpace(_config.Resource))
             {
-                form["resource"] = _config.Resource;
+                form["resource"] = _config.Resource!;
             }
 
             using (var httpContent = new FormUrlEncodedContent(form))
@@ -125,6 +125,11 @@ namespace Cognite.Extractor.Utils
                 if (response.IsSuccessStatusCode)
                 {
                     var tokenResponse = JsonSerializer.Deserialize<ResponseDTO>(body);
+                    if (tokenResponse == null)
+                    {
+                        throw new CogniteUtilsException("Could not obtain OIDC token: Empty response");
+                    }
+
                     _logger.LogDebug(
                         "New OIDC token. Expires on {ttl}", 
                         (DateTime.UtcNow + TimeSpan.FromSeconds(tokenResponse.ExpiresIn)).ToISOString());
@@ -134,6 +139,10 @@ namespace Cognite.Extractor.Utils
                 {
                     try {
                         var error = JsonSerializer.Deserialize<ErrorDTO>(body);
+                        if (error == null)
+                        {
+                            throw new CogniteUtilsException("Could not obtain OIDC token: Empty error");
+                        }
                         _logger.LogError("Unable to obtain OIDC token: {Message}", error.ErrorDescription);
                         throw new CogniteUtilsException($"Could not obtain OIDC token: {error.Error} {error.ErrorDescription}");
                     }
@@ -164,7 +173,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancellation token</param>
         /// <returns>A valid bearer access token</returns>
         /// <exception cref="CogniteUtilsException">Thrown when it was not possible to obtain an authentication token.</exception>
-        public async Task<string> GetToken(CancellationToken token = default)
+        public async Task<string?> GetToken(CancellationToken token = default)
         {
             // TODO: could start a background task to update the token so that this call does not block on the HTTP request.
             if (_config == null)
@@ -174,7 +183,7 @@ namespace Cognite.Extractor.Utils
             }
             if (TokenValid())
             {
-                return _response.AccessToken;
+                return _response?.AccessToken;
             }
 
             _requestTime = DateTime.UtcNow;
