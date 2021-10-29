@@ -111,11 +111,13 @@ namespace Cognite.Extractor.Utils
                 { "grant_type", "client_credentials" }
             };
 
-            if (_config.Scopes != null && _config.Scopes.Count > 0){
+            if (_config.Scopes != null && _config.Scopes.Count > 0)
+            {
                 form["scope"] = string.Join(" ", _config.Scopes);
             }
 
-            if (!string.IsNullOrWhiteSpace(_config.Audience)){
+            if (!string.IsNullOrWhiteSpace(_config.Audience))
+            {
                 form["audience"] = _config.Audience!;
             }
 
