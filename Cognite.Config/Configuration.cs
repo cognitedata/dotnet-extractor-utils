@@ -189,7 +189,7 @@ namespace Cognite.Extractor.Configuration
         /// <param name="services">Services to add to</param>
         /// <param name="config">Configuration object to add from</param>
         /// <param name="types">List of types that should be added</param>
-        public static void AddConfig<T>(this IServiceCollection services, T config, params Type[] types)
+        public static void AddConfig<T>(this IServiceCollection services, T? config, params Type[]? types) where T : class
         {
             if (types == null || !types.Any() || config is null) return;
             foreach (var type in types)

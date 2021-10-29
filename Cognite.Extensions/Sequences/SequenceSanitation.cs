@@ -352,7 +352,7 @@ namespace Cognite.Extensions
 
             var ids = new HashSet<Identity>();
             var duplicated = new HashSet<Identity>();
-            var bad = new List<(ResourceType, SequenceDataCreate)>();
+            var bad = new List<(ResourceType Type, SequenceDataCreate Seq)>();
 
             var badRowSequences = new List<(ResourceType, SequenceRowError)>();
             var dupRowErrors = new List<SequenceRowError>();
@@ -384,7 +384,7 @@ namespace Cognite.Extensions
                     toAdd = false;
                 }
 
-                var badRows = new List<(ResourceType, SequenceRow)>();
+                var badRows = new List<(ResourceType Type, SequenceRow Row)>();
 
                 var rowNums = new HashSet<long>();
                 var duplicateRows = new List<SequenceRow>();
@@ -454,9 +454,9 @@ namespace Cognite.Extensions
 
                 if (badRows.Any())
                 {
-                    badRowSequences.AddRange(badRows.GroupBy(pair => pair.Item1).Select(group => (
+                    badRowSequences.AddRange(badRows.GroupBy(pair => pair.Type).Select(group => (
                         group.Key,
-                        new SequenceRowError(group.Select(pair => pair.Item2).ToList(), idt)
+                        new SequenceRowError(group.Select(pair => pair.Row).ToList(), idt)
                     )));
                 }
 
@@ -504,11 +504,11 @@ namespace Cognite.Extensions
             }
             if (bad.Any())
             {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceRowError>
+                errors.AddRange(bad.GroupBy(pair => pair.Type).Select(group => new CogniteError<SequenceRowError>
                 {
                     Skipped = group.Select(pair => new SequenceRowError(
-                        pair.Item2.Rows,
-                        pair.Item2.Id.HasValue ? Identity.Create(pair.Item2.Id.Value) : Identity.Create(pair.Item2.ExternalId)
+                        pair.Seq.Rows,
+                        pair.Seq.Id.HasValue ? Identity.Create(pair.Seq.Id.Value) : Identity.Create(pair.Seq.ExternalId)
                     )).ToList(),
                     Resource = group.Key,
                     Type = ErrorType.SanitationFailed,

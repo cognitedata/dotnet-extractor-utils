@@ -179,7 +179,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="other">CogniteResult to merge with</param>
         /// <returns>A new result containing the CogniteErrors from both results</returns>
-        public CogniteResult<TError> Merge(CogniteResult<TError> other)
+        public CogniteResult<TError> Merge(CogniteResult<TError>? other)
         {
             if (other == null) return this;
             IEnumerable<CogniteError<TError>>? errors;
@@ -198,7 +198,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="results">List of CogniteResult to merge with</param>
         /// <returns>A new result containing the CogniteErrors from all results given as parameter</returns>
-        public static CogniteResult<TError> Merge(params CogniteResult<TError>[] results)
+        public static CogniteResult<TError> Merge(params CogniteResult<TError>[]? results)
         {
             if (results == null) return new CogniteResult<TError>(null);
             var errors = new List<CogniteError<TError>>();
