@@ -781,12 +781,15 @@ references:
   commentId: M:Cognite.Extensions.Datapoint.#ctor(DateTime,System.Double)
   fullName: Cognite.Extensions.Datapoint.Datapoint(DateTime, System.Double)
   nameWithType: Datapoint.Datapoint(DateTime, Double)
-- uid: Cognite.Extensions.Datapoint.#ctor(DateTime,System.String)
-  name: Datapoint(DateTime, String)
-  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_DateTime_System_String_
-  commentId: M:Cognite.Extensions.Datapoint.#ctor(DateTime,System.String)
-  fullName: Cognite.Extensions.Datapoint.Datapoint(DateTime, System.String)
-  nameWithType: Datapoint.Datapoint(DateTime, String)
+- uid: Cognite.Extensions.Datapoint.#ctor(DateTime,System.Nullable{System.String})
+  name: Datapoint(DateTime, Nullable<String>)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_DateTime_System_Nullable_System_String__
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(DateTime,System.Nullable{System.String})
+  name.vb: Datapoint(DateTime, Nullable(Of String))
+  fullName: Cognite.Extensions.Datapoint.Datapoint(DateTime, System.Nullable<System.String>)
+  fullName.vb: Cognite.Extensions.Datapoint.Datapoint(DateTime, System.Nullable(Of System.String))
+  nameWithType: Datapoint.Datapoint(DateTime, Nullable<String>)
+  nameWithType.vb: Datapoint.Datapoint(DateTime, Nullable(Of String))
 - uid: Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Double)
   name: Datapoint(Int64, Double)
   href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_Int64_System_Double_
@@ -2104,15 +2107,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.Verify
   nameWithType: Sanitation.Verify
-- uid: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32@)
-  name: VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32, out Int32)
-  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_Dictionary_System_String_System_String__System_Int32_System_Int32_System_Int32_System_Int32_System_Int32__
-  commentId: M:Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary{System.String,System.String},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32@)
-  name.vb: VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32, ByRef Int32)
-  fullName: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary<System.String, System.String>, System.Int32, System.Int32, System.Int32, System.Int32, out System.Int32)
-  fullName.vb: Cognite.Extensions.Sanitation.VerifyMetadata(Dictionary(Of System.String, System.String), System.Int32, System.Int32, System.Int32, System.Int32, ByRef System.Int32)
-  nameWithType: Sanitation.VerifyMetadata(Dictionary<String, String>, Int32, Int32, Int32, Int32, out Int32)
-  nameWithType.vb: Sanitation.VerifyMetadata(Dictionary(Of String, String), Int32, Int32, Int32, Int32, ByRef Int32)
+- uid: Cognite.Extensions.Sanitation.VerifyMetadata(System.Nullable{Dictionary{System.String,System.String}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32@)
+  name: VerifyMetadata(Nullable<Dictionary<String, String>>, Int32, Int32, Int32, Int32, out Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_System_Nullable_Dictionary_System_String_System_String___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32__
+  commentId: M:Cognite.Extensions.Sanitation.VerifyMetadata(System.Nullable{Dictionary{System.String,System.String}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32@)
+  name.vb: VerifyMetadata(Nullable(Of Dictionary(Of String, String)), Int32, Int32, Int32, Int32, ByRef Int32)
+  fullName: Cognite.Extensions.Sanitation.VerifyMetadata(System.Nullable<Dictionary<System.String, System.String>>, System.Int32, System.Int32, System.Int32, System.Int32, out System.Int32)
+  fullName.vb: Cognite.Extensions.Sanitation.VerifyMetadata(System.Nullable(Of Dictionary(Of System.String, System.String)), System.Int32, System.Int32, System.Int32, System.Int32, ByRef System.Int32)
+  nameWithType: Sanitation.VerifyMetadata(Nullable<Dictionary<String, String>>, Int32, Int32, Int32, Int32, out Int32)
+  nameWithType.vb: Sanitation.VerifyMetadata(Nullable(Of Dictionary(Of String, String)), Int32, Int32, Int32, Int32, ByRef Int32)
 - uid: Cognite.Extensions.Sanitation.VerifyMetadata*
   name: VerifyMetadata
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_VerifyMetadata_
@@ -6414,15 +6417,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue
   nameWithType: CogniteDestination.CreateTimeSeriesUploadQueue
-- uid: Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary{Identity,IEnumerable{Cognite.Extractor.Common.TimeRange}},CancellationToken)
-  name: DeleteDataPointsIgnoreErrorsAsync(IDictionary<Identity, IEnumerable<TimeRange>>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_IDictionary_Identity_IEnumerable_Cognite_Extractor_Common_TimeRange___CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary{Identity,IEnumerable{Cognite.Extractor.Common.TimeRange}},CancellationToken)
-  name.vb: DeleteDataPointsIgnoreErrorsAsync(IDictionary(Of Identity, IEnumerable(Of TimeRange)), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary<Identity, IEnumerable<Cognite.Extractor.Common.TimeRange>>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary(Of Identity, IEnumerable(Of Cognite.Extractor.Common.TimeRange)), CancellationToken)
-  nameWithType: CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary<Identity, IEnumerable<TimeRange>>, CancellationToken)
-  nameWithType.vb: CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(IDictionary(Of Identity, IEnumerable(Of TimeRange)), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(System.Nullable{IDictionary{Identity,IEnumerable{Cognite.Extractor.Common.TimeRange}}},CancellationToken)
+  name: DeleteDataPointsIgnoreErrorsAsync(Nullable<IDictionary<Identity, IEnumerable<TimeRange>>>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_System_Nullable_IDictionary_Identity_IEnumerable_Cognite_Extractor_Common_TimeRange____CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(System.Nullable{IDictionary{Identity,IEnumerable{Cognite.Extractor.Common.TimeRange}}},CancellationToken)
+  name.vb: DeleteDataPointsIgnoreErrorsAsync(Nullable(Of IDictionary(Of Identity, IEnumerable(Of TimeRange))), CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(System.Nullable<IDictionary<Identity, IEnumerable<Cognite.Extractor.Common.TimeRange>>>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(System.Nullable(Of IDictionary(Of Identity, IEnumerable(Of Cognite.Extractor.Common.TimeRange))), CancellationToken)
+  nameWithType: CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(Nullable<IDictionary<Identity, IEnumerable<TimeRange>>>, CancellationToken)
+  nameWithType.vb: CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(Nullable(Of IDictionary(Of Identity, IEnumerable(Of TimeRange))), CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync*
   name: DeleteDataPointsIgnoreErrorsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_
@@ -6648,15 +6651,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync
   nameWithType: CogniteDestination.GetRowsAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,CancellationToken)
-  name: InsertDataPointsAsync(IDictionary<Identity, IEnumerable<Datapoint>>, SanitationMode, RetryMode, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,CancellationToken)
-  name.vb: InsertDataPointsAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(IDictionary<Identity, IEnumerable<Cognite.Extensions.Datapoint>>, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(IDictionary(Of Identity, IEnumerable(Of Cognite.Extensions.Datapoint)), Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, CancellationToken)
-  nameWithType: CogniteDestination.InsertDataPointsAsync(IDictionary<Identity, IEnumerable<Datapoint>>, SanitationMode, RetryMode, CancellationToken)
-  nameWithType.vb: CogniteDestination.InsertDataPointsAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(System.Nullable{IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,CancellationToken)
+  name: InsertDataPointsAsync(Nullable<IDictionary<Identity, IEnumerable<Datapoint>>>, SanitationMode, RetryMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_System_Nullable_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint____Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(System.Nullable{IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,CancellationToken)
+  name.vb: InsertDataPointsAsync(Nullable(Of IDictionary(Of Identity, IEnumerable(Of Datapoint))), SanitationMode, RetryMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(System.Nullable<IDictionary<Identity, IEnumerable<Cognite.Extensions.Datapoint>>>, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(System.Nullable(Of IDictionary(Of Identity, IEnumerable(Of Cognite.Extensions.Datapoint))), Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, CancellationToken)
+  nameWithType: CogniteDestination.InsertDataPointsAsync(Nullable<IDictionary<Identity, IEnumerable<Datapoint>>>, SanitationMode, RetryMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.InsertDataPointsAsync(Nullable(Of IDictionary(Of Identity, IEnumerable(Of Datapoint))), SanitationMode, RetryMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync*
   name: InsertDataPointsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_
@@ -6671,24 +6674,24 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync
   nameWithType: CogniteDestination.InsertRawRowsAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},CancellationToken)
-  name: InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},CancellationToken)
-  name.vb: InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync<T>(System.String, System.String, IDictionary<System.String, T>, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync(Of T)(System.String, System.String, IDictionary(Of System.String, T), CancellationToken)
-  nameWithType: CogniteDestination.InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, CancellationToken)
-  nameWithType.vb: CogniteDestination.InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), CancellationToken)
-- uid: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},JsonSerializerOptions,CancellationToken)
-  name: InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, JsonSerializerOptions, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__JsonSerializerOptions_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},JsonSerializerOptions,CancellationToken)
-  name.vb: InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), JsonSerializerOptions, CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync<T>(System.String, System.String, IDictionary<System.String, T>, JsonSerializerOptions, CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync(Of T)(System.String, System.String, IDictionary(Of System.String, T), JsonSerializerOptions, CancellationToken)
-  nameWithType: CogniteDestination.InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, JsonSerializerOptions, CancellationToken)
-  nameWithType.vb: CogniteDestination.InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), JsonSerializerOptions, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},System.Nullable{JsonSerializerOptions},CancellationToken)
+  name: InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, Nullable<JsonSerializerOptions>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__System_Nullable_JsonSerializerOptions__CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},System.Nullable{JsonSerializerOptions},CancellationToken)
+  name.vb: InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), Nullable(Of JsonSerializerOptions), CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync<T>(System.String, System.String, IDictionary<System.String, T>, System.Nullable<JsonSerializerOptions>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync(Of T)(System.String, System.String, IDictionary(Of System.String, T), System.Nullable(Of JsonSerializerOptions), CancellationToken)
+  nameWithType: CogniteDestination.InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, Nullable<JsonSerializerOptions>, CancellationToken)
+  nameWithType.vb: CogniteDestination.InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), Nullable(Of JsonSerializerOptions), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,System.Nullable{IDictionary{System.String,``0}},CancellationToken)
+  name: InsertRawRowsAsync<T>(String, String, Nullable<IDictionary<String, T>>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_System_Nullable_IDictionary_System_String___0___CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,System.Nullable{IDictionary{System.String,``0}},CancellationToken)
+  name.vb: InsertRawRowsAsync(Of T)(String, String, Nullable(Of IDictionary(Of String, T)), CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync<T>(System.String, System.String, System.Nullable<IDictionary<System.String, T>>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync(Of T)(System.String, System.String, System.Nullable(Of IDictionary(Of System.String, T)), CancellationToken)
+  nameWithType: CogniteDestination.InsertRawRowsAsync<T>(String, String, Nullable<IDictionary<String, T>>, CancellationToken)
+  nameWithType.vb: CogniteDestination.InsertRawRowsAsync(Of T)(String, String, Nullable(Of IDictionary(Of String, T)), CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync(IEnumerable{SequenceDataCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
   name: InsertSequenceRowsAsync(IEnumerable<SequenceDataCreate>, RetryMode, SanitationMode, CancellationToken)
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertSequenceRowsAsync_IEnumerable_SequenceDataCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
