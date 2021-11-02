@@ -149,8 +149,9 @@ namespace Cognite.Extractor.Common
         /// <param name="t">Timestamp string</param>
         /// <param name="relative">Set time relative to this if -ago syntax is used</param>
         /// <returns>DateTime or null if the input is invalid</returns>
-        public static DateTime? ParseTimestampString(string t, DateTime? relative = null)
+        public static DateTime? ParseTimestampString(string? t, DateTime? relative = null)
         {
+            if (t == null) return null;
             var now = relative ?? DateTime.UtcNow;
             var match = timestampStringRegex.Match(t);
             if (match.Success)
@@ -187,8 +188,9 @@ namespace Cognite.Extractor.Common
         /// <param name="t">Raw input</param>
         /// <param name="defaultUnit">Default unit to use if no unit is specified</param>
         /// <returns>TimeSpan or null if input is invalid</returns>
-        public static TimeSpan? ParseTimeSpanString(string t, string? defaultUnit = null)
+        public static TimeSpan? ParseTimeSpanString(string? t, string? defaultUnit = null)
         {
+            if (t == null) return null;
             var match = timespanStringRegex.Match(t);
             if (match.Success)
             {

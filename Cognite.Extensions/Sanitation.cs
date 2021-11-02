@@ -179,7 +179,7 @@ namespace Cognite.Extensions
         /// <param name="maxBytes">Maximum number of total bytes</param>
         /// <param name="bytes">Total number of bytes in metadata</param>
         /// <returns>True if the limits are satisfied, false otherwise</returns>
-        public static bool VerifyMetadata(this Dictionary<string, string> data,
+        public static bool VerifyMetadata(this Dictionary<string, string>? data,
             int maxPerKey,
             int maxKeys,
             int maxPerValue,

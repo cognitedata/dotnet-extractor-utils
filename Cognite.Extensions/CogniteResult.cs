@@ -243,7 +243,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="other">CogniteResult to merge with</param>
         /// <returns>A new result containing errors and results from both</returns>
-        public CogniteResult<TResult, TError> Merge(CogniteResult<TResult, TError> other)
+        public CogniteResult<TResult, TError> Merge(CogniteResult<TResult, TError>? other)
         {
             if (other == null) return this;
             IEnumerable<CogniteError<TError>>? errors;

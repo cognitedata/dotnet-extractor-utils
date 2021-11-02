@@ -35,11 +35,11 @@ namespace Cognite.Extractor.Common
     public class PeriodicScheduler : IDisposable
     {
         private CancellationTokenSource _source;
-        private Dictionary<string, PeriodicTask> _tasks = new Dictionary<string, PeriodicTask>();
+        private readonly Dictionary<string, PeriodicTask> _tasks = new Dictionary<string, PeriodicTask>();
         private bool disposedValue;
-        private ManualResetEvent _newTaskEvent = new ManualResetEvent(false);
-        private object _taskListMutex = new object();
-        private Task _internalLoopTask;
+        private readonly ManualResetEvent _newTaskEvent = new ManualResetEvent(false);
+        private readonly object _taskListMutex = new object();
+        private readonly Task _internalLoopTask;
 
         /// <summary>
         /// Number of currently active tasks
@@ -68,7 +68,7 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        public void SchedulePeriodicTask(string name, TimeSpan interval,
+        public void SchedulePeriodicTask(string? name, TimeSpan interval,
             Func<CancellationToken, Task> operation, bool runImmediately = true)
         {
             lock (_taskListMutex)
@@ -105,7 +105,7 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        public void SchedulePeriodicTask(string name, TimeSpan interval,
+        public void SchedulePeriodicTask(string? name, TimeSpan interval,
             Action<CancellationToken> operation, bool runImmediately = true)
         {
             SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
@@ -119,7 +119,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="name"></param>
         /// <param name="operation"></param>
-        public void ScheduleTask(string name, Func<CancellationToken, Task> operation)
+        public void ScheduleTask(string? name, Func<CancellationToken, Task> operation)
         {
             if (operation == null) throw new ArgumentNullException(nameof(operation));
             lock (_taskListMutex)
@@ -141,7 +141,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="name"></param>
         /// <param name="operation"></param>
-        public void ScheduleTask(string name, Action<CancellationToken> operation)
+        public void ScheduleTask(string? name, Action<CancellationToken> operation)
         {
             ScheduleTask(name, token => Task.Run(() => operation(token), CancellationToken.None));
         }

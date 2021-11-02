@@ -264,7 +264,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode"></param>
         /// <param name="token">Cancellation token</param>
         public async Task<CogniteResult<DataPointInsertError>> InsertDataPointsAsync(
-            IDictionary<Identity, IEnumerable<Datapoint>> points,
+            IDictionary<Identity, IEnumerable<Datapoint>>? points,
             SanitationMode sanitationMode,
             RetryMode retryMode,
             CancellationToken token)
@@ -299,7 +299,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancelation token</param>
         /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
         public async Task<DeleteError> DeleteDataPointsIgnoreErrorsAsync(
-            IDictionary<Identity, IEnumerable<Common.TimeRange>> ranges,
+            IDictionary<Identity, IEnumerable<TimeRange>>? ranges,
             CancellationToken token)
         {
             if (ranges == null || !ranges.Any())
@@ -339,7 +339,7 @@ namespace Cognite.Extractor.Utils
             string database,
             string table,
             IDictionary<string, T> rows,
-            JsonSerializerOptions options,
+            JsonSerializerOptions? options,
             CancellationToken token)
         {
             if (rows == null || !rows.Any())
@@ -375,7 +375,7 @@ namespace Cognite.Extractor.Utils
         public async Task InsertRawRowsAsync<T>(
             string database, 
             string table, 
-            IDictionary<string, T> rows, 
+            IDictionary<string, T>? rows,
             CancellationToken token)
         {
             if (rows == null || !rows.Any())
