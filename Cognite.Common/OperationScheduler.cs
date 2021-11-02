@@ -21,7 +21,7 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Exception if chunk operation failed
         /// </summary>
-        Exception Exception { get; set; }
+        Exception? Exception { get; set; }
         /// <summary>
         /// Return true if the passed item (which is a member of this chunk) is completed
         /// </summary>

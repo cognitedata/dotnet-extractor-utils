@@ -649,7 +649,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="stringValue">string value</param>
-        public Datapoint(DateTime timestamp, string stringValue)
+        public Datapoint(DateTime timestamp, string? stringValue)
         {
             _timestamp = timestamp.ToUnixTimeMilliseconds();
             _numericValue = null;

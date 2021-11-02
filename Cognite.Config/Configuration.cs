@@ -39,7 +39,7 @@ namespace Cognite.Extractor.Configuration
             {
                 return deserializer.Deserialize<T>(yaml);
             }
-            catch (YamlDotNet.Core.YamlException ye)
+            catch (YamlException ye)
             {
                 throw new ConfigurationException($"Failed to load config string at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
             }
@@ -113,10 +113,10 @@ namespace Cognite.Extractor.Configuration
         /// in case of yaml parsing errors.</exception>
         public static T TryReadConfigFromString<T>(string yaml, params int[] acceptedConfigVersions) where T : VersionedConfig
         {
-            int configVersion = ConfigurationUtils.GetVersionFromString(yaml);
+            int configVersion = GetVersionFromString(yaml);
             CheckVersion(configVersion, acceptedConfigVersions);
 
-            var config = ConfigurationUtils.ReadString<T>(yaml);
+            var config = ReadString<T>(yaml);
             config.GenerateDefaults();
             return config;
         }
@@ -136,10 +136,10 @@ namespace Cognite.Extractor.Configuration
         /// the yaml file is not found or in case of yaml parsing error.</exception>
         public static T TryReadConfigFromFile<T>(string path, params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
-            int configVersion = ConfigurationUtils.GetVersionFromFile(path);
+            int configVersion = GetVersionFromFile(path);
             CheckVersion(configVersion, acceptedConfigVersions);
 
-            var config = ConfigurationUtils.Read<T>(path);
+            var config = Read<T>(path);
             config.GenerateDefaults();
             return config;
         }

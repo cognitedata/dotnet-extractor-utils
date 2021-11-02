@@ -119,7 +119,7 @@ namespace Cognite.Extractor.Logging
    public class LoggerTraceListener : TraceListener
     {
         private readonly ILogger<LoggerTraceListener> _logger;
-        private readonly string? _level;
+        private readonly LogEventLevel? _level; 
 
         /// <summary>
         /// Creates a new listener using the logger and configuration passed as parameters
@@ -137,7 +137,10 @@ namespace Cognite.Extractor.Logging
                 throw new ArgumentNullException(nameof(logger));
             }
             _logger = logger;
-            _level = config.TraceListener?.Level;
+            if (Enum.TryParse(config.TraceListener?.Level, true, out LogEventLevel le))
+            {
+                _level = le;
+            }
         }
 
         /// <summary>
@@ -157,22 +160,22 @@ namespace Cognite.Extractor.Logging
         {
             if (_level is null) return;
             switch(_level){
-                case "verbose":
+                case LogEventLevel.Verbose:
                     _logger.LogTrace(message);
                     break;
-                case "debug":
+                case LogEventLevel.Debug:
                     _logger.LogDebug(message);
                     break;
-                case "information":
+                case LogEventLevel.Information:
                     _logger.LogInformation(message);
                     break;
-                case "warning":
+                case LogEventLevel.Warning:
                     _logger.LogWarning(message);
                     break;
-                case "error":
+                case LogEventLevel.Error:
                     _logger.LogError(message);
                     break;
-                case "fatal":
+                case LogEventLevel.Fatal:
                     _logger.LogCritical(message);
                     break;
                 default:
