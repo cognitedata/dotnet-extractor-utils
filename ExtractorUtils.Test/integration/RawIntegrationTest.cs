@@ -43,7 +43,7 @@ namespace ExtractorUtils.Test.Integration
             {
                 await tester.Destination.InsertRawRowsAsync(dbName, tableName, columns, tester.Source.Token);
                 
-                var rows = await tester.Destination.CogniteClient.Raw.ListRowsAsync(dbName, tableName, tester.Source.Token);
+                var rows = await tester.Destination.CogniteClient.Raw.ListRowsAsync<Dictionary<string, JsonElement>>(dbName, tableName, null, tester.Source.Token);
                 Assert.Equal(columns.Count, rows.Items.Count());
                 Assert.All(rows.Items, (i) =>{
                     Assert.True(columns.ContainsKey(i.Key));
@@ -57,7 +57,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     // TODO: deleting rows is not working in Bluefield. Enable this once it works.
                     await tester.Destination.DeleteRowsAsync(dbName, tableName, columns.Keys, tester.Source.Token);
-                    rows = await tester.Destination.CogniteClient.Raw.ListRowsAsync(dbName, tableName, tester.Source.Token);
+                    rows = await tester.Destination.CogniteClient.Raw.ListRowsAsync<Dictionary<string, JsonElement>>(dbName, tableName, null, tester.Source.Token);
                     Assert.Empty(rows.Items);
                 }
             }
@@ -102,7 +102,7 @@ namespace ExtractorUtils.Test.Integration
                 }
                 Assert.Equal(20, totalUploaded);
 
-                var rows = await tester.Destination.CogniteClient.Raw.ListRowsAsync(dbName, tableName, tester.Source.Token);
+                var rows = await tester.Destination.CogniteClient.Raw.ListRowsAsync<Dictionary<string, JsonElement>>(dbName, tableName, null, tester.Source.Token);
                 Assert.Equal(20, rows.Items.Count());
 
                 var indexes = Enumerable.Range(0, 20).Select(i => $"r{i}").ToList();

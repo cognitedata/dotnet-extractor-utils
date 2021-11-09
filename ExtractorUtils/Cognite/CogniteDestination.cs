@@ -468,7 +468,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogDebug("Fetching all rows from database {db}, table {table}", dbName, tableName);
-            return _client.Raw.GetRowsAsync(dbName, tableName, _config.CdfChunking.RawRows, token);
+            return _client.Raw.GetRowsAsync<IDictionary<string, JsonElement>>(dbName, tableName, _config.CdfChunking.RawRows, token);
         }
 
         /// <summary>

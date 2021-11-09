@@ -50,15 +50,15 @@ namespace Cognite.Extensions
             JsonSerializerOptions? options = null)
         {
             var chunks = rows
-                .Select(kvp =>  new RawRowCreateJson() { Key = kvp.Key, Columns = DtoToJson(kvp.Value, options) })
+                .Select(kvp =>  new RawRowCreate<T>() { Key = kvp.Key, Columns = kvp.Value })
                 .ChunkBy(chunkSize);
 
             var generators = chunks.
-                Select<IEnumerable<RawRowCreateJson>, Func<Task>>(
+                Select<IEnumerable<RawRowCreate<T>>, Func<Task>>(
                     chunk => async () => {
                         using (CdfMetrics.Raw.WithLabels("create_rows"))
                         {
-                            await raw.CreateRowsJsonAsync(database, table, chunk, true, token).ConfigureAwait(false);
+                            await raw.CreateRowsAsync<T>(database, table, chunk, true, options, token).ConfigureAwait(false);
                         }
                     }
                 );
@@ -86,16 +86,18 @@ namespace Cognite.Extensions
         /// <param name="tableName">Table to read from</param>
         /// <param name="chunkSize">Max number of items per request</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="options">Optional json serializer options</param>
         /// <returns>All rows</returns>
-        public static async Task<IDictionary<string, IDictionary<string, JsonElement>>> GetRowsAsync(
+        public static async Task<IDictionary<string, T>> GetRowsAsync<T>(
             this RawResource raw,
             string dbName,
             string tableName,
             int chunkSize,
-            CancellationToken token)
+            CancellationToken token,
+            JsonSerializerOptions? options = null)
         {
             // This might be able to be improved with the ability to pre-fetch cursors for parallel read. Missing from the SDK.
-            var result = new Dictionary<string, IDictionary<string, JsonElement>>();
+            var result = new Dictionary<string, T>();
             string? cursor = null;
             do
             {
@@ -107,10 +109,10 @@ namespace Cognite.Extensions
                 {
                     query.Cursor = cursor;
                 }
-                ItemsWithCursor<RawRow> rows;
+                ItemsWithCursor<RawRow<T>> rows;
                 using (CdfMetrics.Raw.WithLabels("list_rows").NewTimer())
                 {
-                    rows = await raw.ListRowsAsync(dbName, tableName, query, token).ConfigureAwait(false);
+                    rows = await raw.ListRowsAsync<T>(dbName, tableName, query, options, token).ConfigureAwait(false);
                 }
                 foreach (var row in rows.Items)
                 {
