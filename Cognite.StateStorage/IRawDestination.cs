@@ -26,6 +26,7 @@ namespace Cognite.Extractor.StateStorage
             string database,
             string table,
             IDictionary<string, T> rows,
+            JsonSerializerOptions? options,
             CancellationToken token);
 
         /// <summary>
@@ -33,9 +34,11 @@ namespace Cognite.Extractor.StateStorage
         /// </summary>
         /// <param name="dbName">Database to read from</param>
         /// <param name="tableName">Table to read from</param>
+        /// <param name="options"></param>
         /// <param name="token">Cancellation token</param>
         /// <returns>All rows</returns>
-        Task<IDictionary<string, IDictionary<string, JsonElement>>> GetRowsAsync(string dbName, string tableName, CancellationToken token);
+        Task<IDictionary<string, IDictionary<string, JsonElement>>> GetRowsAsync(
+            string dbName, string tableName, JsonSerializerOptions? options, CancellationToken token);
 
         /// <summary>
         /// Delete the given rows from raw database
