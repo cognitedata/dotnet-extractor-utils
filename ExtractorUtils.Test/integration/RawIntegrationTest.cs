@@ -47,8 +47,8 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(columns.Count, rows.Items.Count());
                 Assert.All(rows.Items, (i) =>{
                     Assert.True(columns.ContainsKey(i.Key));
-                    var name = i.Columns["Name"].ToString();
-                    Assert.True(i.Columns["Number"].TryGetInt32(out var number));
+                    var name = i.Columns["name"].ToString();
+                    Assert.True(i.Columns["number"].TryGetInt32(out var number));
                     Assert.Equal(name, columns[i.Key].Name);
                     Assert.Equal(number, columns[i.Key].Number);
                 });
@@ -108,8 +108,8 @@ namespace ExtractorUtils.Test.Integration
                 var indexes = Enumerable.Range(0, 20).Select(i => $"r{i}").ToList();
                 Assert.All(rows.Items, (i) =>{
 
-                    var name = i.Columns["Name"].ToString();
-                    Assert.True(i.Columns["Number"].TryGetInt32(out var number));
+                    var name = i.Columns["name"].ToString();
+                    Assert.True(i.Columns["number"].TryGetInt32(out var number));
                     Assert.Contains(i.Key, indexes);
                     Assert.Equal(name, $"Test {number}");
                 });
