@@ -19,6 +19,10 @@ namespace Cognite.Extractor.StateStorage
         private readonly string _dbName;
         private ConcurrentDictionary<string, DateTime> _lastTimeStored = new ConcurrentDictionary<string, DateTime>();
         public BsonMapper Mapper { get; }
+        public JsonSerializerOptions Options { get; set; } = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
         public RawStateStore(StateStoreConfig config, IRawDestination destination, ILogger logger)
         {
@@ -48,18 +52,13 @@ namespace Cognite.Extractor.StateStorage
             where T : BaseStorableState
             where K : IExtractionState
         {
-            var options = new JsonSerializerOptions
-            {
-                DictionaryKeyPolicy = null,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
             try
             {
                 _logger.LogDebug("Attempting to restore {TotalNum} extraction states from raw table {table}", 
                     extractionStates.Count, 
                     tableName);
                 int count = 0;
-                var raw = await _destination.GetRowsAsync(_dbName, tableName, options, token).ConfigureAwait(false);
+                var raw = await _destination.GetRowsAsync(_dbName, tableName, Options, token).ConfigureAwait(false);
                 foreach (var kvp in raw)
                 {
                     var id = kvp.Key;
@@ -133,11 +132,6 @@ namespace Cognite.Extractor.StateStorage
             where K : IExtractionState
         {
             // TODO: Drop the BsonToDict logic in favor of a proper custom naming system, maybe
-            var options = new JsonSerializerOptions
-            {
-                DictionaryKeyPolicy = null,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
             if (!_lastTimeStored.ContainsKey(tableName)) _lastTimeStored[tableName] = CogniteTime.DateTimeEpoch;
             var lastTimeStored = _lastTimeStored[tableName];
             var storageTime = DateTime.UtcNow;
@@ -158,7 +152,7 @@ namespace Cognite.Extractor.StateStorage
                 {
                     dict.Remove("_id");
                 }
-                await _destination.InsertRawRowsAsync(_dbName, tableName, dicts, options, token).ConfigureAwait(false);
+                await _destination.InsertRawRowsAsync(_dbName, tableName, dicts, Options, token).ConfigureAwait(false);
                 StateStoreMetrics.StateStoreCount.Inc();
                 StateStoreMetrics.StateStoreStates.Inc(pocosToStore.Count);
 

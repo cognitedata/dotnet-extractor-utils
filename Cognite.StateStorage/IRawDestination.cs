@@ -20,6 +20,7 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="table">Raw table name</param>
         /// <param name="rows">Rows of keys and columns</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="options">Optional JSON serializer options</param>
         /// <typeparam name="T">DTO type</typeparam>
         /// <returns>Task</returns>
         Task InsertRawRowsAsync<T>(
@@ -34,7 +35,7 @@ namespace Cognite.Extractor.StateStorage
         /// </summary>
         /// <param name="dbName">Database to read from</param>
         /// <param name="tableName">Table to read from</param>
-        /// <param name="options"></param>
+        /// <param name="options">Optional JSON serializer options</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>All rows</returns>
         Task<IDictionary<string, IDictionary<string, JsonElement>>> GetRowsAsync(
