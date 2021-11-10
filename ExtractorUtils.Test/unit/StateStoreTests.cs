@@ -24,8 +24,12 @@ namespace ExtractorUtils.Test.Unit
     public class StateStoreTestCollection
     {}
     [Collection("state-store")]
-    public class StateStoreTests
+    public class StateStoreTests : ConsoleWrapper
     {
+        public StateStoreTests(ITestOutputHelper output) : base(output)
+        {
+        }
+
         private const string _project = "someProject";
         private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
@@ -518,28 +522,32 @@ namespace ExtractorUtils.Test.Unit
         }
         private class RawItem
         {
-            public string key { get; set; }
-            public TestDto columns { get; set; }
+            public string Key { get; set; }
+            public TestDto Columns { get; set; }
         }
 
         private class RawDeleteItem
         {
-            public string key { get; set; }
+            public string Key { get; set; }
         }
 
         private class RawDelete
         {
-            public IEnumerable<RawDeleteItem> items { get; set; }
+            public IEnumerable<RawDeleteItem> Items { get; set; }
         }
 
         private class RawItems
         {
-            public List<RawItem> items { get; set; }
+            public List<RawItem> Items { get; set; }
         }
 
         private static Dictionary<string, TestDto> rows = new Dictionary<string, TestDto>();
         private static async Task<HttpResponseMessage> mockRawRequestAsync(HttpRequestMessage message, CancellationToken token)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
             var uri = message.RequestUri.ToString();
             // Assume that this means that the database or table is wrong
             if (!uri.Contains($"{_host}/api/v1/projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows"))
@@ -560,10 +568,10 @@ namespace ExtractorUtils.Test.Unit
             {
 
                 var content = await message.Content.ReadAsStringAsync();
-                var items = JsonSerializer.Deserialize<RawDelete>(content);
-                foreach (var item in items.items)
+                var items = JsonSerializer.Deserialize<RawDelete>(content, options);
+                foreach (var item in items.Items)
                 {
-                    rows.Remove(item.key);
+                    rows.Remove(item.Key);
                 }
                 var response = new HttpResponseMessage
                 {
@@ -582,11 +590,11 @@ namespace ExtractorUtils.Test.Unit
                 var responseBody = "{ }";
                 var statusCode = HttpStatusCode.OK;
                 var content = await message.Content.ReadAsStringAsync();
-                var items = JsonSerializer.Deserialize<RawItems>(content);
+                var items = JsonSerializer.Deserialize<RawItems>(content, options);
 
-                foreach (var item in items.items)
+                foreach (var item in items.Items)
                 {
-                    rows[item.key] = item.columns;
+                    rows[item.Key] = item.Columns;
                 }
 
                 var response = new HttpResponseMessage
@@ -603,13 +611,13 @@ namespace ExtractorUtils.Test.Unit
             {
                 var responseBody = JsonSerializer.Serialize(new RawItems
                 {
-                    items = rows.Select(kvp =>
+                    Items = rows.Select(kvp =>
                         new RawItem
                         {
-                            key = kvp.Key,
-                            columns = kvp.Value
+                            Key = kvp.Key,
+                            Columns = kvp.Value
                         }).ToList()
-                });
+                }, options);
                 var response = new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.OK,

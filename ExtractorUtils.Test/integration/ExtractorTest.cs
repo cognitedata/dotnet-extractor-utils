@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -217,7 +218,7 @@ namespace ExtractorUtils.Test.Integration
 
                         if ((dps.Items.First().NumericDatapoints?.Datapoints?.Count ?? 0) < 10) timeseriesOk = false;
 
-                        var rows = await destination.CogniteClient.Raw.ListRowsAsync(extractor.DBName, extractor.TableName);
+                        var rows = await destination.CogniteClient.Raw.ListRowsAsync<JsonElement>(extractor.DBName, extractor.TableName);
                         if (rows.Items.Count() < 10) rawOk = false;
                     }
                     else

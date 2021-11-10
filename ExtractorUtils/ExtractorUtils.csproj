@@ -21,11 +21,12 @@
     <None Include="..\LICENSE" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.36.1" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.37.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cognite.Config\Cognite.Configuration.csproj" />

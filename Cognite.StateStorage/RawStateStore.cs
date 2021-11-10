@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,10 @@ namespace Cognite.Extractor.StateStorage
         private readonly string _dbName;
         private ConcurrentDictionary<string, DateTime> _lastTimeStored = new ConcurrentDictionary<string, DateTime>();
         public BsonMapper Mapper { get; }
+        public JsonSerializerOptions Options { get; set; } = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
         public RawStateStore(StateStoreConfig config, IRawDestination destination, ILogger logger)
         {
@@ -53,7 +58,7 @@ namespace Cognite.Extractor.StateStorage
                     extractionStates.Count, 
                     tableName);
                 int count = 0;
-                var raw = await _destination.GetRowsAsync(_dbName, tableName, token).ConfigureAwait(false);
+                var raw = await _destination.GetRowsAsync(_dbName, tableName, Options, token).ConfigureAwait(false);
                 foreach (var kvp in raw)
                 {
                     var id = kvp.Key;
@@ -126,6 +131,7 @@ namespace Cognite.Extractor.StateStorage
             where T : BaseStorableState
             where K : IExtractionState
         {
+            // TODO: Drop the BsonToDict logic in favor of a proper custom naming system, maybe
             if (!_lastTimeStored.ContainsKey(tableName)) _lastTimeStored[tableName] = CogniteTime.DateTimeEpoch;
             var lastTimeStored = _lastTimeStored[tableName];
             var storageTime = DateTime.UtcNow;
@@ -139,7 +145,6 @@ namespace Cognite.Extractor.StateStorage
 
             try
             {
-
                 var dicts = pocosToStore.Select(poco => StateStoreUtils.BsonToDict(Mapper.ToDocument(poco)))
                     .ToDictionary(raw => (string)raw["_id"], raw => raw);
                 // No reason to store the row key.
@@ -147,7 +152,7 @@ namespace Cognite.Extractor.StateStorage
                 {
                     dict.Remove("_id");
                 }
-                await _destination.InsertRawRowsAsync(_dbName, tableName, dicts, token).ConfigureAwait(false);
+                await _destination.InsertRawRowsAsync(_dbName, tableName, dicts, Options, token).ConfigureAwait(false);
                 StateStoreMetrics.StateStoreCount.Inc();
                 StateStoreMetrics.StateStoreStates.Inc(pocosToStore.Count);
 

@@ -460,15 +460,17 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="dbName">Database to read from</param>
         /// <param name="tableName">Table to read from</param>
+        /// <param name="options">Optional json serializer options</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>All rows</returns>
         public Task<IDictionary<string, IDictionary<string, JsonElement>>> GetRowsAsync(
             string dbName,
             string tableName,
+            JsonSerializerOptions? options,
             CancellationToken token)
         {
             _logger.LogDebug("Fetching all rows from database {db}, table {table}", dbName, tableName);
-            return _client.Raw.GetRowsAsync(dbName, tableName, _config.CdfChunking.RawRows, token);
+            return _client.Raw.GetRowsAsync<IDictionary<string, JsonElement>>(dbName, tableName, _config.CdfChunking.RawRows, token, options);
         }
 
         /// <summary>

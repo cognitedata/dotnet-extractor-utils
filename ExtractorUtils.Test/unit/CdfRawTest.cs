@@ -213,7 +213,8 @@ namespace ExtractorUtils.Test.Unit
             var responseBody = "{ }";
             var statusCode = HttpStatusCode.OK;
             var content = await message.Content.ReadAsStringAsync();
-            var items = JsonSerializer.Deserialize<RawItems>(content);
+            var items = JsonSerializer.Deserialize<RawItems>(content,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
             foreach (var item in items.items)
             {

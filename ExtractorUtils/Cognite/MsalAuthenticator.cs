@@ -6,6 +6,7 @@ using Microsoft.Identity.Client;
 using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using System.Net.Http;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extractor.Utils
 {
@@ -17,7 +18,7 @@ namespace Cognite.Extractor.Utils
     {
         // Injected properties
         private readonly AuthenticatorConfig? _config;
-        private readonly ILogger<IAuthenticator>? _logger;
+        private readonly ILogger<IAuthenticator> _logger;
 
         private readonly IConfidentialClientApplication? _app;
         private DateTimeOffset _lastTokenTime;
@@ -32,7 +33,7 @@ namespace Cognite.Extractor.Utils
         public MsalAuthenticator(AuthenticatorConfig config, ILogger<IAuthenticator> logger, IHttpClientFactory httpClientFactory, string authClientName)
         {
             _config = config;
-            _logger = logger;
+            _logger = logger ?? new NullLogger<MsalAuthenticator>();
             if (_config != null) {
                 var uriBuilder = new UriBuilder(_config.Authority);
                 uriBuilder.Path = $"{_config.Tenant}";
