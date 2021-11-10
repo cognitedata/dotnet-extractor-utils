@@ -1237,12 +1237,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.RawExtensions.DeleteRowsAsync
   nameWithType: RawExtensions.DeleteRowsAsync
-- uid: Cognite.Extensions.RawExtensions.GetRowsAsync(RawResource,System.String,System.String,System.Int32,CancellationToken)
-  name: GetRowsAsync(RawResource, String, String, Int32, CancellationToken)
-  href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_GetRowsAsync_RawResource_System_String_System_String_System_Int32_CancellationToken_
-  commentId: M:Cognite.Extensions.RawExtensions.GetRowsAsync(RawResource,System.String,System.String,System.Int32,CancellationToken)
-  fullName: Cognite.Extensions.RawExtensions.GetRowsAsync(RawResource, System.String, System.String, System.Int32, CancellationToken)
-  nameWithType: RawExtensions.GetRowsAsync(RawResource, String, String, Int32, CancellationToken)
 - uid: Cognite.Extensions.RawExtensions.GetRowsAsync*
   name: GetRowsAsync
   href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_GetRowsAsync_
@@ -1250,6 +1244,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.RawExtensions.GetRowsAsync
   nameWithType: RawExtensions.GetRowsAsync
+- uid: Cognite.Extensions.RawExtensions.GetRowsAsync``1(RawResource,System.String,System.String,System.Int32,CancellationToken,System.Nullable{JsonSerializerOptions})
+  name: GetRowsAsync<T>(RawResource, String, String, Int32, CancellationToken, Nullable<JsonSerializerOptions>)
+  href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_GetRowsAsync__1_RawResource_System_String_System_String_System_Int32_CancellationToken_System_Nullable_JsonSerializerOptions__
+  commentId: M:Cognite.Extensions.RawExtensions.GetRowsAsync``1(RawResource,System.String,System.String,System.Int32,CancellationToken,System.Nullable{JsonSerializerOptions})
+  name.vb: GetRowsAsync(Of T)(RawResource, String, String, Int32, CancellationToken, Nullable(Of JsonSerializerOptions))
+  fullName: Cognite.Extensions.RawExtensions.GetRowsAsync<T>(RawResource, System.String, System.String, System.Int32, CancellationToken, System.Nullable<JsonSerializerOptions>)
+  fullName.vb: Cognite.Extensions.RawExtensions.GetRowsAsync(Of T)(RawResource, System.String, System.String, System.Int32, CancellationToken, System.Nullable(Of JsonSerializerOptions))
+  nameWithType: RawExtensions.GetRowsAsync<T>(RawResource, String, String, Int32, CancellationToken, Nullable<JsonSerializerOptions>)
+  nameWithType.vb: RawExtensions.GetRowsAsync(Of T)(RawResource, String, String, Int32, CancellationToken, Nullable(Of JsonSerializerOptions))
 - uid: Cognite.Extensions.RawExtensions.InsertRowsAsync*
   name: InsertRowsAsync
   href: api/Cognite.Extensions.RawExtensions.html#Cognite_Extensions_RawExtensions_InsertRowsAsync_
@@ -4740,12 +4743,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.StateStorage.IRawDestination.DeleteRowsAsync
   nameWithType: IRawDestination.DeleteRowsAsync
-- uid: Cognite.Extractor.StateStorage.IRawDestination.GetRowsAsync(System.String,System.String,CancellationToken)
-  name: GetRowsAsync(String, String, CancellationToken)
-  href: api/Cognite.Extractor.StateStorage.IRawDestination.html#Cognite_Extractor_StateStorage_IRawDestination_GetRowsAsync_System_String_System_String_CancellationToken_
-  commentId: M:Cognite.Extractor.StateStorage.IRawDestination.GetRowsAsync(System.String,System.String,CancellationToken)
-  fullName: Cognite.Extractor.StateStorage.IRawDestination.GetRowsAsync(System.String, System.String, CancellationToken)
-  nameWithType: IRawDestination.GetRowsAsync(String, String, CancellationToken)
+- uid: Cognite.Extractor.StateStorage.IRawDestination.GetRowsAsync(System.String,System.String,System.Nullable{JsonSerializerOptions},CancellationToken)
+  name: GetRowsAsync(String, String, Nullable<JsonSerializerOptions>, CancellationToken)
+  href: api/Cognite.Extractor.StateStorage.IRawDestination.html#Cognite_Extractor_StateStorage_IRawDestination_GetRowsAsync_System_String_System_String_System_Nullable_JsonSerializerOptions__CancellationToken_
+  commentId: M:Cognite.Extractor.StateStorage.IRawDestination.GetRowsAsync(System.String,System.String,System.Nullable{JsonSerializerOptions},CancellationToken)
+  name.vb: GetRowsAsync(String, String, Nullable(Of JsonSerializerOptions), CancellationToken)
+  fullName: Cognite.Extractor.StateStorage.IRawDestination.GetRowsAsync(System.String, System.String, System.Nullable<JsonSerializerOptions>, CancellationToken)
+  fullName.vb: Cognite.Extractor.StateStorage.IRawDestination.GetRowsAsync(System.String, System.String, System.Nullable(Of JsonSerializerOptions), CancellationToken)
+  nameWithType: IRawDestination.GetRowsAsync(String, String, Nullable<JsonSerializerOptions>, CancellationToken)
+  nameWithType.vb: IRawDestination.GetRowsAsync(String, String, Nullable(Of JsonSerializerOptions), CancellationToken)
 - uid: Cognite.Extractor.StateStorage.IRawDestination.GetRowsAsync*
   name: GetRowsAsync
   href: api/Cognite.Extractor.StateStorage.IRawDestination.html#Cognite_Extractor_StateStorage_IRawDestination_GetRowsAsync_
@@ -4760,15 +4766,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync
   nameWithType: IRawDestination.InsertRawRowsAsync
-- uid: Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},CancellationToken)
-  name: InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, CancellationToken)
-  href: api/Cognite.Extractor.StateStorage.IRawDestination.html#Cognite_Extractor_StateStorage_IRawDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__CancellationToken_
-  commentId: M:Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},CancellationToken)
-  name.vb: InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), CancellationToken)
-  fullName: Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync<T>(System.String, System.String, IDictionary<System.String, T>, CancellationToken)
-  fullName.vb: Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync(Of T)(System.String, System.String, IDictionary(Of System.String, T), CancellationToken)
-  nameWithType: IRawDestination.InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, CancellationToken)
-  nameWithType.vb: IRawDestination.InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), CancellationToken)
+- uid: Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},System.Nullable{JsonSerializerOptions},CancellationToken)
+  name: InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, Nullable<JsonSerializerOptions>, CancellationToken)
+  href: api/Cognite.Extractor.StateStorage.IRawDestination.html#Cognite_Extractor_StateStorage_IRawDestination_InsertRawRowsAsync__1_System_String_System_String_IDictionary_System_String___0__System_Nullable_JsonSerializerOptions__CancellationToken_
+  commentId: M:Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync``1(System.String,System.String,IDictionary{System.String,``0},System.Nullable{JsonSerializerOptions},CancellationToken)
+  name.vb: InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), Nullable(Of JsonSerializerOptions), CancellationToken)
+  fullName: Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync<T>(System.String, System.String, IDictionary<System.String, T>, System.Nullable<JsonSerializerOptions>, CancellationToken)
+  fullName.vb: Cognite.Extractor.StateStorage.IRawDestination.InsertRawRowsAsync(Of T)(System.String, System.String, IDictionary(Of System.String, T), System.Nullable(Of JsonSerializerOptions), CancellationToken)
+  nameWithType: IRawDestination.InsertRawRowsAsync<T>(String, String, IDictionary<String, T>, Nullable<JsonSerializerOptions>, CancellationToken)
+  nameWithType.vb: IRawDestination.InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), Nullable(Of JsonSerializerOptions), CancellationToken)
 - uid: Cognite.Extractor.StateStorage.LiteDBStateStore
   name: LiteDBStateStore
   href: api/Cognite.Extractor.StateStorage.LiteDBStateStore.html
@@ -6638,12 +6644,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync
   nameWithType: CogniteDestination.GetOrCreateTimeSeriesAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String,System.String,CancellationToken)
-  name: GetRowsAsync(String, String, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_System_String_System_String_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String,System.String,CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String, System.String, CancellationToken)
-  nameWithType: CogniteDestination.GetRowsAsync(String, String, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String,System.String,System.Nullable{JsonSerializerOptions},CancellationToken)
+  name: GetRowsAsync(String, String, Nullable<JsonSerializerOptions>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_System_String_System_String_System_Nullable_JsonSerializerOptions__CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String,System.String,System.Nullable{JsonSerializerOptions},CancellationToken)
+  name.vb: GetRowsAsync(String, String, Nullable(Of JsonSerializerOptions), CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String, System.String, System.Nullable<JsonSerializerOptions>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String, System.String, System.Nullable(Of JsonSerializerOptions), CancellationToken)
+  nameWithType: CogniteDestination.GetRowsAsync(String, String, Nullable<JsonSerializerOptions>, CancellationToken)
+  nameWithType.vb: CogniteDestination.GetRowsAsync(String, String, Nullable(Of JsonSerializerOptions), CancellationToken)
 - uid: Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync*
   name: GetRowsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_
