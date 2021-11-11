@@ -33,7 +33,7 @@ namespace Cognite.Extractor.Logging
         }
 
         /// <summary>
-        /// Creates loggerconfiguration according to the configuration in <paramref name="config"/>
+        /// Creates <see cref="LoggerConfiguration" /> according to the configuration in <paramref name="config"/>
         /// </summary>
         /// <param name="config">Configuration object of <see cref="LoggerConfig"/> type</param>
         /// <returns>A configured logger</returns>
@@ -225,7 +225,7 @@ namespace Cognite.Extractor.Logging
         /// which creates logging configuration for file and console using
         /// <see cref="LoggingUtils.GetConfiguration(LoggerConfig)"/></param>
         public static void AddLogger(this IServiceCollection services, Func<LoggerConfig, Serilog.ILogger>? buildLogger = null) {
-            if (buildLogger == null) buildLogger = LoggingUtils.GetConfiguredLogger;
+            buildLogger ??= LoggingUtils.GetConfiguredLogger;
             services.AddSingleton<LoggerTraceListener>();
             services.AddSingleton<Serilog.ILogger>(p => {
                 var config = p.GetService<LoggerConfig>();
