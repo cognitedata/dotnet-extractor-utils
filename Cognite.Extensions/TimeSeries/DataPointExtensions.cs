@@ -212,7 +212,7 @@ namespace Cognite.Extensions
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogDebug("Failed to create datapoints for {seq} timeseries", points.Count);
+                    _logger.LogDebug("Failed to create datapoints for {seq} timeseries: {msg}", points.Count, ex.Message);
                     var error = ResultHandlers.ParseException<DataPointInsertError>(ex, RequestType.CreateDatapoints);
                     if (error.Complete) errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure

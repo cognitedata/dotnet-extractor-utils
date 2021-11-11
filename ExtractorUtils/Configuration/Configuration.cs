@@ -4,6 +4,7 @@ using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.StateStorage;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Cognite.Extractor.Utils
 {
@@ -57,6 +58,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="addMetrics">True to add metrics</param>
         /// <param name="requireDestination">True to fail if a destination cannot be configured</param>
         /// <param name="config">Optional pre-defined config object to use instead of reading from file</param>
+        /// <param name="buildLogger">Optional method to build logger.
+        /// Defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/> </param>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error</exception>
         /// <returns>Configuration object</returns>
@@ -70,7 +73,8 @@ namespace Cognite.Extractor.Utils
             bool addLogger = true,
             bool addMetrics = true,
             bool requireDestination = true,
-            T? config = null) where T : VersionedConfig
+            T? config = null,
+            Func<LoggerConfig, Serilog.ILogger>? buildLogger = null) where T : VersionedConfig
         {
             if (config != null)
             {
@@ -92,7 +96,7 @@ namespace Cognite.Extractor.Utils
             }
             services.AddCogniteClient(appId, userAgent, addLogger, addMetrics, true, requireDestination);
             if (addStateStore) services.AddStateStore();
-            if (addLogger) services.AddLogger();
+            if (addLogger) services.AddLogger(buildLogger);
             if (addMetrics) services.AddMetrics();
             services.AddExtractionRun(addLogger);
             return config;
