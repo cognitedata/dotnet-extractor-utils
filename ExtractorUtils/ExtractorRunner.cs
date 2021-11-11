@@ -85,6 +85,10 @@ namespace Cognite.Extractor.Utils
         /// Method to log exceptions. Default is just a simple log message with the exception.
         /// </summary>
         public Action<ILogger, Exception, string>? LogException { get; set; }
+        /// <summary>
+        /// Method to build logger from config. Defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/>
+        /// </summary>
+        public Func<LoggerConfig, Serilog.ILogger>? BuildLogger { get; set; }
     }
 
 

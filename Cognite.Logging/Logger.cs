@@ -33,11 +33,11 @@ namespace Cognite.Extractor.Logging
         }
 
         /// <summary>
-        /// Creates a <see cref="Serilog.ILogger"/> logger according to the configuration in <paramref name="config"/>
+        /// Creates <see cref="LoggerConfiguration" /> according to the configuration in <paramref name="config"/>
         /// </summary>
         /// <param name="config">Configuration object of <see cref="LoggerConfig"/> type</param>
         /// <returns>A configured logger</returns>
-        public static Serilog.ILogger GetConfiguredLogger(LoggerConfig config)
+        public static LoggerConfiguration GetConfiguration(LoggerConfig config)
         {
             if (config == null)
             {
@@ -64,7 +64,8 @@ namespace Cognite.Extractor.Logging
             if (logToFile && config.File!.Path != null)
             {
                 RollingInterval ri = RollingInterval.Day;
-                if (config.File.RollingInterval == "hour") {
+                if (config.File.RollingInterval == "hour")
+                {
                     ri = RollingInterval.Hour;
                 }
                 logConfig.WriteTo.Async(p => p.File(
@@ -75,6 +76,17 @@ namespace Cognite.Extractor.Logging
                     outputTemplate: fileLevel <= LogEventLevel.Debug ? _logTemplateWithContext : _logTemplate));
             }
 
+            return logConfig;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Serilog.ILogger"/> logger according to the configuration in <paramref name="config"/>
+        /// </summary>
+        /// <param name="config">Configuration object of <see cref="LoggerConfig"/> type</param>
+        /// <returns>A configured logger</returns>
+        public static Serilog.ILogger GetConfiguredLogger(LoggerConfig config)
+        {
+            var logConfig = GetConfiguration(config);
             return logConfig.CreateLogger();
         }
 
@@ -200,7 +212,7 @@ namespace Cognite.Extractor.Logging
     /// Extension utilities for logging
     /// </summary>
     public static class LoggingExtensions {
-        
+
         /// <summary>
         /// Adds a configured Serilog logger as singletons of the <see cref="Microsoft.Extensions.Logging.ILogger"/> and
         /// <see cref="Serilog.ILogger"/> types to the <paramref name="services"/> collection.
@@ -208,7 +220,12 @@ namespace Cognite.Extractor.Logging
         /// collection as well.
         /// </summary>
         /// <param name="services">The service collection</param>
-        public static void AddLogger(this IServiceCollection services) {
+        /// <param name="buildLogger">Method to build the logger.
+        /// This defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/>,
+        /// which creates logging configuration for file and console using
+        /// <see cref="LoggingUtils.GetConfiguration(LoggerConfig)"/></param>
+        public static void AddLogger(this IServiceCollection services, Func<LoggerConfig, Serilog.ILogger>? buildLogger = null) {
+            buildLogger ??= LoggingUtils.GetConfiguredLogger;
             services.AddSingleton<LoggerTraceListener>();
             services.AddSingleton<Serilog.ILogger>(p => {
                 var config = p.GetService<LoggerConfig>();
@@ -218,7 +235,7 @@ namespace Cognite.Extractor.Logging
                     defLog.Warning("No Logging configuration found. Using default logger");
                     return defLog;
                 }
-                return LoggingUtils.GetConfiguredLogger(config);
+                return buildLogger(config);
             });
             services.AddLogging(loggingBuilder => {
                 loggingBuilder.Services.AddSingleton<ILoggerProvider, SerilogLoggerProvider>(s => 
