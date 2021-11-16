@@ -3926,12 +3926,15 @@ references:
   commentId: T:Cognite.Extractor.Logging.LoggingExtensions
   fullName: Cognite.Extractor.Logging.LoggingExtensions
   nameWithType: LoggingExtensions
-- uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
-  name: AddLogger(IServiceCollection)
-  href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_IServiceCollection_
-  commentId: M:Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
-  fullName: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection)
-  nameWithType: LoggingExtensions.AddLogger(IServiceCollection)
+- uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger})
+  name: AddLogger(IServiceCollection, Func<LoggerConfig, Serilog.ILogger>)
+  href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_IServiceCollection_System_Func_Cognite_Extractor_Logging_LoggerConfig_Serilog_ILogger__
+  commentId: M:Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger})
+  name.vb: AddLogger(IServiceCollection, Func(Of LoggerConfig, Serilog.ILogger))
+  fullName: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection, System.Func<Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger>)
+  fullName.vb: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(IServiceCollection, System.Func(Of Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger))
+  nameWithType: LoggingExtensions.AddLogger(IServiceCollection, Func<LoggerConfig, Serilog.ILogger>)
+  nameWithType.vb: LoggingExtensions.AddLogger(IServiceCollection, Func(Of LoggerConfig, Serilog.ILogger))
 - uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger*
   name: AddLogger
   href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_
@@ -3958,6 +3961,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Logging.LoggingUtils.Configure
   nameWithType: LoggingUtils.Configure
+- uid: Cognite.Extractor.Logging.LoggingUtils.GetConfiguration(Cognite.Extractor.Logging.LoggerConfig)
+  name: GetConfiguration(LoggerConfig)
+  href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_GetConfiguration_Cognite_Extractor_Logging_LoggerConfig_
+  commentId: M:Cognite.Extractor.Logging.LoggingUtils.GetConfiguration(Cognite.Extractor.Logging.LoggerConfig)
+  fullName: Cognite.Extractor.Logging.LoggingUtils.GetConfiguration(Cognite.Extractor.Logging.LoggerConfig)
+  nameWithType: LoggingUtils.GetConfiguration(LoggerConfig)
+- uid: Cognite.Extractor.Logging.LoggingUtils.GetConfiguration*
+  name: GetConfiguration
+  href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_GetConfiguration_
+  commentId: Overload:Cognite.Extractor.Logging.LoggingUtils.GetConfiguration
+  isSpec: "True"
+  fullName: Cognite.Extractor.Logging.LoggingUtils.GetConfiguration
+  nameWithType: LoggingUtils.GetConfiguration
 - uid: Cognite.Extractor.Logging.LoggingUtils.GetConfiguredLogger(Cognite.Extractor.Logging.LoggerConfig)
   name: GetConfiguredLogger(LoggerConfig)
   href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_GetConfiguredLogger_Cognite_Extractor_Logging_LoggerConfig_
@@ -4159,6 +4175,32 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Metrics.MetricsService.MetricsService
   nameWithType: MetricsService.MetricsService
+- uid: Cognite.Extractor.Metrics.MetricsService.Dispose
+  name: Dispose()
+  href: api/Cognite.Extractor.Metrics.MetricsService.html#Cognite_Extractor_Metrics_MetricsService_Dispose
+  commentId: M:Cognite.Extractor.Metrics.MetricsService.Dispose
+  fullName: Cognite.Extractor.Metrics.MetricsService.Dispose()
+  nameWithType: MetricsService.Dispose()
+- uid: Cognite.Extractor.Metrics.MetricsService.Dispose*
+  name: Dispose
+  href: api/Cognite.Extractor.Metrics.MetricsService.html#Cognite_Extractor_Metrics_MetricsService_Dispose_
+  commentId: Overload:Cognite.Extractor.Metrics.MetricsService.Dispose
+  isSpec: "True"
+  fullName: Cognite.Extractor.Metrics.MetricsService.Dispose
+  nameWithType: MetricsService.Dispose
+- uid: Cognite.Extractor.Metrics.MetricsService.DisposeAsync
+  name: DisposeAsync()
+  href: api/Cognite.Extractor.Metrics.MetricsService.html#Cognite_Extractor_Metrics_MetricsService_DisposeAsync
+  commentId: M:Cognite.Extractor.Metrics.MetricsService.DisposeAsync
+  fullName: Cognite.Extractor.Metrics.MetricsService.DisposeAsync()
+  nameWithType: MetricsService.DisposeAsync()
+- uid: Cognite.Extractor.Metrics.MetricsService.DisposeAsync*
+  name: DisposeAsync
+  href: api/Cognite.Extractor.Metrics.MetricsService.html#Cognite_Extractor_Metrics_MetricsService_DisposeAsync_
+  commentId: Overload:Cognite.Extractor.Metrics.MetricsService.DisposeAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Metrics.MetricsService.DisposeAsync
+  nameWithType: MetricsService.DisposeAsync
 - uid: Cognite.Extractor.Metrics.MetricsService.Start
   name: Start()
   href: api/Cognite.Extractor.Metrics.MetricsService.html#Cognite_Extractor_Metrics_MetricsService_Start
@@ -6772,15 +6814,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies
   nameWithType: ConfigurationExtensions.AddExtractorDependencies
-- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.Nullable{System.String},System.Int32[],System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0)
-  name: AddExtractorDependencies<T>(IServiceCollection, Nullable<String>, Int32[], Nullable<String>, Nullable<String>, Boolean, Boolean, Boolean, Boolean, T)
-  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractorDependencies__1_IServiceCollection_System_Nullable_System_String__System_Int32___System_Nullable_System_String__System_Nullable_System_String__System_Boolean_System_Boolean_System_Boolean_System_Boolean___0_
-  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.Nullable{System.String},System.Int32[],System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0)
-  name.vb: AddExtractorDependencies(Of T)(IServiceCollection, Nullable(Of String), Int32(), Nullable(Of String), Nullable(Of String), Boolean, Boolean, Boolean, Boolean, T)
-  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, System.Nullable<System.String>, System.Int32[], System.Nullable<System.String>, System.Nullable<System.String>, System.Boolean, System.Boolean, System.Boolean, System.Boolean, T)
-  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, System.Nullable(Of System.String), System.Int32(), System.Nullable(Of System.String), System.Nullable(Of System.String), System.Boolean, System.Boolean, System.Boolean, System.Boolean, T)
-  nameWithType: ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, Nullable<String>, Int32[], Nullable<String>, Nullable<String>, Boolean, Boolean, Boolean, Boolean, T)
-  nameWithType.vb: ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, Nullable(Of String), Int32(), Nullable(Of String), Nullable(Of String), Boolean, Boolean, Boolean, Boolean, T)
+- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.Nullable{System.String},System.Int32[],System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Nullable{Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger}})
+  name: AddExtractorDependencies<T>(IServiceCollection, Nullable<String>, Int32[], Nullable<String>, Nullable<String>, Boolean, Boolean, Boolean, Boolean, T, Nullable<Func<LoggerConfig, Serilog.ILogger>>)
+  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractorDependencies__1_IServiceCollection_System_Nullable_System_String__System_Int32___System_Nullable_System_String__System_Nullable_System_String__System_Boolean_System_Boolean_System_Boolean_System_Boolean___0_System_Nullable_Func_Cognite_Extractor_Logging_LoggerConfig_Serilog_ILogger___
+  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.Nullable{System.String},System.Int32[],System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Nullable{Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger}})
+  name.vb: AddExtractorDependencies(Of T)(IServiceCollection, Nullable(Of String), Int32(), Nullable(Of String), Nullable(Of String), Boolean, Boolean, Boolean, Boolean, T, Nullable(Of Func(Of LoggerConfig, Serilog.ILogger)))
+  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, System.Nullable<System.String>, System.Int32[], System.Nullable<System.String>, System.Nullable<System.String>, System.Boolean, System.Boolean, System.Boolean, System.Boolean, T, System.Nullable<Func<Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger>>)
+  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, System.Nullable(Of System.String), System.Int32(), System.Nullable(Of System.String), System.Nullable(Of System.String), System.Boolean, System.Boolean, System.Boolean, System.Boolean, T, System.Nullable(Of Func(Of Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger)))
+  nameWithType: ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, Nullable<String>, Int32[], Nullable<String>, Nullable<String>, Boolean, Boolean, Boolean, Boolean, T, Nullable<Func<LoggerConfig, Serilog.ILogger>>)
+  nameWithType.vb: ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, Nullable(Of String), Int32(), Nullable(Of String), Nullable(Of String), Boolean, Boolean, Boolean, Boolean, T, Nullable(Of Func(Of LoggerConfig, Serilog.ILogger)))
 - uid: Cognite.Extractor.Utils.DestinationUtils
   name: DestinationUtils
   href: api/Cognite.Extractor.Utils.DestinationUtils.html
@@ -7104,6 +7146,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).AppId
   nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.AppId
   nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).AppId
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.BuildLogger
+  name: BuildLogger
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_BuildLogger
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.BuildLogger
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.BuildLogger
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).BuildLogger
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.BuildLogger
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).BuildLogger
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.BuildLogger*
+  name: BuildLogger
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_BuildLogger_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.BuildLogger
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.BuildLogger
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).BuildLogger
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.BuildLogger
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).BuildLogger
 - uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.Config
   name: Config
   href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_Config
