@@ -20,7 +20,7 @@ namespace Cognite.Extractor.Metrics
     /// Utility class for configuring <see href="https://prometheus.io/">Prometheus</see> for monitoring and metrics.
     /// A metrics server and multiple push gateway destinations can be configured according to <see cref="MetricsConfig"/>.
     /// </summary>
-    public class MetricsService 
+    public class MetricsService : IAsyncDisposable, IDisposable
     {
         internal const string HttpClientName = "prometheus-httpclient";
         private readonly IHttpClientFactory _clientFactory;
@@ -75,7 +75,8 @@ namespace Cognite.Extractor.Metrics
         /// Stops the metrics service.
         /// </summary>
         /// <returns></returns>
-        public async Task Stop() {
+        public async Task Stop()
+        {
             if (_pushers.Any())
             {
                 await Task.WhenAll(_pushers.Select(p => p.StopAsync())).ConfigureAwait(false);
@@ -157,6 +158,33 @@ namespace Cognite.Extractor.Metrics
             server.Start();
             _logger.LogInformation("Metrics server started at {MetricsServerHost}:{MetricsServerPort}", config.Host, config.Port);
             return server;
+        }
+
+        /// <summary>
+        /// Dispose metrics, closing the pushers
+        /// </summary>
+        /// <returns></returns>
+        public async ValueTask DisposeAsync()
+        {
+            try
+            {
+                await Stop().ConfigureAwait(false);
+            }
+            catch { }
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose metrics, closing the pushers
+        /// </summary>
+        public void Dispose()
+        {
+            try
+            {
+                Stop().ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+            catch { }
+            GC.SuppressFinalize(this);
         }
     }
 
