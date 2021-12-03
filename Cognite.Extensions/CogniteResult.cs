@@ -60,6 +60,10 @@ namespace Cognite.Extensions
                 {
                     ParseAssetException(rex, result);
                 }
+                else if (type == RequestType.UpdateAssets)
+                {
+                    ParseAssetUpdateException(rex, result);
+                }
                 else if (type == RequestType.CreateTimeSeries)
                 {
                     ParseTimeSeriesException(rex, result);

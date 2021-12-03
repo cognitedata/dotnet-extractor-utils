@@ -16,8 +16,7 @@ namespace Cognite.Extensions
         public static void Sanitize(this AssetUpdateItem item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
-            item.ExternalId.Truncate(ExternalIdMax);
-            if (item.Id != null && item.Id < 0) item.Id = null;
+            if (item.Id == null) item.ExternalId = item.ExternalId.Truncate(ExternalIdMax);
 
             var update = item.Update;
             update.ExternalId = update.ExternalId.Truncate(ExternalIdMax);
@@ -34,11 +33,14 @@ namespace Cognite.Extensions
             update.Source = update.Source.Truncate(AssetSourceMax);
             if (update.ParentId?.Set != null && update.ParentId.Set < 0) update.ParentId = null;
             update.ParentExternalId = update.ParentExternalId.Truncate(ExternalIdMax);
-            update.Labels.Add = update.Labels.Add?
-                .Where(label => label != null && label.ExternalId != null)
-                .Select(label => label.Truncate(ExternalIdMax))
-                .Take(10)
-                .ToList();
+            if (update.Labels != null)
+            {
+                update.Labels.Add = update.Labels.Add?
+                    .Where(label => label != null && label.ExternalId != null)
+                    .Select(label => label.Truncate(ExternalIdMax))
+                    .Take(10)
+                    .ToList();
+            }
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace Cognite.Extensions
             if (!update.Source?.Set?.CheckLength(AssetSourceMax) ?? false) return ResourceType.Source;
             if (update.ParentId?.Set != null && update.ParentId.Set < 0) return ResourceType.ParentId;
             if (update.ParentId?.Set != null && update.ParentExternalId?.Set != null) return ResourceType.ParentId;
-            if (!update.ParentExternalId?.Set?.CheckLength(ExternalIdMax) ?? false) return ResourceType.ExternalId;
+            if (!update.ParentExternalId?.Set?.CheckLength(ExternalIdMax) ?? false) return ResourceType.ParentExternalId;
             if (update.Labels?.Add != null && (update.Labels.Add.Count() > AssetLabelsMax
                 || update.Labels.Add.Any(label => !label.ExternalId.CheckLength(ExternalIdMax))))
                 return ResourceType.Labels;
