@@ -335,5 +335,81 @@ namespace ExtractorUtils.Test.Integration
                 });
             }
         }
+
+
+        private async Task<IEnumerable<Asset>> CreateAssetsForUpdate(CDFTester tester)
+        {
+            var ids = new[] {
+                $"{tester.Prefix} asset-1",
+                $"{tester.Prefix} asset-2",
+                $"{tester.Prefix} asset-3"
+            };
+
+            var assets = new[]
+            {
+                new AssetCreate
+                {
+                    Name = $"{tester.Prefix} asset-1",
+                    ExternalId = $"{tester.Prefix} asset-1"
+                },
+                new AssetCreate
+                {
+                    Name = $"{tester.Prefix} asset-2",
+                    ExternalId = $"{tester.Prefix} asset-2",
+                    ParentExternalId = $"{tester.Prefix} asset-1"
+                },
+                new AssetCreate
+                {
+                    Name = $"{tester.Prefix} asset-3",
+                    ExternalId = $"{tester.Prefix} asset-3"
+                }
+            };
+
+            var res = await tester.Destination.EnsureAssetsExistsAsync(assets, RetryMode.None, SanitationMode.None, tester.Source.Token);
+            res.Throw();
+            return res.Results;
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestUpdateAssets(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+
+            var assets = (await CreateAssetsForUpdate(tester)).ToArray();
+
+            var ids = assets.Select(a => a.ExternalId).Concat(new[]
+            {
+                $"{tester.Prefix} asset-4",
+                $"{tester.Prefix} asset-5",
+            }).ToArray();
+
+            var upd = new AssetUpdate { Description = new UpdateNullable<string>("new description") };
+
+            var updates = new AssetUpdateItem[]
+            {
+                new AssetUpdateItem(assets[0].ExternalId) { Update = upd },
+                new AssetUpdateItem(assets[1].Id) { Update = upd },
+                new AssetUpdateItem(assets[2].ExternalId) { Update = upd }
+            };
+
+            try
+            {
+                var result = await tester.Destination.UpdateAssetsAsync(updates, RetryMode.None, SanitationMode.None, tester.Source.Token);
+                Assert.True(result.IsAllGood);
+
+                Assert.All(result.Results, asset => Assert.Equal("new description", asset.Description));
+                Assert.Equal(3, result.Results.Count());
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.Assets.DeleteAsync(new AssetDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = ids.Select(Identity.Create)
+                }, tester.Source.Token);
+            }
+        }
     }
 }
