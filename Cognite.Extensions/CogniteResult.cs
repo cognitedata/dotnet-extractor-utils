@@ -603,7 +603,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create timeseries datapoints
         /// </summary>
-        CreateDatapoints
+        CreateDatapoints,
+        /// <summary>
+        /// Update assets
+        /// </summary>
+        UpdateAssets
     }
     
 
