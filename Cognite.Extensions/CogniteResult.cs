@@ -445,6 +445,10 @@ namespace Cognite.Extensions
         /// </summary>
         SanitationFailed,
         /// <summary>
+        /// Item value is illegal for a different reason
+        /// </summary>
+        IllegalItem,
+        /// <summary>
         /// Something else happened that caused the request to fail
         /// </summary>
         FatalFailure = -1

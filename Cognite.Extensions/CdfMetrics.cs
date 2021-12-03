@@ -35,5 +35,8 @@ namespace Cognite.Extensions
             "Number of whole timeseries skipped while pushing datapoints");
         public static Counter DatapointsSkipped { get; } = Metrics.CreateCounter("extractor_utils_datapoints_skipped",
             "Number of datapoints skipped due to errors");
+
+        public static Counter AssetUpdatesSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_asset_updates_skipped",
+            "Number of asset updates skipped due to errors");
     }
 }
