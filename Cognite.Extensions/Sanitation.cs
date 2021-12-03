@@ -55,6 +55,36 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
+        /// Reduce the length of "set" on given update to maxLength, if it is longer.
+        /// </summary>
+        /// <param name="update">String update to be shortened</param>
+        /// <param name="maxLength">Maximum length of final string</param>
+        /// <returns>String update which contains the first <paramref name="maxLength"/> characters of the passed value.</returns>
+#if NETSTANDARD2_1_OR_GREATER
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("id")]
+#endif
+        public static Update<string>? Truncate(this Update<string>? update, int maxLength)
+        {
+            if (update == null) return null;
+            if (string.IsNullOrEmpty(update.Set) || update.Set.Length <= maxLength) return update;
+            return new Update<string>(update.Set.Substring(0, maxLength));
+        }
+
+        /// <summary>
+        /// Reduce the length of "set" on given update to maxLength, if it is longer.
+        /// </summary>
+        /// <param name="update">String update to be shortened</param>
+        /// <param name="maxLength">Maximum length of final string</param>
+        /// <returns>String update which contains the first <paramref name="maxLength"/> characters of the passed value.</returns>
+        public static UpdateNullable<string>? Truncate(this UpdateNullable<string>? update, int maxLength)
+        {
+            if (update == null) return null;
+            if (update.SetNull ?? false) return update;
+            if (update.Set.Length <= maxLength) return update;
+            return new UpdateNullable<string>(update.Set.Substring(0, maxLength));
+        }
+
+        /// <summary>
         /// Limit the maximum number of UTF8 bytes in the given string.
         /// </summary>
         /// <param name="str">String to truncate</param>

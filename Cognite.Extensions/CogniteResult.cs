@@ -563,6 +563,10 @@ namespace Cognite.Extensions
         /// </summary>
         DataPointTimestamp,
         /// <summary>
+        /// The update object itself in some way
+        /// </summary>
+        Update,
+        /// <summary>
         /// None or unknown
         /// </summary>
         None = -1
