@@ -67,10 +67,10 @@ namespace Cognite.Extensions
             if (update.DataSetId?.Set != null && update.DataSetId.Set < 0) return ResourceType.DataSetId;
             if (update.Metadata != null)
             {
-                if (update.Metadata.Set.VerifyMetadata(
+                if (!update.Metadata.Set.VerifyMetadata(
                     AssetMetadataMaxPerKey, AssetMetadataMaxPairs, AssetMetadataMaxPerValue, AssetMetadataMaxBytes, out _))
                     return ResourceType.Metadata;
-                if (update.Metadata.Add.VerifyMetadata(
+                if (!update.Metadata.Add.VerifyMetadata(
                     AssetMetadataMaxPerKey, AssetMetadataMaxPairs, AssetMetadataMaxPerValue, AssetMetadataMaxBytes, out _))
                     return ResourceType.Metadata;
             }

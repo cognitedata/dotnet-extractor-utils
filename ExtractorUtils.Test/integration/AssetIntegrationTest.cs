@@ -339,12 +339,6 @@ namespace ExtractorUtils.Test.Integration
 
         private async Task<IEnumerable<Asset>> CreateAssetsForUpdate(CDFTester tester)
         {
-            var ids = new[] {
-                $"{tester.Prefix} asset-1",
-                $"{tester.Prefix} asset-2",
-                $"{tester.Prefix} asset-3"
-            };
-
             var assets = new[]
             {
                 new AssetCreate
@@ -379,11 +373,7 @@ namespace ExtractorUtils.Test.Integration
 
             var assets = (await CreateAssetsForUpdate(tester)).ToArray();
 
-            var ids = assets.Select(a => a.ExternalId).Concat(new[]
-            {
-                $"{tester.Prefix} asset-4",
-                $"{tester.Prefix} asset-5",
-            }).ToArray();
+            var ids = assets.Select(a => a.ExternalId);
 
             var upd = new AssetUpdate { Description = new UpdateNullable<string>("new description") };
 
@@ -408,6 +398,254 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = ids.Select(Identity.Create)
+                }, tester.Source.Token);
+            }
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestUpdateSanitation(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+
+            var assets = (await CreateAssetsForUpdate(tester)).ToArray();
+
+            var meta = Enumerable.Range(0, 100)
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 200));
+
+            var updates = new AssetUpdateItem[]
+            {
+                new AssetUpdateItem(assets[0].ExternalId)
+                {
+                    Update = new AssetUpdate
+                    {
+                        Description = new UpdateNullable<string>(new string('æ', 2000)),
+                        DataSetId = new UpdateNullable<long?>(-251),
+                        ExternalId = new UpdateNullable<string>(tester.Prefix + new string('æ', 300)),
+                        Metadata = new UpdateDictionary<string>(meta),
+                        Name = new Update<string>(new string('æ', 1000)),
+                        Source = new UpdateNullable<string>(new string('æ', 12345))
+                    }
+                },
+                new AssetUpdateItem(assets[1].ExternalId)
+                {
+                    Update = new AssetUpdate { Name = new Update<string>("name") }
+                },
+                new AssetUpdateItem(assets[1].ExternalId)
+                {
+                    Update = new AssetUpdate { Name = new Update<string>("name") }
+                }
+            };
+
+            try
+            {
+                var result = await tester.Destination.UpdateAssetsAsync(updates, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+                result.ThrowOnFatal();
+
+                Assert.Equal(2, result.Results.Count());
+
+                var errs = result.Errors.ToArray();
+                Assert.Single(errs);
+
+                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
+                Assert.Equal(ResourceType.Id, errs[0].Resource);
+                Assert.Single(errs[0].Values);
+            }
+            finally
+            {
+                var ids = assets.Select(a => a.ExternalId).Concat(new[]
+                {
+                    tester.Prefix + new string('æ', 255 - tester.Prefix.Length)
+                });
+                await tester.Destination.CogniteClient.Assets.DeleteAsync(new AssetDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = ids.Select(Identity.Create)
+                }, tester.Source.Token);
+            }
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestUpdateErrorHandling(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+
+            var assets = (await CreateAssetsForUpdate(tester)).ToArray();
+
+            // Various missing and duplicated
+            var updates1 = new AssetUpdateItem[]
+            {
+                // Asset exists
+                new AssetUpdateItem(assets[0].ExternalId)
+                {
+                    Update = new AssetUpdate { ExternalId = new UpdateNullable<string>(assets[1].ExternalId) }
+                },
+                // Duplicate by extId
+                new AssetUpdateItem(assets[0].ExternalId)
+                {
+                    Update = new AssetUpdate { Name = new Update<string>("test") }
+                },
+                // One update OK
+                new AssetUpdateItem(assets[1].ExternalId)
+                {
+                    Update = new AssetUpdate
+                    { 
+                        Description = new UpdateNullable<string>("New description")
+                    }
+                },
+                // Missing parent external id
+                new AssetUpdateItem(assets[2].Id)
+                {
+                    Update = new AssetUpdate
+                    {
+                        ParentExternalId = new UpdateNullable<string>("missing-parent")
+                    }
+                },
+                // Duplicate internal id
+                new AssetUpdateItem(assets[2].Id)
+                {
+                    Update = new AssetUpdate { Name = new Update<string>("test") }
+                }
+            };
+            // Various missing 2
+            var updates2 = new AssetUpdateItem[]
+            {
+                // Missing labels
+                new AssetUpdateItem(assets[0].ExternalId)
+                {
+                    Update = new AssetUpdate
+                    {
+                        Labels = new UpdateLabels<IEnumerable<CogniteExternalId>>(new [] { new CogniteExternalId("missing-label")})
+                    }
+                },
+                // Missing datasetId
+                new AssetUpdateItem(assets[1].Id)
+                {
+                    Update = new AssetUpdate { DataSetId = new UpdateNullable<long?>(123) }
+                },
+                // Update ok
+                new AssetUpdateItem(assets[2].ExternalId)
+                {
+                    Update = new AssetUpdate { Description = new UpdateNullable<string>("New description") }
+                }
+            };
+            // Various missing 3
+            var updates3 = new AssetUpdateItem[]
+            {
+                // Missing by external id
+                new AssetUpdateItem("missing-asset")
+                {
+                    Update = new AssetUpdate { Description = new UpdateNullable<string>("New description") }
+                },
+                // Missing by internal id
+                new AssetUpdateItem(123)
+                {
+                    Update = new AssetUpdate { Description = new UpdateNullable<string>("New description") }
+                },
+                // Update ok
+                new AssetUpdateItem(assets[2].ExternalId)
+                {
+                    Update = new AssetUpdate { Description = new UpdateNullable<string>("New description") }
+                }
+            };
+            // Bad parentIds
+            var updates4 = new AssetUpdateItem[]
+            {
+                // Missing parent internal id
+                new AssetUpdateItem(assets[0].ExternalId)
+                {
+                    Update = new AssetUpdate { ParentId = new UpdateNullable<long?>(123) }
+                },
+                // Change root asset
+                new AssetUpdateItem(assets[1].ExternalId)
+                {
+                    Update = new AssetUpdate { ParentExternalId = new Update<string>(assets[2].ExternalId) }
+                },
+                // To/from root
+                new AssetUpdateItem(assets[2].ExternalId)
+                {
+                    Update = new AssetUpdate { ParentExternalId = new Update<string>(assets[0].ExternalId) }
+                }
+            };
+
+
+            try
+            {
+                var result1 = await tester.Destination.UpdateAssetsAsync(updates1, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
+                result1.ThrowOnFatal();
+                var result2 = await tester.Destination.UpdateAssetsAsync(updates2, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
+                result2.ThrowOnFatal();
+                var result3 = await tester.Destination.UpdateAssetsAsync(updates3, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
+                result3.ThrowOnFatal();
+                var result4 = await tester.Destination.UpdateAssetsAsync(updates4, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
+                result4.ThrowOnFatal();
+
+                var errs = result1.Errors.ToArray();
+                Assert.Equal(3, errs.Length);
+
+                var err = errs.First(err => err.Resource == ResourceType.Id && err.Type == ErrorType.ItemDuplicated);
+                Assert.Contains(err.Values, e => e.ExternalId == assets[0].ExternalId);
+                Assert.Contains(err.Values, e => e.Id == assets[2].Id);
+
+                err = errs.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemExists);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.ExternalId == assets[1].ExternalId);
+
+                err = errs.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemMissing);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.ExternalId == "missing-parent");
+
+                Assert.Single(result1.Results);
+
+                errs = result2.Errors.ToArray();
+                Assert.Equal(2, errs.Length);
+
+                err = errs.First(err => err.Resource == ResourceType.Labels && err.Type == ErrorType.ItemMissing);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.ExternalId == "missing-label");
+
+                err = errs.First(err => err.Resource == ResourceType.DataSetId && err.Type == ErrorType.ItemMissing);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.Id == 123);
+
+                Assert.Single(result2.Results);
+
+                errs = result3.Errors.ToArray();
+                Assert.Equal(2, errs.Length);
+
+                err = errs.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemMissing);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.ExternalId == "missing-asset");
+
+                err = errs.First(err => err.Resource == ResourceType.Id && err.Type == ErrorType.ItemMissing);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.Id == 123);
+
+                Assert.Single(result3.Results);
+
+                errs = result4.Errors.ToArray();
+                Assert.Equal(2, errs.Length);
+
+                err = errs.First(err => err.Resource == ResourceType.ParentId && err.Type == ErrorType.ItemMissing);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.Id == 123);
+
+                err = errs.First(err => err.Resource == ResourceType.ParentId && err.Type == ErrorType.IllegalItem);
+                Assert.Equal(2, err.Skipped.Count());
+                Assert.Contains(err.Values, e => e.ExternalId == assets[2].ExternalId);
+                Assert.Contains(err.Values, e => e.ExternalId == assets[1].ExternalId);
+
+                Assert.Empty(result4.Results);
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.Assets.DeleteAsync(new AssetDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = assets.Select(a => Identity.Create(a.Id))
                 }, tester.Source.Token);
             }
         }

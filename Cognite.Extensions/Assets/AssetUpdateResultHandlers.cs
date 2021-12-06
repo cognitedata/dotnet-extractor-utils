@@ -111,25 +111,41 @@ namespace Cognite.Extensions
                 switch (error.Resource)
                 {
                     case ResourceType.Id:
-                        if (!item.Id.HasValue || !items.Contains(Identity.Create(item.Id.Value))) added = true;
+                        if (!item.Id.HasValue || !badValues.Contains(Identity.Create(item.Id.Value))) added = true;
                         break;
                     case ResourceType.DataSetId:
-                        if (!update.DataSetId.Set.HasValue || !items.Contains(Identity.Create(update.DataSetId.Set.Value))) added = true;
+                        if (update.DataSetId?.Set == null || !badValues.Contains(Identity.Create(update.DataSetId.Set.Value))) added = true;
                         break;
                     case ResourceType.ExternalId:
-                        if ((update.ExternalId?.Set == null || !items.Contains(Identity.Create(update.ExternalId.Set)))
-                            && (item.ExternalId == null || !items.Contains(Identity.Create(item.ExternalId)))
-                            && (update.ParentExternalId?.Set == null || !items.Contains(Identity.Create(update.ParentExternalId.Set))))
-                            added = true;
+                        if (error.Type == ErrorType.ItemMissing)
+                        {
+                            if ((update.ExternalId?.Set == null || !badValues.Contains(Identity.Create(update.ExternalId.Set)))
+                                && (item.ExternalId == null || !badValues.Contains(Identity.Create(item.ExternalId)))
+                                && (update.ParentExternalId?.Set == null || !badValues.Contains(Identity.Create(update.ParentExternalId.Set))))
+                                    added = true;
+                        }
+                        else if (error.Type == ErrorType.ItemExists)
+                        {
+                            if (update.ExternalId?.Set == null || !badValues.Contains(Identity.Create(update.ExternalId.Set)))
+                                added = true;
+                        }
                         break;
                     case ResourceType.ParentId:
-                        if ((update.ParentId?.Set == null || !items.Contains(Identity.Create(update.ParentId.Set.Value)))
-                            && (update.ParentExternalId?.Set == null || !items.Contains(Identity.Create(update.ParentExternalId.Set))))
-                            added = true;
+                        if (error.Type == ErrorType.IllegalItem)
+                        {
+                            if ((item.ExternalId == null || !badValues.Contains(Identity.Create(item.ExternalId)))
+                                && (item.Id == null || !badValues.Contains(Identity.Create(item.Id.Value)))) added = true;
+                        }
+                        else
+                        {
+                            if ((update.ParentId?.Set == null || !badValues.Contains(Identity.Create(update.ParentId.Set.Value)))
+                            && (update.ParentExternalId?.Set == null || !badValues.Contains(Identity.Create(update.ParentExternalId.Set))))
+                                added = true;
+                        }
                         break;
                     case ResourceType.Labels:
                         if (update.Labels?.Add == null
-                            || !update.Labels.Add.Any(label => items.Contains(Identity.Create(label.ExternalId)))) added = true;
+                            || !update.Labels.Add.Any(label => badValues.Contains(Identity.Create(label.ExternalId)))) added = true;
                         break;
                 }
 
