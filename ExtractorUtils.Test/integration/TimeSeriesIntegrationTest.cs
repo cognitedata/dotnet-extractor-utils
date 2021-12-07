@@ -273,7 +273,7 @@ namespace ExtractorUtils.Test.Integration
             var updates = new[]
             {
                 new TimeSeriesUpdateItem(tss[0].extId) { Update = upd },
-                new TimeSeriesUpdateItem(tss[1].extId) { Update = upd },
+                new TimeSeriesUpdateItem(tss[1].id) { Update = upd },
                 new TimeSeriesUpdateItem(tss[2].extId) { Update = upd }
             };
 
@@ -583,7 +583,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     Name = "utils-test-ts-2",
                     ExternalId = $"{tester.Prefix} utils-test-ts-2",
-                    IsString = false
+                    IsString = true
                 },
                 new TimeSeriesCreate
                 {
