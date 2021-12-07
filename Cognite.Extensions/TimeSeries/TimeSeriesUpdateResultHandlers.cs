@@ -12,7 +12,7 @@ namespace Cognite.Extensions
         {
             if (ex.Missing?.Any() ?? false)
             {
-                if (ex.Message.StartsWith("Time series ids not found", StringComparison.InvariantCultureIgnoreCase))
+                if (ex.Message.StartsWith("Time series not found", StringComparison.InvariantCultureIgnoreCase))
                 {
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.Id;

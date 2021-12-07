@@ -260,6 +260,212 @@ namespace ExtractorUtils.Test.Integration
         }
 
         [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestUpdateTimeSeries(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+
+            var tss = await CreateTestTimeSeries(tester);
+
+            var upd = new TimeSeriesUpdate { Description = new UpdateNullable<string>("new description") };
+
+            var updates = new[]
+            {
+                new TimeSeriesUpdateItem(tss[0].extId) { Update = upd },
+                new TimeSeriesUpdateItem(tss[1].extId) { Update = upd },
+                new TimeSeriesUpdateItem(tss[2].extId) { Update = upd }
+            };
+
+            var json = System.Text.Json.JsonSerializer.Serialize(updates, Oryx.Cognite.Common.jsonOptions);
+
+
+            try
+            {
+                var result = await tester.Destination.UpdateTimeSeriesAsync(updates, RetryMode.None, SanitationMode.None, tester.Source.Token);
+                result.Throw();
+
+                Assert.Equal(3, result.Results.Count());
+                Assert.True(result.IsAllGood);
+
+                Assert.All(result.Results, ts => Assert.Equal("new description", ts.Description));
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = tss.Select(pair => Identity.Create(pair.id))
+                });
+            }
+        }
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestUpdateSanitation(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+
+            var tss = await CreateTestTimeSeries(tester);
+
+            var meta = Enumerable.Range(0, 100)
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 200));
+
+            var updates = new[]
+            {
+                new TimeSeriesUpdateItem(tss[0].extId)
+                {
+                    Update = new TimeSeriesUpdate
+                    {
+                        ExternalId = new UpdateNullable<string>(tester.Prefix + new string('æ', 300)),
+                        DataSetId = new UpdateNullable<long?>(-123),
+                        Description = new UpdateNullable<string>(new string('æ', 2000)),
+                        AssetId = new UpdateNullable<long?>(-123),
+                        Metadata = new UpdateDictionary<string>(meta),
+                        Name = new UpdateNullable<string>(new string('æ', 300)),
+                        Unit = new UpdateNullable<string>(new string('æ', 200))
+                    }
+                },
+                new TimeSeriesUpdateItem(tss[1].extId)
+                {
+                    Update = new TimeSeriesUpdate { Name = new UpdateNullable<string>("name") }
+                },
+                new TimeSeriesUpdateItem(tss[1].extId)
+                {
+                    Update = new TimeSeriesUpdate { Name = new UpdateNullable<string>("name") }
+                }
+            };
+
+            try
+            {
+                var result = await tester.Destination.UpdateTimeSeriesAsync(updates, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+                result.ThrowOnFatal();
+
+                Assert.Equal(2, result.Results.Count());
+
+                var errs = result.Errors.ToArray();
+                Assert.Single(errs);
+
+                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
+                Assert.Equal(ResourceType.Id, errs[0].Resource);
+                Assert.Single(errs[0].Values);
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = tss.Select(pair => Identity.Create(pair.id))
+                });
+            }
+        }
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestUpdateErrorHandling(CogniteHost host)
+        {
+            using var tester = new CDFTester(host);
+
+            var tss = await CreateTestTimeSeries(tester);
+
+            var upd = new TimeSeriesUpdate { Description = new UpdateNullable<string>("new description") };
+
+            var updates1 = new[]
+            {
+                // Existing timeseries
+                new TimeSeriesUpdateItem(tss[0].extId)
+                {
+                    Update = new TimeSeriesUpdate { ExternalId = new UpdateNullable<string>(tss[1].extId) }
+                },
+                // Update OK
+                new TimeSeriesUpdateItem(tss[1].extId)
+                {
+                    Update = upd
+                },
+                // Missing asset
+                new TimeSeriesUpdateItem(tss[2].extId)
+                {
+                    Update = new TimeSeriesUpdate { AssetId = new UpdateNullable<long?>(123) }
+                }
+            };
+            var updates2 = new[]
+            {
+                // Update OK
+                new TimeSeriesUpdateItem(tss[0].extId)
+                {
+                    Update = upd
+                },
+                // Missing dataset
+                new TimeSeriesUpdateItem(tss[1].extId)
+                {
+                    Update = new TimeSeriesUpdate { DataSetId = new UpdateNullable<long?>(123) }
+                }
+            };
+            var updates3 = new[]
+            {
+                // Missing by internal id
+                new TimeSeriesUpdateItem(123)
+                {
+                    Update = upd
+                },
+                // Missing by external id
+                new TimeSeriesUpdateItem("missing-ts")
+                {
+                    Update = upd
+                },
+                // Update OK
+                new TimeSeriesUpdateItem(tss[2].extId)
+                {
+                    Update = upd
+                }
+            };
+
+            try
+            {
+                var result1 = await tester.Destination.UpdateTimeSeriesAsync(updates1, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
+                result1.ThrowOnFatal();
+                var result2 = await tester.Destination.UpdateTimeSeriesAsync(updates2, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
+                result2.ThrowOnFatal();
+                var result3 = await tester.Destination.UpdateTimeSeriesAsync(updates3, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
+                result3.ThrowOnFatal();
+
+                var errs = result1.Errors.ToArray();
+                Assert.Equal(2, errs.Length);
+
+                var err = errs.First(e => e.Type == ErrorType.ItemExists && e.Resource == ResourceType.ExternalId);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.ExternalId == tss[1].extId);
+
+                err = errs.First(e => e.Type == ErrorType.ItemMissing && e.Resource == ResourceType.AssetId);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.Id == 123);
+
+                errs = result2.Errors.ToArray();
+                Assert.Single(errs);
+
+                err = errs.First(e => e.Type == ErrorType.ItemMissing && e.Resource == ResourceType.DataSetId);
+                Assert.Single(err.Skipped);
+                Assert.Contains(err.Values, e => e.Id == 123);
+
+                errs = result3.Errors.ToArray();
+                Assert.Single(errs);
+
+                err = errs.First(e => e.Type == ErrorType.ItemMissing && e.Resource == ResourceType.Id);
+                Assert.Equal(2, err.Skipped.Count());
+                Assert.Contains(err.Values, e => e.Id == 123);
+                Assert.Contains(err.Values, e => e.ExternalId == "missing-ts");
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = tss.Select(pair => Identity.Create(pair.id))
+                });
+            }
+        }
+
+        [Theory]
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUploadQueue(CogniteHost host)
         {
@@ -377,7 +583,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     Name = "utils-test-ts-2",
                     ExternalId = $"{tester.Prefix} utils-test-ts-2",
-                    IsString = true
+                    IsString = false
                 },
                 new TimeSeriesCreate
                 {
