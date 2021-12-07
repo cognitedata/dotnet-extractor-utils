@@ -50,6 +50,12 @@ namespace Cognite.Extensions
             if ((item.Id == null) == (item.ExternalId == null)) return ResourceType.Id;
 
             var update = item.Update;
+
+            if (update.DataSetId == null && update.Description == null && update.ExternalId == null
+                && update.Metadata == null && update.Name == null && update.AssetId == null && update.Unit == null
+                && update.SecurityCategories == null)
+                return ResourceType.Update;
+
             if (!update.ExternalId?.Set?.CheckLength(ExternalIdMax) ?? false) return ResourceType.ExternalId;
             if (!update.Name?.Set?.CheckLength(TimeSeriesNameMax) ?? false) return ResourceType.Name;
             if (update.AssetId?.Set != null && update.AssetId.Set < 1) return ResourceType.AssetId;
