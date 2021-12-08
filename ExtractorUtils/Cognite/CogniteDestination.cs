@@ -303,6 +303,41 @@ namespace Cognite.Extractor.Utils
                 sanitationMode,
                 token).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Insert or update a list of assets, handling errors that come up during both insert and update.
+        /// Only assets that differ from assets in CDF are updated.
+        /// 
+        /// All given assets must have an external id, so it is not in practice possible to use this to change
+        /// the externalId of assets.
+        /// 
+        /// Assets are returned in the same order as given.
+        /// </summary>
+        /// <param name="upserts">Assets to upsert</param>
+        /// <param name="retryMode">How to handle retries on errors</param>
+        /// <param name="sanitationMode">How to sanitize creates and updates</param>
+        /// <param name="options">How to update existing assets</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Result with failed creates/updates and list of assets</returns>
+        /// <exception cref="ArgumentException">All upserted assets must have external id</exception>
+        public async Task<CogniteResult<Asset, AssetCreate>> UpsertAssetsAsync(
+            IEnumerable<AssetCreate> upserts,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            UpsertParams? options,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Upserting {Number} assets in CDF", upserts.Count());
+            return await _client.Assets.UpsertAsync(
+                upserts,
+                _config.CdfChunking.Assets,
+                _config.CdfThrottling.Assets,
+                retryMode,
+                sanitationMode,
+                options,
+                token).ConfigureAwait(false);
+        }
+
         #endregion
 
         #region datapoints
