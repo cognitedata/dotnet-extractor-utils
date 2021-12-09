@@ -175,7 +175,7 @@ namespace Cognite.Extensions
             }
             else
             {
-                throw new ArgumentException("No OIDC tenant or token url defined");
+                throw new ConfigurationException("No OIDC tenant or token url defined");
             }
         }
 

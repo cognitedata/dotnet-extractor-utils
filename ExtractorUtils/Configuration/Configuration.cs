@@ -5,6 +5,7 @@ using Cognite.Extractor.Metrics;
 using Cognite.Extractor.StateStorage;
 using Microsoft.Extensions.Logging;
 using System;
+using Cognite.Extractor.Common;
 
 namespace Cognite.Extractor.Utils
 {
