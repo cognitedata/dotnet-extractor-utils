@@ -157,7 +157,7 @@ namespace Cognite.Extensions
         {
             if (config == null)
             {
-                throw new ArgumentNullException(nameof(config));
+                throw new ConfigurationException("Configuration missing");
             }
             _config = config;
             _client = client;

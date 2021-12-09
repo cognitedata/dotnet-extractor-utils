@@ -64,13 +64,8 @@ namespace ExtractorUtils.Test
                 case CogniteHost.GreenField:
                     config = config.Concat(new List<String>() {
                         "  project: ${TEST_PROJECT}",
-                        "  host: ${TEST_HOST}",
-                        "  idp-authentication:",
-                        "    client-id: ${TEST_CLIENT_ID}",
-                        "    tenant: ${TEST_TENANT}",
-                        "    secret: ${TEST_SECRET}",
-                        "    scopes:",
-                        "    - ${TEST_SCOPE}"
+                        "  api-key: ${TEST_API_KEY}",
+                        "  host: ${TEST_HOST}"
                     }).ToList();
                     break;
                 case CogniteHost.BlueField:
