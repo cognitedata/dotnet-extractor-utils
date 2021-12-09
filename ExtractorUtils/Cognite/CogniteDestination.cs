@@ -179,6 +179,40 @@ namespace Cognite.Extractor.Utils
                 token).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Insert or update a list of timeseries, handling errors that come up during both insert and update.
+        /// Only timeseries that differ from timeseries in CDF are updated.
+        /// 
+        /// All given timeseries must have an external id, so it is not in practice possible to use this to change
+        /// the externalId of timeseries.
+        /// 
+        /// Timeseries are returned in the same order as given.
+        /// </summary>
+        /// <param name="upserts">Assets to upsert</param>
+        /// <param name="retryMode">How to handle retries on errors</param>
+        /// <param name="sanitationMode">How to sanitize creates and updates</param>
+        /// <param name="options">How to update existing assets</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Result with failed creates/updates and list of assets</returns>
+        /// <exception cref="ArgumentException">All upserted assets must have external id</exception>
+        public async Task<CogniteResult<TimeSeries, TimeSeriesCreate>> UpsertTimeSeriesAsync(
+            IEnumerable<TimeSeriesCreate> upserts,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            UpsertParams? options,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Upserting {Number} timseries in CDF", upserts.Count());
+            return await _client.TimeSeries.UpsertAsync(
+                upserts,
+                _config.CdfChunking.TimeSeries,
+                _config.CdfThrottling.TimeSeries,
+                retryMode,
+                sanitationMode,
+                options,
+                token).ConfigureAwait(false);
+        }
+
         #endregion
 
         #region assets

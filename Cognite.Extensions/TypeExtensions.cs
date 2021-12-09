@@ -155,6 +155,10 @@ namespace Cognite.Extensions
             if (ts.Unit != old.Unit && (ts.Unit != null || opt.SetNull))
                 upd.Unit = new UpdateNullable<string?>(ts.Unit);
 
+            if (upd.AssetId == null && upd.DataSetId == null && upd.Description == null
+                && upd.ExternalId == null && upd.Metadata == null && upd.Name == null
+                && upd.SecurityCategories == null && upd.Unit == null) return null;
+
             return new TimeSeriesUpdateItem(old.Id) { Update = upd };
         }
 
