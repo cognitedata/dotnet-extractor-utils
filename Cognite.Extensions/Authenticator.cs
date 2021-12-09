@@ -153,7 +153,7 @@ namespace Cognite.Extensions
         /// <param name="config">Configuration object</param>
         /// <param name="client">Http client</param>
         /// <param name="logger">Logger</param>
-        public Authenticator(AuthenticatorConfig config, HttpClient client, ILogger<IAuthenticator> logger)
+        public Authenticator(AuthenticatorConfig config, HttpClient client, ILogger<IAuthenticator>? logger)
         {
             if (config == null)
             {
@@ -161,7 +161,7 @@ namespace Cognite.Extensions
             }
             _config = config;
             _client = client;
-            _logger = logger;
+            _logger = logger ?? new Microsoft.Extensions.Logging.Abstractions.NullLogger<Authenticator>();
 
             if (!string.IsNullOrWhiteSpace(config.TokenUrl))
             {
