@@ -97,7 +97,8 @@ namespace Cognite.Extensions
 
         private static readonly DistinctResource<EventCreate>[] eventDistinct = new[]
         {
-            new DistinctResource<EventCreate>("Duplicate external ids", ResourceType.ExternalId, e => Identity.Create(e.ExternalId))
+            new DistinctResource<EventCreate>("Duplicate external ids", ResourceType.ExternalId,
+                e => e != null ? Identity.Create(e.ExternalId) : null)
         };
 
         /// <summary>

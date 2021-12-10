@@ -98,7 +98,8 @@ namespace Cognite.Extensions
 
         private static readonly DistinctResource<AssetCreate>[] assetDistinct = new[]
         {
-            new DistinctResource<AssetCreate>("Duplicate external ids", ResourceType.ExternalId, a => Identity.Create(a.ExternalId))
+            new DistinctResource<AssetCreate>("Duplicate external ids", ResourceType.ExternalId,
+                a => a != null ? Identity.Create(a.ExternalId) : null)
         };
 
 

@@ -69,15 +69,18 @@ namespace Cognite.Extensions
             seq.Metadata = seq.Metadata.SanitizeMetadata(SequenceMetadataMaxPerKey, SequenceMetadataMaxBytes,
                 SequenceMetadataMaxBytes, SequenceMetadataMaxBytes, out int totalBytes);
 
-            foreach (var col in seq.Columns)
+            if (seq.Columns != null)
             {
-                col.ExternalId = col.ExternalId.Truncate(ExternalIdMax);
-                col.Name = col.Name.Truncate(SequenceColumnNameMax);
-                col.Description = col.Description.Truncate(SequenceColumnDescriptionMax);
-                col.Metadata = col.Metadata.SanitizeMetadata(SequenceColumnMetadataMaxPerKey, SequenceColumnMetadataMaxBytes,
-                    SequenceColumnMetadataMaxBytes,
-                    Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes);
-                totalBytes += colBytes;
+                foreach (var col in seq.Columns)
+                {
+                    col.ExternalId = col.ExternalId.Truncate(ExternalIdMax);
+                    col.Name = col.Name.Truncate(SequenceColumnNameMax);
+                    col.Description = col.Description.Truncate(SequenceColumnDescriptionMax);
+                    col.Metadata = col.Metadata.SanitizeMetadata(SequenceColumnMetadataMaxPerKey, SequenceColumnMetadataMaxBytes,
+                        SequenceColumnMetadataMaxBytes,
+                        Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes);
+                    totalBytes += colBytes;
+                }
             }
         }
 
@@ -216,7 +219,8 @@ namespace Cognite.Extensions
 
         private static readonly DistinctResource<SequenceCreate>[] sequenceDistinct = new[]
         {
-            new DistinctResource<SequenceCreate>("Duplicate external ids", ResourceType.ExternalId, s => Identity.Create(s.ExternalId))
+            new DistinctResource<SequenceCreate>("Duplicate external ids", ResourceType.ExternalId,
+                s => s.ExternalId != null ? Identity.Create(s.ExternalId) : null)
         };
 
         /// <summary>

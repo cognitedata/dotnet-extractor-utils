@@ -237,7 +237,7 @@ namespace Cognite.Extensions
 
         private class DistinctResource<T>
         {
-            public DistinctResource(string text, ResourceType resource, Func<T, Identity> selector)
+            public DistinctResource(string text, ResourceType resource, Func<T, Identity?> selector)
             {
                 Text = text;
                 Resource = resource;
@@ -246,7 +246,7 @@ namespace Cognite.Extensions
 
             public string Text { get; }
             public ResourceType Resource { get; }
-            public Func<T, Identity> Selector { get; }
+            public Func<T, Identity?> Selector { get; }
         }
 
         private static (List<T>, List<CogniteError<T>>) CleanRequest<T>(

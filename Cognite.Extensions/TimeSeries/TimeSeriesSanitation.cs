@@ -84,9 +84,9 @@ namespace Cognite.Extensions
         private static readonly DistinctResource<TimeSeriesCreate>[] timeSeriesDistinct = new[]
         {
             new DistinctResource<TimeSeriesCreate>("Duplicated externalIds", ResourceType.ExternalId,
-                ts => Identity.Create(ts.ExternalId)),
+                ts => ts.ExternalId != null ? Identity.Create(ts.ExternalId) : null),
             new DistinctResource<TimeSeriesCreate>("Duplicated metric names in request", ResourceType.LegacyName,
-                ts => Identity.Create(ts.LegacyName))
+                ts => ts.LegacyName != null ? Identity.Create(ts.LegacyName) : null)
         };
 
         /// <summary>
