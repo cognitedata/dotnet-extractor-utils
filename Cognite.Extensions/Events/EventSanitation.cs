@@ -94,6 +94,12 @@ namespace Cognite.Extensions
             return null;
         }
 
+
+        private static readonly DistinctResource<EventCreate>[] eventDistinct = new[]
+        {
+            new DistinctResource<EventCreate>("Duplicate external ids", ResourceType.ExternalId, e => Identity.Create(e.ExternalId))
+        };
+
         /// <summary>
         /// Clean list of EventCreate objects, sanitizing each and removing any duplicates.
         /// The first encountered duplicate is kept.
@@ -105,70 +111,7 @@ namespace Cognite.Extensions
             IEnumerable<EventCreate> events,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (events, Enumerable.Empty<CogniteError<EventCreate>>());
-            if (events == null)
-            {
-                throw new ArgumentNullException(nameof(events));
-            }
-            var result = new List<EventCreate>();
-            var errors = new List<CogniteError<EventCreate>>();
-
-            var ids = new HashSet<string>();
-            var duplicated = new HashSet<string>();
-
-            var bad = new List<(ResourceType, EventCreate)>();
-
-            foreach (var evt in events)
-            {
-                bool toAdd = true;
-                if (mode == SanitationMode.Remove)
-                {
-                    var failedField = evt.Verify();
-                    if (failedField.HasValue)
-                    {
-                        bad.Add((failedField.Value, evt));
-                        toAdd = false;
-                    }
-                }
-                else if (mode == SanitationMode.Clean)
-                {
-                    evt.Sanitize();
-                }
-                if (evt.ExternalId != null)
-                {
-                    if (!ids.Add(evt.ExternalId))
-                    {
-                        duplicated.Add(evt.ExternalId);
-                        toAdd = false;
-                    }
-                }
-                if (toAdd)
-                {
-                    result.Add(evt);
-                }
-            }
-            if (duplicated.Any())
-            {
-                errors.Add(new CogniteError<EventCreate>
-                {
-                    Status = 409,
-                    Message = "ExternalIds duplicated",
-                    Resource = ResourceType.ExternalId,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicated.Select(Identity.Create).ToArray()
-                });
-            }
-            if (bad.Any())
-            {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<EventCreate>
-                {
-                    Skipped = group.Select(pair => pair.Item2).ToList(),
-                    Resource = group.Key,
-                    Type = ErrorType.SanitationFailed,
-                    Status = 400
-                }));
-            }
-            return (result, errors);
+            return CleanRequest(eventDistinct, events, Verify, Sanitize, mode);
         }
     }
 }

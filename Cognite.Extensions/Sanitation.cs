@@ -233,5 +233,104 @@ namespace Cognite.Extensions
             }
             return true;
         }
+
+
+        private class DistinctResource<T>
+        {
+            public DistinctResource(string text, ResourceType resource, Func<T, Identity> selector)
+            {
+                Text = text;
+                Resource = resource;
+                Selector = selector;
+            }
+
+            public string Text { get; }
+            public ResourceType Resource { get; }
+            public Func<T, Identity> Selector { get; }
+        }
+
+        private static (List<T>, List<CogniteError<T>>) CleanRequest<T>(
+            DistinctResource<T>[] distinctResources,
+            IEnumerable<T> items,
+            Func<T, ResourceType?> verify,
+            Action<T> sanitize,
+            SanitationMode mode)
+        {
+            if (mode == SanitationMode.None) return (items.ToList(), new List<CogniteError<T>>());
+            if (items == null) throw new ArgumentNullException(nameof(items));
+
+            var result = new List<T>();
+            var errors = new List<CogniteError<T>>();
+
+            var existingResources = new HashSet<Identity>[distinctResources.Length];
+            var duplicates = new List<(T Item, Identity Idt)>[distinctResources.Length];
+
+            var bad = new List<(ResourceType Type, T Item)>();
+
+            for (int i = 0; i < distinctResources.Length; i++)
+            {
+                existingResources[i] = new HashSet<Identity>();
+                duplicates[i] = new List<(T Item, Identity Idt)>();
+            }
+
+            foreach (var item in items)
+            {
+                bool toAdd = true;
+                if (mode == SanitationMode.Clean)
+                {
+                    sanitize(item);
+                }
+                var failedField = verify(item);
+                if (failedField.HasValue)
+                {
+                    bad.Add((failedField.Value, item));
+                    toAdd = false;
+                }
+
+                for (int i = 0; i < distinctResources.Length; i++)
+                {
+                    var value = distinctResources[i].Selector(item);
+                    if (value != null && !existingResources[i].Add(value))
+                    {
+                        duplicates[i].Add((item, value));
+                        toAdd = false;
+                    }
+                }
+
+                if (toAdd)
+                {
+                    result.Add(item);
+                }
+            }
+
+            for (int i = 0; i < duplicates.Length; i++)
+            {
+                if (duplicates[i].Any())
+                {
+                    errors.Add(new CogniteError<T>
+                    {
+                        Status = 409,
+                        Message = distinctResources[i].Text,
+                        Resource = distinctResources[i].Resource,
+                        Type = ErrorType.ItemDuplicated,
+                        Values = duplicates[i].Select(pair => pair.Idt).Distinct().ToArray(),
+                        Skipped = duplicates[i].Select(pair => pair.Item)
+                    });
+                }
+            }
+
+            if (bad.Any())
+            {
+                errors.AddRange(bad.GroupBy(pair => pair.Type).Select(group => new CogniteError<T>
+                {
+                    Skipped = group.Select(pair => pair.Item).ToList(),
+                    Resource = group.Key,
+                    Type = ErrorType.SanitationFailed,
+                    Status = 400
+                }));
+            }
+
+            return (result, errors);
+        }
     }
 }
