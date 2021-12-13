@@ -88,6 +88,7 @@ namespace Cognite.Extractor.Common
 
         private readonly ManualResetEvent _taskCompletionEvent = new ManualResetEvent(false);
         private readonly bool _quitOnFailure;
+        private readonly bool _keepAllResults;
 
         private int _taskIndex;
 
@@ -98,13 +99,21 @@ namespace Cognite.Extractor.Common
         /// <param name="quitOnFailure">True if </param>
         /// <param name="perUnit"></param>
         /// <param name="timeUnit"></param>
-        public TaskThrottler(int maxParallelism, bool quitOnFailure = false, int perUnit = 0, TimeSpan? timeUnit = null)
+        /// <param name="keepAllResults">Keep all task result objects, not those who have failed or are within the
+        /// last <paramref name="timeUnit"/>. This means that the size in memory of the task throttler will grow forever,
+        /// do not use this unless you intend to dispose of the throttler within a short period of time.</param>
+        public TaskThrottler(int maxParallelism,
+            bool quitOnFailure = false,
+            int perUnit = 0,
+            TimeSpan? timeUnit = null,
+            bool keepAllResults = false)
         {
             _maxParallelism = maxParallelism;
             _maxPerUnit = perUnit;
             _timeUnit = timeUnit == null ? TimeSpan.Zero : TimeSpan.FromTicks(timeUnit.Value.Ticks);
             _quitOnFailure = quitOnFailure;
             _completionSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
+            _keepAllResults = keepAllResults;
             RunTask = Task.Run(async () => await Run().ConfigureAwait(false));
         }
 
@@ -238,6 +247,7 @@ namespace Cognite.Extractor.Common
 
                     if (scheduledWithinLastTimeUnit > _maxPerUnit) return false;
                 }
+                
             }
             return true;
         }
@@ -293,15 +303,20 @@ namespace Cognite.Extractor.Common
 
                 lock (_lock)
                 {
-                    var toRemove = _runningTasks.Where(result =>
+                    var now = DateTime.UtcNow;
+                    // Remove all results we are no longer interested in.
+                    if (!_keepAllResults)
+                    {
+                        _results.RemoveAll(result =>
+                            (result.Exception == null || !_quitOnFailure)
+                            && (_timeUnit == TimeSpan.Zero || _maxPerUnit <= 0 || result.StartTime <= now - _timeUnit));
+                    }
+                    
+                    _runningTasks.RemoveAll(result =>
                         result.Task == null
                         || result.Task.IsCompleted
                         || result.Task.IsCanceled
-                        || result.Task.IsFaulted).ToList();
-                    foreach (var task in toRemove)
-                    {
-                        _runningTasks.Remove(task);
-                    }
+                        || result.Task.IsFaulted);
                 }
             }
         }
