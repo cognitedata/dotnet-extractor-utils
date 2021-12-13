@@ -142,6 +142,30 @@ namespace Cognite.Extensions
             }
             return ret;
         }
+
+        /// <summary>
+        /// Utility method for checking if set of identities contains external id.
+        /// </summary>
+        /// <param name="set">Set of identities</param>
+        /// <param name="idt">ExternalId to test</param>
+        /// <returns>True if externalId is non-null and set contains it, false otherwise</returns>
+        public static bool ContainsIdentity(this HashSet<Identity> set, string? idt)
+        {
+            if (idt == null) return false;
+            return set.Contains(Identity.Create(idt));
+        }
+
+        /// <summary>
+        /// Utility method for checking if set of identities contains internal id.
+        /// </summary>
+        /// <param name="set">Set of identities</param>
+        /// <param name="idt">ExternalId to test</param>
+        /// <returns>True if internal id is non-null and set contains it, false otherwise</returns>
+        public static bool ContainsIdentity(this HashSet<Identity> set, long? idt)
+        {
+            if (idt == null) return false;
+            return set.Contains(Identity.Create(idt.Value));
+        }
     }
 
 

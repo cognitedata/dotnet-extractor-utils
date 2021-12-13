@@ -64,11 +64,11 @@ namespace Cognite.Extensions
         {
             return error.Resource switch
             {
-                ResourceType.DataSetId => asset.DataSetId.HasValue && badValues.Contains(Identity.Create(asset.DataSetId.Value)),
-                ResourceType.ExternalId => asset.ExternalId != null && badValues.Contains(Identity.Create(asset.ExternalId)),
-                ResourceType.ParentExternalId => asset.ParentExternalId != null && badValues.Contains(Identity.Create(asset.ParentExternalId)),
-                ResourceType.ParentId => asset.ParentId.HasValue && badValues.Contains(Identity.Create(asset.ParentId.Value)),
-                ResourceType.Labels => asset.Labels != null && asset.Labels.Any(l => badValues.Contains(Identity.Create(l.ExternalId))),
+                ResourceType.DataSetId => badValues.ContainsIdentity(asset.DataSetId),
+                ResourceType.ExternalId => badValues.ContainsIdentity(asset.ExternalId),
+                ResourceType.ParentExternalId => badValues.ContainsIdentity(asset.ParentExternalId),
+                ResourceType.ParentId => badValues.ContainsIdentity(asset.ParentId),
+                ResourceType.Labels => asset.Labels != null && asset.Labels.Any(l => badValues.ContainsIdentity(l.ExternalId)),
                 _ => false
             };
         }

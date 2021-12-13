@@ -53,9 +53,9 @@ namespace Cognite.Extensions
         {
             return error.Resource switch
             {
-                ResourceType.DataSetId => seq.DataSetId.HasValue && badValues.Contains(Identity.Create(seq.DataSetId.Value)),
-                ResourceType.ExternalId => seq.ExternalId != null && badValues.Contains(Identity.Create(seq.ExternalId)),
-                ResourceType.AssetId => seq.AssetId.HasValue && badValues.Contains(Identity.Create(seq.AssetId.Value)),
+                ResourceType.DataSetId => badValues.ContainsIdentity(seq.DataSetId),
+                ResourceType.ExternalId => badValues.ContainsIdentity(seq.ExternalId),
+                ResourceType.AssetId => badValues.ContainsIdentity(seq.AssetId),
                 _ => false
             };
         }

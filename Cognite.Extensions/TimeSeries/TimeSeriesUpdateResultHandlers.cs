@@ -70,9 +70,9 @@ namespace Cognite.Extensions
             var update = item.Update;
             return error.Resource switch
             {
-                ResourceType.DataSetId => update.DataSetId?.Set != null && badValues.Contains(Identity.Create(update.DataSetId.Set.Value)),
-                ResourceType.ExternalId => update.ExternalId?.Set != null && badValues.Contains(Identity.Create(update.ExternalId.Set)),
-                ResourceType.AssetId => update.AssetId?.Set != null && badValues.Contains(Identity.Create(update.AssetId.Set.Value)),
+                ResourceType.DataSetId => badValues.ContainsIdentity(update.DataSetId?.Set),
+                ResourceType.ExternalId => badValues.ContainsIdentity(update.ExternalId?.Set),
+                ResourceType.AssetId => badValues.ContainsIdentity(update.AssetId?.Set),
                 ResourceType.Id => badValues.Contains(item),
                 _ => false
             };

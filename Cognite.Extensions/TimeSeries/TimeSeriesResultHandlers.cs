@@ -60,10 +60,10 @@ namespace Cognite.Extensions
         {
             return error.Resource switch
             {
-                ResourceType.DataSetId => ts.DataSetId.HasValue && badValues.Contains(Identity.Create(ts.DataSetId.Value)),
-                ResourceType.ExternalId => ts.ExternalId != null && badValues.Contains(Identity.Create(ts.ExternalId)),
-                ResourceType.AssetId => ts.AssetId.HasValue && badValues.Contains(Identity.Create(ts.AssetId.Value)),
-                ResourceType.LegacyName => ts.LegacyName != null && badValues.Contains(Identity.Create(ts.LegacyName)),
+                ResourceType.DataSetId => badValues.ContainsIdentity(ts.DataSetId),
+                ResourceType.ExternalId => badValues.ContainsIdentity(ts.ExternalId),
+                ResourceType.AssetId => badValues.ContainsIdentity(ts.AssetId),
+                ResourceType.LegacyName => badValues.ContainsIdentity(ts.LegacyName),
                 _ => false,
             };
         }

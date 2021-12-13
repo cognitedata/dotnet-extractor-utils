@@ -77,19 +77,19 @@ namespace Cognite.Extensions
             switch (error.Resource)
             {
                 case ResourceType.Id:
-                    return item.Id.HasValue && badValues.Contains(Identity.Create(item.Id.Value));
+                    return badValues.ContainsIdentity(item.Id);
                 case ResourceType.DataSetId:
-                    return update.DataSetId?.Set != null && badValues.Contains(Identity.Create(update.DataSetId.Set.Value));
+                    return badValues.ContainsIdentity(update.DataSetId?.Set);
                 case ResourceType.ExternalId:
                     if (error.Type == ErrorType.ItemMissing)
                     {
-                        return update.ExternalId?.Set != null && badValues.Contains(Identity.Create(update.ExternalId.Set))
-                            || item.ExternalId != null && badValues.Contains(Identity.Create(item.ExternalId))
-                            || update.ParentExternalId?.Set != null && badValues.Contains(Identity.Create(update.ParentExternalId.Set));
+                        return badValues.ContainsIdentity(update.ExternalId?.Set)
+                            || badValues.ContainsIdentity(item.ExternalId)
+                            || badValues.ContainsIdentity(update.ParentExternalId?.Set);
                     }
                     else if (error.Type == ErrorType.ItemExists)
                     {
-                        return update.ExternalId?.Set != null && badValues.Contains(Identity.Create(update.ExternalId.Set));
+                        return badValues.ContainsIdentity(update.ExternalId?.Set);
                     }
                     break;
                 case ResourceType.ParentId:
@@ -97,11 +97,11 @@ namespace Cognite.Extensions
                     {
                         return badValues.Contains(item);
                     }
-                    return update.ParentId?.Set != null && badValues.Contains(Identity.Create(update.ParentId.Set.Value))
-                            || update.ParentExternalId?.Set != null && badValues.Contains(Identity.Create(update.ParentExternalId.Set));
+                    return badValues.ContainsIdentity(update.ParentId?.Set)
+                        || badValues.ContainsIdentity(update.ParentExternalId?.Set);
                 case ResourceType.Labels:
                     var labels = update.Labels?.Add ?? update.Labels?.Set;
-                    return labels != null && labels.Any(l => badValues.Contains(Identity.Create(l.ExternalId)));
+                    return labels != null && labels.Any(l => badValues.ContainsIdentity(l.ExternalId));
             }
             return false;
         }
