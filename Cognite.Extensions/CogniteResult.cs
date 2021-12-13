@@ -96,6 +96,52 @@ namespace Cognite.Extensions
                 return new CogniteError<TError> { Message = ex.Message, Exception = ex };
             }
         }
+
+        private static IEnumerable<T> CleanFromErrorCommon<T>(
+            CogniteError<T> error,
+            IEnumerable<T> items,
+            Func<T, HashSet<Identity>, CogniteError<T>, bool> isAffected,
+            Func<T, Identity?> getIdentity,
+            Prometheus.Counter skippedCounter)
+        {
+            if (items == null) throw new ArgumentNullException(nameof(items));
+            if (error == null) return items;
+
+            if (!error.Values?.Any() ?? true)
+            {
+                error.Values = items.Select(item => getIdentity(item)!).Where(idt => idt != null).ToList();
+                return Enumerable.Empty<T>();
+            }
+
+            var badValues = new HashSet<Identity>(error.Values);
+
+            var ret = new List<T>();
+            var skipped = new List<T>();
+
+            foreach (var item in items)
+            {
+                if (isAffected(item, badValues, error))
+                {
+                    skipped.Add(item);
+                    skippedCounter.Inc();
+                }
+                else
+                {
+                    ret.Add(item);
+                }
+            }
+
+            if (skipped.Any())
+            {
+                error.Skipped = skipped;
+            }
+            else
+            {
+                error.Skipped = items;
+                return Enumerable.Empty<T>();
+            }
+            return ret;
+        }
     }
 
 

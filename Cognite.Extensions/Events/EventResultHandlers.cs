@@ -41,6 +41,18 @@ namespace Cognite.Extensions
                 }
             }
         }
+
+        private static bool IsAffected(EventCreate evt, HashSet<Identity> badValues, CogniteError<EventCreate> error)
+        {
+            return error.Resource switch
+            {
+                ResourceType.DataSetId => evt.DataSetId.HasValue && badValues.Contains(Identity.Create(evt.DataSetId.Value)),
+                ResourceType.ExternalId => evt.ExternalId != null && badValues.Contains(Identity.Create(evt.ExternalId)),
+                ResourceType.AssetId => evt.AssetIds != null && evt.AssetIds.Any(id => badValues.Contains(Identity.Create(id))),
+                _ => false
+            };
+        }
+
         /// <summary>
         /// Clean list of EventCreate objects based on CogniteError
         /// </summary>
@@ -51,59 +63,9 @@ namespace Cognite.Extensions
             CogniteError<EventCreate> error,
             IEnumerable<EventCreate> events)
         {
-            if (events == null)
-            {
-                throw new ArgumentNullException(nameof(events));
-            }
-            if (error == null) return events;
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = events.Where(evt => evt.ExternalId != null).Select(evt => Identity.Create(evt.ExternalId));
-                return Array.Empty<EventCreate>();
-            }
-
-            var items = new HashSet<Identity>(error.Values);
-
-            var ret = new List<EventCreate>();
-            var skipped = new List<EventCreate>();
-
-            foreach (var evt in events)
-            {
-                bool added = false;
-                switch (error.Resource)
-                {
-                    case ResourceType.DataSetId:
-                        if (!evt.DataSetId.HasValue || !items.Contains(Identity.Create(evt.DataSetId.Value))) added = true;
-                        else CdfMetrics.EventsSkipped.Inc();
-                        break;
-                    case ResourceType.ExternalId:
-                        if (evt.ExternalId == null || !items.Contains(Identity.Create(evt.ExternalId))) added = true;
-                        else CdfMetrics.EventsSkipped.Inc();
-                        break;
-                    case ResourceType.AssetId:
-                        if (evt.AssetIds == null || !evt.AssetIds.Any(id => items.Contains(Identity.Create(id)))) added = true;
-                        break;
-                }
-                if (added)
-                {
-                    ret.Add(evt);
-                }
-                else
-                {
-                    CdfMetrics.EventsSkipped.Inc();
-                    skipped.Add(evt);
-                }
-            }
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = events;
-                return Array.Empty<EventCreate>();
-            }
-            return ret;
+            return CleanFromErrorCommon(error, events, IsAffected,
+                evt => evt.ExternalId == null ? null : Identity.Create(evt.ExternalId),
+                CdfMetrics.EventsSkipped);
         }
     }
 }

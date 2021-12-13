@@ -38,5 +38,7 @@ namespace Cognite.Extensions
 
         public static Counter AssetUpdatesSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_asset_updates_skipped",
             "Number of asset updates skipped due to errors");
+        public static Counter TimeSeriesUpdatesSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_timeseries_updates_skipped",
+            "Number of timeseries updates skipped due to errors");
     }
 }

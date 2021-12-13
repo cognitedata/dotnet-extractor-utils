@@ -94,7 +94,8 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
                     (chunk, idx) => async () => {
-                        var result = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
+                        var result = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, chunkSize, throttleSize,
+                            0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
                     });
 
@@ -155,7 +156,7 @@ namespace Cognite.Extensions
             var generators = chunks
                 .Select<IEnumerable<AssetCreate>, Func<Task>>(
                 (chunk, idx) => async () => {
-                    var result = await CreateAssetsHandleErrors(assets, chunk, retryMode, token).ConfigureAwait(false);
+                    var result = await CreateAssetsHandleErrors(assets, chunk, chunkSize, throttleSize, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
 
@@ -176,6 +177,8 @@ namespace Cognite.Extensions
             AssetsResource assets,
             IEnumerable<string> externalIds,
             Func<IEnumerable<string>, Task<IEnumerable<AssetCreate>>> buildAssets,
+            int chunkSize,
+            int throttleSize,
             int backoff,
             RetryMode retryMode,
             SanitationMode sanitationMode,
@@ -201,7 +204,7 @@ namespace Cognite.Extensions
             IEnumerable<CogniteError<AssetCreate>> errors;
             (toCreate, errors) = Sanitation.CleanAssetRequest(toCreate, sanitationMode);
 
-            var result = await CreateAssetsHandleErrors(assets, toCreate, retryMode, token).ConfigureAwait(false);
+            var result = await CreateAssetsHandleErrors(assets, toCreate, chunkSize, throttleSize, retryMode, token).ConfigureAwait(false);
             result.Results = result.Results == null ? found : result.Results.Concat(found);
 
             if (errors.Any())
@@ -234,7 +237,8 @@ namespace Cognite.Extensions
             await Task
                 .Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)), token)
                 .ConfigureAwait(false);
-            var nextResult = await GetOrCreateAssetsChunk(assets, duplicatedIds, buildAssets, backoff + 1, retryMode, sanitationMode, token)
+            var nextResult = await GetOrCreateAssetsChunk(assets, duplicatedIds, buildAssets,
+                chunkSize, throttleSize, backoff + 1, retryMode, sanitationMode, token)
                 .ConfigureAwait(false);
             result = result.Merge(nextResult);
 
@@ -288,6 +292,8 @@ namespace Cognite.Extensions
         private static async Task<CogniteResult<Asset, AssetCreate>> CreateAssetsHandleErrors(
             AssetsResource assets,
             IEnumerable<AssetCreate> toCreate,
+            int assetsChunk,
+            int throttleSize,
             RetryMode retryMode,
             CancellationToken token)
         {
@@ -322,9 +328,11 @@ namespace Cognite.Extensions
                     else if (retryMode == RetryMode.None) break;
                     else
                     {
-                        toCreate = await ResultHandlers
-                            .CleanFromError(assets, error, toCreate, 1000, 1, token)
-                            .ConfigureAwait(false);
+                        if (!error.Complete) await ResultHandlers
+                                .CompleteAssetError(assets, error, toCreate, assetsChunk, throttleSize, token)
+                                .ConfigureAwait(false);
+
+                        toCreate = ResultHandlers.CleanFromError(error, toCreate);
                     }
                 }
             }

@@ -60,94 +60,43 @@ namespace Cognite.Extensions
             }
         }
 
+        private static bool IsAffected(AssetCreate asset, HashSet<Identity> badValues, CogniteError<AssetCreate> error)
+        {
+            return error.Resource switch
+            {
+                ResourceType.DataSetId => asset.DataSetId.HasValue && badValues.Contains(Identity.Create(asset.DataSetId.Value)),
+                ResourceType.ExternalId => asset.ExternalId != null && badValues.Contains(Identity.Create(asset.ExternalId)),
+                ResourceType.ParentExternalId => asset.ParentExternalId != null && badValues.Contains(Identity.Create(asset.ParentExternalId)),
+                ResourceType.ParentId => asset.ParentId.HasValue && badValues.Contains(Identity.Create(asset.ParentId.Value)),
+                ResourceType.Labels => asset.Labels != null && asset.Labels.Any(l => badValues.Contains(Identity.Create(l.ExternalId))),
+                _ => false
+            };
+        }
+
         /// <summary>
         /// Clean list of AssetCreate objects based on CogniteError object
         /// </summary>
-        /// <param name="resource">CogniteSdk assets resource</param>
         /// <param name="error">Error that occured with a previous push</param>
         /// <param name="assets">Assets to clean</param>
-        /// <param name="assetChunkSize">Maximum number of ids per asset read</param>
-        /// <param name="assetThrottleSize">Maximum number of parallel asset read requests</param>
-        /// <param name="token"></param>
         /// <returns>Assets that are not affected by the error</returns>
-        public static async Task<IEnumerable<AssetCreate>> CleanFromError(
-            AssetsResource resource,
+        public static IEnumerable<AssetCreate> CleanFromError(
             CogniteError<AssetCreate> error,
-            IEnumerable<AssetCreate> assets,
-            int assetChunkSize,
-            int assetThrottleSize,
-            CancellationToken token)
+            IEnumerable<AssetCreate> assets)
         {
-            if (assets == null)
-            {
-                throw new ArgumentNullException(nameof(assets));
-            }
-            if (error == null)
-            {
-                return assets;
-            }
-            // This is mostly to avoid infinite loops. If there are no bad values then
-            // there is no way to correctly clean the request, so there must be something
-            // else wrong
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = assets.Where(asset => asset.ExternalId != null).Select(asset => Identity.Create(asset.ExternalId));
-                return Array.Empty<AssetCreate>();
-            }
-
-            if (!error.Complete)
-            {
-                await CompleteError(resource, error, assets, assetChunkSize, assetThrottleSize, token).ConfigureAwait(false);
-            }
-
-            var items = new HashSet<Identity>(error.Values);
-
-            var ret = new List<AssetCreate>();
-            var skipped = new List<AssetCreate>();
-
-            foreach (var asset in assets)
-            {
-                bool added = false;
-                switch (error.Resource)
-                {
-                    case ResourceType.DataSetId:
-                        if (!asset.DataSetId.HasValue || !items.Contains(Identity.Create(asset.DataSetId.Value))) added = true;
-                        break;
-                    case ResourceType.ExternalId:
-                        if (asset.ExternalId == null || !items.Contains(Identity.Create(asset.ExternalId))) added = true;
-                        break;
-                    case ResourceType.ParentExternalId:
-                        if (asset.ParentExternalId == null || !items.Contains(Identity.Create(asset.ParentExternalId))) added = true;
-                        break;
-                    case ResourceType.ParentId:
-                        if (!asset.ParentId.HasValue || !items.Contains(Identity.Create(asset.ParentId.Value))) added = true;
-                        break;
-                    case ResourceType.Labels:
-                        if (asset.Labels == null || !asset.Labels.Any(label => items.Contains(Identity.Create(label.ExternalId)))) added = true;
-                        break;
-                }
-                if (added)
-                {
-                    ret.Add(asset);
-                }
-                else
-                {
-                    CdfMetrics.AssetsSkipped.Inc();
-                    skipped.Add(asset);
-                }
-            }
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = assets;
-                return Array.Empty<AssetCreate>();
-            }
-            return ret;
+            return CleanFromErrorCommon(error, assets, IsAffected,
+                asset => asset.ExternalId == null ? null : Identity.Create(asset.ExternalId),
+                CdfMetrics.AssetsSkipped);
         }
-        private static async Task CompleteError(
+        /// <summary>
+        /// Fetch missing parents for an asset create that failed due to missing parent external ids.
+        /// </summary>
+        /// <param name="resource">CogniteSdk assets resource</param>
+        /// <param name="error">Incomplete error</param>
+        /// <param name="assets">List of assets to check</param>
+        /// <param name="assetChunkSize">Chunk size for reading assets</param>
+        /// <param name="assetThrottleSize">Throttle size for reading assets</param>
+        /// <param name="token">Cancellation token</param>
+        public static async Task CompleteAssetError(
             AssetsResource resource,
             CogniteError error,
             IEnumerable<AssetCreate> assets,
@@ -155,7 +104,7 @@ namespace Cognite.Extensions
             int assetThrottleSize,
             CancellationToken token)
         {
-            if (error.Complete) return;
+            if (error == null || error.Complete) return;
 
             if (error.Resource == ResourceType.ParentExternalId)
             {
