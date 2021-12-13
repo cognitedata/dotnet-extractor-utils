@@ -337,5 +337,45 @@ namespace ExtractorUtils.Test.Unit
             Assert.Throws<AggregateException>(() => result.Throw());
             Assert.Throws<AggregateException>(() => result.ThrowOnFatal());
         }
+        [Fact]
+        public void TestGroupBySkipped()
+        {
+            var result = new CogniteResult<string>(new[]
+            {
+                new CogniteError<string>
+                {
+                    Skipped = new[] { "s1", "s2", "s3" },
+                    Resource = ResourceType.ExternalId
+                },
+                new CogniteError<string>
+                {
+                    Skipped = new[] { "s2", "s4" },
+                    Resource = ResourceType.DataSetId
+                },
+                new CogniteError<string>
+                {
+                    Skipped = new[] { "s4", "s2" },
+                    Resource = ResourceType.Unit
+                }
+            });
+
+            var groups = result.ErrorsBySkipped();
+            var groupDict = groups.ToDictionary(pair => pair.Skipped, pair => pair.Errors.ToArray());
+
+            Assert.Single(groupDict["s1"]);
+            Assert.Equal(ResourceType.ExternalId, groupDict["s1"].First().Resource);
+
+            Assert.Equal(3, groupDict["s2"].Length);
+            Assert.Equal(ResourceType.ExternalId, groupDict["s2"][0].Resource);
+            Assert.Equal(ResourceType.DataSetId, groupDict["s2"][1].Resource);
+            Assert.Equal(ResourceType.Unit, groupDict["s2"][2].Resource);
+
+            Assert.Single(groupDict["s3"]);
+            Assert.Equal(ResourceType.ExternalId, groupDict["s3"].First().Resource);
+
+            Assert.Equal(2, groupDict["s4"].Length);
+            Assert.Equal(ResourceType.DataSetId, groupDict["s4"][0].Resource);
+            Assert.Equal(ResourceType.Unit, groupDict["s4"][1].Resource);
+        }
     }
 }

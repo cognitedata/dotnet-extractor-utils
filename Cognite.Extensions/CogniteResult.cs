@@ -211,6 +211,22 @@ namespace Cognite.Extensions
             res.MergeErrors();
             return res;
         }
+
+        /// <summary>
+        /// Return a grouping of skipped error objects with a list of the errors that caused them to be skipped.
+        /// Useful for reporting a list of individual errors per passed resource.
+        /// </summary>
+        /// <returns>Errors grouped by skipped objects</returns>
+        public IEnumerable<(TError Skipped, IEnumerable<CogniteError<TError>> Errors)> ErrorsBySkipped()
+        {
+            if (Errors == null || !Errors.Any()) return Enumerable.Empty<(TError, IEnumerable<CogniteError<TError>>)>();
+
+            return Errors
+                .SelectMany(err => err.Skipped.Select(skipped => (skipped, err)))
+                .GroupBy(pair => pair.skipped)
+                .Select(group => (group.Key, group.Select(pair => pair.err)))
+                .ToList();
+        }
     }
 
     /// <summary>
