@@ -248,6 +248,33 @@ namespace Cognite.Extractor.Utils
                 sanitationMode,
                 token).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Update assets in <paramref name="updates"/>.
+        /// If items fail due to bad parent ids, id, labels or dataset they can be removed before retrying
+        /// by setting <paramref name="retryMode"/>.
+        /// Assets will be returned in the same order as given.
+        /// </summary>
+        /// <param name="updates">List of CogniteSdk AssetUpdateItem objects</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to assets before updating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated assets</returns>
+        public async Task<CogniteResult<Asset, AssetUpdateItem>> UpdateAssetsAsync(
+            IEnumerable<AssetUpdateItem> updates,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Updating {Number} assets in CDF", updates.Count());
+            return await _client.Assets.UpdateAsync(
+                updates,
+                _config.CdfChunking.Assets,
+                _config.CdfThrottling.Assets,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+        }
         #endregion
 
         #region datapoints
