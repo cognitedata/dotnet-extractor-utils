@@ -61,7 +61,7 @@ namespace Cognite.Extensions
         /// <param name="maxLength">Maximum length of final string</param>
         /// <returns>String update which contains the first <paramref name="maxLength"/> characters of the passed value.</returns>
 #if NETSTANDARD2_1_OR_GREATER
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("id")]
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("update")]
 #endif
         public static Update<string>? Truncate(this Update<string>? update, int maxLength)
         {
@@ -165,7 +165,7 @@ namespace Cognite.Extensions
         /// <param name="bytes">Total number of bytes in returned metadata</param>
         /// <returns>A sanitized dictionary</returns>
 #if NETSTANDARD2_1_OR_GREATER
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("str")]
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("data")]
 #endif
         public static Dictionary<string, string>? SanitizeMetadata(this Dictionary<string, string>? data,
             int maxPerKey,
