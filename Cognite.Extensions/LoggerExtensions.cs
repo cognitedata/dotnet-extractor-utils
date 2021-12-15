@@ -38,6 +38,10 @@ namespace Cognite.Extensions
             {
                 cogniteString = $" RequestId: {rex.RequestId}, CDF Message: {rex.Message}";
             }
+            else if (error.Exception != null)
+            {
+                cogniteString = $" Non-CDF Error of type: {error.Exception.GetType()}";
+            }
 
             string? valueString = null;
             if (error.Values != null && error.Values.Any())
@@ -104,30 +108,6 @@ namespace Cognite.Extensions
             }
         }
 
-
-        private static void LogCommon<TResult, TError>(ILogger logger,
-            CogniteResult<TResult, TError> result,
-            RequestType requestType,
-            LogLevel infoLevel,
-            LogLevel handledErrorLevel,
-            LogLevel fatalLevel,
-            bool ignoreExisting)
-        {
-            int successCount = result.Results?.Count() ?? 0;
-            int errorCount = result.Errors?.Count() ?? 0;
-
-            logger.Log(infoLevel, "Request of type {type} had {cnt} results with {cnt2} errors",
-                requestType, successCount, errorCount);
-
-            if (result.Errors != null)
-            {
-                foreach (var err in result.Errors)
-                {
-                    logger.LogCogniteError(err, requestType, ignoreExisting, handledErrorLevel, fatalLevel);
-                }
-            }
-        }
-
         /// <summary>
         /// Log the CogniteResult object and all its errors.
         /// </summary>
@@ -150,7 +130,53 @@ namespace Cognite.Extensions
         {
             if (result == null) throw new ArgumentNullException(nameof(result));
 
-            LogCommon(logger, result, requestType, infoLevel, handledErrorLevel, fatalLevel, ignoreExisting);
+            int successCount = result.Results?.Count() ?? 0;
+            int errorCount = result.Errors?.Count() ?? 0;
+
+            logger.Log(infoLevel, "Request of type {type} had {cnt} results with {cnt2} errors",
+                requestType, successCount, errorCount);
+
+            if (result.Errors != null)
+            {
+                foreach (var err in result.Errors)
+                {
+                    logger.LogCogniteError(err, requestType, ignoreExisting, handledErrorLevel, fatalLevel);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Log the CogniteResult object and all its errors.
+        /// </summary>
+        /// <typeparam name="TError">Type of reported error</typeparam>
+        /// <param name="logger">Logger to write to</param>
+        /// <param name="result">Result to log</param>
+        /// <param name="requestType">Request type</param>
+        /// <param name="ignoreExisting">True to not log errors caused by items already present in CDF</param>
+        /// <param name="infoLevel">Level for summary information about the request</param>
+        /// <param name="handledErrorLevel">Log level of errors that were handled by the utils</param>
+        /// <param name="fatalLevel">Log level of errors that could not be handled and caused the request to fail</param>
+        public static void LogResult<TError>(this ILogger logger,
+            CogniteResult<TError> result,
+            RequestType requestType,
+            bool ignoreExisting,
+            LogLevel infoLevel = LogLevel.Information,
+            LogLevel handledErrorLevel = LogLevel.Debug,
+            LogLevel fatalLevel = LogLevel.Error)
+        {
+            if (result == null) throw new ArgumentNullException(nameof(result));
+
+            int errorCount = result.Errors?.Count() ?? 0;
+
+            logger.Log(infoLevel, "Request of type {type} had {cnt} errors", requestType, errorCount);
+
+            if (result.Errors != null)
+            {
+                foreach (var err in result.Errors)
+                {
+                    logger.LogCogniteError(err, requestType, ignoreExisting, handledErrorLevel, fatalLevel);
+                }
+            }
         }
     }
 }
