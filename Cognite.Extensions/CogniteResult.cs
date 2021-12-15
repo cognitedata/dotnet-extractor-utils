@@ -390,11 +390,11 @@ namespace Cognite.Extensions
         private static string GetErrorString(CogniteError err)
         {
             var builder = new StringBuilder();
-            builder.AppendFormat("CogniteError. Resource: {Resource}, Type: {Type}: {Message}",
+            builder.AppendFormat("CogniteError. Resource: {0}, Type: {1}: {2}",
                 err?.Resource, err?.Type, err?.Message);
             if (err?.Exception is ResponseException rex)
             {
-                builder.AppendFormat(". RequestId: {Id}", rex.RequestId);
+                builder.AppendFormat(". RequestId: {0}", rex.RequestId);
             }
             return builder.ToString();
         }
