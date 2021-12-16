@@ -68,7 +68,8 @@ namespace Cognite.Extensions
             asset.Labels = asset.Labels?
                 .Where(label => label != null && label.ExternalId != null)
                 .Select(label => label.Truncate(ExternalIdMax))
-                .Take(10);
+                .Take(10)
+                .ToList();
         }
 
         /// <summary>
