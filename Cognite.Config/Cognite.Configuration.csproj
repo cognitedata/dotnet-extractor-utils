@@ -28,4 +28,8 @@
     <PackageReference Include="YamlDotNet" Version="11.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Cognite.Common\Cognite.Common.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -151,6 +151,34 @@ namespace Cognite.Extractor.Utils
                 sanitationMode,
                 token).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Update timeseries in <paramref name="updates"/>.
+        /// If items fail due to bad asset ids, id, or dataset they can be removed before retrying
+        /// by setting <paramref name="retryMode"/>.
+        /// TimeSeries will be returned in the same order as given.
+        /// </summary>
+        /// <param name="updates">List of CogniteSdk TimeSeriesUpdateItem objects</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to assets before updating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated timeseries</returns>
+        public async Task<CogniteResult<TimeSeries, TimeSeriesUpdateItem>> UpdateTimeSeriesAsync(
+            IEnumerable<TimeSeriesUpdateItem> updates,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            _logger.LogInformation("Updating {Number} timeseries in CDF", updates.Count());
+            return await _client.TimeSeries.UpdateAsync(
+                updates,
+                _config.CdfChunking.TimeSeries,
+                _config.CdfThrottling.TimeSeries,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+        }
+
         #endregion
 
         #region assets

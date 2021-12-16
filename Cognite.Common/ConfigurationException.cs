@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cognite.Extractor.Configuration
+namespace Cognite.Extractor.Common
 {
     /// <summary>
     /// Exception produced by the configuration utils 

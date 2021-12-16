@@ -68,6 +68,10 @@ namespace Cognite.Extensions
                 {
                     ParseTimeSeriesException(rex, result);
                 }
+                else if (type == RequestType.UpdateTimeSeries)
+                {
+                    ParseTimeSeriesUpdateException(rex, result);
+                }
                 else if (type == RequestType.CreateEvents)
                 {
                     ParseEventException(rex, result);
@@ -611,7 +615,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Update assets
         /// </summary>
-        UpdateAssets
+        UpdateAssets,
+        /// <summary>
+        /// Update timeseries
+        /// </summary>
+        UpdateTimeSeries
     }
     
 

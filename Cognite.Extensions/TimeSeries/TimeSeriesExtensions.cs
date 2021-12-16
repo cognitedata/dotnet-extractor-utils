@@ -331,5 +331,110 @@ namespace Cognite.Extensions
             }
             return new CogniteResult<TimeSeries, TimeSeriesCreate>(errors, null);
         }
+
+        /// <summary>
+        /// Update time series.
+        /// If any items fail to be created due to missing asset, duplicated externalId, missing id,
+        /// or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
+        /// Timeseries will be returned in the same order as given in <paramref name="items"/>
+        /// </summary>
+        /// <param name="resource">CogniteSdk time series resource</param>
+        /// <param name="items">List of timeseries updates</param>
+        /// <param name="chunkSize">Maximum number of timeseries per request</param>
+        /// <param name="throttleSize">Maximum number of parallel requests</param>
+        /// <param name="retryMode">How to handle retries</param>
+        /// <param name="sanitationMode">What kind of pre-request sanitation to perform</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated timeseries</returns>
+        public static async Task<CogniteResult<TimeSeries, TimeSeriesUpdateItem>> UpdateAsync(
+            this TimeSeriesResource resource,
+            IEnumerable<TimeSeriesUpdateItem> items,
+            int chunkSize,
+            int throttleSize,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            IEnumerable<CogniteError<TimeSeriesUpdateItem>> errors;
+            (items, errors) = Sanitation.CleanTimeSeriesUpdateRequest(items, sanitationMode);
+
+            var chunks = items
+                .ChunkBy(chunkSize)
+                .ToList();
+
+            int size = chunks.Count + (errors.Any() ? 1 : 0);
+            var results = new CogniteResult<TimeSeries, TimeSeriesUpdateItem>[size];
+
+            if (errors.Any())
+            {
+                results[size - 1] = new CogniteResult<TimeSeries, TimeSeriesUpdateItem>(errors, null);
+                if (size == 1) return results[size - 1];
+            }
+            if (size == 0) return new CogniteResult<TimeSeries, TimeSeriesUpdateItem>(null, null);
+
+            _logger.LogDebug("Updating time series. Number of time series: {Number}. Number of chunks: {Chunks}", items.Count(), chunks.Count);
+            var generators = chunks
+                .Select<IEnumerable<TimeSeriesUpdateItem>, Func<Task>>(
+                (chunk, idx) => async () => {
+                    var result = await UpdateTimeSeriesHandleErrors(resource, chunk, retryMode, token).ConfigureAwait(false);
+                    results[idx] = result;
+                });
+
+            int taskNum = 0;
+            await generators.RunThrottled(
+                throttleSize,
+                (_) => {
+                    if (chunks.Count > 1)
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
+                            nameof(UpdateAsync), ++taskNum, chunks.Count);
+                },
+                token).ConfigureAwait(false);
+
+            return CogniteResult<TimeSeries, TimeSeriesUpdateItem>.Merge(results);
+        }
+
+
+        private static async Task<CogniteResult<TimeSeries, TimeSeriesUpdateItem>> UpdateTimeSeriesHandleErrors(
+            TimeSeriesResource timeseries,
+            IEnumerable<TimeSeriesUpdateItem> items,
+            RetryMode retryMode,
+            CancellationToken token)
+        {
+            var errors = new List<CogniteError<TimeSeriesUpdateItem>>();
+            while (items != null && items.Any() && !token.IsCancellationRequested)
+            {
+                try
+                {
+                    IEnumerable<TimeSeries> updated;
+                    using (CdfMetrics.TimeSeries.WithLabels("update").NewTimer())
+                    {
+                        updated = await timeseries.UpdateAsync(items, token).ConfigureAwait(false);
+                    }
+
+                    _logger.LogDebug("Updated {Count} timeseries in CDF", updated.Count());
+                    return new CogniteResult<TimeSeries, TimeSeriesUpdateItem>(errors, updated);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogDebug("Failed to create {Count} timeseries: {Message}",
+                        items.Count(), ex.Message);
+                    var error = ResultHandlers.ParseException<TimeSeriesUpdateItem>(ex, RequestType.UpdateTimeSeries);
+                    errors.Add(error);
+                    if (error.Type == ErrorType.FatalFailure
+                        && (retryMode == RetryMode.OnFatal
+                            || retryMode == RetryMode.OnFatalKeepDuplicates))
+                    {
+                        await Task.Delay(1000, token).ConfigureAwait(false);
+                    }
+                    else if (retryMode == RetryMode.None) break;
+                    else
+                    {
+                        items = ResultHandlers.CleanFromError(error, items);
+                    }
+                }
+            }
+
+            return new CogniteResult<TimeSeries, TimeSeriesUpdateItem>(errors, null);
+        }
     }
 }

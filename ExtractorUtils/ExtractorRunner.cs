@@ -1,4 +1,5 @@
-﻿using Cognite.Extractor.Configuration;
+﻿using Cognite.Extractor.Common;
+using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Microsoft.Extensions.DependencyInjection;
