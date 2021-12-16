@@ -3,12 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
-using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using System.Net.Http;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.Extensions
 {
     /// <summary>
     /// Uses Microsoft Authentication Library (MSAL) to acquire tokens from the identity provider endpoint

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cognite.Extensions;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
@@ -139,87 +140,6 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <returns>String format</returns>
         public string Format { get; set; } = "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms";
-    }
-
-    /// <summary>
-    /// Authenticator configuration. For more information, read the 
-    /// <see href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow">OAth 2.0 client credentials flow</see>
-    /// </summary>
-    public class AuthenticatorConfig
-    {
-        /// <summary>
-        /// Available authenticator implementations 
-        /// </summary>
-        public enum AuthenticatorImplementation
-        {
-            /// <summary>
-            /// Use Microsoft Authentication Library (MSAL). Recommended
-            /// </summary>
-            MSAL,
-            /// <summary>
-            /// Use a basic implementation. Post requests to the authority endpoint and parse the JSON response in case of success
-            /// </summary>
-            Basic
-        }
-
-        /// <summary>
-        /// Which implementation to use in the authenticator (optional)
-        /// </summary>
-        public AuthenticatorImplementation Implementation { get; set; } = AuthenticatorImplementation.MSAL;
-
-        /// <summary>
-        /// Identity provider authority endpoint (optional)
-        /// </summary>
-        /// <value>URI</value>
-        public string? Authority { get; set; } = "https://login.microsoftonline.com/";
-
-        /// <summary>
-        /// The application (client) Id
-        /// </summary>
-        /// <value>Client Id</value>
-        public string? ClientId { get; set; }
-
-        /// <summary>
-        /// The directory tenant. Either this or TokenUrl must be set.
-        /// </summary>
-        /// <value>Tenant</value>
-        public string? Tenant { get; set; }
-
-        /// <summary>
-        /// URL to fetch tokens from. Either this or Auhtority / Tenant must be set.
-        /// </summary>
-        /// <value>Tenant</value>
-        public string? TokenUrl { get; set; }
-
-        /// <summary>
-        /// The client secret
-        /// </summary>
-        /// <value>Secret</value>
-        public string? Secret { get; set; }
-
-        /// <summary>
-        /// Resource (optional, only valid for Basic implementation)
-        /// </summary>
-        /// <value>Secret</value>
-        public string? Resource { get; set; }
-
-        /// <summary>
-        /// Resource scopes
-        /// </summary>
-        /// <value>Scope</value>
-        public IList<string>? Scopes { get; set; }
-
-        /// <summary>
-        /// Audience
-        /// </summary>
-        /// <value>Audience</value>
-        public string? Audience { get; set; }
-
-        /// <summary>
-        /// Minimum time-to-live for the token in seconds (optional)
-        /// </summary>
-        /// <value>Minimum TTL</value>
-        public int MinTtl { get; set; } = 30;
     }
 
     /// <summary>
