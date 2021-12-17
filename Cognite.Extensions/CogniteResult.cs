@@ -61,9 +61,17 @@ namespace Cognite.Extensions
                 {
                     ParseAssetException(rex, result);
                 }
+                else if (type == RequestType.UpdateAssets)
+                {
+                    ParseAssetUpdateException(rex, result);
+                }
                 else if (type == RequestType.CreateTimeSeries)
                 {
                     ParseTimeSeriesException(rex, result);
+                }
+                else if (type == RequestType.UpdateTimeSeries)
+                {
+                    ParseTimeSeriesUpdateException(rex, result);
                 }
                 else if (type == RequestType.CreateEvents)
                 {
@@ -459,6 +467,10 @@ namespace Cognite.Extensions
         /// </summary>
         SanitationFailed,
         /// <summary>
+        /// Item value is illegal for a different reason
+        /// </summary>
+        IllegalItem,
+        /// <summary>
         /// Something else happened that caused the request to fail
         /// </summary>
         FatalFailure = -1
@@ -577,6 +589,10 @@ namespace Cognite.Extensions
         /// </summary>
         DataPointTimestamp,
         /// <summary>
+        /// The update object itself in some way
+        /// </summary>
+        Update,
+        /// <summary>
         /// None or unknown
         /// </summary>
         None = -1
@@ -609,7 +625,15 @@ namespace Cognite.Extensions
         /// <summary>
         /// Create timeseries datapoints
         /// </summary>
-        CreateDatapoints
+        CreateDatapoints,
+        /// <summary>
+        /// Update assets
+        /// </summary>
+        UpdateAssets,
+        /// <summary>
+        /// Update timeseries
+        /// </summary>
+        UpdateTimeSeries
     }
     
 

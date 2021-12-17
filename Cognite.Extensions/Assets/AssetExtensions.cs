@@ -330,5 +330,131 @@ namespace Cognite.Extensions
             }
             return new CogniteResult<Asset, AssetCreate>(errors, null);
         }
+
+
+
+
+
+        /// <summary>
+        /// Attempt to update all assets in <paramref name="updates"/>, will retry
+        /// and attempt to handle errors.
+        /// Assets will be returned in the same order as given.
+        /// </summary>
+        /// <param name="assets">Cognite assets resource</param>
+        /// <param name="updates">List of AssetUpdateItem objects</param>
+        /// <param name="chunkSize">Chunk size</param>
+        /// <param name="throttleSize">Throttle size</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
+        /// this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to assets before updating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated assets</returns>
+        public static async Task<CogniteResult<Asset, AssetUpdateItem>> UpdateAsync(
+            this AssetsResource assets,
+            IEnumerable<AssetUpdateItem> updates,
+            int chunkSize,
+            int throttleSize,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token)
+        {
+            IEnumerable<CogniteError<AssetUpdateItem>> errors;
+            (updates, errors) = Sanitation.CleanAssetUpdateRequest(updates, sanitationMode);
+
+            var chunks = updates
+                .ChunkBy(chunkSize)
+                .ToList();
+            _logger.LogDebug("Updating assets. Number of assets: {Number}. Number of chunks: {Chunks}", updates.Count(), chunks.Count);
+            int size = chunks.Count + (errors.Any() ? 1 : 0);
+            var results = new CogniteResult<Asset, AssetUpdateItem>[size];
+            if (errors.Any())
+            {
+                results[size - 1] = new CogniteResult<Asset, AssetUpdateItem>(errors, null);
+                if (size == 1) return results[size - 1];
+            }
+            if (size == 0) return new CogniteResult<Asset, AssetUpdateItem>(null, null);
+
+            var generators = chunks
+                .Select<IEnumerable<AssetUpdateItem>, Func<Task>>(
+                (chunk, idx) => async () => {
+                    var result = await
+                        UpdateAssetsHandleErrors(assets, chunk, chunkSize, throttleSize, retryMode, token)
+                        .ConfigureAwait(false);
+                    results[idx] = result;
+                });
+
+            int taskNum = 0;
+            await generators.RunThrottled(
+                throttleSize,
+                (_) => {
+                    if (chunks.Count > 1)
+                        _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
+                            nameof(UpdateAsync), ++taskNum, chunks.Count);
+                },
+                token).ConfigureAwait(false);
+
+            return CogniteResult<Asset, AssetUpdateItem>.Merge(results);
+        }
+
+        private static async Task<CogniteResult<Asset, AssetUpdateItem>> UpdateAssetsHandleErrors(
+            AssetsResource assets,
+            IEnumerable<AssetUpdateItem> toUpdate,
+            int assetsChunk,
+            int throttleSize,
+            RetryMode retryMode,
+            CancellationToken token)
+        {
+            var errors = new List<CogniteError<AssetUpdateItem>>();
+            while (toUpdate != null && toUpdate.Any() && !token.IsCancellationRequested)
+            {
+                try
+                {
+                    IEnumerable<Asset> updated;
+                    using (CdfMetrics.Assets.WithLabels("update").NewTimer())
+                    {
+                        updated = await assets
+                            .UpdateAsync(toUpdate, token)
+                            .ConfigureAwait(false);
+                    }
+
+                    _logger.LogDebug("Updated {Count} assets in CDF", updated.Count());
+                    return new CogniteResult<Asset, AssetUpdateItem>(errors, updated);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogDebug("Failed to update {Count} assets: {Message}",
+                        toUpdate.Count(), ex.Message);
+                    var error = ResultHandlers.ParseException<AssetUpdateItem>(ex, RequestType.UpdateAssets);
+                    if (error.Complete) errors.Add(error);
+                    if (error.Type == ErrorType.FatalFailure
+                        && (retryMode == RetryMode.OnFatal
+                            || retryMode == RetryMode.OnFatalKeepDuplicates))
+                    {
+                        await Task.Delay(1000, token).ConfigureAwait(false);
+                    }
+                    else if (retryMode == RetryMode.None) break;
+                    else
+                    {
+                        if (!error.Complete)
+                        {
+                            var newErrors = await ResultHandlers
+                                .VerifyAssetUpdateParents(assets, toUpdate, assetsChunk, throttleSize, token)
+                                .ConfigureAwait(false);
+                            foreach (var err in newErrors)
+                            {
+                                errors.Add(err);
+                                toUpdate = ResultHandlers.CleanFromError(err, toUpdate);
+                            }
+                        }
+                        else
+                        {
+                            toUpdate = ResultHandlers.CleanFromError(error, toUpdate);
+                        }
+                    }
+                }
+            }
+
+            return new CogniteResult<Asset, AssetUpdateItem>(errors, null);
+        }
     }
 }

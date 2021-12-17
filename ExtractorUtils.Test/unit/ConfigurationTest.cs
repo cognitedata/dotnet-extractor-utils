@@ -7,6 +7,7 @@ using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
 using Cognite.Extractor.StateStorage;
+using Cognite.Extractor.Common;
 
 namespace ExtractorUtils.Test.Unit
 {

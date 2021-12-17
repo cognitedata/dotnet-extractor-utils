@@ -86,6 +86,117 @@ namespace ExtractorUtils.Test.Unit
             }
             Assert.Null(asset.Verify());
         }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TestSanitizeAssetUpdate(bool addMeta)
+        {
+            var meta = Enumerable.Range(0, 100)
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 200));
+            var update = new AssetUpdateItem(new string('æ', 300))
+            {
+                Update = new AssetUpdate
+                {
+                    Description = new UpdateNullable<string>(new string('æ', 2000)),
+                    DataSetId = new UpdateNullable<long?>(-251),
+                    ExternalId = new UpdateNullable<string>(new string('æ', 300)),
+                    Labels = new UpdateLabels<IEnumerable<CogniteExternalId>>(new CogniteExternalId[] { null, new CogniteExternalId(null) }
+                        .Concat(Enumerable.Range(0, 100).Select(i => new CogniteExternalId(new string('æ', 300)))), Array.Empty<CogniteExternalId>()),
+                    Metadata = addMeta ? new UpdateDictionary<string>(meta, Enumerable.Empty<string>())
+                        : new UpdateDictionary<string>(meta),
+                    Name = new Update<string>(new string('æ', 1000)),
+                    ParentExternalId = new Update<string>(new string('æ', 300)),
+                    ParentId = new Update<long?>(-1234),
+                    Source = new UpdateNullable<string>(new string('æ', 12345))
+                }
+            };
+
+            update.Sanitize();
+
+            Assert.Equal(new string('æ', 255), update.ExternalId);
+            Assert.Equal(new string('æ', 500), update.Update.Description.Set);
+            Assert.Null(update.Update.DataSetId);
+            Assert.Equal(10, update.Update.Labels.Add.Count());
+            Assert.All(update.Update.Labels.Add, ext => Assert.Equal(new string('æ', 255), ext.ExternalId));
+            var sanitizedMeta = addMeta ? update.Update.Metadata.Add : update.Update.Metadata.Set;
+            Assert.Equal(19, sanitizedMeta.Count);
+            // 'æ' is 2 bytes, key{i} will be 6 bytes, so 128-6 = 122, 122/2 = 61, 61 + 6 = 67
+            Assert.All(sanitizedMeta, kvp => Assert.Equal(67, kvp.Key.Length));
+            Assert.All(sanitizedMeta, kvp => Assert.Equal(new string('æ', 200), kvp.Value));
+            Assert.Equal(new string('æ', 140), update.Update.Name.Set);
+            Assert.Equal(new string('æ', 255), update.Update.ParentExternalId.Set);
+            Assert.Null(update.Update.ParentId);
+            Assert.Equal(new string('æ', 128), update.Update.Source.Set);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TestVerifyAssetUpdate(bool addMeta)
+        {
+            var removeFields = new List<ResourceType>
+            {
+                ResourceType.ExternalId, ResourceType.Id, ResourceType.Id, ResourceType.ExternalId,
+                ResourceType.Name, ResourceType.Description, ResourceType.DataSetId, ResourceType.Metadata,
+                ResourceType.Source, ResourceType.ParentId, ResourceType.ParentId,
+                ResourceType.ParentExternalId, ResourceType.Labels, ResourceType.Update
+            };
+
+            var meta = Enumerable.Range(0, 100)
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 200));
+            var item = new AssetUpdateItem(new string('æ', 300))
+            {
+                Update = new AssetUpdate
+                {
+                    Description = new UpdateNullable<string>(new string('æ', 2000)),
+                    DataSetId = new UpdateNullable<long?>(-251),
+                    ExternalId = new UpdateNullable<string>(new string('æ', 300)),
+                    Labels = new UpdateLabels<IEnumerable<CogniteExternalId>>(new CogniteExternalId[] { null, new CogniteExternalId(null) }
+                        .Concat(Enumerable.Range(0, 100).Select(i => new CogniteExternalId(new string('æ', 300)))), Array.Empty<CogniteExternalId>()),
+                    Metadata = addMeta ? new UpdateDictionary<string>(meta, Enumerable.Empty<string>())
+                        : new UpdateDictionary<string>(meta),
+                    Name = new Update<string>(new string('æ', 1000)),
+                    ParentExternalId = new Update<string>(new string('æ', 300)),
+                    ParentId = new Update<long?>(-1234),
+                    Source = new UpdateNullable<string>(new string('æ', 12345))
+                }
+            };
+
+            foreach (var field in removeFields)
+            {
+                var errType = item.Verify();
+                Assert.Equal(field, errType);
+                var update = item.Update;
+                switch (field)
+                {
+                    case ResourceType.ExternalId:
+                        if (item.ExternalId == null) update.ExternalId = null;
+                        else item.ExternalId = null;
+                        break;
+                    case ResourceType.Id:
+                        if (item.Id == null) item.Id = -123;
+                        else (item.Id) = 123;
+                        break;
+                    case ResourceType.Name: update.Name = null; break;
+                    case ResourceType.Description: update.Description = null; break;
+                    case ResourceType.DataSetId: update.DataSetId = null; break;
+                    case ResourceType.Metadata: update.Metadata = null; break;
+                    case ResourceType.Source: update.Source = null; break;
+                    case ResourceType.ParentId:
+                        if (update.ParentId?.Set != null && update.ParentId.Set < 0) update.ParentId = new Update<long?>(123);
+                        else update.ParentId = null;
+                        break;
+                    case ResourceType.ParentExternalId: update.ParentExternalId = null; break;
+                    case ResourceType.Labels: update.Labels = null; break;
+                    case ResourceType.Update:
+                        update.Name = new Update<string>("name");
+                        break;
+                }
+            }
+            Assert.Null(item.Verify());
+        }
+
         [Fact]
         public void TestSanitizeTimeSeries()
         {
@@ -155,6 +266,109 @@ namespace ExtractorUtils.Test.Unit
             }
             Assert.Null(ts.Verify());
         }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TestSanitizeTimeSeriesUpdate(bool addMeta)
+        {
+            var meta = Enumerable.Range(0, 100)
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 200));
+            var ts = new TimeSeriesUpdateItem(new string('æ', 300))
+            {
+                Update = new TimeSeriesUpdate
+                {
+                    ExternalId = new UpdateNullable<string>(new string('æ', 300)),
+                    DataSetId = new UpdateNullable<long?>(-123),
+                    Description = new UpdateNullable<string>(new string('æ', 2000)),
+                    AssetId = new UpdateNullable<long?>(-123),
+                    Metadata = addMeta ? new UpdateDictionary<string>(meta, Enumerable.Empty<string>())
+                        : new UpdateDictionary<string>(meta),
+                    Name = new UpdateNullable<string>(new string('æ', 300)),
+                    Unit = new UpdateNullable<string>(new string('æ', 200))
+                }
+            };
+
+            ts.Sanitize();
+
+            Assert.Equal(new string('æ', 255), ts.ExternalId);
+            Assert.Equal(new string('æ', 255), ts.Update.ExternalId.Set);
+            Assert.Null(ts.Update.DataSetId);
+            Assert.Equal(new string('æ', 1000), ts.Update.Description.Set);
+            Assert.Null(ts.Update.AssetId);
+            if (addMeta)
+            {
+                meta = ts.Update.Metadata.Add;
+            }
+            else
+            {
+                meta = ts.Update.Metadata.Set;
+            }
+            Assert.Equal(18, meta.Count);
+            Assert.All(meta, kvp => Assert.Equal(67, kvp.Key.Length));
+            Assert.All(meta, kvp => Assert.Equal(new string('æ', 200), kvp.Value));
+            Assert.Equal(new string('æ', 255), ts.Update.Name.Set);
+            Assert.Equal(new string('æ', 32), ts.Update.Unit.Set);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void TestVerifyTimeSeriesUpdate(bool addMeta)
+        {
+            var removeFields = new List<ResourceType>
+            {
+                ResourceType.ExternalId, ResourceType.Id, ResourceType.Id, ResourceType.ExternalId,
+                ResourceType.Name, ResourceType.AssetId, ResourceType.Description, ResourceType.DataSetId,
+                ResourceType.Metadata, ResourceType.Unit, ResourceType.Update
+            };
+
+
+            var meta = Enumerable.Range(0, 100)
+                    .ToDictionary(i => $"key{i.ToString("000")}{new string('æ', 100)}", i => new string('æ', 200));
+            var ts = new TimeSeriesUpdateItem(new string('æ', 300))
+            {
+                Update = new TimeSeriesUpdate
+                {
+                    ExternalId = new UpdateNullable<string>(new string('æ', 300)),
+                    DataSetId = new UpdateNullable<long?>(-123),
+                    Description = new UpdateNullable<string>(new string('æ', 2000)),
+                    AssetId = new UpdateNullable<long?>(-123),
+                    Metadata = addMeta ? new UpdateDictionary<string>(meta, Enumerable.Empty<string>())
+                        : new UpdateDictionary<string>(meta),
+                    Name = new UpdateNullable<string>(new string('æ', 300)),
+                    Unit = new UpdateNullable<string>(new string('æ', 200))
+                }
+            };
+
+            foreach (var field in removeFields)
+            {
+                var errType = ts.Verify();
+                Assert.Equal(field, errType);
+                var update = ts.Update;
+                switch (errType)
+                {
+                    case ResourceType.ExternalId:
+                        if (ts.ExternalId == null) update.ExternalId = null;
+                        else ts.ExternalId = null;
+                        break;
+                    case ResourceType.Id:
+                        if (ts.Id == null) ts.Id = -123;
+                        else (ts.Id) = 123;
+                        break;
+                    case ResourceType.Name: update.Name = null; break;
+                    case ResourceType.AssetId: update.AssetId = null; break;
+                    case ResourceType.Description: update.Description = null; break;
+                    case ResourceType.DataSetId: update.DataSetId = null; break;
+                    case ResourceType.Metadata: update.Metadata = null; break;
+                    case ResourceType.Unit: update.Unit = null; break;
+                    case ResourceType.Update: update.Name = new UpdateNullable<string>("name"); break;
+                }
+            }
+
+            Assert.Null(ts.Verify());
+        }
+
         [Fact]
         public void TestSanitizeEvent()
         {
@@ -760,6 +974,64 @@ namespace ExtractorUtils.Test.Unit
 
             err = errors.First(e => e.Resource == ResourceType.DataPointValue);
             Assert.Equal(3, err.Skipped.Count());
+        }
+        [Fact]
+        public void TestSanitizeAssetUpdateRequest()
+        {
+            var upd = new AssetUpdate { Name = new Update<string>("name") };
+            var items = new[]
+            {
+                new AssetUpdateItem("test1") { Update = upd },
+                new AssetUpdateItem("test1") { Update = upd },
+                new AssetUpdateItem(123) { Update = upd },
+                new AssetUpdateItem(123) { Update = upd },
+                new AssetUpdateItem("test2") { Update = upd },
+                new AssetUpdateItem("test3") { Update = new AssetUpdate {
+                    ParentId = new Update<long?>(123), ParentExternalId = new Update<string>("test1") }}
+            };
+            var (result, errors) = Sanitation.CleanAssetUpdateRequest(items, SanitationMode.Clean);
+
+            Assert.Equal(2, errors.Count());
+            var err = errors.First();
+            Assert.Equal(3, result.Count());
+            Assert.Equal(2, err.Values.Count());
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(ResourceType.Id, err.Resource);
+            Assert.Equal(3, result.Select(evt => evt.ExternalId).Distinct().Count());
+
+            err = errors.Last();
+            Assert.Single(err.Skipped);
+            Assert.Equal(ErrorType.SanitationFailed, err.Type);
+            Assert.Equal(ResourceType.ParentId, err.Resource);
+        }
+        [Fact]
+        public void TestSanitizeTimeSeriesUpdateRequest()
+        {
+            var upd = new TimeSeriesUpdate { Name = new UpdateNullable<string>("name") };
+
+            var items = new[]
+            {
+                new TimeSeriesUpdateItem("test1") { Update = upd },
+                new TimeSeriesUpdateItem("test1") { Update = upd },
+                new TimeSeriesUpdateItem(123) { Update = upd },
+                new TimeSeriesUpdateItem(123) { Update = upd },
+                new TimeSeriesUpdateItem("test2") { Update = upd },
+                new TimeSeriesUpdateItem("test3") { Update = new TimeSeriesUpdate() }
+            };
+            var (result, errors) = Sanitation.CleanTimeSeriesUpdateRequest(items, SanitationMode.Clean);
+
+            Assert.Equal(2, errors.Count());
+            var err = errors.First();
+            Assert.Equal(3, result.Count());
+            Assert.Equal(2, err.Values.Count());
+            Assert.Equal(ErrorType.ItemDuplicated, err.Type);
+            Assert.Equal(ResourceType.Id, err.Resource);
+            Assert.Equal(3, result.Select(ts => ts.ExternalId).Distinct().Count());
+
+            err = errors.Last();
+            Assert.Single(err.Skipped);
+            Assert.Equal(ErrorType.SanitationFailed, err.Type);
+            Assert.Equal(ResourceType.Update, err.Resource);
         }
     }
 }
