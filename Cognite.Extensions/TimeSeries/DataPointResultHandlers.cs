@@ -109,10 +109,21 @@ namespace Cognite.Extensions
             IEnumerable<TimeSeries> timeseries;
             using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
             {
-                timeseries = await resource
-                    .GetTimeSeriesByIdsIgnoreErrors(datapoints.Select(kvp => kvp.Key),
-                        timeseriesChunkSize, timeseriesThrottleSize, token)
-                    .ConfigureAwait(false);
+                try
+                {
+                    timeseries = await resource
+                        .GetTimeSeriesByIdsIgnoreErrors(datapoints.Select(kvp => kvp.Key),
+                            timeseriesChunkSize, timeseriesThrottleSize, token)
+                        .ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    var err = ParseSimpleError(
+                        ex,
+                        datapoints.Select(kvp => kvp.Key),
+                        datapoints.Select(kvp => new DataPointInsertError(kvp.Key, kvp.Value)));
+                    return (err, new Dictionary<Identity, IEnumerable<Datapoint>>());
+                }
             }
 
             var badDps = new List<DataPointInsertError>();

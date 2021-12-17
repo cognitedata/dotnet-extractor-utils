@@ -100,6 +100,10 @@ namespace Cognite.Extensions
                 await CompleteError(resource, error, assets, assetChunkSize, assetThrottleSize, token).ConfigureAwait(false);
             }
 
+            // If we failed to complete the error
+            // TODO: Improve this
+            if (!error.Complete) return Enumerable.Empty<AssetCreate>();
+
             var items = new HashSet<Identity>(error.Values);
 
             var ret = new List<AssetCreate>();

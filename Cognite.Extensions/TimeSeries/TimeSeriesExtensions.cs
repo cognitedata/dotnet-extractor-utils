@@ -234,7 +234,16 @@ namespace Cognite.Extensions
             IEnumerable<TimeSeries> found;
             using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
             {
-                found = await client.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token).ConfigureAwait(false);
+                var idts = externalIds.Select(id => new Identity(id));
+                try
+                {
+                    found = await client.RetrieveAsync(idts, true, token).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    var err = ResultHandlers.ParseSimpleError<TimeSeriesCreate>(ex, idts, null);
+                    return new CogniteResult<TimeSeries, TimeSeriesCreate>(new[] { err }, null);
+                }
             }
             _logger.LogDebug("Retrieved {Existing} times series from CDF", found.Count());
 
