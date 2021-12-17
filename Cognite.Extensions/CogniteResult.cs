@@ -3,6 +3,7 @@ using CogniteSdk.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -394,12 +395,25 @@ namespace Cognite.Extensions
     /// </summary>
     public class CogniteErrorException : Exception
     {
+        private static string GetErrorString(CogniteError err)
+        {
+            var builder = new StringBuilder();
+            builder.AppendFormat("CogniteError. Resource: {0}, Type: {1}: {2}",
+                err?.Resource, err?.Type, err?.Message);
+            if (err?.Exception is ResponseException rex)
+            {
+                builder.AppendFormat(". RequestId: {0}", rex.RequestId);
+            }
+            return builder.ToString();
+        }
+
+
         /// <summary>
         /// Constructor taking a <see cref="CogniteError"/>
         /// </summary>
         /// <param name="err"></param>
         public CogniteErrorException(CogniteError err)
-            : this($"CogniteError. Resource: {err?.Resource}, Type: {err?.Type}: {err?.Message}", err?.Exception)
+            : this(GetErrorString(err), err?.Exception)
         {
         }
         /// <summary>
