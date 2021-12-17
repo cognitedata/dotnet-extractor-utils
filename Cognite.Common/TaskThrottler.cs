@@ -309,14 +309,31 @@ namespace Cognite.Extractor.Common
                         }
 
                         if (_lastWaitTime == DateTime.MinValue) _lastWaitTime = DateTime.UtcNow;
+                        try
+                        {
+                            bool timedOut = await CommonUtils
+                                .WaitAsync(_taskCompletionEvent, waitTime, token)
+                                .ConfigureAwait(false);
+                            if (timedOut) _lastWaitTime = DateTime.MinValue;
+                        }
+                        catch (TaskCanceledException)
+                        {
+                        }
+                        
 
-                        var res = WaitHandle.WaitAny(new[] { token.WaitHandle, _taskCompletionEvent }, waitTime);
-
-                        if (res == WaitHandle.WaitTimeout) _lastWaitTime = DateTime.MinValue;
                     }
                     else
                     {
-                        WaitHandle.WaitAny(new[] { token.WaitHandle, _taskCompletionEvent });
+                        try
+                        {
+                            await CommonUtils
+                                .WaitAsync(_taskCompletionEvent, Timeout.InfiniteTimeSpan, token)
+                                .ConfigureAwait(false);
+                        }
+                        catch (TaskCanceledException)
+                        {
+                        }
+                        
                     }
                     _taskCompletionEvent.Reset();
                 }

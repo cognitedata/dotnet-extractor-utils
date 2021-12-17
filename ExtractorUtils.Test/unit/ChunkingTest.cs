@@ -178,7 +178,7 @@ namespace ExtractorUtils.Test.Unit
                     var realMs = (end - start).TotalMilliseconds;
 
                     // Task overhead
-                    var flex = 100 + realMs * 0.1;
+                    var flex = 100 + realMs * 0.2;
                     Assert.True(realMs > minElapsedTime - flex && realMs < minElapsedTime + flex,
                         $"Execution took {realMs}ms but should be between {minElapsedTime - flex} and {minElapsedTime + flex}" +
                         $". Parallel: {minElapsedTimeParallel}, limit: {minElapsedTimeLimit}");
