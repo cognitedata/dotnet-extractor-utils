@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cognite.Extractor.Common
 {
@@ -113,6 +115,35 @@ namespace Cognite.Extractor.Common
                     yield return elem;
                 }
             }
+        }
+
+        /// <summary>
+        /// Convenient method to efficiently wait for a wait handle and cancellation token with timeout
+        /// asynchronously.
+        /// </summary>
+        /// <param name="handle">WaitHandle to wait for</param>
+        /// <param name="timeout">Wait timeout</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>True if wait handle or cancellation token was triggered, false otherwise</returns>
+        public static Task<bool> WaitAsync(WaitHandle handle, TimeSpan timeout, CancellationToken token)
+        {
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var registeredHandle = ThreadPool.RegisterWaitForSingleObject(
+                handle,
+                (state, timedOut) => tcs.TrySetResult(!timedOut),
+                null,
+                timeout,
+                true);
+            var tokenRegistration = token.Register(
+                state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
+                tcs);
+            var task = tcs.Task;
+            tcs.Task.ContinueWith(t =>
+            {
+                if (registeredHandle != null) registeredHandle.Unregister(null);
+                tokenRegistration.Dispose();
+            }, TaskScheduler.Current);
+            return task;
         }
     }
 }

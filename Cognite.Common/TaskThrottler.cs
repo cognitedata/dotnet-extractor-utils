@@ -70,6 +70,7 @@ namespace Cognite.Extractor.Common
         private readonly int _maxParallelism;
         private readonly int _maxPerUnit;
         private readonly TimeSpan _timeUnit;
+        private readonly TimeSpan _timeUnitChunk;
         // Default unederlying collection is a ConcurrentQueue
         private readonly BlockingCollection<Func<TaskResult>> _generators
             = new BlockingCollection<Func<TaskResult>>();
@@ -110,7 +111,17 @@ namespace Cognite.Extractor.Common
         {
             _maxParallelism = maxParallelism;
             _maxPerUnit = perUnit;
-            _timeUnit = timeUnit == null ? TimeSpan.Zero : TimeSpan.FromTicks(timeUnit.Value.Ticks);
+            if (timeUnit != null && perUnit > 0)
+            {
+                _timeUnit = TimeSpan.FromTicks(timeUnit.Value.Ticks);
+                _timeUnitChunk = TimeSpan.FromTicks(timeUnit.Value.Ticks / perUnit);
+            }
+            else
+            {
+                _timeUnit = TimeSpan.Zero;
+                _timeUnitChunk = TimeSpan.Zero;
+            }
+
             _quitOnFailure = quitOnFailure;
             _completionSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
             _keepAllResults = keepAllResults;
@@ -240,17 +251,21 @@ namespace Cognite.Extractor.Common
             lock (_lock)
             {
                 if (_maxParallelism > 0 && _runningTasks.Count >= _maxParallelism) return false;
-                if (_timeUnit > TimeSpan.Zero && _maxPerUnit > 0)
+                if (_timeUnit > TimeSpan.Zero)
                 {
                     var now = DateTime.UtcNow;
-                    var scheduledWithinLastTimeUnit = _results.Count(res => res.StartTime > now - _timeUnit);
+                    var scheduledInLastTimePeriod = _results.Count(res => res.StartTime > now - _timeUnit);
+                    var totalInLastChunk = _results.Count(res => res.StartTime > now - _timeUnitChunk);
 
-                    if (scheduledWithinLastTimeUnit > _maxPerUnit) return false;
+                    // Allow 2 in each "chunk" of time, as flex. This helps distribute tasks a bit more over time.
+                    if (totalInLastChunk > 1 || scheduledInLastTimePeriod >= _maxPerUnit) return false;
                 }
                 
             }
             return true;
         }
+
+        private DateTime _lastWaitTime;
 
         private async Task Run()
         {
@@ -281,11 +296,44 @@ namespace Cognite.Extractor.Common
                 {
                     if (_timeUnit > TimeSpan.Zero)
                     {
-                        WaitHandle.WaitAny(new[] { token.WaitHandle, _taskCompletionEvent }, _timeUnit);
+                        // If waiting is interrupted, we want to continue waiting, instead of restarting,
+                        // this helps ensure even distribution of tasks. I.e. if we run tasks that takes 200ms,
+                        // and use a time unit of 500ms, then we will wake up after 200ms, not schedule a new task,
+                        // wait another 500ms, then wake up again, so we effectively only wake up every 700ms,
+                        // This wake-up period should be a minimum value.
+                        TimeSpan waitTime = _timeUnitChunk;
+                        var now = DateTime.UtcNow;
+                        if (_lastWaitTime + _timeUnitChunk > now)
+                        {
+                            waitTime = _timeUnitChunk - (now - _lastWaitTime);
+                        }
+
+                        if (_lastWaitTime == DateTime.MinValue) _lastWaitTime = DateTime.UtcNow;
+                        try
+                        {
+                            bool timedOut = await CommonUtils
+                                .WaitAsync(_taskCompletionEvent, waitTime, token)
+                                .ConfigureAwait(false);
+                            if (timedOut) _lastWaitTime = DateTime.MinValue;
+                        }
+                        catch (TaskCanceledException)
+                        {
+                        }
+                        
+
                     }
                     else
                     {
-                        WaitHandle.WaitAny(new[] { token.WaitHandle, _taskCompletionEvent });
+                        try
+                        {
+                            await CommonUtils
+                                .WaitAsync(_taskCompletionEvent, Timeout.InfiniteTimeSpan, token)
+                                .ConfigureAwait(false);
+                        }
+                        catch (TaskCanceledException)
+                        {
+                        }
+                        
                     }
                     _taskCompletionEvent.Reset();
                 }
