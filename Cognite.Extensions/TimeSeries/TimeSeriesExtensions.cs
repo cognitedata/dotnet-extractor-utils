@@ -468,11 +468,11 @@ namespace Cognite.Extensions
         {
             if (!upserts.All(a => a.ExternalId != null)) throw new ArgumentException("All inserts must have externalId");
 
-            var assetDict = upserts.ToDictionary(ts => ts.ExternalId);
+            var timeSeriesDict = upserts.ToDictionary(ts => ts.ExternalId);
 
             var createResult = await tss.GetOrCreateTimeSeriesAsync(
-                assetDict.Keys,
-                keys => keys.Select(key => assetDict[key]),
+                timeSeriesDict.Keys,
+                keys => keys.Select(key => timeSeriesDict[key]),
                 chunkSize, throttleSize,
                 retryMode,
                 sanitationMode,
@@ -481,13 +481,13 @@ namespace Cognite.Extensions
             if (createResult.Errors?.Any() ?? false)
             {
                 var badTimeSeries = new HashSet<TimeSeriesCreate>(createResult.Errors.Where(e => e.Skipped != null).SelectMany(e => e.Skipped));
-                assetDict = assetDict.Where(kvp => !badTimeSeries.Contains(kvp.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                timeSeriesDict = timeSeriesDict.Where(kvp => !badTimeSeries.Contains(kvp.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 
-            if (!assetDict.Any() || createResult.Results == null || !createResult.Results.Any()) return createResult;
+            if (!timeSeriesDict.Any() || createResult.Results == null || !createResult.Results.Any()) return createResult;
 
             var resultDict = createResult.Results.ToDictionary(ts => ts.ExternalId);
-            var updates = assetDict.Values
+            var updates = timeSeriesDict.Values
                 .Select(ts => (ts.ToUpdate(resultDict[ts.ExternalId], options)!, ts))
                 .Where(upd => upd.Item1 != null)
                 .ToDictionary(upd => upd.Item1.Id!.Value);
