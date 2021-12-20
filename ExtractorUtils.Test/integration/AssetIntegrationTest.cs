@@ -649,5 +649,123 @@ namespace ExtractorUtils.Test.Integration
                 }, tester.Source.Token);
             }
         }
+
+
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task TestUpsert(bool replaceMeta)
+        {
+            using var tester = new CDFTester(CogniteHost.GreenField);
+
+            var upserts = Enumerable.Range(1, 5).Select(i => new AssetCreate
+            {
+                ExternalId = $"{tester.Prefix} test-upsert-{i}",
+                Name = $"test-upsert-{i}"
+            }).ToArray();
+
+            var options = new UpsertParams { ReplaceMetadata = replaceMeta, SetNull = true };
+
+            try
+            {
+                // Just create
+                var result1 = await tester.Destination.UpsertAssetsAsync(upserts, RetryMode.OnError,
+                    SanitationMode.Remove, options, tester.Source.Token);
+                // Just retrieve
+                var result2 = await tester.Destination.UpsertAssetsAsync(upserts, RetryMode.OnError,
+                    SanitationMode.Remove, options, tester.Source.Token);
+                // Update all
+                foreach (var ups in upserts)
+                {
+                    ups.Description = "Some description";
+                    ups.Metadata = new Dictionary<string, string>
+                    {
+                        { "someKey", "someValue" }
+                    };
+                }
+                var result3 = await tester.Destination.UpsertAssetsAsync(upserts, RetryMode.OnError,
+                    SanitationMode.Remove, options, tester.Source.Token);
+                // Update all and add 2 more
+
+                foreach (var ups in upserts)
+                {
+                    ups.Metadata = new Dictionary<string, string>
+                    {
+                        { "someKey2", "someValue2" }
+                    };
+                }
+
+                upserts = upserts.Concat(Enumerable.Range(6, 2).Select(i => new AssetCreate
+                {
+                    ExternalId = $"{tester.Prefix} test-upsert-{i}",
+                    Name = $"test-upsert-{i}"
+                })).ToArray();
+
+                var result4 = await tester.Destination.UpsertAssetsAsync(upserts, RetryMode.OnError,
+                    SanitationMode.Remove, options, tester.Source.Token);
+
+                // Update all, fail to create 2 more
+
+                foreach (var ups in upserts)
+                {
+                    ups.Source = "Some source";
+                }
+
+                upserts = upserts.Concat(Enumerable.Range(8, 2).Select(i => new AssetCreate
+                {
+                    ExternalId = $"{tester.Prefix} test-upsert-{i}",
+                    Name = null
+                })).ToArray();
+
+                var result5 = await tester.Destination.UpsertAssetsAsync(upserts, RetryMode.OnError,
+                    SanitationMode.Remove, options, tester.Source.Token);
+
+
+                Assert.Equal(5, result1.Results.Count());
+                result1.Throw();
+                Assert.Equal(5, result2.Results.Count());
+                result2.Throw();
+                Assert.Equal(5, result3.Results.Count());
+                result3.Throw();
+                Assert.All(result3.Results, res => {
+                    Assert.Single(res.Metadata);
+                    Assert.Equal("someValue", res.Metadata["someKey"]);
+                    Assert.Equal("Some description", res.Description);
+                });
+                Assert.Equal(7, result4.Results.Count());
+                result4.Throw();
+                Assert.All(result4.Results.Take(5), res => {
+                    if (replaceMeta)
+                    {
+                        Assert.Single(res.Metadata);
+                        Assert.Equal("someValue2", res.Metadata["someKey2"]);
+                    }
+                    else
+                    {
+                        Assert.Equal(2, res.Metadata.Count);
+                        Assert.Equal("someValue", res.Metadata["someKey"]);
+                        Assert.Equal("someValue2", res.Metadata["someKey2"]);
+                    }
+                });
+                Assert.Equal(7, result5.Results.Count());
+                Assert.Single(result5.Errors);
+                Assert.Equal(2, result5.Errors.First().Skipped.Count());
+                Assert.All(result5.Results, res => {
+                    Assert.Equal("Some source", res.Source);
+                });
+            }
+            finally
+            {
+                var ids = Enumerable.Range(1, 9)
+                    .Select(i => Identity.Create($"{tester.Prefix} test-upsert-{i}"))
+                    .ToList();
+                await tester.Destination.CogniteClient.Assets.DeleteAsync(new AssetDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = ids
+                });
+            }
+        }
     }
 }

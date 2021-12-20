@@ -40,6 +40,11 @@ namespace Cognite.Extensions
                     .Select(label => label.Truncate(ExternalIdMax))
                     .Take(10)
                     .ToList();
+                update.Labels.Set = update.Labels.Set?
+                    .Where(label => label != null && label.ExternalId != null)
+                    .Select(label => label.Truncate(ExternalIdMax))
+                    .Take(10)
+                    .ToList();
             }
         }
 
@@ -80,6 +85,9 @@ namespace Cognite.Extensions
             if (!update.ParentExternalId?.Set?.CheckLength(ExternalIdMax) ?? false) return ResourceType.ParentExternalId;
             if (update.Labels?.Add != null && (update.Labels.Add.Count() > AssetLabelsMax
                 || update.Labels.Add.Any(label => !label.ExternalId.CheckLength(ExternalIdMax))))
+                return ResourceType.Labels;
+            if (update.Labels?.Set != null && (update.Labels.Set.Count() > AssetLabelsMax
+                || update.Labels.Set.Any(label => !label.ExternalId.CheckLength(ExternalIdMax))))
                 return ResourceType.Labels;
 
             return null;
