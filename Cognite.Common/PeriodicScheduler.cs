@@ -228,7 +228,7 @@ namespace Cognite.Extractor.Common
             var tasks = new List<Task>();
             PeriodicTask? failedTask = null;
 
-            var waitTask = WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token);
+            var waitTask = CommonUtils.WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token);
             tasks.Add(waitTask);
 
             while (!_source.IsCancellationRequested)
@@ -255,7 +255,7 @@ namespace Cognite.Extractor.Common
                     if (_newTaskEvent.WaitOne(0))
                     {
                         _newTaskEvent.Reset();
-                        waitTask = WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token);
+                        waitTask = CommonUtils.WaitAsync(_newTaskEvent, Timeout.InfiniteTimeSpan, _source.Token);
                     }
                     tasks.Add(waitTask);
                 }
@@ -308,41 +308,12 @@ namespace Cognite.Extractor.Common
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : task.Interval;
-                var waitTask = WaitAsync(task.Event, task.Interval, _source.Token).ConfigureAwait(false);
+                var waitTask = CommonUtils.WaitAsync(task.Event, task.Interval, _source.Token).ConfigureAwait(false);
                 if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
                 shouldRunNow = true;
                 await waitTask;
                 task.Event.Reset();
             }
-        }
-
-        /// <summary>
-        /// Convenient method to efficiently wait for a wait handle and cancellation token with timeout
-        /// asynchronously.
-        /// </summary>
-        /// <param name="handle">WaitHandle to wait for</param>
-        /// <param name="timeout">Wait timeout</param>
-        /// <param name="token">Cancellation token</param>
-        /// <returns>True if wait handle or cancellation token was triggered, false otherwise</returns>
-        private static Task<bool> WaitAsync(WaitHandle handle, TimeSpan timeout, CancellationToken token)
-        {
-            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var registeredHandle = ThreadPool.RegisterWaitForSingleObject(
-                handle,
-                (state, timedOut) => tcs.TrySetResult(!timedOut),
-                null,
-                timeout,
-                true);
-            var tokenRegistration = token.Register(
-                state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
-                tcs);
-            var task = tcs.Task;
-            tcs.Task.ContinueWith(t =>
-            {
-                if (registeredHandle != null) registeredHandle.Unregister(null);
-                tokenRegistration.Dispose();
-            }, TaskScheduler.Current);
-            return task;
         }
 
         /// <summary>
