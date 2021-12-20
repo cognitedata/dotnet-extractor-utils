@@ -115,6 +115,17 @@ cognite:
         # Frequency to report "Seen", in seconds. Less than or equal to zero will not report automatically.
         # frequency: 600
 
+    # Optional configuration for special handling of SSL certificates.
+    # This should never be considered a permanent solution to certificate problems.
+    certificates:
+        # True to accept all certificates.
+        # This poses a severe security risk.
+        accept-all: false
+        # List of thumbprints of certificates to allow.
+        # This is a smaller risk compared to accepting all certificates.
+        allow-list:
+            # - 99E92D8447AEF30483B1D7527812C9B7B3A915A7
+
 
 # Store state in a local database or in CDF raw to speed up starting, by not having to read state from destinations
 state-store:

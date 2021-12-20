@@ -115,6 +115,11 @@ namespace Cognite.Extractor.Utils
         /// Configuration for automatically reporting extraction pipeline runs.
         /// </summary>
         public ExtractionRunConfig? ExtractionPipeline { get; set; }
+
+        /// <summary>
+        /// Configuration for handling SSL certificates.
+        /// </summary>
+        public CertificateConfig? Certificates { get; set; }
     }
 
     /// <summary>
@@ -288,6 +293,21 @@ namespace Cognite.Extractor.Utils
         /// If less than 0, there is no maximum.
         /// </summary>
         public int MaxDelay { get; set; } = 5_000;
+    }
+
+    /// <summary>
+    /// Configure options relating to SSL certificates.
+    /// </summary>
+    public class CertificateConfig
+    {
+        /// <summary>
+        /// True to accept all certificates. This must be considered a security risk in most circumstances.
+        /// </summary>
+        public bool AcceptAll { get; set; }
+        /// <summary>
+        /// List of certificate thumbprints to manually allow. This is much safer.
+        /// </summary>
+        public IEnumerable<string>? AllowList { get; set; }
     }
 
     #endregion
