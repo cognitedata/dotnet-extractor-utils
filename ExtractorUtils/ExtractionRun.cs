@@ -75,18 +75,17 @@ namespace Cognite.Extractor.Utils
             {
                 pipe = await _destination.CogniteClient.ExtPipes.RetrieveAsync(
                     new[] { Identity.Create(_config.PipelineId) }, true, _source.Token).ConfigureAwait(false);
+                if (!pipe.Any())
+                {
+                    _log.LogError("Did not find extraction pipeline with ExternalId: {id}, this extractor will not report status",
+                        _config.PipelineId);
+                    return;
+                }
             }
             catch (Exception ex)
             {
-                _log.LogError("Failed to fetch extraction pipeline with ExternalId: {id}, this extractor will not report status: {msg}",
+                _log.LogWarning("Failed to fetch extraction pipeline with ExternalId: {id}, reporting status may fail, if it does not exist: {msg}",
                     _config.PipelineId, ex.Message);
-                return;
-            }
-            
-            if (!pipe.Any())
-            {
-                _log.LogError("Did not find extraction pipeline with ExternalId: {id}, this extractor will not report status",
-                    _config.PipelineId);
                 return;
             }
 
