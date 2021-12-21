@@ -77,15 +77,6 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
   </h3>
-      <h4><a class="xref" href="Cognite.Extractor.Utils.Authenticator.html">Authenticator</a></h4>
-      <section><p>Authenticator that issues a POST request to an authority endpoint defined in the <a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Authority">Authority</a> configuration
-in order to obtain bearer access tokens.
-The token is cached and renewed if it expired</p>
-</section>
-      <h4><a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig.html">AuthenticatorConfig</a></h4>
-      <section><p>Authenticator configuration. For more information, read the
-<a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow">OAth 2.0 client credentials flow</a></p>
-</section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.BaseConfig.html">BaseConfig</a></h4>
       <section><p>Base configuration object for extractors.
 The config should have a version property, so that versioning and compatibility can be tracked by the extractor.</p>
@@ -95,6 +86,9 @@ The config should have a version property, so that versioning and compatibility 
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html">BaseUploadQueue&lt;T&gt;</a></h4>
       <section><p>Generic base class for upload queues</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.CertificateConfig.html">CertificateConfig</a></h4>
+      <section><p>Configure options relating to SSL certificates.</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.ChunkingConfig.html">ChunkingConfig</a></h4>
       <section><p>Chunking configuration</p>
@@ -133,10 +127,6 @@ requests against the client</p>
       <section><p>Parameters for launching an extractor. Can be modified
 after config is loaded by defining a ConfigCallback.</p>
 </section>
-      <h4><a class="xref" href="Cognite.Extractor.Utils.MsalAuthenticator.html">MsalAuthenticator</a></h4>
-      <section><p>Uses Microsoft Authentication Library (MSAL) to acquire tokens from the identity provider endpoint
-defined in the <a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Authority">Authority</a> configuration</p>
-</section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.QueueUploadResult-1.html">QueueUploadResult&lt;T&gt;</a></h4>
       <section><p>Result of an attempt to upload from an upload queue.</p>
 </section>
@@ -154,9 +144,6 @@ defined in the <a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig
 </section>
     <h3 id="interfaces">Interfaces
   </h3>
-      <h4><a class="xref" href="Cognite.Extractor.Utils.IAuthenticator.html">IAuthenticator</a></h4>
-      <section><p>Interface for implementing authenticators based on bearer access tokens issued by an identity provider</p>
-</section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.IRawUploadQueue-1.html">IRawUploadQueue&lt;T&gt;</a></h4>
       <section><p>Interface to CDF Raw upload queues. The items in the queue are
 DTOs (data type objects) of type <code data-dev-comment-type="typeparamref" class="typeparamref">T</code>.</p>
@@ -166,11 +153,6 @@ DTOs (data type objects) of type <code data-dev-comment-type="typeparamref" clas
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.IUploadQueue-1.html">IUploadQueue&lt;T&gt;</a></h4>
       <section><p>Interface for generic upload queue</p>
-</section>
-    <h3 id="enums">Enums
-  </h3>
-      <h4><a class="xref" href="Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html">AuthenticatorConfig.AuthenticatorImplementation</a></h4>
-      <section><p>Available authenticator implementations</p>
 </section>
 </article>
           </div>

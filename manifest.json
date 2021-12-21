@@ -9,7 +9,43 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.AssetExtensions.html",
-          "hash": "6+Dz4ZIClyYok2TBXmAL0w=="
+          "hash": "00guqAUGWRngw/VovImG/Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Authenticator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Authenticator.html",
+          "hash": "+k+0vepjTPjuUSXHX5bVWg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.html",
+          "hash": "n1Ho5qmSpFVaq4NCymCHFw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.AuthenticatorConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.AuthenticatorConfig.html",
+          "hash": "VCCLrpMEl0E7KsB6buDSTA=="
         }
       },
       "is_incremental": false,
@@ -21,7 +57,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.CogniteError-1.html",
-          "hash": "whMaRqXUGWJt/z4a37YEVQ=="
+          "hash": "cE39aupbFdhUbJle3IvE/w=="
         }
       },
       "is_incremental": false,
@@ -33,7 +69,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.CogniteError.html",
-          "hash": "oXiPxd8rgqimr0NPt/6V0A=="
+          "hash": "QHJWQPKaIlcxh62rs6gHDA=="
         }
       },
       "is_incremental": false,
@@ -45,7 +81,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.CogniteErrorException.html",
-          "hash": "mqp4nVBotx7YIclTHANmTA=="
+          "hash": "8W85f+z9BHWbHJqPxwAkZQ=="
         }
       },
       "is_incremental": false,
@@ -57,7 +93,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.CogniteExtensions.html",
-          "hash": "K7WzNl0WFPHVw1pEJJjKqQ=="
+          "hash": "ncm8aU6U91DxjXb/ZI7HuQ=="
         }
       },
       "is_incremental": false,
@@ -69,7 +105,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.CogniteResult-1.html",
-          "hash": "qA72514R1QoqflWWNjCTdg=="
+          "hash": "4/JpbtRHU+JQqpzLzcKdqQ=="
         }
       },
       "is_incremental": false,
@@ -81,7 +117,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.CogniteResult-2.html",
-          "hash": "AqYoPuexScP6grUoI3EmFg=="
+          "hash": "Qb1LwemBBeRkdReICLn2QA=="
         }
       },
       "is_incremental": false,
@@ -93,7 +129,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.CogniteUtils.html",
-          "hash": "lwrnbtHfI2umbS6N2+Vd4Q=="
+          "hash": "vC7zHi9lkAzIUiWQEINAFQ=="
         }
       },
       "is_incremental": false,
@@ -105,7 +141,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.CogniteUtilsException.html",
-          "hash": "+8mfokj4CuGnZ/gkE36Usw=="
+          "hash": "PpB0JAqv6+dvQ/dyMFaAsQ=="
         }
       },
       "is_incremental": false,
@@ -117,7 +153,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.DataPointExtensions.html",
-          "hash": "onZ2PCq0OGlu4WUQFs4mRw=="
+          "hash": "tW1iDSXcSUgd8z/eymUWBA=="
         }
       },
       "is_incremental": false,
@@ -129,7 +165,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.DataPointInsertError.html",
-          "hash": "XGdgTfL8LCkXfPkRldrfuA=="
+          "hash": "1fu6flebCoirck9Blb00ag=="
         }
       },
       "is_incremental": false,
@@ -141,7 +177,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.Datapoint.html",
-          "hash": "NVsBFiiYFwhu6lZBsW1Z6Q=="
+          "hash": "92yBtNB1dHpgK9PXprNVCQ=="
         }
       },
       "is_incremental": false,
@@ -153,7 +189,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.DeleteError.html",
-          "hash": "F1q5NOMWUnK7gk5+a84RpA=="
+          "hash": "GNvwB8xHVfj3Or6O4nT1ng=="
         }
       },
       "is_incremental": false,
@@ -165,7 +201,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.ErrorType.html",
-          "hash": "CETPSMyWQ3FNib+v2SkRkA=="
+          "hash": "Tl0jvx3YLuVBn7hKspsE/w=="
         }
       },
       "is_incremental": false,
@@ -177,7 +213,19 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.EventExtensions.html",
-          "hash": "Tb/wsDFJDC3/CNU21kSJFA=="
+          "hash": "EOvDoSExeXl/yYTJeT/S8Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.IAuthenticator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.IAuthenticator.html",
+          "hash": "ZEXXjQgM0Z5ELjUP9sto2w=="
         }
       },
       "is_incremental": false,
@@ -189,7 +237,19 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.LoggerExtensions.html",
-          "hash": "SagnyT65DRW/RJvWAI/cIA=="
+          "hash": "EA/Mo96jDhYmbXsa+2K16Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.MsalAuthenticator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.MsalAuthenticator.html",
+          "hash": "UbDvsjCl5QYSkaw/i4jN5Q=="
         }
       },
       "is_incremental": false,
@@ -201,7 +261,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.RawExtensions.html",
-          "hash": "WFC9zwDxlWUSy4h5aajJbw=="
+          "hash": "ZjsCK3oLJhUxPDsw/SPysg=="
         }
       },
       "is_incremental": false,
@@ -213,7 +273,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.RequestType.html",
-          "hash": "F8SzN4+teZsaSJXqWvebdQ=="
+          "hash": "EVDkVicfWDNGElvR9s7oCg=="
         }
       },
       "is_incremental": false,
@@ -225,7 +285,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.ResourceType.html",
-          "hash": "6QWBhjL2zC4EwwgDeZ4ZLQ=="
+          "hash": "/eUAPhdBc11Wx6ZUOhrzFw=="
         }
       },
       "is_incremental": false,
@@ -237,7 +297,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.ResultHandlers.html",
-          "hash": "eE3VZmx/AkPNz3PaGW9oLQ=="
+          "hash": "dzOJ3y3rULpSo4EsulenYg=="
         }
       },
       "is_incremental": false,
@@ -249,7 +309,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.RetryMode.html",
-          "hash": "FUMP7tXY0SwDwXSz798b4Q=="
+          "hash": "rzABrQQLG2HeViR0SWEH+Q=="
         }
       },
       "is_incremental": false,
@@ -261,7 +321,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.Sanitation.html",
-          "hash": "eRyq79gTo0MD8Hebe01NKA=="
+          "hash": "KoCABYqycS+jQ4SVZdIHuQ=="
         }
       },
       "is_incremental": false,
@@ -273,7 +333,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.SanitationMode.html",
-          "hash": "W9mlyvWb2QI6eIcSmf9sAg=="
+          "hash": "wWjlSfWIjnRZWuziER1WLw=="
         }
       },
       "is_incremental": false,
@@ -285,7 +345,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.SequenceExtensions.html",
-          "hash": "wm/kq/y9n4QyU1jXo5uauw=="
+          "hash": "q71+burzVaaIkS646A2MFg=="
         }
       },
       "is_incremental": false,
@@ -297,7 +357,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.SequenceRowError.html",
-          "hash": "KHZ142O/D1UHjrA+LYT9Fg=="
+          "hash": "axtZEeZtxubdCkJJPFVmbw=="
         }
       },
       "is_incremental": false,
@@ -309,7 +369,31 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.TimeSeriesExtensions.html",
-          "hash": "lawVgbwCdE478ffQ/RwUXg=="
+          "hash": "fy7mMbJluP026SYTy4Sm0g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.TypeExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.TypeExtensions.html",
+          "hash": "gc5QEAYEEInf5iiWFluwMA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.UpsertParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.UpsertParams.html",
+          "hash": "5GdN22y1HRZk/s+M4fefhg=="
         }
       },
       "is_incremental": false,
@@ -321,7 +405,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.html",
-          "hash": "33B22SBJgdckX/ktWkshXg=="
+          "hash": "1Bq/r9/4Bzwkk4uXSMDtgA=="
         }
       },
       "is_incremental": false,
@@ -333,7 +417,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.BlockingResourceCounter.html",
-          "hash": "y+CAzpKLXFZfAHVm8W5glg=="
+          "hash": "YTTZ76t0CQKB0FtUOcoA3Q=="
         }
       },
       "is_incremental": false,
@@ -345,7 +429,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.Chunking.html",
-          "hash": "ZaHFSalN6TDGV+VxHb3/cQ=="
+          "hash": "t40gGEvdUbLdqX6r9xTSOw=="
         }
       },
       "is_incremental": false,
@@ -357,7 +441,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.CogniteTime.html",
-          "hash": "Mk8qd8GLYUA/iICxcGVDHA=="
+          "hash": "iTxc3GR64QKKgnk+mvaBBw=="
         }
       },
       "is_incremental": false,
@@ -369,7 +453,19 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.CommonUtils.html",
-          "hash": "A6HvkEs50NGFeon0Bqq+yw=="
+          "hash": "DNlIj44l8KAuZABwWXtJMw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Common.ConfigurationException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Common.ConfigurationException.html",
+          "hash": "6Jz7qic48WkIgJIsGvPJWg=="
         }
       },
       "is_incremental": false,
@@ -381,7 +477,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.IChunk-1.html",
-          "hash": "GK8VSyvQ3l70YNyb9gHUlg=="
+          "hash": "WkwgmQmcbdp4YqTL1tHK7g=="
         }
       },
       "is_incremental": false,
@@ -393,7 +489,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.IResourceCounter.html",
-          "hash": "+M4F/eta48qZxiiEYKZkKQ=="
+          "hash": "PqMJeZkHMzic0orDV1AldQ=="
         }
       },
       "is_incremental": false,
@@ -405,7 +501,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.OperationScheduler-1.html",
-          "hash": "kP1dV2bFP7juzg4sqxMHPQ=="
+          "hash": "Xh+iO/DLSJjc91yHWiB3mQ=="
         }
       },
       "is_incremental": false,
@@ -417,7 +513,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.PeriodicScheduler.html",
-          "hash": "QLjqpQGb1oO82Gl16A0jUw=="
+          "hash": "nmBbDekbXh0vKIglvQck/w=="
         }
       },
       "is_incremental": false,
@@ -429,7 +525,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.SharedResourceScheduler-1.html",
-          "hash": "ffbkhnQoo2SB1duO1k7DJw=="
+          "hash": "yk/6KNAqUJjlAKnSbSzMRg=="
         }
       },
       "is_incremental": false,
@@ -441,7 +537,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.TaskResult.html",
-          "hash": "x/5Wtz/BRiZ3OX5dIBAFsA=="
+          "hash": "TTuhpWXcyVO8DejH2yO0nw=="
         }
       },
       "is_incremental": false,
@@ -453,7 +549,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.TaskThrottler.html",
-          "hash": "BHj3QgnRkwGUXhEu4wcQ3A=="
+          "hash": "tMkzOJ8kWJzbly5PMQXtww=="
         }
       },
       "is_incremental": false,
@@ -465,7 +561,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.TimeRange.html",
-          "hash": "UMp0UglyK/fiaBQZHW+/yw=="
+          "hash": "6p1+9e/CELvfV4EoJQkzKA=="
         }
       },
       "is_incremental": false,
@@ -477,7 +573,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Common.html",
-          "hash": "Fqm/p+HhIr+7C3ckJqHMRQ=="
+          "hash": "nfDUrmmYVWhelUTtrPc6UQ=="
         }
       },
       "is_incremental": false,
@@ -489,7 +585,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Logging.ConsoleConfig.html",
-          "hash": "tnUR0szrDL7dZQJVwfQIDQ=="
+          "hash": "KyPcMXX0wnN5XaArvvAhug=="
         }
       },
       "is_incremental": false,
@@ -501,7 +597,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Logging.FileConfig.html",
-          "hash": "Gd70UUarhzGUsHWdwDEGKw=="
+          "hash": "FsxN44R4EmB4YWN/q8tLag=="
         }
       },
       "is_incremental": false,
@@ -513,7 +609,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Logging.LogConfig.html",
-          "hash": "3Th23Ad7qCkeU4/4sUfnIg=="
+          "hash": "+XNIJIH3Aqq1W5RMH7p1+A=="
         }
       },
       "is_incremental": false,
@@ -525,7 +621,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Logging.LoggerConfig.html",
-          "hash": "TOfsCPRREhlrFFw9Mj6Yuw=="
+          "hash": "q8wJ4tNAAWZKezlVF6dvkA=="
         }
       },
       "is_incremental": false,
@@ -537,7 +633,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Logging.LoggerTraceListener.html",
-          "hash": "0Od8oWlqoVp2Tpuns1XAYQ=="
+          "hash": "nGEGL4tnOYJoB5oujlixBg=="
         }
       },
       "is_incremental": false,
@@ -549,7 +645,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Logging.LoggingExtensions.html",
-          "hash": "2ua8UWiSNOsGULpSD69fSw=="
+          "hash": "pgYGhS5LR6ixQA8lHbLiCA=="
         }
       },
       "is_incremental": false,
@@ -561,7 +657,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Logging.LoggingUtils.html",
-          "hash": "Vdl41EbjktjNBR0ee6BAhg=="
+          "hash": "j3ZEV5NRRbaRwhDJbGB7ew=="
         }
       },
       "is_incremental": false,
@@ -573,7 +669,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Logging.TraceListenerConfig.html",
-          "hash": "cNCz7VxTH1+1eDGGjyWZCQ=="
+          "hash": "jlTn/cdO+q439duqj/+mcA=="
         }
       },
       "is_incremental": false,
@@ -597,7 +693,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Metrics.CommonMetrics.html",
-          "hash": "v3A8iV8QiNtE1RzXxlQCnQ=="
+          "hash": "ASj3T4TERhxTnOfvs58ajg=="
         }
       },
       "is_incremental": false,
@@ -609,7 +705,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Metrics.MetricsConfig.html",
-          "hash": "ZfLMpjT1elKwt89Hxws2Rw=="
+          "hash": "jAJyl2HJBE3nEbpiStnFJg=="
         }
       },
       "is_incremental": false,
@@ -621,7 +717,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Metrics.MetricsExtensions.html",
-          "hash": "qHuraZqkUPFGHyVcCmVmgQ=="
+          "hash": "V2z+m/IeGjLqN5RQBEGkdA=="
         }
       },
       "is_incremental": false,
@@ -633,7 +729,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Metrics.MetricsServerConfig.html",
-          "hash": "on5koJwUVRFxxLUQzw5VUA=="
+          "hash": "BV3zCicrKIt83EeyGqVjiA=="
         }
       },
       "is_incremental": false,
@@ -645,7 +741,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Metrics.MetricsService.html",
-          "hash": "kYKwE70CUp4+8niKWbD/9g=="
+          "hash": "q1m0uQCGzvT7w7LSQGeD7w=="
         }
       },
       "is_incremental": false,
@@ -657,7 +753,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Metrics.PushGatewayConfig.html",
-          "hash": "oWpALurerwPZdSu0Zc3s7w=="
+          "hash": "BYOQzFyLlCeb2uE7jkaXPw=="
         }
       },
       "is_incremental": false,
@@ -669,7 +765,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Metrics.Version.html",
-          "hash": "XSd45D6Al6dI2lJIvS4gRQ=="
+          "hash": "OuziUzQ8il5lxsSiuv8qpA=="
         }
       },
       "is_incremental": false,
@@ -693,7 +789,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.BaseExtractionState.html",
-          "hash": "7ciqg6EwevjnVHMuBoaufA=="
+          "hash": "PFCHixBcDXXctMknza2uuA=="
         }
       },
       "is_incremental": false,
@@ -705,7 +801,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.BaseExtractionStatePoco.html",
-          "hash": "vkz3D5CzVZLhszweMqQSSg=="
+          "hash": "oKc6CFrcv0NEbvCUOmINNw=="
         }
       },
       "is_incremental": false,
@@ -717,7 +813,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.BaseStorableState.html",
-          "hash": "wcWcGFItTF5rRO3PCpD2tg=="
+          "hash": "/szhWwW4ol7xq1MwwOyEoQ=="
         }
       },
       "is_incremental": false,
@@ -729,7 +825,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.HistoryExtractionState.html",
-          "hash": "+Rzvva4GNlWCZHVreA73Nw=="
+          "hash": "YV1Rwve4eCiy5iY8gQUudw=="
         }
       },
       "is_incremental": false,
@@ -741,7 +837,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.IExtractionState.html",
-          "hash": "B11xaTzWEt1QmR/Quot05w=="
+          "hash": "mh4ioSs+MYRMhYejzoEb7g=="
         }
       },
       "is_incremental": false,
@@ -753,7 +849,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.IExtractionStateStore.html",
-          "hash": "HxIIEXBvrIl8blTJljbFWg=="
+          "hash": "tJn3jJIwR0e7TNZu6yxinw=="
         }
       },
       "is_incremental": false,
@@ -765,7 +861,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.IRawDestination.html",
-          "hash": "+TJ48N5eFSgskgjR8UWqFA=="
+          "hash": "BhJtTp9aPMSprJ5yoPR/NQ=="
         }
       },
       "is_incremental": false,
@@ -777,7 +873,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.LiteDBStateStore.html",
-          "hash": "DukiUkh33jw1spIvX8LBxg=="
+          "hash": "4gMEzb5PFLTWlqZVcFnatA=="
         }
       },
       "is_incremental": false,
@@ -789,7 +885,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreConfig.StorageType.html",
-          "hash": "uooAySitvVearPyZHqjkyA=="
+          "hash": "n2HSq90d9J5ftys/qjL8mQ=="
         }
       },
       "is_incremental": false,
@@ -801,7 +897,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreConfig.html",
-          "hash": "rS50O54AxQh22HTMRIB+mg=="
+          "hash": "eJhXUgqRQzGepZlLTvDrMQ=="
         }
       },
       "is_incremental": false,
@@ -813,7 +909,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreProperty.html",
-          "hash": "EqwfRhP1v/que4XA5xl6XQ=="
+          "hash": "tGlQui6/W5GvsaHCPIh5QQ=="
         }
       },
       "is_incremental": false,
@@ -825,7 +921,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreUtils.html",
-          "hash": "KGx3gWrDU1UeMPK+QNBzhg=="
+          "hash": "5g2BiMJpMnXo9OMu+Gp82g=="
         }
       },
       "is_incremental": false,
@@ -845,47 +941,11 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.Authenticator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.Authenticator.html",
-          "hash": "KcrYAeor/1XQzC9+bCRU6A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html",
-          "hash": "p7cQ0UKKfHUCY7ferDQeug=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.AuthenticatorConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.AuthenticatorConfig.html",
-          "hash": "Lbx403s51C8FjvZfPzzV8w=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.BaseConfig.yml",
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.BaseConfig.html",
-          "hash": "P0w3PgscQdPyacVKd5TuAg=="
+          "hash": "IifBG0phw1wLRlbPB26obA=="
         }
       },
       "is_incremental": false,
@@ -897,7 +957,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.BaseExtractor-1.html",
-          "hash": "SmM2ZvaL9pO3AgPD/j7jgA=="
+          "hash": "Dq4DcnCdRbl5Bj73mWyV6A=="
         }
       },
       "is_incremental": false,
@@ -909,7 +969,19 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.BaseUploadQueue-1.html",
-          "hash": "nA5S1DmnM6vJJiiVpJ/BUA=="
+          "hash": "9SsWAbmVFvLO0eGwfss2Ig=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.CertificateConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.CertificateConfig.html",
+          "hash": "SRKOUDuLaGFcm4ivFmMFAg=="
         }
       },
       "is_incremental": false,
@@ -921,7 +993,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.ChunkingConfig.html",
-          "hash": "zegu3attpML9+svg85Gqqg=="
+          "hash": "h2z+y4/8Mj/tlVwQky2i0Q=="
         }
       },
       "is_incremental": false,
@@ -933,7 +1005,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.CogniteClientExtensions.html",
-          "hash": "wZ2wnZXCl6znReT1K67Prw=="
+          "hash": "tYtBSkG5ZtMCBGFVwJRmhg=="
         }
       },
       "is_incremental": false,
@@ -945,7 +1017,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.CogniteConfig.html",
-          "hash": "6UOtU+9fSpUbrfLe+wzZ0w=="
+          "hash": "IVVAizSCbqYpXTsR/2Psuw=="
         }
       },
       "is_incremental": false,
@@ -957,7 +1029,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.CogniteDestination.html",
-          "hash": "rP3T9ajc2KH+bWNP9rgNPA=="
+          "hash": "XVS/jJnufnCEBWDH+0DPsg=="
         }
       },
       "is_incremental": false,
@@ -969,7 +1041,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.ConfigurationExtensions.html",
-          "hash": "LFX03zeEfVQWNWaG9RR6+g=="
+          "hash": "1XxOD/Ein/Avnx00MhDKdg=="
         }
       },
       "is_incremental": false,
@@ -981,7 +1053,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.DestinationUtils.html",
-          "hash": "fY2oW9s3claR5rHnlrNKpw=="
+          "hash": "e5iJ0LJKf+ZP7sVw4DOxIw=="
         }
       },
       "is_incremental": false,
@@ -993,7 +1065,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.EventUploadQueue.html",
-          "hash": "FURaRatJrVF/FsFYa1832A=="
+          "hash": "VJgkl2CnO1Mun0Mg81ETpw=="
         }
       },
       "is_incremental": false,
@@ -1005,7 +1077,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.ExtractionRun.html",
-          "hash": "OYNafK45fSpguT3RGhbE5A=="
+          "hash": "OA+mQFgk/LwMZUOXfRX6OA=="
         }
       },
       "is_incremental": false,
@@ -1017,7 +1089,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.ExtractionRunConfig.html",
-          "hash": "NcGWSojjt94DeZHH2tGq+Q=="
+          "hash": "9QKCiOZhubF3V+XAdcFazQ=="
         }
       },
       "is_incremental": false,
@@ -1029,7 +1101,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.ExtractorRunner.html",
-          "hash": "DS8ybphaWzK6mmxYU/i1IA=="
+          "hash": "Fu2IcLqrw9CTsZgg5/ZfDw=="
         }
       },
       "is_incremental": false,
@@ -1041,19 +1113,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html",
-          "hash": "sQDgkuhOunoP6N4lsND8rw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.IAuthenticator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.IAuthenticator.html",
-          "hash": "06BTI+8wGBrfAc0pwm0lXg=="
+          "hash": "CG0IwGPf+/tg53pZYPKvxA=="
         }
       },
       "is_incremental": false,
@@ -1065,7 +1125,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.IRawUploadQueue-1.html",
-          "hash": "YtpkxuEDTR23ugBPbuzgkg=="
+          "hash": "SIFEKm4JxKcC+3ILy/NzPw=="
         }
       },
       "is_incremental": false,
@@ -1077,7 +1137,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.IUploadQueue-1.html",
-          "hash": "SJ0xZv9S1anycO+qpoq2xw=="
+          "hash": "RycRs9I2ZClc2KbAaGGM/w=="
         }
       },
       "is_incremental": false,
@@ -1089,19 +1149,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.IUploadQueue.html",
-          "hash": "FtCiPM8Uua49phPfqueiVQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.MsalAuthenticator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.MsalAuthenticator.html",
-          "hash": "mOu0BNOnz+lmjdl6XmZTsQ=="
+          "hash": "Xk6WD5bw/nUnKZXZqQXEWw=="
         }
       },
       "is_incremental": false,
@@ -1113,7 +1161,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.QueueUploadResult-1.html",
-          "hash": "MHl94i0Qw4fjJOMTamYL5Q=="
+          "hash": "yPNoTIzWpEAstwxi+x68LA=="
         }
       },
       "is_incremental": false,
@@ -1125,7 +1173,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.RetryConfig.html",
-          "hash": "i4zm6hzISSngpj8km3dswA=="
+          "hash": "oxdFyM562dJwi1DVCMxmMw=="
         }
       },
       "is_incremental": false,
@@ -1137,7 +1185,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.SdkLoggingConfig.html",
-          "hash": "EOfQ6KXmsLmsllImvGmBWg=="
+          "hash": "k+Biiaan4KYh8w7MuOyYCg=="
         }
       },
       "is_incremental": false,
@@ -1149,7 +1197,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.ThrottlingConfig.html",
-          "hash": "6MX0EzOtzA1nrT2ceXRI7A=="
+          "hash": "g9r0DmqiJ3L16pfTgMj+zA=="
         }
       },
       "is_incremental": false,
@@ -1161,7 +1209,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html",
-          "hash": "NYOKVF51MhOEBd9fraRKPg=="
+          "hash": "x6nhpWEWP15wH1b5woxMow=="
         }
       },
       "is_incremental": false,
@@ -1173,7 +1221,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.html",
-          "hash": "Xze/GYFTPv7iqfzysv5TCw=="
+          "hash": "cECDbmlAF/ygkP4LqPyzyw=="
         }
       },
       "is_incremental": false,
@@ -1185,7 +1233,7 @@
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "XRe6SS4wuG43m8GpK53tJg=="
+          "hash": "p4v2aMV1XONvnFWntwvHsA=="
         }
       },
       "is_incremental": false,
@@ -1197,7 +1245,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "2ir9QNnAc2aHdZECGrM7Qw=="
+          "hash": "BIE0QnPHTYDk8xlE5DJk0g=="
         }
       },
       "is_incremental": false,
@@ -1209,7 +1257,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "8ZI8JkS6p/DuuEe/UoMfzQ=="
+          "hash": "d4yTJmcCeSOTfu+RtKh4QQ=="
         }
       },
       "is_incremental": false,
@@ -1229,11 +1277,23 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "tutorials/authentication.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/authentication.html",
+          "hash": "BOT0u8erB80PN7Ed4cgnSQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "tutorials/base-extractor.md",
       "output": {
         ".html": {
           "relative_path": "tutorials/base-extractor.html",
-          "hash": "schqnIwGKcZPkYVKKMJgIQ=="
+          "hash": "NT2mq7EfSkBoMyzU706DWg=="
         }
       },
       "is_incremental": false,
@@ -1245,7 +1305,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/event-queue.html",
-          "hash": "bJIWNbQPQBIc7z49Oe+SVA=="
+          "hash": "ZeJXs/ELdIVadfgR4dt4hg=="
         }
       },
       "is_incremental": false,
@@ -1257,7 +1317,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/history-state.html",
-          "hash": "sdAN/Cd0ovg1iQGaiTGjpw=="
+          "hash": "vdrdgoxje0KeZbndifafHg=="
         }
       },
       "is_incremental": false,
@@ -1269,7 +1329,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/intro.html",
-          "hash": "LTAHWCsehStAWNY8t95kuQ=="
+          "hash": "jRsrZK7mB+lFDFAaRvspsg=="
         }
       },
       "is_incremental": false,
@@ -1281,7 +1341,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/raw-queue.html",
-          "hash": "Hwip5cY1Kgmb9Mq2rUq8lg=="
+          "hash": "l3uHckgkud47MozXyGq5bA=="
         }
       },
       "is_incremental": false,
@@ -1293,7 +1353,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/service.html",
-          "hash": "y0RwjLaxBzsN32C1AV4+ng=="
+          "hash": "rL60ho+SBmMqruf0acVDcg=="
         }
       },
       "is_incremental": false,
@@ -1305,7 +1365,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/setup-template.html",
-          "hash": "PGi/K+v4HRiWSLKdeB76nw=="
+          "hash": "JWcfvWIf9m7q6kFkdu3D9w=="
         }
       },
       "is_incremental": false,
@@ -1317,7 +1377,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/state-store.html",
-          "hash": "V3s09ZZWQjn20FuuvidUrg=="
+          "hash": "aUkOqyI1n2EfqZHAPr53Xg=="
         }
       },
       "is_incremental": false,
@@ -1329,7 +1389,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/toc.html",
-          "hash": "onMvoQ13FZiT7sQXzLIVxQ=="
+          "hash": "Auh1LUtfJihzT+j4LKK9AQ=="
         }
       },
       "is_incremental": false,
@@ -1341,7 +1401,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/ts-queue.html",
-          "hash": "vQI6g0wGzCENR/bG69mv7w=="
+          "hash": "WxHeFZBpW9RPSrHjvsp/Dg=="
         }
       },
       "is_incremental": false,
@@ -1353,7 +1413,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/version.html",
-          "hash": "x+3rPDPsw3wUrUYRbKxUTw=="
+          "hash": "m9qvOg85vOyVUUOlDOhDyg=="
         }
       },
       "is_incremental": false,
@@ -1374,13 +1434,13 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 12,
+          "total_file_count": 13,
           "skipped_file_count": 0
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 98,
+          "total_file_count": 102,
           "skipped_file_count": 0
         },
         "TocDocumentProcessor": {

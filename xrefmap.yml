@@ -70,6 +70,227 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.AssetExtensions.GetOrCreateAsync
   nameWithType: AssetExtensions.GetOrCreateAsync
+- uid: Cognite.Extensions.AssetExtensions.UpdateAsync(AssetsResource,IEnumerable{AssetUpdateItem},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: UpdateAsync(AssetsResource, IEnumerable<AssetUpdateItem>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_UpdateAsync_AssetsResource_IEnumerable_AssetUpdateItem__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.AssetExtensions.UpdateAsync(AssetsResource,IEnumerable{AssetUpdateItem},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: UpdateAsync(AssetsResource, IEnumerable(Of AssetUpdateItem), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.AssetExtensions.UpdateAsync(AssetsResource, IEnumerable<AssetUpdateItem>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.AssetExtensions.UpdateAsync(AssetsResource, IEnumerable(Of AssetUpdateItem), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: AssetExtensions.UpdateAsync(AssetsResource, IEnumerable<AssetUpdateItem>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: AssetExtensions.UpdateAsync(AssetsResource, IEnumerable(Of AssetUpdateItem), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.AssetExtensions.UpdateAsync*
+  name: UpdateAsync
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_UpdateAsync_
+  commentId: Overload:Cognite.Extensions.AssetExtensions.UpdateAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.AssetExtensions.UpdateAsync
+  nameWithType: AssetExtensions.UpdateAsync
+- uid: Cognite.Extensions.AssetExtensions.UpsertAsync(AssetsResource,IEnumerable{AssetCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,CancellationToken)
+  name: UpsertAsync(AssetsResource, IEnumerable<AssetCreate>, Int32, Int32, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_UpsertAsync_AssetsResource_IEnumerable_AssetCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_CancellationToken_
+  commentId: M:Cognite.Extensions.AssetExtensions.UpsertAsync(AssetsResource,IEnumerable{AssetCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,CancellationToken)
+  name.vb: UpsertAsync(AssetsResource, IEnumerable(Of AssetCreate), Int32, Int32, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  fullName: Cognite.Extensions.AssetExtensions.UpsertAsync(AssetsResource, IEnumerable<AssetCreate>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, Cognite.Extensions.UpsertParams, CancellationToken)
+  fullName.vb: Cognite.Extensions.AssetExtensions.UpsertAsync(AssetsResource, IEnumerable(Of AssetCreate), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, Cognite.Extensions.UpsertParams, CancellationToken)
+  nameWithType: AssetExtensions.UpsertAsync(AssetsResource, IEnumerable<AssetCreate>, Int32, Int32, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  nameWithType.vb: AssetExtensions.UpsertAsync(AssetsResource, IEnumerable(Of AssetCreate), Int32, Int32, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+- uid: Cognite.Extensions.AssetExtensions.UpsertAsync*
+  name: UpsertAsync
+  href: api/Cognite.Extensions.AssetExtensions.html#Cognite_Extensions_AssetExtensions_UpsertAsync_
+  commentId: Overload:Cognite.Extensions.AssetExtensions.UpsertAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.AssetExtensions.UpsertAsync
+  nameWithType: AssetExtensions.UpsertAsync
+- uid: Cognite.Extensions.Authenticator
+  name: Authenticator
+  href: api/Cognite.Extensions.Authenticator.html
+  commentId: T:Cognite.Extensions.Authenticator
+  fullName: Cognite.Extensions.Authenticator
+  nameWithType: Authenticator
+- uid: Cognite.Extensions.Authenticator.#ctor(Cognite.Extensions.AuthenticatorConfig,HttpClient,System.Nullable{ILogger{Cognite.Extensions.IAuthenticator}})
+  name: Authenticator(AuthenticatorConfig, HttpClient, Nullable<ILogger<IAuthenticator>>)
+  href: api/Cognite.Extensions.Authenticator.html#Cognite_Extensions_Authenticator__ctor_Cognite_Extensions_AuthenticatorConfig_HttpClient_System_Nullable_ILogger_Cognite_Extensions_IAuthenticator___
+  commentId: M:Cognite.Extensions.Authenticator.#ctor(Cognite.Extensions.AuthenticatorConfig,HttpClient,System.Nullable{ILogger{Cognite.Extensions.IAuthenticator}})
+  name.vb: Authenticator(AuthenticatorConfig, HttpClient, Nullable(Of ILogger(Of IAuthenticator)))
+  fullName: Cognite.Extensions.Authenticator.Authenticator(Cognite.Extensions.AuthenticatorConfig, HttpClient, System.Nullable<ILogger<Cognite.Extensions.IAuthenticator>>)
+  fullName.vb: Cognite.Extensions.Authenticator.Authenticator(Cognite.Extensions.AuthenticatorConfig, HttpClient, System.Nullable(Of ILogger(Of Cognite.Extensions.IAuthenticator)))
+  nameWithType: Authenticator.Authenticator(AuthenticatorConfig, HttpClient, Nullable<ILogger<IAuthenticator>>)
+  nameWithType.vb: Authenticator.Authenticator(AuthenticatorConfig, HttpClient, Nullable(Of ILogger(Of IAuthenticator)))
+- uid: Cognite.Extensions.Authenticator.#ctor*
+  name: Authenticator
+  href: api/Cognite.Extensions.Authenticator.html#Cognite_Extensions_Authenticator__ctor_
+  commentId: Overload:Cognite.Extensions.Authenticator.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extensions.Authenticator.Authenticator
+  nameWithType: Authenticator.Authenticator
+- uid: Cognite.Extensions.Authenticator.GetToken(CancellationToken)
+  name: GetToken(CancellationToken)
+  href: api/Cognite.Extensions.Authenticator.html#Cognite_Extensions_Authenticator_GetToken_CancellationToken_
+  commentId: M:Cognite.Extensions.Authenticator.GetToken(CancellationToken)
+  fullName: Cognite.Extensions.Authenticator.GetToken(CancellationToken)
+  nameWithType: Authenticator.GetToken(CancellationToken)
+- uid: Cognite.Extensions.Authenticator.GetToken*
+  name: GetToken
+  href: api/Cognite.Extensions.Authenticator.html#Cognite_Extensions_Authenticator_GetToken_
+  commentId: Overload:Cognite.Extensions.Authenticator.GetToken
+  isSpec: "True"
+  fullName: Cognite.Extensions.Authenticator.GetToken
+  nameWithType: Authenticator.GetToken
+- uid: Cognite.Extensions.AuthenticatorConfig
+  name: AuthenticatorConfig
+  href: api/Cognite.Extensions.AuthenticatorConfig.html
+  commentId: T:Cognite.Extensions.AuthenticatorConfig
+  fullName: Cognite.Extensions.AuthenticatorConfig
+  nameWithType: AuthenticatorConfig
+- uid: Cognite.Extensions.AuthenticatorConfig.Audience
+  name: Audience
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Audience
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.Audience
+  fullName: Cognite.Extensions.AuthenticatorConfig.Audience
+  nameWithType: AuthenticatorConfig.Audience
+- uid: Cognite.Extensions.AuthenticatorConfig.Audience*
+  name: Audience
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Audience_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.Audience
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.Audience
+  nameWithType: AuthenticatorConfig.Audience
+- uid: Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation
+  name: AuthenticatorConfig.AuthenticatorImplementation
+  href: api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.html
+  commentId: T:Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation
+  fullName: Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation
+  nameWithType: AuthenticatorConfig.AuthenticatorImplementation
+- uid: Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.Basic
+  name: Basic
+  href: api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.html#Cognite_Extensions_AuthenticatorConfig_AuthenticatorImplementation_Basic
+  commentId: F:Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.Basic
+  fullName: Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.Basic
+  nameWithType: AuthenticatorConfig.AuthenticatorImplementation.Basic
+- uid: Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.MSAL
+  name: MSAL
+  href: api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.html#Cognite_Extensions_AuthenticatorConfig_AuthenticatorImplementation_MSAL
+  commentId: F:Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.MSAL
+  fullName: Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.MSAL
+  nameWithType: AuthenticatorConfig.AuthenticatorImplementation.MSAL
+- uid: Cognite.Extensions.AuthenticatorConfig.Authority
+  name: Authority
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Authority
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.Authority
+  fullName: Cognite.Extensions.AuthenticatorConfig.Authority
+  nameWithType: AuthenticatorConfig.Authority
+- uid: Cognite.Extensions.AuthenticatorConfig.Authority*
+  name: Authority
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Authority_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.Authority
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.Authority
+  nameWithType: AuthenticatorConfig.Authority
+- uid: Cognite.Extensions.AuthenticatorConfig.ClientId
+  name: ClientId
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_ClientId
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.ClientId
+  fullName: Cognite.Extensions.AuthenticatorConfig.ClientId
+  nameWithType: AuthenticatorConfig.ClientId
+- uid: Cognite.Extensions.AuthenticatorConfig.ClientId*
+  name: ClientId
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_ClientId_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.ClientId
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.ClientId
+  nameWithType: AuthenticatorConfig.ClientId
+- uid: Cognite.Extensions.AuthenticatorConfig.Implementation
+  name: Implementation
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Implementation
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.Implementation
+  fullName: Cognite.Extensions.AuthenticatorConfig.Implementation
+  nameWithType: AuthenticatorConfig.Implementation
+- uid: Cognite.Extensions.AuthenticatorConfig.Implementation*
+  name: Implementation
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Implementation_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.Implementation
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.Implementation
+  nameWithType: AuthenticatorConfig.Implementation
+- uid: Cognite.Extensions.AuthenticatorConfig.MinTtl
+  name: MinTtl
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_MinTtl
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.MinTtl
+  fullName: Cognite.Extensions.AuthenticatorConfig.MinTtl
+  nameWithType: AuthenticatorConfig.MinTtl
+- uid: Cognite.Extensions.AuthenticatorConfig.MinTtl*
+  name: MinTtl
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_MinTtl_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.MinTtl
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.MinTtl
+  nameWithType: AuthenticatorConfig.MinTtl
+- uid: Cognite.Extensions.AuthenticatorConfig.Resource
+  name: Resource
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Resource
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.Resource
+  fullName: Cognite.Extensions.AuthenticatorConfig.Resource
+  nameWithType: AuthenticatorConfig.Resource
+- uid: Cognite.Extensions.AuthenticatorConfig.Resource*
+  name: Resource
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Resource_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.Resource
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.Resource
+  nameWithType: AuthenticatorConfig.Resource
+- uid: Cognite.Extensions.AuthenticatorConfig.Scopes
+  name: Scopes
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Scopes
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.Scopes
+  fullName: Cognite.Extensions.AuthenticatorConfig.Scopes
+  nameWithType: AuthenticatorConfig.Scopes
+- uid: Cognite.Extensions.AuthenticatorConfig.Scopes*
+  name: Scopes
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Scopes_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.Scopes
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.Scopes
+  nameWithType: AuthenticatorConfig.Scopes
+- uid: Cognite.Extensions.AuthenticatorConfig.Secret
+  name: Secret
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Secret
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.Secret
+  fullName: Cognite.Extensions.AuthenticatorConfig.Secret
+  nameWithType: AuthenticatorConfig.Secret
+- uid: Cognite.Extensions.AuthenticatorConfig.Secret*
+  name: Secret
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Secret_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.Secret
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.Secret
+  nameWithType: AuthenticatorConfig.Secret
+- uid: Cognite.Extensions.AuthenticatorConfig.Tenant
+  name: Tenant
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Tenant
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.Tenant
+  fullName: Cognite.Extensions.AuthenticatorConfig.Tenant
+  nameWithType: AuthenticatorConfig.Tenant
+- uid: Cognite.Extensions.AuthenticatorConfig.Tenant*
+  name: Tenant
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_Tenant_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.Tenant
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.Tenant
+  nameWithType: AuthenticatorConfig.Tenant
+- uid: Cognite.Extensions.AuthenticatorConfig.TokenUrl
+  name: TokenUrl
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_TokenUrl
+  commentId: P:Cognite.Extensions.AuthenticatorConfig.TokenUrl
+  fullName: Cognite.Extensions.AuthenticatorConfig.TokenUrl
+  nameWithType: AuthenticatorConfig.TokenUrl
+- uid: Cognite.Extensions.AuthenticatorConfig.TokenUrl*
+  name: TokenUrl
+  href: api/Cognite.Extensions.AuthenticatorConfig.html#Cognite_Extensions_AuthenticatorConfig_TokenUrl_
+  commentId: Overload:Cognite.Extensions.AuthenticatorConfig.TokenUrl
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorConfig.TokenUrl
+  nameWithType: AuthenticatorConfig.TokenUrl
 - uid: Cognite.Extensions.CogniteError
   name: CogniteError
   href: api/Cognite.Extensions.CogniteError.html
@@ -194,6 +415,24 @@ references:
   fullName.vb: Cognite.Extensions.CogniteError(Of TError).Merge
   nameWithType: CogniteError<TError>.Merge
   nameWithType.vb: CogniteError(Of TError).Merge
+- uid: Cognite.Extensions.CogniteError`1.ReplaceSkipped*
+  name: ReplaceSkipped
+  href: api/Cognite.Extensions.CogniteError-1.html#Cognite_Extensions_CogniteError_1_ReplaceSkipped_
+  commentId: Overload:Cognite.Extensions.CogniteError`1.ReplaceSkipped
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteError<TError>.ReplaceSkipped
+  fullName.vb: Cognite.Extensions.CogniteError(Of TError).ReplaceSkipped
+  nameWithType: CogniteError<TError>.ReplaceSkipped
+  nameWithType.vb: CogniteError(Of TError).ReplaceSkipped
+- uid: Cognite.Extensions.CogniteError`1.ReplaceSkipped``1(Func{`0,``0})
+  name: ReplaceSkipped<TRep>(Func<TError, TRep>)
+  href: api/Cognite.Extensions.CogniteError-1.html#Cognite_Extensions_CogniteError_1_ReplaceSkipped__1_Func__0___0__
+  commentId: M:Cognite.Extensions.CogniteError`1.ReplaceSkipped``1(Func{`0,``0})
+  name.vb: ReplaceSkipped(Of TRep)(Func(Of TError, TRep))
+  fullName: Cognite.Extensions.CogniteError<TError>.ReplaceSkipped<TRep>(Func<TError, TRep>)
+  fullName.vb: Cognite.Extensions.CogniteError(Of TError).ReplaceSkipped(Of TRep)(Func(Of TError, TRep))
+  nameWithType: CogniteError<TError>.ReplaceSkipped<TRep>(Func<TError, TRep>)
+  nameWithType.vb: CogniteError(Of TError).ReplaceSkipped(Of TRep)(Func(Of TError, TRep))
 - uid: Cognite.Extensions.CogniteError`1.Skipped
   name: Skipped
   href: api/Cognite.Extensions.CogniteError-1.html#Cognite_Extensions_CogniteError_1_Skipped
@@ -346,6 +585,23 @@ references:
   fullName.vb: Cognite.Extensions.CogniteResult(Of TError).Errors
   nameWithType: CogniteResult<TError>.Errors
   nameWithType.vb: CogniteResult(Of TError).Errors
+- uid: Cognite.Extensions.CogniteResult`1.ErrorsBySkipped
+  name: ErrorsBySkipped()
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_ErrorsBySkipped
+  commentId: M:Cognite.Extensions.CogniteResult`1.ErrorsBySkipped
+  fullName: Cognite.Extensions.CogniteResult<TError>.ErrorsBySkipped()
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TError).ErrorsBySkipped()
+  nameWithType: CogniteResult<TError>.ErrorsBySkipped()
+  nameWithType.vb: CogniteResult(Of TError).ErrorsBySkipped()
+- uid: Cognite.Extensions.CogniteResult`1.ErrorsBySkipped*
+  name: ErrorsBySkipped
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_ErrorsBySkipped_
+  commentId: Overload:Cognite.Extensions.CogniteResult`1.ErrorsBySkipped
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult<TError>.ErrorsBySkipped
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TError).ErrorsBySkipped
+  nameWithType: CogniteResult<TError>.ErrorsBySkipped
+  nameWithType.vb: CogniteResult(Of TError).ErrorsBySkipped
 - uid: Cognite.Extensions.CogniteResult`1.IsAllGood
   name: IsAllGood
   href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_IsAllGood
@@ -407,6 +663,24 @@ references:
   fullName.vb: Cognite.Extensions.CogniteResult(Of TError).MergeErrors
   nameWithType: CogniteResult<TError>.MergeErrors
   nameWithType.vb: CogniteResult(Of TError).MergeErrors
+- uid: Cognite.Extensions.CogniteResult`1.Replace*
+  name: Replace
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_Replace_
+  commentId: Overload:Cognite.Extensions.CogniteResult`1.Replace
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult<TError>.Replace
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TError).Replace
+  nameWithType: CogniteResult<TError>.Replace
+  nameWithType.vb: CogniteResult(Of TError).Replace
+- uid: Cognite.Extensions.CogniteResult`1.Replace``1(Func{`0,``0})
+  name: Replace<TRep>(Func<TError, TRep>)
+  href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_Replace__1_Func__0___0__
+  commentId: M:Cognite.Extensions.CogniteResult`1.Replace``1(Func{`0,``0})
+  name.vb: Replace(Of TRep)(Func(Of TError, TRep))
+  fullName: Cognite.Extensions.CogniteResult<TError>.Replace<TRep>(Func<TError, TRep>)
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TError).Replace(Of TRep)(Func(Of TError, TRep))
+  nameWithType: CogniteResult<TError>.Replace<TRep>(Func<TError, TRep>)
+  nameWithType.vb: CogniteResult(Of TError).Replace(Of TRep)(Func(Of TError, TRep))
 - uid: Cognite.Extensions.CogniteResult`1.Throw
   name: Throw()
   href: api/Cognite.Extensions.CogniteResult-1.html#Cognite_Extensions_CogniteResult_1_Throw
@@ -495,6 +769,24 @@ references:
   fullName.vb: Cognite.Extensions.CogniteResult(Of TResult, TError).Merge
   nameWithType: CogniteResult<TResult, TError>.Merge
   nameWithType.vb: CogniteResult(Of TResult, TError).Merge
+- uid: Cognite.Extensions.CogniteResult`2.Replace*
+  name: Replace
+  href: api/Cognite.Extensions.CogniteResult-2.html#Cognite_Extensions_CogniteResult_2_Replace_
+  commentId: Overload:Cognite.Extensions.CogniteResult`2.Replace
+  isSpec: "True"
+  fullName: Cognite.Extensions.CogniteResult<TResult, TError>.Replace
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult, TError).Replace
+  nameWithType: CogniteResult<TResult, TError>.Replace
+  nameWithType.vb: CogniteResult(Of TResult, TError).Replace
+- uid: Cognite.Extensions.CogniteResult`2.Replace``1(Func{`1,``0})
+  name: Replace<TRep>(Func<TError, TRep>)
+  href: api/Cognite.Extensions.CogniteResult-2.html#Cognite_Extensions_CogniteResult_2_Replace__1_Func__1___0__
+  commentId: M:Cognite.Extensions.CogniteResult`2.Replace``1(Func{`1,``0})
+  name.vb: Replace(Of TRep)(Func(Of TError, TRep))
+  fullName: Cognite.Extensions.CogniteResult<TResult, TError>.Replace<TRep>(Func<TError, TRep>)
+  fullName.vb: Cognite.Extensions.CogniteResult(Of TResult, TError).Replace(Of TRep)(Func(Of TError, TRep))
+  nameWithType: CogniteResult<TResult, TError>.Replace<TRep>(Func<TError, TRep>)
+  nameWithType.vb: CogniteResult(Of TResult, TError).Replace(Of TRep)(Func(Of TError, TRep))
 - uid: Cognite.Extensions.CogniteResult`2.Results
   name: Results
   href: api/Cognite.Extensions.CogniteResult-2.html#Cognite_Extensions_CogniteResult_2_Results
@@ -1100,6 +1392,12 @@ references:
   commentId: F:Cognite.Extensions.ErrorType.FatalFailure
   fullName: Cognite.Extensions.ErrorType.FatalFailure
   nameWithType: ErrorType.FatalFailure
+- uid: Cognite.Extensions.ErrorType.IllegalItem
+  name: IllegalItem
+  href: api/Cognite.Extensions.ErrorType.html#Cognite_Extensions_ErrorType_IllegalItem
+  commentId: F:Cognite.Extensions.ErrorType.IllegalItem
+  fullName: Cognite.Extensions.ErrorType.IllegalItem
+  nameWithType: ErrorType.IllegalItem
 - uid: Cognite.Extensions.ErrorType.ItemDuplicated
   name: ItemDuplicated
   href: api/Cognite.Extensions.ErrorType.html#Cognite_Extensions_ErrorType_ItemDuplicated
@@ -1177,6 +1475,25 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.EventExtensions.GetOrCreateAsync
   nameWithType: EventExtensions.GetOrCreateAsync
+- uid: Cognite.Extensions.IAuthenticator
+  name: IAuthenticator
+  href: api/Cognite.Extensions.IAuthenticator.html
+  commentId: T:Cognite.Extensions.IAuthenticator
+  fullName: Cognite.Extensions.IAuthenticator
+  nameWithType: IAuthenticator
+- uid: Cognite.Extensions.IAuthenticator.GetToken(CancellationToken)
+  name: GetToken(CancellationToken)
+  href: api/Cognite.Extensions.IAuthenticator.html#Cognite_Extensions_IAuthenticator_GetToken_CancellationToken_
+  commentId: M:Cognite.Extensions.IAuthenticator.GetToken(CancellationToken)
+  fullName: Cognite.Extensions.IAuthenticator.GetToken(CancellationToken)
+  nameWithType: IAuthenticator.GetToken(CancellationToken)
+- uid: Cognite.Extensions.IAuthenticator.GetToken*
+  name: GetToken
+  href: api/Cognite.Extensions.IAuthenticator.html#Cognite_Extensions_IAuthenticator_GetToken_
+  commentId: Overload:Cognite.Extensions.IAuthenticator.GetToken
+  isSpec: "True"
+  fullName: Cognite.Extensions.IAuthenticator.GetToken
+  nameWithType: IAuthenticator.GetToken
 - uid: Cognite.Extensions.LoggerExtensions
   name: LoggerExtensions
   href: api/Cognite.Extensions.LoggerExtensions.html
@@ -1206,6 +1523,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.LoggerExtensions.LogResult
   nameWithType: LoggerExtensions.LogResult
+- uid: Cognite.Extensions.LoggerExtensions.LogResult``1(ILogger,Cognite.Extensions.CogniteResult{``0},Cognite.Extensions.RequestType,System.Boolean,LogLevel,LogLevel,LogLevel)
+  name: LogResult<TError>(ILogger, CogniteResult<TError>, RequestType, Boolean, LogLevel, LogLevel, LogLevel)
+  href: api/Cognite.Extensions.LoggerExtensions.html#Cognite_Extensions_LoggerExtensions_LogResult__1_ILogger_Cognite_Extensions_CogniteResult___0__Cognite_Extensions_RequestType_System_Boolean_LogLevel_LogLevel_LogLevel_
+  commentId: M:Cognite.Extensions.LoggerExtensions.LogResult``1(ILogger,Cognite.Extensions.CogniteResult{``0},Cognite.Extensions.RequestType,System.Boolean,LogLevel,LogLevel,LogLevel)
+  name.vb: LogResult(Of TError)(ILogger, CogniteResult(Of TError), RequestType, Boolean, LogLevel, LogLevel, LogLevel)
+  fullName: Cognite.Extensions.LoggerExtensions.LogResult<TError>(ILogger, Cognite.Extensions.CogniteResult<TError>, Cognite.Extensions.RequestType, System.Boolean, LogLevel, LogLevel, LogLevel)
+  fullName.vb: Cognite.Extensions.LoggerExtensions.LogResult(Of TError)(ILogger, Cognite.Extensions.CogniteResult(Of TError), Cognite.Extensions.RequestType, System.Boolean, LogLevel, LogLevel, LogLevel)
+  nameWithType: LoggerExtensions.LogResult<TError>(ILogger, CogniteResult<TError>, RequestType, Boolean, LogLevel, LogLevel, LogLevel)
+  nameWithType.vb: LoggerExtensions.LogResult(Of TError)(ILogger, CogniteResult(Of TError), RequestType, Boolean, LogLevel, LogLevel, LogLevel)
 - uid: Cognite.Extensions.LoggerExtensions.LogResult``2(ILogger,Cognite.Extensions.CogniteResult{``0,``1},Cognite.Extensions.RequestType,System.Boolean,LogLevel,LogLevel,LogLevel)
   name: LogResult<TResult, TError>(ILogger, CogniteResult<TResult, TError>, RequestType, Boolean, LogLevel, LogLevel, LogLevel)
   href: api/Cognite.Extensions.LoggerExtensions.html#Cognite_Extensions_LoggerExtensions_LogResult__2_ILogger_Cognite_Extensions_CogniteResult___0___1__Cognite_Extensions_RequestType_System_Boolean_LogLevel_LogLevel_LogLevel_
@@ -1215,6 +1541,41 @@ references:
   fullName.vb: Cognite.Extensions.LoggerExtensions.LogResult(Of TResult, TError)(ILogger, Cognite.Extensions.CogniteResult(Of TResult, TError), Cognite.Extensions.RequestType, System.Boolean, LogLevel, LogLevel, LogLevel)
   nameWithType: LoggerExtensions.LogResult<TResult, TError>(ILogger, CogniteResult<TResult, TError>, RequestType, Boolean, LogLevel, LogLevel, LogLevel)
   nameWithType.vb: LoggerExtensions.LogResult(Of TResult, TError)(ILogger, CogniteResult(Of TResult, TError), RequestType, Boolean, LogLevel, LogLevel, LogLevel)
+- uid: Cognite.Extensions.MsalAuthenticator
+  name: MsalAuthenticator
+  href: api/Cognite.Extensions.MsalAuthenticator.html
+  commentId: T:Cognite.Extensions.MsalAuthenticator
+  fullName: Cognite.Extensions.MsalAuthenticator
+  nameWithType: MsalAuthenticator
+- uid: Cognite.Extensions.MsalAuthenticator.#ctor(Cognite.Extensions.AuthenticatorConfig,ILogger{Cognite.Extensions.IAuthenticator},IHttpClientFactory,System.String)
+  name: MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>, IHttpClientFactory, String)
+  href: api/Cognite.Extensions.MsalAuthenticator.html#Cognite_Extensions_MsalAuthenticator__ctor_Cognite_Extensions_AuthenticatorConfig_ILogger_Cognite_Extensions_IAuthenticator__IHttpClientFactory_System_String_
+  commentId: M:Cognite.Extensions.MsalAuthenticator.#ctor(Cognite.Extensions.AuthenticatorConfig,ILogger{Cognite.Extensions.IAuthenticator},IHttpClientFactory,System.String)
+  name.vb: MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator), IHttpClientFactory, String)
+  fullName: Cognite.Extensions.MsalAuthenticator.MsalAuthenticator(Cognite.Extensions.AuthenticatorConfig, ILogger<Cognite.Extensions.IAuthenticator>, IHttpClientFactory, System.String)
+  fullName.vb: Cognite.Extensions.MsalAuthenticator.MsalAuthenticator(Cognite.Extensions.AuthenticatorConfig, ILogger(Of Cognite.Extensions.IAuthenticator), IHttpClientFactory, System.String)
+  nameWithType: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>, IHttpClientFactory, String)
+  nameWithType.vb: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator), IHttpClientFactory, String)
+- uid: Cognite.Extensions.MsalAuthenticator.#ctor*
+  name: MsalAuthenticator
+  href: api/Cognite.Extensions.MsalAuthenticator.html#Cognite_Extensions_MsalAuthenticator__ctor_
+  commentId: Overload:Cognite.Extensions.MsalAuthenticator.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extensions.MsalAuthenticator.MsalAuthenticator
+  nameWithType: MsalAuthenticator.MsalAuthenticator
+- uid: Cognite.Extensions.MsalAuthenticator.GetToken(CancellationToken)
+  name: GetToken(CancellationToken)
+  href: api/Cognite.Extensions.MsalAuthenticator.html#Cognite_Extensions_MsalAuthenticator_GetToken_CancellationToken_
+  commentId: M:Cognite.Extensions.MsalAuthenticator.GetToken(CancellationToken)
+  fullName: Cognite.Extensions.MsalAuthenticator.GetToken(CancellationToken)
+  nameWithType: MsalAuthenticator.GetToken(CancellationToken)
+- uid: Cognite.Extensions.MsalAuthenticator.GetToken*
+  name: GetToken
+  href: api/Cognite.Extensions.MsalAuthenticator.html#Cognite_Extensions_MsalAuthenticator_GetToken_
+  commentId: Overload:Cognite.Extensions.MsalAuthenticator.GetToken
+  isSpec: "True"
+  fullName: Cognite.Extensions.MsalAuthenticator.GetToken
+  nameWithType: MsalAuthenticator.GetToken
 - uid: Cognite.Extensions.RawExtensions
   name: RawExtensions
   href: api/Cognite.Extensions.RawExtensions.html
@@ -1311,6 +1672,18 @@ references:
   commentId: F:Cognite.Extensions.RequestType.CreateTimeSeries
   fullName: Cognite.Extensions.RequestType.CreateTimeSeries
   nameWithType: RequestType.CreateTimeSeries
+- uid: Cognite.Extensions.RequestType.UpdateAssets
+  name: UpdateAssets
+  href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_UpdateAssets
+  commentId: F:Cognite.Extensions.RequestType.UpdateAssets
+  fullName: Cognite.Extensions.RequestType.UpdateAssets
+  nameWithType: RequestType.UpdateAssets
+- uid: Cognite.Extensions.RequestType.UpdateTimeSeries
+  name: UpdateTimeSeries
+  href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_UpdateTimeSeries
+  commentId: F:Cognite.Extensions.RequestType.UpdateTimeSeries
+  fullName: Cognite.Extensions.RequestType.UpdateTimeSeries
+  nameWithType: RequestType.UpdateTimeSeries
 - uid: Cognite.Extensions.ResourceType
   name: ResourceType
   href: api/Cognite.Extensions.ResourceType.html
@@ -1485,6 +1858,12 @@ references:
   commentId: F:Cognite.Extensions.ResourceType.Unit
   fullName: Cognite.Extensions.ResourceType.Unit
   nameWithType: ResourceType.Unit
+- uid: Cognite.Extensions.ResourceType.Update
+  name: Update
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Update
+  commentId: F:Cognite.Extensions.ResourceType.Update
+  fullName: Cognite.Extensions.ResourceType.Update
+  nameWithType: ResourceType.Update
 - uid: Cognite.Extensions.ResultHandlers
   name: ResultHandlers
   href: api/Cognite.Extensions.ResultHandlers.html
@@ -1500,6 +1879,15 @@ references:
   fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource, Cognite.Extensions.CogniteError(Of AssetCreate), IEnumerable(Of AssetCreate), System.Int32, System.Int32, CancellationToken)
   nameWithType: ResultHandlers.CleanFromError(AssetsResource, CogniteError<AssetCreate>, IEnumerable<AssetCreate>, Int32, Int32, CancellationToken)
   nameWithType.vb: ResultHandlers.CleanFromError(AssetsResource, CogniteError(Of AssetCreate), IEnumerable(Of AssetCreate), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{AssetUpdateItem},IEnumerable{AssetUpdateItem})
+  name: CleanFromError(CogniteError<AssetUpdateItem>, IEnumerable<AssetUpdateItem>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_AssetUpdateItem__IEnumerable_AssetUpdateItem__
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{AssetUpdateItem},IEnumerable{AssetUpdateItem})
+  name.vb: CleanFromError(CogniteError(Of AssetUpdateItem), IEnumerable(Of AssetUpdateItem))
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError<AssetUpdateItem>, IEnumerable<AssetUpdateItem>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError(Of AssetUpdateItem), IEnumerable(Of AssetUpdateItem))
+  nameWithType: ResultHandlers.CleanFromError(CogniteError<AssetUpdateItem>, IEnumerable<AssetUpdateItem>)
+  nameWithType.vb: ResultHandlers.CleanFromError(CogniteError(Of AssetUpdateItem), IEnumerable(Of AssetUpdateItem))
 - uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{Cognite.Extensions.DataPointInsertError},IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}})
   name: CleanFromError(CogniteError<DataPointInsertError>, IDictionary<Identity, IEnumerable<Datapoint>>)
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___
@@ -1545,6 +1933,15 @@ references:
   fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError(Of TimeSeriesCreate), IEnumerable(Of TimeSeriesCreate))
   nameWithType: ResultHandlers.CleanFromError(CogniteError<TimeSeriesCreate>, IEnumerable<TimeSeriesCreate>)
   nameWithType.vb: ResultHandlers.CleanFromError(CogniteError(Of TimeSeriesCreate), IEnumerable(Of TimeSeriesCreate))
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{TimeSeriesUpdateItem},IEnumerable{TimeSeriesUpdateItem})
+  name: CleanFromError(CogniteError<TimeSeriesUpdateItem>, IEnumerable<TimeSeriesUpdateItem>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_TimeSeriesUpdateItem__IEnumerable_TimeSeriesUpdateItem__
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{TimeSeriesUpdateItem},IEnumerable{TimeSeriesUpdateItem})
+  name.vb: CleanFromError(CogniteError(Of TimeSeriesUpdateItem), IEnumerable(Of TimeSeriesUpdateItem))
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError<TimeSeriesUpdateItem>, IEnumerable<TimeSeriesUpdateItem>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError(Of TimeSeriesUpdateItem), IEnumerable(Of TimeSeriesUpdateItem))
+  nameWithType: ResultHandlers.CleanFromError(CogniteError<TimeSeriesUpdateItem>, IEnumerable<TimeSeriesUpdateItem>)
+  nameWithType.vb: ResultHandlers.CleanFromError(CogniteError(Of TimeSeriesUpdateItem), IEnumerable(Of TimeSeriesUpdateItem))
 - uid: Cognite.Extensions.ResultHandlers.CleanFromError*
   name: CleanFromError
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_
@@ -1568,6 +1965,22 @@ references:
   fullName.vb: Cognite.Extensions.ResultHandlers.ParseException(Of TError)(Exception, Cognite.Extensions.RequestType)
   nameWithType: ResultHandlers.ParseException<TError>(Exception, RequestType)
   nameWithType.vb: ResultHandlers.ParseException(Of TError)(Exception, RequestType)
+- uid: Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents(AssetsResource,IEnumerable{AssetUpdateItem},System.Int32,System.Int32,CancellationToken)
+  name: VerifyAssetUpdateParents(AssetsResource, IEnumerable<AssetUpdateItem>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifyAssetUpdateParents_AssetsResource_IEnumerable_AssetUpdateItem__System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents(AssetsResource,IEnumerable{AssetUpdateItem},System.Int32,System.Int32,CancellationToken)
+  name.vb: VerifyAssetUpdateParents(AssetsResource, IEnumerable(Of AssetUpdateItem), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents(AssetsResource, IEnumerable<AssetUpdateItem>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents(AssetsResource, IEnumerable(Of AssetUpdateItem), System.Int32, System.Int32, CancellationToken)
+  nameWithType: ResultHandlers.VerifyAssetUpdateParents(AssetsResource, IEnumerable<AssetUpdateItem>, Int32, Int32, CancellationToken)
+  nameWithType.vb: ResultHandlers.VerifyAssetUpdateParents(AssetsResource, IEnumerable(Of AssetUpdateItem), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents*
+  name: VerifyAssetUpdateParents
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifyAssetUpdateParents_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents
+  nameWithType: ResultHandlers.VerifyAssetUpdateParents
 - uid: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(TimeSeriesResource,Cognite.Extensions.CogniteError{Cognite.Extensions.DataPointInsertError},IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,CancellationToken)
   name: VerifyDatapointsFromCDF(TimeSeriesResource, CogniteError<DataPointInsertError>, IDictionary<Identity, IEnumerable<Datapoint>>, Int32, Int32, CancellationToken)
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifyDatapointsFromCDF_TimeSeriesResource_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_CancellationToken_
@@ -1706,6 +2119,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.CleanAssetRequest
   nameWithType: Sanitation.CleanAssetRequest
+- uid: Cognite.Extensions.Sanitation.CleanAssetUpdateRequest(IEnumerable{AssetUpdateItem},Cognite.Extensions.SanitationMode)
+  name: CleanAssetUpdateRequest(IEnumerable<AssetUpdateItem>, SanitationMode)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanAssetUpdateRequest_IEnumerable_AssetUpdateItem__Cognite_Extensions_SanitationMode_
+  commentId: M:Cognite.Extensions.Sanitation.CleanAssetUpdateRequest(IEnumerable{AssetUpdateItem},Cognite.Extensions.SanitationMode)
+  name.vb: CleanAssetUpdateRequest(IEnumerable(Of AssetUpdateItem), SanitationMode)
+  fullName: Cognite.Extensions.Sanitation.CleanAssetUpdateRequest(IEnumerable<AssetUpdateItem>, Cognite.Extensions.SanitationMode)
+  fullName.vb: Cognite.Extensions.Sanitation.CleanAssetUpdateRequest(IEnumerable(Of AssetUpdateItem), Cognite.Extensions.SanitationMode)
+  nameWithType: Sanitation.CleanAssetUpdateRequest(IEnumerable<AssetUpdateItem>, SanitationMode)
+  nameWithType.vb: Sanitation.CleanAssetUpdateRequest(IEnumerable(Of AssetUpdateItem), SanitationMode)
+- uid: Cognite.Extensions.Sanitation.CleanAssetUpdateRequest*
+  name: CleanAssetUpdateRequest
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanAssetUpdateRequest_
+  commentId: Overload:Cognite.Extensions.Sanitation.CleanAssetUpdateRequest
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.CleanAssetUpdateRequest
+  nameWithType: Sanitation.CleanAssetUpdateRequest
 - uid: Cognite.Extensions.Sanitation.CleanDataPointsRequest(IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,System.Nullable{System.Double})
   name: CleanDataPointsRequest(IDictionary<Identity, IEnumerable<Datapoint>>, SanitationMode, Nullable<Double>)
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanDataPointsRequest_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_System_Nullable_System_Double__
@@ -1786,6 +2215,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Sanitation.CleanTimeSeriesRequest
   nameWithType: Sanitation.CleanTimeSeriesRequest
+- uid: Cognite.Extensions.Sanitation.CleanTimeSeriesUpdateRequest(IEnumerable{TimeSeriesUpdateItem},Cognite.Extensions.SanitationMode)
+  name: CleanTimeSeriesUpdateRequest(IEnumerable<TimeSeriesUpdateItem>, SanitationMode)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanTimeSeriesUpdateRequest_IEnumerable_TimeSeriesUpdateItem__Cognite_Extensions_SanitationMode_
+  commentId: M:Cognite.Extensions.Sanitation.CleanTimeSeriesUpdateRequest(IEnumerable{TimeSeriesUpdateItem},Cognite.Extensions.SanitationMode)
+  name.vb: CleanTimeSeriesUpdateRequest(IEnumerable(Of TimeSeriesUpdateItem), SanitationMode)
+  fullName: Cognite.Extensions.Sanitation.CleanTimeSeriesUpdateRequest(IEnumerable<TimeSeriesUpdateItem>, Cognite.Extensions.SanitationMode)
+  fullName.vb: Cognite.Extensions.Sanitation.CleanTimeSeriesUpdateRequest(IEnumerable(Of TimeSeriesUpdateItem), Cognite.Extensions.SanitationMode)
+  nameWithType: Sanitation.CleanTimeSeriesUpdateRequest(IEnumerable<TimeSeriesUpdateItem>, SanitationMode)
+  nameWithType.vb: Sanitation.CleanTimeSeriesUpdateRequest(IEnumerable(Of TimeSeriesUpdateItem), SanitationMode)
+- uid: Cognite.Extensions.Sanitation.CleanTimeSeriesUpdateRequest*
+  name: CleanTimeSeriesUpdateRequest
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_CleanTimeSeriesUpdateRequest_
+  commentId: Overload:Cognite.Extensions.Sanitation.CleanTimeSeriesUpdateRequest
+  isSpec: "True"
+  fullName: Cognite.Extensions.Sanitation.CleanTimeSeriesUpdateRequest
+  nameWithType: Sanitation.CleanTimeSeriesUpdateRequest
 - uid: Cognite.Extensions.Sanitation.EventAssetIdsMax
   name: EventAssetIdsMax
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_EventAssetIdsMax
@@ -1862,6 +2307,12 @@ references:
   commentId: M:Cognite.Extensions.Sanitation.Sanitize(AssetCreate)
   fullName: Cognite.Extensions.Sanitation.Sanitize(AssetCreate)
   nameWithType: Sanitation.Sanitize(AssetCreate)
+- uid: Cognite.Extensions.Sanitation.Sanitize(AssetUpdateItem)
+  name: Sanitize(AssetUpdateItem)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_AssetUpdateItem_
+  commentId: M:Cognite.Extensions.Sanitation.Sanitize(AssetUpdateItem)
+  fullName: Cognite.Extensions.Sanitation.Sanitize(AssetUpdateItem)
+  nameWithType: Sanitation.Sanitize(AssetUpdateItem)
 - uid: Cognite.Extensions.Sanitation.Sanitize(Cognite.Extensions.Datapoint,System.Nullable{System.Double})
   name: Sanitize(Datapoint, Nullable<Double>)
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_Cognite_Extensions_Datapoint_System_Nullable_System_Double__
@@ -1901,6 +2352,12 @@ references:
   commentId: M:Cognite.Extensions.Sanitation.Sanitize(TimeSeriesCreate)
   fullName: Cognite.Extensions.Sanitation.Sanitize(TimeSeriesCreate)
   nameWithType: Sanitation.Sanitize(TimeSeriesCreate)
+- uid: Cognite.Extensions.Sanitation.Sanitize(TimeSeriesUpdateItem)
+  name: Sanitize(TimeSeriesUpdateItem)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_TimeSeriesUpdateItem_
+  commentId: M:Cognite.Extensions.Sanitation.Sanitize(TimeSeriesUpdateItem)
+  fullName: Cognite.Extensions.Sanitation.Sanitize(TimeSeriesUpdateItem)
+  nameWithType: Sanitation.Sanitize(TimeSeriesUpdateItem)
 - uid: Cognite.Extensions.Sanitation.Sanitize*
   name: Sanitize
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Sanitize_
@@ -2054,6 +2511,24 @@ references:
   fullName.vb: Cognite.Extensions.Sanitation.Truncate(System.Nullable(Of System.String), System.Int32)
   nameWithType: Sanitation.Truncate(Nullable<String>, Int32)
   nameWithType.vb: Sanitation.Truncate(Nullable(Of String), Int32)
+- uid: Cognite.Extensions.Sanitation.Truncate(System.Nullable{Update{System.String}},System.Int32)
+  name: Truncate(Nullable<Update<String>>, Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Truncate_System_Nullable_Update_System_String___System_Int32_
+  commentId: M:Cognite.Extensions.Sanitation.Truncate(System.Nullable{Update{System.String}},System.Int32)
+  name.vb: Truncate(Nullable(Of Update(Of String)), Int32)
+  fullName: Cognite.Extensions.Sanitation.Truncate(System.Nullable<Update<System.String>>, System.Int32)
+  fullName.vb: Cognite.Extensions.Sanitation.Truncate(System.Nullable(Of Update(Of System.String)), System.Int32)
+  nameWithType: Sanitation.Truncate(Nullable<Update<String>>, Int32)
+  nameWithType.vb: Sanitation.Truncate(Nullable(Of Update(Of String)), Int32)
+- uid: Cognite.Extensions.Sanitation.Truncate(System.Nullable{UpdateNullable{System.String}},System.Int32)
+  name: Truncate(Nullable<UpdateNullable<String>>, Int32)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Truncate_System_Nullable_UpdateNullable_System_String___System_Int32_
+  commentId: M:Cognite.Extensions.Sanitation.Truncate(System.Nullable{UpdateNullable{System.String}},System.Int32)
+  name.vb: Truncate(Nullable(Of UpdateNullable(Of String)), Int32)
+  fullName: Cognite.Extensions.Sanitation.Truncate(System.Nullable<UpdateNullable<System.String>>, System.Int32)
+  fullName.vb: Cognite.Extensions.Sanitation.Truncate(System.Nullable(Of UpdateNullable(Of System.String)), System.Int32)
+  nameWithType: Sanitation.Truncate(Nullable<UpdateNullable<String>>, Int32)
+  nameWithType.vb: Sanitation.Truncate(Nullable(Of UpdateNullable(Of String)), Int32)
 - uid: Cognite.Extensions.Sanitation.Truncate*
   name: Truncate
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Truncate_
@@ -2067,6 +2542,12 @@ references:
   commentId: M:Cognite.Extensions.Sanitation.Verify(AssetCreate)
   fullName: Cognite.Extensions.Sanitation.Verify(AssetCreate)
   nameWithType: Sanitation.Verify(AssetCreate)
+- uid: Cognite.Extensions.Sanitation.Verify(AssetUpdateItem)
+  name: Verify(AssetUpdateItem)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_AssetUpdateItem_
+  commentId: M:Cognite.Extensions.Sanitation.Verify(AssetUpdateItem)
+  fullName: Cognite.Extensions.Sanitation.Verify(AssetUpdateItem)
+  nameWithType: Sanitation.Verify(AssetUpdateItem)
 - uid: Cognite.Extensions.Sanitation.Verify(Cognite.Extensions.Datapoint)
   name: Verify(Datapoint)
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_Cognite_Extensions_Datapoint_
@@ -2103,6 +2584,12 @@ references:
   commentId: M:Cognite.Extensions.Sanitation.Verify(TimeSeriesCreate)
   fullName: Cognite.Extensions.Sanitation.Verify(TimeSeriesCreate)
   nameWithType: Sanitation.Verify(TimeSeriesCreate)
+- uid: Cognite.Extensions.Sanitation.Verify(TimeSeriesUpdateItem)
+  name: Verify(TimeSeriesUpdateItem)
+  href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_TimeSeriesUpdateItem_
+  commentId: M:Cognite.Extensions.Sanitation.Verify(TimeSeriesUpdateItem)
+  fullName: Cognite.Extensions.Sanitation.Verify(TimeSeriesUpdateItem)
+  nameWithType: Sanitation.Verify(TimeSeriesUpdateItem)
 - uid: Cognite.Extensions.Sanitation.Verify*
   name: Verify
   href: api/Cognite.Extensions.Sanitation.html#Cognite_Extensions_Sanitation_Verify_
@@ -2362,6 +2849,121 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors
   nameWithType: TimeSeriesExtensions.GetTimeSeriesByIdsIgnoreErrors
+- uid: Cognite.Extensions.TimeSeriesExtensions.UpdateAsync(TimeSeriesResource,IEnumerable{TimeSeriesUpdateItem},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: UpdateAsync(TimeSeriesResource, IEnumerable<TimeSeriesUpdateItem>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_UpdateAsync_TimeSeriesResource_IEnumerable_TimeSeriesUpdateItem__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extensions.TimeSeriesExtensions.UpdateAsync(TimeSeriesResource,IEnumerable{TimeSeriesUpdateItem},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: UpdateAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesUpdateItem), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.TimeSeriesExtensions.UpdateAsync(TimeSeriesResource, IEnumerable<TimeSeriesUpdateItem>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extensions.TimeSeriesExtensions.UpdateAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesUpdateItem), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: TimeSeriesExtensions.UpdateAsync(TimeSeriesResource, IEnumerable<TimeSeriesUpdateItem>, Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: TimeSeriesExtensions.UpdateAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesUpdateItem), Int32, Int32, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.TimeSeriesExtensions.UpdateAsync*
+  name: UpdateAsync
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_UpdateAsync_
+  commentId: Overload:Cognite.Extensions.TimeSeriesExtensions.UpdateAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.TimeSeriesExtensions.UpdateAsync
+  nameWithType: TimeSeriesExtensions.UpdateAsync
+- uid: Cognite.Extensions.TimeSeriesExtensions.UpsertAsync(TimeSeriesResource,IEnumerable{TimeSeriesCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,CancellationToken)
+  name: UpsertAsync(TimeSeriesResource, IEnumerable<TimeSeriesCreate>, Int32, Int32, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_UpsertAsync_TimeSeriesResource_IEnumerable_TimeSeriesCreate__System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_CancellationToken_
+  commentId: M:Cognite.Extensions.TimeSeriesExtensions.UpsertAsync(TimeSeriesResource,IEnumerable{TimeSeriesCreate},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,CancellationToken)
+  name.vb: UpsertAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesCreate), Int32, Int32, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  fullName: Cognite.Extensions.TimeSeriesExtensions.UpsertAsync(TimeSeriesResource, IEnumerable<TimeSeriesCreate>, System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, Cognite.Extensions.UpsertParams, CancellationToken)
+  fullName.vb: Cognite.Extensions.TimeSeriesExtensions.UpsertAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesCreate), System.Int32, System.Int32, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, Cognite.Extensions.UpsertParams, CancellationToken)
+  nameWithType: TimeSeriesExtensions.UpsertAsync(TimeSeriesResource, IEnumerable<TimeSeriesCreate>, Int32, Int32, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  nameWithType.vb: TimeSeriesExtensions.UpsertAsync(TimeSeriesResource, IEnumerable(Of TimeSeriesCreate), Int32, Int32, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+- uid: Cognite.Extensions.TimeSeriesExtensions.UpsertAsync*
+  name: UpsertAsync
+  href: api/Cognite.Extensions.TimeSeriesExtensions.html#Cognite_Extensions_TimeSeriesExtensions_UpsertAsync_
+  commentId: Overload:Cognite.Extensions.TimeSeriesExtensions.UpsertAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.TimeSeriesExtensions.UpsertAsync
+  nameWithType: TimeSeriesExtensions.UpsertAsync
+- uid: Cognite.Extensions.TypeExtensions
+  name: TypeExtensions
+  href: api/Cognite.Extensions.TypeExtensions.html
+  commentId: T:Cognite.Extensions.TypeExtensions
+  fullName: Cognite.Extensions.TypeExtensions
+  nameWithType: TypeExtensions
+- uid: Cognite.Extensions.TypeExtensions.ToUpdate(AssetCreate,Asset,Cognite.Extensions.UpsertParams)
+  name: ToUpdate(AssetCreate, Asset, UpsertParams)
+  href: api/Cognite.Extensions.TypeExtensions.html#Cognite_Extensions_TypeExtensions_ToUpdate_AssetCreate_Asset_Cognite_Extensions_UpsertParams_
+  commentId: M:Cognite.Extensions.TypeExtensions.ToUpdate(AssetCreate,Asset,Cognite.Extensions.UpsertParams)
+  fullName: Cognite.Extensions.TypeExtensions.ToUpdate(AssetCreate, Asset, Cognite.Extensions.UpsertParams)
+  nameWithType: TypeExtensions.ToUpdate(AssetCreate, Asset, UpsertParams)
+- uid: Cognite.Extensions.TypeExtensions.ToUpdate(TimeSeriesCreate,TimeSeries,Cognite.Extensions.UpsertParams)
+  name: ToUpdate(TimeSeriesCreate, TimeSeries, UpsertParams)
+  href: api/Cognite.Extensions.TypeExtensions.html#Cognite_Extensions_TypeExtensions_ToUpdate_TimeSeriesCreate_TimeSeries_Cognite_Extensions_UpsertParams_
+  commentId: M:Cognite.Extensions.TypeExtensions.ToUpdate(TimeSeriesCreate,TimeSeries,Cognite.Extensions.UpsertParams)
+  fullName: Cognite.Extensions.TypeExtensions.ToUpdate(TimeSeriesCreate, TimeSeries, Cognite.Extensions.UpsertParams)
+  nameWithType: TypeExtensions.ToUpdate(TimeSeriesCreate, TimeSeries, UpsertParams)
+- uid: Cognite.Extensions.TypeExtensions.ToUpdate*
+  name: ToUpdate
+  href: api/Cognite.Extensions.TypeExtensions.html#Cognite_Extensions_TypeExtensions_ToUpdate_
+  commentId: Overload:Cognite.Extensions.TypeExtensions.ToUpdate
+  isSpec: "True"
+  fullName: Cognite.Extensions.TypeExtensions.ToUpdate
+  nameWithType: TypeExtensions.ToUpdate
+- uid: Cognite.Extensions.UpsertParams
+  name: UpsertParams
+  href: api/Cognite.Extensions.UpsertParams.html
+  commentId: T:Cognite.Extensions.UpsertParams
+  fullName: Cognite.Extensions.UpsertParams
+  nameWithType: UpsertParams
+- uid: Cognite.Extensions.UpsertParams.ReplaceLabels
+  name: ReplaceLabels
+  href: api/Cognite.Extensions.UpsertParams.html#Cognite_Extensions_UpsertParams_ReplaceLabels
+  commentId: P:Cognite.Extensions.UpsertParams.ReplaceLabels
+  fullName: Cognite.Extensions.UpsertParams.ReplaceLabels
+  nameWithType: UpsertParams.ReplaceLabels
+- uid: Cognite.Extensions.UpsertParams.ReplaceLabels*
+  name: ReplaceLabels
+  href: api/Cognite.Extensions.UpsertParams.html#Cognite_Extensions_UpsertParams_ReplaceLabels_
+  commentId: Overload:Cognite.Extensions.UpsertParams.ReplaceLabels
+  isSpec: "True"
+  fullName: Cognite.Extensions.UpsertParams.ReplaceLabels
+  nameWithType: UpsertParams.ReplaceLabels
+- uid: Cognite.Extensions.UpsertParams.ReplaceMetadata
+  name: ReplaceMetadata
+  href: api/Cognite.Extensions.UpsertParams.html#Cognite_Extensions_UpsertParams_ReplaceMetadata
+  commentId: P:Cognite.Extensions.UpsertParams.ReplaceMetadata
+  fullName: Cognite.Extensions.UpsertParams.ReplaceMetadata
+  nameWithType: UpsertParams.ReplaceMetadata
+- uid: Cognite.Extensions.UpsertParams.ReplaceMetadata*
+  name: ReplaceMetadata
+  href: api/Cognite.Extensions.UpsertParams.html#Cognite_Extensions_UpsertParams_ReplaceMetadata_
+  commentId: Overload:Cognite.Extensions.UpsertParams.ReplaceMetadata
+  isSpec: "True"
+  fullName: Cognite.Extensions.UpsertParams.ReplaceMetadata
+  nameWithType: UpsertParams.ReplaceMetadata
+- uid: Cognite.Extensions.UpsertParams.ReplaceSecurityCategories
+  name: ReplaceSecurityCategories
+  href: api/Cognite.Extensions.UpsertParams.html#Cognite_Extensions_UpsertParams_ReplaceSecurityCategories
+  commentId: P:Cognite.Extensions.UpsertParams.ReplaceSecurityCategories
+  fullName: Cognite.Extensions.UpsertParams.ReplaceSecurityCategories
+  nameWithType: UpsertParams.ReplaceSecurityCategories
+- uid: Cognite.Extensions.UpsertParams.ReplaceSecurityCategories*
+  name: ReplaceSecurityCategories
+  href: api/Cognite.Extensions.UpsertParams.html#Cognite_Extensions_UpsertParams_ReplaceSecurityCategories_
+  commentId: Overload:Cognite.Extensions.UpsertParams.ReplaceSecurityCategories
+  isSpec: "True"
+  fullName: Cognite.Extensions.UpsertParams.ReplaceSecurityCategories
+  nameWithType: UpsertParams.ReplaceSecurityCategories
+- uid: Cognite.Extensions.UpsertParams.SetNull
+  name: SetNull
+  href: api/Cognite.Extensions.UpsertParams.html#Cognite_Extensions_UpsertParams_SetNull
+  commentId: P:Cognite.Extensions.UpsertParams.SetNull
+  fullName: Cognite.Extensions.UpsertParams.SetNull
+  nameWithType: UpsertParams.SetNull
+- uid: Cognite.Extensions.UpsertParams.SetNull*
+  name: SetNull
+  href: api/Cognite.Extensions.UpsertParams.html#Cognite_Extensions_UpsertParams_SetNull_
+  commentId: Overload:Cognite.Extensions.UpsertParams.SetNull
+  isSpec: "True"
+  fullName: Cognite.Extensions.UpsertParams.SetNull
+  nameWithType: UpsertParams.SetNull
 - uid: Cognite.Extractor.Common
   name: Cognite.Extractor.Common
   href: api/Cognite.Extractor.Common.html
@@ -2733,6 +3335,50 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.CommonUtils.TrimToNull
   nameWithType: CommonUtils.TrimToNull
+- uid: Cognite.Extractor.Common.CommonUtils.WaitAsync(System.Threading.WaitHandle,System.TimeSpan,System.Threading.CancellationToken)
+  name: WaitAsync(WaitHandle, TimeSpan, CancellationToken)
+  href: api/Cognite.Extractor.Common.CommonUtils.html#Cognite_Extractor_Common_CommonUtils_WaitAsync_System_Threading_WaitHandle_System_TimeSpan_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extractor.Common.CommonUtils.WaitAsync(System.Threading.WaitHandle,System.TimeSpan,System.Threading.CancellationToken)
+  fullName: Cognite.Extractor.Common.CommonUtils.WaitAsync(System.Threading.WaitHandle, System.TimeSpan, System.Threading.CancellationToken)
+  nameWithType: CommonUtils.WaitAsync(WaitHandle, TimeSpan, CancellationToken)
+- uid: Cognite.Extractor.Common.CommonUtils.WaitAsync*
+  name: WaitAsync
+  href: api/Cognite.Extractor.Common.CommonUtils.html#Cognite_Extractor_Common_CommonUtils_WaitAsync_
+  commentId: Overload:Cognite.Extractor.Common.CommonUtils.WaitAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.CommonUtils.WaitAsync
+  nameWithType: CommonUtils.WaitAsync
+- uid: Cognite.Extractor.Common.ConfigurationException
+  name: ConfigurationException
+  href: api/Cognite.Extractor.Common.ConfigurationException.html
+  commentId: T:Cognite.Extractor.Common.ConfigurationException
+  fullName: Cognite.Extractor.Common.ConfigurationException
+  nameWithType: ConfigurationException
+- uid: Cognite.Extractor.Common.ConfigurationException.#ctor
+  name: ConfigurationException()
+  href: api/Cognite.Extractor.Common.ConfigurationException.html#Cognite_Extractor_Common_ConfigurationException__ctor
+  commentId: M:Cognite.Extractor.Common.ConfigurationException.#ctor
+  fullName: Cognite.Extractor.Common.ConfigurationException.ConfigurationException()
+  nameWithType: ConfigurationException.ConfigurationException()
+- uid: Cognite.Extractor.Common.ConfigurationException.#ctor(System.String)
+  name: ConfigurationException(String)
+  href: api/Cognite.Extractor.Common.ConfigurationException.html#Cognite_Extractor_Common_ConfigurationException__ctor_System_String_
+  commentId: M:Cognite.Extractor.Common.ConfigurationException.#ctor(System.String)
+  fullName: Cognite.Extractor.Common.ConfigurationException.ConfigurationException(System.String)
+  nameWithType: ConfigurationException.ConfigurationException(String)
+- uid: Cognite.Extractor.Common.ConfigurationException.#ctor(System.String,System.Exception)
+  name: ConfigurationException(String, Exception)
+  href: api/Cognite.Extractor.Common.ConfigurationException.html#Cognite_Extractor_Common_ConfigurationException__ctor_System_String_System_Exception_
+  commentId: M:Cognite.Extractor.Common.ConfigurationException.#ctor(System.String,System.Exception)
+  fullName: Cognite.Extractor.Common.ConfigurationException.ConfigurationException(System.String, System.Exception)
+  nameWithType: ConfigurationException.ConfigurationException(String, Exception)
+- uid: Cognite.Extractor.Common.ConfigurationException.#ctor*
+  name: ConfigurationException
+  href: api/Cognite.Extractor.Common.ConfigurationException.html#Cognite_Extractor_Common_ConfigurationException__ctor_
+  commentId: Overload:Cognite.Extractor.Common.ConfigurationException.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.ConfigurationException.ConfigurationException
+  nameWithType: ConfigurationException.ConfigurationException
 - uid: Cognite.Extractor.Common.IChunk`1
   name: IChunk<T>
   href: api/Cognite.Extractor.Common.IChunk-1.html
@@ -3407,15 +4053,15 @@ references:
   commentId: T:Cognite.Extractor.Common.TaskThrottler
   fullName: Cognite.Extractor.Common.TaskThrottler
   nameWithType: TaskThrottler
-- uid: Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Nullable{System.TimeSpan})
-  name: TaskThrottler(Int32, Boolean, Int32, Nullable<TimeSpan>)
-  href: api/Cognite.Extractor.Common.TaskThrottler.html#Cognite_Extractor_Common_TaskThrottler__ctor_System_Int32_System_Boolean_System_Int32_System_Nullable_System_TimeSpan__
-  commentId: M:Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Nullable{System.TimeSpan})
-  name.vb: TaskThrottler(Int32, Boolean, Int32, Nullable(Of TimeSpan))
-  fullName: Cognite.Extractor.Common.TaskThrottler.TaskThrottler(System.Int32, System.Boolean, System.Int32, System.Nullable<System.TimeSpan>)
-  fullName.vb: Cognite.Extractor.Common.TaskThrottler.TaskThrottler(System.Int32, System.Boolean, System.Int32, System.Nullable(Of System.TimeSpan))
-  nameWithType: TaskThrottler.TaskThrottler(Int32, Boolean, Int32, Nullable<TimeSpan>)
-  nameWithType.vb: TaskThrottler.TaskThrottler(Int32, Boolean, Int32, Nullable(Of TimeSpan))
+- uid: Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Nullable{System.TimeSpan},System.Boolean)
+  name: TaskThrottler(Int32, Boolean, Int32, Nullable<TimeSpan>, Boolean)
+  href: api/Cognite.Extractor.Common.TaskThrottler.html#Cognite_Extractor_Common_TaskThrottler__ctor_System_Int32_System_Boolean_System_Int32_System_Nullable_System_TimeSpan__System_Boolean_
+  commentId: M:Cognite.Extractor.Common.TaskThrottler.#ctor(System.Int32,System.Boolean,System.Int32,System.Nullable{System.TimeSpan},System.Boolean)
+  name.vb: TaskThrottler(Int32, Boolean, Int32, Nullable(Of TimeSpan), Boolean)
+  fullName: Cognite.Extractor.Common.TaskThrottler.TaskThrottler(System.Int32, System.Boolean, System.Int32, System.Nullable<System.TimeSpan>, System.Boolean)
+  fullName.vb: Cognite.Extractor.Common.TaskThrottler.TaskThrottler(System.Int32, System.Boolean, System.Int32, System.Nullable(Of System.TimeSpan), System.Boolean)
+  nameWithType: TaskThrottler.TaskThrottler(Int32, Boolean, Int32, Nullable<TimeSpan>, Boolean)
+  nameWithType.vb: TaskThrottler.TaskThrottler(Int32, Boolean, Int32, Nullable(Of TimeSpan), Boolean)
 - uid: Cognite.Extractor.Common.TaskThrottler.#ctor*
   name: TaskThrottler
   href: api/Cognite.Extractor.Common.TaskThrottler.html#Cognite_Extractor_Common_TaskThrottler__ctor_
@@ -5143,195 +5789,6 @@ references:
   commentId: N:Cognite.Extractor.Utils
   fullName: Cognite.Extractor.Utils
   nameWithType: Cognite.Extractor.Utils
-- uid: Cognite.Extractor.Utils.Authenticator
-  name: Authenticator
-  href: api/Cognite.Extractor.Utils.Authenticator.html
-  commentId: T:Cognite.Extractor.Utils.Authenticator
-  fullName: Cognite.Extractor.Utils.Authenticator
-  nameWithType: Authenticator
-- uid: Cognite.Extractor.Utils.Authenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,HttpClient,ILogger{Cognite.Extractor.Utils.IAuthenticator})
-  name: Authenticator(AuthenticatorConfig, HttpClient, ILogger<IAuthenticator>)
-  href: api/Cognite.Extractor.Utils.Authenticator.html#Cognite_Extractor_Utils_Authenticator__ctor_Cognite_Extractor_Utils_AuthenticatorConfig_HttpClient_ILogger_Cognite_Extractor_Utils_IAuthenticator__
-  commentId: M:Cognite.Extractor.Utils.Authenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,HttpClient,ILogger{Cognite.Extractor.Utils.IAuthenticator})
-  name.vb: Authenticator(AuthenticatorConfig, HttpClient, ILogger(Of IAuthenticator))
-  fullName: Cognite.Extractor.Utils.Authenticator.Authenticator(Cognite.Extractor.Utils.AuthenticatorConfig, HttpClient, ILogger<Cognite.Extractor.Utils.IAuthenticator>)
-  fullName.vb: Cognite.Extractor.Utils.Authenticator.Authenticator(Cognite.Extractor.Utils.AuthenticatorConfig, HttpClient, ILogger(Of Cognite.Extractor.Utils.IAuthenticator))
-  nameWithType: Authenticator.Authenticator(AuthenticatorConfig, HttpClient, ILogger<IAuthenticator>)
-  nameWithType.vb: Authenticator.Authenticator(AuthenticatorConfig, HttpClient, ILogger(Of IAuthenticator))
-- uid: Cognite.Extractor.Utils.Authenticator.#ctor*
-  name: Authenticator
-  href: api/Cognite.Extractor.Utils.Authenticator.html#Cognite_Extractor_Utils_Authenticator__ctor_
-  commentId: Overload:Cognite.Extractor.Utils.Authenticator.#ctor
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Authenticator.Authenticator
-  nameWithType: Authenticator.Authenticator
-- uid: Cognite.Extractor.Utils.Authenticator.GetToken(CancellationToken)
-  name: GetToken(CancellationToken)
-  href: api/Cognite.Extractor.Utils.Authenticator.html#Cognite_Extractor_Utils_Authenticator_GetToken_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.Authenticator.GetToken(CancellationToken)
-  fullName: Cognite.Extractor.Utils.Authenticator.GetToken(CancellationToken)
-  nameWithType: Authenticator.GetToken(CancellationToken)
-- uid: Cognite.Extractor.Utils.Authenticator.GetToken*
-  name: GetToken
-  href: api/Cognite.Extractor.Utils.Authenticator.html#Cognite_Extractor_Utils_Authenticator_GetToken_
-  commentId: Overload:Cognite.Extractor.Utils.Authenticator.GetToken
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Authenticator.GetToken
-  nameWithType: Authenticator.GetToken
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig
-  name: AuthenticatorConfig
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html
-  commentId: T:Cognite.Extractor.Utils.AuthenticatorConfig
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig
-  nameWithType: AuthenticatorConfig
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Audience
-  name: Audience
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Audience
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Audience
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Audience
-  nameWithType: AuthenticatorConfig.Audience
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Audience*
-  name: Audience
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Audience_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Audience
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Audience
-  nameWithType: AuthenticatorConfig.Audience
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation
-  name: AuthenticatorConfig.AuthenticatorImplementation
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html
-  commentId: T:Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation
-  nameWithType: AuthenticatorConfig.AuthenticatorImplementation
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.Basic
-  name: Basic
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html#Cognite_Extractor_Utils_AuthenticatorConfig_AuthenticatorImplementation_Basic
-  commentId: F:Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.Basic
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.Basic
-  nameWithType: AuthenticatorConfig.AuthenticatorImplementation.Basic
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.MSAL
-  name: MSAL
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.html#Cognite_Extractor_Utils_AuthenticatorConfig_AuthenticatorImplementation_MSAL
-  commentId: F:Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.MSAL
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.AuthenticatorImplementation.MSAL
-  nameWithType: AuthenticatorConfig.AuthenticatorImplementation.MSAL
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Authority
-  name: Authority
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Authority
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Authority
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Authority
-  nameWithType: AuthenticatorConfig.Authority
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Authority*
-  name: Authority
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Authority_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Authority
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Authority
-  nameWithType: AuthenticatorConfig.Authority
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.ClientId
-  name: ClientId
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_ClientId
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.ClientId
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.ClientId
-  nameWithType: AuthenticatorConfig.ClientId
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.ClientId*
-  name: ClientId
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_ClientId_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.ClientId
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.ClientId
-  nameWithType: AuthenticatorConfig.ClientId
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
-  name: Implementation
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Implementation
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
-  nameWithType: AuthenticatorConfig.Implementation
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Implementation*
-  name: Implementation
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Implementation_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Implementation
-  nameWithType: AuthenticatorConfig.Implementation
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl
-  name: MinTtl
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_MinTtl
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl
-  nameWithType: AuthenticatorConfig.MinTtl
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl*
-  name: MinTtl
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_MinTtl_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.MinTtl
-  nameWithType: AuthenticatorConfig.MinTtl
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Resource
-  name: Resource
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Resource
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Resource
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Resource
-  nameWithType: AuthenticatorConfig.Resource
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Resource*
-  name: Resource
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Resource_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Resource
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Resource
-  nameWithType: AuthenticatorConfig.Resource
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
-  name: Scopes
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Scopes
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
-  nameWithType: AuthenticatorConfig.Scopes
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes*
-  name: Scopes
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Scopes_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Scopes
-  nameWithType: AuthenticatorConfig.Scopes
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Secret
-  name: Secret
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Secret
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Secret
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Secret
-  nameWithType: AuthenticatorConfig.Secret
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Secret*
-  name: Secret
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Secret_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Secret
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Secret
-  nameWithType: AuthenticatorConfig.Secret
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Tenant
-  name: Tenant
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Tenant
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.Tenant
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Tenant
-  nameWithType: AuthenticatorConfig.Tenant
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.Tenant*
-  name: Tenant
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_Tenant_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.Tenant
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.Tenant
-  nameWithType: AuthenticatorConfig.Tenant
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
-  name: TokenUrl
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_TokenUrl
-  commentId: P:Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
-  nameWithType: AuthenticatorConfig.TokenUrl
-- uid: Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl*
-  name: TokenUrl
-  href: api/Cognite.Extractor.Utils.AuthenticatorConfig.html#Cognite_Extractor_Utils_AuthenticatorConfig_TokenUrl_
-  commentId: Overload:Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.AuthenticatorConfig.TokenUrl
-  nameWithType: AuthenticatorConfig.TokenUrl
 - uid: Cognite.Extractor.Utils.BaseConfig
   name: BaseConfig
   href: api/Cognite.Extractor.Utils.BaseConfig.html
@@ -6039,6 +6496,38 @@ references:
   fullName.vb: Cognite.Extractor.Utils.BaseUploadQueue(Of T).UploadEntries
   nameWithType: BaseUploadQueue<T>.UploadEntries
   nameWithType.vb: BaseUploadQueue(Of T).UploadEntries
+- uid: Cognite.Extractor.Utils.CertificateConfig
+  name: CertificateConfig
+  href: api/Cognite.Extractor.Utils.CertificateConfig.html
+  commentId: T:Cognite.Extractor.Utils.CertificateConfig
+  fullName: Cognite.Extractor.Utils.CertificateConfig
+  nameWithType: CertificateConfig
+- uid: Cognite.Extractor.Utils.CertificateConfig.AcceptAll
+  name: AcceptAll
+  href: api/Cognite.Extractor.Utils.CertificateConfig.html#Cognite_Extractor_Utils_CertificateConfig_AcceptAll
+  commentId: P:Cognite.Extractor.Utils.CertificateConfig.AcceptAll
+  fullName: Cognite.Extractor.Utils.CertificateConfig.AcceptAll
+  nameWithType: CertificateConfig.AcceptAll
+- uid: Cognite.Extractor.Utils.CertificateConfig.AcceptAll*
+  name: AcceptAll
+  href: api/Cognite.Extractor.Utils.CertificateConfig.html#Cognite_Extractor_Utils_CertificateConfig_AcceptAll_
+  commentId: Overload:Cognite.Extractor.Utils.CertificateConfig.AcceptAll
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CertificateConfig.AcceptAll
+  nameWithType: CertificateConfig.AcceptAll
+- uid: Cognite.Extractor.Utils.CertificateConfig.AllowList
+  name: AllowList
+  href: api/Cognite.Extractor.Utils.CertificateConfig.html#Cognite_Extractor_Utils_CertificateConfig_AllowList
+  commentId: P:Cognite.Extractor.Utils.CertificateConfig.AllowList
+  fullName: Cognite.Extractor.Utils.CertificateConfig.AllowList
+  nameWithType: CertificateConfig.AllowList
+- uid: Cognite.Extractor.Utils.CertificateConfig.AllowList*
+  name: AllowList
+  href: api/Cognite.Extractor.Utils.CertificateConfig.html#Cognite_Extractor_Utils_CertificateConfig_AllowList_
+  commentId: Overload:Cognite.Extractor.Utils.CertificateConfig.AllowList
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CertificateConfig.AllowList
+  nameWithType: CertificateConfig.AllowList
 - uid: Cognite.Extractor.Utils.ChunkingConfig
   name: ChunkingConfig
   href: api/Cognite.Extractor.Utils.ChunkingConfig.html
@@ -6304,6 +6793,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteConfig.CdfThrottling
   nameWithType: CogniteConfig.CdfThrottling
+- uid: Cognite.Extractor.Utils.CogniteConfig.Certificates
+  name: Certificates
+  href: api/Cognite.Extractor.Utils.CogniteConfig.html#Cognite_Extractor_Utils_CogniteConfig_Certificates
+  commentId: P:Cognite.Extractor.Utils.CogniteConfig.Certificates
+  fullName: Cognite.Extractor.Utils.CogniteConfig.Certificates
+  nameWithType: CogniteConfig.Certificates
+- uid: Cognite.Extractor.Utils.CogniteConfig.Certificates*
+  name: Certificates
+  href: api/Cognite.Extractor.Utils.CogniteConfig.html#Cognite_Extractor_Utils_CogniteConfig_Certificates_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteConfig.Certificates
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteConfig.Certificates
+  nameWithType: CogniteConfig.Certificates
 - uid: Cognite.Extractor.Utils.CogniteConfig.ExtractionPipeline
   name: ExtractionPipeline
   href: api/Cognite.Extractor.Utils.CogniteConfig.html#Cognite_Extractor_Utils_CogniteConfig_ExtractionPipeline
@@ -6772,6 +7274,70 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.TestCogniteConfig
   nameWithType: CogniteDestination.TestCogniteConfig
+- uid: Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync(IEnumerable{AssetUpdateItem},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: UpdateAssetsAsync(IEnumerable<AssetUpdateItem>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpdateAssetsAsync_IEnumerable_AssetUpdateItem__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync(IEnumerable{AssetUpdateItem},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: UpdateAssetsAsync(IEnumerable(Of AssetUpdateItem), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync(IEnumerable<AssetUpdateItem>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync(IEnumerable(Of AssetUpdateItem), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.UpdateAssetsAsync(IEnumerable<AssetUpdateItem>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.UpdateAssetsAsync(IEnumerable(Of AssetUpdateItem), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync*
+  name: UpdateAssetsAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpdateAssetsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync
+  nameWithType: CogniteDestination.UpdateAssetsAsync
+- uid: Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync(IEnumerable{TimeSeriesUpdateItem},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name: UpdateTimeSeriesAsync(IEnumerable<TimeSeriesUpdateItem>, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpdateTimeSeriesAsync_IEnumerable_TimeSeriesUpdateItem__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync(IEnumerable{TimeSeriesUpdateItem},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,CancellationToken)
+  name.vb: UpdateTimeSeriesAsync(IEnumerable(Of TimeSeriesUpdateItem), RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync(IEnumerable<TimeSeriesUpdateItem>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync(IEnumerable(Of TimeSeriesUpdateItem), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, CancellationToken)
+  nameWithType: CogniteDestination.UpdateTimeSeriesAsync(IEnumerable<TimeSeriesUpdateItem>, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: CogniteDestination.UpdateTimeSeriesAsync(IEnumerable(Of TimeSeriesUpdateItem), RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync*
+  name: UpdateTimeSeriesAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpdateTimeSeriesAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync
+  nameWithType: CogniteDestination.UpdateTimeSeriesAsync
+- uid: Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync(IEnumerable{AssetCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,CancellationToken)
+  name: UpsertAssetsAsync(IEnumerable<AssetCreate>, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpsertAssetsAsync_IEnumerable_AssetCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync(IEnumerable{AssetCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,CancellationToken)
+  name.vb: UpsertAssetsAsync(IEnumerable(Of AssetCreate), RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync(IEnumerable<AssetCreate>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, Cognite.Extensions.UpsertParams, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync(IEnumerable(Of AssetCreate), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, Cognite.Extensions.UpsertParams, CancellationToken)
+  nameWithType: CogniteDestination.UpsertAssetsAsync(IEnumerable<AssetCreate>, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  nameWithType.vb: CogniteDestination.UpsertAssetsAsync(IEnumerable(Of AssetCreate), RetryMode, SanitationMode, UpsertParams, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync*
+  name: UpsertAssetsAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpsertAssetsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync
+  nameWithType: CogniteDestination.UpsertAssetsAsync
+- uid: Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync(IEnumerable{TimeSeriesCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,CancellationToken)
+  name: UpsertTimeSeriesAsync(IEnumerable<TimeSeriesCreate>, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpsertTimeSeriesAsync_IEnumerable_TimeSeriesCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync(IEnumerable{TimeSeriesCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,CancellationToken)
+  name.vb: UpsertTimeSeriesAsync(IEnumerable(Of TimeSeriesCreate), RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync(IEnumerable<TimeSeriesCreate>, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, Cognite.Extensions.UpsertParams, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync(IEnumerable(Of TimeSeriesCreate), Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, Cognite.Extensions.UpsertParams, CancellationToken)
+  nameWithType: CogniteDestination.UpsertTimeSeriesAsync(IEnumerable<TimeSeriesCreate>, RetryMode, SanitationMode, UpsertParams, CancellationToken)
+  nameWithType.vb: CogniteDestination.UpsertTimeSeriesAsync(IEnumerable(Of TimeSeriesCreate), RetryMode, SanitationMode, UpsertParams, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync*
+  name: UpsertTimeSeriesAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpsertTimeSeriesAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync
+  nameWithType: CogniteDestination.UpsertTimeSeriesAsync
 - uid: Cognite.Extractor.Utils.ConfigurationExtensions
   name: ConfigurationExtensions
   href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html
@@ -6845,13 +7411,13 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient
   nameWithType: DestinationUtils.AddCogniteClient
-- uid: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.Nullable{System.String},System.Nullable{System.String},Cognite.Extractor.Utils.IAuthenticator,System.Nullable{ILogger{Client}},System.Nullable{IMetrics})
+- uid: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.Nullable{System.String},System.Nullable{System.String},Cognite.Extensions.IAuthenticator,System.Nullable{ILogger{Client}},System.Nullable{IMetrics})
   name: Configure(Client.Builder, CogniteConfig, Nullable<String>, Nullable<String>, IAuthenticator, Nullable<ILogger<Client>>, Nullable<IMetrics>)
-  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_Nullable_System_String__System_Nullable_System_String__Cognite_Extractor_Utils_IAuthenticator_System_Nullable_ILogger_Client___System_Nullable_IMetrics__
-  commentId: M:Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.Nullable{System.String},System.Nullable{System.String},Cognite.Extractor.Utils.IAuthenticator,System.Nullable{ILogger{Client}},System.Nullable{IMetrics})
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_Configure_Client_Builder_Cognite_Extractor_Utils_CogniteConfig_System_Nullable_System_String__System_Nullable_System_String__Cognite_Extensions_IAuthenticator_System_Nullable_ILogger_Client___System_Nullable_IMetrics__
+  commentId: M:Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder,Cognite.Extractor.Utils.CogniteConfig,System.Nullable{System.String},System.Nullable{System.String},Cognite.Extensions.IAuthenticator,System.Nullable{ILogger{Client}},System.Nullable{IMetrics})
   name.vb: Configure(Client.Builder, CogniteConfig, Nullable(Of String), Nullable(Of String), IAuthenticator, Nullable(Of ILogger(Of Client)), Nullable(Of IMetrics))
-  fullName: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.Nullable<System.String>, System.Nullable<System.String>, Cognite.Extractor.Utils.IAuthenticator, System.Nullable<ILogger<Client>>, System.Nullable<IMetrics>)
-  fullName.vb: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.Nullable(Of System.String), System.Nullable(Of System.String), Cognite.Extractor.Utils.IAuthenticator, System.Nullable(Of ILogger(Of Client)), System.Nullable(Of IMetrics))
+  fullName: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.Nullable<System.String>, System.Nullable<System.String>, Cognite.Extensions.IAuthenticator, System.Nullable<ILogger<Client>>, System.Nullable<IMetrics>)
+  fullName.vb: Cognite.Extractor.Utils.DestinationUtils.Configure(Client.Builder, Cognite.Extractor.Utils.CogniteConfig, System.Nullable(Of System.String), System.Nullable(Of System.String), Cognite.Extensions.IAuthenticator, System.Nullable(Of ILogger(Of Client)), System.Nullable(Of IMetrics))
   nameWithType: DestinationUtils.Configure(Client.Builder, CogniteConfig, Nullable<String>, Nullable<String>, IAuthenticator, Nullable<ILogger<Client>>, Nullable<IMetrics>)
   nameWithType.vb: DestinationUtils.Configure(Client.Builder, CogniteConfig, Nullable(Of String), Nullable(Of String), IAuthenticator, Nullable(Of ILogger(Of Client)), Nullable(Of IMetrics))
 - uid: Cognite.Extractor.Utils.DestinationUtils.Configure*
@@ -6861,6 +7427,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.DestinationUtils.Configure
   nameWithType: DestinationUtils.Configure
+- uid: Cognite.Extractor.Utils.DestinationUtils.ConfigureSslPolicy(Cognite.Extractor.Utils.CertificateConfig)
+  name: ConfigureSslPolicy(CertificateConfig)
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_ConfigureSslPolicy_Cognite_Extractor_Utils_CertificateConfig_
+  commentId: M:Cognite.Extractor.Utils.DestinationUtils.ConfigureSslPolicy(Cognite.Extractor.Utils.CertificateConfig)
+  fullName: Cognite.Extractor.Utils.DestinationUtils.ConfigureSslPolicy(Cognite.Extractor.Utils.CertificateConfig)
+  nameWithType: DestinationUtils.ConfigureSslPolicy(CertificateConfig)
+- uid: Cognite.Extractor.Utils.DestinationUtils.ConfigureSslPolicy*
+  name: ConfigureSslPolicy
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_ConfigureSslPolicy_
+  commentId: Overload:Cognite.Extractor.Utils.DestinationUtils.ConfigureSslPolicy
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.DestinationUtils.ConfigureSslPolicy
+  nameWithType: DestinationUtils.ConfigureSslPolicy
 - uid: Cognite.Extractor.Utils.EventUploadQueue
   name: EventUploadQueue
   href: api/Cognite.Extractor.Utils.EventUploadQueue.html
@@ -7333,25 +7912,6 @@ references:
   fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
   nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.UserAgent
   nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
-- uid: Cognite.Extractor.Utils.IAuthenticator
-  name: IAuthenticator
-  href: api/Cognite.Extractor.Utils.IAuthenticator.html
-  commentId: T:Cognite.Extractor.Utils.IAuthenticator
-  fullName: Cognite.Extractor.Utils.IAuthenticator
-  nameWithType: IAuthenticator
-- uid: Cognite.Extractor.Utils.IAuthenticator.GetToken(CancellationToken)
-  name: GetToken(CancellationToken)
-  href: api/Cognite.Extractor.Utils.IAuthenticator.html#Cognite_Extractor_Utils_IAuthenticator_GetToken_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.IAuthenticator.GetToken(CancellationToken)
-  fullName: Cognite.Extractor.Utils.IAuthenticator.GetToken(CancellationToken)
-  nameWithType: IAuthenticator.GetToken(CancellationToken)
-- uid: Cognite.Extractor.Utils.IAuthenticator.GetToken*
-  name: GetToken
-  href: api/Cognite.Extractor.Utils.IAuthenticator.html#Cognite_Extractor_Utils_IAuthenticator_GetToken_
-  commentId: Overload:Cognite.Extractor.Utils.IAuthenticator.GetToken
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.IAuthenticator.GetToken
-  nameWithType: IAuthenticator.GetToken
 - uid: Cognite.Extractor.Utils.IRawUploadQueue`1
   name: IRawUploadQueue<T>
   href: api/Cognite.Extractor.Utils.IRawUploadQueue-1.html
@@ -7466,41 +8026,6 @@ references:
   fullName.vb: Cognite.Extractor.Utils.IUploadQueue(Of T).Trigger
   nameWithType: IUploadQueue<T>.Trigger
   nameWithType.vb: IUploadQueue(Of T).Trigger
-- uid: Cognite.Extractor.Utils.MsalAuthenticator
-  name: MsalAuthenticator
-  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html
-  commentId: T:Cognite.Extractor.Utils.MsalAuthenticator
-  fullName: Cognite.Extractor.Utils.MsalAuthenticator
-  nameWithType: MsalAuthenticator
-- uid: Cognite.Extractor.Utils.MsalAuthenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,ILogger{Cognite.Extractor.Utils.IAuthenticator},IHttpClientFactory,System.String)
-  name: MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>, IHttpClientFactory, String)
-  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator__ctor_Cognite_Extractor_Utils_AuthenticatorConfig_ILogger_Cognite_Extractor_Utils_IAuthenticator__IHttpClientFactory_System_String_
-  commentId: M:Cognite.Extractor.Utils.MsalAuthenticator.#ctor(Cognite.Extractor.Utils.AuthenticatorConfig,ILogger{Cognite.Extractor.Utils.IAuthenticator},IHttpClientFactory,System.String)
-  name.vb: MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator), IHttpClientFactory, String)
-  fullName: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator(Cognite.Extractor.Utils.AuthenticatorConfig, ILogger<Cognite.Extractor.Utils.IAuthenticator>, IHttpClientFactory, System.String)
-  fullName.vb: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator(Cognite.Extractor.Utils.AuthenticatorConfig, ILogger(Of Cognite.Extractor.Utils.IAuthenticator), IHttpClientFactory, System.String)
-  nameWithType: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger<IAuthenticator>, IHttpClientFactory, String)
-  nameWithType.vb: MsalAuthenticator.MsalAuthenticator(AuthenticatorConfig, ILogger(Of IAuthenticator), IHttpClientFactory, String)
-- uid: Cognite.Extractor.Utils.MsalAuthenticator.#ctor*
-  name: MsalAuthenticator
-  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator__ctor_
-  commentId: Overload:Cognite.Extractor.Utils.MsalAuthenticator.#ctor
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.MsalAuthenticator.MsalAuthenticator
-  nameWithType: MsalAuthenticator.MsalAuthenticator
-- uid: Cognite.Extractor.Utils.MsalAuthenticator.GetToken(CancellationToken)
-  name: GetToken(CancellationToken)
-  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator_GetToken_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.MsalAuthenticator.GetToken(CancellationToken)
-  fullName: Cognite.Extractor.Utils.MsalAuthenticator.GetToken(CancellationToken)
-  nameWithType: MsalAuthenticator.GetToken(CancellationToken)
-- uid: Cognite.Extractor.Utils.MsalAuthenticator.GetToken*
-  name: GetToken
-  href: api/Cognite.Extractor.Utils.MsalAuthenticator.html#Cognite_Extractor_Utils_MsalAuthenticator_GetToken_
-  commentId: Overload:Cognite.Extractor.Utils.MsalAuthenticator.GetToken
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.MsalAuthenticator.GetToken
-  nameWithType: MsalAuthenticator.GetToken
 - uid: Cognite.Extractor.Utils.QueueUploadResult`1
   name: QueueUploadResult<T>
   href: api/Cognite.Extractor.Utils.QueueUploadResult-1.html
