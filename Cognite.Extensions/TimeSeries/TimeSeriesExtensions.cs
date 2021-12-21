@@ -436,5 +436,91 @@ namespace Cognite.Extensions
 
             return new CogniteResult<TimeSeries, TimeSeriesUpdateItem>(errors, null);
         }
+
+        /// <summary>
+        /// Insert or update a list of timeseries, handling errors that come up during both insert and update.
+        /// Only timeseries that differ from timeseries in CDF are updated.
+        /// 
+        /// All given timeseries must have an external id, so it is not in practice possible to use this to change
+        /// the externalId of timeseries.
+        /// 
+        /// Timeseries are returned in the same order as given.
+        /// </summary>
+        /// <param name="tss">TimeSeries resource</param>
+        /// <param name="upserts">Assets to upsert</param>
+        /// <param name="chunkSize">Number of asset creates, retrieves or updates per request</param>
+        /// <param name="throttleSize">Maximum number of parallel requests</param>
+        /// <param name="retryMode">How to handle retries on errors</param>
+        /// <param name="sanitationMode">How to sanitize creates and updates</param>
+        /// <param name="options">How to update existing assets</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Result with failed creates/updates and list of assets</returns>
+        /// <exception cref="ArgumentException">All upserted assets must have external id</exception>
+        public static async Task<CogniteResult<TimeSeries, TimeSeriesCreate>> UpsertAsync(
+            this TimeSeriesResource tss,
+            IEnumerable<TimeSeriesCreate> upserts,
+            int chunkSize,
+            int throttleSize,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            UpsertParams? options,
+            CancellationToken token)
+        {
+            if (!upserts.All(a => a.ExternalId != null)) throw new ArgumentException("All inserts must have externalId");
+
+            var timeSeriesDict = upserts.ToDictionary(ts => ts.ExternalId);
+
+            var createResult = await tss.GetOrCreateTimeSeriesAsync(
+                timeSeriesDict.Keys,
+                keys => keys.Select(key => timeSeriesDict[key]),
+                chunkSize, throttleSize,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+
+            if (createResult.Errors?.Any() ?? false)
+            {
+                var badTimeSeries = new HashSet<TimeSeriesCreate>(createResult.Errors.Where(e => e.Skipped != null).SelectMany(e => e.Skipped));
+                timeSeriesDict = timeSeriesDict.Where(kvp => !badTimeSeries.Contains(kvp.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+
+            if (!timeSeriesDict.Any() || createResult.Results == null || !createResult.Results.Any()) return createResult;
+
+            var resultDict = createResult.Results.ToDictionary(ts => ts.ExternalId);
+            var updates = timeSeriesDict.Values
+                .Select(ts => (ts.ToUpdate(resultDict[ts.ExternalId], options)!, ts))
+                .Where(upd => upd.Item1 != null)
+                .ToDictionary(upd => upd.Item1.Id!.Value);
+
+            var updateResult = await tss.UpdateAsync(
+                updates.Values.Select(pair => pair.Item1),
+                chunkSize,
+                throttleSize,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+
+            var merged = updateResult.Replace(upd => updates[upd.Id!.Value].ts).Merge(createResult);
+
+            var resultTimeSeries = createResult.Results;
+
+            if (updateResult.Results != null && updateResult.Results.Any())
+            {
+                var updated = new HashSet<long>(updateResult.Results.Select(ts => ts.Id));
+                var finalResultDict = resultTimeSeries
+                    .Where(ts => !updated.Contains(ts.Id))
+                    .Union(updateResult.Results)
+                    .ToDictionary(ts => ts.ExternalId);
+
+                // To maintain the order as given we have to do this mapping if updates have been made.
+                resultTimeSeries = upserts
+                    .Where(ts => finalResultDict.ContainsKey(ts.ExternalId))
+                    .Select(ts => finalResultDict[ts.ExternalId])
+                    .ToList();
+                merged.Results = resultTimeSeries;
+            }
+
+            return merged;
+        }
     }
 }

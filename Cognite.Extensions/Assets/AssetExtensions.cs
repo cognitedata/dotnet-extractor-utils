@@ -456,5 +456,91 @@ namespace Cognite.Extensions
 
             return new CogniteResult<Asset, AssetUpdateItem>(errors, null);
         }
+
+        /// <summary>
+        /// Insert or update a list of assets, handling errors that come up during both insert and update.
+        /// Only assets that differ from assets in CDF are updated.
+        /// 
+        /// All given assets must have an external id, so it is not in practice possible to use this to change
+        /// the externalId of assets.
+        /// 
+        /// Assets are returned in the same order as given.
+        /// </summary>
+        /// <param name="assets">Assets resource</param>
+        /// <param name="upserts">Assets to upsert</param>
+        /// <param name="chunkSize">Number of asset creates, retrieves or updates per request</param>
+        /// <param name="throttleSize">Maximum number of parallel requests</param>
+        /// <param name="retryMode">How to handle retries on errors</param>
+        /// <param name="sanitationMode">How to sanitize creates and updates</param>
+        /// <param name="options">How to update existing assets</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Result with failed creates/updates and list of assets</returns>
+        /// <exception cref="ArgumentException">All upserted assets must have external id</exception>
+        public static async Task<CogniteResult<Asset, AssetCreate>> UpsertAsync(
+            this AssetsResource assets,
+            IEnumerable<AssetCreate> upserts,
+            int chunkSize,
+            int throttleSize,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            UpsertParams? options,
+            CancellationToken token)
+        {
+            if (!upserts.All(a => a.ExternalId != null)) throw new ArgumentException("All inserts must have externalId");
+
+            var assetDict = upserts.ToDictionary(a => a.ExternalId);
+
+            var createResult = await assets.GetOrCreateAsync(
+                assetDict.Keys,
+                keys => keys.Select(key => assetDict[key]),
+                chunkSize, throttleSize,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+
+            if (createResult.Errors?.Any() ?? false)
+            {
+                var badAssets = new HashSet<AssetCreate>(createResult.Errors.Where(e => e.Skipped != null).SelectMany(e => e.Skipped));
+                assetDict = assetDict.Where(kvp => !badAssets.Contains(kvp.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+
+            if (!assetDict.Any() || createResult.Results == null || !createResult.Results.Any()) return createResult;
+
+            var resultDict = createResult.Results.ToDictionary(a => a.ExternalId);
+            var updates = assetDict.Values
+                .Select(asset => (asset.ToUpdate(resultDict[asset.ExternalId], options)!, asset))
+                .Where(upd => upd.Item1 != null)
+                .ToDictionary(upd => upd.Item1.Id!.Value);
+
+            var updateResult = await assets.UpdateAsync(
+                updates.Values.Select(pair => pair.Item1),
+                chunkSize,
+                throttleSize,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+
+            var merged = updateResult.Replace(upd => updates[upd.Id!.Value].asset).Merge(createResult);
+
+            var resultAssets = createResult.Results;
+
+            if (updateResult.Results != null && updateResult.Results.Any())
+            {
+                var updated = new HashSet<long>(updateResult.Results.Select(a => a.Id));
+                var finalResultDict = resultAssets
+                    .Where(asset => !updated.Contains(asset.Id))
+                    .Union(updateResult.Results)
+                    .ToDictionary(a => a.ExternalId);
+
+                // To maintain the order as given we have to do this mapping if updates have been made.
+                resultAssets = upserts
+                    .Where(asset => finalResultDict.ContainsKey(asset.ExternalId))
+                    .Select(asset => finalResultDict[asset.ExternalId])
+                    .ToList();
+                merged.Results = resultAssets;
+            }
+
+            return merged;
+        }
     }
 }
