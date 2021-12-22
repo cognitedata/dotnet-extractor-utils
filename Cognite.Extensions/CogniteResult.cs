@@ -269,6 +269,19 @@ namespace Cognite.Extensions
                 .Select(group => (group.Key, group.Select(pair => pair.err)))
                 .ToList();
         }
+
+        /// <summary>
+        /// Replace errors in this cognite result using <paramref name="replace"/>.
+        /// Used when the return type of a method is different from type of internal method
+        /// (like upsert).
+        /// </summary>
+        /// <typeparam name="TRep">New error type</typeparam>
+        /// <param name="replace">Method to replace error type</param>
+        /// <returns>Result with all errors replaced</returns>
+        public CogniteResult<TRep> Replace<TRep>(Func<TError, TRep> replace)
+        {
+            return new CogniteResult<TRep>(Errors?.Select(e => e.ReplaceSkipped(replace)));
+        }
     }
 
     /// <summary>
@@ -339,6 +352,19 @@ namespace Cognite.Extensions
             var res = new CogniteResult<TResult, TError>(errors, items);
             res.MergeErrors();
             return res;
+        }
+
+        /// <summary>
+        /// Replace errors in this cognite result using <paramref name="replace"/>.
+        /// Used when the return type of a method is different from type of internal method
+        /// (like upsert).
+        /// </summary>
+        /// <typeparam name="TRep">New error type</typeparam>
+        /// <param name="replace">Method to replace error type</param>
+        /// <returns>Result with all errors replaced</returns>
+        public new CogniteResult<TResult, TRep> Replace<TRep>(Func<TError, TRep> replace)
+        {
+            return new CogniteResult<TResult, TRep>(Errors?.Select(e => e.ReplaceSkipped(replace)), Results);
         }
     }
 
@@ -420,6 +446,28 @@ namespace Cognite.Extensions
             initial.Values = values;
 
             return initial;
+        }
+
+        /// <summary>
+        /// Return a new cognite error with error type replaced according to
+        /// <paramref name="replace"/>. Everything else will be the same.
+        /// </summary>
+        /// <typeparam name="TRep">Type of new element</typeparam>
+        /// <param name="replace">Method to replace old error type with new</param>
+        /// <returns>New cognite error with same contents except for replaced members of Skipped</returns>
+        public CogniteError<TRep> ReplaceSkipped<TRep>(Func<TError, TRep> replace)
+        {
+            return new CogniteError<TRep>
+            {
+                Complete = Complete,
+                Exception = Exception,
+                Message = Message,
+                Resource = Resource,
+                Skipped = Skipped?.Select(s => replace(s)),
+                Status = Status,
+                Type = Type,
+                Values = Values
+            };
         }
     }
 

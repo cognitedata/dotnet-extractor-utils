@@ -10,6 +10,8 @@ using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Linq;
+using System.Net.Security;
 
 namespace Cognite.Extractor.Utils
 {
@@ -27,6 +29,52 @@ namespace Cognite.Extractor.Utils
             return new CogniteDestination(client, logger ?? new NullLogger<CogniteDestination>(), config);
         }
 
+#if NETSTANDARD2_1_OR_GREATER
+        /// <summary>
+        /// Return a http handler configured to ignore certificate errors based on passed CertificateConfig.
+        /// </summary>
+        /// <param name="config">Certificate config to use</param>
+        public static HttpClientHandler GetClientHandler(CertificateConfig? config)
+        {
+            var handler = new HttpClientHandler();
+            if (config == null) return handler;
+
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => {
+                if (sslPolicyErrors == SslPolicyErrors.None) return true;
+
+                if (config.AcceptAll) return true;
+
+                if (config.AllowList?.Any(acc => acc.ToLower() == cert.GetCertHashString().ToLower()) ?? false) return true;
+
+                return false;
+            };
+
+            return handler;
+        }
+#endif
+
+        private static bool _sslPolicyConfigured;
+        /// <summary>
+        /// Configure global handling of SSL certificates.
+        /// This must be called to ignore certificates if you require the .NET standard 2.0 version of the library,
+        /// since .NET framework lacks local ignoring of SSL errors.
+        /// </summary>
+        /// <param name="config"></param>
+        public static void ConfigureSslPolicy(CertificateConfig config)
+        {
+            if (_sslPolicyConfigured) return;
+            _sslPolicyConfigured = true;
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) =>
+            {
+                if (sslPolicyErrors == SslPolicyErrors.None) return true;
+
+                if (config.AcceptAll) return true;
+
+                if (config.AllowList?.Any(acc => acc.ToLower() == cert.GetCertHashString().ToLower()) ?? false) return true;
+
+                return false;
+            };
+        }
 
         /// <summary>
         /// Adds a configured Cognite client to the <paramref name="services"/> collection as a transient service
@@ -63,7 +111,16 @@ namespace Cognite.Extractor.Utils
                     {
                         var retryConfig = provider.GetService<CogniteConfig>()?.CdfRetries;
                         return CogniteExtensions.GetTimeoutPolicy(retryConfig?.Timeout);
+                    })
+#if NETSTANDARD2_1_OR_GREATER
+                    .ConfigurePrimaryHttpMessageHandler(provider =>
+                    {
+                        var certConfig = provider.GetService<CogniteConfig>()?.Certificates;
+                        return GetClientHandler(certConfig);
                     });
+#else
+                    ;
+#endif
             }
 
             // Configure token based authentication
@@ -75,7 +132,16 @@ namespace Cognite.Extractor.Utils
                     {
                         c.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
                     }
+                })
+#if NETSTANDARD2_1_OR_GREATER
+                .ConfigurePrimaryHttpMessageHandler(provider =>
+                {
+                    var certConfig = provider.GetService<CogniteConfig>()?.Certificates;
+                    return GetClientHandler(certConfig);
                 });
+#else
+                ;
+#endif
             services.AddTransient<IAuthenticator>(provider =>
             {
                 var conf = provider.GetService<CogniteConfig>();
