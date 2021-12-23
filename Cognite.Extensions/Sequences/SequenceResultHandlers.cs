@@ -233,9 +233,22 @@ namespace Cognite.Extensions
             var createMap = creates
                 .ToDictionary(seq => seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId));
 
-            var sequences = await resource
-                .GetByIdsIgnoreErrors(createMap.Keys, sequencesChunkSize, sequencesThrottleSize, token)
-                .ConfigureAwait(false);
+            IEnumerable<Sequence> sequences;
+            try
+            {
+                sequences = await resource
+                    .GetByIdsIgnoreErrors(createMap.Keys, sequencesChunkSize, sequencesThrottleSize, token)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                var err = ParseSimpleError(
+                    ex,
+                    createMap.Keys,
+                    createMap.Select(kvp => new SequenceRowError(kvp.Value.Rows, kvp.Key)));
+                return new[] { err };
+            }
+            
 
             var sequenceMap = sequences.ToDictionary(seq =>
             {

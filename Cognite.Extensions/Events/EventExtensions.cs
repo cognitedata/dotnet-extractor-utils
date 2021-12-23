@@ -188,7 +188,16 @@ namespace Cognite.Extensions
             IEnumerable<Event> found;
             using (CdfMetrics.Events.WithLabels("retrieve").NewTimer())
             {
-                found = await resource.RetrieveAsync(externalIds.Select(Identity.Create), true, token).ConfigureAwait(false);
+                var idts = externalIds.Select(Identity.Create);
+                try
+                {
+                    found = await resource.RetrieveAsync(idts, true, token).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    var err = ResultHandlers.ParseSimpleError<EventCreate>(ex, idts, null);
+                    return new CogniteResult<Event, EventCreate>(new[] { err }, null);
+                }
             }
             _logger.LogDebug("Retrieved {Existing} events from CDF", found.Count());
 

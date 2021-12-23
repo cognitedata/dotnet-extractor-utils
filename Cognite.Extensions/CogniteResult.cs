@@ -36,6 +36,39 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
+        /// Create a CogniteError from exception thrown when doing some simple operation to CDF.
+        /// Just creates a fatal error based on the exception.
+        /// </summary>
+        /// <typeparam name="TError">Errortype on result</typeparam>
+        /// <param name="ex">Exception thrown by method</param>
+        /// <param name="failed">Items that failed, optional</param>
+        /// <param name="skipped">Items that were skipped, optional</param>
+        /// <returns></returns>
+        public static CogniteError<TError> ParseSimpleError<TError>(
+            Exception ex,
+            IEnumerable<Identity>? failed,
+            IEnumerable<TError>? skipped)
+        {
+            if (ex == null) throw new ArgumentNullException(nameof(ex));
+
+            var err = new CogniteError<TError>
+            {
+                Message = ex.Message,
+                Exception = ex,
+                Type = ErrorType.FatalFailure,
+                Values = failed,
+                Skipped = skipped
+            };
+
+            if (ex is ResponseException rex)
+            {
+                err.Status = rex.Code;
+            }
+
+            return err;
+        }
+
+        /// <summary>
         /// Parse exception into CogniteError which describes the error in detail.
         /// </summary>
         /// <param name="ex">Exception to parse</param>

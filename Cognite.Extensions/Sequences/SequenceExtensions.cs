@@ -235,7 +235,16 @@ namespace Cognite.Extensions
             IEnumerable<Sequence> found;
             using (CdfMetrics.Sequences.WithLabels("retrieve").NewTimer())
             {
-                found = await client.RetrieveAsync(externalIds.Select(id => new Identity(id)), true, token).ConfigureAwait(false);
+                var idts = externalIds.Select(id => new Identity(id));
+                try
+                {
+                    found = await client.RetrieveAsync(idts, true, token).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    var err = ResultHandlers.ParseSimpleError<SequenceCreate>(ex, idts, null);
+                    return new CogniteResult<Sequence, SequenceCreate>(new[] { err }, null);
+                }
             }
             _logger.LogDebug("Retrieved {Existing} sequences from CDF", found.Count());
 
