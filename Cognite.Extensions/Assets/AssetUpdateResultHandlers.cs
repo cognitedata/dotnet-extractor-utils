@@ -219,8 +219,19 @@ namespace Cognite.Extensions
                 }
             }
 
-            var assets = await resource.GetAssetsByIdsIgnoreErrors(assetsToFetch, assetChunkSize, assetThrottleSize, token)
-                .ConfigureAwait(false);
+            IEnumerable<Asset> assets;
+            try
+            {
+                assets = await resource
+                    .GetAssetsByIdsIgnoreErrors(assetsToFetch, assetChunkSize, assetThrottleSize, token)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                var err = ParseSimpleError(ex, assetsToFetch, items);
+                return new[] { err };
+            }
+            
             var byId = assets.ToDictionary(asset => asset.Id);
             var byExtId = assets.Where(asset => asset.ExternalId != null).ToDictionary(asset => asset.ExternalId);
 
