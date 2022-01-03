@@ -161,7 +161,6 @@ namespace Cognite.Extensions
 
             return new TimeSeriesUpdateItem(old.Id) { Update = upd };
         }
-
     }
 
     /// <summary>

@@ -49,6 +49,17 @@ namespace Cognite.Extensions
             }
         }
 
+        private static bool IsAffected(SequenceCreate seq, HashSet<Identity> badValues, CogniteError<SequenceCreate> error)
+        {
+            return error.Resource switch
+            {
+                ResourceType.DataSetId => badValues.ContainsIdentity(seq.DataSetId),
+                ResourceType.ExternalId => badValues.ContainsIdentity(seq.ExternalId),
+                ResourceType.AssetId => badValues.ContainsIdentity(seq.AssetId),
+                _ => false
+            };
+        }
+
         /// <summary>
         /// Clean list of SequenceCreate objects based on CogniteError
         /// </summary>
@@ -56,57 +67,12 @@ namespace Cognite.Extensions
         /// <param name="sequences">Sequences to clean</param>
         /// <returns>Sequences that are not affected by the error</returns>
         public static IEnumerable<SequenceCreate> CleanFromError(
-            CogniteError<SequenceCreate> error,
-            IEnumerable<SequenceCreate> sequences)
+        CogniteError<SequenceCreate> error,
+        IEnumerable<SequenceCreate> sequences)
         {
-            if (sequences == null) throw new ArgumentNullException(nameof(sequences));
-            if (error == null) return sequences;
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = sequences.Where(seq => seq.ExternalId != null).Select(seq => Identity.Create(seq.ExternalId));
-                return Enumerable.Empty<SequenceCreate>();
-            }
-
-            var items = new HashSet<Identity>(error.Values);
-
-            var ret = new List<SequenceCreate>();
-            var skipped = new List<SequenceCreate>();
-
-            foreach (var seq in sequences)
-            {
-                bool added = false;
-                switch (error.Resource)
-                {
-                    case ResourceType.DataSetId:
-                        if (!seq.DataSetId.HasValue || !items.Contains(Identity.Create(seq.DataSetId.Value))) added = true;
-                        break;
-                    case ResourceType.ExternalId:
-                        if (seq.ExternalId == null || !items.Contains(Identity.Create(seq.ExternalId))) added = true;
-                        break;
-                    case ResourceType.AssetId:
-                        if (!seq.AssetId.HasValue || !items.Contains(Identity.Create(seq.AssetId.Value))) added = true;
-                        break;
-                }
-                if (added)
-                {
-                    ret.Add(seq);
-                }
-                else
-                {
-                    CdfMetrics.SequencesSkipped.Inc();
-                    skipped.Add(seq);
-                }
-            }
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = sequences;
-                return Enumerable.Empty<SequenceCreate>();
-            }
-            return ret;
+            return CleanFromErrorCommon(error, sequences, IsAffected,
+                seq => seq.ExternalId == null ? null : Identity.Create(seq.ExternalId),
+                CdfMetrics.SequencesSkipped);
         }
 
         private static void ParseSequenceRowException(ResponseException ex, CogniteError err)

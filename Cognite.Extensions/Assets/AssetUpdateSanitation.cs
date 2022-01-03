@@ -1,4 +1,5 @@
-﻿using CogniteSdk;
+﻿using Cognite.Extractor.Common;
+using CogniteSdk;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +94,12 @@ namespace Cognite.Extensions
             return null;
         }
 
+
+
+        private static readonly DistinctResource<AssetUpdateItem>[] assetUpdateDistinct = new[] {
+            new DistinctResource<AssetUpdateItem>("Duplicated ids", ResourceType.Id, a => a)
+        };
+
         /// <summary>
         /// Clean list of AssetUpdateItem objects, sanitizing each and removing any duplicates.
         /// The first encountered duplicate is kept.
@@ -104,66 +111,7 @@ namespace Cognite.Extensions
             IEnumerable<AssetUpdateItem> items,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (items, Enumerable.Empty<CogniteError<AssetUpdateItem>>());
-            if (items == null) throw new ArgumentNullException(nameof(items));
-
-            var result = new List<AssetUpdateItem>();
-            var errors = new List<CogniteError<AssetUpdateItem>>();
-
-            var ids = new HashSet<Identity>();
-            var duplicated = new HashSet<Identity>();
-            var bad = new List<(ResourceType, AssetUpdateItem)>();
-
-            foreach (var item in items)
-            {
-                bool toAdd = true;
-                if (mode == SanitationMode.Clean)
-                {
-                    item.Sanitize();
-                }
-                var failedField = item.Verify();
-                if (failedField.HasValue)
-                {
-                    bad.Add((failedField.Value, item));
-                    toAdd = false;
-                }
-
-                if (item.ExternalId == null && item.Id == null) continue;
-
-                var idt = item.ExternalId != null ? Identity.Create(item.ExternalId) : Identity.Create(item.Id!.Value);
-                if (!ids.Add(idt))
-                {
-                    duplicated.Add(idt);
-                    toAdd = false;
-                }
-
-                if (toAdd)
-                {
-                    result.Add(item);
-                }
-            }
-            if (duplicated.Any())
-            {
-                errors.Add(new CogniteError<AssetUpdateItem>
-                {
-                    Status = 409,
-                    Message = "Duplicate ids",
-                    Resource = ResourceType.Id,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicated
-                });
-            }
-            if (bad.Any())
-            {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<AssetUpdateItem>
-                {
-                    Skipped = group.Select(pair => pair.Item2).ToList(),
-                    Resource = group.Key,
-                    Type = ErrorType.SanitationFailed,
-                    Status = 400
-                }));
-            }
-            return (result, errors);
+            return CleanRequest(assetUpdateDistinct, items, Verify, Sanitize, mode);
         }
     }
 }

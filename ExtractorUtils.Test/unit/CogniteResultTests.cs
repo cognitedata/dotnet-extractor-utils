@@ -48,7 +48,7 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public async Task CleanAssetRequest()
+        public void CleanAssetRequest()
         {
             var assets = new[]
             {
@@ -108,8 +108,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 var error = ResultHandlers.ParseException<AssetCreate>(exceptions[i], RequestType.CreateAssets);
                 logger.LogCogniteError(error, RequestType.CreateAssets, false, LogLevel.Debug, LogLevel.Warning);
-                assets = (await ResultHandlers.CleanFromError(null, error, assets, 1000, 1, CancellationToken.None))
-                    .ToArray();
+                assets = ResultHandlers.CleanFromError(error, assets).ToArray();
                 Assert.Equal(9 - i * 2 - 2, assets.Count());
                 errors.Add(error);
             }

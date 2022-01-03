@@ -25,7 +25,7 @@ namespace ExtractorUtils.Test.Integration
                 }
                 catch (ResponseException ex)
                 {
-                    if (!ex.Missing.Any()) break;
+                    if (!ex.Missing?.Any() ?? true) break;
                     int cnt = toDelete.Length;
                     toDelete = toDelete
                         .Where(id => !ex.Missing.Any(dict => dict.TryGetValue("externalId", out var val)
@@ -194,12 +194,9 @@ namespace ExtractorUtils.Test.Integration
                 }
 
                 Assert.Equal(3, errs.Count);
-                Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
-                Assert.Equal(ResourceType.SequenceColumns, errs[2].Resource);
-                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
-                Assert.Equal(ResourceType.ColumnExternalId, errs[0].Resource);
-                Assert.Equal(ErrorType.ItemDuplicated, errs[1].Type);
-                Assert.Equal(ResourceType.ExternalId, errs[1].Resource);
+                Assert.Contains(errs, err => err.Type == ErrorType.SanitationFailed && err.Resource == ResourceType.SequenceColumns);
+                Assert.Contains(errs, err => err.Type == ErrorType.ItemDuplicated && err.Resource == ResourceType.ColumnExternalId);
+                Assert.Contains(errs, err => err.Type == ErrorType.ItemDuplicated && err.Resource == ResourceType.ExternalId);
 
                 Assert.Equal(2, result.Results.Count());
                 Assert.Equal(tester.Prefix + new string('æ', 255 - tester.Prefix.Length), result.Results.First().ExternalId);
@@ -582,64 +579,53 @@ namespace ExtractorUtils.Test.Integration
                 var result = await tester.Destination.InsertSequenceRowsAsync(creates1, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
                 var errs = result.Errors.ToArray();
                 Assert.Equal(2, errs.Length);
-                Assert.Equal(ResourceType.ColumnExternalId, errs[0].Resource);
-                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
-                Assert.Single(errs[0].Skipped);
-                Assert.Equal(ResourceType.Id, errs[1].Resource);
-                Assert.Equal(ErrorType.ItemDuplicated, errs[1].Type);
-                Assert.Equal(2, errs[1].Values.Count());
+                var err = errs.First(e => e.Resource == ResourceType.ColumnExternalId && e.Type == ErrorType.ItemDuplicated);
+                Assert.Single(err.Skipped);
+                err = errs.First(e => e.Resource == ResourceType.Id && e.Type == ErrorType.ItemDuplicated);
+                Assert.Equal(2, err.Values.Count());
 
                 var creates2 = GetCreates2();
                 result = await tester.Destination.InsertSequenceRowsAsync(creates2, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
                 errs = result.Errors.ToArray();
                 Assert.Equal(5, errs.Length);
-                Assert.Equal(ResourceType.SequenceRowNumber, errs[0].Resource);
-                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
-                Assert.Single(errs[0].Skipped);
+                err = errs.First(e => e.Resource == ResourceType.SequenceRowNumber && e.Type == ErrorType.ItemDuplicated);
+                Assert.Single(err.Skipped);
 
-                Assert.Equal(ResourceType.SequenceColumns, errs[1].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[1].Type);
-                Assert.Single(errs[1].Skipped);
+                err = errs.First(e => e.Resource == ResourceType.SequenceColumns && e.Type == ErrorType.SanitationFailed);
+                Assert.Single(err.Skipped);
 
-                Assert.Equal(ResourceType.SequenceRows, errs[2].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
-                Assert.Single(errs[2].Skipped);
+                err = errs.First(e => e.Resource == ResourceType.SequenceRows && e.Type == ErrorType.SanitationFailed);
+                Assert.Single(err.Skipped);
 
-                Assert.Equal(ResourceType.SequenceRowValues, errs[3].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[3].Type);
-                Assert.Single(errs[3].Skipped);
-                Assert.Equal(5, errs[3].Skipped.First().SkippedRows.Count());
+                err = errs.First(e => e.Resource == ResourceType.SequenceRowValues && e.Type == ErrorType.SanitationFailed);
+                Assert.Single(err.Skipped);
+                Assert.Equal(5, err.Skipped.First().SkippedRows.Count());
 
-                Assert.Equal(ResourceType.SequenceRowNumber, errs[4].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[4].Type);
-                Assert.Single(errs[4].Skipped);
+                err = errs.First(e => e.Resource == ResourceType.SequenceRowNumber && e.Type == ErrorType.SanitationFailed);
+                Assert.Single(err.Skipped);
 
                 // The inserts are modified in-place
                 creates2 = GetCreates2();
                 result = await tester.Destination.InsertSequenceRowsAsync(creates2, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
                 errs = result.Errors.ToArray();
                 Assert.Equal(5, errs.Length);
-                Assert.Equal(ResourceType.SequenceRowNumber, errs[0].Resource);
-                Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
-                Assert.Single(errs[0].Skipped);
 
-                Assert.Equal(ResourceType.SequenceColumns, errs[1].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[1].Type);
-                Assert.Single(errs[1].Skipped);
+                err = errs.First(e => e.Resource == ResourceType.SequenceRowNumber && e.Type == ErrorType.ItemDuplicated);
+                Assert.Single(err.Skipped);
 
-                Assert.Equal(ResourceType.SequenceRows, errs[2].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[2].Type);
-                Assert.Single(errs[2].Skipped);
+                err = errs.First(e => e.Resource == ResourceType.SequenceColumns && e.Type == ErrorType.SanitationFailed);
+                Assert.Single(err.Skipped);
 
-                Assert.Equal(ResourceType.SequenceRowNumber, errs[3].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[3].Type);
-                Assert.Single(errs[3].Skipped);
+                err = errs.First(e => e.Resource == ResourceType.SequenceRows && e.Type == ErrorType.SanitationFailed);
+                Assert.Single(err.Skipped);
+
+                err = errs.First(e => e.Resource == ResourceType.SequenceRowNumber && e.Type == ErrorType.SanitationFailed);
+                Assert.Single(err.Skipped);
 
                 // Three of the bad rows have now been cleaned and should not be removed
-                Assert.Equal(ResourceType.SequenceRowValues, errs[4].Resource);
-                Assert.Equal(ErrorType.SanitationFailed, errs[4].Type);
-                Assert.Single(errs[4].Skipped);
-                Assert.Equal(2, errs[4].Skipped.First().SkippedRows.Count());
+                err = errs.First(e => e.Resource == ResourceType.SequenceRowValues && e.Type == ErrorType.SanitationFailed);
+                Assert.Single(err.Skipped);
+                Assert.Equal(2, err.Skipped.First().SkippedRows.Count());
             }
             finally
             {

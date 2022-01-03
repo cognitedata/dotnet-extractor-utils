@@ -95,6 +95,14 @@ namespace Cognite.Extensions
             return null;
         }
 
+
+        private static readonly DistinctResource<AssetCreate>[] assetDistinct = new[]
+        {
+            new DistinctResource<AssetCreate>("Duplicate external ids", ResourceType.ExternalId,
+                a => a != null ? Identity.Create(a.ExternalId) : null)
+        };
+
+
         /// <summary>
         /// Clean list of AssetCreate objects, sanitizing each and removing any duplicates.
         /// The first encountered duplicate is kept.
@@ -106,75 +114,7 @@ namespace Cognite.Extensions
             IEnumerable<AssetCreate> assets,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (assets, Enumerable.Empty<CogniteError<AssetCreate>>());
-            if (assets == null)
-            {
-                throw new ArgumentNullException(nameof(assets));
-            }
-            var result = new List<AssetCreate>();
-            var errors = new List<CogniteError<AssetCreate>>();
-
-            var ids = new HashSet<string>();
-            var duplicated = new HashSet<string>();
-            var bad = new List<(ResourceType, AssetCreate)>();
-
-            foreach (var asset in assets)
-            {
-                bool toAdd = true;
-                if (mode == SanitationMode.Remove)
-                {
-                    var failedField = asset.Verify();
-                    if (failedField.HasValue)
-                    {
-                        bad.Add((failedField.Value, asset));
-                        toAdd = false;
-                    }
-                }
-                else if (mode == SanitationMode.Clean)
-                {
-                    asset.Sanitize();
-                    if (asset.Name == null)
-                    {
-                        bad.Add((ResourceType.Name, asset));
-                        toAdd = false;
-                    }
-                }
-                if (asset.ExternalId != null)
-                {
-                    if (!ids.Add(asset.ExternalId))
-                    {
-                        duplicated.Add(asset.ExternalId);
-                        toAdd = false;
-                    }
-                }
-
-                if (toAdd)
-                {
-                    result.Add(asset);
-                }
-            }
-            if (duplicated.Any())
-            {
-                errors.Add(new CogniteError<AssetCreate>
-                {
-                    Status = 409,
-                    Message = "Duplicate external ids",
-                    Resource = ResourceType.ExternalId,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicated.Select(item => Identity.Create(item)).ToArray()
-                });
-            }
-            if (bad.Any())
-            {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<AssetCreate>
-                {
-                    Skipped = group.Select(pair => pair.Item2).ToList(),
-                    Resource = group.Key,
-                    Type = ErrorType.SanitationFailed,
-                    Status = 400
-                }));
-            }
-            return (result, errors);
+            return CleanRequest(assetDistinct, assets, Verify, Sanitize, mode);
         }
     }
 }

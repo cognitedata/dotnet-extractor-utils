@@ -62,6 +62,22 @@ namespace Cognite.Extensions
             }
         }
 
+        private static bool IsAffected(
+            TimeSeriesUpdateItem item,
+            HashSet<Identity> badValues,
+            CogniteError<TimeSeriesUpdateItem> error)
+        {
+            var update = item.Update;
+            return error.Resource switch
+            {
+                ResourceType.DataSetId => badValues.ContainsIdentity(update.DataSetId?.Set),
+                ResourceType.ExternalId => badValues.ContainsIdentity(update.ExternalId?.Set),
+                ResourceType.AssetId => badValues.ContainsIdentity(update.AssetId?.Set),
+                ResourceType.Id => badValues.Contains(item),
+                _ => false
+            };
+        }
+
         /// <summary>
         /// Clean list of TimeSeriesUpdateItem objects based on CogniteError
         /// </summary>
@@ -72,67 +88,7 @@ namespace Cognite.Extensions
             CogniteError<TimeSeriesUpdateItem> error,
             IEnumerable<TimeSeriesUpdateItem> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-            if (error == null) return items;
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = items.Where(ts => ts.ExternalId != null).Select(ts => Identity.Create(ts.ExternalId));
-                return Array.Empty<TimeSeriesUpdateItem>();
-            }
-
-            var badValues = new HashSet<Identity>(error.Values);
-
-            var ret = new List<TimeSeriesUpdateItem>();
-            var skipped = new List<TimeSeriesUpdateItem>();
-
-            foreach (var item in items)
-            {
-                bool added = false;
-                var update = item.Update;
-
-                switch (error.Resource)
-                {
-                    case ResourceType.DataSetId:
-                        if (update.DataSetId?.Set == null
-                            || !badValues.Contains(Identity.Create(update.DataSetId.Set.Value))) added = true;
-                        break;
-                    case ResourceType.ExternalId:
-                        if (update.ExternalId?.Set == null
-                            || !badValues.Contains(Identity.Create(update.ExternalId.Set))) added = true;
-                        break;
-                    case ResourceType.AssetId:
-                        if (update.AssetId?.Set == null
-                            || !badValues.Contains(Identity.Create(update.AssetId.Set.Value))) added = true;
-                        break;
-                    case ResourceType.Id:
-                        var idt = item.Id.HasValue ? Identity.Create(item.Id.Value) : Identity.Create(item.ExternalId);
-
-                        if (!badValues.Contains(idt)) added = true;
-                        break;
-                }
-                if (added)
-                {
-                    ret.Add(item);
-                }
-                else
-                {
-                    CdfMetrics.TimeSeriesSkipped.Inc();
-                    skipped.Add(item);
-                }
-            }
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = items;
-                return Enumerable.Empty<TimeSeriesUpdateItem>();
-            }
-            return ret;
+            return CleanFromErrorCommon(error, items, IsAffected, item => item, CdfMetrics.TimeSeriesUpdatesSkipped);
         }
     }
 }

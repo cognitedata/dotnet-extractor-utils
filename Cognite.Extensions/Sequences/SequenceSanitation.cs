@@ -69,15 +69,18 @@ namespace Cognite.Extensions
             seq.Metadata = seq.Metadata.SanitizeMetadata(SequenceMetadataMaxPerKey, SequenceMetadataMaxBytes,
                 SequenceMetadataMaxBytes, SequenceMetadataMaxBytes, out int totalBytes);
 
-            foreach (var col in seq.Columns)
+            if (seq.Columns != null)
             {
-                col.ExternalId = col.ExternalId.Truncate(ExternalIdMax);
-                col.Name = col.Name.Truncate(SequenceColumnNameMax);
-                col.Description = col.Description.Truncate(SequenceColumnDescriptionMax);
-                col.Metadata = col.Metadata.SanitizeMetadata(SequenceColumnMetadataMaxPerKey, SequenceColumnMetadataMaxBytes,
-                    SequenceColumnMetadataMaxBytes,
-                    Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes);
-                totalBytes += colBytes;
+                foreach (var col in seq.Columns)
+                {
+                    col.ExternalId = col.ExternalId.Truncate(ExternalIdMax);
+                    col.Name = col.Name.Truncate(SequenceColumnNameMax);
+                    col.Description = col.Description.Truncate(SequenceColumnDescriptionMax);
+                    col.Metadata = col.Metadata.SanitizeMetadata(SequenceColumnMetadataMaxPerKey, SequenceColumnMetadataMaxBytes,
+                        SequenceColumnMetadataMaxBytes,
+                        Math.Min(SequenceColumnMetadataMaxBytes, SequenceMetadataMaxBytesTotal - totalBytes), out int colBytes);
+                    totalBytes += colBytes;
+                }
             }
         }
 
@@ -213,6 +216,13 @@ namespace Cognite.Extensions
             return null;
         }
 
+
+        private static readonly DistinctResource<SequenceCreate>[] sequenceDistinct = new[]
+        {
+            new DistinctResource<SequenceCreate>("Duplicate external ids", ResourceType.ExternalId,
+                s => s.ExternalId != null ? Identity.Create(s.ExternalId) : null)
+        };
+
         /// <summary>
         /// Clean list of SequenceCreate objects, sanitizing each and removing any duplicates.
         /// The first encountered duplicate is kept.
@@ -225,78 +235,29 @@ namespace Cognite.Extensions
             IEnumerable<SequenceCreate> sequences,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (sequences, Enumerable.Empty<CogniteError<SequenceCreate>>());
-            if (sequences == null) throw new ArgumentNullException(nameof(sequences));
+            var (result, errors) = CleanRequest(sequenceDistinct, sequences, Verify, Sanitize, mode);
 
-            var result = new List<SequenceCreate>();
-            var errors = new List<CogniteError<SequenceCreate>>();
+            if (mode == SanitationMode.None) return (result, errors);
 
-            var ids = new HashSet<string>();
-            var duplicated = new HashSet<string>();
-            var bad = new List<(ResourceType, SequenceCreate)>();
             var withDupColumns = new List<SequenceCreate>();
 
-            foreach (var seq in sequences)
+            foreach (var seq in result)
             {
                 var columns = new HashSet<string>();
-                bool toAdd = true;
-                if (mode == SanitationMode.Remove)
-                {
-                    var failedField = seq.Verify();
-                    if (failedField.HasValue)
-                    {
-                        bad.Add((failedField.Value, seq));
-                        toAdd = false;
-                    }
-                }
-                else if (mode == SanitationMode.Clean)
-                {
-                    if (seq.Columns == null || !seq.Columns.Any())
-                    {
-                        bad.Add((ResourceType.SequenceColumns, seq));
-                        toAdd = false;
-                    }
-                    else
-                    {
-                        seq.Sanitize();
-                    }
-                }
 
-                if (seq.ExternalId != null)
+                foreach (var col in seq.Columns)
                 {
-                    if (!ids.Add(seq.ExternalId))
+                    if (!columns.Add(col.ExternalId))
                     {
-                        duplicated.Add(seq.ExternalId);
-                        toAdd = false;
+                        withDupColumns.Add(seq);
+                        break;
                     }
-                }
-
-                if (seq.Columns != null)
-                {
-                    foreach (var col in seq.Columns)
-                    {
-                        if (col.ExternalId == null)
-                        {
-                            bad.Add((ResourceType.ColumnExternalId, seq));
-                            break;
-                        }
-                        if (!columns.Add(col.ExternalId))
-                        {
-                            withDupColumns.Add(seq);
-                            toAdd = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (toAdd)
-                {
-                    result.Add(seq);
                 }
             }
 
             if (withDupColumns.Any())
             {
+                result = result.Except(withDupColumns).ToList();
                 errors.Add(new CogniteError<SequenceCreate>
                 {
                     Status = 409,
@@ -307,29 +268,14 @@ namespace Cognite.Extensions
                 });
             }
 
-            if (duplicated.Any())
-            {
-                errors.Add(new CogniteError<SequenceCreate>
-                {
-                    Status = 409,
-                    Message = "Duplicate external ids",
-                    Resource = ResourceType.ExternalId,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicated.Select(item => Identity.Create(item)).ToArray()
-                });
-            }
-            if (bad.Any())
-            {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceCreate>
-                {
-                    Skipped = group.Select(pair => pair.Item2).ToList(),
-                    Resource = group.Key,
-                    Type = ErrorType.SanitationFailed,
-                    Status = 400
-                }));
-            }
             return (result, errors);
         }
+
+        private static readonly DistinctResource<SequenceDataCreate>[] sequenceDataDistinct = new[]
+        {
+            new DistinctResource<SequenceDataCreate>("Duplicate internal or external ids",
+                ResourceType.Id, s => s.Id.HasValue ? Identity.Create(s.Id.Value) : Identity.Create(s.ExternalId))
+        };
 
         /// <summary>
         /// Clean list of SequenceDataCreate objects, sanitizing each and removing any duplicates.
@@ -344,50 +290,35 @@ namespace Cognite.Extensions
             IEnumerable<SequenceDataCreate> sequences,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (sequences, Enumerable.Empty<CogniteError<SequenceRowError>>());
-            if (sequences == null) throw new ArgumentNullException(nameof(sequences));
+            var (result, errors) = CleanRequest(sequenceDataDistinct, sequences, Verify, Sanitize, mode);
 
-            var result = new List<SequenceDataCreate>();
-            var errors = new List<CogniteError<SequenceRowError>>();
+            var convErrors = errors
+                .Select(e => e.ReplaceSkipped(s =>
+                    new SequenceRowError(s.Rows, s.Id.HasValue ? Identity.Create(s.Id.Value) : Identity.Create(s.ExternalId))))
+                .ToList();
 
-            var ids = new HashSet<Identity>();
-            var duplicated = new HashSet<Identity>();
+            if (mode == SanitationMode.None) return (result, convErrors);
+
             var bad = new List<(ResourceType Type, SequenceDataCreate Seq)>();
 
             var badRowSequences = new List<(ResourceType, SequenceRowError)>();
             var dupRowErrors = new List<SequenceRowError>();
             var dupColumnErrors = new List<SequenceRowError>();
 
+            var nextResult = new List<SequenceDataCreate>();
 
-            foreach (var seq in sequences)
+            foreach (var seq in result)
             {
                 var columns = new HashSet<string>();
                 var duplicatedColumns = new HashSet<string>();
                 bool toAdd = true;
 
-                if (mode == SanitationMode.Clean)
-                {
-                    seq.Sanitize();
-                }
-                var failedField = seq.Verify();
-                if (failedField.HasValue)
-                {
-                    bad.Add((failedField.Value, seq));
-                    toAdd = false;
-                }
-
-                var idt = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId);
-
-                if (!ids.Add(idt))
-                {
-                    duplicated.Add(idt);
-                    toAdd = false;
-                }
-
                 var badRows = new List<(ResourceType Type, SequenceRow Row)>();
 
                 var rowNums = new HashSet<long>();
                 var duplicateRows = new List<SequenceRow>();
+
+                var idt = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId);
 
                 if (seq.Columns != null && seq.Rows != null)
                 {
@@ -395,7 +326,7 @@ namespace Cognite.Extensions
                     foreach (var row in seq.Rows)
                     {
                         bool addRow = true;
-                        failedField = row.Verify(seq);
+                        var failedField = row.Verify(seq);
                         if (failedField.HasValue)
                         {
                             badRows.Add((failedField.Value, row));
@@ -462,14 +393,13 @@ namespace Cognite.Extensions
 
                 if (toAdd)
                 {
-                    result.Add(seq);
+                    nextResult.Add(seq);
                 }
-
             }
 
             if (dupColumnErrors.Any())
             {
-                errors.Add(new CogniteError<SequenceRowError>
+                convErrors.Add(new CogniteError<SequenceRowError>
                 {
                     Status = 409,
                     Message = "Duplicate columns in request",
@@ -481,7 +411,7 @@ namespace Cognite.Extensions
 
             if (dupRowErrors.Any())
             {
-                errors.Add(new CogniteError<SequenceRowError>
+                convErrors.Add(new CogniteError<SequenceRowError>
                 {
                     Status = 409,
                     Message = "Duplicate row numbers",
@@ -491,20 +421,9 @@ namespace Cognite.Extensions
                 });
             }
 
-            if (duplicated.Any())
-            {
-                errors.Add(new CogniteError<SequenceRowError>
-                {
-                    Status = 409,
-                    Message = "Duplicate internal or external ids",
-                    Resource = ResourceType.Id,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicated.ToArray()
-                });
-            }
             if (bad.Any())
             {
-                errors.AddRange(bad.GroupBy(pair => pair.Type).Select(group => new CogniteError<SequenceRowError>
+                convErrors.AddRange(bad.GroupBy(pair => pair.Type).Select(group => new CogniteError<SequenceRowError>
                 {
                     Skipped = group.Select(pair => new SequenceRowError(
                         pair.Seq.Rows,
@@ -517,7 +436,7 @@ namespace Cognite.Extensions
             }
             if (badRowSequences.Any())
             {
-                errors.AddRange(badRowSequences.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceRowError>
+                convErrors.AddRange(badRowSequences.GroupBy(pair => pair.Item1).Select(group => new CogniteError<SequenceRowError>
                 {
                     Skipped = group.Select(pair => pair.Item2),
                     Resource = group.Key,
@@ -525,7 +444,7 @@ namespace Cognite.Extensions
                     Status = 400,
                 }));
             }
-            return (result, errors);
+            return (nextResult, convErrors);
         }
     }
 }

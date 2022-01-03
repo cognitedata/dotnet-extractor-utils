@@ -55,6 +55,19 @@ namespace Cognite.Extensions
                 }
             }
         }
+
+        private static bool IsAffected(TimeSeriesCreate ts, HashSet<Identity> badValues, CogniteError<TimeSeriesCreate> error)
+        {
+            return error.Resource switch
+            {
+                ResourceType.DataSetId => badValues.ContainsIdentity(ts.DataSetId),
+                ResourceType.ExternalId => badValues.ContainsIdentity(ts.ExternalId),
+                ResourceType.AssetId => badValues.ContainsIdentity(ts.AssetId),
+                ResourceType.LegacyName => badValues.ContainsIdentity(ts.LegacyName),
+                _ => false,
+            };
+        }
+
         /// <summary>
         /// Clean list of TimeSeriesCreate objects based on CogniteError
         /// </summary>
@@ -65,60 +78,9 @@ namespace Cognite.Extensions
             CogniteError<TimeSeriesCreate> error,
             IEnumerable<TimeSeriesCreate> timeseries)
         {
-            if (timeseries == null)
-            {
-                throw new ArgumentNullException(nameof(timeseries));
-            }
-            if (error == null) return timeseries;
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = timeseries.Where(ts => ts.ExternalId != null).Select(ts => Identity.Create(ts.ExternalId));
-                return Array.Empty<TimeSeriesCreate>();
-            }
-
-            var items = new HashSet<Identity>(error.Values);
-
-            var ret = new List<TimeSeriesCreate>();
-            var skipped = new List<TimeSeriesCreate>();
-
-            foreach (var ts in timeseries)
-            {
-                bool added = false;
-                switch (error.Resource)
-                {
-                    case ResourceType.DataSetId:
-                        if (!ts.DataSetId.HasValue || !items.Contains(Identity.Create(ts.DataSetId.Value))) added = true;
-                        break;
-                    case ResourceType.ExternalId:
-                        if (ts.ExternalId == null || !items.Contains(Identity.Create(ts.ExternalId))) added = true;
-                        break;
-                    case ResourceType.AssetId:
-                        if (!ts.AssetId.HasValue || !items.Contains(Identity.Create(ts.AssetId.Value))) added = true;
-                        break;
-                    case ResourceType.LegacyName:
-                        if (ts.LegacyName == null || !items.Contains(Identity.Create(ts.LegacyName))) added = true;
-                        break;
-                }
-                if (added)
-                {
-                    ret.Add(ts);
-                }
-                else
-                {
-                    CdfMetrics.TimeSeriesSkipped.Inc();
-                    skipped.Add(ts);
-                }
-            }
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = timeseries;
-                return Array.Empty<TimeSeriesCreate>();
-            }
-            return ret;
+            return CleanFromErrorCommon(error, timeseries, IsAffected,
+                ts => ts.ExternalId == null ? null : Identity.Create(ts.ExternalId),
+                CdfMetrics.TimeSeriesSkipped);
         }
     }
 }

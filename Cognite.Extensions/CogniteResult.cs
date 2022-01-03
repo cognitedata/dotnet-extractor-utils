@@ -129,6 +129,76 @@ namespace Cognite.Extensions
                 return new CogniteError<TError> { Message = ex.Message, Exception = ex };
             }
         }
+
+        private static IEnumerable<T> CleanFromErrorCommon<T>(
+            CogniteError<T> error,
+            IEnumerable<T> items,
+            Func<T, HashSet<Identity>, CogniteError<T>, bool> isAffected,
+            Func<T, Identity?> getIdentity,
+            Prometheus.Counter skippedCounter)
+        {
+            if (items == null) throw new ArgumentNullException(nameof(items));
+            if (error == null) return items;
+
+            if (!error.Values?.Any() ?? true)
+            {
+                error.Values = items.Select(item => getIdentity(item)!).Where(idt => idt != null).ToList();
+                return Enumerable.Empty<T>();
+            }
+
+            var badValues = new HashSet<Identity>(error.Values);
+
+            var ret = new List<T>();
+            var skipped = new List<T>();
+
+            foreach (var item in items)
+            {
+                if (isAffected(item, badValues, error))
+                {
+                    skipped.Add(item);
+                    skippedCounter.Inc();
+                }
+                else
+                {
+                    ret.Add(item);
+                }
+            }
+
+            if (skipped.Any())
+            {
+                error.Skipped = skipped;
+            }
+            else
+            {
+                error.Skipped = items;
+                return Enumerable.Empty<T>();
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Utility method for checking if set of identities contains external id.
+        /// </summary>
+        /// <param name="set">Set of identities</param>
+        /// <param name="idt">ExternalId to test</param>
+        /// <returns>True if externalId is non-null and set contains it, false otherwise</returns>
+        public static bool ContainsIdentity(this HashSet<Identity> set, string? idt)
+        {
+            if (idt == null) return false;
+            return set.Contains(Identity.Create(idt));
+        }
+
+        /// <summary>
+        /// Utility method for checking if set of identities contains internal id.
+        /// </summary>
+        /// <param name="set">Set of identities</param>
+        /// <param name="idt">ExternalId to test</param>
+        /// <returns>True if internal id is non-null and set contains it, false otherwise</returns>
+        public static bool ContainsIdentity(this HashSet<Identity> set, long? idt)
+        {
+            if (idt == null) return false;
+            return set.Contains(Identity.Create(idt.Value));
+        }
     }
 
 

@@ -77,6 +77,10 @@ namespace Cognite.Extensions
             return null;
         }
 
+        private static readonly DistinctResource<TimeSeriesUpdateItem>[] timeSeriesUpdateDistinct = new[] {
+            new DistinctResource<TimeSeriesUpdateItem>("Duplicated ids", ResourceType.Id, ts => ts)
+        };
+
         /// <summary>
         /// Clean list of TimeSeriesUpdateItem objects, sanitizing each and removing any duplicates.
         /// The first encountered duplicate is kept.
@@ -88,66 +92,7 @@ namespace Cognite.Extensions
             IEnumerable<TimeSeriesUpdateItem> items,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (items, Enumerable.Empty<CogniteError<TimeSeriesUpdateItem>>());
-            if (items == null) throw new ArgumentNullException(nameof(items));
-
-            var result = new List<TimeSeriesUpdateItem>();
-            var errors = new List<CogniteError<TimeSeriesUpdateItem>>();
-
-            var ids = new HashSet<Identity>();
-            var duplicated = new HashSet<Identity>();
-            var bad = new List<(ResourceType, TimeSeriesUpdateItem)>();
-
-            foreach (var item in items)
-            {
-                bool toAdd = true;
-                if (mode == SanitationMode.Clean)
-                {
-                    item.Sanitize();
-                }
-                var failedField = item.Verify();
-                if (failedField.HasValue)
-                {
-                    bad.Add((failedField.Value, item));
-                    toAdd = false;
-                }
-
-                if (item.ExternalId == null && item.Id == null) continue;
-
-                var idt = item.ExternalId != null ? Identity.Create(item.ExternalId) : Identity.Create(item.Id!.Value);
-                if (!ids.Add(idt))
-                {
-                    duplicated.Add(idt);
-                    toAdd = false;
-                }
-
-                if (toAdd)
-                {
-                    result.Add(item);
-                }
-            }
-            if (duplicated.Any())
-            {
-                errors.Add(new CogniteError<TimeSeriesUpdateItem>
-                {
-                    Status = 409,
-                    Message = "Duplicate ids",
-                    Resource = ResourceType.Id,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicated
-                });
-            }
-            if (bad.Any())
-            {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<TimeSeriesUpdateItem>
-                {
-                    Skipped = group.Select(pair => pair.Item2).ToList(),
-                    Resource = group.Key,
-                    Type = ErrorType.SanitationFailed,
-                    Status = 400
-                }));
-            }
-            return (result, errors);
+            return CleanRequest(timeSeriesUpdateDistinct, items, Verify, Sanitize, mode);
         }
     }
 }

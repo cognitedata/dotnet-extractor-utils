@@ -71,6 +71,42 @@ namespace Cognite.Extensions
             }
         }
 
+        private static bool IsAffected(AssetUpdateItem item, HashSet<Identity> badValues, CogniteError<AssetUpdateItem> error)
+        {
+            var update = item.Update;
+            switch (error.Resource)
+            {
+                case ResourceType.Id:
+                    return badValues.ContainsIdentity(item.Id);
+                case ResourceType.DataSetId:
+                    return badValues.ContainsIdentity(update.DataSetId?.Set);
+                case ResourceType.ExternalId:
+                    if (error.Type == ErrorType.ItemMissing)
+                    {
+                        return badValues.ContainsIdentity(update.ExternalId?.Set)
+                            || badValues.ContainsIdentity(item.ExternalId)
+                            || badValues.ContainsIdentity(update.ParentExternalId?.Set);
+                    }
+                    else if (error.Type == ErrorType.ItemExists)
+                    {
+                        return badValues.ContainsIdentity(update.ExternalId?.Set);
+                    }
+                    break;
+                case ResourceType.ParentId:
+                    if (error.Type == ErrorType.IllegalItem)
+                    {
+                        return badValues.Contains(item);
+                    }
+                    return badValues.ContainsIdentity(update.ParentId?.Set)
+                        || badValues.ContainsIdentity(update.ParentExternalId?.Set);
+                case ResourceType.Labels:
+                    var labels = update.Labels?.Add ?? update.Labels?.Set;
+                    return labels != null && labels.Any(l => badValues.ContainsIdentity(l.ExternalId));
+            }
+            return false;
+        }
+
+
         /// <summary>
         /// Clean list of AssetCreate objects based on CogniteError object
         /// </summary>
@@ -81,95 +117,7 @@ namespace Cognite.Extensions
             CogniteError<AssetUpdateItem> error,
             IEnumerable<AssetUpdateItem> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-            if (error == null)
-            {
-                return items;
-            }
-
-            if (!error.Values?.Any() ?? true)
-            {
-                error.Values = items.Select(update => update.ExternalId != null
-                    ? Identity.Create(update.ExternalId)
-                    : Identity.Create(update.Id!.Value));
-                return Array.Empty<AssetUpdateItem>();
-            }
-
-            var badValues = new HashSet<Identity>(error.Values);
-
-            var ret = new List<AssetUpdateItem>();
-            var skipped = new List<AssetUpdateItem>();
-
-            foreach (var item in items)
-            {
-                bool added = false;
-                var update = item.Update;
-
-                switch (error.Resource)
-                {
-                    case ResourceType.Id:
-                        if (!item.Id.HasValue || !badValues.Contains(Identity.Create(item.Id.Value))) added = true;
-                        break;
-                    case ResourceType.DataSetId:
-                        if (update.DataSetId?.Set == null || !badValues.Contains(Identity.Create(update.DataSetId.Set.Value))) added = true;
-                        break;
-                    case ResourceType.ExternalId:
-                        if (error.Type == ErrorType.ItemMissing)
-                        {
-                            if ((update.ExternalId?.Set == null || !badValues.Contains(Identity.Create(update.ExternalId.Set)))
-                                && (item.ExternalId == null || !badValues.Contains(Identity.Create(item.ExternalId)))
-                                && (update.ParentExternalId?.Set == null || !badValues.Contains(Identity.Create(update.ParentExternalId.Set))))
-                                    added = true;
-                        }
-                        else if (error.Type == ErrorType.ItemExists)
-                        {
-                            if (update.ExternalId?.Set == null || !badValues.Contains(Identity.Create(update.ExternalId.Set)))
-                                added = true;
-                        }
-                        break;
-                    case ResourceType.ParentId:
-                        if (error.Type == ErrorType.IllegalItem)
-                        {
-                            if ((item.ExternalId == null || !badValues.Contains(Identity.Create(item.ExternalId)))
-                                && (item.Id == null || !badValues.Contains(Identity.Create(item.Id.Value)))) added = true;
-                        }
-                        else
-                        {
-                            if ((update.ParentId?.Set == null || !badValues.Contains(Identity.Create(update.ParentId.Set.Value)))
-                            && (update.ParentExternalId?.Set == null || !badValues.Contains(Identity.Create(update.ParentExternalId.Set))))
-                                added = true;
-                        }
-                        break;
-                    case ResourceType.Labels:
-                        if (update.Labels?.Add == null
-                            || !update.Labels.Add.Any(label => badValues.Contains(Identity.Create(label.ExternalId)))) added = true;
-                        break;
-                }
-
-                if (added)
-                {
-                    ret.Add(item);
-                }
-                else
-                {
-                    CdfMetrics.AssetUpdatesSkipped.Inc();
-                    skipped.Add(item);
-                }
-            }
-
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = skipped;
-                return Array.Empty<AssetUpdateItem>();
-            }
-            return ret;
+            return CleanFromErrorCommon(error, items, IsAffected, item => item, CdfMetrics.TimeSeriesUpdatesSkipped);
         }
 
         /// <summary>

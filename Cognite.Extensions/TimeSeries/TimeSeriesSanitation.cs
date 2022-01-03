@@ -81,6 +81,14 @@ namespace Cognite.Extensions
             return null;
         }
 
+        private static readonly DistinctResource<TimeSeriesCreate>[] timeSeriesDistinct = new[]
+        {
+            new DistinctResource<TimeSeriesCreate>("Duplicated externalIds", ResourceType.ExternalId,
+                ts => ts.ExternalId != null ? Identity.Create(ts.ExternalId) : null),
+            new DistinctResource<TimeSeriesCreate>("Duplicated metric names in request", ResourceType.LegacyName,
+                ts => ts.LegacyName != null ? Identity.Create(ts.LegacyName) : null)
+        };
+
         /// <summary>
         /// Clean list of TimeSeriesCreate objects, sanitizing each and removing any duplicates.
         /// The first encountered duplicate is kept.
@@ -92,93 +100,7 @@ namespace Cognite.Extensions
             IEnumerable<TimeSeriesCreate> timeseries,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (timeseries, Enumerable.Empty<CogniteError<TimeSeriesCreate>>());
-            if (timeseries == null)
-            {
-                throw new ArgumentNullException(nameof(timeseries));
-            }
-            var result = new List<TimeSeriesCreate>();
-            var errors = new List<CogniteError<TimeSeriesCreate>>();
-
-            var ids = new HashSet<string>();
-            var duplicatedIds = new HashSet<string>();
-
-            var names = new HashSet<string>();
-            var duplicatedNames = new HashSet<string>();
-
-            var bad = new List<(ResourceType, TimeSeriesCreate)>();
-
-
-            foreach (var ts in timeseries)
-            {
-                bool toAdd = true;
-                if (mode == SanitationMode.Remove)
-                {
-                    var failedField = ts.Verify();
-                    if (failedField.HasValue)
-                    {
-                        bad.Add((failedField.Value, ts));
-                        toAdd = false;
-                    }
-                }
-                else if (mode == SanitationMode.Clean)
-                {
-                    ts.Sanitize();
-                }
-                if (ts.ExternalId != null)
-                {
-                    if (!ids.Add(ts.ExternalId))
-                    {
-                        duplicatedIds.Add(ts.ExternalId);
-                        toAdd = false;
-                    }
-                }
-                if (ts.LegacyName != null)
-                {
-                    if (!names.Add(ts.LegacyName))
-                    {
-                        duplicatedNames.Add(ts.LegacyName);
-                        toAdd = false;
-                    }
-                }
-                if (toAdd)
-                {
-                    result.Add(ts);
-                }
-            }
-            if (duplicatedIds.Any())
-            {
-                errors.Add(new CogniteError<TimeSeriesCreate>
-                {
-                    Status = 409,
-                    Message = "Conflicting identifiers",
-                    Resource = ResourceType.ExternalId,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicatedIds.Select(Identity.Create).ToArray()
-                });
-            }
-            if (duplicatedNames.Any())
-            {
-                errors.Add(new CogniteError<TimeSeriesCreate>
-                {
-                    Status = 409,
-                    Message = "Duplicated metric names in request",
-                    Resource = ResourceType.LegacyName,
-                    Type = ErrorType.ItemDuplicated,
-                    Values = duplicatedNames.Select(Identity.Create).ToArray()
-                });
-            }
-            if (bad.Any())
-            {
-                errors.AddRange(bad.GroupBy(pair => pair.Item1).Select(group => new CogniteError<TimeSeriesCreate>
-                {
-                    Skipped = group.Select(pair => pair.Item2).ToList(),
-                    Resource = group.Key,
-                    Type = ErrorType.SanitationFailed,
-                    Status = 400
-                }));
-            }
-            return (result, errors);
+            return CleanRequest(timeSeriesDistinct, timeseries, Verify, Sanitize, mode);
         }
     }
 }
