@@ -1870,15 +1870,15 @@ references:
   commentId: T:Cognite.Extensions.ResultHandlers
   fullName: Cognite.Extensions.ResultHandlers
   nameWithType: ResultHandlers
-- uid: Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource,Cognite.Extensions.CogniteError{AssetCreate},IEnumerable{AssetCreate},System.Int32,System.Int32,CancellationToken)
-  name: CleanFromError(AssetsResource, CogniteError<AssetCreate>, IEnumerable<AssetCreate>, Int32, Int32, CancellationToken)
-  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_AssetsResource_Cognite_Extensions_CogniteError_AssetCreate__IEnumerable_AssetCreate__System_Int32_System_Int32_CancellationToken_
-  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource,Cognite.Extensions.CogniteError{AssetCreate},IEnumerable{AssetCreate},System.Int32,System.Int32,CancellationToken)
-  name.vb: CleanFromError(AssetsResource, CogniteError(Of AssetCreate), IEnumerable(Of AssetCreate), Int32, Int32, CancellationToken)
-  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource, Cognite.Extensions.CogniteError<AssetCreate>, IEnumerable<AssetCreate>, System.Int32, System.Int32, CancellationToken)
-  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource, Cognite.Extensions.CogniteError(Of AssetCreate), IEnumerable(Of AssetCreate), System.Int32, System.Int32, CancellationToken)
-  nameWithType: ResultHandlers.CleanFromError(AssetsResource, CogniteError<AssetCreate>, IEnumerable<AssetCreate>, Int32, Int32, CancellationToken)
-  nameWithType.vb: ResultHandlers.CleanFromError(AssetsResource, CogniteError(Of AssetCreate), IEnumerable(Of AssetCreate), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{AssetCreate},IEnumerable{AssetCreate})
+  name: CleanFromError(CogniteError<AssetCreate>, IEnumerable<AssetCreate>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_AssetCreate__IEnumerable_AssetCreate__
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{AssetCreate},IEnumerable{AssetCreate})
+  name.vb: CleanFromError(CogniteError(Of AssetCreate), IEnumerable(Of AssetCreate))
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError<AssetCreate>, IEnumerable<AssetCreate>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError(Of AssetCreate), IEnumerable(Of AssetCreate))
+  nameWithType: ResultHandlers.CleanFromError(CogniteError<AssetCreate>, IEnumerable<AssetCreate>)
+  nameWithType.vb: ResultHandlers.CleanFromError(CogniteError(Of AssetCreate), IEnumerable(Of AssetCreate))
 - uid: Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{AssetUpdateItem},IEnumerable{AssetUpdateItem})
   name: CleanFromError(CogniteError<AssetUpdateItem>, IEnumerable<AssetUpdateItem>)
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_AssetUpdateItem__IEnumerable_AssetUpdateItem__
@@ -1949,6 +1949,47 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.ResultHandlers.CleanFromError
   nameWithType: ResultHandlers.CleanFromError
+- uid: Cognite.Extensions.ResultHandlers.CompleteAssetError(AssetsResource,Cognite.Extensions.CogniteError,IEnumerable{AssetCreate},System.Int32,System.Int32,CancellationToken)
+  name: CompleteAssetError(AssetsResource, CogniteError, IEnumerable<AssetCreate>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CompleteAssetError_AssetsResource_Cognite_Extensions_CogniteError_IEnumerable_AssetCreate__System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.ResultHandlers.CompleteAssetError(AssetsResource,Cognite.Extensions.CogniteError,IEnumerable{AssetCreate},System.Int32,System.Int32,CancellationToken)
+  name.vb: CompleteAssetError(AssetsResource, CogniteError, IEnumerable(Of AssetCreate), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.ResultHandlers.CompleteAssetError(AssetsResource, Cognite.Extensions.CogniteError, IEnumerable<AssetCreate>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CompleteAssetError(AssetsResource, Cognite.Extensions.CogniteError, IEnumerable(Of AssetCreate), System.Int32, System.Int32, CancellationToken)
+  nameWithType: ResultHandlers.CompleteAssetError(AssetsResource, CogniteError, IEnumerable<AssetCreate>, Int32, Int32, CancellationToken)
+  nameWithType.vb: ResultHandlers.CompleteAssetError(AssetsResource, CogniteError, IEnumerable(Of AssetCreate), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.ResultHandlers.CompleteAssetError*
+  name: CompleteAssetError
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CompleteAssetError_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.CompleteAssetError
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.CompleteAssetError
+  nameWithType: ResultHandlers.CompleteAssetError
+- uid: Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet{Identity},System.Nullable{System.Int64})
+  name: ContainsIdentity(HashSet<Identity>, Nullable<Int64>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ContainsIdentity_HashSet_Identity__System_Nullable_System_Int64__
+  commentId: M:Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet{Identity},System.Nullable{System.Int64})
+  name.vb: ContainsIdentity(HashSet(Of Identity), Nullable(Of Int64))
+  fullName: Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet<Identity>, System.Nullable<System.Int64>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet(Of Identity), System.Nullable(Of System.Int64))
+  nameWithType: ResultHandlers.ContainsIdentity(HashSet<Identity>, Nullable<Int64>)
+  nameWithType.vb: ResultHandlers.ContainsIdentity(HashSet(Of Identity), Nullable(Of Int64))
+- uid: Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet{Identity},System.Nullable{System.String})
+  name: ContainsIdentity(HashSet<Identity>, Nullable<String>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ContainsIdentity_HashSet_Identity__System_Nullable_System_String__
+  commentId: M:Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet{Identity},System.Nullable{System.String})
+  name.vb: ContainsIdentity(HashSet(Of Identity), Nullable(Of String))
+  fullName: Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet<Identity>, System.Nullable<System.String>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet(Of Identity), System.Nullable(Of System.String))
+  nameWithType: ResultHandlers.ContainsIdentity(HashSet<Identity>, Nullable<String>)
+  nameWithType.vb: ResultHandlers.ContainsIdentity(HashSet(Of Identity), Nullable(Of String))
+- uid: Cognite.Extensions.ResultHandlers.ContainsIdentity*
+  name: ContainsIdentity
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ContainsIdentity_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.ContainsIdentity
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.ContainsIdentity
+  nameWithType: ResultHandlers.ContainsIdentity
 - uid: Cognite.Extensions.ResultHandlers.ParseException*
   name: ParseException
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ParseException_
@@ -1965,6 +2006,22 @@ references:
   fullName.vb: Cognite.Extensions.ResultHandlers.ParseException(Of TError)(Exception, Cognite.Extensions.RequestType)
   nameWithType: ResultHandlers.ParseException<TError>(Exception, RequestType)
   nameWithType.vb: ResultHandlers.ParseException(Of TError)(Exception, RequestType)
+- uid: Cognite.Extensions.ResultHandlers.ParseSimpleError*
+  name: ParseSimpleError
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ParseSimpleError_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.ParseSimpleError
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.ParseSimpleError
+  nameWithType: ResultHandlers.ParseSimpleError
+- uid: Cognite.Extensions.ResultHandlers.ParseSimpleError``1(Exception,System.Nullable{IEnumerable{Identity}},System.Nullable{IEnumerable{``0}})
+  name: ParseSimpleError<TError>(Exception, Nullable<IEnumerable<Identity>>, Nullable<IEnumerable<TError>>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ParseSimpleError__1_Exception_System_Nullable_IEnumerable_Identity___System_Nullable_IEnumerable___0___
+  commentId: M:Cognite.Extensions.ResultHandlers.ParseSimpleError``1(Exception,System.Nullable{IEnumerable{Identity}},System.Nullable{IEnumerable{``0}})
+  name.vb: ParseSimpleError(Of TError)(Exception, Nullable(Of IEnumerable(Of Identity)), Nullable(Of IEnumerable(Of TError)))
+  fullName: Cognite.Extensions.ResultHandlers.ParseSimpleError<TError>(Exception, System.Nullable<IEnumerable<Identity>>, System.Nullable<IEnumerable<TError>>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.ParseSimpleError(Of TError)(Exception, System.Nullable(Of IEnumerable(Of Identity)), System.Nullable(Of IEnumerable(Of TError)))
+  nameWithType: ResultHandlers.ParseSimpleError<TError>(Exception, Nullable<IEnumerable<Identity>>, Nullable<IEnumerable<TError>>)
+  nameWithType.vb: ResultHandlers.ParseSimpleError(Of TError)(Exception, Nullable(Of IEnumerable(Of Identity)), Nullable(Of IEnumerable(Of TError)))
 - uid: Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents(AssetsResource,IEnumerable{AssetUpdateItem},System.Int32,System.Int32,CancellationToken)
   name: VerifyAssetUpdateParents(AssetsResource, IEnumerable<AssetUpdateItem>, Int32, Int32, CancellationToken)
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifyAssetUpdateParents_AssetsResource_IEnumerable_AssetUpdateItem__System_Int32_System_Int32_CancellationToken_
@@ -8379,3 +8436,85 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries
   nameWithType: TimeSeriesUploadQueue.UploadEntries
+- uid: Cognite.ExtractorUtils
+  name: Cognite.ExtractorUtils
+  href: api/Cognite.ExtractorUtils.html
+  commentId: N:Cognite.ExtractorUtils
+  fullName: Cognite.ExtractorUtils
+  nameWithType: Cognite.ExtractorUtils
+- uid: Cognite.ExtractorUtils.FunctionCallConfig
+  name: FunctionCallConfig
+  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html
+  commentId: T:Cognite.ExtractorUtils.FunctionCallConfig
+  fullName: Cognite.ExtractorUtils.FunctionCallConfig
+  nameWithType: FunctionCallConfig
+- uid: Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
+  name: ExternalId
+  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html#Cognite_ExtractorUtils_FunctionCallConfig_ExternalId
+  commentId: P:Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
+  fullName: Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
+  nameWithType: FunctionCallConfig.ExternalId
+- uid: Cognite.ExtractorUtils.FunctionCallConfig.ExternalId*
+  name: ExternalId
+  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html#Cognite_ExtractorUtils_FunctionCallConfig_ExternalId_
+  commentId: Overload:Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
+  isSpec: "True"
+  fullName: Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
+  nameWithType: FunctionCallConfig.ExternalId
+- uid: Cognite.ExtractorUtils.FunctionCallConfig.Id
+  name: Id
+  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html#Cognite_ExtractorUtils_FunctionCallConfig_Id
+  commentId: P:Cognite.ExtractorUtils.FunctionCallConfig.Id
+  fullName: Cognite.ExtractorUtils.FunctionCallConfig.Id
+  nameWithType: FunctionCallConfig.Id
+- uid: Cognite.ExtractorUtils.FunctionCallConfig.Id*
+  name: Id
+  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html#Cognite_ExtractorUtils_FunctionCallConfig_Id_
+  commentId: Overload:Cognite.ExtractorUtils.FunctionCallConfig.Id
+  isSpec: "True"
+  fullName: Cognite.ExtractorUtils.FunctionCallConfig.Id
+  nameWithType: FunctionCallConfig.Id
+- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1
+  name: FunctionCallWrapper<T>
+  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html
+  commentId: T:Cognite.ExtractorUtils.FunctionCallWrapper`1
+  name.vb: FunctionCallWrapper(Of T)
+  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>
+  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T)
+  nameWithType: FunctionCallWrapper<T>
+  nameWithType.vb: FunctionCallWrapper(Of T)
+- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1.#ctor(Cognite.Extractor.Utils.CogniteDestination,Cognite.ExtractorUtils.FunctionCallConfig,System.Nullable{ILogger})
+  name: FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable<ILogger>)
+  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html#Cognite_ExtractorUtils_FunctionCallWrapper_1__ctor_Cognite_Extractor_Utils_CogniteDestination_Cognite_ExtractorUtils_FunctionCallConfig_System_Nullable_ILogger__
+  commentId: M:Cognite.ExtractorUtils.FunctionCallWrapper`1.#ctor(Cognite.Extractor.Utils.CogniteDestination,Cognite.ExtractorUtils.FunctionCallConfig,System.Nullable{ILogger})
+  name.vb: FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable(Of ILogger))
+  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>.FunctionCallWrapper(Cognite.Extractor.Utils.CogniteDestination, Cognite.ExtractorUtils.FunctionCallConfig, System.Nullable<ILogger>)
+  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T).FunctionCallWrapper(Cognite.Extractor.Utils.CogniteDestination, Cognite.ExtractorUtils.FunctionCallConfig, System.Nullable(Of ILogger))
+  nameWithType: FunctionCallWrapper<T>.FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable<ILogger>)
+  nameWithType.vb: FunctionCallWrapper(Of T).FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable(Of ILogger))
+- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1.#ctor*
+  name: FunctionCallWrapper
+  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html#Cognite_ExtractorUtils_FunctionCallWrapper_1__ctor_
+  commentId: Overload:Cognite.ExtractorUtils.FunctionCallWrapper`1.#ctor
+  isSpec: "True"
+  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>.FunctionCallWrapper
+  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T).FunctionCallWrapper
+  nameWithType: FunctionCallWrapper<T>.FunctionCallWrapper
+  nameWithType.vb: FunctionCallWrapper(Of T).FunctionCallWrapper
+- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1.TryCall(`0,CancellationToken)
+  name: TryCall(T, CancellationToken)
+  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html#Cognite_ExtractorUtils_FunctionCallWrapper_1_TryCall__0_CancellationToken_
+  commentId: M:Cognite.ExtractorUtils.FunctionCallWrapper`1.TryCall(`0,CancellationToken)
+  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>.TryCall(T, CancellationToken)
+  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T).TryCall(T, CancellationToken)
+  nameWithType: FunctionCallWrapper<T>.TryCall(T, CancellationToken)
+  nameWithType.vb: FunctionCallWrapper(Of T).TryCall(T, CancellationToken)
+- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1.TryCall*
+  name: TryCall
+  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html#Cognite_ExtractorUtils_FunctionCallWrapper_1_TryCall_
+  commentId: Overload:Cognite.ExtractorUtils.FunctionCallWrapper`1.TryCall
+  isSpec: "True"
+  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>.TryCall
+  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T).TryCall
+  nameWithType: FunctionCallWrapper<T>.TryCall
+  nameWithType.vb: FunctionCallWrapper(Of T).TryCall

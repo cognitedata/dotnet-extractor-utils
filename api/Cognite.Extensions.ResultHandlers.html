@@ -91,19 +91,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_AssetsResource_Cognite_Extensions_CogniteError_AssetCreate__IEnumerable_AssetCreate__System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource%2CCognite.Extensions.CogniteError%7BAssetCreate%7D%2CIEnumerable%7BAssetCreate%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_AssetCreate__IEnumerable_AssetCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BAssetCreate%7D%2CIEnumerable%7BAssetCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/Assets/AssetResultHandlers.cs/#L73">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/Assets/AssetResultHandlers.cs/#L82">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
-  <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_AssetsResource_Cognite_Extensions_CogniteError_AssetCreate__IEnumerable_AssetCreate__System_Int32_System_Int32_CancellationToken_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(AssetsResource,Cognite.Extensions.CogniteError{AssetCreate},IEnumerable{AssetCreate},System.Int32,System.Int32,CancellationToken)">CleanFromError(AssetsResource, CogniteError&lt;AssetCreate&gt;, IEnumerable&lt;AssetCreate&gt;, Int32, Int32, CancellationToken)</h4>
+  <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_AssetCreate__IEnumerable_AssetCreate__" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{AssetCreate},IEnumerable{AssetCreate})">CleanFromError(CogniteError&lt;AssetCreate&gt;, IEnumerable&lt;AssetCreate&gt;)</h4>
   <div class="markdown level1 summary"><p>Clean list of AssetCreate objects based on CogniteError object</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;IEnumerable&lt;AssetCreate&gt;&gt; CleanFromError(AssetsResource resource, CogniteError&lt;AssetCreate&gt; error, IEnumerable&lt;AssetCreate&gt; assets, int assetChunkSize, int assetThrottleSize, CancellationToken token)</code></pre>
+    <pre><code class="lang-csharp hljs">public static IEnumerable&lt;AssetCreate&gt; CleanFromError(CogniteError&lt;AssetCreate&gt; error, IEnumerable&lt;AssetCreate&gt; assets)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -116,12 +116,6 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">AssetsResource</span></td>
-        <td><span class="parametername">resource</span></td>
-        <td><p>CogniteSdk assets resource</p>
-</td>
-      </tr>
-      <tr>
         <td><a class="xref" href="Cognite.Extensions.CogniteError-1.html">CogniteError</a>&lt;<span class="xref">AssetCreate</span>&gt;</td>
         <td><span class="parametername">error</span></td>
         <td><p>Error that occured with a previous push</p>
@@ -132,23 +126,6 @@
         <td><span class="parametername">assets</span></td>
         <td><p>Assets to clean</p>
 </td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">assetChunkSize</span></td>
-        <td><p>Maximum number of ids per asset read</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">assetThrottleSize</span></td>
-        <td><p>Maximum number of parallel asset read requests</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">CancellationToken</span></td>
-        <td><span class="parametername">token</span></td>
-        <td></td>
       </tr>
     </tbody>
   </table>
@@ -162,7 +139,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">AssetCreate</span>&gt;&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">AssetCreate</span>&gt;</td>
         <td><p>Assets that are not affected by the error</p>
 </td>
       </tr>
@@ -170,10 +147,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_AssetUpdateItem__IEnumerable_AssetUpdateItem__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BAssetUpdateItem%7D%2CIEnumerable%7BAssetUpdateItem%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_AssetUpdateItem__IEnumerable_AssetUpdateItem__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BAssetUpdateItem%7D%2CIEnumerable%7BAssetUpdateItem%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/Assets/AssetUpdateResultHandlers.cs/#L80">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/Assets/AssetUpdateResultHandlers.cs/#L116">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_AssetUpdateItem__IEnumerable_AssetUpdateItem__" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{AssetUpdateItem},IEnumerable{AssetUpdateItem})">CleanFromError(CogniteError&lt;AssetUpdateItem&gt;, IEnumerable&lt;AssetUpdateItem&gt;)</h4>
@@ -226,10 +203,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BCognite.Extensions.DataPointInsertError%7D%2CIDictionary%7BIdentity%2CIEnumerable%7BCognite.Extensions.Datapoint%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BCognite.Extensions.DataPointInsertError%7D%2CIDictionary%7BIdentity%2CIEnumerable%7BCognite.Extensions.Datapoint%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/TimeSeries/DataPointResultHandlers.cs/#L49">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/TimeSeries/DataPointResultHandlers.cs/#L49">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{Cognite.Extensions.DataPointInsertError},IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}})">CleanFromError(CogniteError&lt;DataPointInsertError&gt;, IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;)</h4>
@@ -282,10 +259,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_Cognite_Extensions_SequenceRowError__IEnumerable_SequenceDataCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BCognite.Extensions.SequenceRowError%7D%2CIEnumerable%7BSequenceDataCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_Cognite_Extensions_SequenceRowError__IEnumerable_SequenceDataCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BCognite.Extensions.SequenceRowError%7D%2CIEnumerable%7BSequenceDataCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L153">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L119">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_Cognite_Extensions_SequenceRowError__IEnumerable_SequenceDataCreate__" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{Cognite.Extensions.SequenceRowError},IEnumerable{SequenceDataCreate})">CleanFromError(CogniteError&lt;SequenceRowError&gt;, IEnumerable&lt;SequenceDataCreate&gt;)</h4>
@@ -338,10 +315,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_EventCreate__IEnumerable_EventCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BEventCreate%7D%2CIEnumerable%7BEventCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_EventCreate__IEnumerable_EventCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BEventCreate%7D%2CIEnumerable%7BEventCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/Events/EventResultHandlers.cs/#L50">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/Events/EventResultHandlers.cs/#L62">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_EventCreate__IEnumerable_EventCreate__" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{EventCreate},IEnumerable{EventCreate})">CleanFromError(CogniteError&lt;EventCreate&gt;, IEnumerable&lt;EventCreate&gt;)</h4>
@@ -394,10 +371,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_SequenceCreate__IEnumerable_SequenceCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BSequenceCreate%7D%2CIEnumerable%7BSequenceCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_SequenceCreate__IEnumerable_SequenceCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BSequenceCreate%7D%2CIEnumerable%7BSequenceCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L58">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L69">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_SequenceCreate__IEnumerable_SequenceCreate__" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{SequenceCreate},IEnumerable{SequenceCreate})">CleanFromError(CogniteError&lt;SequenceCreate&gt;, IEnumerable&lt;SequenceCreate&gt;)</h4>
@@ -450,10 +427,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_TimeSeriesCreate__IEnumerable_TimeSeriesCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BTimeSeriesCreate%7D%2CIEnumerable%7BTimeSeriesCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_TimeSeriesCreate__IEnumerable_TimeSeriesCreate__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BTimeSeriesCreate%7D%2CIEnumerable%7BTimeSeriesCreate%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/TimeSeries/TimeSeriesResultHandlers.cs/#L64">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/TimeSeries/TimeSeriesResultHandlers.cs/#L77">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_TimeSeriesCreate__IEnumerable_TimeSeriesCreate__" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{TimeSeriesCreate},IEnumerable{TimeSeriesCreate})">CleanFromError(CogniteError&lt;TimeSeriesCreate&gt;, IEnumerable&lt;TimeSeriesCreate&gt;)</h4>
@@ -506,10 +483,10 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_TimeSeriesUpdateItem__IEnumerable_TimeSeriesUpdateItem__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BTimeSeriesUpdateItem%7D%2CIEnumerable%7BTimeSeriesUpdateItem%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_TimeSeriesUpdateItem__IEnumerable_TimeSeriesUpdateItem__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError%7BTimeSeriesUpdateItem%7D%2CIEnumerable%7BTimeSeriesUpdateItem%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/TimeSeries/TimeSeriesUpdateResultHandlers.cs/#L71">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/TimeSeries/TimeSeriesUpdateResultHandlers.cs/#L87">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError_Cognite_Extensions_CogniteError_TimeSeriesUpdateItem__IEnumerable_TimeSeriesUpdateItem__" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError(Cognite.Extensions.CogniteError{TimeSeriesUpdateItem},IEnumerable{TimeSeriesUpdateItem})">CleanFromError(CogniteError&lt;TimeSeriesUpdateItem&gt;, IEnumerable&lt;TimeSeriesUpdateItem&gt;)</h4>
@@ -562,10 +539,201 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_ParseException__1_Exception_Cognite_Extensions_RequestType_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.ParseException%60%601(Exception%2CCognite.Extensions.RequestType)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CompleteAssetError_AssetsResource_Cognite_Extensions_CogniteError_IEnumerable_AssetCreate__System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CompleteAssetError(AssetsResource%2CCognite.Extensions.CogniteError%2CIEnumerable%7BAssetCreate%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/CogniteResult.cs/#L44">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/Assets/AssetResultHandlers.cs/#L99">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_ResultHandlers_CompleteAssetError_" data-uid="Cognite.Extensions.ResultHandlers.CompleteAssetError*"></a>
+  <h4 id="Cognite_Extensions_ResultHandlers_CompleteAssetError_AssetsResource_Cognite_Extensions_CogniteError_IEnumerable_AssetCreate__System_Int32_System_Int32_CancellationToken_" data-uid="Cognite.Extensions.ResultHandlers.CompleteAssetError(AssetsResource,Cognite.Extensions.CogniteError,IEnumerable{AssetCreate},System.Int32,System.Int32,CancellationToken)">CompleteAssetError(AssetsResource, CogniteError, IEnumerable&lt;AssetCreate&gt;, Int32, Int32, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Fetch missing parents for an asset create that failed due to missing parent external ids.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task CompleteAssetError(AssetsResource resource, CogniteError error, IEnumerable&lt;AssetCreate&gt; assets, int assetChunkSize, int assetThrottleSize, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">AssetsResource</span></td>
+        <td><span class="parametername">resource</span></td>
+        <td><p>CogniteSdk assets resource</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.CogniteError.html">CogniteError</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>Incomplete error</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">AssetCreate</span>&gt;</td>
+        <td><span class="parametername">assets</span></td>
+        <td><p>List of assets to check</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">assetChunkSize</span></td>
+        <td><p>Chunk size for reading assets</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">assetThrottleSize</span></td>
+        <td><p>Throttle size for reading assets</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_ContainsIdentity_HashSet_Identity__System_Nullable_System_Int64__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet%7BIdentity%7D%2CSystem.Nullable%7BSystem.Int64%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/CogniteResult.cs/#L197">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_ResultHandlers_ContainsIdentity_" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity*"></a>
+  <h4 id="Cognite_Extensions_ResultHandlers_ContainsIdentity_HashSet_Identity__System_Nullable_System_Int64__" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet{Identity},System.Nullable{System.Int64})">ContainsIdentity(HashSet&lt;Identity&gt;, Nullable&lt;Int64&gt;)</h4>
+  <div class="markdown level1 summary"><p>Utility method for checking if set of identities contains internal id.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool ContainsIdentity(this HashSet&lt;Identity&gt; set, long? idt)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">HashSet</span>&lt;<span class="xref">Identity</span>&gt;</td>
+        <td><span class="parametername">set</span></td>
+        <td><p>Set of identities</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int64</span>&gt;</td>
+        <td><span class="parametername">idt</span></td>
+        <td><p>ExternalId to test</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>True if internal id is non-null and set contains it, false otherwise</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_ContainsIdentity_HashSet_Identity__System_Nullable_System_String__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet%7BIdentity%7D%2CSystem.Nullable%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/CogniteResult.cs/#L185">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_ResultHandlers_ContainsIdentity_" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity*"></a>
+  <h4 id="Cognite_Extensions_ResultHandlers_ContainsIdentity_HashSet_Identity__System_Nullable_System_String__" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity(HashSet{Identity},System.Nullable{System.String})">ContainsIdentity(HashSet&lt;Identity&gt;, Nullable&lt;String&gt;)</h4>
+  <div class="markdown level1 summary"><p>Utility method for checking if set of identities contains external id.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool ContainsIdentity(this HashSet&lt;Identity&gt; set, string? idt)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">HashSet</span>&lt;<span class="xref">Identity</span>&gt;</td>
+        <td><span class="parametername">set</span></td>
+        <td><p>Set of identities</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">idt</span></td>
+        <td><p>ExternalId to test</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>True if externalId is non-null and set contains it, false otherwise</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_ParseException__1_Exception_Cognite_Extensions_RequestType_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.ParseException%60%601(Exception%2CCognite.Extensions.RequestType)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/CogniteResult.cs/#L77">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_ParseException_" data-uid="Cognite.Extensions.ResultHandlers.ParseException*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_ParseException__1_Exception_Cognite_Extensions_RequestType_" data-uid="Cognite.Extensions.ResultHandlers.ParseException``1(Exception,Cognite.Extensions.RequestType)">ParseException&lt;TError&gt;(Exception, RequestType)</h4>
@@ -633,10 +801,88 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_VerifyAssetUpdateParents_AssetsResource_IEnumerable_AssetUpdateItem__System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents(AssetsResource%2CIEnumerable%7BAssetUpdateItem%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_ParseSimpleError__1_Exception_System_Nullable_IEnumerable_Identity___System_Nullable_IEnumerable___0___.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.ParseSimpleError%60%601(Exception%2CSystem.Nullable%7BIEnumerable%7BIdentity%7D%7D%2CSystem.Nullable%7BIEnumerable%7B%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/Assets/AssetUpdateResultHandlers.cs/#L185">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/CogniteResult.cs/#L47">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_ResultHandlers_ParseSimpleError_" data-uid="Cognite.Extensions.ResultHandlers.ParseSimpleError*"></a>
+  <h4 id="Cognite_Extensions_ResultHandlers_ParseSimpleError__1_Exception_System_Nullable_IEnumerable_Identity___System_Nullable_IEnumerable___0___" data-uid="Cognite.Extensions.ResultHandlers.ParseSimpleError``1(Exception,System.Nullable{IEnumerable{Identity}},System.Nullable{IEnumerable{``0}})">ParseSimpleError&lt;TError&gt;(Exception, Nullable&lt;IEnumerable&lt;Identity&gt;&gt;, Nullable&lt;IEnumerable&lt;TError&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Create a CogniteError from exception thrown when doing some simple operation to CDF.
+Just creates a fatal error based on the exception.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static CogniteError&lt;TError&gt; ParseSimpleError&lt;TError&gt;(Exception ex, IEnumerable&lt;Identity&gt;? failed, IEnumerable&lt;TError&gt;? skipped)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Exception</span></td>
+        <td><span class="parametername">ex</span></td>
+        <td><p>Exception thrown by method</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">Identity</span>&gt;&gt;</td>
+        <td><span class="parametername">failed</span></td>
+        <td><p>Items that failed, optional</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IEnumerable</span>&lt;TError&gt;&gt;</td>
+        <td><span class="parametername">skipped</span></td>
+        <td><p>Items that were skipped, optional</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.CogniteError-1.html">CogniteError</a>&lt;TError&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TError</span></td>
+        <td><p>Errortype on result</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_VerifyAssetUpdateParents_AssetsResource_IEnumerable_AssetUpdateItem__System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents(AssetsResource%2CIEnumerable%7BAssetUpdateItem%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/Assets/AssetUpdateResultHandlers.cs/#L133">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_VerifyAssetUpdateParents_" data-uid="Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_VerifyAssetUpdateParents_AssetsResource_IEnumerable_AssetUpdateItem__System_Int32_System_Int32_CancellationToken_" data-uid="Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents(AssetsResource,IEnumerable{AssetUpdateItem},System.Int32,System.Int32,CancellationToken)">VerifyAssetUpdateParents(AssetsResource, IEnumerable&lt;AssetUpdateItem&gt;, Int32, Int32, CancellationToken)</h4>
@@ -708,10 +954,10 @@ between root hierarchies.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_VerifyDatapointsFromCDF_TimeSeriesResource_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(TimeSeriesResource%2CCognite.Extensions.CogniteError%7BCognite.Extensions.DataPointInsertError%7D%2CIDictionary%7BIdentity%2CIEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_VerifyDatapointsFromCDF_TimeSeriesResource_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(TimeSeriesResource%2CCognite.Extensions.CogniteError%7BCognite.Extensions.DataPointInsertError%7D%2CIDictionary%7BIdentity%2CIEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/TimeSeries/DataPointResultHandlers.cs/#L100">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/TimeSeries/DataPointResultHandlers.cs/#L100">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_VerifyDatapointsFromCDF_" data-uid="Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_VerifyDatapointsFromCDF_TimeSeriesResource_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_CancellationToken_" data-uid="Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(TimeSeriesResource,Cognite.Extensions.CogniteError{Cognite.Extensions.DataPointInsertError},IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,CancellationToken)">VerifyDatapointsFromCDF(TimeSeriesResource, CogniteError&lt;DataPointInsertError&gt;, IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;, Int32, Int32, CancellationToken)</h4>
@@ -790,10 +1036,10 @@ after trying to insert to CDF, for efficiency.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_VerifySequencesFromCDF_SequencesResource_IEnumerable_SequenceDataCreate__System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF(SequencesResource%2CIEnumerable%7BSequenceDataCreate%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_VerifySequencesFromCDF_SequencesResource_IEnumerable_SequenceDataCreate__System_Int32_System_Int32_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF(SequencesResource%2CIEnumerable%7BSequenceDataCreate%7D%2CSystem.Int32%2CSystem.Int32%2CCancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L226">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/Sequences/SequenceResultHandlers.cs/#L192">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_VerifySequencesFromCDF_" data-uid="Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_VerifySequencesFromCDF_SequencesResource_IEnumerable_SequenceDataCreate__System_Int32_System_Int32_CancellationToken_" data-uid="Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF(SequencesResource,IEnumerable{SequenceDataCreate},System.Int32,System.Int32,CancellationToken)">VerifySequencesFromCDF(SequencesResource, IEnumerable&lt;SequenceDataCreate&gt;, Int32, Int32, CancellationToken)</h4>
@@ -871,10 +1117,10 @@ checks both missing columns and mismatched data types.</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/apiSpec/new?filename=Cognite_Extensions_ResultHandlers.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/3ce0efc767716db19bcf9e0260d832292ea00a4e/apiSpec/new?filename=Cognite_Extensions_ResultHandlers.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a690a60fb4cb131d2a065e5eb77a8a5f53a2ce90/Cognite.Extensions/TimeSeries/TimeSeriesUpdateResultHandlers.cs/#L9" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/3ce0efc767716db19bcf9e0260d832292ea00a4e/Cognite.Extensions/TimeSeries/TimeSeriesUpdateResultHandlers.cs/#L9" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>
