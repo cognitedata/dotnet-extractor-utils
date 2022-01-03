@@ -187,7 +187,16 @@ namespace Cognite.Extensions
             IEnumerable<Asset> found;
             using (CdfMetrics.Assets.WithLabels("retrieve").NewTimer())
             {
-                found = await assets.RetrieveAsync(externalIds.Select(Identity.Create), true, token).ConfigureAwait(false);
+                var idts = externalIds.Select(Identity.Create);
+                try
+                {
+                    found = await assets.RetrieveAsync(idts, true, token).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    var err = ResultHandlers.ParseSimpleError<AssetCreate>(ex, idts, null);
+                    return new CogniteResult<Asset, AssetCreate>(new[] { err }, null);
+                }
             }
             _logger.LogDebug("Retrieved {Existing} assets from CDF", found.Count());
 
@@ -338,10 +347,6 @@ namespace Cognite.Extensions
             }
             return new CogniteResult<Asset, AssetCreate>(errors, null);
         }
-
-
-
-
 
         /// <summary>
         /// Attempt to update all assets in <paramref name="updates"/>, will retry
