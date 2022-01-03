@@ -256,8 +256,8 @@ namespace Cognite.Extensions
             Action<T> sanitize,
             SanitationMode mode)
         {
-            if (mode == SanitationMode.None) return (items.ToList(), new List<CogniteError<T>>());
             if (items == null) throw new ArgumentNullException(nameof(items));
+            if (mode == SanitationMode.None) return (items.ToList(), new List<CogniteError<T>>());
 
             var result = new List<T>();
             var errors = new List<CogniteError<T>>();
