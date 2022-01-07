@@ -133,8 +133,12 @@ namespace Cognite.Extensions
             int successCount = result.Results?.Count() ?? 0;
             int errorCount = result.Errors?.Count() ?? 0;
 
-            logger.Log(infoLevel, "Request of type {type} had {cnt} results with {cnt2} errors",
-                requestType, successCount, errorCount);
+            if (successCount > 0 || errorCount > 0)
+            {
+                logger.Log(infoLevel, "Request of type {type} had {cnt} results with {cnt2} errors",
+                    requestType, successCount, errorCount);
+            }
+            
 
             if (result.Errors != null)
             {
@@ -168,7 +172,10 @@ namespace Cognite.Extensions
 
             int errorCount = result.Errors?.Count() ?? 0;
 
-            logger.Log(infoLevel, "Request of type {type} had {cnt} errors", requestType, errorCount);
+            if (errorCount > 0)
+            {
+                logger.Log(infoLevel, "Request of type {type} had {cnt} errors", requestType, errorCount);
+            }
 
             if (result.Errors != null)
             {
