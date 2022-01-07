@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Cognite.Extractor.Common
 {
@@ -216,6 +217,67 @@ namespace Cognite.Extractor.Common
             }
 
             return null;
+        }
+    }
+
+    /// <summary>
+    /// Utility for containing a string converted to timespan in config objects.
+    /// To use:
+    /// public string MyIntervalValue { get; } = new MyIntervalValue(false, "s", "0");
+    /// public string MyInterval { get => MyIntervalValue.RawValue; set => MyIntervalValue.RawValue = value; }
+    /// 
+    /// Access MyIntervalValue in your code, and MyInterval is the config option.
+    /// </summary>
+    public class TimeSpanWrapper
+    {
+        private static readonly Regex isNegative = new Regex("^-[0-9]+");
+
+        private readonly bool allowZero;
+        private readonly string defaultUnit;
+        private readonly TimeSpan defaultValue;
+
+        /// <summary>
+        /// Converted value as TimeSpan.
+        /// </summary>
+        public TimeSpan Value { get; private set; }
+        private string rawValue;
+        /// <summary>
+        /// Raw string value of option.
+        /// </summary>
+        public string RawValue
+        {
+            get => rawValue; set
+            {
+                rawValue = value;
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    Value = defaultValue;
+                    return;
+                }
+                var conv = CogniteTime.ParseTimeSpanString(value, defaultUnit);
+                if (conv == null)
+                {
+                    if (isNegative.IsMatch(value)) conv = Timeout.InfiniteTimeSpan;
+                    else throw new ArgumentException($"Invalid timespan string: {value}");
+                }
+                if (conv == TimeSpan.Zero && !allowZero) Value = Timeout.InfiniteTimeSpan;
+                else Value = conv.Value;
+            }
+        }
+        /// <summary>
+        /// Create a new timespan wrapper. The wrapper is intended to be a singleton, i.e.
+        /// it is not recreated if the config is modified.
+        /// </summary>
+        /// <param name="allowZero"></param>
+        /// <param name="defaultUnit"></param>
+        /// <param name="defaultValue"></param>
+        public TimeSpanWrapper(bool allowZero, string defaultUnit, string defaultValue)
+        {
+            this.allowZero = allowZero;
+            this.defaultUnit = defaultUnit;
+            RawValue = defaultValue;
+            rawValue = defaultValue;
+            this.defaultValue = Value;
         }
     }
 }
