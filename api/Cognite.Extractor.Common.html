@@ -120,6 +120,13 @@ scheduled per time unit.</p>
 to be included in the range.
 The legal range of values is from the unix epoch, midnight 1/1/1970, to DateTime.MaxValue.</p>
 </section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.TimeSpanWrapper.html">TimeSpanWrapper</a></h4>
+      <section><p>Utility for containing a string converted to timespan in config objects.
+To use:
+public string MyIntervalValue { get; } = new MyIntervalValue(false, &quot;s&quot;, &quot;0&quot;);
+public string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyIntervalValue.RawValue = value; }</p>
+<p>Access MyIntervalValue in your code, and MyInterval is the config option.</p>
+</section>
     <h3 id="interfaces">Interfaces
   </h3>
       <h4><a class="xref" href="Cognite.Extractor.Common.IChunk-1.html">IChunk&lt;T&gt;</a></h4>

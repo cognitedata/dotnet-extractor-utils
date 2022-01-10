@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class LoggerConfig
+    <title>Class TimeSpanWrapper
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class LoggerConfig
+    <meta name="title" content="Class TimeSpanWrapper
    ">
     <meta name="generator" content="docfx 2.51.0.0">
     
@@ -68,18 +68,22 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Logging.LoggerConfig">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Common.TimeSpanWrapper">
   
   
-  <h1 id="Cognite_Extractor_Logging_LoggerConfig" data-uid="Cognite.Extractor.Logging.LoggerConfig" class="text-break">Class LoggerConfig
+  <h1 id="Cognite_Extractor_Common_TimeSpanWrapper" data-uid="Cognite.Extractor.Common.TimeSpanWrapper" class="text-break">Class TimeSpanWrapper
   </h1>
-  <div class="markdown level0 summary"><p>Logging configuration object</p>
+  <div class="markdown level0 summary"><p>Utility for containing a string converted to timespan in config objects.
+To use:
+public string MyIntervalValue { get; } = new MyIntervalValue(false, &quot;s&quot;, &quot;0&quot;);
+public string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyIntervalValue.RawValue = value; }</p>
+<p>Access MyIntervalValue in your code, and MyInterval is the config option.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">LoggerConfig</span></div>
+    <div class="level1"><span class="xref">TimeSpanWrapper</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -105,29 +109,75 @@
       <span class="xref">System.Object.ToString()</span>
     </div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.Extractor.Logging.html">Cognite.Extractor.Logging</a></h6>
-  <h6><strong>Assembly</strong>: Cognite.Logging.dll</h6>
-  <h5 id="Cognite_Extractor_Logging_LoggerConfig_syntax">Syntax</h5>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.Extractor.Common.html">Cognite.Extractor.Common</a></h6>
+  <h6><strong>Assembly</strong>: Cognite.Common.dll</h6>
+  <h5 id="Cognite_Extractor_Common_TimeSpanWrapper_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class LoggerConfig</code></pre>
+    <pre><code class="lang-csharp hljs">public class TimeSpanWrapper</code></pre>
   </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d77db42ffb084986f2f2f3a5f686562e452f2b6a/apiSpec/new?filename=Cognite_Extractor_Common_TimeSpanWrapper__ctor_System_Boolean_System_String_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeSpanWrapper.%23ctor(System.Boolean%2CSystem.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d77db42ffb084986f2f2f3a5f686562e452f2b6a/Cognite.Common/CogniteTime.cs/#L274">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_TimeSpanWrapper__ctor_" data-uid="Cognite.Extractor.Common.TimeSpanWrapper.#ctor*"></a>
+  <h4 id="Cognite_Extractor_Common_TimeSpanWrapper__ctor_System_Boolean_System_String_System_String_" data-uid="Cognite.Extractor.Common.TimeSpanWrapper.#ctor(System.Boolean,System.String,System.String)">TimeSpanWrapper(Boolean, String, String)</h4>
+  <div class="markdown level1 summary"><p>Create a new timespan wrapper. The wrapper is intended to be a singleton, i.e.
+it is not recreated if the config is modified.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpanWrapper(bool allowZero, string defaultUnit, string defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">allowZero</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">defaultUnit</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d77db42ffb084986f2f2f3a5f686562e452f2b6a/apiSpec/new?filename=Cognite_Extractor_Logging_LoggerConfig_Console.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Logging.LoggerConfig.Console%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d77db42ffb084986f2f2f3a5f686562e452f2b6a/apiSpec/new?filename=Cognite_Extractor_Common_TimeSpanWrapper_RawValue.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeSpanWrapper.RawValue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d77db42ffb084986f2f2f3a5f686562e452f2b6a/Cognite.Logging/LoggerConfig.cs/#L14">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d77db42ffb084986f2f2f3a5f686562e452f2b6a/Cognite.Common/CogniteTime.cs/#L247">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Logging_LoggerConfig_Console_" data-uid="Cognite.Extractor.Logging.LoggerConfig.Console*"></a>
-  <h4 id="Cognite_Extractor_Logging_LoggerConfig_Console" data-uid="Cognite.Extractor.Logging.LoggerConfig.Console">Console</h4>
-  <div class="markdown level1 summary"><p>Logging to console (optional)</p>
+  <a id="Cognite_Extractor_Common_TimeSpanWrapper_RawValue_" data-uid="Cognite.Extractor.Common.TimeSpanWrapper.RawValue*"></a>
+  <h4 id="Cognite_Extractor_Common_TimeSpanWrapper_RawValue" data-uid="Cognite.Extractor.Common.TimeSpanWrapper.RawValue">RawValue</h4>
+  <div class="markdown level1 summary"><p>Raw string value of option.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ConsoleConfig Console { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string RawValue { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -139,27 +189,26 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Cognite.Extractor.Logging.ConsoleConfig.html">ConsoleConfig</a></td>
-        <td><p>A <a class="xref" href="Cognite.Extractor.Logging.LogConfig.html">LogConfig</a> config object</p>
-</td>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d77db42ffb084986f2f2f3a5f686562e452f2b6a/apiSpec/new?filename=Cognite_Extractor_Logging_LoggerConfig_File.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Logging.LoggerConfig.File%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d77db42ffb084986f2f2f3a5f686562e452f2b6a/apiSpec/new?filename=Cognite_Extractor_Common_TimeSpanWrapper_Value.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeSpanWrapper.Value%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d77db42ffb084986f2f2f3a5f686562e452f2b6a/Cognite.Logging/LoggerConfig.cs/#L20">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d77db42ffb084986f2f2f3a5f686562e452f2b6a/Cognite.Common/CogniteTime.cs/#L242">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Logging_LoggerConfig_File_" data-uid="Cognite.Extractor.Logging.LoggerConfig.File*"></a>
-  <h4 id="Cognite_Extractor_Logging_LoggerConfig_File" data-uid="Cognite.Extractor.Logging.LoggerConfig.File">File</h4>
-  <div class="markdown level1 summary"><p>Logging to file (optional)</p>
+  <a id="Cognite_Extractor_Common_TimeSpanWrapper_Value_" data-uid="Cognite.Extractor.Common.TimeSpanWrapper.Value*"></a>
+  <h4 id="Cognite_Extractor_Common_TimeSpanWrapper_Value" data-uid="Cognite.Extractor.Common.TimeSpanWrapper.Value">Value</h4>
+  <div class="markdown level1 summary"><p>Converted value as TimeSpan.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public FileConfig File { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public TimeSpan Value { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -171,39 +220,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Cognite.Extractor.Logging.FileConfig.html">FileConfig</a></td>
-        <td><p>A <a class="xref" href="Cognite.Extractor.Logging.FileConfig.html">FileConfig</a> config object</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d77db42ffb084986f2f2f3a5f686562e452f2b6a/apiSpec/new?filename=Cognite_Extractor_Logging_LoggerConfig_TraceListener.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Logging.LoggerConfig.TraceListener%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d77db42ffb084986f2f2f3a5f686562e452f2b6a/Cognite.Logging/LoggerConfig.cs/#L26">View Source</a>
-  </span>
-  <a id="Cognite_Extractor_Logging_LoggerConfig_TraceListener_" data-uid="Cognite.Extractor.Logging.LoggerConfig.TraceListener*"></a>
-  <h4 id="Cognite_Extractor_Logging_LoggerConfig_TraceListener" data-uid="Cognite.Extractor.Logging.LoggerConfig.TraceListener">TraceListener</h4>
-  <div class="markdown level1 summary"><p>Adds a listener that uses the configured logger to output <span class="xref">System.Diagnostics.Trace</span> messages</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TraceListenerConfig TraceListener { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Cognite.Extractor.Logging.TraceListenerConfig.html">TraceListenerConfig</a></td>
+        <td><span class="xref">System.TimeSpan</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -216,10 +233,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d77db42ffb084986f2f2f3a5f686562e452f2b6a/apiSpec/new?filename=Cognite_Extractor_Logging_LoggerConfig.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Logging.LoggerConfig%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/d77db42ffb084986f2f2f3a5f686562e452f2b6a/apiSpec/new?filename=Cognite_Extractor_Common_TimeSpanWrapper.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.TimeSpanWrapper%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d77db42ffb084986f2f2f3a5f686562e452f2b6a/Cognite.Logging/LoggerConfig.cs/#L8" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d77db42ffb084986f2f2f3a5f686562e452f2b6a/Cognite.Common/CogniteTime.cs/#L231" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

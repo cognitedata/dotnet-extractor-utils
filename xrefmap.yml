@@ -4428,6 +4428,51 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.TimeRange.ToString
   nameWithType: TimeRange.ToString
+- uid: Cognite.Extractor.Common.TimeSpanWrapper
+  name: TimeSpanWrapper
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html
+  commentId: T:Cognite.Extractor.Common.TimeSpanWrapper
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper
+  nameWithType: TimeSpanWrapper
+- uid: Cognite.Extractor.Common.TimeSpanWrapper.#ctor(System.Boolean,System.String,System.String)
+  name: TimeSpanWrapper(Boolean, String, String)
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper__ctor_System_Boolean_System_String_System_String_
+  commentId: M:Cognite.Extractor.Common.TimeSpanWrapper.#ctor(System.Boolean,System.String,System.String)
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper.TimeSpanWrapper(System.Boolean, System.String, System.String)
+  nameWithType: TimeSpanWrapper.TimeSpanWrapper(Boolean, String, String)
+- uid: Cognite.Extractor.Common.TimeSpanWrapper.#ctor*
+  name: TimeSpanWrapper
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper__ctor_
+  commentId: Overload:Cognite.Extractor.Common.TimeSpanWrapper.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper.TimeSpanWrapper
+  nameWithType: TimeSpanWrapper.TimeSpanWrapper
+- uid: Cognite.Extractor.Common.TimeSpanWrapper.RawValue
+  name: RawValue
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper_RawValue
+  commentId: P:Cognite.Extractor.Common.TimeSpanWrapper.RawValue
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper.RawValue
+  nameWithType: TimeSpanWrapper.RawValue
+- uid: Cognite.Extractor.Common.TimeSpanWrapper.RawValue*
+  name: RawValue
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper_RawValue_
+  commentId: Overload:Cognite.Extractor.Common.TimeSpanWrapper.RawValue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper.RawValue
+  nameWithType: TimeSpanWrapper.RawValue
+- uid: Cognite.Extractor.Common.TimeSpanWrapper.Value
+  name: Value
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper_Value
+  commentId: P:Cognite.Extractor.Common.TimeSpanWrapper.Value
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper.Value
+  nameWithType: TimeSpanWrapper.Value
+- uid: Cognite.Extractor.Common.TimeSpanWrapper.Value*
+  name: Value
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper_Value_
+  commentId: Overload:Cognite.Extractor.Common.TimeSpanWrapper.Value
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper.Value
+  nameWithType: TimeSpanWrapper.Value
 - uid: Cognite.Extractor.Logging
   name: Cognite.Extractor.Logging
   href: api/Cognite.Extractor.Logging.html
@@ -7969,6 +8014,82 @@ references:
   fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
   nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.UserAgent
   nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
+- uid: Cognite.Extractor.Utils.FunctionCallConfig
+  name: FunctionCallConfig
+  href: api/Cognite.Extractor.Utils.FunctionCallConfig.html
+  commentId: T:Cognite.Extractor.Utils.FunctionCallConfig
+  fullName: Cognite.Extractor.Utils.FunctionCallConfig
+  nameWithType: FunctionCallConfig
+- uid: Cognite.Extractor.Utils.FunctionCallConfig.ExternalId
+  name: ExternalId
+  href: api/Cognite.Extractor.Utils.FunctionCallConfig.html#Cognite_Extractor_Utils_FunctionCallConfig_ExternalId
+  commentId: P:Cognite.Extractor.Utils.FunctionCallConfig.ExternalId
+  fullName: Cognite.Extractor.Utils.FunctionCallConfig.ExternalId
+  nameWithType: FunctionCallConfig.ExternalId
+- uid: Cognite.Extractor.Utils.FunctionCallConfig.ExternalId*
+  name: ExternalId
+  href: api/Cognite.Extractor.Utils.FunctionCallConfig.html#Cognite_Extractor_Utils_FunctionCallConfig_ExternalId_
+  commentId: Overload:Cognite.Extractor.Utils.FunctionCallConfig.ExternalId
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.FunctionCallConfig.ExternalId
+  nameWithType: FunctionCallConfig.ExternalId
+- uid: Cognite.Extractor.Utils.FunctionCallConfig.Id
+  name: Id
+  href: api/Cognite.Extractor.Utils.FunctionCallConfig.html#Cognite_Extractor_Utils_FunctionCallConfig_Id
+  commentId: P:Cognite.Extractor.Utils.FunctionCallConfig.Id
+  fullName: Cognite.Extractor.Utils.FunctionCallConfig.Id
+  nameWithType: FunctionCallConfig.Id
+- uid: Cognite.Extractor.Utils.FunctionCallConfig.Id*
+  name: Id
+  href: api/Cognite.Extractor.Utils.FunctionCallConfig.html#Cognite_Extractor_Utils_FunctionCallConfig_Id_
+  commentId: Overload:Cognite.Extractor.Utils.FunctionCallConfig.Id
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.FunctionCallConfig.Id
+  nameWithType: FunctionCallConfig.Id
+- uid: Cognite.Extractor.Utils.FunctionCallWrapper`1
+  name: FunctionCallWrapper<T>
+  href: api/Cognite.Extractor.Utils.FunctionCallWrapper-1.html
+  commentId: T:Cognite.Extractor.Utils.FunctionCallWrapper`1
+  name.vb: FunctionCallWrapper(Of T)
+  fullName: Cognite.Extractor.Utils.FunctionCallWrapper<T>
+  fullName.vb: Cognite.Extractor.Utils.FunctionCallWrapper(Of T)
+  nameWithType: FunctionCallWrapper<T>
+  nameWithType.vb: FunctionCallWrapper(Of T)
+- uid: Cognite.Extractor.Utils.FunctionCallWrapper`1.#ctor(Cognite.Extractor.Utils.CogniteDestination,Cognite.Extractor.Utils.FunctionCallConfig,System.Nullable{ILogger})
+  name: FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable<ILogger>)
+  href: api/Cognite.Extractor.Utils.FunctionCallWrapper-1.html#Cognite_Extractor_Utils_FunctionCallWrapper_1__ctor_Cognite_Extractor_Utils_CogniteDestination_Cognite_Extractor_Utils_FunctionCallConfig_System_Nullable_ILogger__
+  commentId: M:Cognite.Extractor.Utils.FunctionCallWrapper`1.#ctor(Cognite.Extractor.Utils.CogniteDestination,Cognite.Extractor.Utils.FunctionCallConfig,System.Nullable{ILogger})
+  name.vb: FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable(Of ILogger))
+  fullName: Cognite.Extractor.Utils.FunctionCallWrapper<T>.FunctionCallWrapper(Cognite.Extractor.Utils.CogniteDestination, Cognite.Extractor.Utils.FunctionCallConfig, System.Nullable<ILogger>)
+  fullName.vb: Cognite.Extractor.Utils.FunctionCallWrapper(Of T).FunctionCallWrapper(Cognite.Extractor.Utils.CogniteDestination, Cognite.Extractor.Utils.FunctionCallConfig, System.Nullable(Of ILogger))
+  nameWithType: FunctionCallWrapper<T>.FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable<ILogger>)
+  nameWithType.vb: FunctionCallWrapper(Of T).FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable(Of ILogger))
+- uid: Cognite.Extractor.Utils.FunctionCallWrapper`1.#ctor*
+  name: FunctionCallWrapper
+  href: api/Cognite.Extractor.Utils.FunctionCallWrapper-1.html#Cognite_Extractor_Utils_FunctionCallWrapper_1__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.FunctionCallWrapper`1.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.FunctionCallWrapper<T>.FunctionCallWrapper
+  fullName.vb: Cognite.Extractor.Utils.FunctionCallWrapper(Of T).FunctionCallWrapper
+  nameWithType: FunctionCallWrapper<T>.FunctionCallWrapper
+  nameWithType.vb: FunctionCallWrapper(Of T).FunctionCallWrapper
+- uid: Cognite.Extractor.Utils.FunctionCallWrapper`1.TryCall(`0,CancellationToken)
+  name: TryCall(T, CancellationToken)
+  href: api/Cognite.Extractor.Utils.FunctionCallWrapper-1.html#Cognite_Extractor_Utils_FunctionCallWrapper_1_TryCall__0_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.FunctionCallWrapper`1.TryCall(`0,CancellationToken)
+  fullName: Cognite.Extractor.Utils.FunctionCallWrapper<T>.TryCall(T, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.FunctionCallWrapper(Of T).TryCall(T, CancellationToken)
+  nameWithType: FunctionCallWrapper<T>.TryCall(T, CancellationToken)
+  nameWithType.vb: FunctionCallWrapper(Of T).TryCall(T, CancellationToken)
+- uid: Cognite.Extractor.Utils.FunctionCallWrapper`1.TryCall*
+  name: TryCall
+  href: api/Cognite.Extractor.Utils.FunctionCallWrapper-1.html#Cognite_Extractor_Utils_FunctionCallWrapper_1_TryCall_
+  commentId: Overload:Cognite.Extractor.Utils.FunctionCallWrapper`1.TryCall
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.FunctionCallWrapper<T>.TryCall
+  fullName.vb: Cognite.Extractor.Utils.FunctionCallWrapper(Of T).TryCall
+  nameWithType: FunctionCallWrapper<T>.TryCall
+  nameWithType.vb: FunctionCallWrapper(Of T).TryCall
 - uid: Cognite.Extractor.Utils.IRawUploadQueue`1
   name: IRawUploadQueue<T>
   href: api/Cognite.Extractor.Utils.IRawUploadQueue-1.html
@@ -8436,85 +8557,3 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.UploadEntries
   nameWithType: TimeSeriesUploadQueue.UploadEntries
-- uid: Cognite.ExtractorUtils
-  name: Cognite.ExtractorUtils
-  href: api/Cognite.ExtractorUtils.html
-  commentId: N:Cognite.ExtractorUtils
-  fullName: Cognite.ExtractorUtils
-  nameWithType: Cognite.ExtractorUtils
-- uid: Cognite.ExtractorUtils.FunctionCallConfig
-  name: FunctionCallConfig
-  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html
-  commentId: T:Cognite.ExtractorUtils.FunctionCallConfig
-  fullName: Cognite.ExtractorUtils.FunctionCallConfig
-  nameWithType: FunctionCallConfig
-- uid: Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
-  name: ExternalId
-  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html#Cognite_ExtractorUtils_FunctionCallConfig_ExternalId
-  commentId: P:Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
-  fullName: Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
-  nameWithType: FunctionCallConfig.ExternalId
-- uid: Cognite.ExtractorUtils.FunctionCallConfig.ExternalId*
-  name: ExternalId
-  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html#Cognite_ExtractorUtils_FunctionCallConfig_ExternalId_
-  commentId: Overload:Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
-  isSpec: "True"
-  fullName: Cognite.ExtractorUtils.FunctionCallConfig.ExternalId
-  nameWithType: FunctionCallConfig.ExternalId
-- uid: Cognite.ExtractorUtils.FunctionCallConfig.Id
-  name: Id
-  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html#Cognite_ExtractorUtils_FunctionCallConfig_Id
-  commentId: P:Cognite.ExtractorUtils.FunctionCallConfig.Id
-  fullName: Cognite.ExtractorUtils.FunctionCallConfig.Id
-  nameWithType: FunctionCallConfig.Id
-- uid: Cognite.ExtractorUtils.FunctionCallConfig.Id*
-  name: Id
-  href: api/Cognite.ExtractorUtils.FunctionCallConfig.html#Cognite_ExtractorUtils_FunctionCallConfig_Id_
-  commentId: Overload:Cognite.ExtractorUtils.FunctionCallConfig.Id
-  isSpec: "True"
-  fullName: Cognite.ExtractorUtils.FunctionCallConfig.Id
-  nameWithType: FunctionCallConfig.Id
-- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1
-  name: FunctionCallWrapper<T>
-  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html
-  commentId: T:Cognite.ExtractorUtils.FunctionCallWrapper`1
-  name.vb: FunctionCallWrapper(Of T)
-  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>
-  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T)
-  nameWithType: FunctionCallWrapper<T>
-  nameWithType.vb: FunctionCallWrapper(Of T)
-- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1.#ctor(Cognite.Extractor.Utils.CogniteDestination,Cognite.ExtractorUtils.FunctionCallConfig,System.Nullable{ILogger})
-  name: FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable<ILogger>)
-  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html#Cognite_ExtractorUtils_FunctionCallWrapper_1__ctor_Cognite_Extractor_Utils_CogniteDestination_Cognite_ExtractorUtils_FunctionCallConfig_System_Nullable_ILogger__
-  commentId: M:Cognite.ExtractorUtils.FunctionCallWrapper`1.#ctor(Cognite.Extractor.Utils.CogniteDestination,Cognite.ExtractorUtils.FunctionCallConfig,System.Nullable{ILogger})
-  name.vb: FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable(Of ILogger))
-  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>.FunctionCallWrapper(Cognite.Extractor.Utils.CogniteDestination, Cognite.ExtractorUtils.FunctionCallConfig, System.Nullable<ILogger>)
-  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T).FunctionCallWrapper(Cognite.Extractor.Utils.CogniteDestination, Cognite.ExtractorUtils.FunctionCallConfig, System.Nullable(Of ILogger))
-  nameWithType: FunctionCallWrapper<T>.FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable<ILogger>)
-  nameWithType.vb: FunctionCallWrapper(Of T).FunctionCallWrapper(CogniteDestination, FunctionCallConfig, Nullable(Of ILogger))
-- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1.#ctor*
-  name: FunctionCallWrapper
-  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html#Cognite_ExtractorUtils_FunctionCallWrapper_1__ctor_
-  commentId: Overload:Cognite.ExtractorUtils.FunctionCallWrapper`1.#ctor
-  isSpec: "True"
-  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>.FunctionCallWrapper
-  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T).FunctionCallWrapper
-  nameWithType: FunctionCallWrapper<T>.FunctionCallWrapper
-  nameWithType.vb: FunctionCallWrapper(Of T).FunctionCallWrapper
-- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1.TryCall(`0,CancellationToken)
-  name: TryCall(T, CancellationToken)
-  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html#Cognite_ExtractorUtils_FunctionCallWrapper_1_TryCall__0_CancellationToken_
-  commentId: M:Cognite.ExtractorUtils.FunctionCallWrapper`1.TryCall(`0,CancellationToken)
-  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>.TryCall(T, CancellationToken)
-  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T).TryCall(T, CancellationToken)
-  nameWithType: FunctionCallWrapper<T>.TryCall(T, CancellationToken)
-  nameWithType.vb: FunctionCallWrapper(Of T).TryCall(T, CancellationToken)
-- uid: Cognite.ExtractorUtils.FunctionCallWrapper`1.TryCall*
-  name: TryCall
-  href: api/Cognite.ExtractorUtils.FunctionCallWrapper-1.html#Cognite_ExtractorUtils_FunctionCallWrapper_1_TryCall_
-  commentId: Overload:Cognite.ExtractorUtils.FunctionCallWrapper`1.TryCall
-  isSpec: "True"
-  fullName: Cognite.ExtractorUtils.FunctionCallWrapper<T>.TryCall
-  fullName.vb: Cognite.ExtractorUtils.FunctionCallWrapper(Of T).TryCall
-  nameWithType: FunctionCallWrapper<T>.TryCall
-  nameWithType.vb: FunctionCallWrapper(Of T).TryCall
