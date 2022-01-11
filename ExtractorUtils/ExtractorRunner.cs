@@ -369,7 +369,7 @@ namespace Cognite.Extractor.Utils
 
 
             }
-            Console.CancelKeyPress -= CancelKeyPressHandler;
+            _ = Task.Run(() => Console.CancelKeyPress -= CancelKeyPressHandler, CancellationToken.None).ConfigureAwait(false);
         }
 
 
