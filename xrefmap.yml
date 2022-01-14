@@ -8014,6 +8014,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
   nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.UserAgent
   nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).UserAgent
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.WaitForConfig
+  name: WaitForConfig
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_WaitForConfig
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.WaitForConfig
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.WaitForConfig
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).WaitForConfig
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.WaitForConfig
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).WaitForConfig
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.WaitForConfig*
+  name: WaitForConfig
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_WaitForConfig_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.WaitForConfig
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.WaitForConfig
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).WaitForConfig
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.WaitForConfig
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).WaitForConfig
 - uid: Cognite.Extractor.Utils.FunctionCallConfig
   name: FunctionCallConfig
   href: api/Cognite.Extractor.Utils.FunctionCallConfig.html
