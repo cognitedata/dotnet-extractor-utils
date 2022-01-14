@@ -90,6 +90,10 @@ namespace Cognite.Extractor.Utils
         /// Method to build logger from config. Defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/>
         /// </summary>
         public Func<LoggerConfig, Serilog.ILogger>? BuildLogger { get; set; }
+        /// <summary>
+        /// Wait for config to be loaded, even if Restart is set to false.
+        /// </summary>
+        public bool WaitForConfig { get; set; } = true;
     }
 
 
@@ -261,15 +265,15 @@ namespace Cognite.Extractor.Utils
                     if (options.StartupLogger != null)
                     {
                         options.StartupLogger.LogError("Invalid configuration file: {msg}", exception.Message);
-                        if (!options.Restart) options.StartupLogger.LogInformation("Sleeping for 30 seconds");
+                        if (options.WaitForConfig || options.Restart) options.StartupLogger.LogInformation("Sleeping for 30 seconds");
                     }
                     else
                     {
                         Serilog.Log.Logger = LoggingUtils.GetSerilogDefault();
                         Serilog.Log.Error("Invalid configuration file: " + exception.Message);
-                        if (!options.Restart) Serilog.Log.Information("Sleeping for 30 seconds");
+                        if (options.WaitForConfig || options.Restart) Serilog.Log.Information("Sleeping for 30 seconds");
                     }
-                    if (!options.Restart) break;
+                    if (!options.WaitForConfig && !options.Restart) break;
                     try
                     {
                         await Task.Delay(30_000, source.Token).ConfigureAwait(false);

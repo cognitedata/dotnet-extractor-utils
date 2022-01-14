@@ -86,7 +86,6 @@ namespace Cognite.Extractor.Utils
             {
                 _log.LogWarning("Failed to fetch extraction pipeline with ExternalId: {id}, reporting status may fail, if it does not exist: {msg}",
                     _config.PipelineId, ex.Message);
-                return;
             }
 
             _log.LogInformation("Begin reporting extraction runs to pipeline with id {id}. Continuous: {cont}", _config.PipelineId, Continuous);
