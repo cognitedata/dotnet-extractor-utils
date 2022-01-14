@@ -319,8 +319,6 @@ namespace Cognite.Extractor.Common
                         catch (TaskCanceledException)
                         {
                         }
-                        
-
                     }
                     else
                     {
@@ -338,15 +336,9 @@ namespace Cognite.Extractor.Common
                     _taskCompletionEvent.Reset();
                 }
 
-
                 lock (_lock)
                 {
                     if (_quitOnFailure && _runningTasks.Any(result => result.Task != null && result.Task.IsFaulted)) break;
-                }
-
-                if (_source.IsCancellationRequested || _generators.IsCompleted)
-                {
-                    await Task.WhenAll(_runningTasks.Select(result => result.Task)).ConfigureAwait(false);
                 }
 
                 lock (_lock)
@@ -367,6 +359,10 @@ namespace Cognite.Extractor.Common
                         || result.Task.IsFaulted);
                 }
             }
+
+            await Task.WhenAll(
+                _runningTasks.Select(result => result.Task)
+                .Where(task => task != null && !task.IsCompleted)).ConfigureAwait(false);
         }
 
         /// <summary>
