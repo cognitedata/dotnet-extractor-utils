@@ -14,7 +14,7 @@ using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
 using System.Reflection;
 using Xunit.Abstractions;
-using Cognite.ExtractorUtils.Testing;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {

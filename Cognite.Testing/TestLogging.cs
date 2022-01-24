@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using Xunit.Abstractions;
 
-namespace Cognite.ExtractorUtils.Testing
+namespace Cognite.Extractor.Testing
 {
     /// <summary>
     /// Serilog sink for ITestOutputHelper

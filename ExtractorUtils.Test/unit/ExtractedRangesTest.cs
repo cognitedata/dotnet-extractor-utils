@@ -19,7 +19,7 @@ using System.Linq;
 using CogniteSdk;
 using Cognite.Extractor.Common;
 using Xunit.Abstractions;
-using Cognite.ExtractorUtils.Testing;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {

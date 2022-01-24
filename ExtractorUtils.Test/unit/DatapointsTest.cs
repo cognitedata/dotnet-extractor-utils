@@ -13,7 +13,7 @@ using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.StateStorage;
 using Cognite.Extractor.Utils;
-using Cognite.ExtractorUtils.Testing;
+using Cognite.Extractor.Testing;
 using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
 using Google.Protobuf;

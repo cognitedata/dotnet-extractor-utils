@@ -20,7 +20,7 @@ using Polly;
 using System.Collections.Concurrent;
 using Cognite.Extensions;
 using Xunit.Abstractions;
-using Cognite.ExtractorUtils.Testing;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {

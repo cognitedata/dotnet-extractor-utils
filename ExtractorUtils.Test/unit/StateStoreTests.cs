@@ -2,7 +2,7 @@
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.StateStorage;
 using Cognite.Extractor.Utils;
-using Cognite.ExtractorUtils.Testing;
+using Cognite.Extractor.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;

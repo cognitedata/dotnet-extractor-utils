@@ -14,7 +14,7 @@ using Xunit;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using Xunit.Abstractions;
-using Cognite.ExtractorUtils.Testing;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {

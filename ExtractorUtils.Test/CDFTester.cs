@@ -1,6 +1,5 @@
-﻿using Cognite.Extractor.Logging;
+﻿using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
-using Cognite.ExtractorUtils.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;

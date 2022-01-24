@@ -28,7 +28,7 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SetupTemplate", "SetupTempl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleExtractor", "ExampleExtractor\ExampleExtractor.csproj", "{78402DC1-9C8C-4D83-9211-66AB81EA257B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractorUtils.Testing", "ExtractorUtils.Testing\ExtractorUtils.Testing.csproj", "{96149187-BA12-4F47-A4D2-B3378C026E07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognite.Testing", "Cognite.Testing\Cognite.Testing.csproj", "{96149187-BA12-4F47-A4D2-B3378C026E07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

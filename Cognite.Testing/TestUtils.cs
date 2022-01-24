@@ -1,12 +1,9 @@
-﻿using Cognite.Extractor.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Cognite.ExtractorUtils.Testing
+namespace Cognite.Extractor.Testing
 {
     /// <summary>
     /// Collection of static utility methods for testing

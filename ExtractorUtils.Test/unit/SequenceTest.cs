@@ -1,7 +1,7 @@
 ﻿using Cognite.Extensions;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
-using Cognite.ExtractorUtils.Testing;
+using Cognite.Extractor.Testing;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;

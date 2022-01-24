@@ -9,7 +9,8 @@ using Xunit.Sdk;
 using Cognite.Extensions;
 using CogniteSdk;
 using Xunit.Abstractions;
-using Cognite.ExtractorUtils.Testing;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {

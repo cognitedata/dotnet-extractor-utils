@@ -2,7 +2,7 @@
 using System.IO;
 using Xunit.Abstractions;
 
-namespace Cognite.ExtractorUtils.Testing
+namespace Cognite.Extractor.Testing
 {
     /// <summary>
     /// Base class for test classes that dump console output to the xunit test output.
