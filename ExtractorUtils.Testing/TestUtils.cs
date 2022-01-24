@@ -93,5 +93,32 @@ namespace Cognite.ExtractorUtils.Testing
         {
             return WaitForCondition(condition, seconds, () => assertion);
         }
+
+        /// <summary>
+        /// Wait for task to complete or <paramref name="seconds"/>.
+        /// Throws an exception if the task did not complete in time.
+        /// </summary>
+        /// <param name="task">Task to wait for.</param>
+        /// <param name="seconds"></param>
+        /// <exception cref="TrueException">If the task does not complete in time</exception>
+        public static async Task RunWithTimeout(Task task, int seconds)
+        {
+            if (task == null) throw new ArgumentNullException(nameof(task));
+            await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(seconds))).ConfigureAwait(false);
+            Assert.True(task.IsCompleted, "Task did not complete in time");
+        }
+
+        /// <summary>
+        /// Wait for task to complete or <paramref name="seconds"/>.
+        /// Throws an exception if the task did not complete in time.
+        /// </summary>
+        /// <param name="action">Method returning task to wait for.</param>
+        /// <param name="seconds"></param>
+        /// <exception cref="TrueException">If the task does not complete in time</exception>
+        public static Task RunWithTimeout(Func<Task> action, int seconds)
+        {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+            return RunWithTimeout(action(), seconds);
+        }
     }
 }
