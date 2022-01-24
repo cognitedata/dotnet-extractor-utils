@@ -1,5 +1,6 @@
 ﻿using Cognite.Extensions;
 using Cognite.Extractor.Logging;
+using Cognite.ExtractorUtils.Testing;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,20 +10,21 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {
     public class CogniteResultTests
     {
         private ILogger<CogniteResultTests> logger;
-        public CogniteResultTests()
+        public CogniteResultTests(ITestOutputHelper output)
         {
             var services = new ServiceCollection();
             services.AddSingleton(new LoggerConfig
             {
                 Console = new ConsoleConfig { Level = "debug" }
             });
-            services.AddLogging();
+            services.AddTestLogging(output);
             logger = services.BuildServiceProvider().GetRequiredService<ILogger<CogniteResultTests>>();
         }
         [Fact]

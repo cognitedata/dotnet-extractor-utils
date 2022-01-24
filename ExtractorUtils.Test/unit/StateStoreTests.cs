@@ -2,6 +2,7 @@
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.StateStorage;
 using Cognite.Extractor.Utils;
+using Cognite.ExtractorUtils.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,10 +25,12 @@ namespace ExtractorUtils.Test.Unit
     public class StateStoreTestCollection
     {}
     [Collection("state-store")]
-    public class StateStoreTests : ConsoleWrapper
+    public class StateStoreTests
     {
-        public StateStoreTests(ITestOutputHelper output) : base(output)
+        private readonly ITestOutputHelper _output;
+        public StateStoreTests(ITestOutputHelper output)
         {
+            _output = output;
         }
 
         private const string _project = "someProject";
@@ -76,7 +79,7 @@ namespace ExtractorUtils.Test.Unit
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddSingleton(loggerConf);
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             services.AddStateStore();
             File.Delete("test.db");
@@ -231,7 +234,7 @@ namespace ExtractorUtils.Test.Unit
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddSingleton(loggerConf);
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             services.AddStateStore();
             File.Delete("test.db");
@@ -334,7 +337,7 @@ namespace ExtractorUtils.Test.Unit
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddSingleton(loggerConf);
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             services.AddStateStore();
             File.Delete("test.db");
@@ -399,7 +402,7 @@ namespace ExtractorUtils.Test.Unit
         {
             var services = new ServiceCollection();
             services.AddSingleton(loggerConf);
-            services.AddLogger();
+            services.AddTestLogging(_output);
 
             using var provider = services.BuildServiceProvider();
             var config = new StateStoreConfig

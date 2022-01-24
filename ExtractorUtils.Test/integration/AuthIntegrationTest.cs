@@ -6,11 +6,18 @@ using Cognite.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {
     public class AuthIntegrationTest
     {
+        private readonly ITestOutputHelper _output;
+        public AuthIntegrationTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
 
         [Theory]
         [InlineData(CogniteHost.GreenField)]
@@ -20,7 +27,7 @@ namespace ExtractorUtils.Test.Integration
             if (host == CogniteHost.BlueField)
             {
                 var configMsal = CDFTester.GetConfig(host);
-                using (var tester = new CDFTester(configMsal))
+                using (var tester = new CDFTester(configMsal, _output))
                 {
                     await tester.Destination.TestCogniteConfig(tester.Source.Token); // should not throw
                 }
@@ -28,7 +35,7 @@ namespace ExtractorUtils.Test.Integration
                 // Fail to validate the project
                 configMsal = CDFTester.GetConfig(host);
                 configMsal[5] = "  project: not-a-valid-project";
-                using (var tester = new CDFTester(configMsal))
+                using (var tester = new CDFTester(configMsal, _output))
                 {
                     await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
                 }
@@ -36,7 +43,7 @@ namespace ExtractorUtils.Test.Integration
                 // Fail to obtain the token
                 configMsal = CDFTester.GetConfig(host);
                 configMsal[10] = "    secret: invalid-secret";
-                using (var tester = new CDFTester(configMsal))
+                using (var tester = new CDFTester(configMsal, _output))
                 {
                     await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
                 }
@@ -45,14 +52,14 @@ namespace ExtractorUtils.Test.Integration
                 configList.Insert(13, "    implementation: basic");
                 configList.Insert(14, "    token-url: https://login.microsoftonline.com/${BF_TEST_TENANT}/oauth2/v2.0/token");
                 var configBasic = configList.ToArray();
-                using (var tester = new CDFTester(configBasic))
+                using (var tester = new CDFTester(configBasic, _output))
                 {
                     await tester.Destination.TestCogniteConfig(tester.Source.Token); // should not throw
                 }
 
                 configBasic = configList.ToArray();
                 configBasic[10] = "    secret: invalid-secret";
-                using (var tester = new CDFTester(configBasic))
+                using (var tester = new CDFTester(configBasic, _output))
                 {
                     await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
                 }
@@ -60,7 +67,7 @@ namespace ExtractorUtils.Test.Integration
             else if (host == CogniteHost.GreenField)
             {
                 var configKey = CDFTester.GetConfig(host);
-                using (var tester = new CDFTester(configKey))
+                using (var tester = new CDFTester(configKey, _output))
                 {
                     await tester.Destination.TestCogniteConfig(tester.Source.Token); // should not throw
                 }
@@ -68,7 +75,7 @@ namespace ExtractorUtils.Test.Integration
                 // Fail to validate the project
                 configKey = CDFTester.GetConfig(host);
                 configKey[5] = "  project: not-a-valid-project";
-                using (var tester = new CDFTester(configKey))
+                using (var tester = new CDFTester(configKey, _output))
                 {
                     await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
                 }
@@ -76,7 +83,7 @@ namespace ExtractorUtils.Test.Integration
                 // Not logged in
                 configKey = CDFTester.GetConfig(host);
                 configKey[6] = "  api-key: invalid-api-key";
-                using (var tester = new CDFTester(configKey))
+                using (var tester = new CDFTester(configKey, _output))
                 {
                     await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
                 }
@@ -88,7 +95,7 @@ namespace ExtractorUtils.Test.Integration
         public async Task TestClientHeaders(CogniteHost host)
         {
             var configMsal = CDFTester.GetConfig(host);
-            using var tester = new CDFTester(configMsal);
+            using var tester = new CDFTester(configMsal, _output);
 
             var factory = tester.Provider.GetRequiredService<IHttpClientFactory>();
             var client = factory.CreateClient("AuthenticatorClient");

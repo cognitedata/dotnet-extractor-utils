@@ -2,6 +2,7 @@
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
+using Cognite.ExtractorUtils.Testing;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,6 +20,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -29,6 +31,12 @@ namespace ExtractorUtils.Test.Unit
         private const string _host = "https://test.cognitedata.com";
 
         private bool _failInsert;
+
+        private readonly ITestOutputHelper _output;
+        public EventTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
 
         [Theory]
         [InlineData("id1", "id2")]
@@ -73,7 +81,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider())
             {
@@ -142,7 +150,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
 
@@ -252,7 +260,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
 
             System.IO.File.Create("event-buffer.bin").Close();

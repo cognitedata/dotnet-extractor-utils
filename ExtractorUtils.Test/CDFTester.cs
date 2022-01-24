@@ -1,11 +1,13 @@
 ﻿using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
+using Cognite.ExtractorUtils.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test
 {
@@ -28,14 +30,14 @@ namespace ExtractorUtils.Test
         public BaseConfig Config { get; }
         private readonly string _configPath;
 
-        public CDFTester(string[] config)
+        public CDFTester(string[] config, ITestOutputHelper output)
         {
             // Thread safe increment and store
             _configPath = $"test-config-{Interlocked.Increment(ref _configIdx)}";
             System.IO.File.WriteAllLines(_configPath, config);
             var services = new ServiceCollection();
             Config = services.AddConfig<BaseConfig>(_configPath, 2);
-            services.AddLogger();
+            services.AddTestLogging(output);
             services.AddCogniteClient("net-extractor-utils-test", userAgent: "Utils-Tests/v1.0.0 (Test)");
             Provider = services.BuildServiceProvider();
             Logger = Provider.GetRequiredService<ILogger<CDFTester>>();
@@ -46,7 +48,7 @@ namespace ExtractorUtils.Test
               .Select(s => s[random.Next(s.Length)]).ToArray());
             Source = new CancellationTokenSource();
         }
-        public CDFTester(CogniteHost host) : this(GetConfig(host))
+        public CDFTester(CogniteHost host, ITestOutputHelper output) : this(GetConfig(host), output)
         {
         }
 

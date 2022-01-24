@@ -1,6 +1,7 @@
 ﻿using Cognite.Extensions;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
+using Cognite.ExtractorUtils.Testing;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -16,11 +17,19 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {
     public class SequenceTest
     {
+        private readonly ITestOutputHelper _output;
+        public SequenceTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+
         private const string _project = "someProject";
         private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
@@ -61,7 +70,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider())
             {

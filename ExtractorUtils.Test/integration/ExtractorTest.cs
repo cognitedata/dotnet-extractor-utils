@@ -144,11 +144,12 @@ namespace ExtractorUtils.Test.Integration
         }
     }
 
-    public class ExtractorTest : ConsoleWrapper
+    public class ExtractorTest
     {
-        public ExtractorTest(ITestOutputHelper output) : base(output)
+        private readonly ITestOutputHelper _output;
+        public ExtractorTest(ITestOutputHelper output)
         {
-
+            _output = output;
         }
 
         [Fact(Timeout = 30000)]
@@ -170,6 +171,8 @@ namespace ExtractorUtils.Test.Integration
 
             TestExtractor extractor = null;
             CogniteDestination destination = null;
+
+            var services = new ServiceCollection();
 
             var task = ExtractorRunner.Run<MyConfig, TestExtractor>(
                 configPath,
@@ -250,7 +253,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestExtractionPipeline(CogniteHost host)
         {
-            var tester = new CDFTester(host);
+            var tester = new CDFTester(host, _output);
             // We just need some dataset
             var datasets = await tester.Destination.CogniteClient.DataSets.ListAsync(new DataSetQuery
             {

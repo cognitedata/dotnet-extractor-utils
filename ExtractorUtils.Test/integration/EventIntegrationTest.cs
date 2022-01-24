@@ -6,18 +6,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {
     public class EventIntegrationTest
     {
+        private readonly ITestOutputHelper _output;
+        public EventIntegrationTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
 
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
         public async Task TestCreateEvents(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
             var ids = new[] {
                 $"{tester.Prefix} evt-1",
                 $"{tester.Prefix} evt-2",
@@ -94,7 +100,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var events = new[] {
                 new EventCreate
@@ -149,7 +155,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             await tester.Destination.EnsureEventsExistsAsync(new[]
             {

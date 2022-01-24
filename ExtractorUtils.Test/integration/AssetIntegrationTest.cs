@@ -5,18 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {
     public class AssetIntegrationTest
     {
+        private readonly ITestOutputHelper _output;
+        public AssetIntegrationTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+
         // Basic usage of ensure and GetOrCreate
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
         public async Task TestCreateAssets(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
             var ids = new[] {
                 $"{tester.Prefix} asset-1",
                 $"{tester.Prefix} asset-2",
@@ -99,7 +107,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
             
             var assets = new[] {
                 new AssetCreate
@@ -174,7 +182,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             // Create duplicate asset
             await tester.Destination.EnsureAssetsExistsAsync(new[]
@@ -369,7 +377,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUpdateAssets(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var assets = (await CreateAssetsForUpdate(tester)).ToArray();
 
@@ -407,7 +415,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUpdateSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var assets = (await CreateAssetsForUpdate(tester)).ToArray();
 
@@ -471,7 +479,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUpdateErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var assets = (await CreateAssetsForUpdate(tester)).ToArray();
 
@@ -657,7 +665,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(false)]
         public async Task TestUpsert(bool replaceMeta)
         {
-            using var tester = new CDFTester(CogniteHost.GreenField);
+            using var tester = new CDFTester(CogniteHost.GreenField, _output);
 
             var upserts = Enumerable.Range(1, 5).Select(i => new AssetCreate
             {

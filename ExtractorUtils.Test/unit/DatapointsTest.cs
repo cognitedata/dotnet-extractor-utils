@@ -13,6 +13,7 @@ using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.StateStorage;
 using Cognite.Extractor.Utils;
+using Cognite.ExtractorUtils.Testing;
 using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
 using Google.Protobuf;
@@ -22,6 +23,7 @@ using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using Xunit;
+using Xunit.Abstractions;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
 
 namespace ExtractorUtils.Test.Unit
@@ -30,6 +32,12 @@ namespace ExtractorUtils.Test.Unit
     {
         private const string _project = "someProject";
         private bool _failInsert = false;
+
+        private readonly ITestOutputHelper _output;
+        public DatapointsTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
 
         [Fact]
         public async Task TestInsertDataPoints()
@@ -58,7 +66,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider()) {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
@@ -149,7 +157,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider()) {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
@@ -219,7 +227,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
 
@@ -346,7 +354,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
 
             Func<int, Dictionary<Identity, Datapoint>> uploadGenerator = (int i) => new Dictionary<Identity, Datapoint>() {

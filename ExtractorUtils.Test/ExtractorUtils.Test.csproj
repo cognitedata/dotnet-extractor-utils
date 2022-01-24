@@ -23,6 +23,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExtractorUtils\ExtractorUtils.csproj" />
-    <ProjectReference Include="..\Cognite.StateStorage\Cognite.StateStorage.csproj" />
+    <ProjectReference Include="..\ExtractorUtils.Testing\ExtractorUtils.Testing.csproj" />
   </ItemGroup>
 </Project>

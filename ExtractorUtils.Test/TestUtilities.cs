@@ -25,43 +25,8 @@ namespace ExtractorUtils.Test {
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
             return (mockFactory, mockHttpMessageHandler);
         }
-
-        public static async Task WaitForCondition(Func<Task<bool>> condition, int seconds, Func<string> assertion)
-        {
-            if (condition == null) throw new ArgumentNullException(nameof(condition));
-            if (assertion == null) throw new ArgumentNullException(nameof(assertion));
-            bool triggered = false;
-            int i;
-            for (i = 0; i < seconds * 5; i++)
-            {
-                if (await condition())
-                {
-                    triggered = true;
-                    break;
-                }
-
-                await Task.Delay(200);
-            }
-
-            Assert.True(triggered, assertion());
-        }
-
-        public static async Task WaitForCondition(Func<bool> condition, int seconds,
-            string assertion = "Expected condition to trigger")
-        {
-            await WaitForCondition(() => Task.FromResult(condition()), seconds, () => assertion);
-        }
-        public static async Task WaitForCondition(Func<bool> condition, int seconds,
-            Func<string> assertion)
-        {
-            await WaitForCondition(() => Task.FromResult(condition()), seconds, assertion);
-        }
-        public static async Task WaitForCondition(Func<Task<bool>> condition, int seconds,
-            string assertion = "Expected condition to trigger")
-        {
-            await WaitForCondition(condition, seconds, () => assertion);
-        }
     }
+
     public class DummyExtractionStore : IExtractionStateStore
     {
         public int DeleteRequests { get; private set; }

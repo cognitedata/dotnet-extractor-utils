@@ -9,6 +9,7 @@ using Xunit.Sdk;
 using Cognite.Extensions;
 using CogniteSdk;
 using Xunit.Abstractions;
+using Cognite.ExtractorUtils.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -296,7 +297,7 @@ namespace ExtractorUtils.Test.Unit
 
             Assert.Equal(4, scheduler.Count);
 
-            await TestUtilities.WaitForCondition(() => scheduler.Count == 2, 1);
+            await TestUtils.WaitForCondition(() => scheduler.Count == 2, 1);
 
             Assert.Equal(2, scheduler.Count);
 
