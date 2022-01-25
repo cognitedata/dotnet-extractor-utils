@@ -9,18 +9,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {
     public class TimeSeriesIntegrationTest
     {
-
+        private readonly ITestOutputHelper _output;
+        public TimeSeriesIntegrationTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
         public async Task TestCreateTimeSeries(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
             var ids = new[] {
                 $"{tester.Prefix} ts-1",
                 $"{tester.Prefix} ts-2",
@@ -97,7 +102,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var timeseries = new[] {
                 new TimeSeriesCreate
@@ -154,7 +159,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             await tester.Destination.EnsureTimeSeriesExistsAsync(new[]
             {
@@ -264,7 +269,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUpdateTimeSeries(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var tss = await CreateTestTimeSeries(tester);
 
@@ -304,7 +309,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUpdateSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var tss = await CreateTestTimeSeries(tester);
 
@@ -364,7 +369,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUpdateErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var tss = await CreateTestTimeSeries(tester);
 
@@ -469,7 +474,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUploadQueue(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var timeseries = new[]
             {
@@ -602,7 +607,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestCreateDataPoints(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var tss = await CreateTestTimeSeries(tester);
 
@@ -659,7 +664,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestDataPointsSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var tss = await CreateTestTimeSeries(tester);
 
@@ -751,7 +756,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestDataPointsErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var tss = await CreateTestTimeSeries(tester);
 
@@ -818,7 +823,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(false)]
         public async Task TestUpsert(bool replaceMeta)
         {
-            using var tester = new CDFTester(CogniteHost.GreenField);
+            using var tester = new CDFTester(CogniteHost.GreenField, _output);
 
             var upserts = Enumerable.Range(1, 5).Select(i => new TimeSeriesCreate
             {

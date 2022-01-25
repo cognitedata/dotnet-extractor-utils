@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit.Abstractions;
 
-namespace ExtractorUtils.Test
+namespace Cognite.Extractor.Testing
 {
+    /// <summary>
+    /// Base class for test classes that dump console output to the xunit test output.
+    /// Requires disabling test parallelization. A better solution is to use TestUtils.AddTestLogger
+    /// but this requires the code to use dependency injected loggers, and that they are
+    /// instantiated after 
+    /// </summary>
     public class ConsoleWrapper : IDisposable
     {
         private readonly ITestOutputHelper _output;
@@ -15,6 +17,10 @@ namespace ExtractorUtils.Test
         private readonly TextWriter _textWriter;
         private bool disposed;
 
+        /// <summary>
+        /// Constructor, pass the test output helper from the test class.
+        /// </summary>
+        /// <param name="output"></param>
         public ConsoleWrapper(ITestOutputHelper output)
         {
             _output = output;
@@ -23,12 +29,17 @@ namespace ExtractorUtils.Test
             Console.SetOut(_textWriter);
         }
 
+        /// <inheritDoc />
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Internal dispose method, should be called if overridden in subclass.
+        /// </summary>
+        /// <param name="disposing">True if we are disposing disposables now</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposed) return;

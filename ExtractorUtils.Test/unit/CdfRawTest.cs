@@ -13,18 +13,25 @@ using Moq.Protected;
 using Xunit;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
+using Xunit.Abstractions;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {
     public class CdfRawTest
     {
-
         private const string _authTenant = "someTenant";
         private const string _project = "someProject";
         private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
         private const string _dbName = "testDb";
         private const string _tableName = "testTable";
+
+        private readonly ITestOutputHelper _output;
+        public CdfRawTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
 
         [Fact]
         public async Task TestInsertRow()
@@ -52,7 +59,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider()) {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
@@ -109,7 +116,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
             using (var source = new CancellationTokenSource())

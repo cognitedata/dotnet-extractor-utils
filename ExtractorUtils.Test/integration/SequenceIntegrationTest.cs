@@ -6,11 +6,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {
     public class SequenceIntegrationTest
     {
+        private readonly ITestOutputHelper _output;
+        public SequenceIntegrationTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         private static async Task SafeDelete(string[] ids, CDFTester tester)
         {
             // There's no "ignore missing" functionality on sequence delete, so we need this.
@@ -41,7 +48,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestCreateSequences(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
             var ids = new[]
             {
                 $"{tester.Prefix} seq-1",
@@ -132,7 +139,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var columns = new[] { new SequenceColumnWrite
             {
@@ -217,7 +224,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             var columns = new[] { new SequenceColumnWrite
             {
@@ -376,7 +383,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestRowsCreate(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
             var ids = await CreateTestSequences(tester);
             var columns = new[] { "col1", "col3", "col2" };
             var writes = new[]
@@ -458,7 +465,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestRowsSanitation(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
             var ids = await CreateTestSequences(tester);
 
             var columns = new[] { "col1", "col3", "col2" };
@@ -638,7 +645,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestRowsErrorHandling(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
             var ids = await CreateTestSequences(tester);
 
             var columns = new[] { "col1", "col3", "col2" };

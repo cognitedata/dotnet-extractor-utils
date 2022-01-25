@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {
@@ -19,13 +20,19 @@ namespace ExtractorUtils.Test.Integration
             public int Number { get; set; }
         }
 
+        private readonly ITestOutputHelper _output;
+        public RawIntegrationTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
 
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
         public async Task TestInsertRow(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             string dbName = $"{tester.Prefix}-Db";
             string tableName = $"{tester.Prefix}-Table";
@@ -72,7 +79,7 @@ namespace ExtractorUtils.Test.Integration
         [InlineData(CogniteHost.BlueField)]
         public async Task TestUploadQueue(CogniteHost host)
         {
-            using var tester = new CDFTester(host);
+            using var tester = new CDFTester(host, _output);
 
             string dbName = $"{tester.Prefix}-Db";
             string tableName = $"{tester.Prefix}-Table";

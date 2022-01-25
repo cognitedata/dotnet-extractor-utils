@@ -19,6 +19,8 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using System.Collections.Concurrent;
 using Cognite.Extensions;
+using Xunit.Abstractions;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -29,6 +31,12 @@ namespace ExtractorUtils.Test.Unit
         private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
         private static int _tokenCounter = 0;
+
+        private readonly ITestOutputHelper _output;
+        public CogniteTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
 
         [Fact]
         public async Task TestAuthenticator()
@@ -59,7 +67,7 @@ namespace ExtractorUtils.Test.Unit
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             var config = services.AddConfig<BaseConfig>(path, 2);
             services.AddSingleton<AuthenticatorConfig>(config.Cognite.IdpAuthentication);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddHttpClient<IAuthenticator, Authenticator>();
             using (var provider = services.BuildServiceProvider()) {
                 var auth = provider.GetRequiredService<IAuthenticator>();
@@ -108,7 +116,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp", "Utils-Tests/v1.0.0 (Test)", setLogger: true, setMetrics: true);
             using (var provider = services.BuildServiceProvider()) {
                 var config = provider.GetRequiredService<CogniteConfig>();
@@ -170,6 +178,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp", "Utils-Tests/v1.0.0 (Test)");
             using (var provider = services.BuildServiceProvider()) {
                 var config = provider.GetRequiredService<CogniteConfig>();
@@ -212,7 +221,7 @@ namespace ExtractorUtils.Test.Unit
             // Setup services
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             IAsyncPolicy<HttpResponseMessage> retryPolicy;
             IAsyncPolicy<HttpResponseMessage> timeoutPolicy;
             using (var provider = services.BuildServiceProvider())
@@ -285,7 +294,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider()) {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
@@ -372,7 +381,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider())
             {

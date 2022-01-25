@@ -13,11 +13,20 @@ using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
 using System.Reflection;
+using Xunit.Abstractions;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {
     public class MetricsTest 
     {
+        private readonly ITestOutputHelper _output;
+        public MetricsTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+
         private static readonly Counter testCount = Metrics.CreateCounter("extractor_utils_test_count", "Counter used for unit testing.");
         private const string endpoint = @"http://localhost101:9091";
         private const string job = "unit-test-job";
@@ -42,7 +51,7 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public static async Task TestMetricsAsync() {
+        public async Task TestMetricsAsync() {
             Metrics.SuppressDefaultMetrics();
 
             string path = "test-metrics-config.yml";
@@ -66,7 +75,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(factory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddMetrics();
 
             using (var provider = services.BuildServiceProvider()) {
@@ -89,7 +98,7 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public static async Task TestDisableMetricsAsync() {
+        public async Task TestDisableMetricsAsync() {
             Metrics.SuppressDefaultMetrics();
 
             string path = "test-disable-metrics-config.yml";
@@ -103,7 +112,7 @@ namespace ExtractorUtils.Test.Unit
             // Setup services
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddMetrics();
 
             using (var provider = services.BuildServiceProvider()) {
@@ -125,7 +134,7 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public static async Task TestInvalidPushGatewayAsync() {
+        public async Task TestInvalidPushGatewayAsync() {
             Metrics.SuppressDefaultMetrics();
 
             string path = "test-invalid-pg-config.yml";
@@ -143,7 +152,7 @@ namespace ExtractorUtils.Test.Unit
             // Setup services
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddMetrics();
 
             using (var provider = services.BuildServiceProvider()) {
@@ -197,7 +206,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(factory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddMetrics();
 
             using (var provider = services.BuildServiceProvider()) {

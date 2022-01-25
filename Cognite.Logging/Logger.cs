@@ -18,9 +18,15 @@ namespace Cognite.Extractor.Logging
     /// </summary>
     public static class LoggingUtils 
     {
-        
-        private const string _logTemplate = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}";
-        private const string _logTemplateWithContext = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";
+        /// <summary>
+        /// Default logging template without context.
+        /// </summary>
+        public const string LogTemplate = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+
+        /// <summary>
+        /// Default logging template with context.
+        /// </summary>
+        public const string LogTemplateWithContext = "[{UtcTimestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";
 
         /// <summary>
         /// Configure Serilog's shared logger according to the configuration in <paramref name="config"/>.
@@ -57,7 +63,7 @@ namespace Cognite.Extractor.Logging
             if (logToConsole)
             {
                 logConfig.WriteTo.Console(consoleLevel,
-                    consoleLevel <= LogEventLevel.Debug ? _logTemplateWithContext : _logTemplate,
+                    consoleLevel <= LogEventLevel.Debug ? LogTemplateWithContext : LogTemplate,
                     standardErrorFromLevel: logToStderr ? (LogEventLevel?)stderrLevel : null);
             }
 
@@ -73,7 +79,7 @@ namespace Cognite.Extractor.Logging
                     rollingInterval: ri,
                     retainedFileCountLimit: config.File.RetentionLimit,
                     restrictedToMinimumLevel: fileLevel,
-                    outputTemplate: fileLevel <= LogEventLevel.Debug ? _logTemplateWithContext : _logTemplate));
+                    outputTemplate: fileLevel <= LogEventLevel.Debug ? LogTemplateWithContext : LogTemplate));
             }
 
             return logConfig;
@@ -109,7 +115,7 @@ namespace Cognite.Extractor.Logging
         public static Serilog.ILogger GetSerilogDefault() {
             return new LoggerConfiguration()
                 .Enrich.With<UtcTimestampEnricher>()
-                .WriteTo.Console(LogEventLevel.Information, _logTemplate)
+                .WriteTo.Console(LogEventLevel.Information, LogTemplate)
                 .CreateLogger();
         }
 

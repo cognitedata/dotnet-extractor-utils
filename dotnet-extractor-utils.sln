@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29806.167
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32104.313
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtractorUtils", "ExtractorUtils\ExtractorUtils.csproj", "{E18EE09E-8E0E-4C2E-B190-663200A3A63E}"
 EndProject
@@ -27,6 +27,8 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SetupTemplate", "SetupTemplate\SetupTemplate.wixproj", "{AB5CEA73-6F41-4811-B4AB-CE668F44E164}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleExtractor", "ExampleExtractor\ExampleExtractor.csproj", "{78402DC1-9C8C-4D83-9211-66AB81EA257B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognite.Testing", "Cognite.Testing\Cognite.Testing.csproj", "{96149187-BA12-4F47-A4D2-B3378C026E07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -154,6 +156,18 @@ Global
 		{78402DC1-9C8C-4D83-9211-66AB81EA257B}.Release|x64.Build.0 = Release|Any CPU
 		{78402DC1-9C8C-4D83-9211-66AB81EA257B}.Release|x86.ActiveCfg = Release|Any CPU
 		{78402DC1-9C8C-4D83-9211-66AB81EA257B}.Release|x86.Build.0 = Release|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Debug|x64.Build.0 = Debug|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Debug|x86.Build.0 = Debug|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Release|x64.ActiveCfg = Release|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Release|x64.Build.0 = Release|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Release|x86.ActiveCfg = Release|Any CPU
+		{96149187-BA12-4F47-A4D2-B3378C026E07}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

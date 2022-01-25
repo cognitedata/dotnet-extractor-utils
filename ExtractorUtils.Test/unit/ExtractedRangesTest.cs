@@ -18,11 +18,20 @@ using Cognite.Extractor.Logging;
 using System.Linq;
 using CogniteSdk;
 using Cognite.Extractor.Common;
+using Xunit.Abstractions;
+using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {
     public class ExtractedRangesTest
     {
+        private readonly ITestOutputHelper _output;
+        public ExtractedRangesTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+
         private const string _project = "someProject";
 
         [Fact]
@@ -55,7 +64,7 @@ namespace ExtractorUtils.Test.Unit
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
-            services.AddLogger();
+            services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
             using var provider = services.BuildServiceProvider();
 
