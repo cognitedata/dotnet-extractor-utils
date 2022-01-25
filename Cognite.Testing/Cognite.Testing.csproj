@@ -16,6 +16,7 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
