@@ -4761,6 +4761,18 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Logging.LoggingUtils.GetSerilogDefault
   nameWithType: LoggingUtils.GetSerilogDefault
+- uid: Cognite.Extractor.Logging.LoggingUtils.LogTemplate
+  name: LogTemplate
+  href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_LogTemplate
+  commentId: F:Cognite.Extractor.Logging.LoggingUtils.LogTemplate
+  fullName: Cognite.Extractor.Logging.LoggingUtils.LogTemplate
+  nameWithType: LoggingUtils.LogTemplate
+- uid: Cognite.Extractor.Logging.LoggingUtils.LogTemplateWithContext
+  name: LogTemplateWithContext
+  href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_LogTemplateWithContext
+  commentId: F:Cognite.Extractor.Logging.LoggingUtils.LogTemplateWithContext
+  fullName: Cognite.Extractor.Logging.LoggingUtils.LogTemplateWithContext
+  nameWithType: LoggingUtils.LogTemplateWithContext
 - uid: Cognite.Extractor.Logging.TraceListenerConfig
   name: TraceListenerConfig
   href: api/Cognite.Extractor.Logging.TraceListenerConfig.html
