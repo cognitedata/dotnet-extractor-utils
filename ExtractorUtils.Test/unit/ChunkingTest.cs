@@ -10,7 +10,6 @@ using Cognite.Extensions;
 using CogniteSdk;
 using Xunit.Abstractions;
 using Cognite.Extractor.Testing;
-using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {
