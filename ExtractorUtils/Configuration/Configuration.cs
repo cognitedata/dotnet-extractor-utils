@@ -6,6 +6,8 @@ using Cognite.Extractor.StateStorage;
 using Microsoft.Extensions.Logging;
 using System;
 using Cognite.Extractor.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cognite.Extractor.Utils
 {
@@ -45,6 +47,31 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
+        /// Read the config of type <typeparamref name="T"/> from the yaml file in <paramref name="path"/>
+        /// and adds it as a singleton to the service collection <paramref name="services"/>
+        /// Also adds <see cref="CogniteConfig"/>, <see cref="LoggerConfig"/> and <see cref="MetricsConfig"/> configuration
+        /// objects as singletons, if they are present in the configuration
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <param name="path">Path to the file</param>
+        /// <param name="acceptedConfigVersions">Accepted versions</param>
+        /// <param name="types">Types to look for as properties on <typeparamref name="T"/></param>
+        /// <typeparam name="T">A type that inherits from <see cref="VersionedConfig"/></typeparam>
+        /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
+        /// the yaml file is not found or in case of yaml parsing error</exception>
+        /// <returns>An instance of the configuration object</returns>
+        public static T AddConfig<T>(this IServiceCollection services,
+                                        string path,
+                                        Type[] types,
+                                        params int[]? acceptedConfigVersions) where T : VersionedConfig
+        {
+            var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
+            services.AddSingleton<T>(config);
+            services.AddConfig<T>(config, types);
+            return config;
+        }
+
+        /// <summary>
         /// Configure dependencies for the BaseExtractor, adding metrics, logging, state store and cognite client.
         /// Short for AddConfig, AddCogniteClient, AddStateStore, AddMetrics and AddLogger.
         /// </summary>
@@ -60,6 +87,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="requireDestination">True to fail if a destination cannot be configured</param>
         /// <param name="config">Optional pre-defined config object to use instead of reading from file</param>
         /// <param name="buildLogger">Optional method to build logger.
+        /// <param name="types">Types to look for as properties on <typeparamref name="T"/></param>
         /// Defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/> </param>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error</exception>
@@ -75,21 +103,28 @@ namespace Cognite.Extractor.Utils
             bool addMetrics = true,
             bool requireDestination = true,
             T? config = null,
-            Func<LoggerConfig, Serilog.ILogger>? buildLogger = null) where T : VersionedConfig
+            Func<LoggerConfig, Serilog.ILogger>? buildLogger = null,
+            IEnumerable<Type>? types = null) where T : VersionedConfig
         {
-            if (config != null)
-            {
-                services.AddSingleton(config);
-                services.AddConfig(config,
+            var configTypes = new[]
+                {
                     typeof(CogniteConfig),
                     typeof(LoggerConfig),
                     typeof(MetricsConfig),
                     typeof(StateStoreConfig),
-                    typeof(BaseConfig));
+                    typeof(BaseConfig)
+                };
+
+            if (types != null) configTypes = configTypes.Concat(types).Distinct().ToArray();
+
+            if (config != null)
+            {
+                services.AddSingleton(config);
+                services.AddConfig(config, configTypes);
             }
             else if (configPath != null)
             {
-                config = services.AddConfig<T>(configPath, acceptedConfigVersions);
+                config = services.AddConfig<T>(configPath, configTypes, acceptedConfigVersions);
             }
             else
             {
