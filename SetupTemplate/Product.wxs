@@ -65,7 +65,7 @@
 
   <Fragment>
     <ComponentGroup Id="ExecutableComponentGroup">
-      <?if service='true' ?>
+      <?if "$(var.service)"="true" ?>
         <Component Id="Primary_exe" Guid="*" Directory="ExecutableFolder">
           <File Source="$(var.build_dir)\$(var.exe_name)" />
 
