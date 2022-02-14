@@ -7474,6 +7474,15 @@ references:
   fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddConfig(Of T)(IServiceCollection, System.String, System.Int32())
   nameWithType: ConfigurationExtensions.AddConfig<T>(IServiceCollection, String, Int32[])
   nameWithType.vb: ConfigurationExtensions.AddConfig(Of T)(IServiceCollection, String, Int32())
+- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddConfig``1(IServiceCollection,System.String,Type[],System.Int32[])
+  name: AddConfig<T>(IServiceCollection, String, Type[], Int32[])
+  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddConfig__1_IServiceCollection_System_String_Type___System_Int32___
+  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddConfig``1(IServiceCollection,System.String,Type[],System.Int32[])
+  name.vb: AddConfig(Of T)(IServiceCollection, String, Type(), Int32())
+  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddConfig<T>(IServiceCollection, System.String, Type[], System.Int32[])
+  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddConfig(Of T)(IServiceCollection, System.String, Type(), System.Int32())
+  nameWithType: ConfigurationExtensions.AddConfig<T>(IServiceCollection, String, Type[], Int32[])
+  nameWithType.vb: ConfigurationExtensions.AddConfig(Of T)(IServiceCollection, String, Type(), Int32())
 - uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractionRun(IServiceCollection,System.Boolean)
   name: AddExtractionRun(IServiceCollection, Boolean)
   href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractionRun_IServiceCollection_System_Boolean_
@@ -7494,15 +7503,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies
   nameWithType: ConfigurationExtensions.AddExtractorDependencies
-- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.Nullable{System.String},System.Int32[],System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Nullable{Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger}})
-  name: AddExtractorDependencies<T>(IServiceCollection, Nullable<String>, Int32[], Nullable<String>, Nullable<String>, Boolean, Boolean, Boolean, Boolean, T, Nullable<Func<LoggerConfig, Serilog.ILogger>>)
-  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractorDependencies__1_IServiceCollection_System_Nullable_System_String__System_Int32___System_Nullable_System_String__System_Nullable_System_String__System_Boolean_System_Boolean_System_Boolean_System_Boolean___0_System_Nullable_Func_Cognite_Extractor_Logging_LoggerConfig_Serilog_ILogger___
-  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.Nullable{System.String},System.Int32[],System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Nullable{Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger}})
-  name.vb: AddExtractorDependencies(Of T)(IServiceCollection, Nullable(Of String), Int32(), Nullable(Of String), Nullable(Of String), Boolean, Boolean, Boolean, Boolean, T, Nullable(Of Func(Of LoggerConfig, Serilog.ILogger)))
-  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, System.Nullable<System.String>, System.Int32[], System.Nullable<System.String>, System.Nullable<System.String>, System.Boolean, System.Boolean, System.Boolean, System.Boolean, T, System.Nullable<Func<Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger>>)
-  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, System.Nullable(Of System.String), System.Int32(), System.Nullable(Of System.String), System.Nullable(Of System.String), System.Boolean, System.Boolean, System.Boolean, System.Boolean, T, System.Nullable(Of Func(Of Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger)))
-  nameWithType: ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, Nullable<String>, Int32[], Nullable<String>, Nullable<String>, Boolean, Boolean, Boolean, Boolean, T, Nullable<Func<LoggerConfig, Serilog.ILogger>>)
-  nameWithType.vb: ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, Nullable(Of String), Int32(), Nullable(Of String), Nullable(Of String), Boolean, Boolean, Boolean, Boolean, T, Nullable(Of Func(Of LoggerConfig, Serilog.ILogger)))
+- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.Nullable{System.String},System.Int32[],System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Nullable{Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger}},System.Nullable{IEnumerable{Type}})
+  name: AddExtractorDependencies<T>(IServiceCollection, Nullable<String>, Int32[], Nullable<String>, Nullable<String>, Boolean, Boolean, Boolean, Boolean, T, Nullable<Func<LoggerConfig, Serilog.ILogger>>, Nullable<IEnumerable<Type>>)
+  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractorDependencies__1_IServiceCollection_System_Nullable_System_String__System_Int32___System_Nullable_System_String__System_Nullable_System_String__System_Boolean_System_Boolean_System_Boolean_System_Boolean___0_System_Nullable_Func_Cognite_Extractor_Logging_LoggerConfig_Serilog_ILogger___System_Nullable_IEnumerable_Type___
+  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(IServiceCollection,System.Nullable{System.String},System.Int32[],System.Nullable{System.String},System.Nullable{System.String},System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Nullable{Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger}},System.Nullable{IEnumerable{Type}})
+  name.vb: AddExtractorDependencies(Of T)(IServiceCollection, Nullable(Of String), Int32(), Nullable(Of String), Nullable(Of String), Boolean, Boolean, Boolean, Boolean, T, Nullable(Of Func(Of LoggerConfig, Serilog.ILogger)), Nullable(Of IEnumerable(Of Type)))
+  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, System.Nullable<System.String>, System.Int32[], System.Nullable<System.String>, System.Nullable<System.String>, System.Boolean, System.Boolean, System.Boolean, System.Boolean, T, System.Nullable<Func<Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger>>, System.Nullable<IEnumerable<Type>>)
+  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, System.Nullable(Of System.String), System.Int32(), System.Nullable(Of System.String), System.Nullable(Of System.String), System.Boolean, System.Boolean, System.Boolean, System.Boolean, T, System.Nullable(Of Func(Of Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger)), System.Nullable(Of IEnumerable(Of Type)))
+  nameWithType: ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, Nullable<String>, Int32[], Nullable<String>, Nullable<String>, Boolean, Boolean, Boolean, Boolean, T, Nullable<Func<LoggerConfig, Serilog.ILogger>>, Nullable<IEnumerable<Type>>)
+  nameWithType.vb: ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, Nullable(Of String), Int32(), Nullable(Of String), Nullable(Of String), Boolean, Boolean, Boolean, Boolean, T, Nullable(Of Func(Of LoggerConfig, Serilog.ILogger)), Nullable(Of IEnumerable(Of Type)))
 - uid: Cognite.Extractor.Utils.DestinationUtils
   name: DestinationUtils
   href: api/Cognite.Extractor.Utils.DestinationUtils.html
@@ -7736,15 +7745,15 @@ references:
   fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor), CancellationToken)
   nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(ExtractorRunnerParams<TConfig, TExtractor>, CancellationToken)
   nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(ExtractorRunnerParams(Of TConfig, TExtractor), CancellationToken)
-- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,System.Nullable{Action{Cognite.Extractor.Utils.CogniteDestination,``1}},System.Nullable{Action{``0,Cognite.Extractor.Utils.ExtractorRunnerParams{``0,``1}}},System.Nullable{ServiceCollection},System.Nullable{ILogger},``0,System.Boolean,System.Nullable{Action{ILogger,Exception,System.String}})
-  name: Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Nullable<Action<CogniteDestination, TExtractor>>, Nullable<Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>>>, Nullable<ServiceCollection>, Nullable<ILogger>, TConfig, Boolean, Nullable<Action<ILogger, Exception, String>>)
-  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_CancellationToken_System_Nullable_Action_Cognite_Extractor_Utils_CogniteDestination___1___System_Nullable_Action___0_Cognite_Extractor_Utils_ExtractorRunnerParams___0___1____System_Nullable_ServiceCollection__System_Nullable_ILogger____0_System_Boolean_System_Nullable_Action_ILogger_Exception_System_String___
-  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,System.Nullable{Action{Cognite.Extractor.Utils.CogniteDestination,``1}},System.Nullable{Action{``0,Cognite.Extractor.Utils.ExtractorRunnerParams{``0,``1}}},System.Nullable{ServiceCollection},System.Nullable{ILogger},``0,System.Boolean,System.Nullable{Action{ILogger,Exception,System.String}})
-  name.vb: Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Nullable(Of Action(Of CogniteDestination, TExtractor)), Nullable(Of Action(Of TConfig, ExtractorRunnerParams(Of TConfig, TExtractor))), Nullable(Of ServiceCollection), Nullable(Of ILogger), TConfig, Boolean, Nullable(Of Action(Of ILogger, Exception, String)))
-  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, System.Nullable<Action<Cognite.Extractor.Utils.CogniteDestination, TExtractor>>, System.Nullable<Action<TConfig, Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>>>, System.Nullable<ServiceCollection>, System.Nullable<ILogger>, TConfig, System.Boolean, System.Nullable<Action<ILogger, Exception, System.String>>)
-  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, System.Nullable(Of Action(Of Cognite.Extractor.Utils.CogniteDestination, TExtractor)), System.Nullable(Of Action(Of TConfig, Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor))), System.Nullable(Of ServiceCollection), System.Nullable(Of ILogger), TConfig, System.Boolean, System.Nullable(Of Action(Of ILogger, Exception, System.String)))
-  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Nullable<Action<CogniteDestination, TExtractor>>, Nullable<Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>>>, Nullable<ServiceCollection>, Nullable<ILogger>, TConfig, Boolean, Nullable<Action<ILogger, Exception, String>>)
-  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Nullable(Of Action(Of CogniteDestination, TExtractor)), Nullable(Of Action(Of TConfig, ExtractorRunnerParams(Of TConfig, TExtractor))), Nullable(Of ServiceCollection), Nullable(Of ILogger), TConfig, Boolean, Nullable(Of Action(Of ILogger, Exception, String)))
+- uid: Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,System.Nullable{Action{Cognite.Extractor.Utils.CogniteDestination,``1}},System.Nullable{Action{``0,Cognite.Extractor.Utils.ExtractorRunnerParams{``0,``1},ServiceCollection}},System.Nullable{ServiceCollection},System.Nullable{ILogger},``0,System.Boolean,System.Nullable{Action{ILogger,Exception,System.String}})
+  name: Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Nullable<Action<CogniteDestination, TExtractor>>, Nullable<Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>, ServiceCollection>>, Nullable<ServiceCollection>, Nullable<ILogger>, TConfig, Boolean, Nullable<Action<ILogger, Exception, String>>)
+  href: api/Cognite.Extractor.Utils.ExtractorRunner.html#Cognite_Extractor_Utils_ExtractorRunner_Run__2_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_CancellationToken_System_Nullable_Action_Cognite_Extractor_Utils_CogniteDestination___1___System_Nullable_Action___0_Cognite_Extractor_Utils_ExtractorRunnerParams___0___1__ServiceCollection___System_Nullable_ServiceCollection__System_Nullable_ILogger____0_System_Boolean_System_Nullable_Action_ILogger_Exception_System_String___
+  commentId: M:Cognite.Extractor.Utils.ExtractorRunner.Run``2(System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,CancellationToken,System.Nullable{Action{Cognite.Extractor.Utils.CogniteDestination,``1}},System.Nullable{Action{``0,Cognite.Extractor.Utils.ExtractorRunnerParams{``0,``1},ServiceCollection}},System.Nullable{ServiceCollection},System.Nullable{ILogger},``0,System.Boolean,System.Nullable{Action{ILogger,Exception,System.String}})
+  name.vb: Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Nullable(Of Action(Of CogniteDestination, TExtractor)), Nullable(Of Action(Of TConfig, ExtractorRunnerParams(Of TConfig, TExtractor), ServiceCollection)), Nullable(Of ServiceCollection), Nullable(Of ILogger), TConfig, Boolean, Nullable(Of Action(Of ILogger, Exception, String)))
+  fullName: Cognite.Extractor.Utils.ExtractorRunner.Run<TConfig, TExtractor>(System.String, System.Int32[], System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, System.Nullable<Action<Cognite.Extractor.Utils.CogniteDestination, TExtractor>>, System.Nullable<Action<TConfig, Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>, ServiceCollection>>, System.Nullable<ServiceCollection>, System.Nullable<ILogger>, TConfig, System.Boolean, System.Nullable<Action<ILogger, Exception, System.String>>)
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunner.Run(Of TConfig, TExtractor)(System.String, System.Int32(), System.String, System.String, System.Boolean, System.Boolean, System.Boolean, System.Boolean, CancellationToken, System.Nullable(Of Action(Of Cognite.Extractor.Utils.CogniteDestination, TExtractor)), System.Nullable(Of Action(Of TConfig, Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor), ServiceCollection)), System.Nullable(Of ServiceCollection), System.Nullable(Of ILogger), TConfig, System.Boolean, System.Nullable(Of Action(Of ILogger, Exception, System.String)))
+  nameWithType: ExtractorRunner.Run<TConfig, TExtractor>(String, Int32[], String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Nullable<Action<CogniteDestination, TExtractor>>, Nullable<Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>, ServiceCollection>>, Nullable<ServiceCollection>, Nullable<ILogger>, TConfig, Boolean, Nullable<Action<ILogger, Exception, String>>)
+  nameWithType.vb: ExtractorRunner.Run(Of TConfig, TExtractor)(String, Int32(), String, String, Boolean, Boolean, Boolean, Boolean, CancellationToken, Nullable(Of Action(Of CogniteDestination, TExtractor)), Nullable(Of Action(Of TConfig, ExtractorRunnerParams(Of TConfig, TExtractor), ServiceCollection)), Nullable(Of ServiceCollection), Nullable(Of ILogger), TConfig, Boolean, Nullable(Of Action(Of ILogger, Exception, String)))
 - uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2
   name: ExtractorRunnerParams<TConfig, TExtractor>
   href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html
@@ -7907,6 +7916,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ConfigPath
   nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ConfigPath
   nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ConfigPath
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigTypes
+  name: ConfigTypes
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ConfigTypes
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigTypes
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.ConfigTypes
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ConfigTypes
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ConfigTypes
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ConfigTypes
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigTypes*
+  name: ConfigTypes
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ConfigTypes_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.ConfigTypes
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.ConfigTypes
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ConfigTypes
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ConfigTypes
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ConfigTypes
 - uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.ExtServices
   name: ExtServices
   href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_ExtServices
@@ -7924,6 +7950,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).ExtServices
   nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.ExtServices
   nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).ExtServices
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.IsFatalException
+  name: IsFatalException
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_IsFatalException
+  commentId: P:Cognite.Extractor.Utils.ExtractorRunnerParams`2.IsFatalException
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.IsFatalException
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).IsFatalException
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.IsFatalException
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).IsFatalException
+- uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.IsFatalException*
+  name: IsFatalException
+  href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_IsFatalException_
+  commentId: Overload:Cognite.Extractor.Utils.ExtractorRunnerParams`2.IsFatalException
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>.IsFatalException
+  fullName.vb: Cognite.Extractor.Utils.ExtractorRunnerParams(Of TConfig, TExtractor).IsFatalException
+  nameWithType: ExtractorRunnerParams<TConfig, TExtractor>.IsFatalException
+  nameWithType.vb: ExtractorRunnerParams(Of TConfig, TExtractor).IsFatalException
 - uid: Cognite.Extractor.Utils.ExtractorRunnerParams`2.LogException
   name: LogException
   href: api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html#Cognite_Extractor_Utils_ExtractorRunnerParams_2_LogException
