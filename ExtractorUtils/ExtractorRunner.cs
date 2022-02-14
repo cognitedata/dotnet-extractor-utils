@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -63,9 +64,9 @@ namespace Cognite.Extractor.Utils
         public Action<CogniteDestination?, TExtractor>? OnCreateExtractor { get; set; }
         /// <summary>
         /// Called after config has been read. Can be used to modify the runner params and config object based on
-        /// external parameters.
+        /// external parameters. New services can also be registered here based on the configuration object.
         /// </summary>
-        public Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>>? ConfigCallback { get; set; }
+        public Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>, ServiceCollection>? ConfigCallback { get; set; }
         /// <summary>
         /// Predefined list of services.
         /// </summary>
@@ -94,6 +95,14 @@ namespace Cognite.Extractor.Utils
         /// Wait for config to be loaded, even if Restart is set to false.
         /// </summary>
         public bool WaitForConfig { get; set; } = true;
+        /// <summary>
+        /// List of configuration types that should be registered if they are present on <typeparamref name="TConfig"/>.
+        /// </summary>
+        public IEnumerable<Type>? ConfigTypes { get; set; }
+        /// <summary>
+        /// Let this method return true if the exception is fatal and the extractor should terminate.
+        /// </summary>
+        public Func<Exception, bool>? IsFatalException { get; set; }
     }
 
 
@@ -146,7 +155,7 @@ namespace Cognite.Extractor.Utils
             bool restart,
             CancellationToken token,
             Action<CogniteDestination?, TExtractor>? onCreateExtractor = null,
-            Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>>? configCallback = null,
+            Action<TConfig, ExtractorRunnerParams<TConfig, TExtractor>, ServiceCollection>? configCallback = null,
             ServiceCollection? extServices = null,
             ILogger? startupLogger = null,
             TConfig? config = null,
@@ -228,8 +237,10 @@ namespace Cognite.Extractor.Utils
                         options.AddLogger,
                         options.AddMetrics, 
                         options.RequireDestination,
-                        options.Config);
-                    options.ConfigCallback?.Invoke(options.Config, options);
+                        options.Config,
+                        options.BuildLogger,
+                        options.ConfigTypes);
+                    options.ConfigCallback?.Invoke(options.Config, options, services);
                 }
                 catch (TargetInvocationException ex)
                 {
@@ -338,6 +349,12 @@ namespace Cognite.Extractor.Utils
                             else
                             {
                                 options.LogException(log, ex, "Extractor crashed unexpectedly");
+                            }
+
+                            if (options.IsFatalException?.Invoke(ex) ?? false)
+                            {
+                                log.LogInformation("Fatal exception encountered, quitting extractor");
+                                break;
                             }
                         }
                     }
