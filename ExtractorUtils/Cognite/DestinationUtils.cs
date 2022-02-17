@@ -102,21 +102,41 @@ namespace Cognite.Extractor.Utils
                 services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
                     .AddPolicyHandler((provider, message) =>
                     {
-                        var retryConfig = provider.GetService<CogniteConfig>()?.CdfRetries;
-                        return CogniteExtensions.GetRetryPolicy(provider.GetService<ILogger<Client>>(),
-                            retryConfig?.MaxRetries, retryConfig?.MaxDelay);
-
+                        try
+                        {
+                            var retryConfig = provider.GetService<CogniteConfig>()?.CdfRetries;
+                            return CogniteExtensions.GetRetryPolicy(provider.GetService<ILogger<Client>>(),
+                                retryConfig?.MaxRetries, retryConfig?.MaxDelay);
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            return CogniteExtensions.GetRetryPolicy(new NullLogger<Client>(), null, null);
+                        }
                     })
                     .AddPolicyHandler((provider, message) =>
                     {
-                        var retryConfig = provider.GetService<CogniteConfig>()?.CdfRetries;
-                        return CogniteExtensions.GetTimeoutPolicy(retryConfig?.Timeout);
+                        try
+                        {
+                            var retryConfig = provider.GetService<CogniteConfig>()?.CdfRetries;
+                            return CogniteExtensions.GetTimeoutPolicy(retryConfig?.Timeout);
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            return CogniteExtensions.GetTimeoutPolicy(null);
+                        }
                     })
 #if NETSTANDARD2_1_OR_GREATER
                     .ConfigurePrimaryHttpMessageHandler(provider =>
                     {
-                        var certConfig = provider.GetService<CogniteConfig>()?.Certificates;
-                        return GetClientHandler(certConfig);
+                        try
+                        {
+                            var certConfig = provider.GetService<CogniteConfig>()?.Certificates;
+                            return GetClientHandler(certConfig);
+                        }
+                        catch (ObjectDisposedException) 
+                        {
+                            return GetClientHandler(null);
+                        }
                     });
 #else
                     ;
@@ -136,8 +156,15 @@ namespace Cognite.Extractor.Utils
 #if NETSTANDARD2_1_OR_GREATER
                 .ConfigurePrimaryHttpMessageHandler(provider =>
                 {
-                    var certConfig = provider.GetService<CogniteConfig>()?.Certificates;
-                    return GetClientHandler(certConfig);
+                    try
+                    {
+                        var certConfig = provider.GetService<CogniteConfig>()?.Certificates;
+                        return GetClientHandler(certConfig);
+                    }
+                    catch (ObjectDisposedException) 
+                    {
+                        return GetClientHandler(null);
+                    }
                 });
 #else
                 ;

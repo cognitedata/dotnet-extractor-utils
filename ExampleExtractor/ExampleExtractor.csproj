@@ -10,4 +10,10 @@
     <ProjectReference Include="..\ExtractorUtils\ExtractorUtils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="config.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
