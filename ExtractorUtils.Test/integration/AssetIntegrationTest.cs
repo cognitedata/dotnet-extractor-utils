@@ -775,5 +775,25 @@ namespace ExtractorUtils.Test.Integration
                 });
             }
         }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestFollowCursor(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+
+            var enumerable = ApiUtils.FollowCursor(
+                new AssetQuery { Limit = 5 },
+                tester.Destination.CogniteClient.Assets.ListAsync<Asset>,
+                tester.Source.Token);
+
+            int count = 0;
+
+            await foreach (var asset in enumerable)
+            {
+                if (count++ > 5) break;
+            }
+        }
     }
 }
