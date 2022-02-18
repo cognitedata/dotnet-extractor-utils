@@ -62,14 +62,14 @@ class Program
         {
             // This can also be invoked directly in main, to not have a CLI.
             await ExtractorRunner.Run<BaseConfig, MyExtractor>(
-                opt.ConfigPath ?? "config.yml",
-                new[] { 1 },
-                "my-extractor",
-                "myextractor/1.0.0",
-                false,
-                true,
-                true,
-                true,
+                configPath: opt.ConfigPath ?? "config.yml",
+                acceptedConfigVersions: new[] { 1 },
+                appId: "my-extractor",
+                userAgent: "myextractor/1.0.0",
+                addStateStore: false,
+                addLogger: true,
+                addMetrics: true,
+                restart: true,
                 CancellationToken.None).ConfigureAwait(false);
         }, binder);
 
