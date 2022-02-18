@@ -24,7 +24,7 @@ class MyExtractor : BaseExtractor<BaseConfig>
                 Name = "Sine Wave"
             }
         }, RetryMode.OnError, SanitationMode.Clean, Source.Token).ConfigureAwait(false);
-        result.Throw();
+        result.ThrowOnFatal();
         CreateTimeseriesQueue(1000, TimeSpan.FromSeconds(1), null);
         ScheduleDatapointsRun("datapoints", TimeSpan.FromMilliseconds(100), token =>
         {

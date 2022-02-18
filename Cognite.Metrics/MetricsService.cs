@@ -114,7 +114,7 @@ namespace Cognite.Extractor.Metrics
                     {
                         _logger.LogError("Metrics push attempt timed out after retrying");
                     }
-                    else
+                    else if (!(e is ObjectDisposedException))
                     {
                         _logger.LogError("Metrics push error: " + e.Message);
                     }
