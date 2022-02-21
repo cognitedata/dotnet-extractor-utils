@@ -776,6 +776,26 @@ namespace ExtractorUtils.Test.Integration
             }
         }
 
+        private async Task CreateAssetsToRead(CDFTester tester)
+        {
+            var assets = Enumerable.Range(0, 10)
+                .Select(i => new AssetCreate
+                {
+                    Name = $"test-asset-read-{i}",
+                    ExternalId = $"{tester.Prefix}-read-{i}"
+                })
+                .ToList();
+            await tester.Destination.CogniteClient.Assets.CreateAsync(assets);
+        }
+
+        private async Task DeleteReadAssets(CDFTester tester)
+        {
+            var ids = Enumerable.Range(0, 10)
+                .Select(i => Identity.Create($"{tester.Prefix}-read-{i}"));
+
+            await tester.Destination.CogniteClient.Assets.DeleteAsync(new AssetDelete { Items = ids, IgnoreUnknownIds = true });
+        }
+
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
@@ -783,16 +803,63 @@ namespace ExtractorUtils.Test.Integration
         {
             using var tester = new CDFTester(host, _output);
 
-            var enumerable = ApiUtils.FollowCursor(
-                new AssetQuery { Limit = 5 },
-                tester.Destination.CogniteClient.Assets.ListAsync<Asset>,
-                tester.Source.Token);
+            await CreateAssetsToRead(tester);
 
-            int count = 0;
-
-            await foreach (var asset in enumerable)
+            try
             {
-                if (count++ > 5) break;
+                for (int i = 0; i < 10; i++)
+                {
+                    var enumerable = ApiUtils.FollowCursor(
+                        new AssetQuery { Limit = 2, Filter = new AssetFilter { ExternalIdPrefix = tester.Prefix } },
+                        tester.Destination.CogniteClient.Assets.ListAsync<Asset>,
+                        tester.Source.Token);
+
+                    var total = await enumerable.ToListAsync(tester.Source.Token);
+
+                    if (total.Count() == 10) break;
+
+                    Assert.NotEqual(9, i);
+
+                    await Task.Delay(1000);
+                }
+            }
+            finally
+            {
+                await DeleteReadAssets(tester);
+            }
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestReadPartitioned(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+
+            await CreateAssetsToRead(tester);
+
+            try
+            {
+                for (int i = 0; i < 10; i++)
+                {
+
+                    var total = await ApiUtils.ReadAllPartitioned(
+                        () => new AssetQuery { Limit = 2, Filter = new AssetFilter { ExternalIdPrefix = tester.Prefix } },
+                        tester.Destination.CogniteClient.Assets.ListAsync<Asset>,
+                        5,
+                        5,
+                        tester.Source.Token);
+
+                    if (total.Count() == 10) break;
+
+                    Assert.NotEqual(9, i);
+
+                    await Task.Delay(1000);
+                }
+            }
+            finally
+            {
+                await DeleteReadAssets(tester);
             }
         }
     }
