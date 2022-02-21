@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Cognite.Extractor.Utils;
+﻿using Cognite.Extractor.Utils;
 using CogniteSdk;
 using System.Threading.Tasks;
 using System.Threading;
 using Cognite.Extensions;
 using System;
 using System.Collections.Generic;
-using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
 
