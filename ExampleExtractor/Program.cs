@@ -7,6 +7,8 @@ using Cognite.Extensions;
 using System;
 using System.Collections.Generic;
 using Cognite.Extractor.Common;
+using Cognite.Extractor.Utils.CommandLine;
+using System.CommandLine;
 
 class MyExtractor : BaseExtractor<BaseConfig>
 {
@@ -37,20 +39,40 @@ class MyExtractor : BaseExtractor<BaseConfig>
     }
 }
 
+// Class for flat command line arguments
+class Options
+{
+    [CommandLineOption("Specify command line argument", true, "-c")]
+    public string ConfigPath { get; set; }
+}
+
 // Then, in the Main() method:
 class Program
 {
-    static async Task Main()
+    static async Task Main(string[] args)
     {
-        await ExtractorRunner.Run<BaseConfig, MyExtractor>(
-            "config.yml",
-            new[] { 1 },
-            "my-extractor",
-            "myextractor/1.0.0",
-            false,
-            true,
-            true,
-            true,
-            CancellationToken.None).ConfigureAwait(true);
+        var command = new RootCommand
+        {
+            Description = "Simple example extractor"
+        };
+        var binder = new AttributeBinder<Options>();
+        binder.AddOptionsToCommand(command);
+
+        command.SetHandler<Options>(async opt =>
+        {
+            // This can also be invoked directly in main, to not have a CLI.
+            await ExtractorRunner.Run<BaseConfig, MyExtractor>(
+                configPath: opt.ConfigPath ?? "config.yml",
+                acceptedConfigVersions: new[] { 1 },
+                appId: "my-extractor",
+                userAgent: "myextractor/1.0.0",
+                addStateStore: false,
+                addLogger: true,
+                addMetrics: true,
+                restart: true,
+                CancellationToken.None).ConfigureAwait(false);
+        }, binder);
+
+        await command.InvokeAsync(args).ConfigureAwait(false);
     }
 }
