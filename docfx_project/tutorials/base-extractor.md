@@ -54,10 +54,10 @@ class Program
             new[] { 1 },
             "my-extractor",
             "myextractor/1.0.0",
-            false,
-            true,
-            true,
-            true,
+            addStateStore: false,
+            addLogger: true,
+            addMetrics: true,
+            restart: true,
             CancellationToken.None);
     }
 }
@@ -66,3 +66,6 @@ class Program
 [ExtractorRunner.Run](xref:Cognite.Extractor.Utils.ExtractorRunner) is used to wait for a valid config file, handle and log errors, and configure services.
 
 If the extractor crashes it can optionally restart automatically, reloading config and building a new extractor object.
+
+The `ExampleExtractor` project found [here](https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExampleExtractor/Program.cs) is a working implementation of this, also including a simple command line interface.
+

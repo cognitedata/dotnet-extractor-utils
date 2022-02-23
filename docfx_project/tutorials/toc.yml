@@ -1,5 +1,7 @@
 - name: Introduction
   href: intro.md
+- name: Basic usage
+  href: minimal-usage.md
 - name: Base Extractor class
   href: base-extractor.md
 - name: Raw Queue
