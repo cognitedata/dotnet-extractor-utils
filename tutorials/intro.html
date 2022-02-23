@@ -73,17 +73,32 @@
 <pre><code class="lang-yaml">version: 1
 
 logger:
-  console:
-    level: &quot;debug&quot;
+    console:
+        level: &quot;debug&quot;
 
 metrics:
-  push-gateways:
-    - host: &quot;http://localhost:9091&quot;
-      job: &quot;extractor-metrics&quot;
+    push-gateways:
+      - host: &quot;http://localhost:9091&quot;
+        job: &quot;extractor-metrics&quot;
 
 cognite:
-  project: ${COGNITE_PROJECT}
-  api-key: ${COGNITE_API_KEY}
+    project: ${COGNITE_PROJECT}
+    # This is for microsoft as IdP, to use a different provider,
+    # set implementation: Basic, and use token-url instead of tenant.
+    # See the example config for the full list of options.
+    idp-authentication:
+        # Directory tenant
+        tenant: ${COGNITE_TENANT_ID}
+        # Application Id
+        client-id: ${COGNITE_CLIENT_ID}
+        # Client secret
+        secret: ${COGNITE_CLIENT_SECRET}
+        # List of resource scopes, ex:
+        # scopes:
+        #   - scopeA
+        #   - scopeB
+        scopes:
+          - ${COGNITE_SCOPE}
 </code></pre>
 <p>See <a class="xref" href="../api/Cognite.Extractor.Utils.BaseConfig.html">full config object</a> for full list of options.</p>
 <p>Set the <code>COGNITE_PROJECT</code> and <code>COGNITE_API_KEY</code> environment variables. Set the <code>metrics</code> tag, only if collecting metrics is required by the extractor. If using a <a href="https://prometheus.io/docs/practices/pushing/">Prometheus pushgateway</a>, set <code>host</code>to a valid endpoint.</p>
@@ -131,35 +146,14 @@ class Program
             new[] { 1 },
             &quot;my-extractor&quot;,
             &quot;myextractor/1.0.0&quot;,
-            false,
-            true,
-            true,
-            true,
+            addStateStore: false,
+            addLogger: true,
+            addMetrics: true,
+            restart: true,
             CancellationToken.None).Wait();
     }
 }
 </code></pre>
-<p>Using the <code>destination</code> you can now push data from your source system to CDF.</p>
-<p>For example, inserting datapoints:</p>
-<pre><code class="lang-c#">// Create a dictonary of time series identities and datapoint objects
-datapoints = new Dictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;() {
-    { new Identity(&quot;externalId1&quot;), new Datapoint[] { new Datapoint(DateTime.UtcNow, &quot;A&quot;)}},
-    { new Identity(&quot;externalId2&quot;), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1), 
-                                                     new Datapoint(DateTime.UtcNow, 2)}},
-    { new Identity(12345789), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}}}
-};
-
-// Insert the data points, ignoring and returning any errors.
-var errors = await destination.InsertDataPointsIgnoreErrorsAsync(
-    datapoints,
-    cancellationToken);
-if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any())
-{
-    logger.LogError(&quot;Ids not found: {NfIds}. Time series with mismatched type: {MmIds}&quot;,
-        errors.IdsNotFound, errors.IdsWithMismatchedData);
-}
-</code></pre>
-<p>The utils handles CDF limits on datapoint values and timestamps.</p>
 </article>
           </div>
           
@@ -168,7 +162,7 @@ if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any())
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/456be14d3891a8fffbb1a15bd80c21f167bed346/docfx_project/tutorials/intro.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/2f5cba58da3efa7cbc921808d72a4ae46299e263/docfx_project/tutorials/intro.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

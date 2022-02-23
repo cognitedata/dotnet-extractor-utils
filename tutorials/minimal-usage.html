@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Basic utils usage </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Basic utils usage ">
+    <meta name="generator" content="docfx 2.51.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="basic-utils-usage">Basic utils usage</h1>
+
+<p>Some applications do not want the full utils runtime, but would still like the utilities for authentication, and the dependency injection based flow to make working with the SDK easier. This article describes the easiest way to use the utils to connect to the Cognite API.</p>
+<p>In general, it is highly recommended to use an IDE with code completion like visual studio, visual studio code with a C# extension, or similar.</p>
+<h2 id="using-the-full-extractorutils-package">Using the full ExtractorUtils package</h2>
+<p>The most powerful is to use the full utils package. To start with, add a dependency to a recent version of <code>Cognite.ExtractorUtils</code>, found <a href="https://www.nuget.org/packages/Cognite.ExtractorUtils/">here</a>. This will include the rest of the Extractor Utils packages and the CogniteSdk package.</p>
+<p>Next, we want to add the necessary services:</p>
+<pre><code class="lang-c#">var services = new ServiceCollection();
+services.AddExtractorDependencies&lt;BaseConfig&gt;(
+    configPath: &quot;config.yml&quot;, // Path to your configuration file
+    acceptedConfigVersions: new [] { 1 }, // Fail if &quot;version&quot; in the config file does not match this, this can be null to not have any version requirement.
+    appId: &quot;my-app&quot;, // Application id passed with HTTP requests to CDF
+    userAgent: &quot;myapp/1.0.0&quot;, // User agent for HTTP requests, including application version
+    addStateStore: false, // True if you want to register code for using a litedb state store
+    addLogger: true, // False if you do not want to register a serilog logger
+    addMetrics: false // True if you want to push or serve metrics to prometheus
+);
+var provider = services.BuildServiceProvider();
+
+var destination = provider.GetRequiredService&lt;CogniteDestination&gt;();
+</code></pre>
+<p><code>destination</code> contains a number of useful methods, and also a property <code>CogniteClient</code>, which is an instance of the SDK client, containing methods for most CDF endpoints.</p>
+<p>The configuration type is here <code>BaseConfig</code>, but you can use any class that extends <code>VersionedConfig</code>. The full range of available options in <code>BaseConfig</code> is shown in <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/config/config.example.yml">config.example.yml</a>.</p>
+<p>A reasonable minimal configuration would look something like this:</p>
+<pre><code class="lang-yaml">version: 1
+
+logger:
+  console:
+    level: &quot;debug&quot;
+
+cognite:
+    project: ${COGNITE_PROJECT}
+    host: ${COGNITE_BASE_URL}
+  
+    # This is for microsoft as IdP, to use a different provider,
+    # set implementation: Basic, and use token-url instead of tenant.
+    # See the example config for the full list of options.
+    idp-authentication:
+        # Directory tenant
+        tenant: ${COGNITE_TENANT_ID}
+        # Application Id
+        client-id: ${COGNITE_CLIENT_ID}
+        # Client secret
+        secret: ${COGNITE_CLIENT_SECRET}
+        # List of resource scopes, ex:
+        # scopes:
+        #   - scopeA
+        #   - scopeB
+        scopes:
+          - ${COGNITE_BASE_URL}/.default
+</code></pre>
+<p>Alternatively you can create the configuration object manually. For the equivalent to the minimal configuration above:</p>
+<pre><code class="lang-c#">var config = new BaseConfig {
+    Version = 1,
+    Logger = new LoggerConfig {
+        Console = new ConsoleConfig {
+            Level = &quot;debug&quot;
+        }
+    },
+    Cognite = new CogniteConfig {
+        Project = Environment.GetEnvironmentVariable(&quot;COGNITE_PROJECT&quot;),
+        Host = Environment.GetEnvironmentVariable(&quot;COGNITE_BASE_URL&quot;),
+        IdpAuthentication = new AuthenticatorConfig
+        {
+            Tenant = Environment.GetEnvironmentVariable(&quot;COGNITE_TENANT&quot;),
+            ClientId = Environment.GetEnvironmentVariable(&quot;COGNITE_CLIENT_ID&quot;),
+            Secret = Environment.GetEnvironmentVariable(&quot;COGNITE_CLIENT_SECRET&quot;),
+            Scopes = new[]
+            {
+                $&quot;{Environment.GetEnvironmentVariable(&quot;COGNITE_BASE_URL&quot;)}/.default&quot;
+            }
+        }
+    }
+};
+
+config.GenerateDefaults();
+
+services.AddExtractorDependencies(
+    configPath: null,
+    acceptedConfigVersions: new [] { 1 }, // Fail if &quot;version&quot; in the config file does not match this, this can be null to not have any version requirement.
+    appId: &quot;my-app&quot;, // Application id passed with HTTP requests to CDF
+    userAgent: &quot;myapp/1.0.0&quot;, // User agent for HTTP requests, including application version
+    addStateStore: false, // True if you want to register code for using a litedb state store
+    addLogger: true, // False if you do not want to register a serilog logger
+    addMetrics: false, // True if you want to push or serve metrics to prometheus
+    config: config // Pass a pre-existing config object
+);
+</code></pre>
+<h2 id="using-just-cogniteextensions">Using just Cognite.Extensions</h2>
+<p>Since the full ExtractorUtils package has quite a few dependencies, it may sometimes be desirable to just use packages related to authentication. In this case you will have to create the SDK client yourself.</p>
+<p>Include a reference to the latest version of <code>Cognite.Extensions</code>, found <a href="https://www.nuget.org/packages/Cognite.Extensions/">here</a>, this also includes a reference to the SDK.</p>
+<p>To create a client:</p>
+<pre><code class="lang-c#">var config = new AuthenticatorConfig
+{
+    Tenant = Environment.GetEnvironmentVariable(&quot;COGNITE_TENANT&quot;),
+    ClientId = Environment.GetEnvironmentVariable(&quot;COGNITE_CLIENT_ID&quot;),
+    Secret = Environment.GetEnvironmentVariable(&quot;COGNITE_CLIENT_SECRET&quot;),
+    Scopes = new[]
+    {
+        $&quot;{Environment.GetEnvironmentVariable(&quot;COGNITE_BASE_URL&quot;)}/.default&quot;
+    }
+};
+
+var authenticator = new Authenticator(config);
+using var client = new HttpClient();
+
+var cogniteClient = new Client.Builder()
+    .SetHttpClient(client)
+    .SetBaseUrl(new Uri(Environment.GetEnvironmentVariable(&quot;COGNITE_BASE_URL&quot;)))
+    .SetProject(Environment.GetEnvironmentVariable(&quot;COGNITE_PROJECT&quot;))
+	.SetAppId(&quot;my-app&quot;)
+    .SetUserAgent(&quot;myapp/1.0.0&quot;)
+	.SetTokenProvider(auth.GetToken)
+	.Build();
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/2f5cba58da3efa7cbc921808d72a4ae46299e263/docfx_project/tutorials/minimal-usage.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

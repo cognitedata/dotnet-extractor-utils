@@ -120,16 +120,17 @@ class Program
             new[] { 1 },
             &quot;my-extractor&quot;,
             &quot;myextractor/1.0.0&quot;,
-            false,
-            true,
-            true,
-            true,
+            addStateStore: false,
+            addLogger: true,
+            addMetrics: true,
+            restart: true,
             CancellationToken.None);
     }
 }
 </code></pre>
 <p><a class="xref" href="../api/Cognite.Extractor.Utils.ExtractorRunner.html">ExtractorRunner.Run</a> is used to wait for a valid config file, handle and log errors, and configure services.</p>
 <p>If the extractor crashes it can optionally restart automatically, reloading config and building a new extractor object.</p>
+<p>The <code>ExampleExtractor</code> project found <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExampleExtractor/Program.cs">here</a> is a working implementation of this, also including a simple command line interface.</p>
 </article>
           </div>
           
@@ -138,7 +139,7 @@ class Program
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/456be14d3891a8fffbb1a15bd80c21f167bed346/docfx_project/tutorials/base-extractor.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/2f5cba58da3efa7cbc921808d72a4ae46299e263/docfx_project/tutorials/base-extractor.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

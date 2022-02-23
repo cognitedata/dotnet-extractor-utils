@@ -7452,6 +7452,150 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync
   nameWithType: CogniteDestination.UpsertTimeSeriesAsync
+- uid: Cognite.Extractor.Utils.CommandLine
+  name: Cognite.Extractor.Utils.CommandLine
+  href: api/Cognite.Extractor.Utils.CommandLine.html
+  commentId: N:Cognite.Extractor.Utils.CommandLine
+  fullName: Cognite.Extractor.Utils.CommandLine
+  nameWithType: Cognite.Extractor.Utils.CommandLine
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1
+  name: AttributeBinder<T>
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html
+  commentId: T:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1
+  name.vb: AttributeBinder(Of T)
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T)
+  nameWithType: AttributeBinder<T>
+  nameWithType.vb: AttributeBinder(Of T)
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.#ctor
+  name: AttributeBinder()
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1__ctor
+  commentId: M:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.#ctor
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.AttributeBinder()
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).AttributeBinder()
+  nameWithType: AttributeBinder<T>.AttributeBinder()
+  nameWithType.vb: AttributeBinder(Of T).AttributeBinder()
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.#ctor*
+  name: AttributeBinder
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.AttributeBinder
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).AttributeBinder
+  nameWithType: AttributeBinder<T>.AttributeBinder
+  nameWithType.vb: AttributeBinder(Of T).AttributeBinder
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.AddOptionsToCommand(Command)
+  name: AddOptionsToCommand(Command)
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_AddOptionsToCommand_Command_
+  commentId: M:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.AddOptionsToCommand(Command)
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.AddOptionsToCommand(Command)
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).AddOptionsToCommand(Command)
+  nameWithType: AttributeBinder<T>.AddOptionsToCommand(Command)
+  nameWithType.vb: AttributeBinder(Of T).AddOptionsToCommand(Command)
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.AddOptionsToCommand*
+  name: AddOptionsToCommand
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_AddOptionsToCommand_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.AddOptionsToCommand
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.AddOptionsToCommand
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).AddOptionsToCommand
+  nameWithType: AttributeBinder<T>.AddOptionsToCommand
+  nameWithType.vb: AttributeBinder(Of T).AddOptionsToCommand
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue(BindingContext)
+  name: GetBoundValue(BindingContext)
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_GetBoundValue_BindingContext_
+  commentId: M:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue(BindingContext)
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.GetBoundValue(BindingContext)
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).GetBoundValue(BindingContext)
+  nameWithType: AttributeBinder<T>.GetBoundValue(BindingContext)
+  nameWithType.vb: AttributeBinder(Of T).GetBoundValue(BindingContext)
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue*
+  name: GetBoundValue
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_GetBoundValue_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.GetBoundValue
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).GetBoundValue
+  nameWithType: AttributeBinder<T>.GetBoundValue
+  nameWithType.vb: AttributeBinder(Of T).GetBoundValue
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.Options
+  name: Options
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_Options
+  commentId: P:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.Options
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.Options
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).Options
+  nameWithType: AttributeBinder<T>.Options
+  nameWithType.vb: AttributeBinder(Of T).Options
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.Options*
+  name: Options
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_Options_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.Options
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.Options
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).Options
+  nameWithType: AttributeBinder<T>.Options
+  nameWithType.vb: AttributeBinder(Of T).Options
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute
+  name: CommandLineOptionAttribute
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html
+  commentId: T:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute
+  nameWithType: CommandLineOptionAttribute
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.#ctor(System.String,System.Boolean,System.String[])
+  name: CommandLineOptionAttribute(String, Boolean, String[])
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html#Cognite_Extractor_Utils_CommandLine_CommandLineOptionAttribute__ctor_System_String_System_Boolean_System_String___
+  commentId: M:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.#ctor(System.String,System.Boolean,System.String[])
+  name.vb: CommandLineOptionAttribute(String, Boolean, String())
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.CommandLineOptionAttribute(System.String, System.Boolean, System.String[])
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.CommandLineOptionAttribute(System.String, System.Boolean, System.String())
+  nameWithType: CommandLineOptionAttribute.CommandLineOptionAttribute(String, Boolean, String[])
+  nameWithType.vb: CommandLineOptionAttribute.CommandLineOptionAttribute(String, Boolean, String())
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.#ctor*
+  name: CommandLineOptionAttribute
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html#Cognite_Extractor_Utils_CommandLine_CommandLineOptionAttribute__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.CommandLineOptionAttribute
+  nameWithType: CommandLineOptionAttribute.CommandLineOptionAttribute
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Aliases
+  name: Aliases
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html#Cognite_Extractor_Utils_CommandLine_CommandLineOptionAttribute_Aliases
+  commentId: P:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Aliases
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Aliases
+  nameWithType: CommandLineOptionAttribute.Aliases
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Aliases*
+  name: Aliases
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html#Cognite_Extractor_Utils_CommandLine_CommandLineOptionAttribute_Aliases_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Aliases
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Aliases
+  nameWithType: CommandLineOptionAttribute.Aliases
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Description
+  name: Description
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html#Cognite_Extractor_Utils_CommandLine_CommandLineOptionAttribute_Description
+  commentId: P:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Description
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Description
+  nameWithType: CommandLineOptionAttribute.Description
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Description*
+  name: Description
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html#Cognite_Extractor_Utils_CommandLine_CommandLineOptionAttribute_Description_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Description
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.Description
+  nameWithType: CommandLineOptionAttribute.Description
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.IncludePropertyName
+  name: IncludePropertyName
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html#Cognite_Extractor_Utils_CommandLine_CommandLineOptionAttribute_IncludePropertyName
+  commentId: P:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.IncludePropertyName
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.IncludePropertyName
+  nameWithType: CommandLineOptionAttribute.IncludePropertyName
+- uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.IncludePropertyName*
+  name: IncludePropertyName
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html#Cognite_Extractor_Utils_CommandLine_CommandLineOptionAttribute_IncludePropertyName_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.IncludePropertyName
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.IncludePropertyName
+  nameWithType: CommandLineOptionAttribute.IncludePropertyName
 - uid: Cognite.Extractor.Utils.ConfigurationExtensions
   name: ConfigurationExtensions
   href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html
