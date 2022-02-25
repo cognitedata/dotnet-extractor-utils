@@ -6,17 +6,32 @@ The extractor utils contain a number of tools useful for creating extractors. To
 version: 1
 
 logger:
-  console:
-    level: "debug"
+    console:
+        level: "debug"
 
 metrics:
-  push-gateways:
-    - host: "http://localhost:9091"
-      job: "extractor-metrics"
+    push-gateways:
+      - host: "http://localhost:9091"
+        job: "extractor-metrics"
 
 cognite:
-  project: ${COGNITE_PROJECT}
-  api-key: ${COGNITE_API_KEY}
+    project: ${COGNITE_PROJECT}
+    # This is for microsoft as IdP, to use a different provider,
+    # set implementation: Basic, and use token-url instead of tenant.
+    # See the example config for the full list of options.
+    idp-authentication:
+        # Directory tenant
+        tenant: ${COGNITE_TENANT_ID}
+        # Application Id
+        client-id: ${COGNITE_CLIENT_ID}
+        # Client secret
+        secret: ${COGNITE_CLIENT_SECRET}
+        # List of resource scopes, ex:
+        # scopes:
+        #   - scopeA
+        #   - scopeB
+        scopes:
+          - ${COGNITE_SCOPE}
 ```
 
 See [full config object](xref:Cognite.Extractor.Utils.BaseConfig) for full list of options. 
@@ -69,37 +84,11 @@ class Program
             new[] { 1 },
             "my-extractor",
             "myextractor/1.0.0",
-            false,
-            true,
-            true,
-            true,
+            addStateStore: false,
+            addLogger: true,
+            addMetrics: true,
+            restart: true,
             CancellationToken.None).Wait();
     }
 }
 ```
-
-Using the ```destination``` you can now push data from your source system to CDF.
-
-For example, inserting datapoints:
-
-```c#
-// Create a dictonary of time series identities and datapoint objects
-datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
-    { new Identity("externalId1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "A")}},
-    { new Identity("externalId2"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1), 
-                                                     new Datapoint(DateTime.UtcNow, 2)}},
-    { new Identity(12345789), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}}}
-};
-
-// Insert the data points, ignoring and returning any errors.
-var errors = await destination.InsertDataPointsIgnoreErrorsAsync(
-    datapoints,
-    cancellationToken);
-if (errors.IdsNotFound.Any() || errors.IdsWithMismatchedData.Any())
-{
-    logger.LogError("Ids not found: {NfIds}. Time series with mismatched type: {MmIds}",
-        errors.IdsNotFound, errors.IdsWithMismatchedData);
-}
-```
-
-The utils handles CDF limits on datapoint values and timestamps.

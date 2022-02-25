@@ -37,17 +37,32 @@ Create a ```config.yml``` file containing the extractor configuration
 version: 1
 
 logger:
-  console:
-    level: "debug"
+    console:
+        level: "debug"
 
 metrics:
-  push-gateways:
-    - host: "http://localhost:9091"
-      job: "extractor-metrics"
+    push-gateways:
+      - host: "http://localhost:9091"
+        job: "extractor-metrics"
 
 cognite:
-  project: ${COGNITE_PROJECT}
-  api-key: ${COGNITE_API_KEY}
+    project: ${COGNITE_PROJECT}
+    # This is for microsoft as IdP, to use a different provider,
+    # set implementation: Basic, and use token-url instead of tenant.
+    # See the example config for the full list of options.
+    idp-authentication:
+        # Directory tenant
+        tenant: ${COGNITE_TENANT_ID}
+        # Application Id
+        client-id: ${COGNITE_CLIENT_ID}
+        # Client secret
+        secret: ${COGNITE_CLIENT_SECRET}
+        # List of resource scopes, ex:
+        # scopes:
+        #   - scopeA
+        #   - scopeB
+        scopes:
+          - ${COGNITE_SCOPE}
 ```
 
 See the [example configuration](ExtractorUtils/config/config.example.yml) for a full example with all available options.
@@ -93,18 +108,18 @@ class MyExtractor : BaseExtractor<BaseConfig>
 // Then, in the Main() method:
 class Program
 {
-    static void Main()
+    static async Task Main()
     {
-        ExtractorRunner.Run<BaseConfig, MyExtractor>(
+        await ExtractorRunner.Run<BaseConfig, MyExtractor>(
             "config.yml",
             new[] { 1 },
             "my-extractor",
             "myextractor/1.0.0",
-            false,
-            true,
-            true,
-            true,
-            CancellationToken.None).Wait();
+            addStateStore: false,
+            addLogger: true,
+            addMetrics: true,
+            restart: true,
+            CancellationToken.None);
     }
 }
 
