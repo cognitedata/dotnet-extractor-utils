@@ -298,7 +298,7 @@ namespace ExtractorUtils.Test.Unit
                 Version = 1
             };
             config.GenerateDefaults();
-            var str = ConfigurationUtils.ConfigToString(config, new[] { "DataSetId" }, new[] { "Secret" }, new[] { "Cognite", "ExtractorUtils" });
+            var str = ConfigurationUtils.ConfigToString(config, new[] { "DataSetId" }, new[] { "Secret" }, new[] { "Cognite", "ExtractorUtils" }, false);
             Assert.Equal(@"cognite:
     data-set-id: 0
     idp-authentication:

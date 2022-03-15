@@ -232,8 +232,14 @@ namespace Cognite.Extractor.Configuration
         /// <param name="toAlwaysKeep">List of items to keep even if they match defaults.</param>
         /// <param name="toIgnore">List of field names to ignore. You should put secrets and passwords in here</param>
         /// <param name="namePrefixes">Prefixes on full type names for types that should be explored internally</param>
+        /// <param name="allowReadOnly">Allow read only properties</param>
         /// <returns>Printable serialized object</returns>
-        public static string ConfigToString<T>(T config, IEnumerable<string> toAlwaysKeep, IEnumerable<string> toIgnore, IEnumerable<string> namePrefixes)
+        public static string ConfigToString<T>(
+            T config,
+            IEnumerable<string> toAlwaysKeep,
+            IEnumerable<string> toIgnore,
+            IEnumerable<string> namePrefixes,
+            bool allowReadOnly)
         {
             if (config is null) return "";
 
@@ -242,7 +248,8 @@ namespace Cognite.Extractor.Configuration
                     insp,
                     toAlwaysKeep,
                     toIgnore,
-                    namePrefixes))
+                    namePrefixes,
+                    allowReadOnly))
                 .WithNamingConvention(HyphenatedNamingConvention.Instance)
                 .Build();
 
@@ -315,10 +322,11 @@ namespace Cognite.Extractor.Configuration
     /// </summary>
     internal class DefaultFilterTypeInspector : TypeInspectorSkeleton
     {
-        private readonly ITypeInspector innerTypeDescriptor;
-        private readonly HashSet<string> toAlwaysKeep;
-        private readonly HashSet<string> toIgnore;
-        private readonly IEnumerable<string> namePrefixes;
+        private readonly ITypeInspector _innerTypeDescriptor;
+        private readonly HashSet<string> _toAlwaysKeep;
+        private readonly HashSet<string> _toIgnore;
+        private readonly IEnumerable<string> _namePrefixes;
+        private readonly bool _allowReadOnly;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -326,19 +334,26 @@ namespace Cognite.Extractor.Configuration
         /// <param name="toAlwaysKeep">Fields to always keep</param>
         /// <param name="toIgnore">Fields to exclude</param>
         /// <param name="namePrefixes">Prefixes on full type names for types that should be explored internally</param>
-        public DefaultFilterTypeInspector(ITypeInspector innerTypeDescriptor, IEnumerable<string> toAlwaysKeep, IEnumerable<string> toIgnore, IEnumerable<string> namePrefixes)
+        /// <param name="allowReadOnly">Allow read only properties</param>
+        public DefaultFilterTypeInspector(
+            ITypeInspector innerTypeDescriptor,
+            IEnumerable<string> toAlwaysKeep,
+            IEnumerable<string> toIgnore,
+            IEnumerable<string> namePrefixes,
+            bool allowReadOnly)
         {
-            this.innerTypeDescriptor = innerTypeDescriptor;
-            this.toAlwaysKeep = new HashSet<string>(toAlwaysKeep);
-            this.toIgnore = new HashSet<string>(toIgnore);
-            this.namePrefixes = namePrefixes;
+            _innerTypeDescriptor = innerTypeDescriptor;
+            _toAlwaysKeep = new HashSet<string>(toAlwaysKeep);
+            _toIgnore = new HashSet<string>(toIgnore);
+            _namePrefixes = namePrefixes;
+            _allowReadOnly = allowReadOnly;
         }
 
         /// <inheritdoc />
         public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
         {
             if (container is null || type is null) return Enumerable.Empty<IPropertyDescriptor>();
-            var props = innerTypeDescriptor.GetProperties(type, container);
+            var props = _innerTypeDescriptor.GetProperties(type, container);
 
             object? dfs = null;
             try
@@ -354,11 +369,11 @@ namespace Cognite.Extractor.Configuration
                 var name = PascalCaseNamingConvention.Instance.Apply(p.Name);
 
                 // Some config objects have private properties, since this is a write-back of config we shouldn't save those
-                if (!p.CanWrite) return false;
+                if (!p.CanWrite && !_allowReadOnly) return false;
                 // Some custom properties are kept on the config object for convenience
-                if (toIgnore.Contains(name)) return false;
+                if (_toIgnore.Contains(name)) return false;
                 // Some should be kept to encourage users to set them
-                if (toAlwaysKeep.Contains(name)) return true;
+                if (_toAlwaysKeep.Contains(name)) return true;
 
                 var prop = type.GetProperty(name);
                 object? df = null;
@@ -366,7 +381,7 @@ namespace Cognite.Extractor.Configuration
                 var val = prop?.GetValue(container);
 
                 if (val != null && prop != null && !type.IsValueType
-                    && namePrefixes.Any(prefix => prop.PropertyType.FullName.StartsWith(prefix, StringComparison.InvariantCulture)))
+                    && _namePrefixes.Any(prefix => prop.PropertyType.FullName.StartsWith(prefix, StringComparison.InvariantCulture)))
                 {
                     var pr = GetProperties(prop.PropertyType, val);
                     if (!pr.Any()) return false;
