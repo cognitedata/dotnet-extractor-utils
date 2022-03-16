@@ -9,25 +9,23 @@
 [![codecov](https://codecov.io/gh/cognitedata/dotnet-extractor-utils/branch/master/graph/badge.svg?token=2IX9UN9ING)](https://codecov.io/gh/cognitedata/dotnet-extractor-utils)
 [![Nuget](https://img.shields.io/nuget/vpre/Cognite.ExtractorUtils)](https://www.nuget.org/packages/Cognite.ExtractorUtils/)
 
-_**Under development**, not recommended for production use cases_
+A library containing utilities for building extractors in .Net.
 
-A library containing utilities for building extractors in .Net
+[Documentation](https://cognitedata.github.io/dotnet-extractor-utils/index.html)
 
 ## Installation
 
 The Cognite Extractor Utils can be downloaded from [NuGet](https://www.nuget.org/packages/Cognite.ExtractorUtils). 
 
-To create a console application and add the **1.0.0-alpha-017** version of library:
+To create a console application and add the **1.0.0** version of the library:
 
 Using .NET CLI:
 ```sh
 mkdir NewExtractor
 cd NewExtractor
 dotnet new console
-dotnet add package Cognite.ExtractorUtils -v 1.0.0-alpha-017
+dotnet add package Cognite.ExtractorUtils -v 1.0.0
 ```
-
-[Documentation (WIP)](https://cognitedata.github.io/dotnet-extractor-utils/index.html)
 
 ## Quickstart
 
