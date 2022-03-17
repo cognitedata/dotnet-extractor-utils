@@ -17,14 +17,14 @@ A library containing utilities for building extractors in .Net.
 
 The Cognite Extractor Utils can be downloaded from [NuGet](https://www.nuget.org/packages/Cognite.ExtractorUtils). 
 
-To create a console application and add the **1.0.0** version of the library:
+To create a console application and add the library:
 
 Using .NET CLI:
 ```sh
 mkdir NewExtractor
 cd NewExtractor
 dotnet new console
-dotnet add package Cognite.ExtractorUtils -v 1.0.0
+dotnet add package Cognite.ExtractorUtils
 ```
 
 ## Quickstart

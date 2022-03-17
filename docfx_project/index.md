@@ -87,4 +87,4 @@ class Program
 }
 ```
 
-See the tutorials section for more details, or the API section for generated API documentation.
+See the [tutorials](tutorials/intro.md) section for more details, or the [API](api/index.md) section for generated API documentation.
