@@ -1,6 +1,8 @@
 using System;
 using Xunit;
 using Cognite.Extractor.Common;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -269,5 +271,61 @@ namespace ExtractorUtils.Test.Unit
                 Assert.Equal(reference, converted);
             }
         }
+
+        [Fact]
+        public static void TestTimeSpanWrapper()
+        {
+            var wrapper = new TimeSpanWrapper(true, "s", "1");
+            Assert.Equal(TimeSpan.FromSeconds(1), wrapper.Value);
+
+            wrapper.RawValue = "-1m";
+            Assert.Equal(Timeout.InfiniteTimeSpan, wrapper.Value);
+
+            wrapper.RawValue = "0h";
+            Assert.Equal(TimeSpan.Zero, wrapper.Value);
+
+            Assert.Throws<ArgumentException>(() => wrapper.RawValue = "abc");
+
+            // Don't allow zero
+            wrapper = new TimeSpanWrapper(false, "m", "1");
+            Assert.Equal(TimeSpan.FromMinutes(1), wrapper.Value);
+
+            wrapper.RawValue = "0d";
+            Assert.Equal(Timeout.InfiniteTimeSpan, wrapper.Value);
+        }
+
+        [Fact]
+        public static async Task TestCronTimeSpanWrapper()
+        {
+            var wrapper = new CronTimeSpanWrapper(false, true, "s", "1");
+            Assert.Equal(TimeSpan.FromSeconds(1), wrapper.Value);
+
+            wrapper.RawValue = "-1m";
+            Assert.Equal(Timeout.InfiniteTimeSpan, wrapper.Value);
+
+            wrapper.RawValue = "0h";
+            Assert.Equal(TimeSpan.Zero, wrapper.Value);
+
+            Assert.Throws<ArgumentException>(() => wrapper.RawValue = "abc");
+
+            wrapper.RawValue = "0 * * * *";
+            Assert.True(wrapper.Value <= TimeSpan.FromHours(1));
+
+            wrapper.RawValue = "@yearly";
+            Assert.True(wrapper.Value <= TimeSpan.FromDays(366));
+
+            // This test can in theory fail if it runs at exactly 0:00 january 1. but I think it is unlikely.
+            var val = wrapper.Value;
+            await Task.Delay(100);
+            Assert.True(wrapper.Value < val, $"Expected {wrapper.Value} < {val}");
+
+            Assert.Throws<Cronos.CronFormatException>(() => wrapper.RawValue = "ab abc");
+
+            wrapper = new CronTimeSpanWrapper(true, true, "s", "1");
+            wrapper.RawValue = "0 * * * * *";
+
+            Assert.True(wrapper.Value <= TimeSpan.FromMinutes(1));
+        }
+
     }
 }
