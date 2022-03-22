@@ -8,16 +8,37 @@ using System.Threading.Tasks;
 
 namespace Cognite.Extractor.Common
 {
+    /// <summary>
+    /// Interface for time span providers used in the periodic scheduler.
+    /// Allows flexible scheduling.
+    /// </summary>
+    public interface ITimeSpanProvider
+    {
+        /// <summary>
+        /// Next timespan value.
+        /// </summary>
+        TimeSpan Value { get; }
+    }
+
+    internal class BasicTimeSpanProvider : ITimeSpanProvider
+    {
+        public TimeSpan Value { get; }
+        public BasicTimeSpanProvider(TimeSpan value)
+        {
+            Value = value;
+        }
+    }
+
     internal sealed class PeriodicTask : IDisposable
     {
         public Task Task { get; set; } = null!;
         public Func<CancellationToken, Task> Operation { get; }
         public ManualResetEvent Event { get; } = new ManualResetEvent(false);
-        public TimeSpan Interval { get; }
+        public ITimeSpanProvider Interval { get; }
         public bool Paused { get; set; }
         public bool ShouldRun { get; set; } = true;
         public string Name { get; }
-        public PeriodicTask(Func<CancellationToken, Task> operation, TimeSpan interval, string name)
+        public PeriodicTask(Func<CancellationToken, Task> operation, ITimeSpanProvider interval, string name)
         {
             Operation = operation;
             Interval = interval;
@@ -68,7 +89,7 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        public void SchedulePeriodicTask(string? name, TimeSpan interval,
+        public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
             Func<CancellationToken, Task> operation, bool runImmediately = true)
         {
             lock (_taskListMutex)
@@ -81,6 +102,23 @@ namespace Cognite.Extractor.Common
                 _newTaskEvent.Set();
             }
         }
+
+        /// <summary>
+        /// Schedule a new periodic task to run with interval <paramref name="interval"/>.
+        /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
+        /// task from WaitForAll should be watched.
+        /// </summary>
+        /// <param name="name">Name of task, used to refer to it later</param>
+        /// <param name="interval">Interval to schedule on</param>
+        /// <param name="operation">Function to call on each iteration</param>
+        /// <param name="runImmediately">True to execute the periodic task immediately, false to first
+        /// wait until triggered by interval or manually</param>
+        public void SchedulePeriodicTask(string? name, TimeSpan interval,
+            Func<CancellationToken, Task> operation, bool runImmediately = true)
+        {
+            SchedulePeriodicTask(name, new BasicTimeSpanProvider(interval), operation, runImmediately);
+        }
+
 
         /// <summary>
         /// Returns true if a task with the given name exists
@@ -112,6 +150,22 @@ namespace Cognite.Extractor.Common
         }
 
         /// <summary>
+        /// Schedule a new periodic task to run with interval <paramref name="interval"/>.
+        /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
+        /// task from WaitForAll should be watched.
+        /// </summary>
+        /// <param name="name">Name of task, used to refer to it later</param>
+        /// <param name="interval">Interval to schedule on</param>
+        /// <param name="operation">Function to call on each iteration</param>
+        /// <param name="runImmediately">True to execute the periodic task immediately, false to first
+        /// wait until triggered by interval or manually</param>
+        public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
+            Action<CancellationToken> operation, bool runImmediately = true)
+        {
+            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
+        }
+
+        /// <summary>
         /// Schedule a new task to run with on the scheduler.
         /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
         /// task from WaitForAll should be watched. Note that this method waits on <paramref name="operation"/> to yield,
@@ -126,7 +180,7 @@ namespace Cognite.Extractor.Common
             {
                 if (name == null) name = $"anonymous{_anonymousCounter++}";
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
-                var task = new PeriodicTask(operation, TimeSpan.Zero, name);
+                var task = new PeriodicTask(operation, new BasicTimeSpanProvider(TimeSpan.Zero), name);
                 _tasks[name] = task;
                 task.Task = operation(_source.Token);
                 _newTaskEvent.Set();
@@ -307,8 +361,9 @@ namespace Cognite.Extractor.Common
             bool shouldRunNow = runImmediately;
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
-                var timeout = task.Paused ? Timeout.InfiniteTimeSpan : task.Interval;
-                var waitTask = CommonUtils.WaitAsync(task.Event, task.Interval, _source.Token).ConfigureAwait(false);
+                var interval = task.Interval.Value;
+                var timeout = task.Paused ? Timeout.InfiniteTimeSpan : interval;
+                var waitTask = CommonUtils.WaitAsync(task.Event, interval, _source.Token).ConfigureAwait(false);
                 if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
                 shouldRunNow = true;
                 await waitTask;
