@@ -128,8 +128,8 @@ var cogniteClient = new Client.Builder()
     .SetHttpClient(client)
     .SetBaseUrl(new Uri(Environment.GetEnvironmentVariable("COGNITE_BASE_URL")))
     .SetProject(Environment.GetEnvironmentVariable("COGNITE_PROJECT"))
-	.SetAppId("my-app")
+    .SetAppId("my-app")
     .SetUserAgent("myapp/1.0.0")
-	.SetTokenProvider(auth.GetToken)
-	.Build();
+    .SetTokenProvider(auth.GetToken)
+    .Build();
 ```
