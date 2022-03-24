@@ -7,6 +7,60 @@ references:
   commentId: N:Cognite.Extensions
   fullName: Cognite.Extensions
   nameWithType: Cognite.Extensions
+- uid: Cognite.Extensions.ApiUtils
+  name: ApiUtils
+  href: api/Cognite.Extensions.ApiUtils.html
+  commentId: T:Cognite.Extensions.ApiUtils
+  fullName: Cognite.Extensions.ApiUtils
+  nameWithType: ApiUtils
+- uid: Cognite.Extensions.ApiUtils.FollowCursor*
+  name: FollowCursor
+  href: api/Cognite.Extensions.ApiUtils.html#Cognite_Extensions_ApiUtils_FollowCursor_
+  commentId: Overload:Cognite.Extensions.ApiUtils.FollowCursor
+  isSpec: "True"
+  fullName: Cognite.Extensions.ApiUtils.FollowCursor
+  nameWithType: ApiUtils.FollowCursor
+- uid: Cognite.Extensions.ApiUtils.FollowCursor``2(``1,Func{``1,CancellationToken,Task{IItemsWithCursor{``0}}},CancellationToken)
+  name: FollowCursor<TResult, TQuery>(TQuery, Func<TQuery, CancellationToken, Task<IItemsWithCursor<TResult>>>, CancellationToken)
+  href: api/Cognite.Extensions.ApiUtils.html#Cognite_Extensions_ApiUtils_FollowCursor__2___1_Func___1_CancellationToken_Task_IItemsWithCursor___0____CancellationToken_
+  commentId: M:Cognite.Extensions.ApiUtils.FollowCursor``2(``1,Func{``1,CancellationToken,Task{IItemsWithCursor{``0}}},CancellationToken)
+  name.vb: FollowCursor(Of TResult, TQuery)(TQuery, Func(Of TQuery, CancellationToken, Task(Of IItemsWithCursor(Of TResult))), CancellationToken)
+  fullName: Cognite.Extensions.ApiUtils.FollowCursor<TResult, TQuery>(TQuery, Func<TQuery, CancellationToken, Task<IItemsWithCursor<TResult>>>, CancellationToken)
+  fullName.vb: Cognite.Extensions.ApiUtils.FollowCursor(Of TResult, TQuery)(TQuery, Func(Of TQuery, CancellationToken, Task(Of IItemsWithCursor(Of TResult))), CancellationToken)
+  nameWithType: ApiUtils.FollowCursor<TResult, TQuery>(TQuery, Func<TQuery, CancellationToken, Task<IItemsWithCursor<TResult>>>, CancellationToken)
+  nameWithType.vb: ApiUtils.FollowCursor(Of TResult, TQuery)(TQuery, Func(Of TQuery, CancellationToken, Task(Of IItemsWithCursor(Of TResult))), CancellationToken)
+- uid: Cognite.Extensions.ApiUtils.ReadAllPartitioned*
+  name: ReadAllPartitioned
+  href: api/Cognite.Extensions.ApiUtils.html#Cognite_Extensions_ApiUtils_ReadAllPartitioned_
+  commentId: Overload:Cognite.Extensions.ApiUtils.ReadAllPartitioned
+  isSpec: "True"
+  fullName: Cognite.Extensions.ApiUtils.ReadAllPartitioned
+  nameWithType: ApiUtils.ReadAllPartitioned
+- uid: Cognite.Extensions.ApiUtils.ReadAllPartitioned``2(Func{``1},Func{``1,CancellationToken,Task{IItemsWithCursor{``0}}},System.Int32,System.Int32,CancellationToken)
+  name: ReadAllPartitioned<TResult, TQuery>(Func<TQuery>, Func<TQuery, CancellationToken, Task<IItemsWithCursor<TResult>>>, Int32, Int32, CancellationToken)
+  href: api/Cognite.Extensions.ApiUtils.html#Cognite_Extensions_ApiUtils_ReadAllPartitioned__2_Func___1__Func___1_CancellationToken_Task_IItemsWithCursor___0____System_Int32_System_Int32_CancellationToken_
+  commentId: M:Cognite.Extensions.ApiUtils.ReadAllPartitioned``2(Func{``1},Func{``1,CancellationToken,Task{IItemsWithCursor{``0}}},System.Int32,System.Int32,CancellationToken)
+  name.vb: ReadAllPartitioned(Of TResult, TQuery)(Func(Of TQuery), Func(Of TQuery, CancellationToken, Task(Of IItemsWithCursor(Of TResult))), Int32, Int32, CancellationToken)
+  fullName: Cognite.Extensions.ApiUtils.ReadAllPartitioned<TResult, TQuery>(Func<TQuery>, Func<TQuery, CancellationToken, Task<IItemsWithCursor<TResult>>>, System.Int32, System.Int32, CancellationToken)
+  fullName.vb: Cognite.Extensions.ApiUtils.ReadAllPartitioned(Of TResult, TQuery)(Func(Of TQuery), Func(Of TQuery, CancellationToken, Task(Of IItemsWithCursor(Of TResult))), System.Int32, System.Int32, CancellationToken)
+  nameWithType: ApiUtils.ReadAllPartitioned<TResult, TQuery>(Func<TQuery>, Func<TQuery, CancellationToken, Task<IItemsWithCursor<TResult>>>, Int32, Int32, CancellationToken)
+  nameWithType.vb: ApiUtils.ReadAllPartitioned(Of TResult, TQuery)(Func(Of TQuery), Func(Of TQuery, CancellationToken, Task(Of IItemsWithCursor(Of TResult))), Int32, Int32, CancellationToken)
+- uid: Cognite.Extensions.ApiUtils.ToListAsync*
+  name: ToListAsync
+  href: api/Cognite.Extensions.ApiUtils.html#Cognite_Extensions_ApiUtils_ToListAsync_
+  commentId: Overload:Cognite.Extensions.ApiUtils.ToListAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.ApiUtils.ToListAsync
+  nameWithType: ApiUtils.ToListAsync
+- uid: Cognite.Extensions.ApiUtils.ToListAsync``1(IAsyncEnumerable{``0},CancellationToken)
+  name: ToListAsync<T>(IAsyncEnumerable<T>, CancellationToken)
+  href: api/Cognite.Extensions.ApiUtils.html#Cognite_Extensions_ApiUtils_ToListAsync__1_IAsyncEnumerable___0__CancellationToken_
+  commentId: M:Cognite.Extensions.ApiUtils.ToListAsync``1(IAsyncEnumerable{``0},CancellationToken)
+  name.vb: ToListAsync(Of T)(IAsyncEnumerable(Of T), CancellationToken)
+  fullName: Cognite.Extensions.ApiUtils.ToListAsync<T>(IAsyncEnumerable<T>, CancellationToken)
+  fullName.vb: Cognite.Extensions.ApiUtils.ToListAsync(Of T)(IAsyncEnumerable(Of T), CancellationToken)
+  nameWithType: ApiUtils.ToListAsync<T>(IAsyncEnumerable<T>, CancellationToken)
+  nameWithType.vb: ApiUtils.ToListAsync(Of T)(IAsyncEnumerable(Of T), CancellationToken)
 - uid: Cognite.Extensions.AssetExtensions
   name: AssetExtensions
   href: api/Cognite.Extensions.AssetExtensions.html
@@ -3436,6 +3490,51 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.ConfigurationException.ConfigurationException
   nameWithType: ConfigurationException.ConfigurationException
+- uid: Cognite.Extractor.Common.CronTimeSpanWrapper
+  name: CronTimeSpanWrapper
+  href: api/Cognite.Extractor.Common.CronTimeSpanWrapper.html
+  commentId: T:Cognite.Extractor.Common.CronTimeSpanWrapper
+  fullName: Cognite.Extractor.Common.CronTimeSpanWrapper
+  nameWithType: CronTimeSpanWrapper
+- uid: Cognite.Extractor.Common.CronTimeSpanWrapper.#ctor(System.Boolean,System.Boolean,System.String,System.String)
+  name: CronTimeSpanWrapper(Boolean, Boolean, String, String)
+  href: api/Cognite.Extractor.Common.CronTimeSpanWrapper.html#Cognite_Extractor_Common_CronTimeSpanWrapper__ctor_System_Boolean_System_Boolean_System_String_System_String_
+  commentId: M:Cognite.Extractor.Common.CronTimeSpanWrapper.#ctor(System.Boolean,System.Boolean,System.String,System.String)
+  fullName: Cognite.Extractor.Common.CronTimeSpanWrapper.CronTimeSpanWrapper(System.Boolean, System.Boolean, System.String, System.String)
+  nameWithType: CronTimeSpanWrapper.CronTimeSpanWrapper(Boolean, Boolean, String, String)
+- uid: Cognite.Extractor.Common.CronTimeSpanWrapper.#ctor*
+  name: CronTimeSpanWrapper
+  href: api/Cognite.Extractor.Common.CronTimeSpanWrapper.html#Cognite_Extractor_Common_CronTimeSpanWrapper__ctor_
+  commentId: Overload:Cognite.Extractor.Common.CronTimeSpanWrapper.#ctor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.CronTimeSpanWrapper.CronTimeSpanWrapper
+  nameWithType: CronTimeSpanWrapper.CronTimeSpanWrapper
+- uid: Cognite.Extractor.Common.CronTimeSpanWrapper.RawValue
+  name: RawValue
+  href: api/Cognite.Extractor.Common.CronTimeSpanWrapper.html#Cognite_Extractor_Common_CronTimeSpanWrapper_RawValue
+  commentId: P:Cognite.Extractor.Common.CronTimeSpanWrapper.RawValue
+  fullName: Cognite.Extractor.Common.CronTimeSpanWrapper.RawValue
+  nameWithType: CronTimeSpanWrapper.RawValue
+- uid: Cognite.Extractor.Common.CronTimeSpanWrapper.RawValue*
+  name: RawValue
+  href: api/Cognite.Extractor.Common.CronTimeSpanWrapper.html#Cognite_Extractor_Common_CronTimeSpanWrapper_RawValue_
+  commentId: Overload:Cognite.Extractor.Common.CronTimeSpanWrapper.RawValue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.CronTimeSpanWrapper.RawValue
+  nameWithType: CronTimeSpanWrapper.RawValue
+- uid: Cognite.Extractor.Common.CronTimeSpanWrapper.Value
+  name: Value
+  href: api/Cognite.Extractor.Common.CronTimeSpanWrapper.html#Cognite_Extractor_Common_CronTimeSpanWrapper_Value
+  commentId: P:Cognite.Extractor.Common.CronTimeSpanWrapper.Value
+  fullName: Cognite.Extractor.Common.CronTimeSpanWrapper.Value
+  nameWithType: CronTimeSpanWrapper.Value
+- uid: Cognite.Extractor.Common.CronTimeSpanWrapper.Value*
+  name: Value
+  href: api/Cognite.Extractor.Common.CronTimeSpanWrapper.html#Cognite_Extractor_Common_CronTimeSpanWrapper_Value_
+  commentId: Overload:Cognite.Extractor.Common.CronTimeSpanWrapper.Value
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.CronTimeSpanWrapper.Value
+  nameWithType: CronTimeSpanWrapper.Value
 - uid: Cognite.Extractor.Common.IChunk`1
   name: IChunk<T>
   href: api/Cognite.Extractor.Common.IChunk-1.html
@@ -3528,6 +3627,25 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.IResourceCounter.Take
   nameWithType: IResourceCounter.Take
+- uid: Cognite.Extractor.Common.ITimeSpanProvider
+  name: ITimeSpanProvider
+  href: api/Cognite.Extractor.Common.ITimeSpanProvider.html
+  commentId: T:Cognite.Extractor.Common.ITimeSpanProvider
+  fullName: Cognite.Extractor.Common.ITimeSpanProvider
+  nameWithType: ITimeSpanProvider
+- uid: Cognite.Extractor.Common.ITimeSpanProvider.Value
+  name: Value
+  href: api/Cognite.Extractor.Common.ITimeSpanProvider.html#Cognite_Extractor_Common_ITimeSpanProvider_Value
+  commentId: P:Cognite.Extractor.Common.ITimeSpanProvider.Value
+  fullName: Cognite.Extractor.Common.ITimeSpanProvider.Value
+  nameWithType: ITimeSpanProvider.Value
+- uid: Cognite.Extractor.Common.ITimeSpanProvider.Value*
+  name: Value
+  href: api/Cognite.Extractor.Common.ITimeSpanProvider.html#Cognite_Extractor_Common_ITimeSpanProvider_Value_
+  commentId: Overload:Cognite.Extractor.Common.ITimeSpanProvider.Value
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.ITimeSpanProvider.Value
+  nameWithType: ITimeSpanProvider.Value
 - uid: Cognite.Extractor.Common.OperationScheduler`1
   name: OperationScheduler<T>
   href: api/Cognite.Extractor.Common.OperationScheduler-1.html
@@ -3857,6 +3975,24 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.PeriodicScheduler.ExitAndWaitForTermination
   nameWithType: PeriodicScheduler.ExitAndWaitForTermination
+- uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,Cognite.Extractor.Common.ITimeSpanProvider,System.Action{System.Threading.CancellationToken},System.Boolean)
+  name: SchedulePeriodicTask(String, ITimeSpanProvider, Action<CancellationToken>, Boolean)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_Cognite_Extractor_Common_ITimeSpanProvider_System_Action_System_Threading_CancellationToken__System_Boolean_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,Cognite.Extractor.Common.ITimeSpanProvider,System.Action{System.Threading.CancellationToken},System.Boolean)
+  name.vb: SchedulePeriodicTask(String, ITimeSpanProvider, Action(Of CancellationToken), Boolean)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, Cognite.Extractor.Common.ITimeSpanProvider, System.Action<System.Threading.CancellationToken>, System.Boolean)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, Cognite.Extractor.Common.ITimeSpanProvider, System.Action(Of System.Threading.CancellationToken), System.Boolean)
+  nameWithType: PeriodicScheduler.SchedulePeriodicTask(String, ITimeSpanProvider, Action<CancellationToken>, Boolean)
+  nameWithType.vb: PeriodicScheduler.SchedulePeriodicTask(String, ITimeSpanProvider, Action(Of CancellationToken), Boolean)
+- uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,Cognite.Extractor.Common.ITimeSpanProvider,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Boolean)
+  name: SchedulePeriodicTask(String, ITimeSpanProvider, Func<CancellationToken, Task>, Boolean)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_Cognite_Extractor_Common_ITimeSpanProvider_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Boolean_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,Cognite.Extractor.Common.ITimeSpanProvider,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Boolean)
+  name.vb: SchedulePeriodicTask(String, ITimeSpanProvider, Func(Of CancellationToken, Task), Boolean)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, Cognite.Extractor.Common.ITimeSpanProvider, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>, System.Boolean)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String, Cognite.Extractor.Common.ITimeSpanProvider, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task), System.Boolean)
+  nameWithType: PeriodicScheduler.SchedulePeriodicTask(String, ITimeSpanProvider, Func<CancellationToken, Task>, Boolean)
+  nameWithType.vb: PeriodicScheduler.SchedulePeriodicTask(String, ITimeSpanProvider, Func(Of CancellationToken, Task), Boolean)
 - uid: Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Action{System.Threading.CancellationToken},System.Boolean)
   name: SchedulePeriodicTask(String, TimeSpan, Action<CancellationToken>, Boolean)
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Action_System_Threading_CancellationToken__System_Boolean_
@@ -4447,6 +4583,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.TimeSpanWrapper.TimeSpanWrapper
   nameWithType: TimeSpanWrapper.TimeSpanWrapper
+- uid: Cognite.Extractor.Common.TimeSpanWrapper.IntRawValue
+  name: IntRawValue
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper_IntRawValue
+  commentId: P:Cognite.Extractor.Common.TimeSpanWrapper.IntRawValue
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper.IntRawValue
+  nameWithType: TimeSpanWrapper.IntRawValue
+- uid: Cognite.Extractor.Common.TimeSpanWrapper.IntRawValue*
+  name: IntRawValue
+  href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper_IntRawValue_
+  commentId: Overload:Cognite.Extractor.Common.TimeSpanWrapper.IntRawValue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.TimeSpanWrapper.IntRawValue
+  nameWithType: TimeSpanWrapper.IntRawValue
 - uid: Cognite.Extractor.Common.TimeSpanWrapper.RawValue
   name: RawValue
   href: api/Cognite.Extractor.Common.TimeSpanWrapper.html#Cognite_Extractor_Common_TimeSpanWrapper_RawValue

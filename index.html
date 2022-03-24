@@ -63,6 +63,78 @@
 <h1 id="net-extractor-utils-for-cognite-data-fusion">.NET Extractor Utils for Cognite Data Fusion</h1>
 
 <p>This is a collection of libraries to simplify the creation of extractors in .NET.</p>
+<h2 id="installation">Installation</h2>
+<p>The Cognite Extractor Utils can be downloaded from <a href="https://www.nuget.org/packages/Cognite.ExtractorUtils">NuGet</a>.</p>
+<p>To create a console application and add the <strong>1.0.0</strong> version of the library:</p>
+<p>Using .NET CLI:</p>
+<pre><code class="lang-sh">mkdir NewExtractor
+cd NewExtractor
+dotnet new console
+dotnet add package Cognite.ExtractorUtils -v 1.0.0
+</code></pre>
+<h2 id="quickstart">Quickstart</h2>
+<p>Create a <code>config.yml</code> file containing the extractor configuration</p>
+<pre><code class="lang-yaml">version: 1
+
+logger:
+    console:
+        level: &quot;debug&quot;
+
+cognite:
+    project: ${COGNITE_PROJECT}
+    # This is for microsoft as IdP, to use a different provider,
+    # set implementation: Basic, and use token-url instead of tenant.
+    # See the example config for the full list of options.
+    idp-authentication:
+        # Directory tenant
+        tenant: ${COGNITE_TENANT_ID}
+        # Application Id
+        client-id: ${COGNITE_CLIENT_ID}
+        # Client secret
+        secret: ${COGNITE_CLIENT_SECRET}
+        # List of resource scopes, ex:
+        # scopes:
+        #   - scopeA
+        #   - scopeB
+        scopes:
+          - ${COGNITE_SCOPE}
+</code></pre>
+<p>Create an extractor by subclassing the <code>BaseExtractor</code> class:</p>
+<pre><code class="lang-c#">class MyExtractor : BaseExtractor&lt;BaseConfig&gt;
+{
+    public MyExtractor(BaseConfig config, CogniteDestination destination)
+        : base(config, destination)
+    {
+    }
+    
+    protected override async Task Start() 
+    {
+        await Destination.EnsureTimeSeriesExistsAsync(...) // to create timeseries
+        CreateTimeseriesQueue(...) // to create an upload queue
+        Scheduler.ScheduleTask(...) // to run some one-off task
+        Scheduler.SchedulePeriodicTask(...) // to run a task with fixed frequency
+    }
+}
+</code></pre>
+<p>Run the extractor from <code>Main()</code>:</p>
+<pre><code class="lang-c#">class Program
+{
+    static async Task Main()
+    {
+        await ExtractorRunner.Run&lt;BaseConfig, MyExtractor&gt;(
+            configPath: opt.ConfigPath ?? &quot;config.yml&quot;,
+            acceptedConfigVersions: new[] { 1 },
+            appId: &quot;my-extractor&quot;,
+            userAgent: &quot;myextractor/1.0.0&quot;,
+            addStateStore: false,
+            addLogger: true,
+            addMetrics: true,
+            restart: true,
+            CancellationToken.None);
+    }
+}
+</code></pre>
+<p>See the <a href="tutorials/intro.html">tutorials</a> section for more details, or the <a href="api/index.html">API</a> section for generated API documentation.</p>
 </article>
           </div>
           
@@ -71,7 +143,7 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/2f5cba58da3efa7cbc921808d72a4ae46299e263/docfx_project/index.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/11a7f6289a939183be87759bf2d5ce39794fa516/docfx_project/index.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

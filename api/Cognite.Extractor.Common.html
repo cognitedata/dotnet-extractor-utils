@@ -93,6 +93,14 @@ a sequence of tasks in parallel.</p>
       <h4><a class="xref" href="Cognite.Extractor.Common.ConfigurationException.html">ConfigurationException</a></h4>
       <section><p>Exception produced by the configuration utils</p>
 </section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.CronTimeSpanWrapper.html">CronTimeSpanWrapper</a></h4>
+      <section><p>Utility for containing a string converted to timespan in config objects.
+Also supports cron expresions.</p>
+<p>To use:
+public string MyIntervalValue { get; } = new CronTimeSpanWrapper(false, &quot;s&quot;, &quot;0&quot;);
+public string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyIntervalValue.RawValue = value; }</p>
+<p>Access MyIntervalValue.Value in your code, and MyInterval is the config option.</p>
+</section>
       <h4><a class="xref" href="Cognite.Extractor.Common.OperationScheduler-1.html">OperationScheduler&lt;T&gt;</a></h4>
       <section><p>Abstraction for handling some kind of recursive exploration.
 Option for shared, asynchronous limits, and using a shared TaskThrottler.</p>
@@ -123,9 +131,9 @@ The legal range of values is from the unix epoch, midnight 1/1/1970, to DateTime
       <h4><a class="xref" href="Cognite.Extractor.Common.TimeSpanWrapper.html">TimeSpanWrapper</a></h4>
       <section><p>Utility for containing a string converted to timespan in config objects.
 To use:
-public string MyIntervalValue { get; } = new MyIntervalValue(false, &quot;s&quot;, &quot;0&quot;);
+public string MyIntervalValue { get; } = new TimeSpanWrapper(false, &quot;s&quot;, &quot;0&quot;);
 public string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyIntervalValue.RawValue = value; }</p>
-<p>Access MyIntervalValue in your code, and MyInterval is the config option.</p>
+<p>Access MyIntervalValue.Value in your code, and MyInterval is the config option.</p>
 </section>
     <h3 id="interfaces">Interfaces
   </h3>
@@ -134,6 +142,10 @@ public string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyInter
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Common.IResourceCounter.html">IResourceCounter</a></h4>
       <section><p>Interface for generic common resource counter, which allows instant freeing, and asynchronous taking.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.ITimeSpanProvider.html">ITimeSpanProvider</a></h4>
+      <section><p>Interface for time span providers used in the periodic scheduler.
+Allows flexible scheduling.</p>
 </section>
 </article>
           </div>
