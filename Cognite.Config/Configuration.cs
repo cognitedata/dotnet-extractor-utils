@@ -1,6 +1,7 @@
 using Cognite.Extractor.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization.TypeInspectors;
 
 namespace Cognite.Extractor.Configuration
 {
@@ -217,6 +219,62 @@ namespace Cognite.Extractor.Configuration
                 }
             }
         }
+
+        /// <summary>
+        /// Convert an object to yaml, comparing it to a new instance of itself.
+        /// Note that this should not be used on objects with cycles.
+        /// This creates a new instance of <typeparamref name="T"/>, calls "GenerateDefaults" on it, if it exists,
+        /// then compares each field in the default and <paramref name="config"/>.
+        /// The generated yaml is cleaned and trimmed to ensure pretty results.
+        /// </summary>
+        /// <typeparam name="T">Type to serialize</typeparam>
+        /// <param name="config">Object to serialize</param>
+        /// <param name="toAlwaysKeep">List of items to keep even if they match defaults.</param>
+        /// <param name="toIgnore">List of field names to ignore. You should put secrets and passwords in here</param>
+        /// <param name="namePrefixes">Prefixes on full type names for types that should be explored internally</param>
+        /// <param name="allowReadOnly">Allow read only properties</param>
+        /// <returns>Printable serialized object</returns>
+        public static string ConfigToString<T>(
+            T config,
+            IEnumerable<string> toAlwaysKeep,
+            IEnumerable<string> toIgnore,
+            IEnumerable<string> namePrefixes,
+            bool allowReadOnly)
+        {
+            if (config is null) return "";
+
+            var serializer = new SerializerBuilder()
+                .WithTypeInspector(insp => new DefaultFilterTypeInspector(
+                    insp,
+                    toAlwaysKeep,
+                    toIgnore,
+                    namePrefixes,
+                    allowReadOnly))
+                .WithNamingConvention(HyphenatedNamingConvention.Instance)
+                .Build();
+
+            string raw = serializer.Serialize(config);
+
+            return TrimConfigString(raw);
+        }
+
+        /// <summary>
+        /// Used for trimming useless elements from config written to yaml, to ensure nice and readable results.
+        /// </summary>
+        /// <param name="raw">Raw input string</param>
+        /// <returns>Formatted config string</returns>
+        public static string TrimConfigString(string raw)
+        {
+            var clearEmptyRegex = new Regex("^\\s*[a-zA-Z-_\\d]*:\\s*({}|\\[\\])\\s*\n", RegexOptions.Multiline);
+            var doubleIndentRegex = new Regex("(^ +)", RegexOptions.Multiline);
+            var fixListIndentRegex = new Regex("(^ +-)", RegexOptions.Multiline);
+
+            raw = clearEmptyRegex.Replace(raw, "");
+            raw = doubleIndentRegex.Replace(raw, "$1$1");
+            raw = fixListIndentRegex.Replace(raw, "  $1");
+
+            return raw;
+        }
     }
 
     internal class TemplatedValueDeserializer : INodeDeserializer
@@ -256,4 +314,89 @@ namespace Cognite.Extractor.Configuration
         }
     }
 
+    /// <summary>
+    /// YamlDotNet type inspector, used to filter out default values from the generated config.
+    /// Instead of serializing the entire config file, which ends up being complicated and difficult to read,
+    /// this just serializes the properties that do not simply equal the default values.
+    /// This does sometimes produce empty arrays, but we can strip those later.
+    /// </summary>
+    internal class DefaultFilterTypeInspector : TypeInspectorSkeleton
+    {
+        private readonly ITypeInspector _innerTypeDescriptor;
+        private readonly HashSet<string> _toAlwaysKeep;
+        private readonly HashSet<string> _toIgnore;
+        private readonly IEnumerable<string> _namePrefixes;
+        private readonly bool _allowReadOnly;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="innerTypeDescriptor">Inner type descriptor</param>
+        /// <param name="toAlwaysKeep">Fields to always keep</param>
+        /// <param name="toIgnore">Fields to exclude</param>
+        /// <param name="namePrefixes">Prefixes on full type names for types that should be explored internally</param>
+        /// <param name="allowReadOnly">Allow read only properties</param>
+        public DefaultFilterTypeInspector(
+            ITypeInspector innerTypeDescriptor,
+            IEnumerable<string> toAlwaysKeep,
+            IEnumerable<string> toIgnore,
+            IEnumerable<string> namePrefixes,
+            bool allowReadOnly)
+        {
+            _innerTypeDescriptor = innerTypeDescriptor;
+            _toAlwaysKeep = new HashSet<string>(toAlwaysKeep);
+            _toIgnore = new HashSet<string>(toIgnore);
+            _namePrefixes = namePrefixes;
+            _allowReadOnly = allowReadOnly;
+        }
+
+        /// <inheritdoc />
+        public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
+        {
+            if (container is null || type is null) return Enumerable.Empty<IPropertyDescriptor>();
+            var props = _innerTypeDescriptor.GetProperties(type, container);
+
+            object? dfs = null;
+            try
+            {
+                dfs = Activator.CreateInstance(type);
+                var genD = type.GetMethod("GenerateDefaults");
+                genD?.Invoke(dfs, null);
+            }
+            catch { }
+
+            props = props.Where(p =>
+            {
+                var name = PascalCaseNamingConvention.Instance.Apply(p.Name);
+
+                // Some config objects have private properties, since this is a write-back of config we shouldn't save those
+                if (!p.CanWrite && !_allowReadOnly) return false;
+                // Some custom properties are kept on the config object for convenience
+                if (_toIgnore.Contains(name)) return false;
+                // Some should be kept to encourage users to set them
+                if (_toAlwaysKeep.Contains(name)) return true;
+
+                var prop = type.GetProperty(name);
+                object? df = null;
+                if (dfs != null) df = prop?.GetValue(dfs);
+                var val = prop?.GetValue(container);
+
+                if (val != null && prop != null && !type.IsValueType
+                    && _namePrefixes.Any(prefix => prop.PropertyType.FullName.StartsWith(prefix, StringComparison.InvariantCulture)))
+                {
+                    var pr = GetProperties(prop.PropertyType, val);
+                    if (!pr.Any()) return false;
+                }
+
+
+                // No need to emit empty lists.
+                if (val != null && (val is IEnumerable list) && !list.GetEnumerator().MoveNext()) return false;
+
+                // Compare the value of each property with its default, and check for empty arrays, don't save those.
+                // This creates minimal config files
+                return df != null && !df.Equals(val) || df == null && val != null;
+            });
+
+            return props;
+        }
+    }
 }

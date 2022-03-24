@@ -239,7 +239,7 @@ namespace ExtractorUtils.Test.Unit
             public CustomConfig CustomConfig { get; set; }
             public override void GenerateDefaults()
             {
-                Logger = new LoggerConfig();
+                Logger = Logger ?? new LoggerConfig();
             }
         }
 
@@ -275,6 +275,38 @@ namespace ExtractorUtils.Test.Unit
 
             File.Delete(path);
 
+        }
+
+        [Fact]
+        public static void TestLogConfiguration()
+        {
+            var config = new ExtendedConfig
+            {
+                Cognite = new ExtendedCogniteConfig
+                {
+                    IdpAuthentication = new Cognite.Extensions.AuthenticatorConfig
+                    {
+                        ClientId = "123",
+                        Secret = "321"
+                    },
+                    Host = "https://api.cognitedata.com"
+                },
+                CustomConfig = new CustomConfig
+                {
+                    SomeValue = "Some Value"
+                },
+                Version = 1
+            };
+            config.GenerateDefaults();
+            var str = ConfigurationUtils.ConfigToString(config, new[] { "DataSetId" }, new[] { "Secret" }, new[] { "Cognite", "ExtractorUtils" }, false);
+            Assert.Equal(@"cognite:
+    data-set-id: 0
+    idp-authentication:
+        client-id: 123
+custom-config:
+    some-value: Some Value
+version: 1
+", str);
         }
     }
 }
