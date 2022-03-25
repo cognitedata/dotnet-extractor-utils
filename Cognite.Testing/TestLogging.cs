@@ -158,9 +158,10 @@ namespace Cognite.Extractor.Testing
         /// Configure the service, setting the sink.
         /// </summary>
         /// <param name="services">Servicecollection to add loggign to.</param>
-        protected void Configure(ServiceCollection services)
+        /// <param name="minimumLevel">Write to this sink only if above this level</param>
+        protected void Configure(ServiceCollection services, LogEventLevel minimumLevel = LogEventLevel.Debug)
         {
-            Sink = services.AddMultiTestLogging();
+            Sink = services.AddMultiTestLogging(minimumLevel);
         }
     }
 }
