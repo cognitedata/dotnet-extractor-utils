@@ -816,7 +816,53 @@ namespace ExtractorUtils.Test.Integration
                 });
             }
         }
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestDataPointsCreateMissing(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
 
+            var tss = await CreateTestTimeSeries(tester);
+
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
+            {
+                { Identity.Create(tss[0].id), new[]
+                {
+                    new Datapoint(DateTime.UtcNow, 1.0),
+                    new Datapoint(DateTime.UtcNow.AddSeconds(1), 2.0),
+                    new Datapoint(DateTime.UtcNow.AddSeconds(2), 3.0)
+                } },
+                { Identity.Create($"{tester.Prefix} utils-test-ts-missing-1"), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
+                { Identity.Create($"{tester.Prefix} utils-test-ts-missing-2"), new[] { new Datapoint(DateTime.UtcNow, "test") } },
+                { Identity.Create(1), new[] { new Datapoint(DateTime.UtcNow, 1.0) } }
+            };
+
+            try
+            {
+                var (dpResult, tsResult) = await tester.Destination
+                    .InsertDataPointsCreateMissingAsync(dps, SanitationMode.Clean, RetryMode.OnError, null, tester.Source.Token);
+
+                Assert.Single(dpResult.Errors);
+                var err = dpResult.Errors.First();
+                Assert.Equal(ErrorType.ItemMissing, err.Type);
+
+                Assert.True(tsResult.Errors == null || !tsResult.Errors.Any());
+                Assert.Equal(2, tsResult.Results.Count());
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = tss
+                        .Select(ts => ts.extId)
+                        .Concat(new[] { $"{tester.Prefix} utils-test-ts-missing-1", $"{tester.Prefix} utils-test-ts-missing-2" })
+                        .Select(Identity.Create)
+                });
+            }
+
+        }
 
         [Theory]
         [InlineData(true)]

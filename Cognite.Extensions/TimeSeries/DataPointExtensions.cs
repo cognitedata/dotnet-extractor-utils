@@ -97,6 +97,94 @@ namespace Cognite.Extensions
 
         /// <summary>
         /// Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+        /// and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
+        /// they are created before the points are inserted again.
+        /// </summary>
+        /// <param name="client">Cognite client</param>
+        /// <param name="points">Datapoints to insert</param>
+        /// <param name="keyChunkSize">Maximum number of timeseries per chunk</param>
+        /// <param name="valueChunkSize">Maximum number of datapoints per timeseries</param>
+        /// <param name="throttleSize">Maximum number of parallel request</param>
+        /// <param name="timeseriesChunkSize">Maximum number of timeseries to retrieve per request</param>
+        /// <param name="timeseriesThrottleSize">Maximum number of parallel requests to retrieve timeseries</param>
+        /// <param name="gzipCountLimit">Number of datapoints total before using gzip compression.</param>
+        /// <param name="sanitationMode">How to sanitize datapoints</param>
+        /// <param name="retryMode">How to handle retries</param>
+        /// <param name="nanReplacement">Optional replacement for NaN double values</param>
+        /// <param name="dataSetId">Optional data set id</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Results with a list of errors. If TimeSeriesResult is null, no timeseries were attempted created.</returns>
+        public static async Task<(CogniteResult<DataPointInsertError> DataPointResult, CogniteResult<TimeSeries, TimeSeriesCreate>? TimeSeriesResult)> InsertAsyncCreateMissing(
+            Client client,
+            IDictionary<Identity, IEnumerable<Datapoint>> points,
+            int keyChunkSize,
+            int valueChunkSize,
+            int throttleSize,
+            int timeseriesChunkSize,
+            int timeseriesThrottleSize,
+            int gzipCountLimit,
+            SanitationMode sanitationMode,
+            RetryMode retryMode,
+            double? nanReplacement,
+            long? dataSetId,
+            CancellationToken token)
+        {
+            if (client == null) throw new ArgumentNullException(nameof(client));
+            if (points == null) throw new ArgumentNullException(nameof(points));
+
+            var result = await InsertAsync(client, points, keyChunkSize, valueChunkSize, throttleSize,
+                timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, sanitationMode,
+                RetryMode.OnError, nanReplacement, token).ConfigureAwait(false);
+
+            if (result.Errors.Any(err => err.Type == ErrorType.FatalFailure)) return (result, null);
+
+            var missingIds = new HashSet<Identity>(result.Errors
+                .Where(err => err.Type == ErrorType.ItemMissing)
+                .SelectMany(err => err.Values ?? Enumerable.Empty<Identity>())
+                .Where(idt => idt.ExternalId != null));
+
+            if (!missingIds.Any()) return (result, null);
+
+            _logger.LogInformation("Creating {Count} missing timeseries", missingIds.Count);
+
+            var toCreate = new List<TimeSeriesCreate>();
+            foreach (var id in missingIds)
+            {
+                var dp = points[id].FirstOrDefault();
+                if (dp == null) continue;
+
+                bool isString = dp.NumericValue == null;
+
+                toCreate.Add(new TimeSeriesCreate
+                {
+                    ExternalId = id.ExternalId,
+                    IsString = isString,
+                    DataSetId = dataSetId
+                });
+            }
+
+            var tsResult = await client.TimeSeries.EnsureTimeSeriesExistsAsync(
+                toCreate,
+                timeseriesChunkSize,
+                timeseriesThrottleSize,
+                retryMode,
+                sanitationMode,
+                token).ConfigureAwait(false);
+
+            if (result.Errors.Any(err => err.Type != ErrorType.ItemExists)) return (result, tsResult);
+
+            var pointsToInsert = points.Where(kvp => missingIds.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            result = await InsertAsync(client, pointsToInsert, keyChunkSize, valueChunkSize, throttleSize,
+                timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, sanitationMode,
+                RetryMode.OnError, nanReplacement, token).ConfigureAwait(false);
+
+            return (result, tsResult);
+        }
+
+
+        /// <summary>
+        /// Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
         /// and can optionally handle errors.
         /// </summary>
         /// <param name="client">Cognite client</param>

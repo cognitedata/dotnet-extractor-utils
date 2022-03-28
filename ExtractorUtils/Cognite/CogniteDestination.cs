@@ -414,6 +414,42 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
+        /// Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+        /// and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
+        /// they are created before the points are inserted again.
+        /// </summary>
+        /// <param name="points">Datapoints to insert</param>
+        /// <param name="sanitationMode">How to sanitize datapoints</param>
+        /// <param name="retryMode">How to handle retries</param>
+        /// <param name="dataSetId">Optional data set id</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Results with a list of errors. If TimeSeriesResult is null, no timeseries were attempted created.</returns>
+        public async Task<(CogniteResult<DataPointInsertError> DataPointResult, CogniteResult<TimeSeries, TimeSeriesCreate>? TimeSeriesResult)> InsertDataPointsCreateMissingAsync(
+            IDictionary<Identity, IEnumerable<Datapoint>>? points,
+            SanitationMode sanitationMode,
+            RetryMode retryMode,
+            long? dataSetId,
+            CancellationToken token)
+        {
+            if (points == null || !points.Any()) return (new CogniteResult<DataPointInsertError>(null), null);
+
+            return await DataPointExtensions.InsertAsyncCreateMissing(
+                _client,
+                points,
+                _config.CdfChunking.DataPointTimeSeries,
+                _config.CdfChunking.DataPoints,
+                _config.CdfThrottling.DataPoints,
+                _config.CdfChunking.TimeSeries,
+                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.DataPointsGzipLimit,
+                sanitationMode,
+                retryMode,
+                _config.NanReplacement,
+                dataSetId,
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
         /// and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
         /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 

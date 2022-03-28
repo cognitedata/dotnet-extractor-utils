@@ -31,6 +31,8 @@ namespace Cognite.Extractor.Utils
         private readonly string? _bufferPath;
         private bool _bufferEnabled;
         private bool _bufferAny;
+        private bool _createMissingTimeseries;
+        private long? _dataSetId;
         /// <summary>
         /// Upload queue for timeseries datapoints
         /// </summary>
@@ -40,15 +42,22 @@ namespace Cognite.Extractor.Utils
         /// <param name="logger">Logger to use</param>
         /// <param name="callback">Callback after pushing</param>
         /// <param name="bufferPath">Path to local buffer file for binary buffering of datapoints</param>
+        /// <param name="createMissingTimeseries">Create missing timeseries when insert fails, only works if datapoints
+        /// are inserted by external id.</param>
+        /// <param name="dataSetId">DataSetId to use if creating missing timeseries.</param>
         public TimeSeriesUploadQueue(
             CogniteDestination destination,
             TimeSpan interval,
             int maxSize,
             ILogger<CogniteDestination> logger,
             Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>? callback,
-            string? bufferPath) : base(destination, interval, maxSize, logger, callback)
+            string? bufferPath,
+            bool createMissingTimeseries = false,
+            long? dataSetId = null) : base(destination, interval, maxSize, logger, callback)
         {
+            _createMissingTimeseries = createMissingTimeseries;
             _bufferPath = bufferPath;
+            _dataSetId = dataSetId;
             if (!string.IsNullOrWhiteSpace(_bufferPath))
             {
                 _bufferEnabled = true;
@@ -124,6 +133,43 @@ namespace Cognite.Extractor.Utils
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
+        private async Task InsertDataPoints(IDictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
+        {
+            CogniteResult<DataPointInsertError> result;
+            if (_createMissingTimeseries)
+            {
+                var (dpResult, tsResult) = await Destination.InsertDataPointsCreateMissingAsync(dps, SanitationMode.Clean, RetryMode.OnError, _dataSetId, token);
+                if (tsResult != null) DestLogger.LogResult(tsResult, RequestType.CreateDatapoints, true);
+                result = dpResult;
+            }
+            else
+            {
+                result = await Destination.InsertDataPointsAsync(dps, SanitationMode.Clean, RetryMode.OnError, token);
+            }
+
+            DestLogger.LogResult(result, RequestType.CreateDatapoints, false, LogLevel.Debug);
+
+            if (result.Errors != null)
+            {
+                var fatal = result.Errors.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
+                if (fatal != null) throw fatal.Exception ?? new ResponseException(fatal.Message)
+                {
+                    Code = fatal.Status
+                };
+                foreach (var err in result.Errors)
+                {
+                    if (err.Skipped != null && err.Skipped.Any())
+                    {
+                        foreach (var dpErr in err.Skipped.OfType<DataPointInsertError>())
+                        {
+                            dps.Remove(dpErr.Id);
+                        }
+                    }
+                }
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task ReadFromBuffer(CancellationToken token)
         {
             IDictionary<Identity, IEnumerable<Datapoint>> dps;
@@ -137,12 +183,7 @@ namespace Cognite.Extractor.Utils
                         dps = await CogniteUtils.ReadDatapointsAsync(stream, token, 1_000_000);
                         if (dps.Any())
                         {
-                            var result = await Destination.InsertDataPointsAsync(dps, SanitationMode.Clean, RetryMode.OnError, token);
-                            var fatal = result.Errors.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
-                            if (fatal != null) throw fatal.Exception ?? new ResponseException(fatal.Message)
-                            {
-                                Code = fatal.Status
-                            };
+                            await InsertDataPoints(dps, token);
                             await HandleUploadResult(dps, token);
                             if (Callback != null) await Callback(new QueueUploadResult<(Identity id, Datapoint dp)>(
                                 dps.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList()));
@@ -225,26 +266,7 @@ namespace Cognite.Extractor.Utils
 
             try
             {
-                var result = await Destination.InsertDataPointsAsync(dpMap, SanitationMode.Clean, RetryMode.OnError, token);
-                
-                if (result.Errors != null)
-                {
-                    var fatal = result.Errors.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
-                    if (fatal != null) throw fatal.Exception ?? new ResponseException(fatal.Message)
-                    {
-                        Code = fatal.Status
-                    };
-                    foreach (var err in result.Errors)
-                    {
-                        if (err.Skipped != null && err.Skipped.Any())
-                        {
-                            foreach (var dpErr in err.Skipped.OfType<DataPointInsertError>())
-                            {
-                                dpMap.Remove(dpErr.Id);
-                            }
-                        }
-                    }
-                }
+                await InsertDataPoints(dpMap, token);
             }
             catch (Exception ex)
             {
