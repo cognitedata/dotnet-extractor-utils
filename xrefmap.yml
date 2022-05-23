@@ -1322,6 +1322,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.DataPointExtensions.InsertAsync
   nameWithType: DataPointExtensions.InsertAsync
+- uid: Cognite.Extensions.DataPointExtensions.InsertAsyncCreateMissing(Client,IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Nullable{System.Int64},CancellationToken)
+  name: InsertAsyncCreateMissing(Client, IDictionary<Identity, IEnumerable<Datapoint>>, Int32, Int32, Int32, Int32, Int32, Int32, SanitationMode, RetryMode, Nullable<Double>, Nullable<Int64>, CancellationToken)
+  href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_InsertAsyncCreateMissing_Client_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Nullable_System_Int64__CancellationToken_
+  commentId: M:Cognite.Extensions.DataPointExtensions.InsertAsyncCreateMissing(Client,IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Nullable{System.Int64},CancellationToken)
+  name.vb: InsertAsyncCreateMissing(Client, IDictionary(Of Identity, IEnumerable(Of Datapoint)), Int32, Int32, Int32, Int32, Int32, Int32, SanitationMode, RetryMode, Nullable(Of Double), Nullable(Of Int64), CancellationToken)
+  fullName: Cognite.Extensions.DataPointExtensions.InsertAsyncCreateMissing(Client, IDictionary<Identity, IEnumerable<Cognite.Extensions.Datapoint>>, System.Int32, System.Int32, System.Int32, System.Int32, System.Int32, System.Int32, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Nullable<System.Double>, System.Nullable<System.Int64>, CancellationToken)
+  fullName.vb: Cognite.Extensions.DataPointExtensions.InsertAsyncCreateMissing(Client, IDictionary(Of Identity, IEnumerable(Of Cognite.Extensions.Datapoint)), System.Int32, System.Int32, System.Int32, System.Int32, System.Int32, System.Int32, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Nullable(Of System.Double), System.Nullable(Of System.Int64), CancellationToken)
+  nameWithType: DataPointExtensions.InsertAsyncCreateMissing(Client, IDictionary<Identity, IEnumerable<Datapoint>>, Int32, Int32, Int32, Int32, Int32, Int32, SanitationMode, RetryMode, Nullable<Double>, Nullable<Int64>, CancellationToken)
+  nameWithType.vb: DataPointExtensions.InsertAsyncCreateMissing(Client, IDictionary(Of Identity, IEnumerable(Of Datapoint)), Int32, Int32, Int32, Int32, Int32, Int32, SanitationMode, RetryMode, Nullable(Of Double), Nullable(Of Int64), CancellationToken)
+- uid: Cognite.Extensions.DataPointExtensions.InsertAsyncCreateMissing*
+  name: InsertAsyncCreateMissing
+  href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_InsertAsyncCreateMissing_
+  commentId: Overload:Cognite.Extensions.DataPointExtensions.InsertAsyncCreateMissing
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataPointExtensions.InsertAsyncCreateMissing
+  nameWithType: DataPointExtensions.InsertAsyncCreateMissing
 - uid: Cognite.Extensions.DataPointExtensions.ToInsertRequest(IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}})
   name: ToInsertRequest(IDictionary<Identity, IEnumerable<Datapoint>>)
   href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_ToInsertRequest_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint___
@@ -7483,6 +7499,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync
   nameWithType: CogniteDestination.InsertDataPointsAsync
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync(System.Nullable{IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Int64},CancellationToken)
+  name: InsertDataPointsCreateMissingAsync(Nullable<IDictionary<Identity, IEnumerable<Datapoint>>>, SanitationMode, RetryMode, Nullable<Int64>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsCreateMissingAsync_System_Nullable_IDictionary_Identity_IEnumerable_Cognite_Extensions_Datapoint____Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Int64__CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync(System.Nullable{IDictionary{Identity,IEnumerable{Cognite.Extensions.Datapoint}}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Int64},CancellationToken)
+  name.vb: InsertDataPointsCreateMissingAsync(Nullable(Of IDictionary(Of Identity, IEnumerable(Of Datapoint))), SanitationMode, RetryMode, Nullable(Of Int64), CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync(System.Nullable<IDictionary<Identity, IEnumerable<Cognite.Extensions.Datapoint>>>, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Nullable<System.Int64>, CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync(System.Nullable(Of IDictionary(Of Identity, IEnumerable(Of Cognite.Extensions.Datapoint))), Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Nullable(Of System.Int64), CancellationToken)
+  nameWithType: CogniteDestination.InsertDataPointsCreateMissingAsync(Nullable<IDictionary<Identity, IEnumerable<Datapoint>>>, SanitationMode, RetryMode, Nullable<Int64>, CancellationToken)
+  nameWithType.vb: CogniteDestination.InsertDataPointsCreateMissingAsync(Nullable(Of IDictionary(Of Identity, IEnumerable(Of Datapoint))), SanitationMode, RetryMode, Nullable(Of Int64), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync*
+  name: InsertDataPointsCreateMissingAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsCreateMissingAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync
+  nameWithType: CogniteDestination.InsertDataPointsCreateMissingAsync
 - uid: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync*
   name: InsertRawRowsAsync
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync_
@@ -8849,15 +8881,15 @@ references:
   commentId: T:Cognite.Extractor.Utils.TimeSeriesUploadQueue
   fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue
   nameWithType: TimeSeriesUploadQueue
-- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},System.Nullable{Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task}},System.Nullable{System.String})
-  name: TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger<CogniteDestination>, Nullable<Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>>, Nullable<String>)
-  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_Cognite_Extractor_Utils_CogniteDestination_TimeSpan_System_Int32_ILogger_Cognite_Extractor_Utils_CogniteDestination__System_Nullable_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task___System_Nullable_System_String__
-  commentId: M:Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},System.Nullable{Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task}},System.Nullable{System.String})
-  name.vb: TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger(Of CogniteDestination), Nullable(Of Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task)), Nullable(Of String))
-  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.TimeSeriesUploadQueue(Cognite.Extractor.Utils.CogniteDestination, TimeSpan, System.Int32, ILogger<Cognite.Extractor.Utils.CogniteDestination>, System.Nullable<Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<Identity, Cognite.Extensions.Datapoint>>, Task>>, System.Nullable<System.String>)
-  fullName.vb: Cognite.Extractor.Utils.TimeSeriesUploadQueue.TimeSeriesUploadQueue(Cognite.Extractor.Utils.CogniteDestination, TimeSpan, System.Int32, ILogger(Of Cognite.Extractor.Utils.CogniteDestination), System.Nullable(Of Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of Identity, Cognite.Extensions.Datapoint)), Task)), System.Nullable(Of System.String))
-  nameWithType: TimeSeriesUploadQueue.TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger<CogniteDestination>, Nullable<Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>>, Nullable<String>)
-  nameWithType.vb: TimeSeriesUploadQueue.TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger(Of CogniteDestination), Nullable(Of Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task)), Nullable(Of String))
+- uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},System.Nullable{Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task}},System.Nullable{System.String},System.Boolean,System.Nullable{System.Int64})
+  name: TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger<CogniteDestination>, Nullable<Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>>, Nullable<String>, Boolean, Nullable<Int64>)
+  href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_Cognite_Extractor_Utils_CogniteDestination_TimeSpan_System_Int32_ILogger_Cognite_Extractor_Utils_CogniteDestination__System_Nullable_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_Identity_Cognite_Extensions_Datapoint___Task___System_Nullable_System_String__System_Boolean_System_Nullable_System_Int64__
+  commentId: M:Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor(Cognite.Extractor.Utils.CogniteDestination,TimeSpan,System.Int32,ILogger{Cognite.Extractor.Utils.CogniteDestination},System.Nullable{Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{Identity,Cognite.Extensions.Datapoint}},Task}},System.Nullable{System.String},System.Boolean,System.Nullable{System.Int64})
+  name.vb: TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger(Of CogniteDestination), Nullable(Of Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task)), Nullable(Of String), Boolean, Nullable(Of Int64))
+  fullName: Cognite.Extractor.Utils.TimeSeriesUploadQueue.TimeSeriesUploadQueue(Cognite.Extractor.Utils.CogniteDestination, TimeSpan, System.Int32, ILogger<Cognite.Extractor.Utils.CogniteDestination>, System.Nullable<Func<Cognite.Extractor.Utils.QueueUploadResult<System.ValueTuple<Identity, Cognite.Extensions.Datapoint>>, Task>>, System.Nullable<System.String>, System.Boolean, System.Nullable<System.Int64>)
+  fullName.vb: Cognite.Extractor.Utils.TimeSeriesUploadQueue.TimeSeriesUploadQueue(Cognite.Extractor.Utils.CogniteDestination, TimeSpan, System.Int32, ILogger(Of Cognite.Extractor.Utils.CogniteDestination), System.Nullable(Of Func(Of Cognite.Extractor.Utils.QueueUploadResult(Of System.ValueTuple(Of Identity, Cognite.Extensions.Datapoint)), Task)), System.Nullable(Of System.String), System.Boolean, System.Nullable(Of System.Int64))
+  nameWithType: TimeSeriesUploadQueue.TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger<CogniteDestination>, Nullable<Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>>, Nullable<String>, Boolean, Nullable<Int64>)
+  nameWithType.vb: TimeSeriesUploadQueue.TimeSeriesUploadQueue(CogniteDestination, TimeSpan, Int32, ILogger(Of CogniteDestination), Nullable(Of Func(Of QueueUploadResult(Of (id As Identity, dp As Datapoint)), Task)), Nullable(Of String), Boolean, Nullable(Of Int64))
 - uid: Cognite.Extractor.Utils.TimeSeriesUploadQueue.#ctor*
   name: TimeSeriesUploadQueue
   href: api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html#Cognite_Extractor_Utils_TimeSeriesUploadQueue__ctor_
