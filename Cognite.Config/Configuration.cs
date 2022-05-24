@@ -114,7 +114,7 @@ namespace Cognite.Extractor.Configuration
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid or
         /// in case of yaml parsing errors.</exception>
-        public static T TryReadConfigFromString<T>(string yaml, params int[] acceptedConfigVersions) where T : VersionedConfig
+        public static T TryReadConfigFromString<T>(string yaml, params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
             int configVersion = GetVersionFromString(yaml);
             CheckVersion(configVersion, acceptedConfigVersions);
@@ -153,8 +153,25 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         /// <param name="tag">Tag to be mapped</param>
         /// <typeparam name="T">Type to map to</typeparam>
-        public static void AddTagMapping<T>(string tag) {
+        public static void AddTagMapping<T>(string tag)
+        {
             builder = builder.WithTagMapping(tag, typeof(T));
+            deserializer = builder.Build();
+        }
+
+        /// <summary>
+        /// Configures the deserializer to ignore unmatched properties.
+        /// </summary>
+        public static void IgnoreUnmatchedProperties()
+        {
+            deserializer = builder.IgnoreUnmatchedProperties().Build();
+        }
+
+        /// <summary>
+        /// Configures the deserializer to throw an exception on unmatched properties, this is the default.
+        /// </summary>
+        public static void DisallowUnmatchedProperties()
+        {
             deserializer = builder.Build();
         }
 

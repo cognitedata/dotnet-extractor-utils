@@ -8,6 +8,9 @@ using System;
 using Cognite.Extractor.Common;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.IO;
+using System.Threading;
 
 namespace Cognite.Extractor.Utils
 {
@@ -68,6 +71,79 @@ namespace Cognite.Extractor.Utils
             var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
             services.AddConfig<T>(config, types);
+            return config;
+        }
+
+        /// <summary>
+        /// Read the config of type <typeparamref name="T"/> from the yaml file in <paramref name="path"/>
+        /// and adds it as a singleton to the service collection <paramref name="services"/>
+        /// Also adds <see cref="CogniteConfig"/>, <see cref="LoggerConfig"/> and <see cref="MetricsConfig"/> configuration
+        /// objects as singletons, if they are present in the configuration.
+        /// The config file will either be read locally or fetched from CDF depending on the "type" field.
+        /// </summary>
+        /// <param name="services">The service collection</param>
+        /// <param name="path">Path to the file</param>
+        /// <param name="acceptedConfigVersions">Accepted versions</param>
+        /// <param name="types">Types to look for as properties on <typeparamref name="T"/></param>
+        /// <param name="setHttpClient">Set http client for the sdk, or assume one is provided.</param>
+        /// <param name="setLogger">Set logger for the sdk.</param>
+        /// <param name="setMetrics">Set metrics for the sdk.</param>
+        /// <param name="remoteConfig">Pre-existing config object, set to null to read from <paramref name="path"/> instead. Path is still required if <paramref name="bufferConfigFile"/> is set.</param>
+        /// <param name="bufferConfigFile">True to store the configuration file locally so that the extractor may start even without a connection to CDF.
+        /// Stored in the same directory as the config file, with name equal to _temp_[name-of-config-file]</param>
+        /// <param name="token">Optional cancellation token.</param>
+        /// <typeparam name="T">A type that inherits from <see cref="VersionedConfig"/></typeparam>
+        /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
+        /// the yaml file is not found or in case of yaml parsing error</exception>
+        /// <returns>An instance of the configuration object</returns>
+        public static async Task<T> AddRemoteConfig<T>(this IServiceCollection services,
+                                        string path,
+                                        Type[] types,
+                                        bool setHttpClient,
+                                        bool setLogger,
+                                        bool setMetrics,
+                                        bool bufferConfigFile,
+                                        RemoteConfig? remoteConfig,
+                                        CancellationToken token,
+                                        params int[]? acceptedConfigVersions) where T : VersionedConfig
+        {
+            if (remoteConfig == null)
+            {
+                ConfigurationUtils.IgnoreUnmatchedProperties();
+                remoteConfig = ConfigurationUtils.TryReadConfigFromFile<RemoteConfig>(path, null);
+                ConfigurationUtils.DisallowUnmatchedProperties();
+
+                if (remoteConfig.Type == ConfigurationMode.Local)
+                {
+                    return services.AddConfig<T>(path, types, acceptedConfigVersions);
+                }
+
+                // Try read config again, to get checking of unmatched properties.
+                remoteConfig = ConfigurationUtils.TryReadConfigFromFile<RemoteConfig>(path, null);
+            }
+            else if (remoteConfig.Type == ConfigurationMode.Local)
+            {
+                return services.AddConfig<T>(path, types, acceptedConfigVersions);
+            }
+
+            if (remoteConfig.CogniteConfig.ExtractionPipeline?.PipelineId == null) throw new ConfigurationException("Extraction pipeline id required for remote config");
+
+            services.AddCogniteClient("dotnet-utils-remote-config", null, setHttpClient, setLogger, setMetrics, true);
+            services.AddSingleton(remoteConfig.CogniteConfig);
+            services.AddSingleton(provider => new RemoteConfigManager<T>(
+                provider.GetRequiredService<CogniteDestination>(),
+                provider.GetService<ILogger<RemoteConfigManager<T>>>(),
+                path,
+                bufferConfigFile,
+                acceptedConfigVersions,
+                remoteConfig.CogniteConfig.ExtractionPipeline.PipelineId));
+            var manager = services.BuildServiceProvider().GetRequiredService<RemoteConfigManager<T>>();
+
+            var config = await manager.FetchLatestThrowOnFailure(token).ConfigureAwait(false);
+
+            services.AddSingleton(config);
+            services.AddConfig(config, types);
+
             return config;
         }
 
