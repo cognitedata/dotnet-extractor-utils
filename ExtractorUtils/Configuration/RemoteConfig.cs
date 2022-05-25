@@ -48,39 +48,69 @@ namespace Cognite.Extractor.Utils
         }
     }
 
+
+    /// <summary>
+    /// State for remote config manager, which is reused between initialization and normal operation.
+    /// This lets the state be created after services are initialized, giving it logger, etc.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class RemoteConfigState<T> where T : VersionedConfig
+    {
+        /// <summary>
+        /// Current revision in use.
+        /// </summary>
+        public int CurrentRevision { get; set; }
+        /// <summary>
+        /// Current config object.
+        /// </summary>
+        public T? Config { get; set; }
+    }
+
     /// <summary>
     /// Class to handle fetching of remote config objects.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class RemoteConfigManager<T> where T : VersionedConfig
     {
-        private int _currentRevision;
-        private CogniteDestination _destination;
-        private string? _bufferFilePath;
-        private int[]? _acceptedConfigVersions;
-        private string _pipelineId;
-        private ILogger<RemoteConfigManager<T>> _logger;
+        private readonly RemoteConfigState<T> _state;
+
+        private readonly CogniteDestination _destination;
+        private readonly string? _bufferFilePath;
+        private readonly int[]? _acceptedConfigVersions;
+        private readonly string _pipelineId;
+        private readonly ILogger<RemoteConfigManager<T>> _logger;
+        private readonly RemoteConfig _remoteConfig;
         /// <summary>
         /// Current configuration object, if fetched.
         /// </summary>
-        public T? Config { get; private set; }
+        public T? Config => _state.Config;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="destination">Cognite destination to use to fetch data from CDF.</param>
         /// <param name="configFilePath">Path to local config file, used for buffering.</param>
+        /// <param name="remoteConfig">Remote config object</param>
+        /// <param name="state">Shared remote config manager state</param>
         /// <param name="bufferConfigFile">True to buffer the config file.</param>
         /// <param name="acceptedConfigVersions">List of accepted values of the "version" parameter, or null.</param>
         /// <param name="logger">Logger to use</param>
-        /// <param name="pipelineId">Extraction pipeline id</param>
-        public RemoteConfigManager(CogniteDestination destination, ILogger<RemoteConfigManager<T>>? logger, string configFilePath, bool bufferConfigFile, int[]? acceptedConfigVersions, string pipelineId)
+        public RemoteConfigManager(
+            CogniteDestination destination,
+            ILogger<RemoteConfigManager<T>>? logger,
+            RemoteConfig remoteConfig,
+            RemoteConfigState<T> state,
+            string? configFilePath,
+            bool bufferConfigFile,
+            int[]? acceptedConfigVersions)
         {
             _destination = destination;
             _bufferFilePath = bufferConfigFile ? $"{Path.GetDirectoryName(configFilePath)}/_temp_{Path.GetFileName(configFilePath)}" : null;
             _acceptedConfigVersions = acceptedConfigVersions;
-            _pipelineId = pipelineId;
+            _pipelineId = remoteConfig?.CogniteConfig?.ExtractionPipeline?.PipelineId ?? throw new ConfigurationException("Extraction pipeline id may not be null");
             _logger = logger ?? new NullLogger<RemoteConfigManager<T>>();
+            _state = state;
+            _remoteConfig = remoteConfig;
         }
 
         private async Task<(T config, int revision)> FetchLatestInternal(CancellationToken token)
@@ -95,7 +125,16 @@ namespace Cognite.Extractor.Utils
                     File.WriteAllText(_bufferFilePath, rawConfig.Config);
                 }
 
-                Config = config;
+                if (config is CogniteConfig cogniteConfig)
+                {
+                    cogniteConfig.IdpAuthentication = _remoteConfig.CogniteConfig.IdpAuthentication;
+                    cogniteConfig.Project = _remoteConfig.CogniteConfig.Project;
+                    cogniteConfig.ApiKey = _remoteConfig.CogniteConfig.ApiKey;
+                    cogniteConfig.ExtractionPipeline = _remoteConfig.CogniteConfig.ExtractionPipeline;
+                }
+
+                _state.Config = config;
+                
 
                 return (config, rawConfig.Revision);
             }
@@ -108,7 +147,7 @@ namespace Cognite.Extractor.Utils
                 }
                 else if (Config != null)
                 {
-                    return (Config, _currentRevision);
+                    return (Config, _state.CurrentRevision);
                 }
                 throw new ConfigurationException($"Could not retrieve remote configuration: {ex.Message}", ex);
             }
@@ -117,7 +156,7 @@ namespace Cognite.Extractor.Utils
         internal async Task<T> FetchLatestThrowOnFailure(CancellationToken token)
         {
             var (config, revision) = await FetchLatestInternal(token).ConfigureAwait(false);
-            _currentRevision = revision;
+            _state.CurrentRevision = revision;
             return config;
         }
 
@@ -131,11 +170,11 @@ namespace Cognite.Extractor.Utils
             try
             {
                 var (config, revision) = await FetchLatestInternal(token).ConfigureAwait(false);
-                if (revision == _currentRevision || revision == 0)
+                if (revision == _state.CurrentRevision || revision == 0)
                 {
                     return null;
                 }
-                _currentRevision = revision;
+                _state.CurrentRevision = revision;
                 return config;
             }
             catch (Exception ex)

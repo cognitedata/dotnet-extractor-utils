@@ -75,19 +75,21 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// Read the config of type <typeparamref name="T"/> from the yaml file in <paramref name="path"/>
-        /// and adds it as a singleton to the service collection <paramref name="services"/>
+        /// Read the config of type <typeparamref name="T"/> from the yaml file in <paramref name="path"/>,
+        /// or if the "type" field is set to "remote", read a minimal config file with just <see cref="CogniteConfig"/>,
+        /// then use that to fetch the config file from the configured extraction pipeline.
+        /// Either way it adds a config object to <paramref name="services"/>.
         /// Also adds <see cref="CogniteConfig"/>, <see cref="LoggerConfig"/> and <see cref="MetricsConfig"/> configuration
         /// objects as singletons, if they are present in the configuration.
-        /// The config file will either be read locally or fetched from CDF depending on the "type" field.
+        /// The RemoteConfigManager is added as a service to the service collection, and can be used to check for updates to configuration later.
         /// </summary>
         /// <param name="services">The service collection</param>
         /// <param name="path">Path to the file</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
         /// <param name="types">Types to look for as properties on <typeparamref name="T"/></param>
-        /// <param name="setHttpClient">Set http client for the sdk, or assume one is provided.</param>
-        /// <param name="setLogger">Set logger for the sdk.</param>
-        /// <param name="setMetrics">Set metrics for the sdk.</param>
+        /// <param name="appId">Optional appid</param>
+        /// <param name="userAgent">Optional user agent</param>
+        /// <param name="setDestination">Create a cognite destination based on remote config, or assume one is already provided.</param>
         /// <param name="remoteConfig">Pre-existing config object, set to null to read from <paramref name="path"/> instead. Path is still required if <paramref name="bufferConfigFile"/> is set.</param>
         /// <param name="bufferConfigFile">True to store the configuration file locally so that the extractor may start even without a connection to CDF.
         /// Stored in the same directory as the config file, with name equal to _temp_[name-of-config-file]</param>
@@ -97,25 +99,37 @@ namespace Cognite.Extractor.Utils
         /// the yaml file is not found or in case of yaml parsing error</exception>
         /// <returns>An instance of the configuration object</returns>
         public static async Task<T> AddRemoteConfig<T>(this IServiceCollection services,
-                                        string path,
-                                        Type[] types,
-                                        bool setHttpClient,
-                                        bool setLogger,
-                                        bool setMetrics,
+                                        string? path,
+                                        IEnumerable<Type>? types,
+                                        string? appId,
+                                        string? userAgent,
+                                        bool setDestination,
                                         bool bufferConfigFile,
                                         RemoteConfig? remoteConfig,
                                         CancellationToken token,
                                         params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
+            var configTypes = new[]
+                {
+                    typeof(CogniteConfig),
+                    typeof(LoggerConfig),
+                    typeof(MetricsConfig),
+                    typeof(StateStoreConfig),
+                    typeof(BaseConfig)
+                };
+
+            if (types != null) configTypes = configTypes.Concat(types).Distinct().ToArray();
+
             if (remoteConfig == null)
             {
+                if (path == null) throw new ConfigurationException("No config object specified, config file path is required");
                 ConfigurationUtils.IgnoreUnmatchedProperties();
                 remoteConfig = ConfigurationUtils.TryReadConfigFromFile<RemoteConfig>(path, null);
                 ConfigurationUtils.DisallowUnmatchedProperties();
 
                 if (remoteConfig.Type == ConfigurationMode.Local)
                 {
-                    return services.AddConfig<T>(path, types, acceptedConfigVersions);
+                    return services.AddConfig<T>(path, configTypes, acceptedConfigVersions);
                 }
 
                 // Try read config again, to get checking of unmatched properties.
@@ -123,26 +137,43 @@ namespace Cognite.Extractor.Utils
             }
             else if (remoteConfig.Type == ConfigurationMode.Local)
             {
-                return services.AddConfig<T>(path, types, acceptedConfigVersions);
+                if (path == null) throw new ConfigurationException("Config file path is required for local config");
+                return services.AddConfig<T>(path, configTypes, acceptedConfigVersions);
             }
 
             if (remoteConfig.CogniteConfig.ExtractionPipeline?.PipelineId == null) throw new ConfigurationException("Extraction pipeline id required for remote config");
 
-            services.AddCogniteClient("dotnet-utils-remote-config", null, setHttpClient, setLogger, setMetrics, true);
-            services.AddSingleton(remoteConfig.CogniteConfig);
-            services.AddSingleton(provider => new RemoteConfigManager<T>(
-                provider.GetRequiredService<CogniteDestination>(),
-                provider.GetService<ILogger<RemoteConfigManager<T>>>(),
+            var localServices = new ServiceCollection();
+
+            if (setDestination) localServices.AddCogniteClient(appId, userAgent, false, false, true, true);
+            localServices.AddSingleton(remoteConfig.CogniteConfig);
+            var destination = localServices.BuildServiceProvider().GetRequiredService<CogniteDestination>();
+
+            var state = new RemoteConfigState<T>();
+
+            var manager = new RemoteConfigManager<T>(
+                destination,
+                null,
+                remoteConfig,
+                state,
                 path,
                 bufferConfigFile,
-                acceptedConfigVersions,
-                remoteConfig.CogniteConfig.ExtractionPipeline.PipelineId));
-            var manager = services.BuildServiceProvider().GetRequiredService<RemoteConfigManager<T>>();
+                acceptedConfigVersions);
 
             var config = await manager.FetchLatestThrowOnFailure(token).ConfigureAwait(false);
 
+            services.AddSingleton(provider => new RemoteConfigManager<T>(
+                provider.GetRequiredService<CogniteDestination>(),
+                provider.GetService<ILogger<RemoteConfigManager<T>>>(),
+                remoteConfig,
+                state,
+                path,
+                bufferConfigFile,
+                acceptedConfigVersions
+            ));
+
             services.AddSingleton(config);
-            services.AddConfig(config, types);
+            services.AddConfig(config, configTypes);
 
             return config;
         }
@@ -164,6 +195,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="config">Optional pre-defined config object to use instead of reading from file</param>
         /// <param name="buildLogger">Optional method to build logger.
         /// <param name="types">Types to look for as properties on <typeparamref name="T"/></param>
+        /// <param name="doNotAddConfig">Skip adding config to the service collection, for example if it has already been added by AddRemoteConfig.</param>
         /// Defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/> </param>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error</exception>
@@ -180,7 +212,8 @@ namespace Cognite.Extractor.Utils
             bool requireDestination = true,
             T? config = null,
             Func<LoggerConfig, Serilog.ILogger>? buildLogger = null,
-            IEnumerable<Type>? types = null) where T : VersionedConfig
+            IEnumerable<Type>? types = null,
+            bool doNotAddConfig = false) where T : VersionedConfig
         {
             var configTypes = new[]
                 {
@@ -195,8 +228,11 @@ namespace Cognite.Extractor.Utils
 
             if (config != null)
             {
-                services.AddSingleton(config);
-                services.AddConfig(config, configTypes);
+                if (!doNotAddConfig)
+                {
+                    services.AddSingleton(config);
+                    services.AddConfig(config, configTypes);
+                }
             }
             else if (configPath != null)
             {

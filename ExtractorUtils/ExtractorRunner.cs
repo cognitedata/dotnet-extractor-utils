@@ -103,6 +103,19 @@ namespace Cognite.Extractor.Utils
         /// Let this method return true if the exception is fatal and the extractor should terminate.
         /// </summary>
         public Func<Exception, bool>? IsFatalException { get; set; }
+        /// <summary>
+        /// Allow users to set type: remote and fetch config from extraction pipelines.
+        /// </summary>
+        public bool AllowRemoteConfig { get; set; }
+        /// <summary>
+        /// True to buffer config if it is fetched from remote. Requires a config path to be set.
+        /// Defaults to true.
+        /// </summary>
+        public bool BufferRemoteConfig { get; set; } = true;
+        /// <summary>
+        /// Optional pre-existing remote config, used to inject the config object, for example from the command line.
+        /// </summary>
+        public RemoteConfig? RemoteConfig { get; set; }
     }
 
 
@@ -143,6 +156,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="config">Optional pre-existing config object, can be used instead of config path.</param>
         /// <param name="requireDestination">Default true, whether to fail if a destination cannot be configured</param>
         /// <param name="logException">Method called to log exceptions. Useful if special handling is desired.</param>
+        /// <param name="allowRemoteConfig">True to allow the user to specify "type: remote", and get config read from extraction pipelines.</param>
         /// <returns>Task which completes when the extractor has run</returns>
         public static async Task Run<TConfig, TExtractor>(
             string configPath,
@@ -160,7 +174,8 @@ namespace Cognite.Extractor.Utils
             ILogger? startupLogger = null,
             TConfig? config = null,
             bool requireDestination = true,
-            Action<ILogger, Exception, string>? logException = null)
+            Action<ILogger, Exception, string>? logException = null,
+            bool allowRemoteConfig = true)
             where TConfig : VersionedConfig
             where TExtractor : BaseExtractor<TConfig>
         {
@@ -180,7 +195,8 @@ namespace Cognite.Extractor.Utils
                 StartupLogger = startupLogger,
                 Config = config,
                 RequireDestination = requireDestination,
-                LogException = logException
+                LogException = logException,
+                AllowRemoteConfig = allowRemoteConfig
             }, token).ConfigureAwait(false);
         }
 
@@ -228,6 +244,21 @@ namespace Cognite.Extractor.Utils
                 ConfigurationException? exception = null;
                 try
                 {
+                    if (options.AllowRemoteConfig)
+                    {
+                        options.Config = await services.AddRemoteConfig<TConfig>(
+                            options.ConfigPath,
+                            options.ConfigTypes,
+                            options.AppId,
+                            options.UserAgent,
+                            true,
+                            options.BufferRemoteConfig,
+                            options.RemoteConfig,
+                            token,
+                            options.AcceptedConfigVersions).ConfigureAwait(false);
+                    }
+
+
                     options.Config = services.AddExtractorDependencies(
                         options.ConfigPath,
                         options.AcceptedConfigVersions,
