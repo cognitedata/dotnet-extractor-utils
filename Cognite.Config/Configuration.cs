@@ -27,6 +27,12 @@ namespace Cognite.Extractor.Configuration
             .WithNodeDeserializer(new TemplatedValueDeserializer());
         private static IDeserializer deserializer = builder
             .Build();
+        private static DeserializerBuilder ignoreUnmatchedBuilder = new DeserializerBuilder()
+            .WithNamingConvention(HyphenatedNamingConvention.Instance)
+            .WithNodeDeserializer(new TemplatedValueDeserializer())
+            .IgnoreUnmatchedProperties();
+
+        private static bool ignoreUnmatchedProperties;
 
         /// <summary>
         /// Reads the provided string containing yml and deserializes it to an object of type <typeparamref name="T"/>.
@@ -156,7 +162,15 @@ namespace Cognite.Extractor.Configuration
         public static void AddTagMapping<T>(string tag)
         {
             builder = builder.WithTagMapping(tag, typeof(T));
-            deserializer = builder.Build();
+            ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
+            if (ignoreUnmatchedProperties)
+            {
+                deserializer = ignoreUnmatchedBuilder.Build();
+            }
+            else
+            {
+                deserializer = builder.Build();
+            }
         }
 
         /// <summary>
@@ -164,7 +178,8 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         public static void IgnoreUnmatchedProperties()
         {
-            deserializer = builder.IgnoreUnmatchedProperties().Build();
+            ignoreUnmatchedProperties = true;
+            deserializer = ignoreUnmatchedBuilder.Build();
         }
 
         /// <summary>
@@ -172,6 +187,7 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         public static void DisallowUnmatchedProperties()
         {
+            ignoreUnmatchedProperties = false;
             deserializer = builder.Build();
         }
 

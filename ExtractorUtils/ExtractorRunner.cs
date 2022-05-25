@@ -217,6 +217,7 @@ namespace Cognite.Extractor.Utils
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
             if (options.LogException == null) options.LogException = LogException;
+            if (options.StartupLogger == null) options.StartupLogger = LoggingUtils.GetDefault();
 
             int waitRepeats = 1;
 
@@ -247,6 +248,7 @@ namespace Cognite.Extractor.Utils
                     if (options.AllowRemoteConfig)
                     {
                         options.Config = await services.AddRemoteConfig<TConfig>(
+                            options.StartupLogger,
                             options.ConfigPath,
                             options.ConfigTypes,
                             options.AppId,
@@ -270,7 +272,8 @@ namespace Cognite.Extractor.Utils
                         options.RequireDestination,
                         options.Config,
                         options.BuildLogger,
-                        options.ConfigTypes);
+                        options.ConfigTypes,
+                        options.AllowRemoteConfig);
                     options.ConfigCallback?.Invoke(options.Config, options, services);
                 }
                 catch (TargetInvocationException ex)
@@ -304,17 +307,8 @@ namespace Cognite.Extractor.Utils
 
                 if (exception != null)
                 {
-                    if (options.StartupLogger != null)
-                    {
-                        options.StartupLogger.LogError("Invalid configuration file: {msg}", exception.Message);
-                        if (options.WaitForConfig || options.Restart) options.StartupLogger.LogInformation("Sleeping for 30 seconds");
-                    }
-                    else
-                    {
-                        Serilog.Log.Logger = LoggingUtils.GetSerilogDefault();
-                        Serilog.Log.Error("Invalid configuration file: " + exception.Message);
-                        if (options.WaitForConfig || options.Restart) Serilog.Log.Information("Sleeping for 30 seconds");
-                    }
+                    options.StartupLogger.LogError("Invalid configuration file: {msg}", exception.Message);
+                    if (options.WaitForConfig || options.Restart) options.StartupLogger.LogInformation("Sleeping for 30 seconds");
                     if (!options.WaitForConfig && !options.Restart) break;
                     try
                     {
@@ -329,9 +323,12 @@ namespace Cognite.Extractor.Utils
                 DateTime startTime = DateTime.UtcNow;
                 ILogger<BaseExtractor<TConfig>> log;
 
+                bool extractorStoppedGracefully;
+
                 var provider = services.BuildServiceProvider();
                 await using (provider.ConfigureAwait(false))
                 {
+                    extractorStoppedGracefully = false;
                     log = new NullLogger<BaseExtractor<TConfig>>();
                     TExtractor? extractor = null;
                     try
@@ -355,7 +352,7 @@ namespace Cognite.Extractor.Utils
                     }
                     catch (Exception ex)
                     {
-                        log.LogError("Failed to build extractor: {msg}", ex.Message);
+                        log.LogError(ex, "Failed to build extractor: {msg}", ex.Message);
                     }
 
                     if (extractor != null)
@@ -363,6 +360,7 @@ namespace Cognite.Extractor.Utils
                         try
                         {
                             await extractor.Start(source.Token).ConfigureAwait(false);
+                            extractorStoppedGracefully = true;
                         }
                         catch (TaskCanceledException) when (source.IsCancellationRequested)
                         {
@@ -397,26 +395,32 @@ namespace Cognite.Extractor.Utils
                         break;
                     }
 
-                    if (startTime > DateTime.UtcNow - TimeSpan.FromSeconds(600))
-                    {
-                        waitRepeats++;
-                    }
-                    else
-                    {
-                        waitRepeats = 1;
-                    }
+                    
 
-                    try
+                    if (!extractorStoppedGracefully)
                     {
-                        var sleepTime = TimeSpan.FromSeconds(Math.Pow(2, Math.Min(waitRepeats, 9)));
-                        log.LogInformation("Sleeping for {time}", sleepTime);
-                        await Task.Delay(sleepTime, source.Token).ConfigureAwait(false);
+                        if (startTime > DateTime.UtcNow - TimeSpan.FromSeconds(600))
+                        {
+                            waitRepeats++;
+                        }
+                        else
+                        {
+                            waitRepeats = 1;
+                        }
+
+                        try
+                        {
+                            var sleepTime = TimeSpan.FromSeconds(Math.Pow(2, Math.Min(waitRepeats, 9)));
+                            log.LogInformation("Sleeping for {time}", sleepTime);
+                            await Task.Delay(sleepTime, source.Token).ConfigureAwait(false);
+                        }
+                        catch (Exception)
+                        {
+                            log.LogWarning("Extractor stopped manually");
+                            break;
+                        }
                     }
-                    catch (Exception)
-                    {
-                        log.LogWarning("Extractor stopped manually");
-                        break;
-                    }
+                    
                 }
 
 

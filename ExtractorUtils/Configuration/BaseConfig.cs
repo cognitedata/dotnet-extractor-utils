@@ -14,7 +14,7 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public class BaseConfig : VersionedConfig
     {
-
+        public ConfigurationMode Type { get; set; } = ConfigurationMode.Local;
         /// <summary>
         /// Logging configuration (optional)
         /// </summary>

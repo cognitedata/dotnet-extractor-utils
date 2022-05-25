@@ -1,7 +1,8 @@
 version: 1
-logger:
-  console:
-    level: verbose
+#logger:
+#  console:
+#    level: verbose
+type: remote
 cognite:
   project: ${BF_TEST_PROJECT}
   host: ${BF_TEST_HOST}
@@ -11,3 +12,5 @@ cognite:
     secret: ${BF_TEST_SECRET}
     scopes:
       - ${BF_TEST_SCOPE}
+  extraction-pipeline:
+    pipeline-id: net-remote-test

@@ -84,6 +84,7 @@ namespace Cognite.Extractor.Utils
         /// The RemoteConfigManager is added as a service to the service collection, and can be used to check for updates to configuration later.
         /// </summary>
         /// <param name="services">The service collection</param>
+        /// <param name="logger">Logger to use during startup</param>
         /// <param name="path">Path to the file</param>
         /// <param name="acceptedConfigVersions">Accepted versions</param>
         /// <param name="types">Types to look for as properties on <typeparamref name="T"/></param>
@@ -98,25 +99,27 @@ namespace Cognite.Extractor.Utils
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error</exception>
         /// <returns>An instance of the configuration object</returns>
-        public static async Task<T> AddRemoteConfig<T>(this IServiceCollection services,
-                                        string? path,
-                                        IEnumerable<Type>? types,
-                                        string? appId,
-                                        string? userAgent,
-                                        bool setDestination,
-                                        bool bufferConfigFile,
-                                        RemoteConfig? remoteConfig,
-                                        CancellationToken token,
-                                        params int[]? acceptedConfigVersions) where T : VersionedConfig
+        public static async Task<T> AddRemoteConfig<T>(
+            this IServiceCollection services,
+            ILogger? logger,
+            string? path,
+            IEnumerable<Type>? types,
+            string? appId,
+            string? userAgent,
+            bool setDestination,
+            bool bufferConfigFile,
+            RemoteConfig? remoteConfig,
+            CancellationToken token,
+            params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
             var configTypes = new[]
-                {
-                    typeof(CogniteConfig),
-                    typeof(LoggerConfig),
-                    typeof(MetricsConfig),
-                    typeof(StateStoreConfig),
-                    typeof(BaseConfig)
-                };
+            {
+                typeof(CogniteConfig),
+                typeof(LoggerConfig),
+                typeof(MetricsConfig),
+                typeof(StateStoreConfig),
+                typeof(BaseConfig)
+            };
 
             if (types != null) configTypes = configTypes.Concat(types).Distinct().ToArray();
 
@@ -129,6 +132,7 @@ namespace Cognite.Extractor.Utils
 
                 if (remoteConfig.Type == ConfigurationMode.Local)
                 {
+                    services.AddSingleton<RemoteConfigManager<T>>(provider => null!);
                     return services.AddConfig<T>(path, configTypes, acceptedConfigVersions);
                 }
 
@@ -138,22 +142,23 @@ namespace Cognite.Extractor.Utils
             else if (remoteConfig.Type == ConfigurationMode.Local)
             {
                 if (path == null) throw new ConfigurationException("Config file path is required for local config");
+                services.AddSingleton<RemoteConfigManager<T>>(provider => null!);
                 return services.AddConfig<T>(path, configTypes, acceptedConfigVersions);
             }
 
-            if (remoteConfig.CogniteConfig.ExtractionPipeline?.PipelineId == null) throw new ConfigurationException("Extraction pipeline id required for remote config");
+            if (remoteConfig.Cognite.ExtractionPipeline?.PipelineId == null) throw new ConfigurationException("Extraction pipeline id required for remote config");
 
             var localServices = new ServiceCollection();
 
             if (setDestination) localServices.AddCogniteClient(appId, userAgent, false, false, true, true);
-            localServices.AddSingleton(remoteConfig.CogniteConfig);
+            localServices.AddSingleton(remoteConfig.Cognite);
             var destination = localServices.BuildServiceProvider().GetRequiredService<CogniteDestination>();
 
             var state = new RemoteConfigState<T>();
 
             var manager = new RemoteConfigManager<T>(
                 destination,
-                null,
+                logger,
                 remoteConfig,
                 state,
                 path,

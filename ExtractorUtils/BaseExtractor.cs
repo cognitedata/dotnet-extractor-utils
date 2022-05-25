@@ -20,6 +20,19 @@ namespace Cognite.Extractor.Utils
         where TConfig : VersionedConfig
     {
         /// <summary>
+        /// Delegate for OnConfigUpdate event.
+        /// </summary>
+        /// <param name="sender">Extractor as sender</param>
+        /// <param name="newConfig">New config object</param>
+        /// <param name="revision">Revision of the new config object.</param>
+        protected delegate void OnConfigUpdateHandler(object sender, TConfig newConfig, int revision);
+
+        /// <summary>
+        /// If a RemoteConfigManager is provided, it will periodically look for config updates.
+        /// </summary>
+        protected event OnConfigUpdateHandler? OnConfigUpdate;
+
+        /// <summary>
         /// Configuration object
         /// </summary>
         protected TConfig Config { get; }
@@ -59,6 +72,11 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         protected ExtractionRun? Run { get; }
 
+        /// <summary>
+        /// Config manager for fetching remote configs, will contain the newest config version and its revision.
+        /// </summary>
+        protected RemoteConfigManager<TConfig>? ConfigManager { get; }
+
         private readonly ILogger<BaseExtractor<TConfig>> _logger;
 
         /// <summary>
@@ -68,17 +86,29 @@ namespace Cognite.Extractor.Utils
         /// <param name="destination">Cognite destination</param>
         /// <param name="provider">Service provider</param>
         /// <param name="run">Optional extraction run</param>
+        /// <param name="configManager">Optional remote config manager</param>
         public BaseExtractor(
             TConfig config,
             IServiceProvider provider,
             CogniteDestination? destination = null,
-            ExtractionRun? run = null)
+            ExtractionRun? run = null,
+            RemoteConfigManager<TConfig>? configManager = null)
         {
             Config = config;
             Destination = destination;
             Provider = provider;
             Run = run;
             _logger = provider.GetService<ILogger<BaseExtractor<TConfig>>>() ?? new NullLogger<BaseExtractor<TConfig>>();
+            ConfigManager = configManager;
+        }
+
+        private async Task CheckForConfigUpdates(CancellationToken token)
+        {
+            var newConfig = await ConfigManager!.FetchLatest(token).ConfigureAwait(false);
+            if (newConfig != null)
+            {
+                OnConfigUpdate?.Invoke(this, newConfig, ConfigManager.Revision);
+            }
         }
 
         /// <summary>
@@ -115,6 +145,12 @@ namespace Cognite.Extractor.Utils
         {
             Init(token);
             await TestConfig().ConfigureAwait(false);
+
+            if (ConfigManager != null && ConfigManager.UpdatePeriod.Value != Timeout.InfiniteTimeSpan)
+            {
+                Scheduler.SchedulePeriodicTask(null, ConfigManager.UpdatePeriod, CheckForConfigUpdates, false);
+            }
+
             try
             {
                 await Start().ConfigureAwait(false);

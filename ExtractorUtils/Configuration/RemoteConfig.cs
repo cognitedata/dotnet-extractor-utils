@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,12 +40,12 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Cognite configuration object.
         /// </summary>
-        public CogniteConfig CogniteConfig { get; set; } = null!;
+        public CogniteConfig Cognite { get; set; } = null!;
 
         /// <inheritdoc />
         public override void GenerateDefaults()
         {
-            CogniteConfig = new CogniteConfig();
+            if (Cognite == null) Cognite = new CogniteConfig();
         }
     }
 
@@ -72,18 +73,28 @@ namespace Cognite.Extractor.Utils
     /// <typeparam name="T"></typeparam>
     public class RemoteConfigManager<T> where T : VersionedConfig
     {
+        /// <summary>
+        /// Period between each check for new config revisions.
+        /// </summary>
+        public ITimeSpanProvider UpdatePeriod { get; set; } = new BasicTimeSpanProvider(Timeout.InfiniteTimeSpan);
+
         private readonly RemoteConfigState<T> _state;
 
         private readonly CogniteDestination _destination;
         private readonly string? _bufferFilePath;
         private readonly int[]? _acceptedConfigVersions;
         private readonly string _pipelineId;
-        private readonly ILogger<RemoteConfigManager<T>> _logger;
+        private readonly ILogger _logger;
         private readonly RemoteConfig _remoteConfig;
         /// <summary>
         /// Current configuration object, if fetched.
         /// </summary>
         public T? Config => _state.Config;
+
+        /// <summary>
+        /// Current revision, 0 if it is not known.
+        /// </summary>
+        public int Revision => _state.CurrentRevision;
 
         /// <summary>
         /// Constructor.
@@ -97,7 +108,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="logger">Logger to use</param>
         public RemoteConfigManager(
             CogniteDestination destination,
-            ILogger<RemoteConfigManager<T>>? logger,
+            ILogger? logger,
             RemoteConfig remoteConfig,
             RemoteConfigState<T> state,
             string? configFilePath,
@@ -107,10 +118,29 @@ namespace Cognite.Extractor.Utils
             _destination = destination;
             _bufferFilePath = bufferConfigFile ? $"{Path.GetDirectoryName(configFilePath)}/_temp_{Path.GetFileName(configFilePath)}" : null;
             _acceptedConfigVersions = acceptedConfigVersions;
-            _pipelineId = remoteConfig?.CogniteConfig?.ExtractionPipeline?.PipelineId ?? throw new ConfigurationException("Extraction pipeline id may not be null");
+            _pipelineId = remoteConfig?.Cognite?.ExtractionPipeline?.PipelineId ?? throw new ConfigurationException("Extraction pipeline id may not be null");
             _logger = logger ?? new NullLogger<RemoteConfigManager<T>>();
             _state = state;
             _remoteConfig = remoteConfig;
+        }
+
+        private T InjectRemoteConfig(T config)
+        {
+            var cogniteProperty = typeof(T).GetProperty("Cognite");
+            if (cogniteProperty != null)
+            {
+                var cogniteConfig = cogniteProperty.GetValue(config) as CogniteConfig;
+                if (cogniteConfig != null)
+                {
+                    cogniteConfig.IdpAuthentication = _remoteConfig.Cognite.IdpAuthentication;
+                    cogniteConfig.Project = _remoteConfig.Cognite.Project;
+                    cogniteConfig.ApiKey = _remoteConfig.Cognite.ApiKey;
+                    cogniteConfig.ExtractionPipeline = _remoteConfig.Cognite.ExtractionPipeline;
+                    cogniteConfig.Host = _remoteConfig.Cognite.Host;
+                }
+            }
+
+            return config;
         }
 
         private async Task<(T config, int revision)> FetchLatestInternal(CancellationToken token)
@@ -125,25 +155,25 @@ namespace Cognite.Extractor.Utils
                     File.WriteAllText(_bufferFilePath, rawConfig.Config);
                 }
 
-                if (config is CogniteConfig cogniteConfig)
-                {
-                    cogniteConfig.IdpAuthentication = _remoteConfig.CogniteConfig.IdpAuthentication;
-                    cogniteConfig.Project = _remoteConfig.CogniteConfig.Project;
-                    cogniteConfig.ApiKey = _remoteConfig.CogniteConfig.ApiKey;
-                    cogniteConfig.ExtractionPipeline = _remoteConfig.CogniteConfig.ExtractionPipeline;
-                }
+                config = InjectRemoteConfig(config);
 
                 _state.Config = config;
-                
-
+               
                 return (config, rawConfig.Revision);
             }
             catch (Exception ex)
             {
+                _logger.LogError("Failed to retrieve configuration from pipeline {Pipeline} file: {Message}", _pipelineId, ex.Message);
                 if (Config == null && _bufferFilePath != null)
                 {
                     if (!File.Exists(_bufferFilePath)) throw new ConfigurationException($"Could not retrieve remote configuration, and local buffer does not exist: {ex.Message}", ex);
-                    return (ConfigurationUtils.TryReadConfigFromFile<T>(_bufferFilePath, _acceptedConfigVersions), 0);
+                    var config = ConfigurationUtils.TryReadConfigFromFile<T>(_bufferFilePath, _acceptedConfigVersions);
+
+                    _logger.LogWarning("Loaded configuration from local config file buffer.");
+
+                    config = InjectRemoteConfig(config);
+
+                    return (config, 0);
                 }
                 else if (Config != null)
                 {
@@ -157,6 +187,8 @@ namespace Cognite.Extractor.Utils
         {
             var (config, revision) = await FetchLatestInternal(token).ConfigureAwait(false);
             _state.CurrentRevision = revision;
+            // var cc = typeof(T).GetProperty("Cognite").GetValue(config) as CogniteConfig;
+            // Console.WriteLine(cc.
             return config;
         }
 
@@ -172,14 +204,16 @@ namespace Cognite.Extractor.Utils
                 var (config, revision) = await FetchLatestInternal(token).ConfigureAwait(false);
                 if (revision == _state.CurrentRevision || revision == 0)
                 {
+                    _logger.LogTrace("Config revision in CDF is equal to existing revision for pipeline {Pipeline}", _pipelineId);
                     return null;
                 }
+                _logger.LogInformation("Obtained new config object for pipeline {Pipeline}. Revision {Rev}", _pipelineId, revision);
                 _state.CurrentRevision = revision;
                 return config;
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Failed to fetch latest configuration file from CDF: {Message}", ex.Message);
+                _logger.LogWarning("Failed to fetch latest configuration file from CDF for pipeline {Pipeline}: {Message}", _pipelineId, ex.Message);
                 return null;
             }
         }
