@@ -77,9 +77,9 @@ class MyExtractor : BaseExtractor
 // Then, in the Main() method:
 class Program
 {
-    static void Main()
+    static async Task Main()
     {
-        ExtractorRunner.Run<BaseConfig>(
+        await ExtractorRunner.Run<BaseConfig>(
             "config.yml",
             new[] { 1 },
             "my-extractor",
@@ -88,7 +88,7 @@ class Program
             addLogger: true,
             addMetrics: true,
             restart: true,
-            CancellationToken.None).Wait();
+            CancellationToken.None);
     }
 }
 ```

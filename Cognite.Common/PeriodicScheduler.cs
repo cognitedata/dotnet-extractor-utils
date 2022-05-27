@@ -20,9 +20,18 @@ namespace Cognite.Extractor.Common
         TimeSpan Value { get; }
     }
 
-    internal class BasicTimeSpanProvider : ITimeSpanProvider
+    /// <summary>
+    /// Implementation of ITimeSpanProvider that just exposes a constant TimeSpan.
+    /// </summary>
+    public class BasicTimeSpanProvider : ITimeSpanProvider
     {
+        /// <inheritdoc />
         public TimeSpan Value { get; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="value">Constant timespan to expose</param>
         public BasicTimeSpanProvider(TimeSpan value)
         {
             Value = value;

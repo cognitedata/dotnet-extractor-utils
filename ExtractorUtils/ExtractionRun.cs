@@ -65,6 +65,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public void Start()
         {
+            if (_runTask != null) return;
             _runTask = Run();
         }
         
