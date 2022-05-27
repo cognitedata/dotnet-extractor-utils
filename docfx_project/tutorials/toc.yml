@@ -1,9 +1,13 @@
 - name: Introduction
   href: intro.md
-- name: Basic usage
+- name: Basic Usage
   href: minimal-usage.md
 - name: Base Extractor class
   href: base-extractor.md
+- name: Extraction Pipelines
+  href: extpipes.md
+- name: Command Line Arguments
+  href: command-line.md
 - name: Raw Queue
   href: raw-queue.md
 - name: Time Series Queue

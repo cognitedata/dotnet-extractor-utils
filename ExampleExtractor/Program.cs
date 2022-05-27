@@ -10,9 +10,10 @@ using System.CommandLine;
 
 class MyExtractor : BaseExtractor<BaseConfig>
 {
-    public MyExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination)
-        : base(config, provider, destination)
+    public MyExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
+        : base(config, provider, destination, run)
     {
+        if (run != null) run.Continuous = true;
     }
 
     protected override async Task Start()
@@ -40,7 +41,7 @@ class MyExtractor : BaseExtractor<BaseConfig>
 // Class for flat command line arguments
 class Options
 {
-    [CommandLineOption("Specify command line argument", true, "-c")]
+    [CommandLineOption("Specify path to config file", true, "-c")]
     public string ConfigPath { get; set; }
 }
 
