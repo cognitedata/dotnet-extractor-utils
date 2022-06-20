@@ -215,6 +215,7 @@ namespace ExtractorUtils.Test.Unit
         [InlineData("1234s-", true)]
         [InlineData("1234k", true)]
         [InlineData("1209600000ms", false)]
+        [InlineData("14.00:00:00", false)]
         public static void TestParseTimeFuture(string input, bool resultNull)
         {
             var time = DateTime.UtcNow;
@@ -253,9 +254,9 @@ namespace ExtractorUtils.Test.Unit
         [InlineData("1209600", false, "s")]
         [InlineData("1209600000ms", false)]
         [InlineData("1209600000", false, "ms")]
-        [InlineData("1234", true)]
         [InlineData("test", true, "s")]
         [InlineData("1234k", true)]
+        [InlineData("14.00:00:00", false)]
         public static void TestParseTimeSpan(string input, bool resultNull, string unit = null)
         {
             var reference = TimeSpan.FromDays(14);

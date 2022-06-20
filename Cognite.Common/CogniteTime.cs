@@ -145,7 +145,7 @@ namespace Cognite.Extractor.Common
         /// The format is N[timeunit]-ago where timeunit is w,d,h,m,s. Example: '2d-ago'
         /// returns a timestamp two days ago.
         /// If the format is N[timeunit], without -ago, it is set to the future, or after <paramref name="relative"/>
-        /// Without timeunit, it is converted to a datetime in milliseconds since epoch.
+        /// Without timeunit, it is converted to a datetime in milliseconds since epoch, or by using a standard datetime format like ISO 8601.
         /// </summary>
         /// <param name="t">Timestamp string</param>
         /// <param name="relative">Set time relative to this if -ago syntax is used</param>
@@ -176,8 +176,11 @@ namespace Cognite.Extractor.Common
             }
             catch
             {
-                return null;
             }
+
+            if (DateTime.TryParse(t, out var result)) return result;
+
+            return null;
         }
 
         /// <summary>
@@ -212,9 +215,10 @@ namespace Cognite.Extractor.Common
                 }
                 catch
                 {
-                    return null;
                 }
             }
+
+            if (TimeSpan.TryParse(t, out var result)) return result;
 
             return null;
         }
