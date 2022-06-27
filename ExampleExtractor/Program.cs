@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Cognite.Extensions;
 using System;
+using System.Text.Json;
 using System.Collections.Generic;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
@@ -14,10 +15,15 @@ class MyExtractor : BaseExtractor<BaseConfig>
         : base(config, provider, destination, run)
     {
         if (run != null) run.Continuous = true;
+        
+        //createDatabase();    
     }
 
+
     protected override async Task Start()
-    {
+    {   
+        
+
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
             new TimeSeriesCreate {
@@ -36,42 +42,44 @@ class MyExtractor : BaseExtractor<BaseConfig>
             return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new[] { dp });
         });
     }
+
+    public async void createDatabase()
+    {
+        var res = await Destination.CogniteClient.Login.StatusAsync().ConfigureAwait(false);
+        Console.WriteLine(res);
+
+        var rows = await Destination.CogniteClient.Raw.ListRowsAsync<JsonElement>("kjerand-test-db", "kjerand-test-table").ConfigureAwait(false);
+        Console.WriteLine(rows);
+    }
 }
 
-// Class for flat command line arguments
-class Options
-{
-    [CommandLineOption("Specify path to config file", true, "-c")]
-    public string ConfigPath { get; set; }
-}
-
-// Then, in the Main() method:
 class Program
 {
     static async Task Main(string[] args)
     {
-        var command = new RootCommand
-        {
-            Description = "Simple example extractor"
-        };
-        var binder = new AttributeBinder<Options>();
-        binder.AddOptionsToCommand(command);
-
-        command.SetHandler<Options>(async opt =>
-        {
-            // This can also be invoked directly in main, to not have a CLI.
-            await ExtractorRunner.Run<BaseConfig, MyExtractor>(
-                configPath: opt.ConfigPath ?? "config.yml",
-                acceptedConfigVersions: new[] { 1 },
-                appId: "my-extractor",
-                userAgent: "myextractor/1.0.0",
-                addStateStore: false,
-                addLogger: true,
-                addMetrics: true,
-                restart: true,
-                CancellationToken.None).ConfigureAwait(false);
-        }, binder);
-
-        await command.InvokeAsync(args).ConfigureAwait(false);
+        List<Task> extractors = createExtractors();
+        await Task.WhenAll(extractors).ConfigureAwait(false);
     }
+
+    static public List<Task> createExtractors()
+    {
+        List<Task> extractors = new List<Task>();
+        extractors.Add(createExtractor(1)); 
+        return extractors;
+    }
+
+     static public Task createExtractor(int index)
+     {
+        return Task.Run(async () => await ExtractorRunner.Run<BaseConfig, MyExtractor>(
+            index,
+            configPath: "config.yml",
+            acceptedConfigVersions: new[] { 1 },
+            appId: "1",
+            userAgent: "myextractor/1.0.0",
+            addStateStore: false,
+            addLogger: true,
+            addMetrics: false,
+            restart: true,
+            CancellationToken.None).ConfigureAwait(false));
+     }
 }

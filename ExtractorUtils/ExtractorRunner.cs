@@ -25,6 +25,10 @@ namespace Cognite.Extractor.Utils
         where TConfig : VersionedConfig
         where TExtractor : BaseExtractor<TConfig>
     {
+                /// <summary>
+        /// Path to config file
+        /// </summary>
+        public int Index { get; set; }
         /// <summary>
         /// Path to config file
         /// </summary>
@@ -103,6 +107,7 @@ namespace Cognite.Extractor.Utils
         /// Let this method return true if the exception is fatal and the extractor should terminate.
         /// </summary>
         public Func<Exception, bool>? IsFatalException { get; set; }
+
     }
 
 
@@ -145,6 +150,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="logException">Method called to log exceptions. Useful if special handling is desired.</param>
         /// <returns>Task which completes when the extractor has run</returns>
         public static async Task Run<TConfig, TExtractor>(
+            int index,
             string configPath,
             int[] acceptedConfigVersions,
             string appId,
@@ -166,6 +172,7 @@ namespace Cognite.Extractor.Utils
         {
             await Run(new ExtractorRunnerParams<TConfig, TExtractor>
             {
+                Index = index,
                 ConfigPath = configPath,
                 AcceptedConfigVersions = acceptedConfigVersions,
                 AppId = appId,
@@ -180,8 +187,8 @@ namespace Cognite.Extractor.Utils
                 StartupLogger = startupLogger,
                 Config = config,
                 RequireDestination = requireDestination,
-                LogException = logException
-            }, token).ConfigureAwait(false);
+                LogException = logException,
+                }, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -316,6 +323,7 @@ namespace Cognite.Extractor.Utils
                             Serilog.Log.Logger = provider.GetRequiredService<Serilog.ILogger>();
                         }
                         extractor = provider.GetRequiredService<TExtractor>();
+                        
                         if (options.OnCreateExtractor != null)
                         {
                             var destination = provider.GetService<CogniteDestination>();
@@ -329,6 +337,30 @@ namespace Cognite.Extractor.Utils
 
                     if (extractor != null)
                     {
+                        Console.WriteLine("Index:" + options.Index);
+                        var destination = provider.GetService<CogniteDestination>();
+
+                        if (options.Index < 0)
+                        {
+                            log.LogError("Invalid index number: negative number");
+                            break;
+                        }
+                        if (destination != null)
+                        {
+                            IExtractorManager extractorManager = new ExtractorManager(destination);
+
+                            if (options.Index == 0)
+                            {
+                                await Task.Run(() => {
+                                    extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000).ConfigureAwait(false);
+                                });
+                            } 
+                            else 
+                            {
+                                await extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000).ConfigureAwait(false);
+                            }
+                        }
+                    
                         try
                         {
                             await extractor.Start(source.Token).ConfigureAwait(false);
