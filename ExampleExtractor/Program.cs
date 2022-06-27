@@ -74,7 +74,7 @@ class Program
             index,
             configPath: "config.yml",
             acceptedConfigVersions: new[] { 1 },
-            appId: "1",
+            appId: "my-extractor",
             userAgent: "myextractor/1.0.0",
             addStateStore: false,
             addLogger: true,

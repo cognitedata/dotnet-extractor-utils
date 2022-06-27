@@ -14,7 +14,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// True to require a CogniteDestination to be set.
         /// </summary>
-        Task WaitToBecomeActive(int index,  string databaseName, string tableName, int sleepTime); 
+        Task WaitToBecomeActive(int index,  string databaseName, string tableName, int sleepTime, int inactivityThreshold, CancellationTokenSource source); 
     }
     /// <summary>
     /// True to require a CogniteDestination to be set.
@@ -45,25 +45,43 @@ namespace Cognite.Extractor.Utils
         }
 
         private CogniteDestination Destination {get;}
-        async Task IExtractorManager.WaitToBecomeActive(int index, string databaseName, string tableName, int sleepTime)
+        async Task IExtractorManager.WaitToBecomeActive(int index, string databaseName, string tableName, int sleepTime, int inactivityThreshold, CancellationTokenSource source)
         {
-            bool active = false;
-            Console.WriteLine("This is extractor " +index);
-            while (!active)
+            Console.WriteLine("This is extractor " + index);
+            while (!source.IsCancellationRequested)
             {
-                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<JsonElement>(databaseName, tableName).ConfigureAwait(false);
-                Console.WriteLine(allRows);
+                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(databaseName, tableName).ConfigureAwait(false);
+                
+                bool active = index == 0 ? true : false;
+                foreach (var extractor in allRows.Items)
+                {
+                    DateTime currentTime = DateTime.Now;
+                    LogData extractorData = extractor.Columns;
+                    double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
+                    
+                    Console.WriteLine("Extractor key: " + extractor.Key);
+                    Console.WriteLine(Math.Floor(timeDifference) + " sec since last activity");
+                    Console.WriteLine("Active: " + extractorData.Active);
+                    Console.WriteLine();
 
-                await UploadLogToState(index, databaseName, tableName, sleepTime);
+                    if (extractorData.Active == true && timeDifference > inactivityThreshold && Int32.Parse(extractor.Key) != index)
+                    {
+                        Console.WriteLine("Starting extractor with index " + index);
+                        return;
+                    }
+                }
+                Console.WriteLine();
+
+                await UploadLogToState(active, index, databaseName, tableName);
                 await Task.Delay(sleepTime).ConfigureAwait(false);
             }
         }
 
-        async Task UploadLogToState(int index, string databaseName, string tableName, int sleepTime)
+        async Task UploadLogToState(bool active, int index, string databaseName, string tableName)
         {
             LogData log = new LogData();
             log.TimeStamp = DateTime.Now;
-            log.Active = index == 0 ? true : false;
+            log.Active = active;
 
             RawRowCreate<LogData> row = new RawRowCreate<LogData>() { Key = index.ToString(), Columns = log };
 

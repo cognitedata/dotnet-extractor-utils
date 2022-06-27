@@ -337,7 +337,6 @@ namespace Cognite.Extractor.Utils
 
                     if (extractor != null)
                     {
-                        Console.WriteLine("Index:" + options.Index);
                         var destination = provider.GetService<CogniteDestination>();
 
                         if (options.Index < 0)
@@ -352,12 +351,12 @@ namespace Cognite.Extractor.Utils
                             if (options.Index == 0)
                             {
                                 await Task.Run(() => {
-                                    extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000).ConfigureAwait(false);
+                                    extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000, 25, source).ConfigureAwait(false);
                                 });
                             } 
                             else 
                             {
-                                await extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000).ConfigureAwait(false);
+                                await extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000, 25, source).ConfigureAwait(false);
                             }
                         }
                     
