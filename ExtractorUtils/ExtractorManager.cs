@@ -59,8 +59,6 @@ namespace Cognite.Extractor.Utils
             {
                 var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
                 
-                bool active = index == 0 ? true : false;
-
                 Console.WriteLine();
                 Console.WriteLine("Current status:");
                 bool responsive = false;

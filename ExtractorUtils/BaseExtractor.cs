@@ -158,19 +158,19 @@ namespace Cognite.Extractor.Utils
             {
                 ExtractorManager extractorManager = new ExtractorManager("kjerand-test-db", "kjerand-test-table", 10, Destination);
 
-                bool responsive = await extractorManager.CurrentlyActiveExtractor();
-                bool active = (index == 0 && !responsive) ? true : false;
+                //bool responsive = await extractorManager.CurrentlyActiveExtractor();
+                //bool active = (index == 0 && !responsive) ? true : false;
 
                 Console.WriteLine("This is extractor " + index);
-                TimeSpan interval = new TimeSpan(0, 0, 10);  
-                bool firstRun = true;
 
-                Scheduler.SchedulePeriodicTask("Upload log to state", interval, async (token) => {
-                    await extractorManager.UploadLogToStateAtInterval(active, index, firstRun).ConfigureAwait(false);
+                bool firstRun = true;
+                Scheduler.SchedulePeriodicTask("Upload log to state", new TimeSpan(0, 0, 10), async (token) => {
+                    await extractorManager.UploadLogToStateAtInterval(false, index, firstRun).ConfigureAwait(false);
                     if (firstRun) firstRun = false;
                 });
        
-                if (!active) await extractorManager.WaitToBecomeActive(index, 5000, Source).ConfigureAwait(false);
+                //if (!active) await extractorManager.WaitToBecomeActive(index, 5000, Source).ConfigureAwait(false);
+                await extractorManager.WaitToBecomeActive(index, 5000, Source).ConfigureAwait(false);
             }
         }
 
