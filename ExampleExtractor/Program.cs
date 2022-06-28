@@ -15,15 +15,11 @@ class MyExtractor : BaseExtractor<BaseConfig>
         : base(config, provider, destination, run)
     {
         if (run != null) run.Continuous = true;
-        
-        //createDatabase();    
     }
 
 
     protected override async Task Start()
     {   
-        
-
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
             new TimeSeriesCreate {
@@ -41,15 +37,6 @@ class MyExtractor : BaseExtractor<BaseConfig>
             );
             return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new[] { dp });
         });
-    }
-
-    public async void createDatabase()
-    {
-        var res = await Destination.CogniteClient.Login.StatusAsync().ConfigureAwait(false);
-        Console.WriteLine(res);
-
-        var rows = await Destination.CogniteClient.Raw.ListRowsAsync<JsonElement>("kjerand-test-db", "kjerand-test-table").ConfigureAwait(false);
-        Console.WriteLine(rows);
     }
 }
 

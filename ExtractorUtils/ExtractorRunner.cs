@@ -346,8 +346,8 @@ namespace Cognite.Extractor.Utils
                         }
                         if (destination != null)
                         {
-                            IExtractorManager extractorManager = new ExtractorManager(destination);
-
+                            ExtractorManager extractorManager = new ExtractorManager(destination);
+                            /*
                             if (options.Index == 0)
                             {
                                 await Task.Run(() => {
@@ -357,7 +357,15 @@ namespace Cognite.Extractor.Utils
                             else 
                             {
                                 await extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000, 25, source).ConfigureAwait(false);
-                            }
+                            }*/
+                            
+                            bool active = options.Index == 0 ? true : false;
+                            
+                            await Task.Run(() => {
+                                extractorManager.UploadLogToStateAtInterval(active, options.Index, "kjerand-test-db", "kjerand-test-table", 10000, source).ConfigureAwait(false);
+                            });
+
+                            if (!active) await extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000, 40, source).ConfigureAwait(false);
                         }
                     
                         try
