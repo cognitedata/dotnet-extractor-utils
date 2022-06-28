@@ -109,11 +109,34 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Method called to start the extractor.
         /// </summary>
+        /// <param name="index">Cancellation token</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public virtual async Task Start(CancellationToken token)
+        public virtual async Task Start(int index, CancellationToken token)
         {
             Init(token);
+
+            if (index < 0)
+            {
+                _logger.LogError("Invalid index number: negative number");
+                return;
+            }
+            if (Destination != null)
+            {
+                ExtractorManager extractorManager = new ExtractorManager("kjerand-test-db", "kjerand-test-table", 10, Destination);
+
+                bool responsive = await extractorManager.CurrentlyActiveExtractor();
+                bool active = (index == 0 && !responsive) ? true : false;
+
+                Console.WriteLine(responsive);
+                Console.WriteLine(active);
+                
+                await Task.Run(() => {
+                    extractorManager.UploadLogToStateAtInterval(active, index, 5000, Source).ConfigureAwait(false);
+                });
+
+                if (!active) await extractorManager.WaitToBecomeActive(index, 5000, Source).ConfigureAwait(false);
+            }
             await TestConfig().ConfigureAwait(false);
             try
             {

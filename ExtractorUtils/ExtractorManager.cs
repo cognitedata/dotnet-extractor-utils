@@ -39,24 +39,32 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// True to require a CogniteDestination to be set.
         /// </summary>
-        public ExtractorManager(CogniteDestination destination)
+        public ExtractorManager(string databaseName, string tableName, int inactivityThreshold, CogniteDestination destination)
         {
+            DatabaseName = databaseName;
+            TableName = tableName;
+            InactivityThreshold = inactivityThreshold;
             Destination = destination;
         }
-
-        private CogniteDestination Destination {get;}
+        private int InactivityThreshold { get; }
+        private string DatabaseName { get; }
+        private string TableName { get; }
+        private CogniteDestination Destination { get; }
         /// <summary>
         /// True to require a CogniteDestination to be set.
         /// </summary>
-        public async Task WaitToBecomeActive(int index, string databaseName, string tableName, int sleepTime, int inactivityThreshold, CancellationTokenSource source)
+        public async Task WaitToBecomeActive(int index, int sleepTime, CancellationTokenSource source)
         {
             while (!source.IsCancellationRequested)
             {
-                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(databaseName, tableName).ConfigureAwait(false);
+                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
                 
                 bool active = index == 0 ? true : false;
+
+                Console.WriteLine();
                 Console.WriteLine("Current status:");
                 bool responsive = false;
+                List<int> responsiveExtractorIndexes = new List<int>();
                 foreach (RawRow<LogData> extractor in allRows.Items)
                 {
                     LogData extractorData = extractor.Columns;
@@ -68,23 +76,27 @@ namespace Cognite.Extractor.Utils
                     Console.WriteLine("Active: " + extractorData.Active);
                     Console.WriteLine();
 
-                    if (extractorData.Active == true && timeDifference > inactivityThreshold)
-                    {
-                        Console.WriteLine("Starting extractor with index " + index);
-
-                        await UploadLogToState(true, index, databaseName, tableName);
-                        return;
-                    }
+                    if (extractorData.Active == true && timeDifference < InactivityThreshold) responsive = true;
+                    if (extractorData.Active == false && timeDifference < InactivityThreshold) responsiveExtractorIndexes.Add(Int32.Parse(extractor.Key));
                 }
-                Console.WriteLine();
-                /*
-                await UploadLogToState(active, index, databaseName, tableName);
-                */
+                if (!responsive)
+                {
+                    if (responsiveExtractorIndexes.Count > 0)
+                    {
+                        responsiveExtractorIndexes.Sort();
+
+                        if (responsiveExtractorIndexes[0] == index)
+                        {
+                            await UploadLogToState(true, index);
+                            return;
+                        }
+                    }   
+                }
                 await Task.Delay(sleepTime).ConfigureAwait(false);
             }
         }
 
-        async Task UploadLogToState(bool active, int index, string databaseName, string tableName)
+        async Task UploadLogToState(bool active, int index)
         {
             LogData log = new LogData();
             log.TimeStamp = DateTime.Now;
@@ -93,12 +105,12 @@ namespace Cognite.Extractor.Utils
             RawRowCreate<LogData> row = new RawRowCreate<LogData>() { Key = index.ToString(), Columns = log };
 
             List<RawRowCreate<LogData>> rows = new List<RawRowCreate<LogData>>(){row};
-            var insert = await Destination.CogniteClient.Raw.CreateRowsAsync<LogData>(databaseName, tableName, rows).ConfigureAwait(false);
+            var insert = await Destination.CogniteClient.Raw.CreateRowsAsync<LogData>(DatabaseName, TableName, rows).ConfigureAwait(false);
         }
         /// <summary>
         /// True to require a CogniteDestination to be set.
         /// </summary>
-        public async Task UploadLogToStateAtInterval(bool initialStatus, int index, string databaseName, string tableName, int sleepTime, CancellationTokenSource source)
+        public async Task UploadLogToStateAtInterval(bool initialStatus, int index, int sleepTime, CancellationTokenSource source)
         {
             Console.WriteLine("This is extractor " + index);
             bool active = initialStatus;
@@ -107,7 +119,7 @@ namespace Cognite.Extractor.Utils
             {
                 if (!firstRun)
                 {
-                    var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(databaseName, tableName).ConfigureAwait(false);
+                    var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
                     foreach (var extractor in allRows.Items)
                     {
                         int keyIndex = Int32.Parse(extractor.Key);
@@ -116,10 +128,26 @@ namespace Cognite.Extractor.Utils
                 }
                 Console.WriteLine("Uploading log to shared state...");
 
-                await UploadLogToState(active, index, databaseName, tableName);
+                await UploadLogToState(active, index);
                 await Task.Delay(sleepTime).ConfigureAwait(false);
                 firstRun = false;
             }
+        }
+        /// <summary>
+        /// True to require a CogniteDestination to be set.
+        /// </summary>
+        public async Task<bool> CurrentlyActiveExtractor()
+        {
+            var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
+            bool responsive = false;
+            foreach (RawRow<LogData> extractor in allRows.Items)
+            {            
+                LogData extractorData = extractor.Columns;
+                DateTime currentTime = DateTime.Now;
+                double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
+                if (extractorData.Active == true && timeDifference < InactivityThreshold) responsive = true;
+            }
+            return responsive;
         }
     }
 }

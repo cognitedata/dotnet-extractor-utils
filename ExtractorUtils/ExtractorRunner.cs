@@ -336,41 +336,10 @@ namespace Cognite.Extractor.Utils
                     }
 
                     if (extractor != null)
-                    {
-                        var destination = provider.GetService<CogniteDestination>();
-
-                        if (options.Index < 0)
-                        {
-                            log.LogError("Invalid index number: negative number");
-                            break;
-                        }
-                        if (destination != null)
-                        {
-                            ExtractorManager extractorManager = new ExtractorManager(destination);
-                            /*
-                            if (options.Index == 0)
-                            {
-                                await Task.Run(() => {
-                                    extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000, 25, source).ConfigureAwait(false);
-                                });
-                            } 
-                            else 
-                            {
-                                await extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000, 25, source).ConfigureAwait(false);
-                            }*/
-                            
-                            bool active = options.Index == 0 ? true : false;
-                            
-                            await Task.Run(() => {
-                                extractorManager.UploadLogToStateAtInterval(active, options.Index, "kjerand-test-db", "kjerand-test-table", 10000, source).ConfigureAwait(false);
-                            });
-
-                            if (!active) await extractorManager.WaitToBecomeActive(options.Index, "kjerand-test-db", "kjerand-test-table", 10000, 40, source).ConfigureAwait(false);
-                        }
-                    
+                    {                    
                         try
                         {
-                            await extractor.Start(source.Token).ConfigureAwait(false);
+                            await extractor.Start(options.Index, source.Token).ConfigureAwait(false);
                         }
                         catch (TaskCanceledException) when (source.IsCancellationRequested)
                         {
