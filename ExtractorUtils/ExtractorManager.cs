@@ -25,6 +25,14 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// True to require a CogniteDestination to be set.
         /// </summary>
+        public LogData(DateTime timeStamp, bool active)
+        {
+            TimeStamp = timeStamp;
+            Active = active;
+        }
+        /// <summary>
+        /// True to require a CogniteDestination to be set.
+        /// </summary>
         public DateTime TimeStamp {get; set;}
         /// <summary>
         /// True to require a CogniteDestination to be set.
@@ -60,13 +68,13 @@ namespace Cognite.Extractor.Utils
                 var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
                 
                 Console.WriteLine();
-                Console.WriteLine("Current status:");
+                Console.WriteLine("Current status, extractor " + index);
                 bool responsive = false;
                 List<int> responsiveExtractorIndexes = new List<int>();
                 foreach (RawRow<LogData> extractor in allRows.Items)
                 {
                     LogData extractorData = extractor.Columns;
-                    DateTime currentTime = DateTime.Now;
+                    DateTime currentTime = DateTime.UtcNow;
                     double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
                     
                     Console.WriteLine("Extractor key: " + extractor.Key);
@@ -94,12 +102,9 @@ namespace Cognite.Extractor.Utils
             }
         }
 
-        async Task UploadLogToState(bool active, int index)
+        private async Task UploadLogToState(bool active, int index)
         {
-            LogData log = new LogData();
-            log.TimeStamp = DateTime.Now;
-            log.Active = active;
-
+            LogData log = new LogData(DateTime.UtcNow, active);
             RawRowCreate<LogData> row = new RawRowCreate<LogData>() { Key = index.ToString(), Columns = log };
 
             List<RawRowCreate<LogData>> rows = new List<RawRowCreate<LogData>>(){row};
@@ -133,7 +138,7 @@ namespace Cognite.Extractor.Utils
             foreach (RawRow<LogData> extractor in allRows.Items)
             {            
                 LogData extractorData = extractor.Columns;
-                DateTime currentTime = DateTime.Now;
+                DateTime currentTime = DateTime.UtcNow;
                 double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
                 if (extractorData.Active == true && timeDifference < InactivityThreshold) responsive = true;
             }

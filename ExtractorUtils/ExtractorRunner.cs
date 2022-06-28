@@ -25,7 +25,7 @@ namespace Cognite.Extractor.Utils
         where TConfig : VersionedConfig
         where TExtractor : BaseExtractor<TConfig>
     {
-                /// <summary>
+        /// <summary>
         /// Path to config file
         /// </summary>
         public int Index { get; set; }
