@@ -108,13 +108,13 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// True to require a CogniteDestination to be set.
         /// </summary>
-        public async Task UploadLogToStateAtInterval(bool initialStatus, int index, bool firstRun)
+        public async Task UploadLogToStateAtInterval(int index, bool firstRun)
         {
-            bool active = initialStatus;
+            bool active = false;
             if (!firstRun)
             {
                 var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-                foreach (var extractor in allRows.Items)
+                foreach (RawRow<LogData> extractor in allRows.Items)
                 {
                     int keyIndex = Int32.Parse(extractor.Key);
                     if (keyIndex == index) active = extractor.Columns.Active;
