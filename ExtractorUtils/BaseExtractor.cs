@@ -116,27 +116,8 @@ namespace Cognite.Extractor.Utils
         {
             Init(token);
 
-            if (index < 0)
-            {
-                _logger.LogError("Invalid index number: negative number");
-                return;
-            }
-            if (Destination != null)
-            {
-                ExtractorManager extractorManager = new ExtractorManager("kjerand-test-db", "kjerand-test-table", 10, Destination);
-
-                bool responsive = await extractorManager.CurrentlyActiveExtractor();
-                bool active = (index == 0 && !responsive) ? true : false;
-
-                Console.WriteLine(responsive);
-                Console.WriteLine(active);
-                
-                await Task.Run(() => {
-                    extractorManager.UploadLogToStateAtInterval(active, index, 5000, Source).ConfigureAwait(false);
-                });
-
-                if (!active) await extractorManager.WaitToBecomeActive(index, 5000, Source).ConfigureAwait(false);
-            }
+            await RunWithHighAvailability(index);
+           
             await TestConfig().ConfigureAwait(false);
             try
             {
@@ -164,6 +145,32 @@ namespace Cognite.Extractor.Utils
                 {
                     await Run.DisposeAsync().ConfigureAwait(false);
                 }
+            }
+        }
+        /// <summary>
+        /// Method called to start the extractor.
+        /// </summary>
+        /// <param name="index">Cancellation token</param>
+        /// <returns></returns>
+        public async Task RunWithHighAvailability(int index)
+        {
+            if (Destination != null)
+            {
+                ExtractorManager extractorManager = new ExtractorManager("kjerand-test-db", "kjerand-test-table", 10, Destination);
+
+                bool responsive = await extractorManager.CurrentlyActiveExtractor();
+                bool active = (index == 0 && !responsive) ? true : false;
+
+                Console.WriteLine("This is extractor " + index);
+                TimeSpan interval = new TimeSpan(0, 0, 10);  
+                bool firstRun = true;
+
+                Scheduler.SchedulePeriodicTask("Upload log to state", interval, async (token) => {
+                    await extractorManager.UploadLogToStateAtInterval(active, index, firstRun).ConfigureAwait(false);
+                    if (firstRun) firstRun = false;
+                });
+       
+                if (!active) await extractorManager.WaitToBecomeActive(index, 5000, Source).ConfigureAwait(false);
             }
         }
 

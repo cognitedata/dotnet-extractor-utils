@@ -110,28 +110,20 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// True to require a CogniteDestination to be set.
         /// </summary>
-        public async Task UploadLogToStateAtInterval(bool initialStatus, int index, int sleepTime, CancellationTokenSource source)
+        public async Task UploadLogToStateAtInterval(bool initialStatus, int index, bool firstRun)
         {
-            Console.WriteLine("This is extractor " + index);
             bool active = initialStatus;
-            bool firstRun = true;
-            while (!source.IsCancellationRequested)
+            if (!firstRun)
             {
-                if (!firstRun)
+                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
+                foreach (var extractor in allRows.Items)
                 {
-                    var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-                    foreach (var extractor in allRows.Items)
-                    {
-                        int keyIndex = Int32.Parse(extractor.Key);
-                        if (keyIndex == index) active = extractor.Columns.Active;
-                    }
+                    int keyIndex = Int32.Parse(extractor.Key);
+                    if (keyIndex == index) active = extractor.Columns.Active;
                 }
-                Console.WriteLine("Uploading log to shared state...");
-
-                await UploadLogToState(active, index);
-                await Task.Delay(sleepTime).ConfigureAwait(false);
-                firstRun = false;
             }
+            Console.WriteLine("Uploading log to shared state...");
+            await UploadLogToState(active, index);    
         }
         /// <summary>
         /// True to require a CogniteDestination to be set.
