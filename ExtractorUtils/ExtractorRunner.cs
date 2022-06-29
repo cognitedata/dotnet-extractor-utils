@@ -26,7 +26,7 @@ namespace Cognite.Extractor.Utils
         where TExtractor : BaseExtractor<TConfig>
     {
         /// <summary>
-        /// Path to config file
+        /// The extractor index
         /// </summary>
         public int Index { get; set; }
         /// <summary>
@@ -128,6 +128,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <typeparam name="TConfig">Type of configuration</typeparam>
         /// <typeparam name="TExtractor">Type of extractor</typeparam>
+        /// <param name="index">The extractor index</param>
         /// <param name="configPath">Path to yml config file. Can be null to not load config, in this case
         /// <paramref name="config" /> must be set, or the config must be added to <paramref name="extServices"/></param>
         /// <param name="acceptedConfigVersions">List of accepted config versions, null accepts all</param>

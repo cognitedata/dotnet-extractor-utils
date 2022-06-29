@@ -5,79 +5,35 @@ using System.Collections.Generic;
 using CogniteSdk;
 namespace Cognite.Extractor.Utils
 {
-    /// <summary>
-    /// Interface for an extractor manager
-    /// </summary>
     public interface IExtractorManager 
     {
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         Task WaitToBecomeActive(TimeSpan interval); 
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         Task UploadLogToStateAtInterval(bool firstRun);
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
-        Task CheckIfMultipleActiveExtractors();
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
+        Task CheckIfMultipleActiveExtractors(TimeSpan interval);
+        Task<bool> CheckIfIndexIsUsed();
         int Index { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
+
         string DatabaseName { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         string TableName { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
+
         TimeSpan InactivityThreshold { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
+
         CogniteDestination Destination { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
+
         CancellationTokenSource Source { get; }
     }
-    /// <summary>
-    /// True to require a CogniteDestination to be set.
-    /// </summary>
-
     public class LogData
     {
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         public LogData(DateTime timeStamp, bool active)
         {
             TimeStamp = timeStamp;
             Active = active;
         }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         public DateTime TimeStamp { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         public bool Active { get; }
     }
-    /// <summary>
-    /// True to require a CogniteDestination to be set.
-    /// </summary>
     public class ExtractorManager : IExtractorManager
     {   
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         public ExtractorManager(int index, string databaseName, string tableName, TimeSpan inactivityThreshold, CogniteDestination destination, CancellationTokenSource source)
         {
             Index = index;
@@ -87,45 +43,23 @@ namespace Cognite.Extractor.Utils
             Destination = destination;
             Source = source;
         }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         public int Index { get; }
-         /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         public string DatabaseName { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
-        public string TableName { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>        
-        public TimeSpan InactivityThreshold { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>   
+        public string TableName { get; }      
+        public TimeSpan InactivityThreshold { get; } 
         public CogniteDestination Destination { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary> 
         public CancellationTokenSource Source { get; }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         public async Task WaitToBecomeActive(TimeSpan interval)
         {
             while (!Source.IsCancellationRequested)
             {
-                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-                
                 Console.WriteLine();
                 Console.WriteLine("Current status, extractor " + Index);
 
-                bool responsive = false;
+                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
+                
                 List<int> responsiveExtractorIndexes = new List<int>();
-
+                bool responsive = false;
                 foreach (RawRow<LogData> extractor in allRows.Items)
                 {
                     LogData extractorData = extractor.Columns;
@@ -136,11 +70,6 @@ namespace Cognite.Extractor.Utils
                          if (extractorData.Active == true) responsive = true;
                          else responsiveExtractorIndexes.Add(Int32.Parse(extractor.Key));
                     }
-                    
-                    /*
-                    if (extractorData.Active == true && timeDifference < InactivityThreshold) responsive = true;
-                    if (extractorData.Active == false && timeDifference < InactivityThreshold) responsiveExtractorIndexes.Add(Int32.Parse(extractor.Key));
-                    */
 
                     Console.WriteLine("Extractor key: " + extractor.Key);
                     Console.WriteLine(Math.Floor(timeDifference) + " sec since last activity");
@@ -163,57 +92,27 @@ namespace Cognite.Extractor.Utils
                 await Task.Delay(interval).ConfigureAwait(false);
             }
         }
-
-        private async Task UploadLogToState(bool activeStatus)
-        {
-            LogData log = new LogData(DateTime.UtcNow, activeStatus);
-            RawRowCreate<LogData> row = new RawRowCreate<LogData>() { Key = Index.ToString(), Columns = log };
-
-            List<RawRowCreate<LogData>> rows = new List<RawRowCreate<LogData>>(){row};
-            await Destination.CogniteClient.Raw.CreateRowsAsync<LogData>(DatabaseName, TableName, rows).ConfigureAwait(false);
-        }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
         public async Task UploadLogToStateAtInterval(bool firstRun)
         {
+            Console.WriteLine("Uploading log to shared state...");
+
             bool active = false;
             if (!firstRun)
             {
                 var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
+
                 foreach (RawRow<LogData> extractor in allRows.Items)
                 {
                     int keyIndex = Int32.Parse(extractor.Key);
                     if (keyIndex == Index) active = extractor.Columns.Active;
                 }
             }
-            Console.WriteLine("Uploading log to shared state...");
             await UploadLogToState(active);    
         }
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
-        public async Task<bool> CurrentlyActiveExtractor()
+        public async Task CheckIfMultipleActiveExtractors(TimeSpan interval)
         {
             var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-            bool responsive = false;
-            foreach (RawRow<LogData> extractor in allRows.Items)
-            {            
-                LogData extractorData = extractor.Columns;
-                DateTime currentTime = DateTime.UtcNow;
-                double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
-                if (extractorData.Active == true && timeDifference < InactivityThreshold.TotalSeconds) responsive = true;
-            }
-            return responsive;
-        }
-
-        /// <summary>
-        /// True to require a CogniteDestination to be set.
-        /// </summary>
-        public async Task CheckIfMultipleActiveExtractors()
-        {
-            var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-       
+    
             List<int> activeExtractorIndexes = new List<int>();
             foreach (RawRow<LogData> extractor in allRows.Items)
             {            
@@ -229,8 +128,34 @@ namespace Cognite.Extractor.Utils
                 activeExtractorIndexes.Sort();
                 activeExtractorIndexes.Reverse();
 
-                if (activeExtractorIndexes[0] == Index) Source.Cancel(); //restart extractor Source.Cancel();
+                if (activeExtractorIndexes[0] == Index)
+                {
+                    await UploadLogToState(false);
+                    Source.Cancel();
+                    return;
+                }
             }
+        }
+        public async Task<bool> CheckIfIndexIsUsed()
+        {
+            var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
+            foreach (RawRow<LogData> extractor in allRows.Items)
+            {            
+                LogData extractorData = extractor.Columns;
+                DateTime currentTime = DateTime.UtcNow;
+                double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
+
+                if (Int32.Parse(extractor.Key) == Index && timeDifference < InactivityThreshold.TotalSeconds) return true;
+            }
+            return false;
+        }
+        private async Task UploadLogToState(bool activeStatus)
+        {
+            LogData log = new LogData(DateTime.UtcNow, activeStatus);
+            RawRowCreate<LogData> row = new RawRowCreate<LogData>() { Key = Index.ToString(), Columns = log };
+
+            List<RawRowCreate<LogData>> rows = new List<RawRowCreate<LogData>>(){row};
+            await Destination.CogniteClient.Raw.CreateRowsAsync<LogData>(DatabaseName, TableName, rows).ConfigureAwait(false);
         }
     }
 }

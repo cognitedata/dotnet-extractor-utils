@@ -175,6 +175,7 @@ namespace ExtractorUtils.Test.Integration
             var services = new ServiceCollection();
 
             var task = ExtractorRunner.Run<MyConfig, TestExtractor>(
+                0,
                 configPath,
                 null,
                 "base-extractor-test-utils",
@@ -341,6 +342,7 @@ namespace ExtractorUtils.Test.Integration
             using var source = new CancellationTokenSource();
 
             var task = ExtractorRunner.Run<MyConfig, NoCdfExtractor>(
+                0,
                 null,
                 null,
                 null,
