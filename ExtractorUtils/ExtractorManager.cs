@@ -8,47 +8,29 @@ namespace Cognite.Extractor.Utils
     public interface IExtractorManager 
     {
         Task WaitToBecomeActive(TimeSpan interval); 
-        Task UploadLogToStateAtInterval(bool firstRun);
+        Task UploadLogToStateAtInterval();
         Task CheckIfMultipleActiveExtractors(TimeSpan interval);
-        Task<bool> CheckIfIndexIsUsed();
+        Task InitState();
         int Index { get; }
-
-        string DatabaseName { get; }
-        string TableName { get; }
-
+        ExtractorState State { get; set; }
         TimeSpan InactivityThreshold { get; }
 
-        CogniteDestination Destination { get; }
-
         CancellationTokenSource Source { get; }
-    }
-    public class LogData
-    {
-        public LogData(DateTime timeStamp, bool active)
-        {
-            TimeStamp = timeStamp;
-            Active = active;
-        }
-        public DateTime TimeStamp { get; }
-        public bool Active { get; }
     }
     public class ExtractorManager : IExtractorManager
     {   
         public ExtractorManager(int index, string databaseName, string tableName, TimeSpan inactivityThreshold, CogniteDestination destination, CancellationTokenSource source)
         {
             Index = index;
-            DatabaseName = databaseName;
-            TableName = tableName;
             InactivityThreshold = inactivityThreshold;
-            Destination = destination;
             Source = source;
+            State = new ExtractorState(databaseName, tableName, destination);
         }
-        public int Index { get; }
-        public string DatabaseName { get; }
-        public string TableName { get; }      
+        public int Index { get; }   
+        public ExtractorState State { get; set; }
         public TimeSpan InactivityThreshold { get; } 
-        public CogniteDestination Destination { get; }
         public CancellationTokenSource Source { get; }
+
         public async Task WaitToBecomeActive(TimeSpan interval)
         {
             while (!Source.IsCancellationRequested)
@@ -56,19 +38,17 @@ namespace Cognite.Extractor.Utils
                 Console.WriteLine();
                 Console.WriteLine("Current status, extractor " + Index);
 
-                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-                
                 List<int> responsiveExtractorIndexes = new List<int>();
                 bool responsive = false;
-                foreach (RawRow<LogData> extractor in allRows.Items)
+                foreach (RawRow<LogData> extractor in State.CurrentState)
                 {
                     LogData extractorData = extractor.Columns;
                     double timeDifference = DateTime.UtcNow.Subtract(extractorData.TimeStamp).TotalSeconds;
 
                     if (timeDifference < InactivityThreshold.TotalSeconds)
                     {
-                         if (extractorData.Active == true) responsive = true;
-                         else responsiveExtractorIndexes.Add(Int32.Parse(extractor.Key));
+                        if (extractorData.Active == true) responsive = true;
+                        else responsiveExtractorIndexes.Add(Int32.Parse(extractor.Key));
                     }
 
                     Console.WriteLine("Extractor key: " + extractor.Key);
@@ -84,7 +64,7 @@ namespace Cognite.Extractor.Utils
                         
                         if (responsiveExtractorIndexes[0] == Index)
                         {
-                            await UploadLogToState(true);
+                            State.UpdatedStatus = true;
                             return;
                         }
                     }   
@@ -92,54 +72,53 @@ namespace Cognite.Extractor.Utils
                 await Task.Delay(interval).ConfigureAwait(false);
             }
         }
-        public async Task UploadLogToStateAtInterval(bool firstRun)
+        public async Task UploadLogToStateAtInterval()
         {
             Console.WriteLine("Uploading log to shared state...");
 
-            bool active = false;
-            if (!firstRun)
+            await State.UpdateExtractorState();
+            /*
+            foreach (RawRow<LogData> extractor in State.CurrentState)
             {
-                var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-
-                foreach (RawRow<LogData> extractor in allRows.Items)
-                {
-                    int keyIndex = Int32.Parse(extractor.Key);
-                    if (keyIndex == Index) active = extractor.Columns.Active;
-                }
-            }
-            await UploadLogToState(active);    
+                int keyIndex = Int32.Parse(extractor.Key);
+                if (keyIndex == Index) State.UpdatedStatus = extractor.Columns.Active;
+            }*/
+            
+            await State.UploadLogToState(Index);    
         }
         public async Task CheckIfMultipleActiveExtractors(TimeSpan interval)
         {
-            var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-    
-            List<int> activeExtractorIndexes = new List<int>();
-            foreach (RawRow<LogData> extractor in allRows.Items)
-            {            
-                LogData extractorData = extractor.Columns;
-                DateTime currentTime = DateTime.UtcNow;
-                double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
-
-                if (extractorData.Active == true && timeDifference < InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(Int32.Parse(extractor.Key));
-                
-            }
-            if (activeExtractorIndexes.Count > 1)
+            while (!Source.IsCancellationRequested)
             {
-                activeExtractorIndexes.Sort();
-                activeExtractorIndexes.Reverse();
+                Console.WriteLine("Checking for multiple active extractors...");
+        
+                List<int> activeExtractorIndexes = new List<int>();
+                foreach (RawRow<LogData> extractor in State.CurrentState)
+                {            
+                    LogData extractorData = extractor.Columns;
+                    DateTime currentTime = DateTime.UtcNow;
+                    double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
 
-                if (activeExtractorIndexes[0] == Index)
-                {
-                    await UploadLogToState(false);
-                    Source.Cancel();
-                    return;
+                    if (extractorData.Active == true && timeDifference < InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(Int32.Parse(extractor.Key));
                 }
+                if (activeExtractorIndexes.Count > 1)
+                {
+                    activeExtractorIndexes.Sort();
+                    activeExtractorIndexes.Reverse();
+
+                    if (activeExtractorIndexes[0] == Index)
+                    {
+                        State.UpdatedStatus = false;
+                        Source.Cancel();
+                        break;
+                    }
+                }
+                await Task.Delay(interval).ConfigureAwait(false);
             }
         }
-        public async Task<bool> CheckIfIndexIsUsed()
+        private async Task<bool> CheckIfIndexIsUsed()
         {
-            var allRows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
-            foreach (RawRow<LogData> extractor in allRows.Items)
+            foreach (RawRow<LogData> extractor in State.CurrentState)
             {            
                 LogData extractorData = extractor.Columns;
                 DateTime currentTime = DateTime.UtcNow;
@@ -147,15 +126,62 @@ namespace Cognite.Extractor.Utils
 
                 if (Int32.Parse(extractor.Key) == Index && timeDifference < InactivityThreshold.TotalSeconds) return true;
             }
+            
             return false;
         }
-        private async Task UploadLogToState(bool activeStatus)
+
+        public async Task InitState()
         {
-            LogData log = new LogData(DateTime.UtcNow, activeStatus);
-            RawRowCreate<LogData> row = new RawRowCreate<LogData>() { Key = Index.ToString(), Columns = log };
+            await State.UpdateExtractorState();
+
+            bool indexUsed = await CheckIfIndexIsUsed();
+            if (indexUsed) Source.Cancel();
+
+            State.UpdatedStatus = true;
+        }
+    }
+
+    public class ExtractorState 
+    {
+        public ExtractorState(string databaseName, string tableName, CogniteDestination destination)
+        {
+            DatabaseName = databaseName;
+            TableName = tableName;
+            Destination = destination;
+        }
+        public IEnumerable<RawRow<LogData>> CurrentState { get; set; }
+
+        public bool UpdatedStatus { get; set; }
+
+        public CogniteDestination Destination { get; }
+
+        public string DatabaseName { get; }
+        public string TableName { get; }  
+
+        public async Task UpdateExtractorState()
+        {
+            ItemsWithCursor<RawRow<LogData>> rows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
+            CurrentState = rows.Items;
+        }
+
+        public async Task UploadLogToState(int index)
+        {
+            LogData log = new LogData(DateTime.UtcNow, UpdatedStatus);
+            RawRowCreate<LogData> row = new RawRowCreate<LogData>() { Key = index.ToString(), Columns = log };
 
             List<RawRowCreate<LogData>> rows = new List<RawRowCreate<LogData>>(){row};
             await Destination.CogniteClient.Raw.CreateRowsAsync<LogData>(DatabaseName, TableName, rows).ConfigureAwait(false);
         }
+    }
+
+    public class LogData
+    {
+        public LogData(DateTime timeStamp, bool active)
+        {
+            TimeStamp = timeStamp;
+            Active = active;
+        }
+        public DateTime TimeStamp { get; }
+        public bool Active { get; }
     }
 }
