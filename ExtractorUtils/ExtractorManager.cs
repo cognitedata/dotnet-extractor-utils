@@ -7,10 +7,9 @@ namespace Cognite.Extractor.Utils
 {
     public interface IExtractorManager 
     {
-        Task WaitToBecomeActive(TimeSpan interval); 
-        Task UploadLogToStateAtInterval();
-        Task CheckIfMultipleActiveExtractors(TimeSpan interval);
         Task InitState();
+        Task WaitToBecomeActive(TimeSpan interval); 
+        Task UpdateStateAtInterval();
         int Index { get; }
         ExtractorState State { get; set; }
         TimeSpan InactivityThreshold { get; }
@@ -31,6 +30,24 @@ namespace Cognite.Extractor.Utils
         public TimeSpan InactivityThreshold { get; } 
         public CancellationTokenSource Source { get; }
 
+        public async Task InitState()
+        {
+            await State.UpdateExtractorState();
+
+            bool indexUsed = await CheckIfIndexIsUsed();
+            if (indexUsed) Source.Cancel();
+
+            State.UpdatedStatus = false;
+        }
+        public async Task UpdateStateAtInterval()
+        {
+            Console.WriteLine("Uploading log to shared state...");
+
+            await State.UpdateExtractorState();
+            await State.UploadLogToState(Index); 
+
+            await CheckIfMultipleActiveExtractors();
+        }
         public async Task WaitToBecomeActive(TimeSpan interval)
         {
             while (!Source.IsCancellationRequested)
@@ -72,48 +89,30 @@ namespace Cognite.Extractor.Utils
                 await Task.Delay(interval).ConfigureAwait(false);
             }
         }
-        public async Task UploadLogToStateAtInterval()
+        private async Task CheckIfMultipleActiveExtractors()
         {
-            Console.WriteLine("Uploading log to shared state...");
-
-            await State.UpdateExtractorState();
-            /*
+            Console.WriteLine("Checking for multiple active extractors...");
+    
+            List<int> activeExtractorIndexes = new List<int>();
             foreach (RawRow<LogData> extractor in State.CurrentState)
-            {
-                int keyIndex = Int32.Parse(extractor.Key);
-                if (keyIndex == Index) State.UpdatedStatus = extractor.Columns.Active;
-            }*/
-            
-            await State.UploadLogToState(Index);    
-        }
-        public async Task CheckIfMultipleActiveExtractors(TimeSpan interval)
-        {
-            while (!Source.IsCancellationRequested)
-            {
-                Console.WriteLine("Checking for multiple active extractors...");
-        
-                List<int> activeExtractorIndexes = new List<int>();
-                foreach (RawRow<LogData> extractor in State.CurrentState)
-                {            
-                    LogData extractorData = extractor.Columns;
-                    DateTime currentTime = DateTime.UtcNow;
-                    double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
+            {            
+                LogData extractorData = extractor.Columns;
+                DateTime currentTime = DateTime.UtcNow;
+                double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
 
-                    if (extractorData.Active == true && timeDifference < InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(Int32.Parse(extractor.Key));
-                }
-                if (activeExtractorIndexes.Count > 1)
+                if (extractorData.Active == true && timeDifference < InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(Int32.Parse(extractor.Key));
+            }
+            if (activeExtractorIndexes.Count > 1)
+            {
+                activeExtractorIndexes.Sort();
+                activeExtractorIndexes.Reverse();
+
+                if (activeExtractorIndexes[0] == Index)
                 {
-                    activeExtractorIndexes.Sort();
-                    activeExtractorIndexes.Reverse();
-
-                    if (activeExtractorIndexes[0] == Index)
-                    {
-                        State.UpdatedStatus = false;
-                        Source.Cancel();
-                        break;
-                    }
+                    State.UpdatedStatus = false;
+                    Source.Cancel();
+                
                 }
-                await Task.Delay(interval).ConfigureAwait(false);
             }
         }
         private async Task<bool> CheckIfIndexIsUsed()
@@ -126,18 +125,7 @@ namespace Cognite.Extractor.Utils
 
                 if (Int32.Parse(extractor.Key) == Index && timeDifference < InactivityThreshold.TotalSeconds) return true;
             }
-            
             return false;
-        }
-
-        public async Task InitState()
-        {
-            await State.UpdateExtractorState();
-
-            bool indexUsed = await CheckIfIndexIsUsed();
-            if (indexUsed) Source.Cancel();
-
-            State.UpdatedStatus = true;
         }
     }
 

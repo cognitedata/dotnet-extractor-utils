@@ -166,18 +166,11 @@ namespace Cognite.Extractor.Utils
                 await extractorManager.InitState();
 
                 TimeSpan interval = new TimeSpan(0, 0, 5);
-                bool firstRun = true;
                 Scheduler.SchedulePeriodicTask("Upload log to state", interval, async (token) => {
-                    await extractorManager.UploadLogToStateAtInterval().ConfigureAwait(false);
-                    if (firstRun) firstRun = false; 
+                    await extractorManager.UpdateStateAtInterval().ConfigureAwait(false);
                 });
 
-                
-                await Task.Run(() => {
-                    extractorManager.CheckIfMultipleActiveExtractors(interval);
-                });
-                
-       
+                interval = new TimeSpan(0, 0, 10);
                 await extractorManager.WaitToBecomeActive(interval).ConfigureAwait(false);
             }
         }
