@@ -17,7 +17,6 @@ class MyExtractor : BaseExtractor<BaseConfig>
         if (run != null) run.Continuous = true;
     }
 
-
     protected override async Task Start()
     {   
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]

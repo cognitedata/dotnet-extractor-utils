@@ -116,6 +116,8 @@ namespace Cognite.Extractor.Utils
         {
             Init(token);
 
+            
+
             await RunWithHighAvailability(index);
            
             await TestConfig().ConfigureAwait(false);
@@ -156,21 +158,21 @@ namespace Cognite.Extractor.Utils
         {
             if (Destination != null)
             {
-                ExtractorManager extractorManager = new ExtractorManager("kjerand-test-db", "kjerand-test-table", 15, Destination);
-
-                //bool responsive = await extractorManager.CurrentlyActiveExtractor();
-                //bool active = (index == 0 && !responsive) ? true : false;
 
                 Console.WriteLine("This is extractor " + index);
 
+                TimeSpan inactivityThreshold = new TimeSpan(0, 0, 15);
+                IExtractorManager extractorManager = new ExtractorManager(index, "kjerand-test-db", "kjerand-test-table", inactivityThreshold, Destination, Source);
+
+                TimeSpan interval = new TimeSpan(0, 0, 5);
                 bool firstRun = true;
-                Scheduler.SchedulePeriodicTask("Upload log to state", new TimeSpan(0, 0, 5), async (token) => {
-                    await extractorManager.UploadLogToStateAtInterval(index, firstRun).ConfigureAwait(false);
+
+                Scheduler.SchedulePeriodicTask("Upload log to state", interval, async (token) => {
+                    await extractorManager.UploadLogToStateAtInterval(firstRun).ConfigureAwait(false);
                     if (firstRun) firstRun = false;
                 });
        
-                //if (!active) await extractorManager.WaitToBecomeActive(index, 5000, Source).ConfigureAwait(false);
-                await extractorManager.WaitToBecomeActive(index, 5000, Source).ConfigureAwait(false);
+                await extractorManager.WaitToBecomeActive(interval).ConfigureAwait(false);
             }
         }
 
