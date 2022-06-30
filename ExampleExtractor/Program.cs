@@ -45,7 +45,8 @@ class Program
     {
         //await CreateExtractor(0, CancellationToken.None);
 
-        await TestExtractors();
+        await TestExtractors().ConfigureAwait(false);
+        //await TestRestartingExtractor();
     }
 
     static public Task CreateExtractor(int index, CancellationToken ct)
@@ -74,7 +75,7 @@ class Program
 
         var source2 = new CancellationTokenSource();
         CancellationToken ct2 = source2.Token;
-        
+
         var source3 = new CancellationTokenSource();
         CancellationToken ct3 = source3.Token;
 
@@ -83,21 +84,21 @@ class Program
         Task extractor3 = CreateExtractor(2, ct3);
 
         Task cancel = Task.Run(async () => {
-            await Task.Delay(25000);
+            await Task.Delay(25000).ConfigureAwait(false);
             source1.Cancel();
 
             Console.WriteLine();
             Console.WriteLine("Turning off extractor 0...");
             Console.WriteLine();
 
-            await Task.Delay(25000);
+            await Task.Delay(25000).ConfigureAwait(false);
             source2.Cancel();
 
             Console.WriteLine();
             Console.WriteLine("Turning off extractor 1...");
             Console.WriteLine();
 
-            await Task.Delay(25000);
+            await Task.Delay(25000).ConfigureAwait(false);
             source3.Cancel();
 
             Console.WriteLine();
@@ -110,5 +111,41 @@ class Program
         source1.Dispose(); 
         source2.Dispose();  
         source3.Dispose();
+    }
+
+    static public async Task TestRestartingExtractor()
+    {
+        var source1 = new CancellationTokenSource();
+        CancellationToken ct1 = source1.Token;
+
+        var source2 = new CancellationTokenSource();
+        CancellationToken ct2 = source2.Token;
+        
+        Task extractor1 = CreateExtractor(0, ct1);
+        Task extractor2 = CreateExtractor(1, ct2);
+
+        Task cancel = Task.Run(async () => {
+            await Task.Delay(25000).ConfigureAwait(false);
+            source1.Cancel();
+
+            Console.WriteLine();
+            Console.WriteLine("Turning off extractor 0...");
+            Console.WriteLine();
+
+            await Task.Delay(5000).ConfigureAwait(false);
+            await CreateExtractor(0, CancellationToken.None).ConfigureAwait(false);
+
+            Console.WriteLine();
+            Console.WriteLine("Restarting extractor 0...");
+            Console.WriteLine();
+
+
+        });
+
+        await Task.WhenAll(extractor1, extractor2, cancel).ConfigureAwait(false);   
+
+        source1.Dispose(); 
+        source2.Dispose();  
+  
     }
 }
