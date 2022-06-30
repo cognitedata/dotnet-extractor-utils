@@ -45,8 +45,9 @@ class Program
     {
         //await CreateExtractor(0, CancellationToken.None);
 
-        await TestExtractors().ConfigureAwait(false);
-        //await TestRestartingExtractor();
+        //await TestTurningOffExtractors().ConfigureAwait(false);
+        //await TestRestartingExtractor().ConfigureAwait(false);
+        await TestMultipleExtractorsActive().ConfigureAwait(false);
     }
 
     static public Task CreateExtractor(int index, CancellationToken ct)
@@ -68,7 +69,7 @@ class Program
             }, ct);
     }
 
-    static public async Task TestExtractors()
+    static public async Task TestTurningOffExtractors()
     {
         var source1 = new CancellationTokenSource();
         CancellationToken ct1 = source1.Token;
@@ -112,6 +113,41 @@ class Program
         source2.Dispose();  
         source3.Dispose();
     }
+    static public async Task TestMultipleExtractorsActive()
+    {
+        var source1 = new CancellationTokenSource();
+        CancellationToken ct1 = source1.Token;
+
+        var source2 = new CancellationTokenSource();
+        CancellationToken ct2 = source2.Token;
+        
+        Task extractor1 = CreateExtractor(0, ct1);
+        Task extractor2 = CreateExtractor(1, ct2);
+
+        Task cancel = Task.Run(async () => {
+            await Task.Delay(15000).ConfigureAwait(false);
+            source1.Cancel();
+
+            Console.WriteLine();
+            Console.WriteLine("Turning off extractor 0...");
+            Console.WriteLine();
+        });
+
+        Task restartExtractor = Task.Run(async () => {
+            await Task.Delay(25000).ConfigureAwait(false);
+
+            Console.WriteLine();
+            Console.WriteLine("Restarting extractor 0...");
+            Console.WriteLine();
+
+            await CreateExtractor(0, CancellationToken.None);
+        });
+
+        await Task.WhenAll(extractor1, extractor2, cancel, restartExtractor).ConfigureAwait(false);   
+
+        source1.Dispose(); 
+        source2.Dispose();  
+    }
 
     static public async Task TestRestartingExtractor()
     {
@@ -125,27 +161,34 @@ class Program
         Task extractor2 = CreateExtractor(1, ct2);
 
         Task cancel = Task.Run(async () => {
-            await Task.Delay(25000).ConfigureAwait(false);
+            await Task.Delay(20000).ConfigureAwait(false);
             source1.Cancel();
 
             Console.WriteLine();
             Console.WriteLine("Turning off extractor 0...");
             Console.WriteLine();
 
-            await Task.Delay(5000).ConfigureAwait(false);
-            await CreateExtractor(0, CancellationToken.None).ConfigureAwait(false);
+            await Task.Delay(40000).ConfigureAwait(false);
+            source2.Cancel();
+
+            Console.WriteLine();
+            Console.WriteLine("Turning off extractor 1...");
+            Console.WriteLine();
+        });
+
+        Task restartExtractor = Task.Run(async () => {
+            await Task.Delay(45000).ConfigureAwait(false);
 
             Console.WriteLine();
             Console.WriteLine("Restarting extractor 0...");
             Console.WriteLine();
 
-
+            await CreateExtractor(0, CancellationToken.None).ConfigureAwait(false);
         });
 
-        await Task.WhenAll(extractor1, extractor2, cancel).ConfigureAwait(false);   
+        await Task.WhenAll(extractor1, extractor2, cancel, restartExtractor).ConfigureAwait(false);   
 
         source1.Dispose(); 
         source2.Dispose();  
-  
     }
 }
