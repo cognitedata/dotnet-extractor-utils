@@ -104,7 +104,7 @@ namespace Cognite.Extractor.Utils
                         if (responsiveExtractorIndexes[0] == Index)
                         {
                             State.UpdatedStatus = true;
-                            return;
+                            break;
                         }
                     }   
                 }
@@ -116,11 +116,11 @@ namespace Cognite.Extractor.Utils
             List<int> activeExtractorIndexes = new List<int>();
             foreach (RawExtractorInstance extractor in State.CurrentState)
             {            
-                DateTime currentTime = DateTime.UtcNow;
-                double timeDifference = currentTime.Subtract(extractor.TimeStamp).TotalSeconds;
-
+                double timeDifference = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
+                
                 if (extractor.Active == true && timeDifference < InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(extractor.Key);
             }
+
             if (activeExtractorIndexes.Count > 1)
             {
                 activeExtractorIndexes.Sort();

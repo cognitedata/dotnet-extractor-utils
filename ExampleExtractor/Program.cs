@@ -50,9 +50,7 @@ class Program
     static public List<Task> createExtractors()
     {
         List<Task> extractors = new List<Task>();
-        extractors.Add(createExtractor(0)); 
         extractors.Add(createExtractor(1)); 
-        extractors.Add(createExtractor(2)); 
         return extractors;
     }
 
