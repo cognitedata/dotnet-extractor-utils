@@ -170,7 +170,7 @@ namespace Cognite.Extractor.Utils
                     await extractorManager.UpdateStateAtInterval().ConfigureAwait(false);
                 });
 
-                interval = new TimeSpan(0, 0, 10);
+                interval = new TimeSpan(0, 0, 5);
                 await extractorManager.WaitToBecomeActive(interval).ConfigureAwait(false);
             }
         }

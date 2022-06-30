@@ -13,7 +13,6 @@ namespace Cognite.Extractor.Utils
         int Index { get; }
         ExtractorState State { get; set; }
         TimeSpan InactivityThreshold { get; }
-
         CancellationTokenSource Source { get; }
     }
     public class ExtractorManager : IExtractorManager
@@ -23,7 +22,7 @@ namespace Cognite.Extractor.Utils
             Index = index;
             InactivityThreshold = inactivityThreshold;
             Source = source;
-            State = new ExtractorState(databaseName, tableName, destination);
+            State = new ExtractorState(databaseName, tableName, false, destination);
         }
         public int Index { get; }   
         public ExtractorState State { get; set; }
@@ -36,15 +35,13 @@ namespace Cognite.Extractor.Utils
 
             bool indexUsed = await CheckIfIndexIsUsed();
             if (indexUsed) Source.Cancel();
-
-            State.UpdatedStatus = false;
         }
         public async Task UpdateStateAtInterval()
         {
             Console.WriteLine("Uploading log to shared state...");
 
-            await State.UpdateExtractorState();
             await State.UploadLogToState(Index); 
+            await State.UpdateExtractorState();
 
             await CheckIfMultipleActiveExtractors();
         }
@@ -131,18 +128,16 @@ namespace Cognite.Extractor.Utils
 
     public class ExtractorState 
     {
-        public ExtractorState(string databaseName, string tableName, CogniteDestination destination)
+        public ExtractorState(string databaseName, string tableName, bool initialStatus, CogniteDestination destination)
         {
             DatabaseName = databaseName;
             TableName = tableName;
+            UpdatedStatus = initialStatus;
             Destination = destination;
         }
         public IEnumerable<RawRow<LogData>> CurrentState { get; set; }
-
         public bool UpdatedStatus { get; set; }
-
         public CogniteDestination Destination { get; }
-
         public string DatabaseName { get; }
         public string TableName { get; }  
 
