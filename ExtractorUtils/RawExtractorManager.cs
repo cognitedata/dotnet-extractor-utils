@@ -59,11 +59,13 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public async Task UpdateStateAtInterval()
         {
+            /*
             Console.WriteLine();
             Console.WriteLine("Extractor " + Index);
             Console.WriteLine("Uploading log to shared state...");
             Console.WriteLine("Checking for multiple active extractors...");
             Console.WriteLine();
+            */
 
             await UploadLogToState(Index, DatabaseName, TableName, Destination).ConfigureAwait(false); 
             await UpdateExtractorState(DatabaseName, TableName, Destination).ConfigureAwait(false);
@@ -78,6 +80,9 @@ namespace Cognite.Extractor.Utils
         {
             while (!Source.IsCancellationRequested)
             {
+                Console.WriteLine();
+                Console.WriteLine("Extractor " +Index+ " waiting to become active...");
+                Console.WriteLine();
                 List<int> responsiveExtractorIndexes = new List<int>();
                 bool responsive = false;
                 foreach (RawExtractorInstance extractor in State.CurrentState)
@@ -89,11 +94,12 @@ namespace Cognite.Extractor.Utils
                         if (extractor.Active == true) responsive = true;
                         else responsiveExtractorIndexes.Add(extractor.Key);
                     }
-
+                    /*
                     Console.WriteLine("Extractor key: " + extractor.Key);
                     Console.WriteLine(Math.Floor(timeDifference) + " sec since last activity");
                     Console.WriteLine("Active: " + extractor.Active);
                     Console.WriteLine();
+                    */
                 }
                 if (!responsive)
                 {
@@ -103,6 +109,9 @@ namespace Cognite.Extractor.Utils
                         
                         if (responsiveExtractorIndexes[0] == Index)
                         {
+                            Console.WriteLine();
+                            Console.WriteLine("Extractor " + Index + " is starting...");
+                            Console.WriteLine();
                             State.UpdatedStatus = true;
                             break;
                         }

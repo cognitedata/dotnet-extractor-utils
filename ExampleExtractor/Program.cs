@@ -43,29 +43,72 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        List<Task> extractors = createExtractors();
-        await Task.WhenAll(extractors).ConfigureAwait(false);
+        //await CreateExtractor(0, CancellationToken.None);
+
+        await TestExtractors();
     }
 
-    static public List<Task> createExtractors()
+    static public Task CreateExtractor(int index, CancellationToken ct)
     {
-        List<Task> extractors = new List<Task>();
-        extractors.Add(createExtractor(1)); 
-        return extractors;
+        return Task.Run(async () => {
+            ct.ThrowIfCancellationRequested();
+            await ExtractorRunner.Run<BaseConfig, MyExtractor>(
+                index,
+                configPath: "config.yml",
+                acceptedConfigVersions: new[] { 1 },
+                appId: "my-extractor",
+                userAgent: "myextractor/1.0.0",
+                addStateStore: false,
+                addLogger: true,
+                addMetrics: false,
+                restart: true,
+                ct).ConfigureAwait(false);
+      
+            }, ct);
     }
 
-     static public Task createExtractor(int index)
-     {
-        return Task.Run(async () => await ExtractorRunner.Run<BaseConfig, MyExtractor>(
-            index,
-            configPath: "config.yml",
-            acceptedConfigVersions: new[] { 1 },
-            appId: "my-extractor",
-            userAgent: "myextractor/1.0.0",
-            addStateStore: false,
-            addLogger: true,
-            addMetrics: false,
-            restart: true,
-            CancellationToken.None).ConfigureAwait(false));
-     }
+    static public async Task TestExtractors()
+    {
+        var source1 = new CancellationTokenSource();
+        CancellationToken ct1 = source1.Token;
+
+        var source2 = new CancellationTokenSource();
+        CancellationToken ct2 = source2.Token;
+        
+        var source3 = new CancellationTokenSource();
+        CancellationToken ct3 = source3.Token;
+
+        Task extractor1 = CreateExtractor(0, ct1);
+        Task extractor2 = CreateExtractor(1, ct2);
+        Task extractor3 = CreateExtractor(2, ct3);
+
+        Task cancel = Task.Run(async () => {
+            await Task.Delay(25000);
+            source1.Cancel();
+
+            Console.WriteLine();
+            Console.WriteLine("Turning off extractor 0...");
+            Console.WriteLine();
+
+            await Task.Delay(25000);
+            source2.Cancel();
+
+            Console.WriteLine();
+            Console.WriteLine("Turning off extractor 1...");
+            Console.WriteLine();
+
+            await Task.Delay(25000);
+            source3.Cancel();
+
+            Console.WriteLine();
+            Console.WriteLine("Turning off extractor 2...");
+            Console.WriteLine();
+        });
+
+        await Task.WhenAll(extractor1, extractor2, extractor3, cancel).ConfigureAwait(false);   
+
+        source1.Dispose(); 
+        source2.Dispose();  
+        source3.Dispose();
+    }
 }
