@@ -5,58 +5,75 @@ using System.Collections.Generic;
 using CogniteSdk;
 namespace Cognite.Extractor.Utils
 {
+    /// <summary>
+    /// General interface for an extractor manager
+    /// </summary>
     public interface IExtractorManager 
     {
-        Task InitState();
+        /// <summary>
+        /// Method called by standby extractor to wait until it should become active
+        /// </summary>
+        /// <param name="interval">The interval the method should run at</param>
         Task WaitToBecomeActive(TimeSpan interval); 
+        /// <summary>
+        /// Method used to update the extractor state
+        /// </summary>
         Task UpdateStateAtInterval();
-        int Index { get; }
-        ExtractorState State { get; set; }
-        TimeSpan InactivityThreshold { get; }
-        CancellationTokenSource Source { get; }
     }
-    public class ExtractorManager : IExtractorManager
-    {   
-        public ExtractorManager(int index, string databaseName, string tableName, TimeSpan inactivityThreshold, CogniteDestination destination, CancellationTokenSource source)
+    /// <summary>
+    /// Class for an extractor manager using Raw
+    /// </summary> 
+    public class RawExtractorManager : IExtractorManager
+    {
+        /// <summary>
+        /// Constructor for creating a Raw extractor manager
+        /// </summary>   
+        public RawExtractorManager(int index, string databaseName, string tableName, TimeSpan inactivityThreshold, CogniteDestination destination, CancellationTokenSource source)
         {
             Index = index;
             InactivityThreshold = inactivityThreshold;
+            DatabaseName = databaseName;
+            TableName = tableName;
             Source = source;
-            State = new ExtractorState(databaseName, tableName, false, destination);
+            Destination = destination;
+            State = new ExtractorState(false);
         }
-        public int Index { get; }   
-        public ExtractorState State { get; set; }
-        public TimeSpan InactivityThreshold { get; } 
-        public CancellationTokenSource Source { get; }
-
-        public async Task InitState()
-        {
-            await State.UpdateExtractorState();
-
-            bool indexUsed = await CheckIfIndexIsUsed();
-            if (indexUsed) Source.Cancel();
-        }
+        internal int Index { get; }   
+        internal string DatabaseName { get; }
+        internal string TableName { get; }  
+        internal ExtractorState State { get; set; }
+        internal TimeSpan InactivityThreshold { get; } 
+        internal CogniteDestination Destination { get; }
+        internal CancellationTokenSource Source { get; }
+        /// <summary>
+        /// Method used to update the extractor state
+        /// </summary>
         public async Task UpdateStateAtInterval()
         {
+            Console.WriteLine();
+            Console.WriteLine("Extractor " + Index);
             Console.WriteLine("Uploading log to shared state...");
+            Console.WriteLine("Checking for multiple active extractors...");
+            Console.WriteLine();
 
-            await State.UploadLogToState(Index); 
-            await State.UpdateExtractorState();
+            await State.UploadLogToState(Index, DatabaseName, TableName, Destination); 
+            await State.UpdateExtractorState(DatabaseName, TableName, Destination);
 
-            await CheckIfMultipleActiveExtractors();
+            CheckIfMultipleActiveExtractors();
         }
+        /// <summary>
+        /// Method called by standby extractor to wait until it should become active
+        /// </summary>
+        /// <param name="interval">The interval the method should run at</param>
         public async Task WaitToBecomeActive(TimeSpan interval)
         {
             while (!Source.IsCancellationRequested)
             {
-                Console.WriteLine();
-                Console.WriteLine("Current status, extractor " + Index);
-
                 List<int> responsiveExtractorIndexes = new List<int>();
                 bool responsive = false;
-                foreach (RawRow<LogData> extractor in State.CurrentState)
+                foreach (RawRow<RawLogData> extractor in State.CurrentState)
                 {
-                    LogData extractorData = extractor.Columns;
+                    RawLogData extractorData = extractor.Columns;
                     double timeDifference = DateTime.UtcNow.Subtract(extractorData.TimeStamp).TotalSeconds;
 
                     if (timeDifference < InactivityThreshold.TotalSeconds)
@@ -86,14 +103,12 @@ namespace Cognite.Extractor.Utils
                 await Task.Delay(interval).ConfigureAwait(false);
             }
         }
-        private async Task CheckIfMultipleActiveExtractors()
+        internal void CheckIfMultipleActiveExtractors()
         {
-            Console.WriteLine("Checking for multiple active extractors...");
-    
             List<int> activeExtractorIndexes = new List<int>();
-            foreach (RawRow<LogData> extractor in State.CurrentState)
+            foreach (RawRow<RawLogData> extractor in State.CurrentState)
             {            
-                LogData extractorData = extractor.Columns;
+                RawLogData extractorData = extractor.Columns;
                 DateTime currentTime = DateTime.UtcNow;
                 double timeDifference = currentTime.Subtract(extractorData.TimeStamp).TotalSeconds;
 
@@ -108,10 +123,10 @@ namespace Cognite.Extractor.Utils
                 {
                     State.UpdatedStatus = false;
                     Source.Cancel();
-                
                 }
             }
         }
+        /*
         private async Task<bool> CheckIfIndexIsUsed()
         {
             foreach (RawRow<LogData> extractor in State.CurrentState)
@@ -124,42 +139,44 @@ namespace Cognite.Extractor.Utils
             }
             return false;
         }
+        */
     }
 
-    public class ExtractorState 
+    internal class ExtractorState 
     {
-        public ExtractorState(string databaseName, string tableName, bool initialStatus, CogniteDestination destination)
+        public ExtractorState(bool initialStatus)
         {
-            DatabaseName = databaseName;
-            TableName = tableName;
             UpdatedStatus = initialStatus;
-            Destination = destination;
+            CurrentState = new List<RawRow<RawLogData>>();
         }
-        public IEnumerable<RawRow<LogData>> CurrentState { get; set; }
+        public IEnumerable<RawRow<RawLogData>> CurrentState { get; set; }
         public bool UpdatedStatus { get; set; }
-        public CogniteDestination Destination { get; }
-        public string DatabaseName { get; }
-        public string TableName { get; }  
-
-        public async Task UpdateExtractorState()
+        public async Task UpdateExtractorState(string databaseName, string tableName, CogniteDestination destination)
         {
-            ItemsWithCursor<RawRow<LogData>> rows = await Destination.CogniteClient.Raw.ListRowsAsync<LogData>(DatabaseName, TableName).ConfigureAwait(false);
+            ItemsWithCursor<RawRow<RawLogData>> rows = await destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(databaseName, tableName).ConfigureAwait(false);
             CurrentState = rows.Items;
         }
 
-        public async Task UploadLogToState(int index)
+        public async Task UploadLogToState(int index, string databaseName, string tableName, CogniteDestination destination)
         {
-            LogData log = new LogData(DateTime.UtcNow, UpdatedStatus);
-            RawRowCreate<LogData> row = new RawRowCreate<LogData>() { Key = index.ToString(), Columns = log };
+            RawLogData log = new RawLogData(DateTime.UtcNow, UpdatedStatus);
+            RawRowCreate<RawLogData> row = new RawRowCreate<RawLogData>() { Key = index.ToString(), Columns = log };
 
-            List<RawRowCreate<LogData>> rows = new List<RawRowCreate<LogData>>(){row};
-            await Destination.CogniteClient.Raw.CreateRowsAsync<LogData>(DatabaseName, TableName, rows).ConfigureAwait(false);
+            List<RawRowCreate<RawLogData>> rows = new List<RawRowCreate<RawLogData>>(){row};
+            await destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(databaseName, tableName, rows).ConfigureAwait(false);
         }
     }
 
-    public class LogData
+    interface IExtractorInstance
     {
-        public LogData(DateTime timeStamp, bool active)
+        int Key { get; set; }
+        DateTime timeStamp { get; set; }
+        bool Active { get; set; }  
+    }
+
+    internal class RawLogData
+    {
+        public RawLogData(DateTime timeStamp, bool active)
         {
             TimeStamp = timeStamp;
             Active = active;

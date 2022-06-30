@@ -156,21 +156,12 @@ namespace Cognite.Extractor.Utils
         {
             if (Destination != null)
             {
-                Console.WriteLine("This is extractor " + index);
-
-                string databaseName = "kjerand-test-db";
-                string tableName = "kjerand-test-table";
-                TimeSpan inactivityThreshold = new TimeSpan(0, 0, 15);
-
-                IExtractorManager extractorManager = new ExtractorManager(index, databaseName, tableName, inactivityThreshold, Destination, Source);
-                await extractorManager.InitState();
+                IExtractorManager extractorManager = new RawExtractorManager(index, "kjerand-test-db", "kjerand-test-table", new TimeSpan(0, 0, 15), Destination, Source);
 
                 TimeSpan interval = new TimeSpan(0, 0, 5);
                 Scheduler.SchedulePeriodicTask("Upload log to state", interval, async (token) => {
                     await extractorManager.UpdateStateAtInterval().ConfigureAwait(false);
                 });
-
-                interval = new TimeSpan(0, 0, 5);
                 await extractorManager.WaitToBecomeActive(interval).ConfigureAwait(false);
             }
         }
