@@ -116,7 +116,7 @@ namespace Cognite.Extractor.Utils
         {
             Init(token);
 
-            await RunWithHighAvailability(index);
+            await RunWithHighAvailability(index).ConfigureAwait(false);
            
             await TestConfig().ConfigureAwait(false);
             try
