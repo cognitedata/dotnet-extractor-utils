@@ -157,11 +157,9 @@ namespace Cognite.Extractor.Utils
             if (Destination != null)
             {
                 IExtractorManager extractorManager = new RawExtractorManager(index, "kjerand-test-db", "kjerand-test-table", new TimeSpan(0, 0, 15), Destination, Source);
-
                 TimeSpan interval = new TimeSpan(0, 0, 5);
-                Scheduler.SchedulePeriodicTask("Upload log to state", interval, async (token) => {
-                    await extractorManager.UpdateStateAtInterval().ConfigureAwait(false);
-                });
+                
+                extractorManager.UpdateStateAtInterval(interval, Scheduler);
                 await extractorManager.WaitToBecomeActive(interval).ConfigureAwait(false);
             }
         }

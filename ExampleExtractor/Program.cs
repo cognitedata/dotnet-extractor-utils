@@ -69,6 +69,11 @@ class Program
             }, ct);
     }
 
+    //1. Start three extractors
+    //2. The extractor with highest priority will start while the two others will go into standby
+    //3. After 25 seconds turn off the first extractor, the standby extractor with highest priority will then start
+    //4. After 25 more seconds turn off the second extractor, the last standby extractor will then start
+    //5. Stop all the extractors
     static public async Task TestTurningOffExtractors()
     {
         var source1 = new CancellationTokenSource();
@@ -99,7 +104,7 @@ class Program
             Console.WriteLine("Turning off extractor 1...");
             Console.WriteLine();
 
-            await Task.Delay(25000).ConfigureAwait(false);
+            await Task.Delay(15000).ConfigureAwait(false);
             source3.Cancel();
 
             Console.WriteLine();
@@ -113,42 +118,12 @@ class Program
         source2.Dispose();  
         source3.Dispose();
     }
-    static public async Task TestMultipleExtractorsActive()
-    {
-        var source1 = new CancellationTokenSource();
-        CancellationToken ct1 = source1.Token;
-
-        var source2 = new CancellationTokenSource();
-        CancellationToken ct2 = source2.Token;
-        
-        Task extractor1 = CreateExtractor(0, ct1);
-        Task extractor2 = CreateExtractor(1, ct2);
-
-        Task cancel = Task.Run(async () => {
-            await Task.Delay(15000).ConfigureAwait(false);
-            source1.Cancel();
-
-            Console.WriteLine();
-            Console.WriteLine("Turning off extractor 0...");
-            Console.WriteLine();
-        });
-
-        Task restartExtractor = Task.Run(async () => {
-            await Task.Delay(25000).ConfigureAwait(false);
-
-            Console.WriteLine();
-            Console.WriteLine("Restarting extractor 0...");
-            Console.WriteLine();
-
-            await CreateExtractor(0, CancellationToken.None);
-        });
-
-        await Task.WhenAll(extractor1, extractor2, cancel, restartExtractor).ConfigureAwait(false);   
-
-        source1.Dispose(); 
-        source2.Dispose();  
-    }
-
+    //1. Start two extractors
+    //2. The extractor with highest priority will start while the other will go into standby
+    //3. After 20 seconds turn off the first extractor, the second extractor will then start
+    //4. After 30 more seoncds restart the first extractor, this extractor will then go into standby
+    //5. After 20 more seconds turn off the second extractor, the restarted first extractor will then start again
+    //6. Stop all the extractors
     static public async Task TestRestartingExtractor()
     {
         var source1 = new CancellationTokenSource();
@@ -156,6 +131,9 @@ class Program
 
         var source2 = new CancellationTokenSource();
         CancellationToken ct2 = source2.Token;
+
+        var source3 = new CancellationTokenSource();
+        CancellationToken ct3 = source3.Token;
         
         Task extractor1 = CreateExtractor(0, ct1);
         Task extractor2 = CreateExtractor(1, ct2);
@@ -168,27 +146,87 @@ class Program
             Console.WriteLine("Turning off extractor 0...");
             Console.WriteLine();
 
-            await Task.Delay(40000).ConfigureAwait(false);
+            await Task.Delay(50000).ConfigureAwait(false);
             source2.Cancel();
 
             Console.WriteLine();
             Console.WriteLine("Turning off extractor 1...");
             Console.WriteLine();
+
+            await Task.Delay(20000).ConfigureAwait(false);
+            source3.Cancel();
         });
 
         Task restartExtractor = Task.Run(async () => {
-            await Task.Delay(45000).ConfigureAwait(false);
+            await Task.Delay(50000).ConfigureAwait(false);
+
+            Task extractor1Restart = CreateExtractor(0, ct3);
 
             Console.WriteLine();
             Console.WriteLine("Restarting extractor 0...");
             Console.WriteLine();
 
-            await CreateExtractor(0, CancellationToken.None).ConfigureAwait(false);
+            await extractor1Restart.ConfigureAwait(false);
         });
 
         await Task.WhenAll(extractor1, extractor2, cancel, restartExtractor).ConfigureAwait(false);   
 
         source1.Dispose(); 
         source2.Dispose();  
+        source3.Dispose();
+    }
+
+
+    //1. Start two extractors
+    //2. The extractor with highest priority will start while the other will go into standby
+    //3. After 15 seconds turn off the first extractor, the second extractor will then start
+    //4. After 15 more seconds restart the first extractor
+    //5. Due to the second extractor not having had time to update its status to active yet, the first extractor will also start
+    //6. Both extractors will detect that there are now two active extractors
+    //7. The extractor with the lowest priority will then turn itself off, in this case the second extractor
+    //8. The first extractor will continue running while the second goes back into standby mode
+    //9. Stop all the extractors
+    static public async Task TestMultipleExtractorsActive()
+    {
+        var source1 = new CancellationTokenSource();
+        CancellationToken ct1 = source1.Token;
+
+        var source2 = new CancellationTokenSource();
+        CancellationToken ct2 = source2.Token;
+
+        var source3 = new CancellationTokenSource();
+        CancellationToken ct3 = source2.Token;
+        
+        Task extractor1 = CreateExtractor(0, ct1);
+        Task extractor2 = CreateExtractor(1, ct2);
+
+        Task cancel = Task.Run(async () => {
+            await Task.Delay(15000).ConfigureAwait(false);
+            source1.Cancel();
+
+            Console.WriteLine();
+            Console.WriteLine("Turning off extractor 0...");
+            Console.WriteLine();
+
+            await Task.Delay(30000).ConfigureAwait(false);
+            source2.Cancel();
+            source3.Cancel();
+        });
+
+        Task restartExtractor = Task.Run(async () => {
+            await Task.Delay(25000).ConfigureAwait(false);
+
+            Console.WriteLine();
+            Console.WriteLine("Restarting extractor 0...");
+            Console.WriteLine();
+
+            await CreateExtractor(0, ct3).ConfigureAwait(false);
+        });
+
+        await Task.WhenAll(extractor1, extractor2, cancel, restartExtractor).ConfigureAwait(false);   
+
+        source1.Dispose(); 
+        source2.Dispose(); 
+        source3.Dispose(); 
     }
 }

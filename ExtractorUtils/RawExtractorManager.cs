@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CogniteSdk;
+using Cognite.Extractor.Common;
 
 namespace Cognite.Extractor.Utils
 {
@@ -12,14 +13,14 @@ namespace Cognite.Extractor.Utils
     public interface IExtractorManager 
     {
         /// <summary>
+        /// Method used to update the extractor state
+        /// </summary>
+        void UpdateStateAtInterval(TimeSpan interval, PeriodicScheduler scheduler);
+        /// <summary>
         /// Method called by standby extractor to wait until it should become active
         /// </summary>
         /// <param name="interval">The interval the method should run at</param>
         Task WaitToBecomeActive(TimeSpan interval); 
-        /// <summary>
-        /// Method used to update the extractor state
-        /// </summary>
-        Task UpdateStateAtInterval();
     }
 
     internal interface IExtractorInstance
@@ -57,20 +58,17 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Method used to update the extractor state
         /// </summary>
-        public async Task UpdateStateAtInterval()
+        public void UpdateStateAtInterval(TimeSpan interval, PeriodicScheduler scheduler)
         {
-            /*
-            Console.WriteLine();
-            Console.WriteLine("Extractor " + Index);
-            Console.WriteLine("Uploading log to shared state...");
-            Console.WriteLine("Checking for multiple active extractors...");
-            Console.WriteLine();
-            */
+            if (scheduler != null)
+            {
+                scheduler.SchedulePeriodicTask("Upload log to state", interval, async (token) => {
+                    await UploadLogToState().ConfigureAwait(false); 
+                    await UpdateExtractorState().ConfigureAwait(false);
 
-            await UploadLogToState(Index, DatabaseName, TableName, Destination).ConfigureAwait(false); 
-            await UpdateExtractorState(DatabaseName, TableName, Destination).ConfigureAwait(false);
-
-            CheckIfMultipleActiveExtractors();
+                    CheckIfMultipleActiveExtractors();
+                });
+            }
         }
         /// <summary>
         /// Method called by standby extractor to wait until it should become active
@@ -88,7 +86,6 @@ namespace Cognite.Extractor.Utils
                 foreach (RawExtractorInstance extractor in State.CurrentState)
                 {
                     double timeDifference = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-
                     if (timeDifference < InactivityThreshold.TotalSeconds)
                     {
                         if (extractor.Active == true) responsive = true;
@@ -99,7 +96,7 @@ namespace Cognite.Extractor.Utils
                     Console.WriteLine(Math.Floor(timeDifference) + " sec since last activity");
                     Console.WriteLine("Active: " + extractor.Active);
                     Console.WriteLine();
-                    */
+                    */ 
                 }
                 if (!responsive)
                 {
@@ -111,7 +108,7 @@ namespace Cognite.Extractor.Utils
                         {
                             Console.WriteLine();
                             Console.WriteLine("Extractor " + Index + " is starting...");
-                            Console.WriteLine();
+                            
                             State.UpdatedStatus = true;
                             break;
                         }
@@ -126,7 +123,6 @@ namespace Cognite.Extractor.Utils
             foreach (RawExtractorInstance extractor in State.CurrentState)
             {            
                 double timeDifference = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                
                 if (extractor.Active == true && timeDifference < InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(extractor.Key);
             }
 
@@ -137,14 +133,18 @@ namespace Cognite.Extractor.Utils
 
                 if (activeExtractorIndexes[0] == Index)
                 {
+                    Console.WriteLine();
+                    Console.WriteLine("Multiple active extractors, turning off extractor " + Index);
+                    Console.WriteLine();
+
                     State.UpdatedStatus = false;
                     Source.Cancel();
                 }
             }
         }
-        internal async Task UpdateExtractorState(string databaseName, string tableName, CogniteDestination destination)
+        internal async Task UpdateExtractorState()
         {
-            ItemsWithCursor<RawRow<RawLogData>> rows = await destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(databaseName, tableName).ConfigureAwait(false);
+            ItemsWithCursor<RawRow<RawLogData>> rows = await Destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(DatabaseName, TableName).ConfigureAwait(false);
 
             List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
             foreach (RawRow<RawLogData> extractor in rows.Items)
@@ -155,19 +155,19 @@ namespace Cognite.Extractor.Utils
             State.CurrentState = extractorInstances;
         }
 
-        internal async Task UploadLogToState(int index, string databaseName, string tableName, CogniteDestination destination)
+        internal async Task UploadLogToState()
         {
             RawLogData log = new RawLogData(DateTime.UtcNow, State.UpdatedStatus);
-            RawRowCreate<RawLogData> row = new RawRowCreate<RawLogData>() { Key = index.ToString(), Columns = log };
+            RawRowCreate<RawLogData> row = new RawRowCreate<RawLogData>() { Key = Index.ToString(), Columns = log };
 
             List<RawRowCreate<RawLogData>> rows = new List<RawRowCreate<RawLogData>>(){row};
-            await destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(databaseName, tableName, rows).ConfigureAwait(false);
+            await Destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(DatabaseName, TableName, rows).ConfigureAwait(false);
         }
     }
 
     internal class ExtractorState 
     {
-        public ExtractorState(bool initialStatus)
+        public ExtractorState(bool initialStatus = false)
         {
             UpdatedStatus = initialStatus;
             CurrentState = new List<IExtractorInstance>();
