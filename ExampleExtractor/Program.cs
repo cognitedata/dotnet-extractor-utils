@@ -92,24 +92,15 @@ class Program
         Task cancel = Task.Run(async () => {
             await Task.Delay(25000).ConfigureAwait(false);
             source1.Cancel();
-
-            Console.WriteLine();
-            Console.WriteLine("Turning off extractor 0...");
-            Console.WriteLine();
+            Console.WriteLine("\n Turning off extractor 0... \n");
 
             await Task.Delay(25000).ConfigureAwait(false);
             source2.Cancel();
-
-            Console.WriteLine();
-            Console.WriteLine("Turning off extractor 1...");
-            Console.WriteLine();
+            Console.WriteLine("\n Turning off extractor 1... \n");
 
             await Task.Delay(15000).ConfigureAwait(false);
             source3.Cancel();
-
-            Console.WriteLine();
-            Console.WriteLine("Turning off extractor 2...");
-            Console.WriteLine();
+            Console.WriteLine("\n Turning off extractor 2... \n");
         });
 
         await Task.WhenAll(extractor1, extractor2, extractor3, cancel).ConfigureAwait(false);   
@@ -141,17 +132,11 @@ class Program
         Task cancel = Task.Run(async () => {
             await Task.Delay(20000).ConfigureAwait(false);
             source1.Cancel();
-
-            Console.WriteLine();
-            Console.WriteLine("Turning off extractor 0...");
-            Console.WriteLine();
+            Console.WriteLine("\n Turning off extractor 0... \n");
 
             await Task.Delay(50000).ConfigureAwait(false);
             source2.Cancel();
-
-            Console.WriteLine();
-            Console.WriteLine("Turning off extractor 1...");
-            Console.WriteLine();
+            Console.WriteLine("\n Turning off extractor 1... \n");
 
             await Task.Delay(20000).ConfigureAwait(false);
             source3.Cancel();
@@ -159,14 +144,8 @@ class Program
 
         Task restartExtractor = Task.Run(async () => {
             await Task.Delay(50000).ConfigureAwait(false);
-
             Task extractor1Restart = CreateExtractor(0, ct3);
-
-            Console.WriteLine();
-            Console.WriteLine("Restarting extractor 0...");
-            Console.WriteLine();
-
-            await extractor1Restart.ConfigureAwait(false);
+            Console.WriteLine("\n Restarting extractor 0... \n");
         });
 
         await Task.WhenAll(extractor1, extractor2, cancel, restartExtractor).ConfigureAwait(false);   
@@ -203,22 +182,16 @@ class Program
         Task cancel = Task.Run(async () => {
             await Task.Delay(15000).ConfigureAwait(false);
             source1.Cancel();
+            Console.WriteLine("\n Turning off extractor 0... \n");
 
-            Console.WriteLine();
-            Console.WriteLine("Turning off extractor 0...");
-            Console.WriteLine();
-
-            await Task.Delay(30000).ConfigureAwait(false);
+            await Task.Delay(60000).ConfigureAwait(false);
             source2.Cancel();
             source3.Cancel();
         });
 
         Task restartExtractor = Task.Run(async () => {
             await Task.Delay(25000).ConfigureAwait(false);
-
-            Console.WriteLine();
-            Console.WriteLine("Restarting extractor 0...");
-            Console.WriteLine();
+            Console.WriteLine("\n Restarting extractor 0... \n");
 
             await CreateExtractor(0, ct3).ConfigureAwait(false);
         });
