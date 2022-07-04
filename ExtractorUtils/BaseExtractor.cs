@@ -157,8 +157,8 @@ namespace Cognite.Extractor.Utils
             if (Destination != null)
             {
                 RawManagerConfig config = new RawManagerConfig(index, "kjerand-test-db", "kjerand-test-table", new TimeSpan(0, 0, 15), new TimeSpan(0, 0, 5), new TimeSpan(0, 0, 5));
-                
-                IExtractorManager extractorManager = new RawExtractorManager(config, Scheduler, Destination, Source);
+
+                IExtractorManager extractorManager = new RawExtractorManager(config, Scheduler, Destination, Provider.GetRequiredService<ILogger<RawExtractorManager>>(), Source);
 
                 extractorManager.UpdateStateAtInterval();
                 await extractorManager.WaitToBecomeActive().ConfigureAwait(false);

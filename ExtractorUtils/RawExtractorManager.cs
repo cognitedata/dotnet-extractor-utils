@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using CogniteSdk;
 using Cognite.Extractor.Common;
+using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
 {
@@ -15,11 +16,11 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Method used to update the extractor state
         /// </summary>
-        void UpdateStateAtInterval();
+        public void UpdateStateAtInterval();
         /// <summary>
         /// Method called by standby extractor to wait until it should become active
         /// </summary>
-        Task WaitToBecomeActive(); 
+        public Task WaitToBecomeActive(); 
     }
 
     internal interface IExtractorInstance
@@ -40,36 +41,29 @@ namespace Cognite.Extractor.Utils
         public RawExtractorManager(
             RawManagerConfig config, 
             PeriodicScheduler scheduler, 
-            CogniteDestination destination, 
+            CogniteDestination destination,
+            ILogger<RawExtractorManager> logger,
             CancellationTokenSource source)
         {
-            _index = config.Index;
-            _databaseName = config.DatabaseName;
-            _tableName = config.TableName;
-            _updateStateInterval = config.UpdateStateInterval;
-            _waitToBecomeActiveInterval = config.WaitToBecomeActiveInterval;
-            _inactivityThreshold = config.InactivityThreshold;
-            _source = source;
+            _config = config;
             _scheduler = scheduler;
             _destination = destination;
+            _logger = logger;
+            _source = source;
             _state = new ExtractorState(false);
         }
-        private int _index { get; }   
-        private string _databaseName { get; }
-        private string _tableName { get; }  
-        private ExtractorState _state { get; set; }
-        private TimeSpan _inactivityThreshold { get; } 
-        private TimeSpan _updateStateInterval { get; } 
-        private TimeSpan _waitToBecomeActiveInterval { get; } 
-        private PeriodicScheduler _scheduler { get; }
-        private CogniteDestination _destination { get; }
-        private CancellationTokenSource _source { get; }
+        private readonly RawManagerConfig _config;
+        private readonly PeriodicScheduler _scheduler;
+        private readonly CogniteDestination _destination;
+        private readonly ILogger<RawExtractorManager> _logger;
+        private readonly CancellationTokenSource _source;
+        private readonly ExtractorState _state;
         /// <summary>
         /// Method used to update the extractor state
         /// </summary>
         public void UpdateStateAtInterval()
         {
-            _scheduler.SchedulePeriodicTask("Upload log to state", _updateStateInterval, async (token) => {
+            _scheduler.SchedulePeriodicTask("Upload log to state", _config.UpdateStateInterval, async (token) => {
                 await UploadLogToState().ConfigureAwait(false); 
                 await UpdateExtractorState().ConfigureAwait(false);
 
@@ -84,14 +78,14 @@ namespace Cognite.Extractor.Utils
         {
             while (!_source.IsCancellationRequested)
             {
-                Console.WriteLine("\nExtractor " +_index+ " waiting to become active... \n");
+                Console.WriteLine("\nExtractor " +_config.Index+ " waiting to become active... \n");
 
                 List<int> responsiveExtractorIndexes = new List<int>();
                 bool responsive = false;
                 foreach (RawExtractorInstance extractor in _state.CurrentState)
                 {
                     double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                    if (timeSinceActive < _inactivityThreshold.TotalSeconds)
+                    if (timeSinceActive < _config.InactivityThreshold.TotalSeconds)
                     {
                         if (extractor.Active == true) responsive = true;
                         else responsiveExtractorIndexes.Add(extractor.Key);
@@ -105,17 +99,17 @@ namespace Cognite.Extractor.Utils
                     {
                         responsiveExtractorIndexes.Sort();
                         
-                        if (responsiveExtractorIndexes[0] == _index)
+                        if (responsiveExtractorIndexes[0] == _config.Index)
                         {
                             _state.UpdatedStatus = true;
                           
-                            Console.WriteLine("\nExtractor " + _index + " is starting... \n");
+                            Console.WriteLine("\nExtractor " + _config.Index + " is starting... \n");
                             
                             break;
                         }
                     }   
                 }
-                await Task.Delay(_waitToBecomeActiveInterval).ConfigureAwait(false);
+                await Task.Delay(_config.WaitToBecomeActiveInterval).ConfigureAwait(false);
             }
         }
         internal void CheckIfMultipleActiveExtractors()
@@ -124,7 +118,7 @@ namespace Cognite.Extractor.Utils
             foreach (RawExtractorInstance extractor in _state.CurrentState)
             {            
                 double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                if (extractor.Active == true && timeSinceActive < _inactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(extractor.Key);
+                if (extractor.Active == true && timeSinceActive < _config.InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(extractor.Key);
             }
 
             if (activeExtractorIndexes.Count > 1)
@@ -132,9 +126,9 @@ namespace Cognite.Extractor.Utils
                 activeExtractorIndexes.Sort();
                 activeExtractorIndexes.Reverse();
 
-                if (activeExtractorIndexes[0] == _index)
+                if (activeExtractorIndexes[0] == _config.Index)
                 {
-                    Console.WriteLine("\nMultiple active extractors, turning off extractor " + _index +"\n");
+                    Console.WriteLine("\nMultiple active extractors, turning off extractor " + _config.Index +"\n");
 
                     _state.UpdatedStatus = false;
                     _source.Cancel();
@@ -145,35 +139,52 @@ namespace Cognite.Extractor.Utils
         {
             try
             {
-                ItemsWithCursor<RawRow<RawLogData>> rows = await _destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(_databaseName, _tableName).ConfigureAwait(false);
+                ItemsWithCursor<RawRow<RawLogData>> rows = await _destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(_config.DatabaseName, _config.TableName).ConfigureAwait(false);
 
                 List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
+                List<int> keys = new List<int>();
                 foreach (RawRow<RawLogData> extractor in rows.Items)
                 {
                     RawExtractorInstance instance = new RawExtractorInstance(Int32.Parse(extractor.Key), extractor.Columns.TimeStamp, extractor.Columns.Active);
                     extractorInstances.Add(instance);
+
+                    keys.Add(Int32.Parse(extractor.Key));
                 }
+
+                //Check if extractor data is missing a key, if missing insert prev state
+                
+                if (keys.Count < _state.CurrentState.Count)
+                {
+                    foreach (RawExtractorInstance extractor in _state.CurrentState)
+                    {            
+                        if (!keys.Contains(extractor.Key)) extractorInstances.Add(extractor); 
+                        Console.WriteLine("Missing extractor with index " + extractor.Key);
+                    }
+                }
+
+
                 _state.CurrentState = extractorInstances;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                
+                _logger.LogError("Error when updating state: {msg}", ex.Message);
             }
         }
 
         internal async Task UploadLogToState()
         {
             RawLogData log = new RawLogData(DateTime.UtcNow, _state.UpdatedStatus);
-            RawRowCreate<RawLogData> row = new RawRowCreate<RawLogData>() { Key = _index.ToString(), Columns = log };
+            RawRowCreate<RawLogData> row = new RawRowCreate<RawLogData>() { Key = _config.Index.ToString(), Columns = log };
             List<RawRowCreate<RawLogData>> rows = new List<RawRowCreate<RawLogData>>(){row};
 
             try 
             {
-                await _destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(_databaseName, _tableName, rows).ConfigureAwait(false);
+                await _destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(_config.DatabaseName, _config.TableName, rows).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogError("Error when uploading log to state: {msg}", ex.Message);
             }
         }
     }

@@ -45,8 +45,8 @@ class Program
         //await CreateExtractor(0, CancellationToken.None).ConfigureAwait(false);
 
         //await TestTurningOffExtractors().ConfigureAwait(false);
-        //await TestRestartingExtractor().ConfigureAwait(false);
-        await TestMultipleExtractorsActive().ConfigureAwait(false);
+        await TestRestartingExtractor().ConfigureAwait(false);
+        //await TestMultipleExtractorsActive().ConfigureAwait(false);
     }
 
     static public Task CreateExtractor(int index, CancellationToken ct)

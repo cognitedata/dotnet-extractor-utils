@@ -335,13 +335,7 @@ namespace Cognite.Extractor.Utils
                     {
                         log.LogError("Failed to build extractor: {msg}", ex.Message);
                     }
-
-                    if (options.Index < 0)
-                    {
-                        log.LogError("Invalid index number: negative number");
-                        break;
-                    }
-                      
+                                          
                     if (extractor != null)
                     {
                         try
