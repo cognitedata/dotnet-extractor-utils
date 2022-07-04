@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using Cognite.Extensions;
 using System;
-using System.Text.Json;
 using System.Collections.Generic;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
@@ -43,7 +42,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        //await CreateExtractor(0, CancellationToken.None);
+        //await CreateExtractor(0, CancellationToken.None).ConfigureAwait(false);
 
         //await TestTurningOffExtractors().ConfigureAwait(false);
         //await TestRestartingExtractor().ConfigureAwait(false);
@@ -76,6 +75,8 @@ class Program
     //5. Stop all the extractors
     static public async Task TestTurningOffExtractors()
     {
+        Console.WriteLine("Test turning off extractors... \n");
+
         var source1 = new CancellationTokenSource();
         CancellationToken ct1 = source1.Token;
 
@@ -92,15 +93,15 @@ class Program
         Task cancel = Task.Run(async () => {
             await Task.Delay(25000).ConfigureAwait(false);
             source1.Cancel();
-            Console.WriteLine("\n Turning off extractor 0... \n");
+            Console.WriteLine("\nTurning off extractor 0... \n");
 
             await Task.Delay(25000).ConfigureAwait(false);
             source2.Cancel();
-            Console.WriteLine("\n Turning off extractor 1... \n");
+            Console.WriteLine("\nTurning off extractor 1... \n");
 
             await Task.Delay(15000).ConfigureAwait(false);
             source3.Cancel();
-            Console.WriteLine("\n Turning off extractor 2... \n");
+            Console.WriteLine("\nTurning off extractor 2... \n");
         });
 
         await Task.WhenAll(extractor1, extractor2, extractor3, cancel).ConfigureAwait(false);   
@@ -111,12 +112,14 @@ class Program
     }
     //1. Start two extractors
     //2. The extractor with highest priority will start while the other will go into standby
-    //3. After 20 seconds turn off the first extractor, the second extractor will then start
-    //4. After 30 more seoncds restart the first extractor, this extractor will then go into standby
+    //3. After 15 seconds turn off the first extractor, the second extractor will then start
+    //4. After 25 more seoncds restart the first extractor, this extractor will then go into standby
     //5. After 20 more seconds turn off the second extractor, the restarted first extractor will then start again
     //6. Stop all the extractors
     static public async Task TestRestartingExtractor()
     {
+        Console.WriteLine("Test restarting extractor... \n");
+
         var source1 = new CancellationTokenSource();
         CancellationToken ct1 = source1.Token;
 
@@ -130,22 +133,22 @@ class Program
         Task extractor2 = CreateExtractor(1, ct2);
 
         Task cancel = Task.Run(async () => {
-            await Task.Delay(20000).ConfigureAwait(false);
+            await Task.Delay(15000).ConfigureAwait(false);
             source1.Cancel();
-            Console.WriteLine("\n Turning off extractor 0... \n");
+            Console.WriteLine("\nTurning off extractor 0... \n");
 
-            await Task.Delay(50000).ConfigureAwait(false);
+            await Task.Delay(45000).ConfigureAwait(false);
             source2.Cancel();
-            Console.WriteLine("\n Turning off extractor 1... \n");
+            Console.WriteLine("\nTurning off extractor 1... \n");
 
             await Task.Delay(20000).ConfigureAwait(false);
             source3.Cancel();
         });
 
         Task restartExtractor = Task.Run(async () => {
-            await Task.Delay(50000).ConfigureAwait(false);
+            await Task.Delay(40000).ConfigureAwait(false);
             Task extractor1Restart = CreateExtractor(0, ct3);
-            Console.WriteLine("\n Restarting extractor 0... \n");
+            Console.WriteLine("\nRestarting extractor 0... \n");
         });
 
         await Task.WhenAll(extractor1, extractor2, cancel, restartExtractor).ConfigureAwait(false);   
@@ -167,6 +170,8 @@ class Program
     //9. Stop all the extractors
     static public async Task TestMultipleExtractorsActive()
     {
+        Console.WriteLine("Test running multiple active extractors... \n");
+
         var source1 = new CancellationTokenSource();
         CancellationToken ct1 = source1.Token;
 
@@ -182,7 +187,7 @@ class Program
         Task cancel = Task.Run(async () => {
             await Task.Delay(15000).ConfigureAwait(false);
             source1.Cancel();
-            Console.WriteLine("\n Turning off extractor 0... \n");
+            Console.WriteLine("\nTurning off extractor 0... \n");
 
             await Task.Delay(60000).ConfigureAwait(false);
             source2.Cancel();
@@ -190,8 +195,8 @@ class Program
         });
 
         Task restartExtractor = Task.Run(async () => {
-            await Task.Delay(25000).ConfigureAwait(false);
-            Console.WriteLine("\n Restarting extractor 0... \n");
+            await Task.Delay(23000).ConfigureAwait(false);
+            Console.WriteLine("\nRestarting extractor 0... \n");
 
             await CreateExtractor(0, ct3).ConfigureAwait(false);
         });

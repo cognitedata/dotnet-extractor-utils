@@ -15,12 +15,11 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Method used to update the extractor state
         /// </summary>
-        void UpdateStateAtInterval(TimeSpan interval, PeriodicScheduler scheduler);
+        void UpdateStateAtInterval();
         /// <summary>
         /// Method called by standby extractor to wait until it should become active
         /// </summary>
-        /// <param name="interval">The interval the method should run at</param>
-        Task WaitToBecomeActive(TimeSpan interval); 
+        Task WaitToBecomeActive(); 
     }
 
     internal interface IExtractorInstance
@@ -38,64 +37,67 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Constructor for creating a Raw extractor manager
         /// </summary>   
-        public RawExtractorManager(int index, string databaseName, string tableName, TimeSpan inactivityThreshold, CogniteDestination destination, CancellationTokenSource source)
+        public RawExtractorManager(
+            RawManagerConfig config, 
+            PeriodicScheduler scheduler, 
+            CogniteDestination destination, 
+            CancellationTokenSource source)
         {
-            Index = index;
-            InactivityThreshold = inactivityThreshold;
-            DatabaseName = databaseName;
-            TableName = tableName;
-            Source = source;
-            Destination = destination;
-            State = new ExtractorState(false);
+            _index = config.Index;
+            _databaseName = config.DatabaseName;
+            _tableName = config.TableName;
+            _updateStateInterval = config.UpdateStateInterval;
+            _waitToBecomeActiveInterval = config.WaitToBecomeActiveInterval;
+            _inactivityThreshold = config.InactivityThreshold;
+            _source = source;
+            _scheduler = scheduler;
+            _destination = destination;
+            _state = new ExtractorState(false);
         }
-        internal int Index { get; }   
-        internal string DatabaseName { get; }
-        internal string TableName { get; }  
-        internal ExtractorState State { get; set; }
-        internal TimeSpan InactivityThreshold { get; } 
-        internal CogniteDestination Destination { get; }
-        internal CancellationTokenSource Source { get; }
+        private int _index { get; }   
+        private string _databaseName { get; }
+        private string _tableName { get; }  
+        private ExtractorState _state { get; set; }
+        private TimeSpan _inactivityThreshold { get; } 
+        private TimeSpan _updateStateInterval { get; } 
+        private TimeSpan _waitToBecomeActiveInterval { get; } 
+        private PeriodicScheduler _scheduler { get; }
+        private CogniteDestination _destination { get; }
+        private CancellationTokenSource _source { get; }
         /// <summary>
         /// Method used to update the extractor state
         /// </summary>
-        public void UpdateStateAtInterval(TimeSpan interval, PeriodicScheduler scheduler)
+        public void UpdateStateAtInterval()
         {
-            if (scheduler != null)
-            {
-                scheduler.SchedulePeriodicTask("Upload log to state", interval, async (token) => {
-                    await UploadLogToState().ConfigureAwait(false); 
-                    await UpdateExtractorState().ConfigureAwait(false);
+            _scheduler.SchedulePeriodicTask("Upload log to state", _updateStateInterval, async (token) => {
+                await UploadLogToState().ConfigureAwait(false); 
+                await UpdateExtractorState().ConfigureAwait(false);
 
-                    CheckIfMultipleActiveExtractors();
-                });
-            }
+                CheckIfMultipleActiveExtractors();
+            });
         }
         /// <summary>
         /// Method called by standby extractor to wait until it should become active
         /// </summary>
-        /// <param name="interval">The interval the method should run at</param>
-        public async Task WaitToBecomeActive(TimeSpan interval)
+       
+        public async Task WaitToBecomeActive()
         {
-            while (!Source.IsCancellationRequested)
+            while (!_source.IsCancellationRequested)
             {
-                Console.WriteLine("\nExtractor " +Index+ " waiting to become active... \n");
+                Console.WriteLine("\nExtractor " +_index+ " waiting to become active... \n");
 
                 List<int> responsiveExtractorIndexes = new List<int>();
                 bool responsive = false;
-                foreach (RawExtractorInstance extractor in State.CurrentState)
+                foreach (RawExtractorInstance extractor in _state.CurrentState)
                 {
-                    double timeDifference = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                    if (timeDifference < InactivityThreshold.TotalSeconds)
+                    double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
+                    if (timeSinceActive < _inactivityThreshold.TotalSeconds)
                     {
                         if (extractor.Active == true) responsive = true;
                         else responsiveExtractorIndexes.Add(extractor.Key);
-                    }
-                    /*
-                    Console.WriteLine("Extractor key: " + extractor.Key);
-                    Console.WriteLine(Math.Floor(timeDifference) + " sec since last activity");
-                    Console.WriteLine("Active: " + extractor.Active +"\n");
-                    */
-                    
+                    }  
+                              
+                    Console.WriteLine("\nExtractor key: " + extractor.Key +"\n"+Math.Floor(timeSinceActive) + " sec since last activity \nActive: " + extractor.Active +"\n");
                 }
                 if (!responsive)
                 {
@@ -103,25 +105,26 @@ namespace Cognite.Extractor.Utils
                     {
                         responsiveExtractorIndexes.Sort();
                         
-                        if (responsiveExtractorIndexes[0] == Index)
+                        if (responsiveExtractorIndexes[0] == _index)
                         {
-                            Console.WriteLine("\nExtractor " + Index + " is starting... \n");
+                            _state.UpdatedStatus = true;
+                          
+                            Console.WriteLine("\nExtractor " + _index + " is starting... \n");
                             
-                            State.UpdatedStatus = true;
                             break;
                         }
                     }   
                 }
-                await Task.Delay(interval).ConfigureAwait(false);
+                await Task.Delay(_waitToBecomeActiveInterval).ConfigureAwait(false);
             }
         }
         internal void CheckIfMultipleActiveExtractors()
         {
             List<int> activeExtractorIndexes = new List<int>();
-            foreach (RawExtractorInstance extractor in State.CurrentState)
+            foreach (RawExtractorInstance extractor in _state.CurrentState)
             {            
-                double timeDifference = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                if (extractor.Active == true && timeDifference < InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(extractor.Key);
+                double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
+                if (extractor.Active == true && timeSinceActive < _inactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(extractor.Key);
             }
 
             if (activeExtractorIndexes.Count > 1)
@@ -129,12 +132,12 @@ namespace Cognite.Extractor.Utils
                 activeExtractorIndexes.Sort();
                 activeExtractorIndexes.Reverse();
 
-                if (activeExtractorIndexes[0] == Index)
+                if (activeExtractorIndexes[0] == _index)
                 {
-                    Console.WriteLine("\nMultiple active extractors, turning off extractor " + Index +"\n");
+                    Console.WriteLine("\nMultiple active extractors, turning off extractor " + _index +"\n");
 
-                    State.UpdatedStatus = false;
-                    Source.Cancel();
+                    _state.UpdatedStatus = false;
+                    _source.Cancel();
                 }
             }
         }
@@ -142,7 +145,7 @@ namespace Cognite.Extractor.Utils
         {
             try
             {
-                ItemsWithCursor<RawRow<RawLogData>> rows = await Destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(DatabaseName, TableName).ConfigureAwait(false);
+                ItemsWithCursor<RawRow<RawLogData>> rows = await _destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(_databaseName, _tableName).ConfigureAwait(false);
 
                 List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
                 foreach (RawRow<RawLogData> extractor in rows.Items)
@@ -150,7 +153,7 @@ namespace Cognite.Extractor.Utils
                     RawExtractorInstance instance = new RawExtractorInstance(Int32.Parse(extractor.Key), extractor.Columns.TimeStamp, extractor.Columns.Active);
                     extractorInstances.Add(instance);
                 }
-                State.CurrentState = extractorInstances;
+                _state.CurrentState = extractorInstances;
             }
             catch (Exception ex)
             {
@@ -160,13 +163,13 @@ namespace Cognite.Extractor.Utils
 
         internal async Task UploadLogToState()
         {
-            RawLogData log = new RawLogData(DateTime.UtcNow, State.UpdatedStatus);
-            RawRowCreate<RawLogData> row = new RawRowCreate<RawLogData>() { Key = Index.ToString(), Columns = log };
+            RawLogData log = new RawLogData(DateTime.UtcNow, _state.UpdatedStatus);
+            RawRowCreate<RawLogData> row = new RawRowCreate<RawLogData>() { Key = _index.ToString(), Columns = log };
             List<RawRowCreate<RawLogData>> rows = new List<RawRowCreate<RawLogData>>(){row};
 
             try 
             {
-                await Destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(DatabaseName, TableName, rows).ConfigureAwait(false);
+                await _destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(_databaseName, _tableName, rows).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -188,7 +191,10 @@ namespace Cognite.Extractor.Utils
 
     internal class RawExtractorInstance : IExtractorInstance
     {
-        internal RawExtractorInstance(int key, DateTime timeStamp, bool active)
+        internal RawExtractorInstance(
+            int key, 
+            DateTime timeStamp, 
+            bool active)
         {
             Key = key;
             TimeStamp = timeStamp;
@@ -208,5 +214,41 @@ namespace Cognite.Extractor.Utils
         }
         public DateTime TimeStamp { get; }
         public bool Active { get; }
+    }
+    /// <summary>
+    /// Config for a Raw manager
+    /// </summary>
+    public class RawManagerConfig
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public RawManagerConfig(
+            int index, 
+            string databaseName, 
+            string tableName, 
+            TimeSpan inactivityThreshold, 
+            TimeSpan updateStateInterval, 
+            TimeSpan waitToBecomeActiveInterval)
+        {
+            Index = index;
+            DatabaseName = databaseName;
+            TableName = tableName;
+            InactivityThreshold = inactivityThreshold;
+            UpdateStateInterval = updateStateInterval;
+            WaitToBecomeActiveInterval = waitToBecomeActiveInterval;
+        }
+        ///Index
+        public int Index { get; }   
+        ///DatabaseName
+        public string DatabaseName { get; }
+        ///TableName
+        public string TableName { get; }  
+        ///InactivityThreshold
+        public TimeSpan InactivityThreshold { get; } 
+        ///UpdateStateInterval
+        public TimeSpan UpdateStateInterval { get; } 
+        ///WaitToBecomeActiveInterval
+        public TimeSpan WaitToBecomeActiveInterval { get; } 
     }
 }

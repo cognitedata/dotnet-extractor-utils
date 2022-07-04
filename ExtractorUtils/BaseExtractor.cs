@@ -156,11 +156,12 @@ namespace Cognite.Extractor.Utils
         {
             if (Destination != null)
             {
-                IExtractorManager extractorManager = new RawExtractorManager(index, "kjerand-test-db", "kjerand-test-table", new TimeSpan(0, 0, 15), Destination, Source);
-                TimeSpan interval = new TimeSpan(0, 0, 5);
+                RawManagerConfig config = new RawManagerConfig(index, "kjerand-test-db", "kjerand-test-table", new TimeSpan(0, 0, 15), new TimeSpan(0, 0, 5), new TimeSpan(0, 0, 5));
                 
-                extractorManager.UpdateStateAtInterval(interval, Scheduler);
-                await extractorManager.WaitToBecomeActive(interval).ConfigureAwait(false);
+                IExtractorManager extractorManager = new RawExtractorManager(config, Scheduler, Destination, Source);
+
+                extractorManager.UpdateStateAtInterval();
+                await extractorManager.WaitToBecomeActive().ConfigureAwait(false);
             }
         }
 
