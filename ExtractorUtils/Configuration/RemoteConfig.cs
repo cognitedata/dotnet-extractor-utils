@@ -116,7 +116,17 @@ namespace Cognite.Extractor.Utils
             int[]? acceptedConfigVersions)
         {
             _destination = destination;
-            _bufferFilePath = bufferConfigFile ? $"{Path.GetDirectoryName(configFilePath)}/_temp_{Path.GetFileName(configFilePath)}" : null;
+            if (bufferConfigFile)
+            {
+                if (!string.IsNullOrEmpty(Path.GetDirectoryName(configFilePath)))
+                {
+                    _bufferFilePath = $"{Path.GetDirectoryName(configFilePath)}/_temp_{Path.GetFileName(configFilePath)}";
+                }
+                else
+                {
+                    _bufferFilePath = $"_temp_{Path.GetFileName(configFilePath)}";
+                }
+            }
             _acceptedConfigVersions = acceptedConfigVersions;
             _pipelineId = remoteConfig?.Cognite?.ExtractionPipeline?.PipelineId ?? throw new ConfigurationException("Extraction pipeline id may not be null");
             _logger = logger ?? new NullLogger<RemoteConfigManager<T>>();
@@ -137,6 +147,10 @@ namespace Cognite.Extractor.Utils
                     cogniteConfig.ApiKey = _remoteConfig.Cognite.ApiKey;
                     cogniteConfig.ExtractionPipeline = _remoteConfig.Cognite.ExtractionPipeline;
                     cogniteConfig.Host = _remoteConfig.Cognite.Host;
+                }
+                else
+                {
+                    cogniteProperty.SetValue(config, _remoteConfig.Cognite);
                 }
             }
 
@@ -173,7 +187,7 @@ namespace Cognite.Extractor.Utils
 
                     config = InjectRemoteConfig(config);
 
-                    return (config, 0);
+                    return (config, -1);
                 }
                 else if (Config != null)
                 {
@@ -202,7 +216,7 @@ namespace Cognite.Extractor.Utils
             try
             {
                 var (config, revision) = await FetchLatestInternal(token).ConfigureAwait(false);
-                if (revision == _state.CurrentRevision || revision == 0)
+                if (revision == _state.CurrentRevision)
                 {
                     _logger.LogTrace("Config revision in CDF is equal to existing revision for pipeline {Pipeline}", _pipelineId);
                     return null;

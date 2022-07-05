@@ -123,5 +123,75 @@ namespace ExtractorUtils.Test.integration
                 System.IO.File.Delete(remoteConfigPath);
             }
         }
+
+        [Theory]
+        // [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestRemoteConfigManager(CogniteHost host)
+        {
+            var tester = new CDFTester(host, _output);
+            var remoteConfigPath = $"{tester.Prefix}-remote-config.yml";
+            var pipeline = await Setup(tester);
+            try
+            {
+                var localCognite = new CogniteConfig
+                {
+                    ApiKey = tester.Config.Cognite.ApiKey,
+                    Project = tester.Config.Cognite.Project,
+                    IdpAuthentication = tester.Config.Cognite.IdpAuthentication,
+                    Host = tester.Config.Cognite.Host,
+                    ExtractionPipeline = new ExtractionRunConfig
+                    {
+                        PipelineId = pipeline.ExternalId
+                    }
+                };
+                var manager = new RemoteConfigManager<BaseConfig>(tester.Destination, tester.Logger, new RemoteConfig
+                {
+                    Cognite = localCognite,
+                    Type = ConfigurationMode.Remote,
+                    Version = 2
+                }, new RemoteConfigState<BaseConfig>(), remoteConfigPath, false, new[] { 2 });
+
+                // Try fetching, it should fail, and we should get null
+                Assert.Null(await manager.FetchLatest(tester.Source.Token));
+
+                // Again, this time successfully
+                await tester.Destination.CogniteClient.Playground.ExtPipeConfigs.Create(new ExtPipeConfigCreate
+                {
+                    Config = "{\"version\": 2, \"logger\": { \"console\": {\"level\": \"verbose\"}}}",
+                    ExternalId = pipeline.ExternalId
+                });
+                var config = await manager.FetchLatest(tester.Source.Token);
+                Assert.Equal("verbose", config.Logger.Console.Level);
+                Assert.Equal(tester.Config.Cognite.Project, config.Cognite.Project);
+
+                // Create a manager that writes a buffer file
+                manager = new RemoteConfigManager<BaseConfig>(tester.Destination, tester.Logger, new RemoteConfig
+                {
+                    Cognite = localCognite,
+                    Type = ConfigurationMode.Remote,
+                    Version = 2
+                }, new RemoteConfigState<BaseConfig>(), remoteConfigPath, true, new[] { 2 });
+                await manager.FetchLatest(tester.Source.Token);
+                Assert.True(System.IO.File.Exists($"_temp_{remoteConfigPath}"));
+
+                // Again, this time with bad pipeline id
+                localCognite.ExtractionPipeline.PipelineId = "doesnotexist";
+                manager = new RemoteConfigManager<BaseConfig>(tester.Destination, tester.Logger, new RemoteConfig
+                {
+                    Cognite = localCognite,
+                    Type = ConfigurationMode.Remote,
+                    Version = 2
+                }, new RemoteConfigState<BaseConfig>(), remoteConfigPath, true, new[] { 2 });
+                config = await manager.FetchLatest(tester.Source.Token);
+                Assert.Equal("verbose", config.Logger.Console.Level);
+                Assert.Equal(tester.Config.Cognite.Project, config.Cognite.Project);
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new[] { pipeline.Id });
+                System.IO.File.Delete($"_temp_{remoteConfigPath}");
+            }
+        }
     }
 }
