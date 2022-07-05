@@ -106,7 +106,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Allow users to set type: remote and fetch config from extraction pipelines.
         /// </summary>
-        public bool AllowRemoteConfig { get; set; }
+        public bool AllowRemoteConfig { get; set; } = true;
         /// <summary>
         /// True to buffer config if it is fetched from remote. Requires a config path to be set.
         /// Defaults to true.
