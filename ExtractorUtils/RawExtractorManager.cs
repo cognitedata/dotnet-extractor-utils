@@ -38,14 +38,13 @@ namespace Cognite.Extractor.Utils
             RawManagerConfig config, 
             CogniteDestination destination,
             ILogger<RawExtractorManager> logger,
-            PeriodicScheduler scheduler, 
-            CancellationTokenSource source)
+            CancellationToken token)
         {
             _config = config;
             _destination = destination;
             _logger = logger;
-            _scheduler = scheduler;
-            _source = source;
+            _source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            _scheduler = new PeriodicScheduler(_source.Token);
             _state = new ExtractorState(false);
             _cronWrapper =  new CronTimeSpanWrapper(true, true, "s", "1");
             SetCronRawValue();
@@ -54,10 +53,10 @@ namespace Cognite.Extractor.Utils
         private readonly RawManagerConfig _config;
         private readonly CogniteDestination _destination;
         private readonly ILogger<RawExtractorManager> _logger;
-        private readonly PeriodicScheduler _scheduler;
         private readonly CancellationTokenSource _source;
-        private readonly CronTimeSpanWrapper _cronWrapper;
+        private readonly PeriodicScheduler _scheduler;
         private readonly ExtractorState _state;
+        private readonly CronTimeSpanWrapper _cronWrapper;
 
         ///InactivityThreshold
         public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0,0,15);
@@ -73,9 +72,8 @@ namespace Cognite.Extractor.Utils
         {
             while (!_source.IsCancellationRequested)
             {
-                TimeSpan delay = _cronWrapper.Value;
-                if (delay.TotalMilliseconds < 10) continue;
-                await Task.Delay(delay);
+                if (_cronWrapper.Value.TotalMilliseconds < 10) continue;
+                await Task.Delay(_cronWrapper.Value).ConfigureAwait(false);
 
                 await UpdateState().ConfigureAwait(false);
                
@@ -114,27 +112,23 @@ namespace Cognite.Extractor.Utils
         }
         internal void UpdateStateAtInterval()
         {
-            /*
-            _scheduler.SchedulePeriodicTask("Upload log to state", _cronWrapper, async (token) => {
-                Console.WriteLine(_cronWrapper.Value.TotalMilliseconds);               
-                if (_cronWrapper.Value.TotalMilliseconds > 10)
-                {
-                    await UpdateState().ConfigureAwait(false);
-                }             
-            });
-            */
-
             _scheduler.ScheduleTask("Upload log to state", async (token) => {
                 while (!_source.IsCancellationRequested)
                 {
-                    TimeSpan delay = _cronWrapper.Value;
-                    if (delay.TotalMilliseconds < 10) continue;
-                    await Task.Delay(delay);
+                    if (_cronWrapper.Value.TotalMilliseconds < 10) continue;
+                    await Task.Delay(_cronWrapper.Value).ConfigureAwait(false);
 
                     await UpdateState().ConfigureAwait(false);
                 }
             });
-        
+            /*
+            _scheduler.SchedulePeriodicTask("Upload log to state", _cronWrapper, async (token) => {
+                Console.WriteLine(_cronWrapper.Value.TotalMilliseconds);               
+
+                await UpdateState().ConfigureAwait(false);
+                           
+            });
+            */   
         }
         internal async Task UpdateState()
         {
@@ -185,6 +179,7 @@ namespace Cognite.Extractor.Utils
                 
                 if (keys.Count < _state.CurrentState.Count)
                 {
+                    Console.WriteLine("FEIL!");
                     foreach (RawExtractorInstance extractor in _state.CurrentState)
                     {            
                         if (!keys.Contains(extractor.Key)) extractorInstances.Add(extractor); 

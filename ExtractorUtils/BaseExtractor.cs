@@ -154,17 +154,13 @@ namespace Cognite.Extractor.Utils
         /// <returns></returns>
         public async Task RunWithHighAvailability(int index)
         {
-            if (Destination != null)
-            {
-                IExtractorManager extractorManager = new RawExtractorManager(
-                    new RawManagerConfig(index, "kjerand-test-db", "kjerand-test-table"), 
-                    Destination, 
-                    Provider.GetRequiredService<ILogger<RawExtractorManager>>(), 
-                    Scheduler, 
-                    Source);
+            IExtractorManager extractorManager = new RawExtractorManager(
+                new RawManagerConfig(index, "kjerand-test-db", "kjerand-test-table"), 
+                Provider.GetRequiredService<CogniteDestination>(), 
+                Provider.GetRequiredService<ILogger<RawExtractorManager>>(), 
+                Source.Token);
 
-                await extractorManager.WaitToBecomeActive().ConfigureAwait(false);    
-            }
+            await extractorManager.WaitToBecomeActive().ConfigureAwait(false);    
         }
 
         /// <summary>
