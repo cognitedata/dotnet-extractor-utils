@@ -36,15 +36,15 @@ namespace Cognite.Extractor.Utils
         /// </summary>   
         public RawExtractorManager(
             RawManagerConfig config, 
-            PeriodicScheduler scheduler, 
             CogniteDestination destination,
             ILogger<RawExtractorManager> logger,
+            PeriodicScheduler scheduler, 
             CancellationTokenSource source)
         {
             _config = config;
-            _scheduler = scheduler;
             _destination = destination;
             _logger = logger;
+            _scheduler = scheduler;
             _source = source;
             _state = new ExtractorState(false);
             _cronWrapper =  new CronTimeSpanWrapper(true, true, "s", "1");
@@ -52,9 +52,9 @@ namespace Cognite.Extractor.Utils
         }
 
         private readonly RawManagerConfig _config;
-        private readonly PeriodicScheduler _scheduler;
         private readonly CogniteDestination _destination;
         private readonly ILogger<RawExtractorManager> _logger;
+        private readonly PeriodicScheduler _scheduler;
         private readonly CancellationTokenSource _source;
         private readonly CronTimeSpanWrapper _cronWrapper;
         private readonly ExtractorState _state;
@@ -74,10 +74,10 @@ namespace Cognite.Extractor.Utils
             while (!_source.IsCancellationRequested)
             {
                 TimeSpan delay = _cronWrapper.Value;
-                if (delay.TotalMilliseconds < 1) delay = Interval;
-                await Task.Delay(delay).ConfigureAwait(false);
+                if (delay.TotalMilliseconds < 10) continue;
+                await Task.Delay(delay);
 
-                await UpdateState();
+                await UpdateState().ConfigureAwait(false);
                
                 Console.WriteLine("\nExtractor " +_config.Index+ " waiting to become active... \n");
 
@@ -92,7 +92,7 @@ namespace Cognite.Extractor.Utils
                         else responsiveExtractorIndexes.Add(extractor.Key);
                     }  
                               
-                    Console.WriteLine("\nExtractor key: " + extractor.Key +"\n"+Math.Floor(timeSinceActive) + " sec since last activity \nActive: " + extractor.Active +"\n");
+                    //Console.WriteLine("\nExtractor key: " + extractor.Key +"\n"+Math.Floor(timeSinceActive) + " sec since last activity \nActive: " + extractor.Active +"\n");
                 }
                 if (!responsive)
                 {
@@ -114,9 +114,27 @@ namespace Cognite.Extractor.Utils
         }
         internal void UpdateStateAtInterval()
         {
+            /*
             _scheduler.SchedulePeriodicTask("Upload log to state", _cronWrapper, async (token) => {
-                await UpdateState();
+                Console.WriteLine(_cronWrapper.Value.TotalMilliseconds);               
+                if (_cronWrapper.Value.TotalMilliseconds > 10)
+                {
+                    await UpdateState().ConfigureAwait(false);
+                }             
             });
+            */
+
+            _scheduler.ScheduleTask("Upload log to state", async (token) => {
+                while (!_source.IsCancellationRequested)
+                {
+                    TimeSpan delay = _cronWrapper.Value;
+                    if (delay.TotalMilliseconds < 10) continue;
+                    await Task.Delay(delay);
+
+                    await UpdateState().ConfigureAwait(false);
+                }
+            });
+        
         }
         internal async Task UpdateState()
         {

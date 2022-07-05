@@ -158,9 +158,9 @@ namespace Cognite.Extractor.Utils
             {
                 IExtractorManager extractorManager = new RawExtractorManager(
                     new RawManagerConfig(index, "kjerand-test-db", "kjerand-test-table"), 
-                    Scheduler, 
                     Destination, 
                     Provider.GetRequiredService<ILogger<RawExtractorManager>>(), 
+                    Scheduler, 
                     Source);
 
                 await extractorManager.WaitToBecomeActive().ConfigureAwait(false);    

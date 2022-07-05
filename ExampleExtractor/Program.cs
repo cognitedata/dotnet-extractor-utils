@@ -43,11 +43,11 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        await CreateExtractor(1, CancellationToken.None).ConfigureAwait(false);
+        //await CreateExtractor(0, CancellationToken.None).ConfigureAwait(false);
 
         //await TestTurningOffExtractors().ConfigureAwait(false);
         //await TestRestartingExtractor().ConfigureAwait(false);
-        //await TestMultipleExtractorsActive().ConfigureAwait(false);
+        await TestMultipleExtractorsActive().ConfigureAwait(false);
     }
 
     static public Task CreateExtractor(int index, CancellationToken ct)
@@ -80,7 +80,7 @@ class Program
 
         CronTimeSpanWrapper wrapper = new CronTimeSpanWrapper(true, true, "s", "1");
 
-        wrapper.RawValue = "59 * * * * *";
+        wrapper.RawValue = "59/5 * * * * *";
 
         await Task.Delay(wrapper.Value);
 
@@ -98,19 +98,19 @@ class Program
         Task extractor3 = CreateExtractor(2, ct3);
 
         Task cancel = Task.Run(async () => {
-            /*
+            
             
             await Task.Delay(25000).ConfigureAwait(false);
             source1.Cancel();
             Console.WriteLine("\nTurning off extractor 0... \n");
 
-            await Task.Delay(25000).ConfigureAwait(false);
+            await Task.Delay(35000).ConfigureAwait(false);
             source2.Cancel();
             Console.WriteLine("\nTurning off extractor 1... \n");
 
-            await Task.Delay(15000).ConfigureAwait(false);
+            await Task.Delay(35000).ConfigureAwait(false);
             source3.Cancel();
-            Console.WriteLine("\nTurning off extractor 2... \n");*/
+            Console.WriteLine("\nTurning off extractor 2... \n");
         });
 
         await Task.WhenAll(extractor1, extractor2, extractor3, cancel).ConfigureAwait(false);   
