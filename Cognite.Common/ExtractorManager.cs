@@ -4,14 +4,10 @@ using System.Collections.Generic;
 
 namespace Cognite.Extractor.Common
 {
-    /// <summary>
-    /// General interface for an extractor manager
-    /// </summary>
+    ///
     public interface IExtractorManager 
     {
-        /// <summary>
-        /// Method called by standby extractor to wait until it should become active
-        /// </summary>
+        ///
         public Task WaitToBecomeActive(); 
     }
     ///

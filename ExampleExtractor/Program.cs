@@ -19,8 +19,9 @@ class MyExtractor : BaseExtractor<BaseConfig>
 
     protected override async Task Start()
     {
-        RawManagerConfig config = new RawManagerConfig(TestExtractor.Index, "kjerand-test-db", "kjerand-test-table");
-        await RunWithHighAvailability(config).ConfigureAwait(false);
+        RawManagerConfig config = new RawManagerConfig(TestExtractor.Index, TestExtractor.DatabaseName, TestExtractor.TableName);
+        await AddHighAvailability(config).ConfigureAwait(false);
+
 
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
@@ -44,15 +45,17 @@ class MyExtractor : BaseExtractor<BaseConfig>
 
 static class TestExtractor 
 {
-    public static int Index { get; set; } = 0;
+    public static int Index { get; set; }
+    public static string DatabaseName { get; set; }
+    public static string TableName { get; set; }
 }
 
 class Program
 {
     static async Task Main(string[] args)
     {
-        await CreateExtractor(CancellationToken.None).ConfigureAwait(false);
-
+        TestExtractor.DatabaseName = "kjerand-test-db";
+        TestExtractor.TableName = "kjerand-test-table";
         TestExtractor.Index = 1;
 
         await CreateExtractor(CancellationToken.None).ConfigureAwait(false);
@@ -64,8 +67,6 @@ class Program
 
     static public Task CreateExtractor(CancellationToken ct)
     {
-        
-
         return Task.Run(async () => {
             ct.ThrowIfCancellationRequested();
             await ExtractorRunner.Run<BaseConfig, MyExtractor>(

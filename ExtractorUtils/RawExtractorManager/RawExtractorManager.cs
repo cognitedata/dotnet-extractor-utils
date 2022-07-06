@@ -93,7 +93,6 @@ namespace Cognite.Extractor.Utils
                 }
             });
             
-            
             /*
             _scheduler.SchedulePeriodicTask("Upload log to state", _cronWrapper, async (token) => {
                 bool run = true;

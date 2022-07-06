@@ -144,7 +144,7 @@ namespace Cognite.Extractor.Utils
             }
         }
         ///
-        public async Task RunWithHighAvailability(RawManagerConfig config)
+        public async Task AddHighAvailability(RawManagerConfig config)
         {
             IExtractorManager extractorManager = new RawExtractorManager(
                 config, 
