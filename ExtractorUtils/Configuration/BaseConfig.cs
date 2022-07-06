@@ -310,5 +310,28 @@ namespace Cognite.Extractor.Utils
         public IEnumerable<string>? AllowList { get; set; }
     }
 
+    /// <summary>
+    /// Config for a Raw manager
+    /// </summary>
+    public class RawManagerConfig
+    {
+        /// Constructor
+        public RawManagerConfig(
+            int index, 
+            string databaseName, 
+            string tableName)
+        {
+            Index = index;
+            DatabaseName = databaseName;
+            TableName = tableName;
+        }
+        ///Index
+        public int Index { get; set; }   
+        ///DatabaseName
+        public string DatabaseName { get; set; }
+        ///TableName
+        public string TableName { get; set; }  
+    }
+
     #endregion
 }

@@ -116,11 +116,12 @@ namespace Cognite.Extractor.Utils
         {
             Init(token);
 
-            await RunWithHighAvailability(index).ConfigureAwait(false);
-           
             await TestConfig().ConfigureAwait(false);
             try
             {
+                RawManagerConfig config = new RawManagerConfig(index, "kjerand-test-db", "kjerand-test-table");
+                await RunWithHighAvailability(config).ConfigureAwait(false);
+                
                 await Start().ConfigureAwait(false);
                 if (Run != null)
                 {
@@ -147,15 +148,11 @@ namespace Cognite.Extractor.Utils
                 }
             }
         }
-        /// <summary>
-        /// Method called to start the extractor.
-        /// </summary>
-        /// <param name="index">Index of the extractor</param>
-        /// <returns></returns>
-        public async Task RunWithHighAvailability(int index)
+        ///
+        public async Task RunWithHighAvailability(RawManagerConfig config)
         {
             IExtractorManager extractorManager = new RawExtractorManager(
-                new RawManagerConfig(index, "kjerand-test-db", "kjerand-test-table"), 
+                config, 
                 Provider.GetRequiredService<CogniteDestination>(), 
                 Provider.GetRequiredService<ILogger<RawExtractorManager>>(), 
                 Source.Token);

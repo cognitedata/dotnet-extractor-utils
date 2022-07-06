@@ -43,7 +43,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        await CreateExtractor(0, CancellationToken.None).ConfigureAwait(false);
+        await CreateExtractor(1, CancellationToken.None).ConfigureAwait(false);
 
         //await TestTurningOffExtractors().ConfigureAwait(false);
         //await TestRestartingExtractor().ConfigureAwait(false);
