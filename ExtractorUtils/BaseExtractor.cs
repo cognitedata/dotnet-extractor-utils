@@ -114,7 +114,6 @@ namespace Cognite.Extractor.Utils
         public virtual async Task Start(CancellationToken token)
         {
             Init(token);
-
             await TestConfig().ConfigureAwait(false);
             try
             {                
