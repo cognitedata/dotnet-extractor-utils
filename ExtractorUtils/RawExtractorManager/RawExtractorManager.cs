@@ -11,6 +11,19 @@ namespace Cognite.Extractor.Utils
     ///
     public class RawExtractorManager : IExtractorManager
     {
+        private readonly RawManagerConfig _config;
+        private readonly CogniteDestination _destination;
+        private readonly ILogger<RawExtractorManager> _logger;
+        private readonly ExtractorState _state;
+        private readonly CancellationTokenSource _source;
+        private readonly PeriodicScheduler _scheduler;
+        private readonly CronTimeSpanWrapper _cronWrapper;
+        ///
+        public TimeSpan Interval { get; set; } = new TimeSpan(0,0,5);
+        ///
+        public TimeSpan Offset { get; set; } = new TimeSpan(0,0,3);
+        ///
+        public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0,0,15);
         ///
         public RawExtractorManager(
             RawManagerConfig config, 
@@ -28,20 +41,6 @@ namespace Cognite.Extractor.Utils
 
             SetCronWrapperRawValue();
         }
-
-        private readonly RawManagerConfig _config;
-        private readonly CogniteDestination _destination;
-        private readonly ILogger<RawExtractorManager> _logger;
-        private readonly ExtractorState _state;
-        private readonly CancellationTokenSource _source;
-        private readonly PeriodicScheduler _scheduler;
-        private readonly CronTimeSpanWrapper _cronWrapper;
-        ///
-        public TimeSpan Interval { get; set; } = new TimeSpan(0,0,5);
-        ///
-        public TimeSpan Offset { get; set; } = new TimeSpan(0,0,3);
-        ///
-        public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0,0,15);
         ///
         public async Task WaitToBecomeActive()
         {

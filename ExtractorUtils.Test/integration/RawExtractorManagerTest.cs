@@ -1,12 +1,10 @@
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using System.Threading.Tasks;
-using System.Threading;
 using Cognite.Extensions;
 using System;
 using System.Collections.Generic;
-using Cognite.Extractor.Common;
-
+using Xunit;
 
 namespace ExtractorUtils.Test.Integration
 {
@@ -22,7 +20,6 @@ namespace ExtractorUtils.Test.Integration
         {
             RawManagerConfig config = new RawManagerConfig(TestExtractorConfig.Index, TestExtractorConfig.DatabaseName, TestExtractorConfig.TableName);
             await AddHighAvailability(config).ConfigureAwait(false);
-
 
             var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
             {
@@ -51,8 +48,16 @@ namespace ExtractorUtils.Test.Integration
     }
     public class RawExtractorManagerTest
     {
-        static public Task CreateExtractor(CancellationToken ct)
+        [Fact]
+        public void TestClass()
         {
+            bool test = true;
+            Assert.True(test);
+        }
+        /*
+        public async Task CreateExtractor(CancellationToken ct)
+        {
+            
             return Task.Run(async () => {
                 ct.ThrowIfCancellationRequested();
                 await ExtractorRunner.Run<BaseConfig, MyExtractor>(
@@ -66,14 +71,16 @@ namespace ExtractorUtils.Test.Integration
                     restart: true,
                     ct).ConfigureAwait(false);
                 }, ct);
+                
         }
         //1. Start three extractors
         //2. The extractor with highest priority will start while the two others will go into standby
         //3. After 25 seconds turn off the first extractor, the standby extractor with highest priority will then start
         //4. After 25 more seconds turn off the second extractor, the last standby extractor will then start
         //5. Stop all the extractors
-        static public async Task TestTurningOffExtractors()
+        public async Task TestTurningOffExtractors()
         {
+            
             Console.WriteLine("Test turning off extractors... \n");
 
             CronTimeSpanWrapper wrapper = new CronTimeSpanWrapper(true, true, "s", "1");
@@ -116,6 +123,7 @@ namespace ExtractorUtils.Test.Integration
             source1.Dispose(); 
             source2.Dispose();  
             source3.Dispose();
+            
         }
         //1. Start two extractors
         //2. The extractor with highest priority will start while the other will go into standby
@@ -123,8 +131,9 @@ namespace ExtractorUtils.Test.Integration
         //4. After 25 more seoncds restart the first extractor, this extractor will then go into standby
         //5. After 20 more seconds turn off the second extractor, the restarted first extractor will then start again
         //6. Stop all the extractors
-        static public async Task TestRestartingExtractor()
+        public async Task TestRestartingExtractor()
         {
+            
             Console.WriteLine("Test restarting extractor... \n");
 
             CronTimeSpanWrapper wrapper = new CronTimeSpanWrapper(true, true, "s", "1");
@@ -169,6 +178,7 @@ namespace ExtractorUtils.Test.Integration
             source1.Dispose(); 
             source2.Dispose();  
             source3.Dispose();
+            
         }
 
 
@@ -181,8 +191,9 @@ namespace ExtractorUtils.Test.Integration
         //7. The extractor with the lowest priority will then turn itself off, in this case the second extractor
         //8. The first extractor will continue running while the second goes back into standby mode
         //9. Stop all the extractors
-        static public async Task TestMultipleExtractorsActive()
+        public async Task TestMultipleExtractorsActive()
         {
+            
             Console.WriteLine("Test running multiple active extractors... \n");
 
             CronTimeSpanWrapper wrapper = new CronTimeSpanWrapper(true, true, "s", "1");
@@ -223,6 +234,7 @@ namespace ExtractorUtils.Test.Integration
             source1.Dispose(); 
             source2.Dispose(); 
             source3.Dispose(); 
-        }
+            
+        }*/
     }
 }
