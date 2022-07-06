@@ -116,7 +116,7 @@ namespace Cognite.Extractor.Utils
             Init(token);
             await TestConfig().ConfigureAwait(false);
             try
-            {                
+            {   
                 await Start().ConfigureAwait(false);
                 if (Run != null)
                 {
