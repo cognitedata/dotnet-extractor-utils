@@ -109,19 +109,15 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Method called to start the extractor.
         /// </summary>
-        /// <param name="index">Cancellation token</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public virtual async Task Start(int index, CancellationToken token)
+        public virtual async Task Start(CancellationToken token)
         {
             Init(token);
 
             await TestConfig().ConfigureAwait(false);
             try
-            {
-                RawManagerConfig config = new RawManagerConfig(index, "kjerand-test-db", "kjerand-test-table");
-                await RunWithHighAvailability(config).ConfigureAwait(false);
-                
+            {                
                 await Start().ConfigureAwait(false);
                 if (Run != null)
                 {

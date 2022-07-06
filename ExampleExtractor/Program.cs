@@ -18,7 +18,10 @@ class MyExtractor : BaseExtractor<BaseConfig>
     }
 
     protected override async Task Start()
-    {   
+    {
+        RawManagerConfig config = new RawManagerConfig(TestExtractor.Index, "kjerand-test-db", "kjerand-test-table");
+        await RunWithHighAvailability(config).ConfigureAwait(false);
+
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
             new TimeSeriesCreate {
@@ -39,23 +42,33 @@ class MyExtractor : BaseExtractor<BaseConfig>
     }
 }
 
+static class TestExtractor 
+{
+    public static int Index { get; set; } = 0;
+}
+
 class Program
 {
     static async Task Main(string[] args)
     {
-        await CreateExtractor(1, CancellationToken.None).ConfigureAwait(false);
+        await CreateExtractor(CancellationToken.None).ConfigureAwait(false);
+
+        TestExtractor.Index = 1;
+
+        await CreateExtractor(CancellationToken.None).ConfigureAwait(false);
 
         //await TestTurningOffExtractors().ConfigureAwait(false);
         //await TestRestartingExtractor().ConfigureAwait(false);
         //await TestMultipleExtractorsActive().ConfigureAwait(false);
     }
 
-    static public Task CreateExtractor(int index, CancellationToken ct)
+    static public Task CreateExtractor(CancellationToken ct)
     {
+        
+
         return Task.Run(async () => {
             ct.ThrowIfCancellationRequested();
             await ExtractorRunner.Run<BaseConfig, MyExtractor>(
-                index,
                 configPath: "config.yml",
                 acceptedConfigVersions: new[] { 1 },
                 appId: "my-extractor",
@@ -65,7 +78,6 @@ class Program
                 addMetrics: false,
                 restart: true,
                 ct).ConfigureAwait(false);
-      
             }, ct);
     }
 
@@ -76,6 +88,8 @@ class Program
     //5. Stop all the extractors
     static public async Task TestTurningOffExtractors()
     {
+
+
         Console.WriteLine("Test turning off extractors... \n");
 
         CronTimeSpanWrapper wrapper = new CronTimeSpanWrapper(true, true, "s", "1");
@@ -93,9 +107,9 @@ class Program
         var source3 = new CancellationTokenSource();
         CancellationToken ct3 = source3.Token;
 
-        Task extractor1 = CreateExtractor(0, ct1);
-        Task extractor2 = CreateExtractor(1, ct2);
-        Task extractor3 = CreateExtractor(2, ct3);
+        Task extractor1 = CreateExtractor(ct1);
+        Task extractor2 = CreateExtractor(ct2);
+        Task extractor3 = CreateExtractor(ct3);
 
         Task cancel = Task.Run(async () => {
             
@@ -144,8 +158,8 @@ class Program
         var source3 = new CancellationTokenSource();
         CancellationToken ct3 = source3.Token;
         
-        Task extractor1 = CreateExtractor(0, ct1);
-        Task extractor2 = CreateExtractor(1, ct2);
+        Task extractor1 = CreateExtractor(ct1);
+        Task extractor2 = CreateExtractor(ct2);
 
         Task cancel = Task.Run(async () => {
             await Task.Delay(15000).ConfigureAwait(false);
@@ -162,7 +176,7 @@ class Program
 
         Task restartExtractor = Task.Run(async () => {
             await Task.Delay(45000).ConfigureAwait(false);
-            Task extractor1Restart = CreateExtractor(0, ct3);
+            Task extractor1Restart = CreateExtractor(ct3);
             Console.WriteLine("\nRestarting extractor 0... \n");
         });
 
@@ -200,8 +214,8 @@ class Program
         var source3 = new CancellationTokenSource();
         CancellationToken ct3 = source2.Token;
         
-        Task extractor1 = CreateExtractor(0, ct1);
-        Task extractor2 = CreateExtractor(1, ct2);
+        Task extractor1 = CreateExtractor(ct1);
+        Task extractor2 = CreateExtractor(ct2);
 
         Task cancel = Task.Run(async () => {
             await Task.Delay(15000).ConfigureAwait(false);
@@ -217,7 +231,7 @@ class Program
             await Task.Delay(30000).ConfigureAwait(false);
             Console.WriteLine("\nRestarting extractor 0... \n");
 
-            await CreateExtractor(0, ct3).ConfigureAwait(false);
+            await CreateExtractor(ct3).ConfigureAwait(false);
         });
 
         await Task.WhenAll(extractor1, extractor2, cancel, restartExtractor).ConfigureAwait(false);   

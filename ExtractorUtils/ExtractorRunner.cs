@@ -26,10 +26,6 @@ namespace Cognite.Extractor.Utils
         where TExtractor : BaseExtractor<TConfig>
     {
         /// <summary>
-        /// The extractor index
-        /// </summary>
-        public int Index { get; set; }
-        /// <summary>
         /// Path to config file
         /// </summary>
         public string? ConfigPath { get; set; }
@@ -128,7 +124,6 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <typeparam name="TConfig">Type of configuration</typeparam>
         /// <typeparam name="TExtractor">Type of extractor</typeparam>
-        /// <param name="index">The extractor index</param>
         /// <param name="configPath">Path to yml config file. Can be null to not load config, in this case
         /// <paramref name="config" /> must be set, or the config must be added to <paramref name="extServices"/></param>
         /// <param name="acceptedConfigVersions">List of accepted config versions, null accepts all</param>
@@ -151,7 +146,6 @@ namespace Cognite.Extractor.Utils
         /// <param name="logException">Method called to log exceptions. Useful if special handling is desired.</param>
         /// <returns>Task which completes when the extractor has run</returns>
         public static async Task Run<TConfig, TExtractor>(
-            int index,
             string configPath,
             int[] acceptedConfigVersions,
             string appId,
@@ -173,7 +167,6 @@ namespace Cognite.Extractor.Utils
         {
             await Run(new ExtractorRunnerParams<TConfig, TExtractor>
             {
-                Index = index,
                 ConfigPath = configPath,
                 AcceptedConfigVersions = acceptedConfigVersions,
                 AppId = appId,
@@ -340,7 +333,7 @@ namespace Cognite.Extractor.Utils
                     {
                         try
                         {
-                            await extractor.Start(options.Index, source.Token).ConfigureAwait(false);
+                            await extractor.Start(source.Token).ConfigureAwait(false);
                         }
                         catch (TaskCanceledException) when (source.IsCancellationRequested)
                         {

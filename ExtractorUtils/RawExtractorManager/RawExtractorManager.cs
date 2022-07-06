@@ -25,7 +25,8 @@ namespace Cognite.Extractor.Utils
             _source = CancellationTokenSource.CreateLinkedTokenSource(token);
             _scheduler = new PeriodicScheduler(_source.Token);
             _cronWrapper =  new CronTimeSpanWrapper(true, true, "s", "1");
-            SetCronRawValue();
+
+            SetCronWrapperRawValue();
         }
 
         private readonly RawManagerConfig _config;
@@ -149,11 +150,11 @@ namespace Cognite.Extractor.Utils
                         if (!keys.Contains(extractor.Key))
                         {
                             extractorInstances.Add(extractor); 
-                            Console.WriteLine("Missing extractor with index " + extractor.Key);
+                            Console.WriteLine("Missing row for extractor with index " + extractor.Key);
                         } 
                     }
                 }
-
+                
                 _state.CurrentState = extractorInstances;
             }
             catch (Exception ex)
@@ -163,30 +164,30 @@ namespace Cognite.Extractor.Utils
         }
         internal void CheckForMultipleActiveExtractors()
         {
-            List<int> activeExtractorIndexes = new List<int>();
+            List<int> activeExtractors = new List<int>();
             foreach (RawExtractorInstance extractor in _state.CurrentState)
             {            
                 double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                if (extractor.Active == true && timeSinceActive < InactivityThreshold.TotalSeconds) activeExtractorIndexes.Add(extractor.Key);
+                if (extractor.Active == true && timeSinceActive < InactivityThreshold.TotalSeconds) activeExtractors.Add(extractor.Key);
             }
 
-            if (activeExtractorIndexes.Count > 1)
+            if (activeExtractors.Count > 1)
             {
-                activeExtractorIndexes.Sort();
-                activeExtractorIndexes.Reverse();
+                activeExtractors.Sort();
+                activeExtractors.Reverse();
 
-                if (activeExtractorIndexes[0] == _config.Index)
+                if (activeExtractors[0] == _config.Index)
                 {
                     Console.WriteLine("\nMultiple active extractors, turning off extractor " + _config.Index +"\n");
-
                     _source.Cancel();
                 }
             }
         }
-        internal void SetCronRawValue()
+        internal void SetCronWrapperRawValue()
         {
-            int offset = ((int) Offset.TotalSeconds * _config.Index);
-            _cronWrapper.RawValue = $"{offset}/{(int) Interval.TotalSeconds} * * * * *";
+            int offset = (int) Offset.TotalSeconds * _config.Index;
+            int interval = (int) Interval.TotalSeconds;
+            _cronWrapper.RawValue = $"{offset}/{interval} * * * * *"; 
         }
     }
 }
