@@ -173,9 +173,8 @@ namespace Cognite.Extractor.Utils
             if (activeExtractors.Count > 1)
             {
                 activeExtractors.Sort();
-                activeExtractors.Reverse();
 
-                if (activeExtractors[0] == _config.Index)
+                if (activeExtractors[0] != _config.Index)
                 {
                     Console.WriteLine("\nMultiple active extractors, turning off extractor " + _config.Index +"\n");
                     _source.Cancel();
