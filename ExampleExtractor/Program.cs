@@ -13,6 +13,7 @@ class MyExtractor : BaseExtractor<BaseConfig>
     private readonly int _index = 0;
     private readonly string _databaseName = "kjerand-test-db";
     private readonly string _tableName = "kjerand-test-table";
+
     public MyExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
         : base(config, provider, destination, run)
     {

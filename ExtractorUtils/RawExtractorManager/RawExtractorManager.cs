@@ -14,40 +14,47 @@ namespace Cognite.Extractor.Utils
         private readonly RawManagerConfig _config;
         private readonly CogniteDestination _destination;
         private readonly ILogger<RawExtractorManager> _logger;
-        private readonly ExtractorState _state;
         private readonly CancellationTokenSource _source;
         private readonly PeriodicScheduler _scheduler;
         private readonly CronTimeSpanWrapper _cronWrapper;
+        private readonly ExtractorState _state;
         ///
-        public TimeSpan Interval { get; set; } = new TimeSpan(0,0,5);
+        public TimeSpan Interval { get; set; } = new TimeSpan(0,0,45);
         ///
         public TimeSpan Offset { get; set; } = new TimeSpan(0,0,3);
         ///
-        public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0,0,15);
+        public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0,0,55);
         ///
         public RawExtractorManager(
             RawManagerConfig config, 
             CogniteDestination destination,
             ILogger<RawExtractorManager> logger,
-            CancellationToken token)
+            CancellationTokenSource source)
         {
             _config = config;
             _destination = destination;
             _logger = logger;
-            _state = new ExtractorState();
-            _source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            _source = source;
             _scheduler = new PeriodicScheduler(_source.Token);
             _cronWrapper =  new CronTimeSpanWrapper(true, true, "s", "1");
+            _state = new ExtractorState();
 
             SetCronWrapperRawValue();
         }
         ///
         public async Task WaitToBecomeActive()
         {
+            bool firstRun = true;
             while (!_source.IsCancellationRequested)
             { 
                 await Task.Delay(_cronWrapper.Value).ConfigureAwait(false);
                 await UpdateState().ConfigureAwait(false);
+
+                if (firstRun) 
+                {
+                    firstRun = false;
+                    continue;
+                }
                
                 Console.WriteLine("\nExtractor " +_config.Index+ " waiting to become active... \n");
 
@@ -62,7 +69,7 @@ namespace Cognite.Extractor.Utils
                         else responsiveStandbyExtractors.Add(extractor.Key);
                     }  
                               
-                    //Console.WriteLine("\nExtractor key: " + extractor.Key +"\n"+Math.Floor(timeSinceActive) + " sec since last activity \nActive: " + extractor.Active +"\n");
+                    Console.WriteLine("\nExtractor key: " + extractor.Key +"\n"+Math.Floor(timeSinceActive) + " sec since last activity \nActive: " + extractor.Active +"\n");
                 }
                 if (!activeExtractorResponsive)
                 {

@@ -150,7 +150,7 @@ namespace Cognite.Extractor.Utils
                 config, 
                 Provider.GetRequiredService<CogniteDestination>(), 
                 Provider.GetRequiredService<ILogger<RawExtractorManager>>(), 
-                Source.Token);
+                Source);
 
             await extractorManager.WaitToBecomeActive().ConfigureAwait(false);    
         }
