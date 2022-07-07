@@ -103,7 +103,6 @@ namespace Cognite.Extractor.Utils
         /// Let this method return true if the exception is fatal and the extractor should terminate.
         /// </summary>
         public Func<Exception, bool>? IsFatalException { get; set; }
-
     }
 
 
@@ -181,8 +180,8 @@ namespace Cognite.Extractor.Utils
                 StartupLogger = startupLogger,
                 Config = config,
                 RequireDestination = requireDestination,
-                LogException = logException,
-                }, token).ConfigureAwait(false);
+                LogException = logException
+            }, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -327,8 +326,7 @@ namespace Cognite.Extractor.Utils
                     catch (Exception ex)
                     {
                         log.LogError("Failed to build extractor: {msg}", ex.Message);
-                    }
-                                          
+                    }            
                     if (extractor != null)
                     {
                         try

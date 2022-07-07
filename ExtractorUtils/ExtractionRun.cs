@@ -52,7 +52,6 @@ namespace Cognite.Extractor.Utils
         {
             _config = config;
             _destination = destination;
-
             if (log != null) _log = log;
             if (_config.PipelineId == null)
             {
