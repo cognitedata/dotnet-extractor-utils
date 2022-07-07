@@ -19,23 +19,24 @@ namespace Cognite.Extractor.Utils
         private readonly CronTimeSpanWrapper _cronWrapper;
         private readonly ExtractorState _state;
         ///
-        public TimeSpan Interval { get; set; } = new TimeSpan(0,0,45);
+        public TimeSpan Interval { get; set; } = new TimeSpan(0,0,5);
         ///
         public TimeSpan Offset { get; set; } = new TimeSpan(0,0,3);
         ///
-        public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0,0,55);
+        public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0,0,15);
         ///
         public RawExtractorManager(
             RawManagerConfig config, 
             CogniteDestination destination,
             ILogger<RawExtractorManager> logger,
+            PeriodicScheduler scheduler,
             CancellationTokenSource source)
         {
             _config = config;
             _destination = destination;
             _logger = logger;
             _source = source;
-            _scheduler = new PeriodicScheduler(_source.Token);
+            _scheduler = scheduler;
             _cronWrapper =  new CronTimeSpanWrapper(true, true, "s", "1");
             _state = new ExtractorState();
 
@@ -69,7 +70,7 @@ namespace Cognite.Extractor.Utils
                         else responsiveStandbyExtractors.Add(extractor.Key);
                     }  
                               
-                    Console.WriteLine("\nExtractor key: " + extractor.Key +"\n"+Math.Floor(timeSinceActive) + " sec since last activity \nActive: " + extractor.Active +"\n");
+                    Console.WriteLine("Key: " + extractor.Key +", Active: " + extractor.Active +", "+ +Math.Floor(timeSinceActive) + "s\n");
                 }
                 if (!activeExtractorResponsive)
                 {
@@ -98,14 +99,6 @@ namespace Cognite.Extractor.Utils
                     await UpdateState().ConfigureAwait(false);
                 }
             });
-            
-            /*
-            _scheduler.SchedulePeriodicTask("Upload log to state", _cronWrapper, async (token) => {
-                bool run = true;
-                if (_cronWrapper.Value.TotalMilliseconds < 10) run = false; 
-                if (run) await UpdateState().ConfigureAwait(false);   
-            });
-            */
         }
         internal async Task UpdateState()
         {

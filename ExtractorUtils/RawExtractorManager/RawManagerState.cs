@@ -29,4 +29,4 @@ namespace Cognite.Extractor.Utils
         public DateTime TimeStamp { get; }
         public bool Active { get; }
     }
-}
+} 
