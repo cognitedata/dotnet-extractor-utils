@@ -110,6 +110,7 @@ namespace Cognite.Extractor.Utils
                 {
                     typeof(CogniteConfig),
                     typeof(LoggerConfig),
+                    typeof(RawManagerConfig),
                     typeof(MetricsConfig),
                     typeof(StateStoreConfig),
                     typeof(BaseConfig)

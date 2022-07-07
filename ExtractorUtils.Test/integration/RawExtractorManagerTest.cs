@@ -18,8 +18,7 @@ namespace ExtractorUtils.Test.Integration
  
         protected override async Task Start()
         {
-            RawManagerConfig config = new RawManagerConfig(TestExtractorConfig.Index, TestExtractorConfig.DatabaseName, TestExtractorConfig.TableName);
-            await AddHighAvailability(config).ConfigureAwait(false);
+            await AddHighAvailability(Config.Manager).ConfigureAwait(false);
 
             var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
             {

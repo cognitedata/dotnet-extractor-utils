@@ -10,10 +10,6 @@ using System.CommandLine;
 
 class MyExtractor : BaseExtractor<BaseConfig>
 {
-    private readonly int _index = 0;
-    private readonly string _databaseName = "kjerand-test-db";
-    private readonly string _tableName = "kjerand-test-table";
-
     public MyExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
         : base(config, provider, destination, run)
     {
@@ -22,9 +18,8 @@ class MyExtractor : BaseExtractor<BaseConfig>
 
     protected override async Task Start()
     {
-        RawManagerConfig config = new RawManagerConfig(_index, _databaseName, _tableName);
-        await AddHighAvailability(config).ConfigureAwait(false);
-        
+        if (Config.Manager != null) await AddHighAvailability(Config.Manager);
+
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
             new TimeSeriesCreate {
@@ -44,6 +39,7 @@ class MyExtractor : BaseExtractor<BaseConfig>
         });
     }
 }
+
 // Class for flat command line arguments
 class Options
 {

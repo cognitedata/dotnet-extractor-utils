@@ -33,7 +33,9 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>A <see cref="CogniteConfig"/> config object</value>
         public CogniteConfig Cognite { get; set; } = null!;
-
+        ///
+        public RawManagerConfig? Manager { get; set; } = null;
+    
         /// <summary>
         /// Configuration for extraction state storage (optional)
         /// </summary>
@@ -315,22 +317,12 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public class RawManagerConfig
     {
-        /// Constructor
-        public RawManagerConfig(
-            int index, 
-            string databaseName, 
-            string tableName)
-        {
-            Index = index;
-            DatabaseName = databaseName;
-            TableName = tableName;
-        }
         ///Index
         public int Index { get; set; }   
         ///DatabaseName
-        public string DatabaseName { get; set; }
+        public string DatabaseName { get; set; } = null!;
         ///TableName
-        public string TableName { get; set; }  
+        public string TableName { get; set; } = null!;
     }
 
     #endregion
