@@ -40,6 +40,7 @@ namespace Cognite.Extractor.Utils
             services.AddConfig<T>(config,
                 typeof(CogniteConfig),
                 typeof(LoggerConfig),
+                typeof(RawManagerConfig),
                 typeof(MetricsConfig),
                 typeof(StateStoreConfig),
                 typeof(BaseConfig));
