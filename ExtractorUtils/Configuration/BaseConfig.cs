@@ -33,13 +33,15 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <value>A <see cref="CogniteConfig"/> config object</value>
         public CogniteConfig Cognite { get; set; } = null!;
-        ///
-        public RawManagerConfig? Manager { get; set; } = null;
-    
+
         /// <summary>
         /// Configuration for extraction state storage (optional)
         /// </summary>
         public StateStoreConfig StateStore { get; set; } = null!;
+
+        ///
+        public RawManagerConfig? Manager { get; set; }
+        
         /// <summary>
         /// Generate default configuration objects if the corresponding tags are not
         /// present in the yaml config file/string

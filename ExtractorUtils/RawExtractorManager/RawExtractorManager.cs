@@ -95,7 +95,7 @@ namespace Cognite.Extractor.Utils
             _scheduler.ScheduleTask("Upload log to state", async (token) => {
                 while (!_source.IsCancellationRequested)
                 {
-                    await Task.Delay(_cronWrapper.Value).ConfigureAwait(false);
+                    await Task.Delay(_cronWrapper.Value, token).ConfigureAwait(false);
                     await UpdateState().ConfigureAwait(false);
                 }
             });

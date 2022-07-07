@@ -18,7 +18,7 @@ class MyExtractor : BaseExtractor<BaseConfig>
 
     protected override async Task Start()
     {
-        if (Config.Manager != null) await AddHighAvailability(Config.Manager);
+        if (Config.Manager != null) await AddHighAvailability(Config.Manager).ConfigureAwait(false);
 
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
