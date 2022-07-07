@@ -116,7 +116,7 @@ namespace Cognite.Extractor.Utils
             Init(token);
             await TestConfig().ConfigureAwait(false);
             try
-            {   
+            {
                 await Start().ConfigureAwait(false);
                 if (Run != null)
                 {
@@ -147,13 +147,13 @@ namespace Cognite.Extractor.Utils
         public async Task AddHighAvailability(RawManagerConfig config)
         {
             IExtractorManager extractorManager = new RawExtractorManager(
-                config, 
-                Provider.GetRequiredService<CogniteDestination>(), 
-                Provider.GetRequiredService<ILogger<RawExtractorManager>>(), 
+                config,
+                Provider.GetRequiredService<CogniteDestination>(),
+                Provider.GetRequiredService<ILogger<RawExtractorManager>>(),
                 Scheduler,
                 Source);
 
-            await extractorManager.WaitToBecomeActive().ConfigureAwait(false);    
+            await extractorManager.WaitToBecomeActive().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -364,7 +364,8 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         protected virtual async ValueTask DisposeAsyncCore()
         {
-            if (Scheduler != null) {
+            if (Scheduler != null)
+            {
                 try
                 {
                     await Scheduler.ExitAllAndWait().ConfigureAwait(false);

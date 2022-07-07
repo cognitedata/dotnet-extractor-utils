@@ -235,7 +235,7 @@ namespace Cognite.Extractor.Utils
                         options.UserAgent,
                         options.AddStateStore,
                         options.AddLogger,
-                        options.AddMetrics, 
+                        options.AddMetrics,
                         options.RequireDestination,
                         options.Config,
                         options.BuildLogger,
@@ -325,7 +325,7 @@ namespace Cognite.Extractor.Utils
                     catch (Exception ex)
                     {
                         log.LogError("Failed to build extractor: {msg}", ex.Message);
-                    }            
+                    }
                     if (extractor != null)
                     {
                         try
