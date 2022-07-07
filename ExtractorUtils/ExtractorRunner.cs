@@ -316,7 +316,6 @@ namespace Cognite.Extractor.Utils
                             Serilog.Log.Logger = provider.GetRequiredService<Serilog.ILogger>();
                         }
                         extractor = provider.GetRequiredService<TExtractor>();
-                        
                         if (options.OnCreateExtractor != null)
                         {
                             var destination = provider.GetService<CogniteDestination>();
