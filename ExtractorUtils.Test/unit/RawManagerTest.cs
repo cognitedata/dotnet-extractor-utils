@@ -151,7 +151,6 @@ namespace ExtractorUtils.Test.Unit
                 RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
 
                 rows.Clear();
-                rows = new Dictionary<string, RawLogData>();
                 rows.Add("0", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 20)), false));
                 rows.Add("1", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 40)), false));
                 rows.Add("2", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 50)), true));
@@ -235,7 +234,8 @@ namespace ExtractorUtils.Test.Unit
                 {
                     Items = rowList
                 };
-                responseBody = JsonSerializer.Serialize(finalContent, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                responseBody = JsonSerializer.Serialize(finalContent,
+                new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             }
 
             var response = new HttpResponseMessage
@@ -245,6 +245,8 @@ namespace ExtractorUtils.Test.Unit
             };
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             response.Headers.Add("x-request-id", "1");
+
+            await Task.Delay(100);
 
             return response;
         }

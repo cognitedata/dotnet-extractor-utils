@@ -151,7 +151,6 @@ namespace Cognite.Extractor.Utils
                 List<int> keys = new List<int>();
                 foreach (RawRow<RawLogData> extractor in rows.Items)
                 {
-                    _logger.LogInformation(extractor.Columns.TimeStamp.ToString());
                     int key = Int16.Parse(extractor.Key);
                     keys.Add(key);
 
