@@ -6,8 +6,8 @@ namespace Cognite.Extractor.Utils
     internal class RawExtractorInstance : IExtractorInstance
     {
         internal RawExtractorInstance(
-            int key, 
-            DateTime timeStamp, 
+            int key,
+            DateTime timeStamp,
             bool active)
         {
             Key = key;
@@ -16,7 +16,7 @@ namespace Cognite.Extractor.Utils
         }
         public int Key { get; set; }
         public DateTime TimeStamp { get; set; }
-        public bool Active { get; set; }  
+        public bool Active { get; set; }
     }
 
     internal class RawLogData
@@ -29,4 +29,4 @@ namespace Cognite.Extractor.Utils
         public DateTime TimeStamp { get; }
         public bool Active { get; }
     }
-} 
+}

@@ -2,9 +2,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using CogniteSdk;
 using Cognite.Extractor.Common;
 using Microsoft.Extensions.Logging;
-using CogniteSdk;
 
 namespace Cognite.Extractor.Utils
 {
@@ -23,7 +24,7 @@ namespace Cognite.Extractor.Utils
 
         private readonly CronTimeSpanWrapper _cronWrapper;
 
-        private readonly ExtractorState _state;
+        internal readonly ExtractorState _state;
 
         ///
         public TimeSpan Interval { get; set; } = new TimeSpan(0, 0, 5);
@@ -132,11 +133,11 @@ namespace Cognite.Extractor.Utils
 
             try
             {
-                await _destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(_config.DatabaseName, _config.TableName, rows).ConfigureAwait(false);
+                await _destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(_config.DatabaseName, _config.TableName, rows, ensureParent: true).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error when uploading log to state: {msg}", ex.Message);
+                _logger.LogError("Error when uploading log to state: {Message}", ex.Message);
             }
         }
 
@@ -173,7 +174,7 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error when updating state: {msg}", ex.Message);
+                _logger.LogError("Error when updating state: {Message}", ex.Message);
             }
         }
 

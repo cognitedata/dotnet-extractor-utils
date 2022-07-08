@@ -8,9 +8,14 @@ using System.Collections.Generic;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
 
-class MyExtractor : BaseExtractor<BaseConfig>
+class MyConfig : BaseConfig
 {
-    public MyExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
+    public RawManagerConfig Manager { get; set; }
+}
+
+class MyExtractor : BaseExtractor<MyConfig>
+{
+    public MyExtractor(MyConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
         : base(config, provider, destination, run)
     {
         if (run != null) run.Continuous = true;
@@ -62,7 +67,7 @@ class Program
         command.SetHandler<Options>(async opt =>
         {
             // This can also be invoked directly in main, to not have a CLI.
-            await ExtractorRunner.Run<BaseConfig, MyExtractor>(
+            await ExtractorRunner.Run<MyConfig, MyExtractor>(
                 configPath: opt.ConfigPath ?? "config.yml",
                 acceptedConfigVersions: new[] { 1 },
                 appId: "my-extractor",

@@ -15,11 +15,9 @@ namespace ExtractorUtils.Test.Integration
         {
             if (run != null) run.Continuous = true;
         }
- 
+
         protected override async Task Start()
         {
-            await AddHighAvailability(Config.Manager).ConfigureAwait(false);
-
             var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
             {
                 new TimeSeriesCreate {

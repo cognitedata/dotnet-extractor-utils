@@ -39,9 +39,6 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public StateStoreConfig StateStore { get; set; } = null!;
 
-        ///
-        public RawManagerConfig? Manager { get; set; }
-        
         /// <summary>
         /// Generate default configuration objects if the corresponding tags are not
         /// present in the yaml config file/string
@@ -320,11 +317,11 @@ namespace Cognite.Extractor.Utils
     public class RawManagerConfig
     {
         ///Index
-        public int Index { get; set; }   
+        public int Index { get; set; }
         ///DatabaseName
-        public string DatabaseName { get; set; } = null!;
+        public string? DatabaseName { get; set; }
         ///TableName
-        public string TableName { get; set; } = null!;
+        public string? TableName { get; set; }
     }
 
     #endregion
