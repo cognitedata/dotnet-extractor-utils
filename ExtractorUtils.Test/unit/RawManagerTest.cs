@@ -13,6 +13,7 @@ using Cognite.Extractor.Utils;
 using Xunit.Abstractions;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Common;
+using CogniteSdk;
 
 
 
@@ -34,6 +35,7 @@ namespace ExtractorUtils.Test.Unit
 
         private readonly ITestOutputHelper _output;
         private static bool _failInsert = false;
+        private static bool _failUpdateState = false;
 
         public RawManagerTest(ITestOutputHelper output)
         {
@@ -44,7 +46,7 @@ namespace ExtractorUtils.Test.Unit
         public async Task TestUploadLogToState()
         {
             string path = "test-upload-log-to-state-config";
-            string[] config = {  "version: 2",
+            string[] config = { "version: 2",
                                 "logger:",
                                 "  console:",
                                 "    level: verbose",
@@ -108,11 +110,11 @@ namespace ExtractorUtils.Test.Unit
 
             System.IO.File.Delete(path);
         }
-
+        [Fact]
         public async Task TestUpdateExtractorState()
         {
             string path = "test-update-extractor-state-config";
-            string[] config = {  "version: 2",
+            string[] config = { "version: 2",
                                 "logger:",
                                 "  console:",
                                 "    level: verbose",
@@ -149,6 +151,7 @@ namespace ExtractorUtils.Test.Unit
                 RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
 
                 rows.Clear();
+                rows = new Dictionary<string, RawLogData>();
                 rows.Add("0", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 20)), false));
                 rows.Add("1", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 40)), false));
                 rows.Add("2", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 50)), true));
@@ -161,8 +164,6 @@ namespace ExtractorUtils.Test.Unit
             }
 
             System.IO.File.Delete(path);
-
-
         }
         private class RawItem
         {
@@ -211,24 +212,30 @@ namespace ExtractorUtils.Test.Unit
         private static async Task<HttpResponseMessage> mockGetRowsAsync(HttpRequestMessage message, CancellationToken token)
         {
             var uri = message.RequestUri.ToString();
-
             Assert.Contains($"{_host}/api/v1/projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows", uri);
-            Assert.Contains("ensureParent=true", message.RequestUri.Query);
 
             var responseBody = "{ }";
             var statusCode = HttpStatusCode.OK;
 
-            if (_failInsert)
+            if (_failUpdateState)
             {
                 statusCode = HttpStatusCode.InternalServerError;
             }
             else
             {
-                var content = await message.Content.ReadAsStringAsync();
-                var items = JsonSerializer.Deserialize<RawItems>(content,
-                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                RawRow<RawLogData> responseRows = new RawRow<RawLogData>();
+                var rowList = new List<RawRow<RawLogData>>();
 
-                foreach (var item in items.items) rows[_index] = item.columns;
+                foreach (KeyValuePair<string, RawLogData> entry in rows)
+                {
+                    rowList.Add(new RawRow<RawLogData>() { Key = entry.Key, Columns = entry.Value });
+                }
+
+                var finalContent = new ItemsWithCursor<RawRow<RawLogData>>
+                {
+                    Items = rowList
+                };
+                responseBody = JsonSerializer.Serialize(finalContent, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             }
 
             var response = new HttpResponseMessage
