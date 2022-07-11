@@ -44,19 +44,7 @@ namespace ExtractorUtils.Test.Unit
         {
             string index = "0";
             string path = "test-upload-log-to-state-config";
-            string[] config = { "version: 2",
-                                "logger:",
-                                "  console:",
-                                "    level: verbose",
-                                "cognite:",
-                               $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
-                               $"  host: {_host}",
-                                "manager:",
-                               $"  index: {index}",
-                               $"  database-name: {_dbName}",
-                               $"  table-name: {_tableName}"};
-            System.IO.File.WriteAllLines(path, config);
+            SetupConfig(index, path);
 
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertRowsAsync);
             var mockHttpMessageHandler = mocks.handler;
@@ -70,15 +58,10 @@ namespace ExtractorUtils.Test.Unit
 
             using (var provider = services.BuildServiceProvider())
             {
-                var testLogger = provider.GetRequiredService<ILogger<RawManagerTest>>();
+                var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
 
-                var managerConfig = provider.GetRequiredService<RawManagerConfig>();
-                var destination = provider.GetRequiredService<CogniteDestination>();
-                var logger = provider.GetRequiredService<ILogger<RawExtractorManager>>();
-                var source = new CancellationTokenSource();
-                var scheduler = new PeriodicScheduler(source.Token);
+                RawExtractorManager extractorManager = CreateRawExtractorManager(provider);
 
-                RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
                 await extractorManager.UploadLogToState();
                 Dictionary<string, RawLogData> rows = rowsUploadState;
 
@@ -116,19 +99,7 @@ namespace ExtractorUtils.Test.Unit
         {
             string index = "0";
             string path = "test-update-extractor-state-config";
-            string[] config = { "version: 2",
-                                "logger:",
-                                "  console:",
-                                "    level: verbose",
-                                "cognite:",
-                               $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
-                               $"  host: {_host}",
-                                "manager:",
-                               $"  index: {index}",
-                               $"  database-name: {_dbName}",
-                               $"  table-name: {_tableName}"};
-            System.IO.File.WriteAllLines(path, config);
+            SetupConfig(index, path);
 
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockGetRowsAsync);
             var mockHttpMessageHandler = mocks.handler;
@@ -142,15 +113,9 @@ namespace ExtractorUtils.Test.Unit
 
             using (var provider = services.BuildServiceProvider())
             {
-                var testLogger = provider.GetRequiredService<ILogger<RawManagerTest>>();
+                var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
 
-                var managerConfig = provider.GetRequiredService<RawManagerConfig>();
-                var destination = provider.GetRequiredService<CogniteDestination>();
-                var logger = provider.GetRequiredService<ILogger<RawExtractorManager>>();
-                var source = new CancellationTokenSource();
-                var scheduler = new PeriodicScheduler(source.Token);
-
-                RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
+                RawExtractorManager extractorManager = CreateRawExtractorManager(provider);
 
                 Dictionary<string, RawLogData> rows = new Dictionary<string, RawLogData>();
 
@@ -158,7 +123,6 @@ namespace ExtractorUtils.Test.Unit
                 rows.Add("1", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 10)), false));
                 rows.Add("2", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
                 rows.Add("3", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 50)), false));
-                rows.Add("4", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 70)), false));
                 rowsUpdateState = rows;
 
                 Assert.True(extractorManager._state.CurrentState.Count == 0);
@@ -166,7 +130,7 @@ namespace ExtractorUtils.Test.Unit
                 await extractorManager.UpdateExtractorState();
 
                 //Testing that the state has changed 
-                Assert.True(extractorManager._state.CurrentState.Count == 5);
+                Assert.True(extractorManager._state.CurrentState.Count == 4);
 
                 //Checking that each value in the state is the same as in the local dict
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
@@ -180,15 +144,15 @@ namespace ExtractorUtils.Test.Unit
                 }
 
                 //Testing updating the active status and timestamp for a given extractor
-                int testKey = 1;
-                rows[testKey.ToString()] = new RawLogData(DateTime.UtcNow, true);
+                string testKey = "1";
+                rows[testKey] = new RawLogData(DateTime.UtcNow, true);
                 rowsUpdateState = rows;
 
                 await extractorManager.UpdateExtractorState();
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    if (instance.Key == testKey)
+                    if (instance.Key == Int16.Parse(testKey))
                     {
                         //Checking that the valus has been changed for the given extractor
                         Assert.True(rows[testKey.ToString()].Active == instance.Active);
@@ -198,36 +162,29 @@ namespace ExtractorUtils.Test.Unit
 
                 //Testing removing an extractor after it has been initialized
                 //If an extractor has been initialized but then returns an empty row in the state, it will use the last seen log
-                testKey = 2;
-                RawLogData logCopy = rows[testKey.ToString()];
-                rows.Remove(testKey.ToString());
-                rows[index] = new RawLogData(DateTime.UtcNow, false);
+                testKey = "2";
+                RawLogData logCopy = rows[testKey];
+                rows.Remove(testKey);
 
                 rowsUpdateState = rows;
 
                 await extractorManager.UpdateExtractorState();
 
-                Assert.True(extractorManager._state.CurrentState.Count == 5);
+                Assert.True(extractorManager._state.CurrentState.Count == 4);
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    if (instance.Key == testKey)
+                    if (instance.Key == Int16.Parse(testKey))
                     {
                         //Checking that the previous value from the state is reused
                         Assert.True(logCopy.Active == instance.Active);
                         Assert.True(logCopy.TimeStamp == instance.TimeStamp);
 
                     }
-                    else if (instance.Key == Int16.Parse(index))
-                    {
-                        //Checking that the row at _index has been updated, to make sure that state was changed
-                        Assert.True(rows[index].Active == instance.Active);
-                        Assert.True(rows[index].TimeStamp == instance.TimeStamp);
-                    }
                 }
 
                 //Inserting the removed extractor back and checking that the new value is used again
-                rows[testKey.ToString()] = new RawLogData(DateTime.UtcNow, false);
+                rows[testKey] = new RawLogData(DateTime.UtcNow, false);
 
                 rowsUpdateState = rows;
 
@@ -235,28 +192,29 @@ namespace ExtractorUtils.Test.Unit
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    if (instance.Key == testKey)
+                    if (instance.Key == Int16.Parse(testKey))
                     {
                         //Checking that the previous value from the state is reused
-                        Assert.True(rows[testKey.ToString()].Active == instance.Active);
-                        Assert.True(rows[testKey.ToString()].TimeStamp == instance.TimeStamp);
+                        Assert.True(rows[testKey].Active == instance.Active);
+                        Assert.True(rows[testKey].TimeStamp == instance.TimeStamp);
 
                     }
                 }
 
+                testKey = "3";
                 _failUpdateState = true;
-                rows[index] = new RawLogData(DateTime.UtcNow, !rows[index].Active);
+                rows[testKey] = new RawLogData(DateTime.UtcNow, !rows[testKey].Active);
                 rowsUpdateState = rows;
 
                 await extractorManager.UpdateExtractorState();
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    if (instance.Key == Int16.Parse(index))
+                    if (instance.Key == Int16.Parse(testKey))
                     {
                         //Checking that if the method fails the current state will remain unchanged
-                        Assert.False(rows[index].Active == instance.Active);
-                        Assert.False(rows[index].TimeStamp == instance.TimeStamp);
+                        Assert.False(rows[testKey].Active == instance.Active);
+                        Assert.False(rows[testKey].TimeStamp == instance.TimeStamp);
                     }
                 }
             }
@@ -268,19 +226,7 @@ namespace ExtractorUtils.Test.Unit
         {
             string index = "1";
             string path = "test-multiple-active-extractors-config";
-            string[] config = { "version: 2",
-                                "logger:",
-                                "  console:",
-                                "    level: verbose",
-                                "cognite:",
-                               $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
-                               $"  host: {_host}",
-                                "manager:",
-                               $"  index: {index}",
-                               $"  database-name: {_dbName}",
-                               $"  table-name: {_tableName}"};
-            System.IO.File.WriteAllLines(path, config);
+            SetupConfig(index, path);
 
             var services = new ServiceCollection();
             services.AddConfig<MyConfig>(path, 2);
@@ -289,15 +235,10 @@ namespace ExtractorUtils.Test.Unit
 
             using (var provider = services.BuildServiceProvider())
             {
-                var testLogger = provider.GetRequiredService<ILogger<RawManagerTest>>();
+                var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
 
-                var managerConfig = provider.GetRequiredService<RawManagerConfig>();
-                var destination = provider.GetRequiredService<CogniteDestination>();
-                var logger = provider.GetRequiredService<ILogger<RawExtractorManager>>();
                 var source1 = new CancellationTokenSource();
-                var scheduler = new PeriodicScheduler(source1.Token);
-
-                RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source1);
+                RawExtractorManager extractorManager = CreateRawExtractorManager(provider, source1);
                 extractorManager.InactivityThreshold = new TimeSpan(0, 0, 10);
 
                 List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
@@ -311,7 +252,7 @@ namespace ExtractorUtils.Test.Unit
                 Assert.True(source1.IsCancellationRequested);
 
                 var source2 = new CancellationTokenSource();
-                extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source2);
+                extractorManager = CreateRawExtractorManager(provider, source2);
 
                 extractorInstances.Clear();
                 extractorInstances.Add(new RawExtractorInstance(0, DateTime.UtcNow, true));
@@ -324,7 +265,7 @@ namespace ExtractorUtils.Test.Unit
                 Assert.False(source2.IsCancellationRequested);
 
                 var source3 = new CancellationTokenSource();
-                extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source3);
+                extractorManager = CreateRawExtractorManager(provider, source3);
 
                 extractorInstances.Clear();
                 extractorInstances.Add(new RawExtractorInstance(0, DateTime.UtcNow, true));
@@ -337,7 +278,7 @@ namespace ExtractorUtils.Test.Unit
                 Assert.True(source3.IsCancellationRequested);
 
                 var source4 = new CancellationTokenSource();
-                extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source4);
+                extractorManager = CreateRawExtractorManager(provider, source4);
 
                 extractorInstances.Clear();
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, true));
@@ -357,19 +298,7 @@ namespace ExtractorUtils.Test.Unit
         {
             string index = "1";
             string path = "test-should-become-active-config";
-            string[] config = { "version: 2",
-                                "logger:",
-                                "  console:",
-                                "    level: verbose",
-                                "cognite:",
-                               $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
-                               $"  host: {_host}",
-                                "manager:",
-                               $"  index: {index}",
-                               $"  database-name: {_dbName}",
-                               $"  table-name: {_tableName}"};
-            System.IO.File.WriteAllLines(path, config);
+            SetupConfig(index, path);
 
             var services = new ServiceCollection();
             services.AddConfig<MyConfig>(path, 2);
@@ -378,15 +307,9 @@ namespace ExtractorUtils.Test.Unit
 
             using (var provider = services.BuildServiceProvider())
             {
-                var testLogger = provider.GetRequiredService<ILogger<RawManagerTest>>();
+                var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
 
-                var managerConfig = provider.GetRequiredService<RawManagerConfig>();
-                var destination = provider.GetRequiredService<CogniteDestination>();
-                var logger = provider.GetRequiredService<ILogger<RawExtractorManager>>();
-                var source = new CancellationTokenSource();
-                var scheduler = new PeriodicScheduler(source.Token);
-
-                RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
+                RawExtractorManager extractorManager = CreateRawExtractorManager(provider);
                 extractorManager.InactivityThreshold = new TimeSpan(0, 0, 10);
 
                 List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
@@ -434,6 +357,38 @@ namespace ExtractorUtils.Test.Unit
 
             System.IO.File.Delete(path);
         }
+
+        private void SetupConfig(string index, string path)
+        {
+            string[] config = {
+                    "version: 2",
+                    "logger:",
+                    "  console:",
+                    "    level: verbose",
+                    "cognite:",
+                    $"  project: {_project}",
+                    $"  api-key: {_apiKey}",
+                    $"  host: {_host}",
+                    "manager:",
+                    $"  index: {index}",
+                    $"  database-name: {_dbName}",
+                    $"  table-name: {_tableName}"};
+            System.IO.File.WriteAllLines(path, config);
+        }
+
+        private RawExtractorManager CreateRawExtractorManager(ServiceProvider provider, CancellationTokenSource source = null)
+        {
+            var managerConfig = provider.GetRequiredService<RawManagerConfig>();
+            var destination = provider.GetRequiredService<CogniteDestination>();
+            var logger = provider.GetRequiredService<ILogger<RawExtractorManager>>();
+            if (source == null) source = new CancellationTokenSource();
+            var scheduler = new PeriodicScheduler(source.Token);
+
+            RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
+
+            return extractorManager;
+        }
+
         private class RawItem
         {
             public string key { get; set; }
@@ -443,8 +398,10 @@ namespace ExtractorUtils.Test.Unit
         {
             public List<RawItem> items { get; set; }
         }
+
         private static Dictionary<string, RawLogData> rowsUploadState = new Dictionary<string, RawLogData>();
         private static Dictionary<string, RawLogData> rowsUpdateState = new Dictionary<string, RawLogData>();
+
         private static async Task<HttpResponseMessage> mockInsertRowsAsync(HttpRequestMessage message, CancellationToken token)
         {
             var uri = message.RequestUri.ToString();
