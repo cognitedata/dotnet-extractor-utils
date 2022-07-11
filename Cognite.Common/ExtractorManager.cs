@@ -5,10 +5,10 @@ using System.Collections.Generic;
 namespace Cognite.Extractor.Common
 {
     ///
-    public interface IExtractorManager 
+    public interface IExtractorManager
     {
         ///
-        public Task WaitToBecomeActive(); 
+        public Task WaitToBecomeActive();
     }
     ///
     public interface IExtractorInstance
@@ -18,20 +18,20 @@ namespace Cognite.Extractor.Common
         ///
         public DateTime TimeStamp { get; set; }
         ///
-        public bool Active { get; set; }  
+        public bool Active { get; set; }
     }
     ///
-    public class ExtractorState 
+    public class ExtractorState
     {
+        ///
+        public List<IExtractorInstance> CurrentState { get; set; }
+        ///
+        public bool UpdatedStatus { get; set; }
         ///
         public ExtractorState(bool initialStatus = false)
         {
             CurrentState = new List<IExtractorInstance>();
             UpdatedStatus = initialStatus;
         }
-        ///
-        public List<IExtractorInstance> CurrentState { get; set; }
-        ///
-        public bool UpdatedStatus { get; set; }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using CogniteSdk;
 using Cognite.Extractor.Common;
 using Microsoft.Extensions.Logging;
@@ -71,36 +70,44 @@ namespace Cognite.Extractor.Utils
 
                 Console.WriteLine("\nExtractor " + _config.Index + " waiting to become active... \n");
 
-                List<int> responsiveStandbyExtractors = new List<int>();
-                bool activeExtractorResponsive = false;
-                foreach (RawExtractorInstance extractor in _state.CurrentState)
+                if (ShouldBecomeActive())
                 {
-                    double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                    if (timeSinceActive < InactivityThreshold.TotalSeconds)
-                    {
-                        if (extractor.Active == true) activeExtractorResponsive = true;
-                        else responsiveStandbyExtractors.Add(extractor.Key);
-                    }
-
-                    Console.WriteLine("Key: " + extractor.Key + ", Active: " + extractor.Active + ", " + +Math.Floor(timeSinceActive) + "s\n");
-                }
-                if (!activeExtractorResponsive)
-                {
-                    if (responsiveStandbyExtractors.Count > 0)
-                    {
-                        responsiveStandbyExtractors.Sort();
-
-                        if (responsiveStandbyExtractors[0] == _config.Index)
-                        {
-                            Console.WriteLine("\nExtractor " + _config.Index + " is starting... \n");
-                            _state.UpdatedStatus = true;
-                            break;
-                        }
-                    }
+                    Console.WriteLine("\nExtractor " + _config.Index + " is starting... \n");
+                    _state.UpdatedStatus = true;
+                    break;
                 }
             }
 
             UpdateStateAtInterval();
+        }
+
+        internal bool ShouldBecomeActive()
+        {
+            List<int> responsiveStandbyExtractors = new List<int>();
+            bool activeExtractorResponsive = false;
+            foreach (RawExtractorInstance extractor in _state.CurrentState)
+            {
+                double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
+                if (timeSinceActive < InactivityThreshold.TotalSeconds)
+                {
+                    if (extractor.Active) activeExtractorResponsive = true;
+                    else responsiveStandbyExtractors.Add(extractor.Key);
+                }
+
+                Console.WriteLine("Key: " + extractor.Key + ", Active: " + extractor.Active + ", " + +Math.Floor(timeSinceActive) + "s\n");
+            }
+
+            if (!activeExtractorResponsive)
+            {
+                if (responsiveStandbyExtractors.Count > 0)
+                {
+                    responsiveStandbyExtractors.Sort();
+
+                    if (responsiveStandbyExtractors[0] == _config.Index) return true;
+                }
+            }
+
+            return false;
         }
 
         internal void UpdateStateAtInterval()
@@ -184,7 +191,7 @@ namespace Cognite.Extractor.Utils
             foreach (RawExtractorInstance extractor in _state.CurrentState)
             {
                 double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                if (extractor.Active == true && timeSinceActive < InactivityThreshold.TotalSeconds) activeExtractors.Add(extractor.Key);
+                if (extractor.Active && timeSinceActive < InactivityThreshold.TotalSeconds) activeExtractors.Add(extractor.Key);
             }
 
             if (activeExtractors.Count > 1)
