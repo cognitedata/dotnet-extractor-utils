@@ -326,6 +326,7 @@ namespace Cognite.Extractor.Utils
                     {
                         log.LogError("Failed to build extractor: {msg}", ex.Message);
                     }
+
                     if (extractor != null)
                     {
                         try
