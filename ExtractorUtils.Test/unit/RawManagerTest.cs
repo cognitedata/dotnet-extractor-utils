@@ -55,7 +55,7 @@ namespace ExtractorUtils.Test.Unit
                                $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "manager:",
-                               $"  index: {0}",
+                               $"  index: {_index}",
                                $"  database-name: {_dbName}",
                                $"  table-name: {_tableName}"};
             System.IO.File.WriteAllLines(path, config);
@@ -80,10 +80,9 @@ namespace ExtractorUtils.Test.Unit
                 var source = new CancellationTokenSource();
                 var scheduler = new PeriodicScheduler(source.Token);
 
-                rows.Clear();
-
                 RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
                 await extractorManager.UploadLogToState();
+                Dictionary<string, RawLogData> rows = rowsUploadState;
 
                 Assert.True(rows.Count == 1);
                 Assert.True(rows[_index].Active == false);
@@ -123,7 +122,7 @@ namespace ExtractorUtils.Test.Unit
                                $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "manager:",
-                               $"  index: {0}",
+                               $"  index: {_index}",
                                $"  database-name: {_dbName}",
                                $"  table-name: {_tableName}"};
             System.IO.File.WriteAllLines(path, config);
@@ -150,19 +149,117 @@ namespace ExtractorUtils.Test.Unit
 
                 RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
 
-                rows.Clear();
-                rows.Add("0", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 20)), false));
-                rows.Add("1", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 40)), false));
-                rows.Add("2", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 50)), true));
+                Dictionary<string, RawLogData> rows = new Dictionary<string, RawLogData>();
+
+                rows.Add("0", new RawLogData(DateTime.UtcNow, true));
+                rows.Add("1", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 10)), false));
+                rows.Add("2", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
+                rowsUpdateState = rows;
 
                 Assert.True(extractorManager._state.CurrentState.Count == 0);
 
                 await extractorManager.UpdateExtractorState();
 
+                //Testing that the state has changed 
                 Assert.True(extractorManager._state.CurrentState.Count == 3);
+
+                //Checking that each value in the state is the same as in the local dict
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                {
+                    string key = instance.Key.ToString();
+                    if (rows.ContainsKey(key))
+                    {
+                        Assert.True(rows[key].Active == instance.Active);
+                        Assert.True(rows[key].TimeStamp == instance.TimeStamp);
+                    }
+                }
+
+                //Testing updating the active status and timestamp for a given extractor
+                int testKey = 1;
+                rows[testKey.ToString()] = new RawLogData(DateTime.UtcNow, true);
+                rowsUpdateState = rows;
+
+                await extractorManager.UpdateExtractorState();
+
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                {
+                    if (instance.Key == testKey)
+                    {
+                        //Checking that the valus has been changed for the given extractor
+                        Assert.True(rows[testKey.ToString()].Active == instance.Active);
+                        Assert.True(rows[testKey.ToString()].TimeStamp == instance.TimeStamp);
+                    }
+                }
+
+                //Testing removing an extractor after it has been initialized
+                //If an extractor has been initialized but then returns an empty row in the state, it will use the last seen log
+                testKey = 2;
+                RawLogData logCopy = rows[testKey.ToString()];
+                rows.Remove(testKey.ToString());
+                rows[_index] = new RawLogData(DateTime.UtcNow, false);
+
+                rowsUpdateState = rows;
+
+                await extractorManager.UpdateExtractorState();
+
+                Assert.True(extractorManager._state.CurrentState.Count == 3);
+
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                {
+                    if (instance.Key == testKey)
+                    {
+                        //Checking that the previous value from the state is reused
+                        Assert.True(logCopy.Active == instance.Active);
+                        Assert.True(logCopy.TimeStamp == instance.TimeStamp);
+
+                    }
+                    else if (instance.Key == Int16.Parse(_index))
+                    {
+                        //Checking that the row at _index has been updated, to make sure that state was changed
+                        Assert.True(rows[_index].Active == instance.Active);
+                        Assert.True(rows[_index].TimeStamp == instance.TimeStamp);
+                    }
+                }
+
+                //Inserting the removed extractor back and checking that the new value is used again
+                rows[testKey.ToString()] = new RawLogData(DateTime.UtcNow, false);
+
+                rowsUpdateState = rows;
+
+                await extractorManager.UpdateExtractorState();
+
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                {
+                    if (instance.Key == testKey)
+                    {
+                        //Checking that the previous value from the state is reused
+                        Assert.True(rows[testKey.ToString()].Active == instance.Active);
+                        Assert.True(rows[testKey.ToString()].TimeStamp == instance.TimeStamp);
+
+                    }
+                }
+
+                _failUpdateState = true;
+                rows[_index] = new RawLogData(DateTime.UtcNow, !rows[_index].Active);
+                rowsUpdateState = rows;
+
+                await extractorManager.UpdateExtractorState();
+
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                {
+                    if (instance.Key == Int16.Parse(_index))
+                    {
+                        //Checking that the row at _index has been updated, to make sure that state was changed
+                        Assert.False(rows[_index].Active == instance.Active);
+                        Assert.False(rows[_index].TimeStamp == instance.TimeStamp);
+                    }
+                }
             }
 
             System.IO.File.Delete(path);
+        }
+        public async Task TestCheckForMultipleActiveExtractors()
+        {
         }
         private class RawItem
         {
@@ -173,7 +270,8 @@ namespace ExtractorUtils.Test.Unit
         {
             public List<RawItem> items { get; set; }
         }
-        private static Dictionary<string, RawLogData> rows = new Dictionary<string, RawLogData>();
+        private static Dictionary<string, RawLogData> rowsUploadState = new Dictionary<string, RawLogData>();
+        private static Dictionary<string, RawLogData> rowsUpdateState = new Dictionary<string, RawLogData>();
         private static async Task<HttpResponseMessage> mockInsertRowsAsync(HttpRequestMessage message, CancellationToken token)
         {
             var uri = message.RequestUri.ToString();
@@ -194,7 +292,7 @@ namespace ExtractorUtils.Test.Unit
                 var items = JsonSerializer.Deserialize<RawItems>(content,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-                foreach (var item in items.items) rows[_index] = item.columns;
+                foreach (var item in items.items) rowsUploadState[_index] = item.columns;
             }
 
             var response = new HttpResponseMessage
@@ -225,7 +323,7 @@ namespace ExtractorUtils.Test.Unit
                 RawRow<RawLogData> responseRows = new RawRow<RawLogData>();
                 var rowList = new List<RawRow<RawLogData>>();
 
-                foreach (KeyValuePair<string, RawLogData> entry in rows)
+                foreach (KeyValuePair<string, RawLogData> entry in rowsUpdateState)
                 {
                     rowList.Add(new RawRow<RawLogData>() { Key = entry.Key, Columns = entry.Value });
                 }
