@@ -38,7 +38,6 @@ namespace Cognite.Extractor.Utils
         /// Configuration for extraction state storage (optional)
         /// </summary>
         public StateStoreConfig StateStore { get; set; } = null!;
-
         /// <summary>
         /// Generate default configuration objects if the corresponding tags are not
         /// present in the yaml config file/string
