@@ -15,8 +15,6 @@ using Cognite.Extractor.Testing;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 
-
-
 namespace ExtractorUtils.Test.Unit
 {
     class MyConfig : BaseConfig
@@ -393,35 +391,35 @@ namespace ExtractorUtils.Test.Unit
 
                 List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
-                extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 60)), false));
-                extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 60)), false));
+                extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
+                extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
                 extractorManager._state.CurrentState = extractorInstances;
 
-                //Extractor 1 will become active because 2 and 3 are not within the threshold
+                //Extractor 1 will become active because 2 and 3 are not within the time threshold
                 Assert.True(extractorManager.ShouldBecomeActive());
 
                 extractorInstances.Clear();
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow, true));
-                extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 60)), false));
+                extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
                 extractorManager._state.CurrentState = extractorInstances;
 
-                //Extractor 1 will not become active because 2 is already active and within threshold
+                //Extractor 1 will not become active because 2 is already active and within the time threshold
                 Assert.False(extractorManager.ShouldBecomeActive());
 
                 extractorInstances.Clear();
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
-                extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 60)), true));
-                extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 60)), true));
+                extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), true));
+                extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), true));
                 extractorManager._state.CurrentState = extractorInstances;
 
-                //Extractor 1 will become active because 2 and 3 are over the threshold
+                //Extractor 1 will become active because 2 and 3 are over the time threshold
                 Assert.True(extractorManager.ShouldBecomeActive());
 
                 extractorInstances.Clear();
                 extractorInstances.Add(new RawExtractorInstance(0, DateTime.UtcNow, false));
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
-                extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 60)), true));
+                extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), true));
                 extractorManager._state.CurrentState = extractorInstances;
 
                 //Extractor 1 will not become active because 0 has higher priority
