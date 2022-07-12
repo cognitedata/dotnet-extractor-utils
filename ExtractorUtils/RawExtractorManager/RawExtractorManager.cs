@@ -68,11 +68,8 @@ namespace Cognite.Extractor.Utils
                     continue;
                 }
 
-                Console.WriteLine("\nExtractor " + _config.Index + " waiting to become active... \n");
-
                 if (ShouldBecomeActive())
                 {
-                    Console.WriteLine("\nExtractor " + _config.Index + " is starting... \n");
                     _state.UpdatedStatus = true;
                     break;
                 }
@@ -83,6 +80,7 @@ namespace Cognite.Extractor.Utils
 
         internal bool ShouldBecomeActive()
         {
+            //Checking if there is currently an active extractor
             List<int> responsiveStandbyExtractors = new List<int>();
             bool activeExtractorResponsive = false;
             foreach (RawExtractorInstance extractor in _state.CurrentState)
@@ -93,17 +91,17 @@ namespace Cognite.Extractor.Utils
                     if (extractor.Active) activeExtractorResponsive = true;
                     else responsiveStandbyExtractors.Add(extractor.Key);
                 }
-
-                Console.WriteLine("Key: " + extractor.Key + ", Active: " + extractor.Active + ", " + +Math.Floor(timeSinceActive) + "s\n");
             }
 
-            if (!activeExtractorResponsive)
+            //If there are no active extractors, start the standby extractor with highest priority
+            if (!activeExtractorResponsive && responsiveStandbyExtractors.Count > 0)
             {
-                if (responsiveStandbyExtractors.Count > 0)
-                {
-                    responsiveStandbyExtractors.Sort();
+                responsiveStandbyExtractors.Sort();
 
-                    if (responsiveStandbyExtractors[0] == _config.Index) return true;
+                if (responsiveStandbyExtractors[0] == _config.Index)
+                {
+                    _logger.LogInformation("Extractor is starting.");
+                    return true;
                 }
             }
 
@@ -112,7 +110,7 @@ namespace Cognite.Extractor.Utils
 
         internal void UpdateStateAtInterval()
         {
-            _scheduler.ScheduleTask("Upload log to state", async (token) =>
+            _scheduler.ScheduleTask("Updating state", async (token) =>
             {
                 while (!_source.IsCancellationRequested)
                 {
@@ -124,8 +122,6 @@ namespace Cognite.Extractor.Utils
 
         internal async Task UpdateState()
         {
-            Console.WriteLine("\nExtractor " + _config.Index + " updating state...\n");
-
             await UploadLogToState().ConfigureAwait(false);
             await UpdateExtractorState().ConfigureAwait(false);
 
@@ -141,6 +137,7 @@ namespace Cognite.Extractor.Utils
             try
             {
                 await _destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(_config.DatabaseName, _config.TableName, rows, ensureParent: true).ConfigureAwait(false);
+                _logger.LogTrace("Log has been uploaded to state.");
             }
             catch (Exception ex)
             {
@@ -165,14 +162,15 @@ namespace Cognite.Extractor.Utils
                     extractorInstances.Add(instance);
                 }
 
+                //Checking if a row is missing from the Raw database
                 if (keys.Count < _state.CurrentState.Count)
                 {
                     foreach (RawExtractorInstance extractor in _state.CurrentState)
                     {
+                        //Adding the missing row from the current state
                         if (!keys.Contains(extractor.Key))
                         {
                             extractorInstances.Add(extractor);
-                            Console.WriteLine("Missing row for extractor with index " + extractor.Key);
                         }
                     }
                 }
@@ -187,6 +185,7 @@ namespace Cognite.Extractor.Utils
 
         internal void CheckForMultipleActiveExtractors()
         {
+            //Creating a list of all the active extractors
             List<int> activeExtractors = new List<int>();
             foreach (RawExtractorInstance extractor in _state.CurrentState)
             {
@@ -198,9 +197,10 @@ namespace Cognite.Extractor.Utils
             {
                 activeExtractors.Sort();
 
+                //Turning off extractor if it does not have the highest priority
                 if (activeExtractors[0] != _config.Index)
                 {
-                    Console.WriteLine("\nMultiple active extractors, turning off extractor " + _config.Index + "\n");
+                    _logger.LogInformation("Turning off extractor.");
                     _source.Cancel();
                 }
             }
