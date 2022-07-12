@@ -69,38 +69,54 @@ namespace ExtractorUtils.Test.Integration
     public class RawManagerIntegrationTest
     {
         private readonly ITestOutputHelper _output;
+
+        private const string _dbName = "testDb";
+        private const string _tableName = "testTable";
         public RawManagerIntegrationTest(ITestOutputHelper output)
         {
             _output = output;
         }
-        [Fact]
-        public void TestExtractorManagerRun()
+        [Fact(Timeout = 30000)]
+        public async void TestExtractorManagerRun()
         {
+            int index = 0;
             string path = "test-extractor-manager-config";
             var config = CDFTester.GetConfig(CogniteHost.BlueField);
+
+
+            string[] lines = {
+                    "manager:",
+                    $"  index: {index}",
+                    $"  database-name: {_dbName}",
+                    $"  table-name: {_tableName}"};
+
+            foreach (string line in lines)
+            {
+                config = config.Append(line).ToArray();
+            }
+
+            foreach (string line in config)
+            {
+
+                Console.WriteLine(line);
+            }
 
             System.IO.File.WriteAllLines(path, config);
 
             using var source = new CancellationTokenSource();
 
-            TestExtractor extractor = null;
-            CogniteDestination destination = null;
 
-            var task = ExtractorRunner.Run<MyConfig, TestExtractor>(
-                path,
-                null,
-                "base-extractor-test-utils",
-                null,
-                false,
-                true,
-                false,
-                false,
-                source.Token,
-                (dest, ext) =>
-                {
-                    destination = dest;
-                    extractor = ext;
-                });
+
+            await ExtractorRunner.Run<MyManagerConfig, MyExtractor>(
+                configPath: path,
+                acceptedConfigVersions: new[] { 2 },
+                appId: "my-extractor",
+                userAgent: "myextractor/1.0.0",
+                addStateStore: false,
+                addLogger: true,
+                addMetrics: true,
+                restart: true,
+                source.Token).ConfigureAwait(false);
 
             System.IO.File.Delete(path);
 

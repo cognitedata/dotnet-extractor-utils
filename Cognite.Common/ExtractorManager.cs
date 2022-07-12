@@ -11,9 +11,6 @@ namespace Cognite.Extractor.Common
     {
         /// <summary>
         /// Method used to add high availability to an extractor.
-        /// Will update the extractor state at an interval and check whether the
-        /// given extractor should become active. If the given extractor becomes active it will 
-        /// start a periodic task that will continue updating the state at the same interval.
         /// </summary>
         /// <returns></returns>
         public Task WaitToBecomeActive();
