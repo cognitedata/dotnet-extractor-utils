@@ -12,5 +12,3 @@ docfx_project/api/.manifest
 **/buildoutput/
 
 *.runsettings
-
-/config.yml
