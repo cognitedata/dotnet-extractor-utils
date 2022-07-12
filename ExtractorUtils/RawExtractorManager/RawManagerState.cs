@@ -5,15 +5,15 @@ namespace Cognite.Extractor.Utils
 {
     internal class RawExtractorInstance : IExtractorInstance
     {
-        public int Key { get; set; }
+        public int Index { get; set; }
         public DateTime TimeStamp { get; set; }
         public bool Active { get; set; }
         internal RawExtractorInstance(
-            int key,
+            int index,
             DateTime timeStamp,
             bool active)
         {
-            Key = key;
+            Index = index;
             TimeStamp = timeStamp;
             Active = active;
         }

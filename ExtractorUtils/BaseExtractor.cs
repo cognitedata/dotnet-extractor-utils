@@ -143,7 +143,11 @@ namespace Cognite.Extractor.Utils
                 }
             }
         }
-        ///
+        /// <summary>
+        /// Method called to add high availability to an extractor.
+        /// </summary>
+        /// <param name="config">Configuration object</param>
+        /// <returns></returns>
         public async Task AddHighAvailability(RawManagerConfig config)
         {
             IExtractorManager extractorManager = new RawExtractorManager(

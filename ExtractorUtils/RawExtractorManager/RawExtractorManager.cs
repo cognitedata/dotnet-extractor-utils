@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
 {
-    ///
+    /// <summary>
+    /// Implementation of an ExtractorManager in Raw
+    /// </summary>
     public class RawExtractorManager : IExtractorManager
     {
         private readonly RawManagerConfig _config;
@@ -25,16 +27,29 @@ namespace Cognite.Extractor.Utils
 
         internal readonly ExtractorState _state;
 
-        ///
+        /// <summary>
+        /// The time interval the state should be updated at
+        /// </summary>
         public TimeSpan Interval { get; set; } = new TimeSpan(0, 0, 5);
 
-        ///
+        /// <summary>
+        /// The time offset between each extracor used in the CronTimeSpanWrapper
+        /// </summary>
         public TimeSpan Offset { get; set; } = new TimeSpan(0, 0, 3);
 
-        ///
+        /// <summary>
+        /// The minimum time threshold for an extractor to be considered unresponsive
+        /// </summary>
         public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0, 0, 15);
 
-        ///
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="config">Configuration object</param>
+        /// <param name="destination">Cognite destination</param>
+        /// <param name="logger">Logger</param>
+        /// <param name="scheduler">Scheduler</param>
+        /// <param name="source">CancellationToken source</param>
         public RawExtractorManager(
             RawManagerConfig config,
             CogniteDestination destination,
@@ -53,7 +68,14 @@ namespace Cognite.Extractor.Utils
             SetCronWrapperRawValue();
         }
 
-        ///
+        /// <summary>
+        /// Method used to add high availability to an extractor.
+        /// Will update the extractor state at an interval and check whether the
+        /// given extractor should become active.
+        /// If the given extractor becomes active it will start a periodic task that will
+        /// continue updating the state at the same interval.
+        /// </summary>
+        /// <returns></returns>
         public async Task WaitToBecomeActive()
         {
             bool firstRun = true;
@@ -89,7 +111,7 @@ namespace Cognite.Extractor.Utils
                 if (timeSinceActive < InactivityThreshold.TotalSeconds)
                 {
                     if (extractor.Active) activeExtractorResponsive = true;
-                    else responsiveStandbyExtractors.Add(extractor.Key);
+                    else responsiveStandbyExtractors.Add(extractor.Index);
                 }
             }
 
@@ -105,6 +127,7 @@ namespace Cognite.Extractor.Utils
                 }
             }
 
+            _logger.LogTrace("Waiting to become active.");
             return false;
         }
 
@@ -137,7 +160,7 @@ namespace Cognite.Extractor.Utils
             try
             {
                 await _destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(_config.DatabaseName, _config.TableName, rows, ensureParent: true).ConfigureAwait(false);
-                _logger.LogTrace("Log has been uploaded to state.");
+                _logger.LogTrace("State has been updated.");
             }
             catch (Exception ex)
             {
@@ -151,8 +174,8 @@ namespace Cognite.Extractor.Utils
             {
                 ItemsWithCursor<RawRow<RawLogData>> rows = await _destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(_config.DatabaseName, _config.TableName).ConfigureAwait(false);
 
-                List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
                 List<int> keys = new List<int>();
+                List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
                 foreach (RawRow<RawLogData> extractor in rows.Items)
                 {
                     int key = Int16.Parse(extractor.Key);
@@ -168,7 +191,7 @@ namespace Cognite.Extractor.Utils
                     foreach (RawExtractorInstance extractor in _state.CurrentState)
                     {
                         //Adding the missing row from the current state
-                        if (!keys.Contains(extractor.Key))
+                        if (!keys.Contains(extractor.Index))
                         {
                             extractorInstances.Add(extractor);
                         }
@@ -190,7 +213,7 @@ namespace Cognite.Extractor.Utils
             foreach (RawExtractorInstance extractor in _state.CurrentState)
             {
                 double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
-                if (extractor.Active && timeSinceActive < InactivityThreshold.TotalSeconds) activeExtractors.Add(extractor.Key);
+                if (extractor.Active && timeSinceActive < InactivityThreshold.TotalSeconds) activeExtractors.Add(extractor.Index);
             }
 
             if (activeExtractors.Count > 1)
