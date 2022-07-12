@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Cognite.Extractor.Utils
 {
     /// <summary>
-    /// Implementation of an ExtractorManager in Raw
+    /// Implementation of an ExtractorManager with Raw
     /// </summary>
     public class RawExtractorManager : IExtractorManager
     {
@@ -71,9 +71,8 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Method used to add high availability to an extractor.
         /// Will update the extractor state at an interval and check whether the
-        /// given extractor should become active.
-        /// If the given extractor becomes active it will start a periodic task that will
-        /// continue updating the state at the same interval.
+        /// given extractor should become active. If the given extractor becomes active it will 
+        /// start a periodic task that will continue updating the state at the same interval.
         /// </summary>
         /// <returns></returns>
         public async Task WaitToBecomeActive()
@@ -220,7 +219,7 @@ namespace Cognite.Extractor.Utils
             {
                 activeExtractors.Sort();
 
-                //Turning off extractor if it does not have the highest priority
+                //Turning off extractor if there are multiple active and it does not have the highest priority
                 if (activeExtractors[0] != _config.Index)
                 {
                     _logger.LogInformation("Turning off extractor.");

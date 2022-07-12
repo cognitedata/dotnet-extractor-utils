@@ -135,7 +135,7 @@ namespace ExtractorUtils.Test.Unit
                 //Checking that each value in the state is the same as in the local dict
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    string key = instance.Key.ToString();
+                    string key = instance.Index.ToString();
                     if (rows.ContainsKey(key))
                     {
                         Assert.True(rows[key].Active == instance.Active);
@@ -152,7 +152,7 @@ namespace ExtractorUtils.Test.Unit
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    if (instance.Key == Int16.Parse(testKey))
+                    if (instance.Index == Int16.Parse(testKey))
                     {
                         //Checking that the valus has been changed for the given extractor
                         Assert.True(rows[testKey.ToString()].Active == instance.Active);
@@ -174,7 +174,7 @@ namespace ExtractorUtils.Test.Unit
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    if (instance.Key == Int16.Parse(testKey))
+                    if (instance.Index == Int16.Parse(testKey))
                     {
                         //Checking that the previous value from the state is reused
                         Assert.True(logCopy.Active == instance.Active);
@@ -192,7 +192,7 @@ namespace ExtractorUtils.Test.Unit
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    if (instance.Key == Int16.Parse(testKey))
+                    if (instance.Index == Int16.Parse(testKey))
                     {
                         //Checking that the previous value from the state is reused
                         Assert.True(rows[testKey].Active == instance.Active);
@@ -210,7 +210,7 @@ namespace ExtractorUtils.Test.Unit
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
-                    if (instance.Key == Int16.Parse(testKey))
+                    if (instance.Index == Int16.Parse(testKey))
                     {
                         //Checking that if the method fails the current state will remain unchanged
                         Assert.False(rows[testKey].Active == instance.Active);
