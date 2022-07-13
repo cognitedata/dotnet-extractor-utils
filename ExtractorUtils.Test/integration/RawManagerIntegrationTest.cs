@@ -76,50 +76,70 @@ namespace ExtractorUtils.Test.Integration
         {
             _output = output;
         }
-        [Fact(Timeout = 30000)]
+        [Fact(Timeout = 40000)]
         public async void TestExtractorManagerRun()
         {
-            int index = 0;
-            string path = "test-extractor-manager-config";
+            string configPath_0 = SetupConfig(index: 0);
+            string configPath_1 = SetupConfig(index: 1);
+
+            using var source_0 = new CancellationTokenSource();
+            using var source_1 = new CancellationTokenSource();
+
+            Task extractor_0 = CreateExtractor(configPath_0, source_0.Token);
+            Task extractor_1 = CreateExtractor(configPath_1, source_1.Token);
+
+            Task cancel_0 = TurnOffAfterDelay(15000, source_0);
+            Task cancel_1 = TurnOffAfterDelay(35000, source_1);
+
+            await Task.WhenAll(extractor_0, extractor_1, cancel_0);
+
+            System.IO.File.Delete(configPath_0);
+            System.IO.File.Delete(configPath_1);
+
+        }
+
+        private string SetupConfig(int index)
+        {
             var config = CDFTester.GetConfig(CogniteHost.BlueField);
 
-
+            string path = $"test-extractor-manager-{index}-config";
             string[] lines = {
                     "manager:",
-                    $"  index: {index}",
-                    $"  database-name: {_dbName}",
-                    $"  table-name: {_tableName}"};
+                   $"  index: {index}",
+                    "  database-name: ${BF_TEST_DB}",
+                    "  table-name: ${BF_TEST_TABLE}"};
 
-            foreach (string line in lines)
-            {
-                config = config.Append(line).ToArray();
-            }
-
-            foreach (string line in config)
-            {
-
-                Console.WriteLine(line);
-            }
-
+            foreach (string line in lines) config = config.Append(line).ToArray();
             System.IO.File.WriteAllLines(path, config);
 
-            using var source = new CancellationTokenSource();
+            return path;
+        }
 
+        private Task CreateExtractor(string configPath, CancellationToken token)
+        {
+            Task extractor = Task.Run(async () =>
+                await ExtractorRunner.Run<MyManagerConfig, MyExtractor>(
+                configPath,
+                null,
+                "test-extractor-manager",
+                null,
+                false,
+                true,
+                false,
+                false,
+                token).ConfigureAwait(false));
+            return extractor;
+        }
 
+        private Task TurnOffAfterDelay(int delay, CancellationTokenSource source)
+        {
+            Task cancel = Task.Run(async () =>
+            {
+                await Task.Delay(delay);
+                source.Cancel();
+            });
 
-            await ExtractorRunner.Run<MyManagerConfig, MyExtractor>(
-                configPath: path,
-                acceptedConfigVersions: new[] { 2 },
-                appId: "my-extractor",
-                userAgent: "myextractor/1.0.0",
-                addStateStore: false,
-                addLogger: true,
-                addMetrics: true,
-                restart: true,
-                source.Token).ConfigureAwait(false);
-
-            System.IO.File.Delete(path);
-
+            return cancel;
         }
     }
 }
