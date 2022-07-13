@@ -14,6 +14,9 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public class BaseConfig : VersionedConfig
     {
+        /// <summary>
+        /// Type of configuration this represents, local or remote. Will generally always be local.
+        /// </summary>
         public ConfigurationMode Type { get; set; } = ConfigurationMode.Local;
         /// <summary>
         /// Logging configuration (optional)

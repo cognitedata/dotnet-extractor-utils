@@ -245,7 +245,8 @@ namespace Cognite.Extractor.Utils
                 ConfigurationException? exception = null;
                 try
                 {
-                    if (options.AllowRemoteConfig)
+                    bool usesRemoteConfig = false;
+                    if (options.AllowRemoteConfig && options.Config == null)
                     {
                         options.Config = await services.AddRemoteConfig<TConfig>(
                             options.StartupLogger,
@@ -258,6 +259,7 @@ namespace Cognite.Extractor.Utils
                             options.RemoteConfig,
                             token,
                             options.AcceptedConfigVersions).ConfigureAwait(false);
+                        usesRemoteConfig = true;
                     }
 
 
@@ -273,7 +275,7 @@ namespace Cognite.Extractor.Utils
                         options.Config,
                         options.BuildLogger,
                         options.ConfigTypes,
-                        options.AllowRemoteConfig);
+                        doNotAddConfig: usesRemoteConfig);
                     options.ConfigCallback?.Invoke(options.Config, options, services);
                 }
                 catch (TargetInvocationException ex)
