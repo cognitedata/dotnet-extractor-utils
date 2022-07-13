@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
 
-//cKC8Q~tNVQTkw30EETbfslglCd65~NM~LJ-MTbGq
-
 class MyConfig : BaseConfig
 {
     public RawManagerConfig Manager { get; set; }
@@ -70,7 +68,7 @@ class Program
         {
             // This can also be invoked directly in main, to not have a CLI.
             await ExtractorRunner.Run<MyConfig, MyExtractor>(
-                configPath: opt.ConfigPath ?? "../config.yml",
+                configPath: opt.ConfigPath ?? "config.yml",
                 acceptedConfigVersions: new[] { 1 },
                 appId: "my-extractor",
                 userAgent: "myextractor/1.0.0",
