@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
 
+//cKC8Q~tNVQTkw30EETbfslglCd65~NM~LJ-MTbGq
+
 class MyConfig : BaseConfig
 {
     public RawManagerConfig Manager { get; set; }
