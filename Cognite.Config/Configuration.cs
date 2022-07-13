@@ -153,26 +153,30 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         /// <param name="tag">Tag to be mapped</param>
         /// <typeparam name="T">Type to map to</typeparam>
-        public static void AddTagMapping<T>(string tag) {
+        public static void AddTagMapping<T>(string tag)
+        {
             builder = builder.WithTagMapping(tag, typeof(T));
             deserializer = builder.Build();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code", Justification = "Other methods using this can still pass null as parameter")]
-        private static void CheckVersion(int version, params int[]? acceptedConfigVersions) {
+        private static void CheckVersion(int version, params int[]? acceptedConfigVersions)
+        {
             if (acceptedConfigVersions == null || acceptedConfigVersions.Length == 0)
             {
                 return;
             }
             var accept = new List<int>(acceptedConfigVersions);
-            if (!accept.Contains(version)) {
+            if (!accept.Contains(version))
+            {
                 throw new ConfigurationException($"Config version {version} is not supported by this extractor");
             }
         }
 
         private static int GetVersion(Dictionary<object, object> versionedConfig)
         {
-            if (versionedConfig.TryGetValue("version", out dynamic version)) {
+            if (versionedConfig.TryGetValue("version", out dynamic version))
+            {
                 if (int.TryParse(version, out int intVersion))
                 {
                     return intVersion;
