@@ -69,35 +69,75 @@ namespace ExtractorUtils.Test.Integration
     public class RawManagerIntegrationTest
     {
         private readonly ITestOutputHelper _output;
-
-        private const string _dbName = "testDb";
-        private const string _tableName = "testTable";
         public RawManagerIntegrationTest(ITestOutputHelper output)
         {
             _output = output;
         }
-        [Fact(Timeout = 40000)]
+        [Fact(Timeout = 55000)]
         public async void TestExtractorManagerRun()
+        {
+            string configPath_0 = SetupConfig(index: 0);
+            string configPath_1 = SetupConfig(index: 1);
+            string configPath_2 = SetupConfig(index: 2);
+
+            using var source_0 = new CancellationTokenSource();
+            using var source_1 = new CancellationTokenSource();
+            using var source_2 = new CancellationTokenSource();
+
+            Task extractor_0 = CreateExtractor(configPath_0, source_0.Token);
+            Task extractor_1 = CreateExtractor(configPath_1, source_1.Token);
+            Task extractor_2 = CreateExtractor(configPath_2, source_2.Token);
+
+            Task cancel_0 = TurnOffAfterDelay(15000, source_0);
+            Task cancel_1 = TurnOffAfterDelay(35000, source_1);
+            Task cancel_2 = TurnOffAfterDelay(50000, source_2);
+
+            try
+            {
+                Task tasks = Task.WhenAll(extractor_0, extractor_1, extractor_2, cancel_0, cancel_1, cancel_2);
+                await tasks;
+                Assert.True(tasks.IsCompleted);
+            }
+            finally
+            {
+
+                System.IO.File.Delete(configPath_0);
+                System.IO.File.Delete(configPath_1);
+                System.IO.File.Delete(configPath_2);
+            }
+        }
+
+        [Fact(Timeout = 55000)]
+        public async void TestRestartExtractor()
         {
             string configPath_0 = SetupConfig(index: 0);
             string configPath_1 = SetupConfig(index: 1);
 
             using var source_0 = new CancellationTokenSource();
             using var source_1 = new CancellationTokenSource();
+            using var source_2 = new CancellationTokenSource();
 
             Task extractor_0 = CreateExtractor(configPath_0, source_0.Token);
             Task extractor_1 = CreateExtractor(configPath_1, source_1.Token);
+            Task restart_0 = CreateExtractor(configPath_0, source_2.Token, delay: 25000);
 
             Task cancel_0 = TurnOffAfterDelay(15000, source_0);
-            Task cancel_1 = TurnOffAfterDelay(35000, source_1);
+            Task cancel_1 = TurnOffAfterDelay(30000, source_1);
+            Task cancel_2 = TurnOffAfterDelay(50000, source_2);
 
-            await Task.WhenAll(extractor_0, extractor_1, cancel_0);
+            try
+            {
+                Task tasks = Task.WhenAll(extractor_0, extractor_1, cancel_0, cancel_1, cancel_2, restart_0);
+                await tasks;
 
-            System.IO.File.Delete(configPath_0);
-            System.IO.File.Delete(configPath_1);
-
+                Assert.True(tasks.IsCompleted);
+            }
+            finally
+            {
+                System.IO.File.Delete(configPath_0);
+                System.IO.File.Delete(configPath_1);
+            }
         }
-
         private string SetupConfig(int index)
         {
             var config = CDFTester.GetConfig(CogniteHost.BlueField);
@@ -115,8 +155,10 @@ namespace ExtractorUtils.Test.Integration
             return path;
         }
 
-        private Task CreateExtractor(string configPath, CancellationToken token)
+        private async Task<Task> CreateExtractor(string configPath, CancellationToken token, int delay = 0)
         {
+            if (delay > 0) await Task.Delay(delay);
+
             Task extractor = Task.Run(async () =>
                 await ExtractorRunner.Run<MyManagerConfig, MyExtractor>(
                 configPath,
@@ -128,6 +170,7 @@ namespace ExtractorUtils.Test.Integration
                 false,
                 false,
                 token).ConfigureAwait(false));
+
             return extractor;
         }
 
