@@ -40,7 +40,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// The minimum time threshold for an extractor to be considered unresponsive
         /// </summary>
-        public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0, 0, 15);
+        public TimeSpan InactivityThreshold { get; set; } = new TimeSpan(0, 0, 10);
 
         /// <summary>
         /// Constructor
