@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Cognite.Extractor.Common
 {
     /// <summary>
-    /// Interface for an ExtractorManager
+    /// Interface for an ExtractorManager.
     /// </summary>
     public interface IExtractorManager
     {
@@ -17,45 +17,45 @@ namespace Cognite.Extractor.Common
     }
 
     /// <summary>
-    /// Interface for the instance of an extractor
+    /// Interface for the instance of an extractor.
     /// </summary>
     public interface IExtractorInstance
     {
         /// <summary>
-        /// The index of an extractor.
+        /// The index of the extractor.
         /// </summary>
         public int Index { get; set; }
 
         /// <summary>
-        /// The time when the extractor was last updated
+        /// The time when the extractor was last updated.
         /// </summary>
         public DateTime TimeStamp { get; set; }
 
         /// <summary>
-        /// Whether the extractor is marked as being active
+        /// The active status of the extractor.
         /// </summary>
         public bool Active { get; set; }
     }
 
     /// <summary>
-    /// Class used to store the state of the extractors
+    /// Class used to store the state of the extractors.
     /// </summary>
     public class ExtractorState
     {
         /// <summary>
-        /// State of all the current extractors
+        /// State of all the current extractors.
         /// </summary>
         public List<IExtractorInstance> CurrentState { get; set; }
 
         /// <summary>
-        /// The last status of the given extractor
+        /// Value used by the extractor to update its own active status.
         /// </summary>
         public bool UpdatedStatus { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="initialStatus">The initial active status of the extractor</param>
+        /// <param name="initialStatus">The initial active status of the extractor.</param>
         public ExtractorState(bool initialStatus = false)
         {
             CurrentState = new List<IExtractorInstance>();

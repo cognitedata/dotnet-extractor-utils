@@ -8,11 +8,6 @@ using System.Collections.Generic;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
 
-class MyConfig : BaseConfig
-{
-    public RawManagerConfig Manager { get; set; }
-}
-
 class MyExtractor : BaseExtractor<MyConfig>
 {
     public MyExtractor(MyConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
@@ -43,6 +38,10 @@ class MyExtractor : BaseExtractor<MyConfig>
             return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new[] { dp });
         });
     }
+}
+class MyConfig : BaseConfig
+{
+    public RawManagerConfig Manager { get; set; }
 }
 
 // Class for flat command line arguments

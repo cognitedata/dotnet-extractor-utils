@@ -81,6 +81,7 @@ namespace Cognite.Extractor.Utils
             while (!_source.IsCancellationRequested)
             {
                 await Task.Delay(_cronWrapper.Value).ConfigureAwait(false);
+
                 await UpdateState().ConfigureAwait(false);
 
                 if (firstRun)
@@ -109,6 +110,7 @@ namespace Cognite.Extractor.Utils
                 double timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp).TotalSeconds;
                 if (timeSinceActive < InactivityThreshold.TotalSeconds)
                 {
+                    //An extractor is considered active if it is marked as active and it has been responsive within the inactivty threshold
                     if (extractor.Active) activeExtractorResponsive = true;
                     else responsiveStandbyExtractors.Add(extractor.Index);
                 }

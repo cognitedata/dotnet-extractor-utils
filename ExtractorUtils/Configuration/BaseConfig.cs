@@ -311,22 +311,22 @@ namespace Cognite.Extractor.Utils
     }
 
     /// <summary>
-    /// Config for a RawManager
+    /// Config for a RawExtractorManager.
     /// </summary>
     public class RawManagerConfig
     {
         /// <summary>
-        /// Index of the extractor
+        /// The index of the extractor.
         /// </summary>
         public int Index { get; set; }
 
         /// <summary>
-        /// Name of the database
+        /// Name of the shared state database.
         /// </summary>
         public string? DatabaseName { get; set; }
 
         /// <summary>
-        /// Name of the table
+        /// Name of the shared state table.
         /// </summary>
         public string? TableName { get; set; }
     }
