@@ -147,17 +147,27 @@ namespace Cognite.Extractor.Utils
         /// Method called to add high availability to an extractor.
         /// </summary>
         /// <param name="config">Configuration object</param>
+        /// <param name="interval">Optional update state interval.</param>
+        /// <param name="inactivityThreshold">Optional threshold for extractor being inactive.</param>
         /// <returns></returns>
-        public async Task AddHighAvailability(RawManagerConfig config)
+        public async Task AddHighAvailability(
+            RawManagerConfig config,
+            TimeSpan? interval = null,
+            TimeSpan? inactivityThreshold = null)
         {
-            IExtractorManager extractorManager = new RawExtractorManager(
-                config,
-                Provider.GetRequiredService<CogniteDestination>(),
-                Provider.GetRequiredService<ILogger<RawExtractorManager>>(),
-                Scheduler,
-                Source);
+            if (config != null)
+            {
+                IExtractorManager extractorManager = new RawExtractorManager(
+                    config,
+                    Provider.GetRequiredService<CogniteDestination>(),
+                    Provider.GetRequiredService<ILogger<RawExtractorManager>>(),
+                    Scheduler,
+                    Source,
+                    interval,
+                    inactivityThreshold);
 
-            await extractorManager.WaitToBecomeActive().ConfigureAwait(false);
+                await extractorManager.WaitToBecomeActive().ConfigureAwait(false);
+            }
         }
 
         /// <summary>

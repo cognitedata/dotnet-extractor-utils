@@ -43,7 +43,7 @@ namespace Cognite.Extractor.Common
     public class ExtractorState
     {
         /// <summary>
-        /// State of all the current extractors.
+        /// State of the current extractors.
         /// </summary>
         public List<IExtractorInstance> CurrentState { get; set; }
 
