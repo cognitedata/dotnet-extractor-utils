@@ -1,5 +1,3 @@
-
-
 using Cognite.Extractor.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System;

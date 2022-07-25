@@ -42,7 +42,7 @@ namespace ExtractorUtils.Test.Integration
             TableName = $"{_prefix}-test-table";
             CreateEventQueue(10, TimeSpan.FromSeconds(1), null);
             CreateTimeseriesQueue(10, TimeSpan.FromSeconds(1), null);
-            CreateRawQueue<TestRawItem>(DBName, TableName,
+            CreateRawQueue<TestRawItem>(DBName, TableName, 
                 10, TimeSpan.FromSeconds(1), null);
 
             TSId = $"{_prefix}-test-db";
@@ -87,7 +87,7 @@ namespace ExtractorUtils.Test.Integration
             ScheduleDatapointsRun("datapoints", TimeSpan.FromMilliseconds(100), token =>
             {
                 var dp = (Identity.Create(TSId), new Datapoint(DateTime.UtcNow, Math.Sin(DateTime.UtcNow.Ticks)));
-                return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new[] { dp });
+                return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new [] { dp });
             });
         }
 
@@ -235,7 +235,7 @@ namespace ExtractorUtils.Test.Integration
 
                 Assert.True(eventsOk && timeseriesOk && rawOk, $"{eventsOk}, {rawOk}, {timeseriesOk}");
 
-
+               
             }
             finally
             {
@@ -245,7 +245,7 @@ namespace ExtractorUtils.Test.Integration
                 System.IO.File.Delete(configPath);
                 Assert.True(task.IsCompleted);
             }
-
+            
         }
 
         [Theory]
