@@ -2,21 +2,19 @@ using Cognite.Extensions;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
-
-
 namespace ExtractorUtils.Test.Integration
 {
-    class MyExtractor : BaseExtractor<MyManagerConfig>
+    class MyExtractor : BaseExtractor<MyTestConfig>
     {
-        public MyExtractor(MyManagerConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
+        public MyExtractor(MyTestConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
             : base(config, provider, destination, run)
         {
             if (run != null) run.Continuous = true;
@@ -24,7 +22,11 @@ namespace ExtractorUtils.Test.Integration
 
         protected override async Task Start()
         {
-            await AddHighAvailability(Config.Manager, interval: new TimeSpan(0, 0, 2), inactivityThreshold: new TimeSpan(0, 0, 5)).ConfigureAwait(false);
+            await AddHighAvailability(
+                Config.Manager,
+                interval: new TimeSpan(0, 0, 2),
+                inactivityThreshold: new TimeSpan(0, 0, 4))
+                .ConfigureAwait(false);
 
             var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
             {
@@ -46,7 +48,7 @@ namespace ExtractorUtils.Test.Integration
         }
     }
 
-    class MyManagerConfig : BaseConfig
+    class MyTestConfig : BaseConfig
     {
         public RawManagerConfig Manager { get; set; }
     }
@@ -54,39 +56,39 @@ namespace ExtractorUtils.Test.Integration
     public class RawManagerIntegrationTest
     {
         private readonly ITestOutputHelper _output;
+
         private readonly string _dbName = "test-db-integration";
+
         private readonly string _tableName = "test-table-integration";
+
         public RawManagerIntegrationTest(ITestOutputHelper output)
         {
             _output = output;
         }
-        [Fact(Timeout = 55000)]
+
+        [Fact(Timeout = 30000)]
         public async void TestExtractorManagerRun()
         {
-            // Creating configs for three different extractors
+            // Creating configs for two different extractors.
             string configPath_0 = SetupConfig(index: 0);
             string configPath_1 = SetupConfig(index: 1);
-            string configPath_2 = SetupConfig(index: 2);
 
             using var source_0 = new CancellationTokenSource();
             using var source_1 = new CancellationTokenSource();
-            using var source_2 = new CancellationTokenSource();
 
-            //Creating three extractors
+            // Creating two extractors.
             Task extractor_0 = CreateExtractor(configPath_0, source_0.Token);
             Task extractor_1 = CreateExtractor(configPath_1, source_1.Token);
-            Task extractor_2 = CreateExtractor(configPath_2, source_2.Token);
 
-            // Turning off extractor 0 after 15s, 1 after 35s and 2 after 50s
+            // Turning off extractor 0 after 15s and 1 after 25s.
             Task cancel_0 = TurnOffAfterDelay(15000, source_0);
-            Task cancel_1 = TurnOffAfterDelay(35000, source_1);
-            Task cancel_2 = TurnOffAfterDelay(50000, source_2);
+            Task cancel_1 = TurnOffAfterDelay(25000, source_1);
 
             try
             {
-                // Testing running all three extractors at the same, then turning them off one by one
-                // When each extractor is turned off the standby extractor with highest priority will start
-                Task tasks = Task.WhenAll(extractor_0, extractor_1, extractor_2, cancel_0, cancel_1, cancel_2);
+                // Testing running two extractors at the same, then turning them off one by one.
+                // When the first extractor is turned off the second extractor will become active.
+                Task tasks = Task.WhenAll(extractor_0, extractor_1, cancel_0, cancel_1);
                 await tasks;
                 Assert.True(tasks.IsCompleted);
             }
@@ -96,14 +98,13 @@ namespace ExtractorUtils.Test.Integration
 
                 System.IO.File.Delete(configPath_0);
                 System.IO.File.Delete(configPath_1);
-                System.IO.File.Delete(configPath_2);
             }
         }
 
-        [Fact(Timeout = 55000)]
+        [Fact(Timeout = 45000)]
         public async void TestRestartExtractor()
         {
-            // Creating config for two extractors
+            // Creating config for two extractors.
             string configPath_0 = SetupConfig(index: 0);
             string configPath_1 = SetupConfig(index: 1);
 
@@ -111,22 +112,23 @@ namespace ExtractorUtils.Test.Integration
             using var source_1 = new CancellationTokenSource();
             using var source_2 = new CancellationTokenSource();
 
-            // Creating extractor 0 and 1
+            // Creating extractor 0 and 1.
             Task extractor_0 = CreateExtractor(configPath_0, source_0.Token);
             Task extractor_1 = CreateExtractor(configPath_1, source_1.Token);
-            // Creating a copy of extractor 0 that will start after 25s
-            Task restart_0 = CreateExtractor(configPath_0, source_2.Token, delay: 25000);
+            // Creating a copy of extractor 0 that will start after 20s.
+            Task restart_0 = CreateExtractor(configPath_0, source_2.Token, delay: 20000);
 
-            //Turning off extractor 0 after 15s, 1 after 30s and the restarted 0 after 50s
-            Task cancel_0 = TurnOffAfterDelay(15000, source_0);
+            //Turning off extractor 0 after 10s, 1 after 30s and the restarted 0 after 40s.
+            Task cancel_0 = TurnOffAfterDelay(10000, source_0);
             Task cancel_1 = TurnOffAfterDelay(30000, source_1);
-            Task cancel_2 = TurnOffAfterDelay(50000, source_2);
+            Task cancel_2 = TurnOffAfterDelay(40000, source_2);
 
             try
             {
-                // Testing turning off extractor 0 and then restarting it after a delay
-                // When extractor 0 is turned off, extractor 1 will start
-                // Then when extractor 0 is restarted it will go into standby 
+                // Running two extractors.
+                // When extractor 0 is turned off, extractor 1 will start.
+                // Then when extractor 0 is restarted it will go into standby.
+                // Lastly when extractor 1 is turned off, 0 will start again.
                 Task tasks = Task.WhenAll(extractor_0, extractor_1, cancel_0, cancel_1, cancel_2, restart_0);
                 await tasks;
 
@@ -141,25 +143,66 @@ namespace ExtractorUtils.Test.Integration
             }
         }
 
-        private async Task DeleteDatabase(string path)
+        // Testing the same as TestExtractorManagerRun, but with 5 concurrent extractors
+        // and stopping the extractors in a different order.
+        [Fact(Timeout = 55000)]
+        public async void TestManyExtractorsRun()
         {
-            var services = new ServiceCollection();
-            services.AddConfig<MyManagerConfig>(path, 2);
-            services.AddCogniteClient("testApp");
+            string configPath_0 = SetupConfig(index: 0);
+            string configPath_1 = SetupConfig(index: 1);
+            string configPath_2 = SetupConfig(index: 2);
+            string configPath_3 = SetupConfig(index: 3);
+            string configPath_4 = SetupConfig(index: 4);
 
-            using (var provider = services.BuildServiceProvider())
+            using var source_0 = new CancellationTokenSource();
+            using var source_1 = new CancellationTokenSource();
+            using var source_2 = new CancellationTokenSource();
+            using var source_3 = new CancellationTokenSource();
+            using var source_4 = new CancellationTokenSource();
+
+            Task extractor_0 = CreateExtractor(configPath_0, source_0.Token);
+            Task extractor_1 = CreateExtractor(configPath_1, source_1.Token);
+            Task extractor_2 = CreateExtractor(configPath_2, source_2.Token);
+            Task extractor_3 = CreateExtractor(configPath_3, source_3.Token);
+            Task extractor_4 = CreateExtractor(configPath_4, source_4.Token);
+
+            Task cancel_0 = TurnOffAfterDelay(15000, source_1);
+            Task cancel_1 = TurnOffAfterDelay(20000, source_0);
+            Task cancel_2 = TurnOffAfterDelay(30000, source_2);
+            Task cancel_3 = TurnOffAfterDelay(40000, source_4);
+            Task cancel_4 = TurnOffAfterDelay(50000, source_3);
+
+            Task[] runTasks = new Task[]{
+                extractor_0,
+                extractor_1,
+                extractor_2,
+                extractor_3,
+                extractor_4,
+                cancel_0,
+                cancel_1,
+                cancel_2,
+                cancel_3,
+                cancel_4
+            };
+
+            try
             {
-                var destination = provider.GetRequiredService<CogniteDestination>();
-                await destination.CogniteClient.Raw.DeleteDatabasesAsync(new RawDatabaseDelete
-                {
-                    Items = new[]
-                {
-                    new RawDatabase { Name = _dbName}
-                },
-                    Recursive = true
-                });
+                Task tasks = Task.WhenAll(runTasks);
+                await tasks;
+                Assert.True(tasks.IsCompleted);
+            }
+            finally
+            {
+                await DeleteDatabase(configPath_0);
+
+                System.IO.File.Delete(configPath_0);
+                System.IO.File.Delete(configPath_1);
+                System.IO.File.Delete(configPath_2);
+                System.IO.File.Delete(configPath_3);
+                System.IO.File.Delete(configPath_4);
             }
         }
+
         private string SetupConfig(int index)
         {
             var config = CDFTester.GetConfig(CogniteHost.BlueField);
@@ -182,7 +225,7 @@ namespace ExtractorUtils.Test.Integration
             if (delay > 0) await Task.Delay(delay);
 
             Task extractor = Task.Run(async () =>
-                await ExtractorRunner.Run<MyManagerConfig, MyExtractor>(
+                await ExtractorRunner.Run<MyTestConfig, MyExtractor>(
                 configPath,
                 null,
                 "test-extractor-manager",
@@ -205,6 +248,26 @@ namespace ExtractorUtils.Test.Integration
             });
 
             return cancel;
+        }
+
+        private async Task DeleteDatabase(string path)
+        {
+            var services = new ServiceCollection();
+            services.AddConfig<MyTestConfig>(path, 2);
+            services.AddCogniteClient("testApp");
+
+            using (var provider = services.BuildServiceProvider())
+            {
+                var destination = provider.GetRequiredService<CogniteDestination>();
+                await destination.CogniteClient.Raw.DeleteDatabasesAsync(new RawDatabaseDelete
+                {
+                    Items = new[]
+                {
+                    new RawDatabase { Name = _dbName}
+                },
+                    Recursive = true
+                });
+            }
         }
     }
 }

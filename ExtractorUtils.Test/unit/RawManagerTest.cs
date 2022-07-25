@@ -1,37 +1,40 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
-using Cognite.Extractor.Utils;
 using Xunit.Abstractions;
+using Cognite.Extractor.Utils;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 
 namespace ExtractorUtils.Test.Unit
 {
-    class MyConfig : BaseConfig
-    {
-        public RawManagerConfig Manager { get; set; }
-    }
     public class RawManagerTest
     {
         private const string _authTenant = "someTenant";
+
         private const string _project = "someProject";
+
         private const string _apiKey = "someApiKey";
+
         private const string _host = "https://test.cognitedata.com";
+
         private const string _dbName = "testDb";
+
         private const string _tableName = "testTable";
 
         private readonly ITestOutputHelper _output;
+
         private static bool _failInsert = false;
+
         private static bool _failUpdateState = false;
 
         public RawManagerTest(ITestOutputHelper output)
@@ -52,7 +55,7 @@ namespace ExtractorUtils.Test.Unit
 
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object);
-            services.AddConfig<MyConfig>(path, 2);
+            services.AddConfig<MyTestConfig>(path, 2);
             services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
 
@@ -65,36 +68,37 @@ namespace ExtractorUtils.Test.Unit
 
                 await extractorManager.UploadLogToState();
 
-                // Checking that log has been inserted into db
+                // Checking that the initial log has been inserted into db.
                 Assert.True(rows.Count == 1);
                 Assert.True(rows[index.ToString()].Active == false);
                 Assert.True(rows[index.ToString()].TimeStamp < DateTime.UtcNow);
 
-                // Updating the status
+                // Updating the status.
                 DateTime prevTimeStamp = rows[index.ToString()].TimeStamp;
                 extractorManager._state.UpdatedStatus = true;
 
                 await extractorManager.UploadLogToState();
 
-                // Testing that the status has been changed
+                // Testing that the status has been changed.
                 Assert.True(rows.Count == 1);
                 Assert.True(rows[index.ToString()].Active == true);
                 Assert.True(rows[index.ToString()].TimeStamp > prevTimeStamp);
 
-                // Testing making the endpoint return an error
+                // Testing making the endpoint return an error.
                 _failInsert = true;
                 prevTimeStamp = rows[index.ToString()].TimeStamp;
                 extractorManager._state.UpdatedStatus = false;
 
                 await extractorManager.UploadLogToState();
 
-                // Checking that the db remains unchanged after the error
+                // Checking that the db remains unchanged after the error.
                 Assert.True(rows[index.ToString()].Active == true);
                 Assert.True(rows[index.ToString()].TimeStamp == prevTimeStamp);
             }
 
             System.IO.File.Delete(path);
         }
+
         [Fact]
         public async Task TestUpdateExtractorState()
         {
@@ -108,7 +112,7 @@ namespace ExtractorUtils.Test.Unit
 
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(mockFactory.Object);
-            services.AddConfig<MyConfig>(path, 2);
+            services.AddConfig<MyTestConfig>(path, 2);
             services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
 
@@ -128,10 +132,10 @@ namespace ExtractorUtils.Test.Unit
 
                 await extractorManager.UpdateExtractorState();
 
-                //Testing that the state has changed 
+                // Testing that the state has changed.
                 Assert.True(extractorManager._state.CurrentState.Count == 4);
 
-                //Checking that each value in the state is the same as in the db
+                // Checking that each value in the state is the same as in the db.
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
                     string key = instance.Index.ToString();
@@ -142,7 +146,7 @@ namespace ExtractorUtils.Test.Unit
                     }
                 }
 
-                //Testing updating the active status and timestamp for a given extractor
+                // Testing updating the active status and timestamp for a given extractor.
                 string testKey = "1";
                 rows[testKey] = new RawLogData(DateTime.UtcNow, true);
 
@@ -152,36 +156,36 @@ namespace ExtractorUtils.Test.Unit
                 {
                     if (instance.Index == Int16.Parse(testKey))
                     {
-                        //Checking that the valus has been changed for the given extractor
+                        // Checking that the valus has been changed for the given extractor.
                         Assert.True(rows[testKey].Active == instance.Active);
                         Assert.True(rows[testKey].TimeStamp == instance.TimeStamp);
                     }
                 }
 
-                // Testing removing an extractor after it has been initialized
+                // Testing removing an extractor after it has been initialized.
                 // If an extractor has been initialized but then returns an empty
-                // row in the state it will use the last seen log
+                // row in the state it will use the last seen log.
                 testKey = "2";
                 RawLogData logCopy = rows[testKey];
                 rows.Remove(testKey);
 
                 await extractorManager.UpdateExtractorState();
 
-                // Checking that the state still has all the ros
+                // Checking that the state still has all the rows.
                 Assert.True(extractorManager._state.CurrentState.Count == 4);
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
                 {
                     if (instance.Index == Int16.Parse(testKey))
                     {
-                        //Checking that the previous value from the state is reused
+                        // Checking that the previous value from the state is reused.
                         Assert.True(logCopy.Active == instance.Active);
                         Assert.True(logCopy.TimeStamp == instance.TimeStamp);
 
                     }
                 }
 
-                //Inserting the removed extractor back and checking that the new value is used again
+                // Inserting the removed extractor back and checking that the new value is used again.
                 rows[testKey] = new RawLogData(DateTime.UtcNow, false);
 
                 await extractorManager.UpdateExtractorState();
@@ -190,14 +194,14 @@ namespace ExtractorUtils.Test.Unit
                 {
                     if (instance.Index == Int16.Parse(testKey))
                     {
-                        //Checking that the removed value has been replaced
+                        // Checking that the removed value has been replaced.
                         Assert.True(rows[testKey].Active == instance.Active);
                         Assert.True(rows[testKey].TimeStamp == instance.TimeStamp);
 
                     }
                 }
 
-                // Testing making the endpoint return an error
+                // Testing making the endpoint return an error.
                 _failUpdateState = true;
                 testKey = "3";
                 rows[testKey] = new RawLogData(DateTime.UtcNow, !rows[testKey].Active);
@@ -208,7 +212,7 @@ namespace ExtractorUtils.Test.Unit
                 {
                     if (instance.Index == Int16.Parse(testKey))
                     {
-                        //Checking that if the endpoint fails the current state will remain unchanged
+                        // Checking that if the endpoint fails the current state will remain unchanged.
                         Assert.False(rows[testKey].Active == instance.Active);
                         Assert.False(rows[testKey].TimeStamp == instance.TimeStamp);
                     }
@@ -217,6 +221,7 @@ namespace ExtractorUtils.Test.Unit
 
             System.IO.File.Delete(path);
         }
+
         [Fact]
         public void TestCheckForMultipleActiveExtractors()
         {
@@ -225,7 +230,7 @@ namespace ExtractorUtils.Test.Unit
             SetupConfig(index, path);
 
             var services = new ServiceCollection();
-            services.AddConfig<MyConfig>(path, 2);
+            services.AddConfig<MyTestConfig>(path, 2);
             services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
 
@@ -243,7 +248,8 @@ namespace ExtractorUtils.Test.Unit
 
                 extractorManager._state.CurrentState = extractorInstances;
                 extractorManager.CheckForMultipleActiveExtractors();
-                // Extractor 1 will be cancelled because both 0 and 1 are active, where 0 has higher priority
+
+                // Extractor 1 will be cancelled because both 0 and 1 are active, where 0 has higher priority.
                 Assert.True(source1.IsCancellationRequested);
 
                 var source2 = new CancellationTokenSource();
@@ -257,7 +263,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorManager._state.CurrentState = extractorInstances;
                 extractorManager.CheckForMultipleActiveExtractors();
 
-                // Extractor 1 will not be cancelled because it is not active
+                // Extractor 1 will not be cancelled because it is not active.
                 Assert.False(source2.IsCancellationRequested);
 
                 var source3 = new CancellationTokenSource();
@@ -271,7 +277,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorManager._state.CurrentState = extractorInstances;
                 extractorManager.CheckForMultipleActiveExtractors();
 
-                // Extractor 1 will be cancelled because there are multiple active extractors and 0 has higher priorty
+                // Extractor 1 will be cancelled because there are multiple active extractors and 0 has higher priority.
                 Assert.True(source3.IsCancellationRequested);
 
                 var source4 = new CancellationTokenSource();
@@ -285,12 +291,13 @@ namespace ExtractorUtils.Test.Unit
                 extractorManager._state.CurrentState = extractorInstances;
                 extractorManager.CheckForMultipleActiveExtractors();
 
-                // Extractor 1 will not be cancelled because it has higher priority than 2 and 3
+                // Extractor 1 will not be cancelled because it has higher priority than 2 and 3.
                 Assert.False(source4.IsCancellationRequested);
             }
 
             System.IO.File.Delete(path);
         }
+
         [Fact]
         public void TestShouldBecomeActive()
         {
@@ -299,7 +306,7 @@ namespace ExtractorUtils.Test.Unit
             SetupConfig(index, path);
 
             var services = new ServiceCollection();
-            services.AddConfig<MyConfig>(path, 2);
+            services.AddConfig<MyTestConfig>(path, 2);
             services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
 
@@ -315,7 +322,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
                 extractorManager._state.CurrentState = extractorInstances;
 
-                //Extractor 1 will become active because 2 and 3 are not within the time threshold
+                // Extractor 1 will become active because 2 and 3 are not within the time threshold.
                 Assert.True(extractorManager.ShouldBecomeActive());
 
                 extractorInstances.Clear();
@@ -324,7 +331,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
                 extractorManager._state.CurrentState = extractorInstances;
 
-                //Extractor 1 will not become active because 2 is already active and within the time threshold
+                // Extractor 1 will not become active because 2 is already active and within the time threshold.
                 Assert.False(extractorManager.ShouldBecomeActive());
 
                 extractorInstances.Clear();
@@ -333,7 +340,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), true));
                 extractorManager._state.CurrentState = extractorInstances;
 
-                //Extractor 1 will become active because 2 and 3 are over the time threshold
+                // Extractor 1 will become active because 2 and 3 are over the time threshold.
                 Assert.True(extractorManager.ShouldBecomeActive());
 
                 extractorInstances.Clear();
@@ -342,13 +349,13 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), true));
                 extractorManager._state.CurrentState = extractorInstances;
 
-                //Extractor 1 will not become active because 0 has higher priority
+                // Extractor 1 will not become active because 0 has higher priority.
                 Assert.False(extractorManager.ShouldBecomeActive());
 
                 extractorInstances.Clear();
                 extractorManager._state.CurrentState = extractorInstances;
 
-                //Extractor 1 will not become active because the state is empty
+                // Extractor 1 will not become active because the state is empty.
                 Assert.False(extractorManager.ShouldBecomeActive());
             }
 
@@ -380,8 +387,9 @@ namespace ExtractorUtils.Test.Unit
             var logger = provider.GetRequiredService<ILogger<RawExtractorManager>>();
             if (source == null) source = new CancellationTokenSource();
             var scheduler = new PeriodicScheduler(source.Token);
+            var inactivityThreshold = new TimeSpan(0, 0, 10);
 
-            RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source);
+            RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source, inactivityThreshold: inactivityThreshold);
 
             return extractorManager;
         }
@@ -391,6 +399,7 @@ namespace ExtractorUtils.Test.Unit
             public string key { get; set; }
             public RawLogData columns { get; set; }
         }
+
         private class RawItems
         {
             public List<RawItem> items { get; set; }
@@ -471,9 +480,14 @@ namespace ExtractorUtils.Test.Unit
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             response.Headers.Add("x-request-id", "1");
 
-            await Task.Delay(100);
+            await Task.Delay(200);
 
             return response;
         }
+    }
+
+    class MyTestConfig : BaseConfig
+    {
+        public RawManagerConfig Manager { get; set; }
     }
 }
