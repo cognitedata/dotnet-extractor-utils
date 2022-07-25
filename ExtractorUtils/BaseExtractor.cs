@@ -143,6 +143,7 @@ namespace Cognite.Extractor.Utils
                 }
             }
         }
+        
         /// <summary>
         /// Method called to add high availability to an extractor.
         /// </summary>

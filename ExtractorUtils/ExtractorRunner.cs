@@ -235,7 +235,7 @@ namespace Cognite.Extractor.Utils
                         options.UserAgent,
                         options.AddStateStore,
                         options.AddLogger,
-                        options.AddMetrics,
+                        options.AddMetrics, 
                         options.RequireDestination,
                         options.Config,
                         options.BuildLogger,
