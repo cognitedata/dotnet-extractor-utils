@@ -11,10 +11,7 @@ namespace Cognite.Extractor.Utils
 
         public bool Active { get; set; }
 
-        internal RawExtractorInstance(
-            int index,
-            DateTime timeStamp,
-            bool active)
+        internal RawExtractorInstance(int index, DateTime timeStamp, bool active)
         {
             Index = index;
             TimeStamp = timeStamp;

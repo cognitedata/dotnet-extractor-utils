@@ -168,6 +168,10 @@ namespace Cognite.Extractor.Utils
 
                 await extractorManager.WaitToBecomeActive().ConfigureAwait(false);
             }
+            else
+            {
+                _logger.LogWarning("Add manager config to add high availability.");
+            }
         }
 
         /// <summary>

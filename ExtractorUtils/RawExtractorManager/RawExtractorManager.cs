@@ -20,9 +20,9 @@ namespace Cognite.Extractor.Utils
 
         private readonly ILogger<RawExtractorManager> _logger;
 
-        private readonly CancellationTokenSource _source;
-
         private readonly PeriodicScheduler _scheduler;
+
+        private readonly CancellationTokenSource _source;
 
         private readonly CronTimeSpanWrapper _cronWrapper;
 
@@ -32,7 +32,7 @@ namespace Cognite.Extractor.Utils
 
         private readonly TimeSpan _interval = new TimeSpan(0, 0, 45);
 
-        private readonly TimeSpan _inactivityThreshold = new TimeSpan(0, 0, 60);
+        private readonly TimeSpan _inactivityThreshold = new TimeSpan(0, 0, 100);
 
         /// <summary>
         /// Constructor.
@@ -56,8 +56,8 @@ namespace Cognite.Extractor.Utils
             _config = config;
             _destination = destination;
             _logger = logger;
-            _source = source;
             _scheduler = scheduler;
+            _source = source;
             _cronWrapper = new CronTimeSpanWrapper(true, true, "s", "1");
             _state = new ExtractorState();
 
@@ -68,9 +68,9 @@ namespace Cognite.Extractor.Utils
 
         /// <summary>
         /// Method used to add high availability to an extractor.
-        /// Will update the extractor state at an interval and check whether the
-        /// given extractor should become active. If the given extractor becomes active it will 
-        /// start a periodic task that will continue updating the state at the same interval.
+        /// Will update the extractor state at an interval and check whether it
+        /// should become active. If the extractor becomes active it will 
+        /// start a periodic task that will continue updating the state.
         /// </summary>
         /// <returns></returns>
         public async Task WaitToBecomeActive()
@@ -78,7 +78,7 @@ namespace Cognite.Extractor.Utils
             bool firstRun = true;
             while (!_source.IsCancellationRequested)
             {
-                await Task.Delay(_cronWrapper.Value).ConfigureAwait(false);
+                await Task.Delay(_cronWrapper.Value, _source.Token).ConfigureAwait(false);
 
                 await UpdateState().ConfigureAwait(false);
 
@@ -100,7 +100,7 @@ namespace Cognite.Extractor.Utils
 
         internal bool ShouldBecomeActive()
         {
-            //Checking if there is currently an active extractor
+            // Checking if there is currently an active extractor.
             var responsiveStandbyExtractors = new List<int>();
             bool activeExtractorResponsive = false;
             foreach (RawExtractorInstance extractor in _state.CurrentState)
@@ -108,13 +108,13 @@ namespace Cognite.Extractor.Utils
                 TimeSpan timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp);
                 if (timeSinceActive < _inactivityThreshold)
                 {
-                    //An extractor is considered active if it is marked as active and it has been responsive within the inactivty threshold
+                    // An extractor is considered active if it is marked as active and it has been responsive within the inactivty threshold.
                     if (extractor.Active) activeExtractorResponsive = true;
                     else responsiveStandbyExtractors.Add(extractor.Index);
                 }
             }
 
-            //If there are no active extractors, start the standby extractor with highest priority
+            // If there are no active extractors, start the standby extractor with highest priority.
             if (!activeExtractorResponsive && responsiveStandbyExtractors.Count > 0)
             {
                 if (responsiveStandbyExtractors.Min() == _config.Index)
@@ -141,6 +141,7 @@ namespace Cognite.Extractor.Utils
             });
         }
 
+        // Uploading log to state, updating local state and checking for multiple active extractors.
         internal async Task UpdateState()
         {
             await UploadLogToState().ConfigureAwait(false);
@@ -173,6 +174,7 @@ namespace Cognite.Extractor.Utils
             {
                 var rows = await _destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(_config.DatabaseName, _config.TableName).ConfigureAwait(false);
 
+                // Converting Raw data to ExtractorInstance object.
                 var keys = new List<int>();
                 var extractorInstances = new List<IExtractorInstance>();
                 foreach (var extractor in rows.Items)
@@ -184,16 +186,17 @@ namespace Cognite.Extractor.Utils
                     extractorInstances.Add(instance);
                 }
 
-                //Checking if a row is missing from the Raw database
+                // Checking if a row is missing from the Raw database.
                 if (extractorInstances.Count < _state.CurrentState.Count)
                 {
                     foreach (RawExtractorInstance extractor in _state.CurrentState)
                     {
-                        //Adding the missing row from the current state
+                        // Adding the missing row from the current state.
                         if (!keys.Contains(extractor.Index)) extractorInstances.Add(extractor);
                     }
                 }
 
+                // Updating state.
                 _state.CurrentState = extractorInstances;
             }
             catch (Exception ex)
@@ -204,15 +207,15 @@ namespace Cognite.Extractor.Utils
 
         internal void CheckForMultipleActiveExtractors()
         {
-            //Creating a list of all the active extractors
+            // Creating a list of all the active extractors.
             var activeExtractors = new List<int>();
             foreach (RawExtractorInstance extractor in _state.CurrentState)
             {
                 TimeSpan timeSinceActive = DateTime.UtcNow.Subtract(extractor.TimeStamp);
-                if (extractor.Active && timeSinceActive < _inactivityThreshold) activeExtractors.Add(extractor.Index);
+                if (extractor.Active && (timeSinceActive < _inactivityThreshold)) activeExtractors.Add(extractor.Index);
             }
 
-            //Turning off extractor if there are multiple active and it does not have the highest priority
+            // Turning off extractor if there are multiple active and it does not have the highest priority.
             if ((activeExtractors.Count > 1) && (activeExtractors.Min() != _config.Index))
             {
                 _logger.LogInformation("Turning off extractor.");
@@ -220,7 +223,7 @@ namespace Cognite.Extractor.Utils
             }
         }
 
-        internal void SetCronWrapperRawValue()
+        private void SetCronWrapperRawValue()
         {
             int offset = (int)_offset.TotalSeconds * _config.Index;
             int interval = (int)_interval.TotalSeconds;
