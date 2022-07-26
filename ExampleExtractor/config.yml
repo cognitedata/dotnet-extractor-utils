@@ -12,7 +12,7 @@ cognite:
     scopes:
       - ${BF_TEST_SCOPE}
 manager:
-  index: 1
+  index: 0
   database-name: ${BF_TEST_DB}
   table-name: ${BF_TEST_TABLE}
   

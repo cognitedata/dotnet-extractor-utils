@@ -70,6 +70,7 @@ namespace Cognite.Extractor.Common
         private readonly ManualResetEvent _newTaskEvent = new ManualResetEvent(false);
         private readonly object _taskListMutex = new object();
         private readonly Task _internalLoopTask;
+        private readonly int _limit = 15;
 
         /// <summary>
         /// Number of currently active tasks
@@ -98,7 +99,7 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        /// <param name="dynamic">Whether the interval is dynamic or not</param>
+        /// <param name="dynamic">Whether the interval is dynamic or not, e.g. cron expression</param>
         public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
             Func<CancellationToken, Task> operation, bool runImmediately = true, bool dynamic = false)
         {
@@ -169,7 +170,7 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        /// <param name="dynamic">Whether the interval is dynamic or not</param>
+        /// <param name="dynamic">Whether the interval is dynamic or not, e.g. cron expression</param>
         public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
             Action<CancellationToken> operation, bool runImmediately = true, bool dynamic = false)
         {
@@ -373,9 +374,9 @@ namespace Cognite.Extractor.Common
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var interval = task.Interval.Value;
-                if (dynamic && interval.TotalMilliseconds < 15) 
+                if (dynamic && interval.TotalMilliseconds < _limit) 
                 {
-                    await Task.Delay(15).ConfigureAwait(false);
+                    await Task.Delay(_limit, _source.Token).ConfigureAwait(false);
                     continue;
                 }
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : interval;

@@ -130,15 +130,11 @@ namespace Cognite.Extractor.Utils
 
         internal void UpdateStateAtInterval()
         {
-            _scheduler.ScheduleTask("Updating state", async (token) =>
-            {
-                while (!_source.IsCancellationRequested)
-                {
-                    await Task.Delay(_cronWrapper.Value, token).ConfigureAwait(false);
-
-                    await UpdateState().ConfigureAwait(false);
-                }
-            });
+            _scheduler.SchedulePeriodicTask(
+                "Updating state", 
+                _cronWrapper, 
+                async (token) => await UpdateState().ConfigureAwait(false),
+                dynamic: true);
         }
 
         // Uploading log to state, updating local state and checking for multiple active extractors.
