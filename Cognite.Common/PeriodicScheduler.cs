@@ -98,8 +98,9 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
+        /// <param name="dynamic">Whether the interval is dynamic or not</param>
         public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
-            Func<CancellationToken, Task> operation, bool runImmediately = true)
+            Func<CancellationToken, Task> operation, bool runImmediately = true, bool dynamic = false)
         {
             lock (_taskListMutex)
             {
@@ -107,7 +108,7 @@ namespace Cognite.Extractor.Common
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, interval, name);
                 _tasks[name] = task;
-                task.Task = RunPeriodicTaskAsync(task, runImmediately);
+                task.Task = RunPeriodicTaskAsync(task, runImmediately, dynamic);
                 _newTaskEvent.Set();
             }
         }
@@ -168,10 +169,11 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
+        /// <param name="dynamic">Whether the interval is dynamic or not</param>
         public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
-            Action<CancellationToken> operation, bool runImmediately = true)
+            Action<CancellationToken> operation, bool runImmediately = true, bool dynamic = false)
         {
-            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
+            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately, dynamic);
         }
 
         /// <summary>
@@ -365,17 +367,23 @@ namespace Cognite.Extractor.Common
             }
         }
 
-        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately)
+        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately, bool dynamic)
         {
             bool shouldRunNow = runImmediately;
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var interval = task.Interval.Value;
+                if (dynamic && interval.TotalMilliseconds < 15) 
+                {
+                    await Task.Delay(15).ConfigureAwait(false);
+                    continue;
+                }
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : interval;
                 var waitTask = CommonUtils.WaitAsync(task.Event, interval, _source.Token).ConfigureAwait(false);
+                if (dynamic) await waitTask;
                 if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
+                if (!dynamic) await waitTask;
                 shouldRunNow = true;
-                await waitTask;
                 task.Event.Reset();
             }
         }
