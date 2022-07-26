@@ -1,7 +1,7 @@
 version: 1
 logger:
   console:
-    level: information
+    level: verbose
 cognite:
   project: ${BF_TEST_PROJECT}
   host: ${BF_TEST_HOST}

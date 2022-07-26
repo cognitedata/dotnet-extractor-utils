@@ -115,9 +115,6 @@ namespace Cognite.Extractor.Utils
         {
             Init(token);
             await TestConfig().ConfigureAwait(false);
-
-            TestPeriodicScheduler();
-            
             try
             {
                 await Start().ConfigureAwait(false);
@@ -146,27 +143,6 @@ namespace Cognite.Extractor.Utils
                 }
             }
         }
-    ///
-    public void TestPeriodicScheduler()
-    {
-        var cronWrapper = new CronTimeSpanWrapper(true, true, "s", "1");
-        int offset = 3;
-        int interval = 5;
-        cronWrapper.RawValue = $"{offset}/{interval} * * * * *";
-
-
-        Scheduler.SchedulePeriodicTask("Test tasks", cronWrapper, async (token) => {
-            _logger.LogInformation("Running");
-            await Task.Delay(200);
-        }, dynamic: true);
-
-        /*
-        Scheduler.SchedulePeriodicTask("Test tasks", new TimeSpan(0,0,10), async (token) => {
-            Console.WriteLine(cronWrapper.Value);
-            Console.WriteLine("test");
-        });
-        */
-    }
 
         /// <summary>
         /// Internal method starting the extractor. Should handle any creation of timeseries,
