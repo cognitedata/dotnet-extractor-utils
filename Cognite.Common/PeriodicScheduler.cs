@@ -375,7 +375,6 @@ namespace Cognite.Extractor.Common
                 var interval = task.Interval.Value;
                 if (dynamic && interval.TotalMilliseconds < 15) 
                 {
-                    Console.WriteLine(interval.TotalMilliseconds);
                     await Task.Delay(15).ConfigureAwait(false);
                     continue;
                 }
