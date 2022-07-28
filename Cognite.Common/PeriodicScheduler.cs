@@ -70,7 +70,7 @@ namespace Cognite.Extractor.Common
         private readonly ManualResetEvent _newTaskEvent = new ManualResetEvent(false);
         private readonly object _taskListMutex = new object();
         private readonly Task _internalLoopTask;
-        private readonly int _limit = 15;
+        private readonly TimeSpan _minimumInterval = new TimeSpan(0, 0, 0, 0, 15);
 
         /// <summary>
         /// Number of currently active tasks
@@ -374,9 +374,9 @@ namespace Cognite.Extractor.Common
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var interval = task.Interval.Value;
-                if (dynamic && interval.TotalMilliseconds < _limit) 
+                if (dynamic && interval < _minimumInterval) 
                 {
-                    await Task.Delay(_limit, _source.Token).ConfigureAwait(false);
+                    await Task.Delay(_minimumInterval, _source.Token).ConfigureAwait(false);
                     continue;
                 }
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : interval;
