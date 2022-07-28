@@ -211,7 +211,7 @@ namespace Cognite.Extractor.Utils
             }
 
             // Turning off extractor if there are multiple active and it does not have the highest priority.
-            if ((activeExtractors.Count > 1) && (activeExtractors.Min() != _config.Index))
+            if ((activeExtractors.Count > 1) && activeExtractors.Contains(_config.Index) && (activeExtractors.Min() != _config.Index))
             {
                 _logger.LogInformation("Turning off extractor.");
                 _source.Cancel();
