@@ -28,9 +28,9 @@ namespace Cognite.Extractor.Utils
 
         internal readonly ExtractorState _state;
 
-        private readonly TimeSpan _offset = new TimeSpan(0, 0, 3);
+        private readonly TimeSpan? _interval;
 
-        private readonly TimeSpan _interval = new TimeSpan(0, 0, 45);
+        private readonly TimeSpan _offset = new TimeSpan(0, 0, 3);
 
         private readonly TimeSpan _inactivityThreshold = new TimeSpan(0, 0, 100);
 
@@ -60,8 +60,7 @@ namespace Cognite.Extractor.Utils
             _source = source;
             _cronWrapper = new CronTimeSpanWrapper(true, true, "s", "1");
             _state = new ExtractorState();
-
-            if (interval != null) _interval = (TimeSpan)interval;
+            _interval = interval;
             if (inactivityThreshold != null) _inactivityThreshold = (TimeSpan)inactivityThreshold;
             SetCronWrapperRawValue();
         }
@@ -222,8 +221,17 @@ namespace Cognite.Extractor.Utils
         private void SetCronWrapperRawValue()
         {
             int offset = (int)_offset.TotalSeconds * _config.Index;
-            int interval = (int)_interval.TotalSeconds;
-            _cronWrapper.RawValue = $"{offset}/{interval} * * * * *";
+
+            if (_interval != null)
+            {
+                var interval = (TimeSpan)_interval;
+                int value = (int)interval.TotalSeconds;
+                _cronWrapper.RawValue = $"{offset}/{value} * * * * *";
+            }
+            else
+            {
+                _cronWrapper.RawValue = $"{offset} * * * * *";
+            }
         }
     }
 }
