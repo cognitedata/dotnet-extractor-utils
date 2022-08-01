@@ -17,6 +17,11 @@ namespace Cognite.Extractor.Common
         /// Next timespan value.
         /// </summary>
         TimeSpan Value { get; }
+
+        /// <summary>
+        /// Whether the interval is dynamic or not, e.g. cron expression
+        /// </summary>
+        bool IsDynamic { get; }
     }
 
     /// <summary>
@@ -26,6 +31,9 @@ namespace Cognite.Extractor.Common
     {
         /// <inheritdoc />
         public TimeSpan Value { get; }
+
+        /// <inheritdoc />
+        public bool IsDynamic => false;
 
         /// <summary>
         /// Constructor
@@ -367,6 +375,7 @@ namespace Cognite.Extractor.Common
         private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately)
         {
             bool shouldRunNow = runImmediately;
+            if (task.Interval.IsDynamic) shouldRunNow = false;
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var interval = task.Interval.Value;
