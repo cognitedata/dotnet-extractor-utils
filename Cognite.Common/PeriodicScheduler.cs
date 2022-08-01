@@ -18,6 +18,11 @@ namespace Cognite.Extractor.Common
         /// Next timespan value.
         /// </summary>
         TimeSpan Value { get; }
+
+        /// <summary>
+        /// Whether the interval is dynamic or not, e.g. cron expression
+        /// </summary>
+        bool IsDynamic { get; set; }
     }
 
     /// <summary>
@@ -28,6 +33,9 @@ namespace Cognite.Extractor.Common
         /// <inheritdoc />
         public TimeSpan Value { get; }
 
+        /// <inheritdoc />
+        public bool IsDynamic { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -35,6 +43,7 @@ namespace Cognite.Extractor.Common
         public BasicTimeSpanProvider(TimeSpan value)
         {
             Value = value;
+            IsDynamic = false;
         }
     }
 
@@ -70,7 +79,6 @@ namespace Cognite.Extractor.Common
         private readonly ManualResetEvent _newTaskEvent = new ManualResetEvent(false);
         private readonly object _taskListMutex = new object();
         private readonly Task _internalLoopTask;
-        private readonly TimeSpan _minimumInterval = new TimeSpan(0, 0, 0, 0, 15);
 
         /// <summary>
         /// Number of currently active tasks
@@ -99,17 +107,18 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        /// <param name="dynamic">Whether the interval is dynamic or not, e.g. cron expression</param>
         public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
-            Func<CancellationToken, Task> operation, bool runImmediately = true, bool dynamic = false)
+            Func<CancellationToken, Task> operation, bool runImmediately = true)
         {
             lock (_taskListMutex)
             {
+                if (interval.IsDynamic) runImmediately = false;
+                Console.WriteLine(name + " " + interval.IsDynamic);
                 if (name == null) name = $"anonymous-periodic{_anonymousCounter++}";
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, interval, name);
                 _tasks[name] = task;
-                task.Task = RunPeriodicTaskAsync(task, runImmediately, dynamic);
+                task.Task = RunPeriodicTaskAsync(task, runImmediately);
                 _newTaskEvent.Set();
             }
         }
@@ -170,11 +179,10 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        /// <param name="dynamic">Whether the interval is dynamic or not, e.g. cron expression</param>
         public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
-            Action<CancellationToken> operation, bool runImmediately = true, bool dynamic = false)
+            Action<CancellationToken> operation, bool runImmediately = true)
         {
-            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately, dynamic);
+            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
         }
 
         /// <summary>
@@ -368,23 +376,17 @@ namespace Cognite.Extractor.Common
             }
         }
 
-        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately, bool dynamic)
+        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately)
         {
             bool shouldRunNow = runImmediately;
             while (!_source.IsCancellationRequested && task.ShouldRun)
             {
                 var interval = task.Interval.Value;
-                if (dynamic && interval < _minimumInterval) 
-                {
-                    await Task.Delay(_minimumInterval, _source.Token).ConfigureAwait(false);
-                    continue;
-                }
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : interval;
                 var waitTask = CommonUtils.WaitAsync(task.Event, interval, _source.Token).ConfigureAwait(false);
-                if (dynamic) await waitTask;
                 if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
-                if (!dynamic) await waitTask;
                 shouldRunNow = true;
+                await waitTask;
                 task.Event.Reset();
             }
         }

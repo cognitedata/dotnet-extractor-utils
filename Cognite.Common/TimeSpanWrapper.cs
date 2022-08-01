@@ -21,6 +21,8 @@ namespace Cognite.Extractor.Common
         private readonly string defaultUnit;
         private readonly TimeSpan defaultValue;
 
+        /// <inheritdoc />
+        public bool IsDynamic { get; set; }
         /// <summary>
         /// Converted value as TimeSpan.
         /// </summary>
@@ -66,6 +68,7 @@ namespace Cognite.Extractor.Common
             RawValue = defaultValue;
             IntRawValue = defaultValue;
             this.defaultValue = Value;
+            IsDynamic = false;
         }
     }
 
@@ -97,6 +100,7 @@ namespace Cognite.Extractor.Common
             : base(allowZero, defaultUnit, defaultValue)
         {
             _includeSeconds = includeSeconds;
+            IsDynamic = true;
         }
 
         /// <summary>
@@ -108,7 +112,7 @@ namespace Cognite.Extractor.Common
             get
             {
                 if (_expression == null) return base.Value;
-                return (_expression.GetNextOccurrence(DateTime.UtcNow, true) - DateTime.UtcNow)
+                return (_expression.GetNextOccurrence(DateTime.UtcNow.AddSeconds(0.5), true) - DateTime.UtcNow)
                     ?? Timeout.InfiniteTimeSpan;
             }
         }
