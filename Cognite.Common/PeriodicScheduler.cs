@@ -22,7 +22,7 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Whether the interval is dynamic or not, e.g. cron expression
         /// </summary>
-        bool IsDynamic { get; set; }
+        bool IsDynamic { get; }
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ namespace Cognite.Extractor.Common
         public TimeSpan Value { get; }
 
         /// <inheritdoc />
-        public bool IsDynamic { get; set; }
+        public bool IsDynamic => false;
 
         /// <summary>
         /// Constructor
@@ -43,7 +43,6 @@ namespace Cognite.Extractor.Common
         public BasicTimeSpanProvider(TimeSpan value)
         {
             Value = value;
-            IsDynamic = false;
         }
     }
 
