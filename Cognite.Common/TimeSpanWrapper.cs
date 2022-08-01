@@ -21,7 +21,9 @@ namespace Cognite.Extractor.Common
         private readonly string defaultUnit;
         private readonly TimeSpan defaultValue;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Whether the interval is dynamic or not, e.g. cron expression
+        /// </summary>
         public bool IsDynamic { get; set; }
         /// <summary>
         /// Converted value as TimeSpan.
