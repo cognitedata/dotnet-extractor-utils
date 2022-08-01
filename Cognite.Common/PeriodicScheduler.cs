@@ -113,7 +113,6 @@ namespace Cognite.Extractor.Common
             lock (_taskListMutex)
             {
                 if (name == null) name = $"anonymous-periodic{_anonymousCounter++}";
-                
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, interval, name);
                 _tasks[name] = task;
