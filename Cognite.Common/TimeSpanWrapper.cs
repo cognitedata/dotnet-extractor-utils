@@ -22,6 +22,10 @@ namespace Cognite.Extractor.Common
         private readonly TimeSpan defaultValue;
 
         /// <summary>
+        /// Whether the interval is dynamic or not, e.g. cron expression
+        /// </summary>
+        public virtual bool IsDynamic => false;
+        /// <summary>
         /// Converted value as TimeSpan.
         /// </summary>
         public virtual TimeSpan Value { get; private set; }
@@ -86,6 +90,11 @@ namespace Cognite.Extractor.Common
         private CronExpression? _expression;
 
         /// <summary>
+        /// Whether the interval is dynamic or not, e.g. cron expression
+        /// </summary>
+        public override bool IsDynamic => _expression != null;
+
+        /// <summary>
         /// Create a new cron expression timespan wrapper. The wrapper is intended to be a singleton, i.e.
         /// it is not recreated if the config is modified.
         /// </summary>
@@ -108,7 +117,7 @@ namespace Cognite.Extractor.Common
             get
             {
                 if (_expression == null) return base.Value;
-                return (_expression.GetNextOccurrence(DateTime.UtcNow, true) - DateTime.UtcNow)
+                return (_expression.GetNextOccurrence(DateTime.UtcNow.AddSeconds(0.5), true) - DateTime.UtcNow)
                     ?? Timeout.InfiniteTimeSpan;
             }
         }
@@ -132,7 +141,5 @@ namespace Cognite.Extractor.Common
                 }
             }
         }
-
-
     }
 }
