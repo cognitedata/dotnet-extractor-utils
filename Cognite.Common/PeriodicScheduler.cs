@@ -112,9 +112,8 @@ namespace Cognite.Extractor.Common
         {
             lock (_taskListMutex)
             {
-                if (interval.IsDynamic) runImmediately = false;
-                Console.WriteLine(name + " " + interval.IsDynamic);
                 if (name == null) name = $"anonymous-periodic{_anonymousCounter++}";
+                if (interval.IsDynamic) runImmediately = false;
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
                 var task = new PeriodicTask(operation, interval, name);
                 _tasks[name] = task;
