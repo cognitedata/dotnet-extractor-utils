@@ -2,8 +2,6 @@ using System;
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using CogniteSdk;
 using Cognite.Extractor.Common;
 using Microsoft.Extensions.Logging;
 

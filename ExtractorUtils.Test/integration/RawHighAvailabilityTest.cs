@@ -53,7 +53,7 @@ namespace ExtractorUtils.Test.Integration
         public HighAvailabilityConfig HighAvailability { get; set; }
     }
 
-    public class RawManagerIntegrationTest
+    public class RawHighAvailabilityTest
     {
         private readonly ITestOutputHelper _output;
 
@@ -61,7 +61,7 @@ namespace ExtractorUtils.Test.Integration
 
         private readonly string _tableName = "test-table-integration";
 
-        public RawManagerIntegrationTest(ITestOutputHelper output)
+        public RawHighAvailabilityTest(ITestOutputHelper output)
         {
             _output = output;
         }
