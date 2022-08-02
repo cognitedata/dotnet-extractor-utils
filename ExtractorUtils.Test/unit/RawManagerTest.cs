@@ -64,7 +64,7 @@ namespace ExtractorUtils.Test.Unit
                 var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
                 rows.Clear();
 
-                RawExtractorManager extractorManager = CreateRawExtractorManager(provider);
+                var extractorManager = CreateRawExtractorManager(provider);
 
                 await extractorManager.UploadLogToState();
 
@@ -120,7 +120,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
 
-                RawExtractorManager extractorManager = CreateRawExtractorManager(provider);
+                var extractorManager = CreateRawExtractorManager(provider);
 
                 rows.Clear();
                 rows.Add("0", new RawLogData(DateTime.UtcNow, true));
@@ -239,7 +239,7 @@ namespace ExtractorUtils.Test.Unit
                 var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
 
                 var source1 = new CancellationTokenSource();
-                RawExtractorManager extractorManager = CreateRawExtractorManager(provider, source1);
+                var extractorManager = CreateRawExtractorManager(provider, source1);
 
                 List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
                 extractorInstances.Add(new RawExtractorInstance(0, DateTime.UtcNow, true));
@@ -314,7 +314,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
 
-                RawExtractorManager extractorManager = CreateRawExtractorManager(provider);
+                var extractorManager = CreateRawExtractorManager(provider);
 
                 List<IExtractorInstance> extractorInstances = new List<IExtractorInstance>();
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
@@ -373,23 +373,24 @@ namespace ExtractorUtils.Test.Unit
                     $"  project: {_project}",
                     $"  api-key: {_apiKey}",
                     $"  host: {_host}",
-                    "manager:",
+                    "high-availability:",
                     $"  index: {index}",
-                    $"  database-name: {_dbName}",
-                    $"  table-name: {_tableName}"};
+                    $"  raw:",
+                    $"    database-name: {_dbName}",
+                    $"    table-name: {_tableName}"};
             System.IO.File.WriteAllLines(path, config);
         }
 
-        private RawExtractorManager CreateRawExtractorManager(ServiceProvider provider, CancellationTokenSource source = null)
+        private RawHighAvailabilityManager CreateRawExtractorManager(ServiceProvider provider, CancellationTokenSource source = null)
         {
-            var managerConfig = provider.GetRequiredService<RawManagerConfig>();
+            var managerConfig = provider.GetRequiredService<HighAvailabilityConfig>();
             var destination = provider.GetRequiredService<CogniteDestination>();
-            var logger = provider.GetRequiredService<ILogger<RawExtractorManager>>();
+            var logger = provider.GetRequiredService<ILogger<RawHighAvailabilityManager>>();
             if (source == null) source = new CancellationTokenSource();
             var scheduler = new PeriodicScheduler(source.Token);
             var inactivityThreshold = new TimeSpan(0, 0, 10);
 
-            RawExtractorManager extractorManager = new RawExtractorManager(managerConfig, destination, logger, scheduler, source, inactivityThreshold: inactivityThreshold);
+            RawHighAvailabilityManager extractorManager = new RawHighAvailabilityManager(managerConfig, destination, logger, scheduler, source, inactivityThreshold: inactivityThreshold);
 
             return extractorManager;
         }
@@ -488,6 +489,6 @@ namespace ExtractorUtils.Test.Unit
 
     class MyTestConfig : BaseConfig
     {
-        public RawManagerConfig Manager { get; set; }
+        public HighAvailabilityConfig HighAvailability { get; set; }
     }
 }

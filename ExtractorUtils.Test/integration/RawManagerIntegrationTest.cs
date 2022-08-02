@@ -22,8 +22,8 @@ namespace ExtractorUtils.Test.Integration
 
         protected override async Task Start()
         {
-            await AddHighAvailability(
-                Config.Manager,
+            await RunWithHighAvailabilityAndWait(
+                Config.HighAvailability,
                 interval: new TimeSpan(0, 0, 2),
                 inactivityThreshold: new TimeSpan(0, 0, 4))
                 .ConfigureAwait(false);
@@ -50,7 +50,7 @@ namespace ExtractorUtils.Test.Integration
 
     class MyTestConfig : BaseConfig
     {
-        public RawManagerConfig Manager { get; set; }
+        public HighAvailabilityConfig HighAvailability { get; set; }
     }
 
     public class RawManagerIntegrationTest
@@ -143,74 +143,15 @@ namespace ExtractorUtils.Test.Integration
             }
         }
 
-        // Testing the same as TestExtractorManagerRun, but with 5 concurrent extractors
-        // and stopping the extractors in a different order.
-        [Fact(Timeout = 55000)]
-        public async void TestManyExtractorsRun()
-        {
-            string configPath_0 = SetupConfig(index: 0);
-            string configPath_1 = SetupConfig(index: 1);
-            string configPath_2 = SetupConfig(index: 2);
-            string configPath_3 = SetupConfig(index: 3);
-            string configPath_4 = SetupConfig(index: 4);
-
-            using var source_0 = new CancellationTokenSource();
-            using var source_1 = new CancellationTokenSource();
-            using var source_2 = new CancellationTokenSource();
-            using var source_3 = new CancellationTokenSource();
-            using var source_4 = new CancellationTokenSource();
-
-            Task extractor_0 = CreateExtractor(configPath_0, source_0.Token);
-            Task extractor_1 = CreateExtractor(configPath_1, source_1.Token);
-            Task extractor_2 = CreateExtractor(configPath_2, source_2.Token);
-            Task extractor_3 = CreateExtractor(configPath_3, source_3.Token);
-            Task extractor_4 = CreateExtractor(configPath_4, source_4.Token);
-
-            Task cancel_0 = TurnOffAfterDelay(15000, source_1);
-            Task cancel_1 = TurnOffAfterDelay(20000, source_0);
-            Task cancel_2 = TurnOffAfterDelay(30000, source_2);
-            Task cancel_3 = TurnOffAfterDelay(40000, source_4);
-            Task cancel_4 = TurnOffAfterDelay(50000, source_3);
-
-            Task[] runTasks = new Task[]{
-                extractor_0,
-                extractor_1,
-                extractor_2,
-                extractor_3,
-                extractor_4,
-                cancel_0,
-                cancel_1,
-                cancel_2,
-                cancel_3,
-                cancel_4
-            };
-
-            try
-            {
-                Task tasks = Task.WhenAll(runTasks);
-                await tasks;
-                Assert.True(tasks.IsCompleted);
-            }
-            finally
-            {
-                await DeleteDatabase(configPath_0);
-
-                System.IO.File.Delete(configPath_0);
-                System.IO.File.Delete(configPath_1);
-                System.IO.File.Delete(configPath_2);
-                System.IO.File.Delete(configPath_3);
-                System.IO.File.Delete(configPath_4);
-            }
-        }
-
         private string SetupConfig(int index)
         {
             var config = CDFTester.GetConfig(CogniteHost.BlueField);
             string[] lines = {
-                        "manager:",
+                        "high-availability:",
                         $"  index: {index}",
-                        $"  database-name: {_dbName}",
-                        $"  table-name: {_tableName}"};
+                        $"  raw:",
+                        $"    database-name: {_dbName}",
+                        $"    table-name: {_tableName}"};
 
             foreach (string line in lines) config = config.Append(line).ToArray();
 

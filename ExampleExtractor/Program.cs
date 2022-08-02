@@ -19,7 +19,7 @@ class MyExtractor : BaseExtractor<MyConfig>
     protected override async Task Start()
     {
         // Adding high availability to the extractor.
-        await AddHighAvailability(Config.Manager).ConfigureAwait(false);
+        await RunWithHighAvailabilityAndWait(Config.HighAvailability, new TimeSpan(0,0,10), new TimeSpan(0,0,15)).ConfigureAwait(false);
 
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
@@ -40,9 +40,10 @@ class MyExtractor : BaseExtractor<MyConfig>
         });
     }
 }
+
 class MyConfig : BaseConfig
 {
-    public RawManagerConfig Manager { get; set; }
+    public HighAvailabilityConfig HighAvailability { get; set; }
 }
 
 // Class for flat command line arguments

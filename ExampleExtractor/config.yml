@@ -1,7 +1,7 @@
 version: 1
 logger:
   console:
-    level: verbose
+    level: information
 cognite:
   project: ${BF_TEST_PROJECT}
   host: ${BF_TEST_HOST}
@@ -11,8 +11,9 @@ cognite:
     secret: ${BF_TEST_SECRET}
     scopes:
       - ${BF_TEST_SCOPE}
-manager:
+high-availability:
   index: 0
-  database-name: ${BF_TEST_DB}
-  table-name: ${BF_TEST_TABLE}
+  raw:
+    database-name: ${BF_TEST_DB}
+    table-name: ${BF_TEST_TABLE}
   

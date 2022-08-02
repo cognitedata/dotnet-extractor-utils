@@ -151,28 +151,47 @@ namespace Cognite.Extractor.Utils
         /// <param name="interval">Optional update state interval.</param>
         /// <param name="inactivityThreshold">Optional threshold for extractor being inactive.</param>
         /// <returns></returns>
-        public async Task AddHighAvailability(
-            RawManagerConfig config,
+        public async Task RunWithHighAvailabilityAndWait(
+            HighAvailabilityConfig config,
             TimeSpan? interval = null,
             TimeSpan? inactivityThreshold = null)
         {
-            if (config != null)
-            {
-                IExtractorManager extractorManager = new RawExtractorManager(
-                    config,
-                    Provider.GetRequiredService<CogniteDestination>(),
-                    Provider.GetRequiredService<ILogger<RawExtractorManager>>(),
-                    Scheduler,
-                    Source,
-                    interval,
-                    inactivityThreshold);
+            var highAvailabilityManager = CreateHighAvailabilityManager(config, Provider, Scheduler, Source, interval, inactivityThreshold);
 
-                await extractorManager.WaitToBecomeActive().ConfigureAwait(false);
+            if (highAvailabilityManager != null) 
+            {
+                await highAvailabilityManager.WaitToBecomeActive().ConfigureAwait(false);
             }
             else
             {
                 _logger.LogWarning("Add manager config to add high availability.");
             }
+        }
+
+        ///
+        public static IHighAvailabilityManager? CreateHighAvailabilityManager(
+            HighAvailabilityConfig config,
+            IServiceProvider provider,
+            PeriodicScheduler scheduler,
+            CancellationTokenSource source,
+            TimeSpan? interval = null,
+            TimeSpan? inactivityThreshold = null)
+        {
+            IHighAvailabilityManager? highAvailabilityManager = null;
+            
+            if (config?.Raw != null)
+            {
+                highAvailabilityManager = new RawHighAvailabilityManager(
+                    config,
+                    provider.GetRequiredService<CogniteDestination>(),
+                    provider.GetRequiredService<ILogger<RawHighAvailabilityManager>>(),
+                    scheduler,
+                    source,
+                    interval,
+                    inactivityThreshold);
+            }
+
+            return highAvailabilityManager;
         }
 
         /// <summary>

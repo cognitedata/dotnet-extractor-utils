@@ -5,15 +5,15 @@ using System.Collections.Generic;
 namespace Cognite.Extractor.Common
 {
     /// <summary>
-    /// Interface for an ExtractorManager.
+    /// Interface for a manager used to add high availability.
     /// </summary>
-    public interface IExtractorManager
+    public interface IHighAvailabilityManager
     {
         /// <summary>
         /// Method used to add high availability to an extractor.
         /// </summary>
         /// <returns></returns>
-        public Task WaitToBecomeActive();
+        Task WaitToBecomeActive();
     }
 
     /// <summary>
@@ -24,17 +24,17 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// The index of the extractor.
         /// </summary>
-        public int Index { get; set; }
+        int Index { get; set; }
 
         /// <summary>
         /// The time when the extractor was last updated.
         /// </summary>
-        public DateTime TimeStamp { get; set; }
+        DateTime TimeStamp { get; set; }
 
         /// <summary>
         /// The active status of the extractor.
         /// </summary>
-        public bool Active { get; set; }
+        bool Active { get; set; }
     }
 
     /// <summary>

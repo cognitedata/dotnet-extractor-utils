@@ -311,15 +311,26 @@ namespace Cognite.Extractor.Utils
     }
 
     /// <summary>
-    /// Config for a RawExtractorManager.
+    /// Config for adding high availability.
     /// </summary>
-    public class RawManagerConfig
+    public class HighAvailabilityConfig
     {
         /// <summary>
         /// The index of the extractor.
         /// </summary>
         public int Index { get; set; }
-
+        
+        /// <summary>
+        /// Config for adding high availability using Raw.
+        /// </summary>
+        public RawConfig? Raw { get; set; }
+    }
+        
+    /// <summary>
+    /// Config required for high availability using Raw.
+    /// </summary>
+    public class RawConfig
+    {
         /// <summary>
         /// Name of the shared state database.
         /// </summary>
