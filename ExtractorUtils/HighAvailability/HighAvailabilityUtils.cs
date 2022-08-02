@@ -23,7 +23,7 @@ namespace Cognite.Extractor.Utils
                 highAvailabilityManager = new RawHighAvailabilityManager(
                     config,
                     provider.GetRequiredService<CogniteDestination>(),
-                    provider.GetRequiredService<ILogger<RawHighAvailabilityManager>>(),
+                    provider.GetRequiredService<ILogger<HighAvailabilityManager>>(),
                     scheduler,
                     source,
                     interval,
