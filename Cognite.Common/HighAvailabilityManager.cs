@@ -64,32 +64,4 @@ namespace Cognite.Extractor.Common
             UpdatedStatus = initialStatus;
         }
     }
-
-    static class HighAvailabilityUtils
-    {
-        public static IHighAvailabilityManager? CreateHighAvailabilityManager(
-            HighAvailabilityConfig config,
-            IServiceProvider provider,
-            PeriodicScheduler scheduler,
-            CancellationTokenSource source,
-            TimeSpan? interval = null,
-            TimeSpan? inactivityThreshold = null)
-        {
-            IHighAvailabilityManager? highAvailabilityManager = null;
-            
-            if (config?.Raw != null)
-            {
-                highAvailabilityManager = new RawHighAvailabilityManager(
-                    config,
-                    provider.GetRequiredService<CogniteDestination>(),
-                    provider.GetRequiredService<ILogger<RawHighAvailabilityManager>>(),
-                    scheduler,
-                    source,
-                    interval,
-                    inactivityThreshold);
-            }
-
-            return highAvailabilityManager;
-        }
-    }
 }

@@ -4,7 +4,6 @@ using Cognite.Extractor.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace Cognite.Extractor.Utils
 {
     static class HighAvailabilityUtils
