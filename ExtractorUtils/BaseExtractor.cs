@@ -156,7 +156,8 @@ namespace Cognite.Extractor.Utils
             TimeSpan? interval = null,
             TimeSpan? inactivityThreshold = null)
         {
-            var highAvailabilityManager = CreateHighAvailabilityManager(config, Provider, Scheduler, Source, interval, inactivityThreshold);
+            var highAvailabilityManager = HighAvailabilityUtils
+                .CreateHighAvailabilityManager(config, Provider, Scheduler, Source, interval, inactivityThreshold);
 
             if (highAvailabilityManager != null) 
             {
@@ -166,32 +167,6 @@ namespace Cognite.Extractor.Utils
             {
                 _logger.LogWarning("Add manager config to add high availability.");
             }
-        }
-
-        ///
-        public static IHighAvailabilityManager? CreateHighAvailabilityManager(
-            HighAvailabilityConfig config,
-            IServiceProvider provider,
-            PeriodicScheduler scheduler,
-            CancellationTokenSource source,
-            TimeSpan? interval = null,
-            TimeSpan? inactivityThreshold = null)
-        {
-            IHighAvailabilityManager? highAvailabilityManager = null;
-            
-            if (config?.Raw != null)
-            {
-                highAvailabilityManager = new RawHighAvailabilityManager(
-                    config,
-                    provider.GetRequiredService<CogniteDestination>(),
-                    provider.GetRequiredService<ILogger<RawHighAvailabilityManager>>(),
-                    scheduler,
-                    source,
-                    interval,
-                    inactivityThreshold);
-            }
-
-            return highAvailabilityManager;
         }
 
         /// <summary>
