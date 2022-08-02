@@ -17,7 +17,7 @@ using CogniteSdk;
 
 namespace ExtractorUtils.Test.Unit
 {
-    public class RawManagerTest
+    public class RawHighAvailabilityTest
     {
         private const string _authTenant = "someTenant";
 
@@ -37,7 +37,7 @@ namespace ExtractorUtils.Test.Unit
 
         private static bool _failUpdateState = false;
 
-        public RawManagerTest(ITestOutputHelper output)
+        public RawHighAvailabilityTest(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -61,7 +61,7 @@ namespace ExtractorUtils.Test.Unit
 
             using (var provider = services.BuildServiceProvider())
             {
-                var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
+                var logger = provider.GetRequiredService<ILogger<RawHighAvailabilityTest>>();
                 rows.Clear();
 
                 var extractorManager = CreateRawExtractorManager(provider);
@@ -118,7 +118,7 @@ namespace ExtractorUtils.Test.Unit
 
             using (var provider = services.BuildServiceProvider())
             {
-                var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
+                var logger = provider.GetRequiredService<ILogger<RawHighAvailabilityTest>>();
 
                 var extractorManager = CreateRawExtractorManager(provider);
 
@@ -236,7 +236,7 @@ namespace ExtractorUtils.Test.Unit
 
             using (var provider = services.BuildServiceProvider())
             {
-                var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
+                var logger = provider.GetRequiredService<ILogger<RawHighAvailabilityTest>>();
 
                 var source1 = new CancellationTokenSource();
                 var extractorManager = CreateRawExtractorManager(provider, source1);
@@ -312,7 +312,7 @@ namespace ExtractorUtils.Test.Unit
 
             using (var provider = services.BuildServiceProvider())
             {
-                var logger = provider.GetRequiredService<ILogger<RawManagerTest>>();
+                var logger = provider.GetRequiredService<ILogger<RawHighAvailabilityTest>>();
 
                 var extractorManager = CreateRawExtractorManager(provider);
 
