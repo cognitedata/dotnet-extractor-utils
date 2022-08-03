@@ -18,19 +18,17 @@ namespace Cognite.Extractor.Utils
 
         internal readonly ILogger<HighAvailabilityManager> _logger;
 
-        internal readonly PeriodicScheduler _scheduler;
+        private readonly PeriodicScheduler _scheduler;
 
-        internal readonly CancellationTokenSource _source;
-
-        internal readonly CronTimeSpanWrapper _cronWrapper;
+        private readonly CancellationTokenSource _source;
 
         internal readonly ExtractorState _state;
 
-        internal readonly TimeSpan? _interval;
+        private readonly CronTimeSpanWrapper _cronWrapper;
 
-        internal readonly TimeSpan _offset = new TimeSpan(0, 0, 3);
+        private readonly TimeSpan _offset = new TimeSpan(0, 0, 3);
 
-        internal readonly TimeSpan _inactivityThreshold = new TimeSpan(0, 0, 100);
+        private readonly TimeSpan _inactivityThreshold = new TimeSpan(0, 0, 100);
 
         internal HighAvailabilityManager(
             HighAvailabilityConfig config,
@@ -46,11 +44,9 @@ namespace Cognite.Extractor.Utils
             _logger = logger;
             _scheduler = scheduler;
             _source = source;
-            _cronWrapper = new CronTimeSpanWrapper(true, true, "s", "1");
             _state = new ExtractorState();
-            _interval = interval;
+            _cronWrapper = HighAvailabilityUtils.CreateCronWrapper(_config.Index, _offset, interval);
             if (inactivityThreshold != null) _inactivityThreshold = (TimeSpan)inactivityThreshold;
-            SetCronWrapperRawValue();
         }
 
         /// <summary>
@@ -105,10 +101,9 @@ namespace Cognite.Extractor.Utils
                 return true;
             }
 
-            _logger.LogTrace("Waiting to become active.");
+            _logger.LogInformation("Waiting to become active.");
             return false;
         }
-
 
         internal void UpdateStateAtInterval()
         {
@@ -143,23 +138,7 @@ namespace Cognite.Extractor.Utils
         internal abstract Task UploadLogToState();
 
         internal abstract Task UpdateExtractorState();
-        
+
         private bool IsResponsive(DateTime lastActive, DateTime now) => now.Subtract(lastActive) < _inactivityThreshold;
-
-        private void SetCronWrapperRawValue()
-        {
-            int offset = (int)_offset.TotalSeconds * _config.Index;
-
-            if (_interval != null)
-            {
-                var interval = (TimeSpan)_interval;
-                int value = (int)interval.TotalSeconds;
-                _cronWrapper.RawValue = $"{offset}/{value} * * * * *";
-            }
-            else
-            {
-                _cronWrapper.RawValue = $"{offset} * * * * *";
-            }
-        }
     }
 }

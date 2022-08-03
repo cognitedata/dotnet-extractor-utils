@@ -32,5 +32,24 @@ namespace Cognite.Extractor.Utils
 
             return highAvailabilityManager;
         }
+
+        public static CronTimeSpanWrapper CreateCronWrapper(int index, TimeSpan offset, TimeSpan? interval = null)
+        {
+            var cronWrapper = new CronTimeSpanWrapper(true, true, "s", "1");
+            int offsetValue = (int)offset.TotalSeconds * index;
+
+            if (interval != null)
+            {
+                var intervalCast = (TimeSpan)interval;
+                int intervalValue = (int)intervalCast.TotalSeconds;
+                cronWrapper.RawValue = $"{offsetValue}/{intervalValue} * * * * *";
+            }
+            else
+            {
+                cronWrapper.RawValue = $"{offsetValue} * * * * *";
+            }
+
+            return cronWrapper;
+        }
     }
 }
