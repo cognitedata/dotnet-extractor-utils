@@ -89,16 +89,19 @@ namespace Cognite.Extractor.Utils
             // An extractor is considered active if it is marked as active and it has been responsive within the inactivty threshold.
             bool activeExtractor = _state.CurrentState
                 .Any(extractor => extractor.Active && IsResponsive(extractor.TimeStamp, now));
-                
-            var responsiveStandbyExtractors = _state.CurrentState
-                .Where(extractor => !extractor.Active && IsResponsive(extractor.TimeStamp, now))
-                .Select(extractor => extractor.Index);
-                    
-            // If there are no active extractors, start the standby extractor with highest priority.
-            if (!activeExtractor && responsiveStandbyExtractors.Any() && responsiveStandbyExtractors.Min() == _config.Index)
+
+            if (!activeExtractor)
             {
-                _logger.LogInformation("Extractor is starting.");
-                return true;
+                var responsiveStandbyExtractors = _state.CurrentState
+                    .Where(extractor => !extractor.Active && IsResponsive(extractor.TimeStamp, now))
+                    .Select(extractor => extractor.Index);
+                        
+                // If there are no active extractors, start the standby extractor with highest priority.
+                if (responsiveStandbyExtractors.Any() && responsiveStandbyExtractors.Min() == _config.Index)
+                {
+                    _logger.LogInformation("Extractor is starting.");
+                    return true;
+                }
             }
 
             _logger.LogInformation("Waiting to become active.");
