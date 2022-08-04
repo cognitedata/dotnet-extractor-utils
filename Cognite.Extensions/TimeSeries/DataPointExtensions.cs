@@ -449,6 +449,8 @@ namespace Cognite.Extensions
             CancellationToken token)
         {
             var missing = new HashSet<Identity>();
+            if (!chunks.Any()) return missing;
+
             var deleteQuery = new DataPointsDelete()
             {
                 Items = chunks
