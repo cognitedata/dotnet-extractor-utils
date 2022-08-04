@@ -25,8 +25,7 @@ namespace ExtractorUtils.Test.Integration
             await RunWithHighAvailabilityAndWait(
                 Config.HighAvailability,
                 interval: new TimeSpan(0, 0, 2),
-                inactivityThreshold: new TimeSpan(0, 0, 4))
-                .ConfigureAwait(false);
+                inactivityThreshold: new TimeSpan(0, 0, 4)).ConfigureAwait(false);
 
             var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
             {

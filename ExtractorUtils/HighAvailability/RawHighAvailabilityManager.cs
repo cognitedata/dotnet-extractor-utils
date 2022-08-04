@@ -47,7 +47,7 @@ namespace Cognite.Extractor.Utils
             try
             {
                 await _destination.CogniteClient.Raw.CreateRowsAsync<RawLogData>(_config.Raw?.DatabaseName, _config.Raw?.TableName, rows, ensureParent: true).ConfigureAwait(false);
-                _logger.LogInformation("State has been updated.");
+                _logger.LogTrace("State has been updated.");
             }
             catch (Exception ex)
             {

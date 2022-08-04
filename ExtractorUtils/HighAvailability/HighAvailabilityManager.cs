@@ -13,21 +13,13 @@ namespace Cognite.Extractor.Utils
     public abstract class HighAvailabilityManager : IHighAvailabilityManager
     {
         internal readonly HighAvailabilityConfig _config;
-
         internal readonly CogniteDestination _destination;
-
         internal readonly ILogger<HighAvailabilityManager> _logger;
-
         private readonly PeriodicScheduler _scheduler;
-
         private readonly CancellationTokenSource _source;
-
         internal readonly ExtractorState _state;
-
         private readonly CronTimeSpanWrapper _cronWrapper;
-
         private readonly TimeSpan _offset = new TimeSpan(0, 0, 3);
-
         private readonly TimeSpan _inactivityThreshold = new TimeSpan(0, 0, 100);
 
         internal HighAvailabilityManager(
@@ -104,7 +96,7 @@ namespace Cognite.Extractor.Utils
                 }
             }
 
-            _logger.LogInformation("Waiting to become active.");
+            _logger.LogTrace("Waiting to become active.");
             return false;
         }
 
@@ -128,10 +120,11 @@ namespace Cognite.Extractor.Utils
             // Creating a list of all the active extractors.
             var activeExtractors = _state.CurrentState
                 .Where(extractor => extractor.Active && IsResponsive(extractor.TimeStamp, now))
-                .Select(extractor => extractor.Index);
+                .Select(extractor => extractor.Index)
+                .ToList();
 
             // Turning off extractor if there are multiple active and it does not have the highest priority.
-            if (activeExtractors.Count() > 1 && activeExtractors.Contains(_config.Index) && (activeExtractors.Min() != _config.Index))
+            if (activeExtractors.Count > 1 && activeExtractors.Contains(_config.Index) && (activeExtractors.Min() != _config.Index))
             {
                 _logger.LogInformation("Turning off extractor.");
                 _source.Cancel();
