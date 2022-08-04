@@ -398,49 +398,8 @@ namespace Cognite.Extensions
                             nameof(DeleteIgnoreErrorsAsync), ++taskNum, chunks.Count);
                 },
                 token).ConfigureAwait(false);
-            _logger.LogDebug("Deletion completed. Verifying that data points were removed from CDF");
 
-            var query = new List<DataPointsQueryItem>();
-            foreach (var kvp in ranges)
-            {
-                var queries = kvp.Value.Select(r =>
-                {
-                    return new DataPointsQueryItem()
-                    {
-                        ExternalId = kvp.Key.ExternalId,
-                        Id = kvp.Key.Id,
-                        Start = $"{r.First.ToUnixTimeMilliseconds()}",
-                        End = $"{r.Last.ToUnixTimeMilliseconds() + 1}",
-                        Limit = 1
-                    };
-                });
-                query.AddRange(queries);
-            }
-
-            var queryChunks = query
-                .ChunkBy(listChunkSize)
-                .ToList(); // Maximum number of items in the /timeseries/data/list endpoint.
-
-            var notVerified = new HashSet<Identity>();
-            var verifyGenerators = queryChunks
-                .Select<IEnumerable<DataPointsQueryItem>, Func<Task>>(
-                    c => async () =>
-                    {
-                        var errors = await VerifyDataPointsDeletion(dataPoints, c, token).ConfigureAwait(false);
-                        lock (mutex)
-                        {
-                            notVerified.UnionWith(errors);
-                        }
-                    });
-
-            taskNum = 0;
-            await verifyGenerators.RunThrottled(
-                listThrottleSize,
-                (_) => { _logger.LogDebug("Verifying data points deletion: {Num}/{Total}", ++taskNum, queryChunks.Count); },
-                token).ConfigureAwait(false);
-
-            _logger.LogDebug("Deletion tasks completed");
-            return new DeleteError(missing, notVerified);
+            return new DeleteError(missing, Enumerable.Empty<Identity>());
         }
 
         private static async Task<HashSet<Identity>> DeleteDataPointsIgnoreErrorsChunk(

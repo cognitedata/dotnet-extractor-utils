@@ -175,7 +175,7 @@ namespace ExtractorUtils.Test.Unit
                 mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
                     "SendAsync", 
-                    Times.Exactly(3), // 1 delete and two list
+                    Times.Exactly(1), // 1 delete
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
 
@@ -195,8 +195,6 @@ namespace ExtractorUtils.Test.Unit
                 
                 Assert.Contains(new Identity("missing-C"), errors.IdsNotFound);
                 Assert.Contains(new Identity("missing-F"), errors.IdsNotFound);
-                Assert.Contains(new Identity("nc-E"), errors.IdsDeleteNotConfirmed);
-                Assert.Contains(new Identity("nc-H"), errors.IdsDeleteNotConfirmed);
             }
 
             System.IO.File.Delete(path);
@@ -565,10 +563,6 @@ namespace ExtractorUtils.Test.Unit
                     var dp = new DataPointListItem();
                     dp.ExternalId = id;
                     dp.NumericDatapoints = new NumericDatapoints();
-                    if (id.StartsWith("nc"))
-                    {
-                        dp.NumericDatapoints.Datapoints.Add(new NumericDatapoint{Timestamp = DateTime.UtcNow.ToUnixTimeMilliseconds(), Value = 1.0});
-                    }
                     dpList.Items.Add(dp);
                 }
                 using(MemoryStream stream = new MemoryStream())
