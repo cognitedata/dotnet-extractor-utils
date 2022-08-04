@@ -69,8 +69,8 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="using-historyextractionstate">Using HistoryExtractionState</h1>
 
-<p><a class="xref" href="../api/Cognite.Extractor.StateStorage.HistoryExtractionState.html">HistoryExtractionState</a> is a more advanced abstraction of the history extraction process. Basic usage is fairly similar to BaseExtractionState, but using it requires a few extra steps when extracting data. It handles some more of the logic behind synchronization of data between source and destination systems.</p>
-<p>Most importantly it introduces a new <a class="xref" href="../api/Cognite.Extractor.Common.TimeRange.html">TimeRange</a> <code>SourceExtractedRange</code>, which describes the range of data present in the source system. This is separate from the data present in destination systems and handles the &quot;Read, but not pushed&quot; case described <a href="state-store.html">here</a>.</p>
+<p><a href="xref:Cognite.Extractor.StateStorage.HistoryExtractionState">HistoryExtractionState</a> is a more advanced abstraction of the history extraction process. Basic usage is fairly similar to BaseExtractionState, but using it requires a few extra steps when extracting data. It handles some more of the logic behind synchronization of data between source and destination systems.</p>
+<p>Most importantly it introduces a new <a href="xref:Cognite.Extractor.Common.TimeRange">TimeRange</a> <code>SourceExtractedRange</code>, which describes the range of data present in the source system. This is separate from the data present in destination systems and handles the &quot;Read, but not pushed&quot; case described <a href="state-store.html">here</a>.</p>
 <p>Using the state consists of the source range separately from the destination range, in different ways depending on which operation is being performed.</p>
 <h2 id="initialization">Initialization</h2>
 <p>First of all, when creating a state you must specify whether frontfill/backfill is enabled for the given state. This determines how the state is synchronized, and what default values for ranges are.</p>
@@ -138,7 +138,7 @@ foreach (var kvp in points)
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/4a6579fbdd94877f2e833cf9d9925fa74eabd29a/docfx_project/tutorials/history-state.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d38bb05b9fbf8f8391cf675e4a5dbaa462b9b8d5/docfx_project/tutorials/history-state.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

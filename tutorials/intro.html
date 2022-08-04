@@ -100,7 +100,7 @@ cognite:
         scopes:
           - ${COGNITE_SCOPE}
 </code></pre>
-<p>See <a class="xref" href="../api/Cognite.Extractor.Utils.BaseConfig.html">full config object</a> for full list of options.</p>
+<p>See <a href="xref:Cognite.Extractor.Utils.BaseConfig">full config object</a> for full list of options.</p>
 <p>Set the <code>COGNITE_PROJECT</code> and <code>COGNITE_API_KEY</code> environment variables. Set the <code>metrics</code> tag, only if collecting metrics is required by the extractor. If using a <a href="https://prometheus.io/docs/practices/pushing/">Prometheus pushgateway</a>, set <code>host</code>to a valid endpoint.</p>
 <p>The library is intended to be used with dependency injection, In <code>Program.cs</code>:</p>
 <pre><code class="lang-c#">using Microsoft.Extensions.DependencyInjection;
@@ -139,9 +139,9 @@ class MyExtractor : BaseExtractor
 // Then, in the Main() method:
 class Program
 {
-    static void Main()
+    static async Task Main()
     {
-        ExtractorRunner.Run&lt;BaseConfig&gt;(
+        await ExtractorRunner.Run&lt;BaseConfig&gt;(
             &quot;config.yml&quot;,
             new[] { 1 },
             &quot;my-extractor&quot;,
@@ -150,7 +150,7 @@ class Program
             addLogger: true,
             addMetrics: true,
             restart: true,
-            CancellationToken.None).Wait();
+            CancellationToken.None);
     }
 }
 </code></pre>
@@ -162,7 +162,7 @@ class Program
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/4a6579fbdd94877f2e833cf9d9925fa74eabd29a/docfx_project/tutorials/intro.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d38bb05b9fbf8f8391cf675e4a5dbaa462b9b8d5/docfx_project/tutorials/intro.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

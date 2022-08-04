@@ -4,1356 +4,12 @@
   "xrefmap": "xrefmap.yml",
   "files": [
     {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.ApiUtils.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.ApiUtils.html",
-          "hash": "vmk4/+6SnLyJklFq9BoNog=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.AssetExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.AssetExtensions.html",
-          "hash": "fBJDcs1AL26IA4WeYFdSPA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Authenticator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Authenticator.html",
-          "hash": "zkTCIgsUx1CeZ+O+1GzFTA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.html",
-          "hash": "uXXuOOr1guC5KabogBHZww=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.AuthenticatorConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.AuthenticatorConfig.html",
-          "hash": "ncsg7V5xShJHtlYK+Zndng=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.CogniteError-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.CogniteError-1.html",
-          "hash": "iKIG4x9igg01APbHQLJiaA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.CogniteError.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.CogniteError.html",
-          "hash": "yKyev1nl3aEjBQ9CvWI1JQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.CogniteErrorException.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.CogniteErrorException.html",
-          "hash": "eGBYnNQfr67wgC51/JyBRg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.CogniteExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.CogniteExtensions.html",
-          "hash": "7MeyTRqM9dI7pEMm78Baow=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.CogniteResult-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.CogniteResult-1.html",
-          "hash": "uLdmOSeGW0pUayO9KCp8Xw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.CogniteResult-2.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.CogniteResult-2.html",
-          "hash": "dUgDbTLRt4wV2iVvDXeQ7g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.CogniteUtils.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.CogniteUtils.html",
-          "hash": "b+CjMTkvXBh8Z2PsG+us6Q=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.CogniteUtilsException.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.CogniteUtilsException.html",
-          "hash": "VWZNnlKBrTcTZE5Q1sYgbQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.DataPointExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.DataPointExtensions.html",
-          "hash": "HdQUleuYrssFQ0cMRdOtBQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.DataPointInsertError.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.DataPointInsertError.html",
-          "hash": "bjTTzqJlnOb8CNqVJ4fPxA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Datapoint.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Datapoint.html",
-          "hash": "YQmZAE44jDP73rG/y6gRdA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.DeleteError.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.DeleteError.html",
-          "hash": "48GqmHJNfJXOpEeQ87CCsw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.ErrorType.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.ErrorType.html",
-          "hash": "7ed4Y/Z32sqGJ1TLxtmvHw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.EventExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.EventExtensions.html",
-          "hash": "I0FaajhmHhr7pXP031G8+w=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.IAuthenticator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.IAuthenticator.html",
-          "hash": "+06ddG4dYnM3Kt0ra5rOYQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.LoggerExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.LoggerExtensions.html",
-          "hash": "lgMUQFrzPklfELlcssk/Pg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.MsalAuthenticator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.MsalAuthenticator.html",
-          "hash": "43ZUVhy06UZF6MDbOh/xcw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.RawExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.RawExtensions.html",
-          "hash": "2s5gL3JC+LwYh9RkTr6UJA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.RequestType.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.RequestType.html",
-          "hash": "ZpE0/w10sDBWZX/XTC5Hog=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.ResourceType.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.ResourceType.html",
-          "hash": "AxZiRpd7luiDlGgXyMsyeA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.ResultHandlers.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.ResultHandlers.html",
-          "hash": "AY2b3g+MeKS5uXFs2n5VAw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.RetryMode.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.RetryMode.html",
-          "hash": "rPebLM1ME1LCaL5+t4+V8w=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Sanitation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Sanitation.html",
-          "hash": "+r6qSn6LUEnXLU6EBxgoDA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.SanitationMode.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.SanitationMode.html",
-          "hash": "n4cGOR2nrP8n6CU8i5yRpw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.SequenceExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.SequenceExtensions.html",
-          "hash": "GK8ADnQnj7IYhPxzTKouXw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.SequenceRowError.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.SequenceRowError.html",
-          "hash": "q78KTI+y36HfloPENi1Srg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.TimeSeriesExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.TimeSeriesExtensions.html",
-          "hash": "PHY+tddurva6YxawpIU3Sg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.TypeExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.TypeExtensions.html",
-          "hash": "zYJjYYopffZrNKZzA/iRkw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.UpsertParams.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.UpsertParams.html",
-          "hash": "PDAhOZNtc0tQ5qqqcP7JHw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.html",
-          "hash": "iMNvdQW7cKVxYtAmTQ7Bow=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.BlockingResourceCounter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.BlockingResourceCounter.html",
-          "hash": "1YJEuFVcZ6IXxBhfaqqyhQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.Chunking.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.Chunking.html",
-          "hash": "+ApNIKdVDt7Kj2uNbHs7KA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.CogniteTime.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.CogniteTime.html",
-          "hash": "ZTX0YHdtnwVRt0Ymo3/58Q=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.CommonUtils.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.CommonUtils.html",
-          "hash": "JVy2WXIP/n+nR7TKtBfEeQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.ConfigurationException.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.ConfigurationException.html",
-          "hash": "Tpnef/gCvdCIE/PYZr8H9A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.CronTimeSpanWrapper.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.CronTimeSpanWrapper.html",
-          "hash": "YHoP/PSBXcpfIlFUjYBd2g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.IChunk-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.IChunk-1.html",
-          "hash": "qyv9FHgyAOaEuD1euDR0Dw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.IResourceCounter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.IResourceCounter.html",
-          "hash": "qlyhqn72ej2D2rmowAuecw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.ITimeSpanProvider.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.ITimeSpanProvider.html",
-          "hash": "EdutWGo6vtNmO2i0ZgC6Ng=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.OperationScheduler-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.OperationScheduler-1.html",
-          "hash": "HHMmsBkIPF21bDU1U5XWyg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.PeriodicScheduler.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.PeriodicScheduler.html",
-          "hash": "XV4rL4ii3j/V4e7c4jQViQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.SharedResourceScheduler-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.SharedResourceScheduler-1.html",
-          "hash": "w22xLYCHV/2csNdIP3sNrA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.TaskResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.TaskResult.html",
-          "hash": "NJ7o55n4N6E/fgwevO+M5Q=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.TaskThrottler.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.TaskThrottler.html",
-          "hash": "H2iwsTfEhWGRiXaLX227oQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.TimeRange.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.TimeRange.html",
-          "hash": "aYAn12KyLA4OMAlTtSzsqg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.TimeSpanWrapper.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.TimeSpanWrapper.html",
-          "hash": "peaGLQlzGAk+rUUi652ZlA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Common.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Common.html",
-          "hash": "OhbwcUVZIk43lpGtqKtXnA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.ConsoleConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.ConsoleConfig.html",
-          "hash": "36K9oNhNhddzmZTAJWpSkg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.FileConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.FileConfig.html",
-          "hash": "3FcDP2/bROxJ2vGxE+eRvg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.LogConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.LogConfig.html",
-          "hash": "jN2ARGAYsA3BpIjh6LOYxw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.LoggerConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.LoggerConfig.html",
-          "hash": "fbFWCaHkzNBK6MWbHl+dcw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.LoggerTraceListener.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.LoggerTraceListener.html",
-          "hash": "5Hz27T5sO5umI4tp2cidjQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.LoggingExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.LoggingExtensions.html",
-          "hash": "2/to/jK6bl3bRRvnc5oOyA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.LoggingUtils.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.LoggingUtils.html",
-          "hash": "+TAfr5cycKDUlgy7OQ7GGg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.TraceListenerConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.TraceListenerConfig.html",
-          "hash": "7HtTx907P+4nnelz+Z2q6A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Logging.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Logging.html",
-          "hash": "XxxySjK4EunNwarIWPvSlg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Metrics.CommonMetrics.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Metrics.CommonMetrics.html",
-          "hash": "I786lti2urvRdsmVJl6WGg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Metrics.MetricsConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Metrics.MetricsConfig.html",
-          "hash": "UstonTi+4z7MoIEj98Nh2g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Metrics.MetricsExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Metrics.MetricsExtensions.html",
-          "hash": "opKxHNhQDSvsUVTo4h7gzg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Metrics.MetricsServerConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Metrics.MetricsServerConfig.html",
-          "hash": "IPXDrhy0gdAJrkq1s4wxuQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Metrics.MetricsService.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Metrics.MetricsService.html",
-          "hash": "tKlIqLD5wNr3umIJGC2a3w=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Metrics.PushGatewayConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Metrics.PushGatewayConfig.html",
-          "hash": "/pw4hXyUwEl6lDFIutLZIg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Metrics.Version.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Metrics.Version.html",
-          "hash": "0iLWp4ebV7oC8NUmC+0Sdg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Metrics.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Metrics.html",
-          "hash": "q7xN7JEnEambDL3VWi6WTA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.BaseExtractionState.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.BaseExtractionState.html",
-          "hash": "vLM7ENRcUcXn/vcw53zjdQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.BaseExtractionStatePoco.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.BaseExtractionStatePoco.html",
-          "hash": "m2rpSb2tYHvvmGTLUCfrXQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.BaseStorableState.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.BaseStorableState.html",
-          "hash": "bs2E4mU6UYa7Qd6ggnZZ+g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.HistoryExtractionState.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.HistoryExtractionState.html",
-          "hash": "eW2Mhr6A2LVtjKZ8Wls/fw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.IExtractionState.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.IExtractionState.html",
-          "hash": "bdKjW3icUP9uLpEHv9lxRw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.IExtractionStateStore.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.IExtractionStateStore.html",
-          "hash": "meNWxBrB5PfZ4JYwQsa3rQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.IRawDestination.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.IRawDestination.html",
-          "hash": "oJ5DTfgSoQAJMPuZUMzW2w=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.LiteDBStateStore.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.LiteDBStateStore.html",
-          "hash": "K0ISyqJSg01F229Pqj/QRA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.StateStoreConfig.StorageType.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreConfig.StorageType.html",
-          "hash": "I7pIhLZhed1SZDTgcCWn3Q=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.StateStoreConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreConfig.html",
-          "hash": "uAYF+kV8zDiGbrYaoyFLzA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.StateStoreProperty.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreProperty.html",
-          "hash": "pobaTbWn/cwiC19lVgNqhA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.StateStoreUtils.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreUtils.html",
-          "hash": "GJxWgbTBLE5f3dvsJs4qsA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.StateStorage.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.StateStorage.html",
-          "hash": "qyBPHtpenHy3LZQVAulzaA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.BaseConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.BaseConfig.html",
-          "hash": "dcHVoob7ZevWBn0fWRsjZw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.BaseExtractor-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.BaseExtractor-1.html",
-          "hash": "Csy+GR/bU2k8TLpGyhcP0A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.BaseUploadQueue-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.BaseUploadQueue-1.html",
-          "hash": "E19q84ONeg8e2i4gfULNHA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.CertificateConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.CertificateConfig.html",
-          "hash": "s5qFPOmnRfE/DCyEMuDCXA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.ChunkingConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.ChunkingConfig.html",
-          "hash": "og1Pv6/eyTqq+B9OXYvBLQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.CogniteClientExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.CogniteClientExtensions.html",
-          "hash": "oOZBsRiV7vedtoyJ8vVMRQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.CogniteConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.CogniteConfig.html",
-          "hash": "8RLDouVGDsd59QBLXZLy8A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.CogniteDestination.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.CogniteDestination.html",
-          "hash": "M2CYc/8kPCqitllWsFsJJg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html",
-          "hash": "eNB9NDU9bbmZtXzcrR2zMA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html",
-          "hash": "QCctH/T0Y08bwa1AawIFOQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.CommandLine.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.CommandLine.html",
-          "hash": "H+Iu3/wO95Cfh/xagmt9ZQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.ConfigurationExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.ConfigurationExtensions.html",
-          "hash": "Ua/3QUtVnU+vSddPhdAq5Q=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.DestinationUtils.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.DestinationUtils.html",
-          "hash": "plIYmi8qUi/kpxT2DMll+A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.EventUploadQueue.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.EventUploadQueue.html",
-          "hash": "Sf7AWTj6/iOFAVO+KfjnLQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.ExtractionRun.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.ExtractionRun.html",
-          "hash": "fLGr2YeIuvvMh7ylvtcZRQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.ExtractionRunConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.ExtractionRunConfig.html",
-          "hash": "Pa8mUkY4I2URwVzm787x0g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.ExtractorRunner.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.ExtractorRunner.html",
-          "hash": "x6D/GYXsYSZ2EgT1p9Y16A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html",
-          "hash": "bUoLf/MQWbqzzzruyaMUJA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.FunctionCallConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.FunctionCallConfig.html",
-          "hash": "EoriDcHDJitKQot2B/nCEA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.FunctionCallWrapper-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.FunctionCallWrapper-1.html",
-          "hash": "bl9nxTWKxoKqpkVUOPuCAg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.IRawUploadQueue-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.IRawUploadQueue-1.html",
-          "hash": "MbTTDpDEf+mQIPQvaSAq1A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.IUploadQueue-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.IUploadQueue-1.html",
-          "hash": "2Otbd+abBLe7PEwt3Vw5hA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.IUploadQueue.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.IUploadQueue.html",
-          "hash": "99taWRRldwu1QFoX6OMSeQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.QueueUploadResult-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.QueueUploadResult-1.html",
-          "hash": "HS/ck5i5Y63WXZK4SjaoHA=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.RetryConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.RetryConfig.html",
-          "hash": "Xvg3S/zSCS/d0cSdTP/Q9g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.SdkLoggingConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.SdkLoggingConfig.html",
-          "hash": "aXdE32Y3Va0TOtf8VVFvRw=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.ThrottlingConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.ThrottlingConfig.html",
-          "hash": "FFyqMxLe95bHSM5lQI3R+A=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html",
-          "hash": "dwPaSdh/X3jtxwMTcHSMCQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.html",
-          "hash": "/OhRWRd+cJDnSejJCqG02g=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
       "type": "Conceptual",
       "source_relative_path": "api/index.md",
       "output": {
         ".html": {
           "relative_path": "api/index.html",
-          "hash": "Fkn1XtrEm3XpM27LghRUbQ=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Toc",
-      "source_relative_path": "api/toc.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/toc.html",
-          "hash": "J28s6gA6237+gM96VI0d4A=="
+          "hash": "Cj3vmyo5D2eevdUjgcstCw=="
         }
       },
       "is_incremental": false,
@@ -1365,7 +21,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "Dh5/AOJQ2Vwdd04/OT2M1A=="
+          "hash": "tukjDTEE646CB+1wjCaLow=="
         }
       },
       "is_incremental": false,
@@ -1377,7 +33,22 @@
       "output": {
         ".html": {
           "relative_path": "toc.html",
-          "hash": "gD9XKtGvGYZ5AULayg2tpg=="
+          "hash": "xYmIIP/fcyjqLt2l1f4IKw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/base-extractor.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/base-extractor.html",
+          "hash": "xBWDS4AzxZ+OivENFVlA7g=="
         }
       },
       "is_incremental": false,
@@ -1385,11 +56,11 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "tutorials/base-extractor.md",
+      "source_relative_path": "tutorials/command-line.md",
       "output": {
         ".html": {
-          "relative_path": "tutorials/base-extractor.html",
-          "hash": "fRmaVRYyCLehvXgV3vsuhA=="
+          "relative_path": "tutorials/command-line.html",
+          "hash": "gg8Qcw1+tiu4QMXoIRo5Tw=="
         }
       },
       "is_incremental": false,
@@ -1401,31 +72,49 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/event-queue.html",
-          "hash": "TGKYfR3ukuOYr5P6ksMd/g=="
+          "hash": "cSW9E++F+L6VHRY7SiQb6w=="
         }
       },
       "is_incremental": false,
       "version": ""
     },
     {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/extpipes.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/extpipes.html",
+          "hash": "TupmJYEFaFRMj4QH7p/6rQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
       "type": "Conceptual",
       "source_relative_path": "tutorials/history-state.md",
       "output": {
         ".html": {
           "relative_path": "tutorials/history-state.html",
-          "hash": "2jrKDHUerGQjCupiMSliCA=="
+          "hash": "ihpiTzXTR6BFyBb5BroGKA=="
         }
       },
       "is_incremental": false,
       "version": ""
     },
     {
+      "log_codes": [
+        "UidNotFound"
+      ],
       "type": "Conceptual",
       "source_relative_path": "tutorials/intro.md",
       "output": {
         ".html": {
           "relative_path": "tutorials/intro.html",
-          "hash": "cTLGq1ltV2x5bl59TpZrHw=="
+          "hash": "e6rmKTonuX9MYHl/OSnsxQ=="
         }
       },
       "is_incremental": false,
@@ -1437,7 +126,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/minimal-usage.html",
-          "hash": "cLAw48J/HD8l6CPx4tF49g=="
+          "hash": "KZEjxEdz9bxU1OyOFuCuKg=="
         }
       },
       "is_incremental": false,
@@ -1449,7 +138,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/raw-queue.html",
-          "hash": "FAGYnxNyfNEMl40qV5Jjmg=="
+          "hash": "5cezEeScxU7Yj8DmjcZzhg=="
         }
       },
       "is_incremental": false,
@@ -1461,7 +150,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/service.html",
-          "hash": "KR2ADRbsF6CAvM1EfEghlA=="
+          "hash": "iB6RzCuVYEcQCXOYftfl2Q=="
         }
       },
       "is_incremental": false,
@@ -1473,19 +162,22 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/setup-template.html",
-          "hash": "fUUyc88VcJvq9+5SW865MQ=="
+          "hash": "c9d3CLXvpdkIsRZ1SwH5rg=="
         }
       },
       "is_incremental": false,
       "version": ""
     },
     {
+      "log_codes": [
+        "UidNotFound"
+      ],
       "type": "Conceptual",
       "source_relative_path": "tutorials/state-store.md",
       "output": {
         ".html": {
           "relative_path": "tutorials/state-store.html",
-          "hash": "j/Wqllfp7LNT5t7uGHuekA=="
+          "hash": "al0pYcfSuXMWVZCVNiJysg=="
         }
       },
       "is_incremental": false,
@@ -1497,19 +189,22 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/toc.html",
-          "hash": "7Y6jNvWrO8K+PhIOTKZnCA=="
+          "hash": "HhuTJOqQYnnkwEHTIR+4DQ=="
         }
       },
       "is_incremental": false,
       "version": ""
     },
     {
+      "log_codes": [
+        "UidNotFound"
+      ],
       "type": "Conceptual",
       "source_relative_path": "tutorials/ts-queue.md",
       "output": {
         ".html": {
           "relative_path": "tutorials/ts-queue.html",
-          "hash": "m90uXTrUrtxTmnM6OnfQag=="
+          "hash": "UruK6Byj9iru/pW704egRg=="
         }
       },
       "is_incremental": false,
@@ -1521,7 +216,7 @@
       "output": {
         ".html": {
           "relative_path": "tutorials/version.html",
-          "hash": "iGmSz4MpesOxwiAsj48t8g=="
+          "hash": "hF7FyU/HkzBW6VVyYMpd7A=="
         }
       },
       "is_incremental": false,
@@ -1542,13 +237,7 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 13,
-          "skipped_file_count": 0
-        },
-        "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build",
-          "total_file_count": 111,
+          "total_file_count": 15,
           "skipped_file_count": 0
         },
         "TocDocumentProcessor": {

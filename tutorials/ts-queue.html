@@ -95,7 +95,7 @@ await using (var queue = destination.CreateTimeSeriesUploadQueue&lt;ColumnsDto&g
 } // disposing the queue will upload any datapoints left and stop the upload loop
 </code></pre>
 <h2 id="state-storage">State storage</h2>
-<p>Call <a class="xref" href="../api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html">AddStateStorage</a> with a dictionary of states in order to enable automatically updating extracted ranges after pushing.</p>
+<p>Call <a href="xref:Cognite.Extractor.Utils.TimeSeriesUploadQueue">AddStateStorage</a> with a dictionary of states in order to enable automatically updating extracted ranges after pushing.</p>
 <pre><code class="lang-c#">var myStateMap = new Dictionary&lt;Identity, BaseExtractionState&gt;(new IdentityComparer());
 
 queue.AddStateStorage(states, provider.GetRequiredService&lt;IExtractionStateStore&gt;(), &quot;some-timeseries-collection-name&quot;);
@@ -109,7 +109,7 @@ queue.AddStateStorage(states, provider.GetRequiredService&lt;IExtractionStateSto
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/4a6579fbdd94877f2e833cf9d9925fa74eabd29a/docfx_project/tutorials/ts-queue.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/d38bb05b9fbf8f8391cf675e4a5dbaa462b9b8d5/docfx_project/tutorials/ts-queue.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
