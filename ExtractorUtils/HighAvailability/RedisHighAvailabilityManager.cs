@@ -38,6 +38,7 @@ namespace Cognite.Extractor.Utils
             if (_config.Redis?.ConnectionString != null)
             {
                 _redis = ConnectionMultiplexer.Connect(_config.Redis.ConnectionString);   
+
                 if (!_redis.IsConnected)
                 {
                     throw new RedisConnectionException(ConnectionFailureType.UnableToConnect, "Cannot reach remote data store.");
@@ -56,7 +57,7 @@ namespace Cognite.Extractor.Utils
                 var db = _redis.GetDatabase();
                 var log = new RedisExtractorInstance(_config.Index, DateTime.UtcNow, _state.UpdatedStatus);
 
-                await db.StringSetAsync(ToRedisKey(false), JsonSerializer.Serialize(log));
+                await db.StringSetAsync(GetRedisKey(), JsonSerializer.Serialize(log)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -68,14 +69,14 @@ namespace Cognite.Extractor.Utils
         {
             try
             {
-                var server = _redis.GetServer(_redis.GetEndPoints().First());
                 var db = _redis.GetDatabase();
-                var keys = server.Keys(pattern: ToRedisKey(true));
+                var server = _redis.GetServer(_redis.GetEndPoints().First());
+                var keys = server.Keys(pattern: GetRedisKey(pattern: true));
 
                 var extractorInstances = new List<IExtractorInstance>();
                 foreach (RedisKey key in keys)
                 {
-                    var value = await db.StringGetAsync(key);
+                    var value = await db.StringGetAsync(key).ConfigureAwait(false);
                     if (value.HasValue)
                     {
                         var doc = JsonDocument.Parse(value.ToString());
@@ -89,14 +90,14 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error when uploading log to state: {Message}", ex.Message);
+                _logger.LogError("Error when updating state: {Message}", ex.Message);
             }
-           
         }
 
-        private string ToRedisKey(bool pattern)
+        private string GetRedisKey(bool pattern = false)
         {
             var result = ($"{_config.Redis?.TableName}.");
+
             if (!pattern) result += _config.Index;
             else result += "*";
 
