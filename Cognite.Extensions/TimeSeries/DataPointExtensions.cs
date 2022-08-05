@@ -175,11 +175,11 @@ namespace Cognite.Extensions
 
             var pointsToInsert = points.Where(kvp => missingIds.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            result = await InsertAsync(client, pointsToInsert, keyChunkSize, valueChunkSize, throttleSize,
+            var result2 = await InsertAsync(client, pointsToInsert, keyChunkSize, valueChunkSize, throttleSize,
                 timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, sanitationMode,
                 RetryMode.OnError, nanReplacement, token).ConfigureAwait(false);
 
-            return (result, tsResult);
+            return (result.Merge(result2), tsResult);
         }
 
 
