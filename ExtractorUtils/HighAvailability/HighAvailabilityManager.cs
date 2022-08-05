@@ -19,8 +19,8 @@ namespace Cognite.Extractor.Utils
         private readonly CancellationTokenSource _source;
         internal readonly ExtractorState _state;
         private readonly CronTimeSpanWrapper _cronWrapper;
-        private readonly TimeSpan _offset = new TimeSpan(0, 0, 3);
-        private readonly TimeSpan _inactivityThreshold = new TimeSpan(0, 0, 100);
+        private readonly TimeSpan _offset = TimeSpan.FromSeconds(3);
+        private readonly TimeSpan _inactivityThreshold = TimeSpan.FromSeconds(150);
 
         internal HighAvailabilityManager(
             HighAvailabilityConfig config,
