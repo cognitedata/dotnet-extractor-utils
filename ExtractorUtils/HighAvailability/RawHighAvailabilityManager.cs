@@ -14,6 +14,8 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public class RawHighAvailabilityManager : HighAvailabilityManager
     {
+        private readonly CogniteDestination _destination;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -32,8 +34,9 @@ namespace Cognite.Extractor.Utils
             CancellationTokenSource source,
             TimeSpan? interval = null,
             TimeSpan? inactivityThreshold = null) 
-            : base(config, destination, logger, scheduler, source, interval, inactivityThreshold)
+            : base(config, logger, scheduler, source, interval, inactivityThreshold)
         {   
+            _destination = destination;
         }
 
         internal override async Task UploadLogToState()

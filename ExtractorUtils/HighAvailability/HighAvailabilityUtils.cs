@@ -29,6 +29,16 @@ namespace Cognite.Extractor.Utils
                     interval,
                     inactivityThreshold);
             }
+            else if (config?.Redis != null)
+            {
+                highAvailabilityManager = new RedisHighAvailabilityManager(
+                    config,
+                    provider.GetRequiredService<ILogger<HighAvailabilityManager>>(),
+                    scheduler,
+                    source,
+                    interval,
+                    inactivityThreshold);
+            }
 
             return highAvailabilityManager;
         }
