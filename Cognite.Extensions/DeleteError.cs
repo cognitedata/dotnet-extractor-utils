@@ -14,7 +14,8 @@ namespace Cognite.Extensions
         public IEnumerable<Identity> IdsNotFound { get; }
         
         /// <summary>
-        /// Ids of time series with unconfirmed data point deletions
+        /// Ids of time series with unconfirmed data point deletions.
+        /// DEPRECATED, timeseries is now immediately consistent, and we no longer verify deletion.
         /// </summary>
         public IEnumerable<Identity> IdsDeleteNotConfirmed { get; }
 
@@ -23,7 +24,7 @@ namespace Cognite.Extensions
         /// found or with unconfirmed deletions
         /// </summary>
         /// <param name="idsNotFound">Ids not found</param>
-        /// <param name="idsDeleteNotConfirmed">Mismatched ids</param>
+        /// <param name="idsDeleteNotConfirmed">Mismatched ids. DEPRECATED, leave empty.</param>
         public DeleteError(IEnumerable<Identity> idsNotFound, IEnumerable<Identity> idsDeleteNotConfirmed)
         {
             IdsNotFound = idsNotFound;
