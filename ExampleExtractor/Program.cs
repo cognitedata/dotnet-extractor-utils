@@ -19,7 +19,7 @@ class MyExtractor : BaseExtractor<MyConfig>
     protected override async Task Start()
     {
         // Adding high availability to the extractor.
-        await RunWithHighAvailabilityAndWait(Config.HighAvailability).ConfigureAwait(false);
+        await RunWithHighAvailabilityAndWait(Config.HighAvailability, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(15)).ConfigureAwait(false);
 
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {

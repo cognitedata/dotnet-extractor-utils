@@ -11,7 +11,7 @@ using System.Linq;
 namespace Cognite.Extractor.Utils
 {
     /// <summary>
-    /// Class used to manage an extractor using a Raw database.
+    /// Class used to manage an extractor using a Redis database.
     /// </summary>
     public class RedisHighAvailabilityManager : HighAvailabilityManager
     {
@@ -36,7 +36,7 @@ namespace Cognite.Extractor.Utils
             : base(config, logger, scheduler, source, interval, inactivityThreshold)
         {
             if (_config.Redis?.ConnectionString != null)
-            {
+            {  
                 _redis = ConnectionMultiplexer.Connect(_config.Redis.ConnectionString);   
 
                 if (!_redis.IsConnected)
@@ -55,9 +55,14 @@ namespace Cognite.Extractor.Utils
             try
             {
                 var db = _redis.GetDatabase();
-                var log = new RedisExtractorInstance(_config.Index, DateTime.UtcNow, _state.UpdatedStatus);
+                var log = new RedisExtractorInstance() {
+                    Index = _config.Index,
+                    TimeStamp = DateTime.UtcNow,
+                    Active = _state.UpdatedStatus
+                };
 
                 await db.StringSetAsync(GetRedisKey(), JsonSerializer.Serialize(log)).ConfigureAwait(false);
+                _logger.LogTrace("State has been updated.");
             }
             catch (Exception ex)
             {
@@ -80,8 +85,8 @@ namespace Cognite.Extractor.Utils
                     if (value.HasValue)
                     {
                         var doc = JsonDocument.Parse(value.ToString());
-                        var instance = JsonSerializer.Deserialize<RedisExtractorInstance>(doc);
 
+                        var instance = JsonSerializer.Deserialize<RedisExtractorInstance>(doc);
                         if (instance != null) extractorInstances.Add(instance);
                     }
                 }
@@ -108,16 +113,7 @@ namespace Cognite.Extractor.Utils
     internal class RedisExtractorInstance : IExtractorInstance
     {
         public int Index { get; set; }
-
         public DateTime TimeStamp { get; set; }
-
         public bool Active { get; set; }
-
-        internal RedisExtractorInstance(int index, DateTime timeStamp, bool active)
-        {
-            Index = index;
-            TimeStamp = timeStamp;
-            Active = active;
-        }
     }
 }

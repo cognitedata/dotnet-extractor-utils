@@ -14,5 +14,5 @@ cognite:
 high-availability:
   index: 1
   redis:
-    connection-string: "test"
-    table-name: "test"
+    connection-string: "localhost:6379"
+    table-name: ${BF_TEST_TABLE}
