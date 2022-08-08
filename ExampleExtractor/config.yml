@@ -13,6 +13,9 @@ cognite:
       - ${BF_TEST_SCOPE}
 high-availability:
   index: 1
+  raw:
+    database-name: ${BF_TEST_DB}
+    table-name: ${BF_TEST_TABLE}
   redis:
     connection-string: "localhost:6379"
     table-name: ${BF_TEST_TABLE}
