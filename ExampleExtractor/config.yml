@@ -12,10 +12,7 @@ cognite:
     scopes:
       - ${BF_TEST_SCOPE}
 high-availability:
-  index: 1
-  raw:
-    database-name: ${BF_TEST_DB}
-    table-name: ${BF_TEST_TABLE}
+  index: 0
   redis:
-    connection-string: "localhost:6379"
+    connection-string: "localhost"
     table-name: ${BF_TEST_TABLE}

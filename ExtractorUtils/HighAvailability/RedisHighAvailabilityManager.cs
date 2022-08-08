@@ -16,6 +16,8 @@ namespace Cognite.Extractor.Utils
     public class RedisHighAvailabilityManager : HighAvailabilityManager
     {
         private readonly ConnectionMultiplexer _redis;
+        private readonly string _redisKey;
+        private readonly string _redisKeyPattern;
 
         /// <summary>
         /// Constructor.
@@ -39,15 +41,16 @@ namespace Cognite.Extractor.Utils
             {  
                 _redis = ConnectionMultiplexer.Connect(_config.Redis.ConnectionString);   
 
-                if (!_redis.IsConnected)
-                {
-                    throw new RedisConnectionException(ConnectionFailureType.UnableToConnect, "Cannot reach remote data store.");
-                }
+                if (!_redis.IsConnected) throw new RedisConnectionException(ConnectionFailureType.UnableToConnect, "Cannot reach remote data store.");
             }
-            else 
+            else throw new MissingFieldException("Add a connection string to your config.");
+
+            if (_config.Redis?.TableName != null)
             {
-                throw new MissingFieldException("Add a connection string to your config.");
+                _redisKey = $"{_config.Redis.TableName}.{_config.Index}";
+                _redisKeyPattern = $"{_config.Redis.TableName}.*";
             }
+            else throw new MissingFieldException("Add table name to your config.");
         }
 
         internal override async Task UploadLogToState()
@@ -61,7 +64,7 @@ namespace Cognite.Extractor.Utils
                     Active = _state.UpdatedStatus
                 };
 
-                await db.StringSetAsync(GetRedisKey(), JsonSerializer.Serialize(log)).ConfigureAwait(false);
+                await db.StringSetAsync(_redisKey, JsonSerializer.Serialize(log)).ConfigureAwait(false);
                 _logger.LogTrace("State has been updated.");
             }
             catch (Exception ex)
@@ -76,7 +79,7 @@ namespace Cognite.Extractor.Utils
             {
                 var db = _redis.GetDatabase();
                 var server = _redis.GetServer(_redis.GetEndPoints().First());
-                var keys = server.Keys(pattern: GetRedisKey(pattern: true));
+                var keys = server.Keys(pattern: _redisKeyPattern);
 
                 var extractorInstances = new List<IExtractorInstance>();
                 foreach (RedisKey key in keys)
@@ -85,7 +88,6 @@ namespace Cognite.Extractor.Utils
                     if (value.HasValue)
                     {
                         var doc = JsonDocument.Parse(value.ToString());
-
                         var instance = JsonSerializer.Deserialize<RedisExtractorInstance>(doc);
                         if (instance != null) extractorInstances.Add(instance);
                     }
@@ -97,16 +99,6 @@ namespace Cognite.Extractor.Utils
             {
                 _logger.LogError("Error when updating state: {Message}", ex.Message);
             }
-        }
-
-        private string GetRedisKey(bool pattern = false)
-        {
-            var result = ($"{_config.Redis?.TableName}.");
-
-            if (!pattern) result += _config.Index;
-            else result += "*";
-
-            return result;
         }
     }
 
