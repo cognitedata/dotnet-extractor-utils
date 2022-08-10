@@ -106,7 +106,7 @@ namespace ExtractorUtils.Test.Integration
 
             foreach (string line in lines) config = config.Append(line).ToArray();
 
-            string path = $"test-extractor-manager-{index}-config";
+            string path = $"test-redis-extractor-manager-{index}-config";
             System.IO.File.WriteAllLines(path, config);
 
             return path;

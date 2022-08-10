@@ -10,10 +10,6 @@ jobs:
   build:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
-        redis-version: [5]
 
     steps:
     - uses: actions/checkout@v2
@@ -31,7 +27,7 @@ jobs:
     - name: Start Redis
       uses: supercharge/redis-github-action@1.4.0
       with:
-        redis-version: ${{ matrix.redis-version }}
+        redis-version: 5
     - name: Test
       run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
       if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
