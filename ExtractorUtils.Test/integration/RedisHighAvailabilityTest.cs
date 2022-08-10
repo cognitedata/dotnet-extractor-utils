@@ -8,7 +8,6 @@ using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test.Integration
 {
-
     public class RedisHighAvailabilityTest
     {
         private readonly ITestOutputHelper _output;
