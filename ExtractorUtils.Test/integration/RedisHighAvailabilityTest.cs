@@ -14,7 +14,7 @@ namespace ExtractorUtils.Test.Integration
         private readonly ITestOutputHelper _output;
 
         private readonly string _tableName = "test-table-integration";
-        private readonly string _connectionString = "localhost:6379";
+        private readonly string _connectionString = "localhost";
 
         public RedisHighAvailabilityTest(ITestOutputHelper output)
         {
