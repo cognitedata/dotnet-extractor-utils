@@ -33,8 +33,7 @@ jobs:
       with:
         redis-version: ${{ matrix.redis-version }}
     - name: Test
-      run: 
-        - dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
+      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
       if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
       env:
         TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
