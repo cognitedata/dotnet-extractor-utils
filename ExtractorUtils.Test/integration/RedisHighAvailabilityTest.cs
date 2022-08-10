@@ -5,24 +5,28 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 using Cognite.Extractor.Utils;
+using StackExchange.Redis;
 
 namespace ExtractorUtils.Test.Integration
 {
     public class RedisHighAvailabilityTest
     {
         private readonly ITestOutputHelper _output;
-
+        private readonly ConnectionMultiplexer _redis;
         private readonly string _tableName = "test-table-integration";
         private readonly string _connectionString = "localhost";
 
         public RedisHighAvailabilityTest(ITestOutputHelper output)
         {
             _output = output;
+            _redis = ConnectionMultiplexer.Connect(_connectionString);
         }
 
         [Fact(Timeout = 30000)]
         public async void TestRedisExtractorManagerRun()
         {
+            Assert.True(_redis.IsConnected);
+
             // Creating configs for two different extractors.
             string configPath_0 = SetupConfig(index: 0);
             string configPath_1 = SetupConfig(index: 1);
@@ -56,6 +60,8 @@ namespace ExtractorUtils.Test.Integration
         [Fact(Timeout = 45000)]
         public async void TestRedisRestartExtractor()
         {
+            Assert.True(_redis.IsConnected);
+
             // Creating config for two extractors.
             string configPath_0 = SetupConfig(index: 0);
             string configPath_1 = SetupConfig(index: 1);
