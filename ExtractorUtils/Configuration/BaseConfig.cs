@@ -324,6 +324,11 @@ namespace Cognite.Extractor.Utils
         /// Config for adding high availability using Raw.
         /// </summary>
         public RawConfig? Raw { get; set; }
+
+        /// <summary>
+        /// Config for adding high availability using Redis.
+        /// </summary>
+        public RedisConfig? Redis { get; set; }
     }
         
     /// <summary>
@@ -335,6 +340,22 @@ namespace Cognite.Extractor.Utils
         /// Name of the shared state database.
         /// </summary>
         public string? DatabaseName { get; set; }
+
+        /// <summary>
+        /// Name of the shared state table.
+        /// </summary>
+        public string? TableName { get; set; }
+    }
+
+    /// <summary>
+    /// Config required for high availability using Redis.
+    /// </summary>
+    public class RedisConfig
+    {
+        /// <summary>
+        /// Connection string for the Redis database.
+        /// </summary>
+        public string? ConnectionString { get; set; }
 
         /// <summary>
         /// Name of the shared state table.

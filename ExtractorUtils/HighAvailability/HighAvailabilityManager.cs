@@ -13,7 +13,6 @@ namespace Cognite.Extractor.Utils
     public abstract class HighAvailabilityManager : IHighAvailabilityManager
     {
         internal readonly HighAvailabilityConfig _config;
-        internal readonly CogniteDestination _destination;
         internal readonly ILogger<HighAvailabilityManager> _logger;
         private readonly PeriodicScheduler _scheduler;
         private readonly CancellationTokenSource _source;
@@ -24,7 +23,6 @@ namespace Cognite.Extractor.Utils
 
         internal HighAvailabilityManager(
             HighAvailabilityConfig config,
-            CogniteDestination destination,
             ILogger<HighAvailabilityManager> logger,
             PeriodicScheduler scheduler,
             CancellationTokenSource source,
@@ -32,7 +30,6 @@ namespace Cognite.Extractor.Utils
             TimeSpan? inactivityThreshold = null)
         {
             _config = config;
-            _destination = destination;
             _logger = logger;
             _scheduler = scheduler;
             _source = source;
@@ -102,15 +99,17 @@ namespace Cognite.Extractor.Utils
 
         internal void UpdateStateAtInterval()
         {
-            _scheduler.SchedulePeriodicTask("Updating state", _cronWrapper, async (token) => await UpdateState().ConfigureAwait(false));
+            _scheduler.SchedulePeriodicTask("Updating state", _cronWrapper, async (token) => {
+                await UpdateState().ConfigureAwait(false);
+                CheckForMultipleActiveExtractors();
+            });
         }
 
-        // Uploading log to state, updating local state and checking for multiple active extractors.
+        // Uploading log to state and updating local state.
         internal async Task UpdateState()
         {
             await UploadLogToState().ConfigureAwait(false);
             await UpdateExtractorState().ConfigureAwait(false);
-            CheckForMultipleActiveExtractors();
         }
 
         internal void CheckForMultipleActiveExtractors()
