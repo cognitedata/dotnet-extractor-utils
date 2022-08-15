@@ -311,5 +311,58 @@ namespace Cognite.Extractor.Utils
         public IEnumerable<string>? AllowList { get; set; }
     }
 
+    /// <summary>
+    /// Config for adding high availability.
+    /// </summary>
+    public class HighAvailabilityConfig
+    {
+        /// <summary>
+        /// The index of the extractor.
+        /// </summary>
+        public int Index { get; set; }
+        
+        /// <summary>
+        /// Config for adding high availability using Raw.
+        /// </summary>
+        public RawConfig? Raw { get; set; }
+
+        /// <summary>
+        /// Config for adding high availability using Redis.
+        /// </summary>
+        public RedisConfig? Redis { get; set; }
+    }
+        
+    /// <summary>
+    /// Config required for high availability using Raw.
+    /// </summary>
+    public class RawConfig
+    {
+        /// <summary>
+        /// Name of the shared state database.
+        /// </summary>
+        public string? DatabaseName { get; set; }
+
+        /// <summary>
+        /// Name of the shared state table.
+        /// </summary>
+        public string? TableName { get; set; }
+    }
+
+    /// <summary>
+    /// Config required for high availability using Redis.
+    /// </summary>
+    public class RedisConfig
+    {
+        /// <summary>
+        /// Connection string for the Redis database.
+        /// </summary>
+        public string? ConnectionString { get; set; }
+
+        /// <summary>
+        /// Name of the shared state table.
+        /// </summary>
+        public string? TableName { get; set; }
+    }
+
     #endregion
 }

@@ -9,10 +9,10 @@ using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
 using Cognite.Extractor.Common;
 
-class MyExtractor : BaseExtractor<BaseConfig>
+class MyExtractor : BaseExtractor<MyConfig>
 {
-    public MyExtractor(BaseConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run, RemoteConfigManager<BaseConfig> configManager)
-        : base(config, provider, destination, run, configManager)
+    public MyExtractor(MyConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run, RemoteConfigManager<BaseConfig> configManager)
+        : base(config, provider, destination, run)
     {
         // Configure extraction pipeline
         if (run != null) run.Continuous = true;
@@ -31,6 +31,9 @@ class MyExtractor : BaseExtractor<BaseConfig>
 
     protected override async Task Start()
     {
+        // Adding high availability to the extractor.
+        await RunWithHighAvailabilityAndWait(Config.HighAvailability).ConfigureAwait(false);
+
         var result = await Destination.EnsureTimeSeriesExistsAsync(new[]
         {
             new TimeSeriesCreate {
@@ -49,6 +52,11 @@ class MyExtractor : BaseExtractor<BaseConfig>
             return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new[] { dp });
         });
     }
+}
+
+class MyConfig : BaseConfig
+{
+    public HighAvailabilityConfig HighAvailability { get; set; }
 }
 
 // Class for flat command line arguments
@@ -73,8 +81,8 @@ class Program
         command.SetHandler<Options>(async opt =>
         {
             // This can also be invoked directly in main, to not have a CLI.
-            await ExtractorRunner.Run<BaseConfig, MyExtractor>(
-                configPath: opt.ConfigPath ?? "config.yml",
+            await ExtractorRunner.Run<MyConfig, MyExtractor>(
+                configPath: opt.ConfigPath ?? "./ExampleExtractor/config.yml",
                 acceptedConfigVersions: new[] { 1 },
                 appId: "my-extractor",
                 userAgent: "myextractor/1.0.0",

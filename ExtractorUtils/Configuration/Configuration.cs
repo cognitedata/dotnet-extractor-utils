@@ -43,6 +43,7 @@ namespace Cognite.Extractor.Utils
             services.AddConfig<T>(config,
                 typeof(CogniteConfig),
                 typeof(LoggerConfig),
+                typeof(HighAvailabilityConfig),
                 typeof(MetricsConfig),
                 typeof(StateStoreConfig),
                 typeof(BaseConfig));
@@ -224,6 +225,7 @@ namespace Cognite.Extractor.Utils
                 {
                     typeof(CogniteConfig),
                     typeof(LoggerConfig),
+                    typeof(HighAvailabilityConfig),
                     typeof(MetricsConfig),
                     typeof(StateStoreConfig),
                     typeof(BaseConfig)

@@ -179,6 +179,31 @@ namespace Cognite.Extractor.Utils
                 }
             }
         }
+        
+        /// <summary>
+        /// Method called to add high availability to an extractor.
+        /// </summary>
+        /// <param name="config">Configuration object</param>
+        /// <param name="interval">Optional update state interval.</param>
+        /// <param name="inactivityThreshold">Optional threshold for extractor being inactive.</param>
+        /// <returns></returns>
+        public async Task RunWithHighAvailabilityAndWait(
+            HighAvailabilityConfig config,
+            TimeSpan? interval = null,
+            TimeSpan? inactivityThreshold = null)
+        {
+            var highAvailabilityManager = HighAvailabilityUtils
+                .CreateHighAvailabilityManager(config, Provider, Scheduler, Source, interval, inactivityThreshold);
+
+            if (highAvailabilityManager != null) 
+            {
+                await highAvailabilityManager.WaitToBecomeActive().ConfigureAwait(false);
+            }
+            else
+            {
+                _logger.LogWarning("Add manager config to add high availability.");
+            }
+        }
 
         /// <summary>
         /// Internal method starting the extractor. Should handle any creation of timeseries,
@@ -388,7 +413,8 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         protected virtual async ValueTask DisposeAsyncCore()
         {
-            if (Scheduler != null) {
+            if (Scheduler != null)
+            {
                 try
                 {
                     await Scheduler.ExitAllAndWait().ConfigureAwait(false);
