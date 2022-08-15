@@ -8,14 +8,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
 {
-
     /// <summary>
     /// Base configuration object for extractors.
     /// The config should have a version property, so that versioning and compatibility can be tracked by the extractor.
     /// </summary>
     public class BaseConfig : VersionedConfig
     {
-
+        /// <summary>
+        /// Type of configuration this represents, local or remote. Will generally always be local.
+        /// </summary>
+        public ConfigurationMode Type { get; set; } = ConfigurationMode.Local;
         /// <summary>
         /// Logging configuration (optional)
         /// </summary>
@@ -52,7 +54,6 @@ namespace Cognite.Extractor.Utils
     }
 
     #region Cognite configuration
-
     /// <summary>
     /// Cognite configuration object
     /// </summary>

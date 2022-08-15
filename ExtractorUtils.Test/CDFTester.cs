@@ -1,11 +1,13 @@
 ﻿using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
+using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test
@@ -51,15 +53,37 @@ namespace ExtractorUtils.Test
         {
         }
 
-        public static string[] GetConfig(CogniteHost host)
+        public async Task<long> GetDataSetId()
         {
-            var config = new List<string>() {
-                "version: 2",
-                "logger:",
-                "  console:",
-                "    level: verbose",
-                "cognite:",
-            };
+
+            var dataSets = await Destination.CogniteClient.DataSets.RetrieveAsync(new[] { "test-dataset" }, true);
+            if (!dataSets.Any())
+            {
+                dataSets = await Destination.CogniteClient.DataSets.CreateAsync(new[] { new DataSetCreate
+                {
+                    Description = ".NET utils test dataset",
+                    ExternalId = "test-dataset",
+                    Name = "Test dataset"
+                } });
+            }
+            return dataSets.First().Id;
+        }
+
+        public static string[] GetConfig(CogniteHost host, bool onlyCognite = false)
+        {
+            var config = onlyCognite
+                ? new List<string>()
+                {
+                    "version: 2",
+                    "cognite:"
+                }
+                : new List<string>() {
+                    "version: 2",
+                    "logger:",
+                    "  console:",
+                    "    level: verbose",
+                    "cognite:",
+                };
             switch (host)
             {
                 case CogniteHost.GreenField:

@@ -27,6 +27,12 @@ namespace Cognite.Extractor.Configuration
             .WithNodeDeserializer(new TemplatedValueDeserializer());
         private static IDeserializer deserializer = builder
             .Build();
+        private static DeserializerBuilder ignoreUnmatchedBuilder = new DeserializerBuilder()
+            .WithNamingConvention(HyphenatedNamingConvention.Instance)
+            .WithNodeDeserializer(new TemplatedValueDeserializer())
+            .IgnoreUnmatchedProperties();
+
+        private static bool ignoreUnmatchedProperties;
 
         /// <summary>
         /// Reads the provided string containing yml and deserializes it to an object of type <typeparamref name="T"/>.
@@ -114,7 +120,7 @@ namespace Cognite.Extractor.Configuration
         /// <returns>A configuration object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid or
         /// in case of yaml parsing errors.</exception>
-        public static T TryReadConfigFromString<T>(string yaml, params int[] acceptedConfigVersions) where T : VersionedConfig
+        public static T TryReadConfigFromString<T>(string yaml, params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
             int configVersion = GetVersionFromString(yaml);
             CheckVersion(configVersion, acceptedConfigVersions);
@@ -153,8 +159,35 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         /// <param name="tag">Tag to be mapped</param>
         /// <typeparam name="T">Type to map to</typeparam>
-        public static void AddTagMapping<T>(string tag) {
+        public static void AddTagMapping<T>(string tag)
+        {
             builder = builder.WithTagMapping(tag, typeof(T));
+            ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
+            if (ignoreUnmatchedProperties)
+            {
+                deserializer = ignoreUnmatchedBuilder.Build();
+            }
+            else
+            {
+                deserializer = builder.Build();
+            }
+        }
+
+        /// <summary>
+        /// Configures the deserializer to ignore unmatched properties.
+        /// </summary>
+        public static void IgnoreUnmatchedProperties()
+        {
+            ignoreUnmatchedProperties = true;
+            deserializer = ignoreUnmatchedBuilder.Build();
+        }
+
+        /// <summary>
+        /// Configures the deserializer to throw an exception on unmatched properties, this is the default.
+        /// </summary>
+        public static void DisallowUnmatchedProperties()
+        {
+            ignoreUnmatchedProperties = false;
             deserializer = builder.Build();
         }
 

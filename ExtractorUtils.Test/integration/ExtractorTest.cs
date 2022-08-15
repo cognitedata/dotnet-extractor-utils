@@ -1,4 +1,5 @@
 ﻿using Cognite.Extensions;
+using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
@@ -144,10 +145,10 @@ namespace ExtractorUtils.Test.Integration
         }
     }
 
-    public class ExtractorTest
+    public class ExtractorTest : ConsoleWrapper
     {
         private readonly ITestOutputHelper _output;
-        public ExtractorTest(ITestOutputHelper output)
+        public ExtractorTest(ITestOutputHelper output) : base(output)
         {
             _output = output;
         }
@@ -335,6 +336,7 @@ namespace ExtractorUtils.Test.Integration
         {
             var cfg = new MyConfig();
             cfg.GenerateDefaults();
+            cfg.Logger.Console = new Cognite.Extractor.Logging.ConsoleConfig { Level = "debug" };
 
             NoCdfExtractor ext = null;
 
@@ -363,6 +365,11 @@ namespace ExtractorUtils.Test.Integration
                 );
 
             await Task.Delay(500);
+
+            if (task.IsFaulted)
+            {
+                throw task.Exception;
+            }
 
             Assert.NotNull(ext);
             Assert.True(ext.Started);

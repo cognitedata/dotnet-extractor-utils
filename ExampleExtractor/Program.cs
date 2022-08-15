@@ -7,13 +7,26 @@ using System;
 using System.Collections.Generic;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
+using Cognite.Extractor.Common;
 
 class MyExtractor : BaseExtractor<MyConfig>
 {
-    public MyExtractor(MyConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run)
+    public MyExtractor(MyConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run, RemoteConfigManager<BaseConfig> configManager)
         : base(config, provider, destination, run)
     {
+        // Configure extraction pipeline
         if (run != null) run.Continuous = true;
+        // Configure extractor to check for updates to config every five minutes.
+        // Here you could also use CronTimeSpanWrapper, or TimeSpanWrapper, to let users set this through configuration.
+        if (configManager != null)
+        {
+            configManager.UpdatePeriod = new BasicTimeSpanProvider(TimeSpan.FromMinutes(5));
+            // On configuration change, tell the extractor to stop.
+            OnConfigUpdate += (sender, config, revision) =>
+            {
+                Source.Cancel();
+            };
+        }
     }
 
     protected override async Task Start()
