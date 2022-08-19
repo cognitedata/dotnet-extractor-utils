@@ -648,7 +648,7 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Theory]
-        [InlineData(0)]
+        [InlineData(0.0)]
         [InlineData(321.321)]
         [InlineData(null)]
         public void TestSanitizeDataPoints(double? nanRepl)
