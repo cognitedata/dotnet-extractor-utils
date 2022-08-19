@@ -44,22 +44,5 @@ namespace ExtractorUtils.Test.Unit
 
             Assert.Equal(0, command.Invoke("--string-type stringvalue -b -i 123"));
         }
-
-        [Fact]
-        public void LibBugTest()
-        {
-            // This shows a bug in System.CommandLine, once this fails we can remove the workaround from AttributeBinder
-
-            var arg = new Option<bool>(new[] { "-b" }, "Some description");
-
-            var cmd = new RootCommand
-            {
-                arg
-            };
-
-            var res = cmd.Parse("-b");
-
-            Assert.False((bool)res.GetValueForOption((Option)arg));
-        }
     }
 }
