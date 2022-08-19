@@ -24,11 +24,11 @@
     <ProjectReference Include="..\Cognite.Common\Cognite.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.44.0" />
-    <PackageReference Include="CogniteSdk" Version="3.4.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.46.1" />
+    <PackageReference Include="CogniteSdk" Version="3.4.1" />
     <PackageReference Include="prometheus-net" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.8" />
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
   </ItemGroup>
 </Project>
