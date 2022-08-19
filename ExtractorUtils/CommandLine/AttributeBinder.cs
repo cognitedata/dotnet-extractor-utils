@@ -89,16 +89,8 @@ namespace Cognite.Extractor.Utils.CommandLine
                 if (!prop.CanWrite) continue;
                 if (!Options.TryGetValue(prop.Name, out var option)) continue;
 
-                if (option.GetType() == typeof(Option<>).MakeGenericType(typeof(bool)))
-                {
-                    prop.SetValue(result, bindingContext.ParseResult.GetValueForOption((Option<bool>)option));
-                }
-                else
-                {
-                    var res = bindingContext.ParseResult.GetValueForOption(option);
-                    prop.SetValue(result, res);
-                }
-                
+                var res = bindingContext.ParseResult.GetValueForOption(option);
+                prop.SetValue(result, res);
             }
 
             return (T)result;
