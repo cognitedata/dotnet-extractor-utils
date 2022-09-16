@@ -131,16 +131,17 @@ namespace ExtractorUtils.Test.Unit
 
                 Assert.True(extractorManager._state.CurrentState.Count == 0);
 
+                await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
 
                 // Testing that the state has changed.
-                Assert.True(extractorManager._state.CurrentState.Count == 4);
+                Assert.Equal(4, extractorManager._state.CurrentState.Count);
 
                 // Checking that each value in the state is the same as in the db.
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
                     string key = instance.Index.ToString();
-                    if (rows.ContainsKey(key))
+                    if (rows.ContainsKey(key) && key != "0")
                     {
                         Assert.True(rows[key].Active == instance.Active);
                         Assert.True(rows[key].TimeStamp == instance.TimeStamp);
@@ -151,6 +152,7 @@ namespace ExtractorUtils.Test.Unit
                 string testKey = "1";
                 rows[testKey] = new RawLogData(DateTime.UtcNow, true);
 
+                await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
@@ -170,6 +172,7 @@ namespace ExtractorUtils.Test.Unit
                 RawLogData logCopy = rows[testKey];
                 rows.Remove(testKey);
 
+                await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
 
                 // Checking that the state still has all the rows.
@@ -189,6 +192,7 @@ namespace ExtractorUtils.Test.Unit
                 // Inserting the removed extractor back and checking that the new value is used again.
                 rows[testKey] = new RawLogData(DateTime.UtcNow, false);
 
+                await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
@@ -207,6 +211,7 @@ namespace ExtractorUtils.Test.Unit
                 testKey = "3";
                 rows[testKey] = new RawLogData(DateTime.UtcNow, !rows[testKey].Active);
 
+                await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
