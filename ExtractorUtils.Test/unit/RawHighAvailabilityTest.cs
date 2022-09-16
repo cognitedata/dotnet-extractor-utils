@@ -14,6 +14,7 @@ using Cognite.Extractor.Utils;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Common;
 using CogniteSdk;
+using System.Linq;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -136,7 +137,7 @@ namespace ExtractorUtils.Test.Unit
                 Assert.True(extractorManager._state.CurrentState.Count == 4);
 
                 // Checking that each value in the state is the same as in the db.
-                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
                     string key = instance.Index.ToString();
                     if (rows.ContainsKey(key))
@@ -152,7 +153,7 @@ namespace ExtractorUtils.Test.Unit
 
                 await extractorManager.UpdateExtractorState();
 
-                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
                     if (instance.Index == Int16.Parse(testKey))
                     {
@@ -174,7 +175,7 @@ namespace ExtractorUtils.Test.Unit
                 // Checking that the state still has all the rows.
                 Assert.True(extractorManager._state.CurrentState.Count == 4);
 
-                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
                     if (instance.Index == Int16.Parse(testKey))
                     {
@@ -190,7 +191,7 @@ namespace ExtractorUtils.Test.Unit
 
                 await extractorManager.UpdateExtractorState();
 
-                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
                     if (instance.Index == Int16.Parse(testKey))
                     {
@@ -208,7 +209,7 @@ namespace ExtractorUtils.Test.Unit
 
                 await extractorManager.UpdateExtractorState();
 
-                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState)
+                foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
                     if (instance.Index == Int16.Parse(testKey))
                     {
@@ -246,7 +247,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, true));
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 50)), false));
 
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
                 extractorManager.CheckForMultipleActiveExtractors();
 
                 // Extractor 1 will be cancelled because both 0 and 1 are active, where 0 has higher priority.
@@ -260,7 +261,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 20)), true));
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 50)), true));
 
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
                 extractorManager.CheckForMultipleActiveExtractors();
 
                 // Extractor 1 will not be cancelled because it is not active.
@@ -274,7 +275,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, true));
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow, true));
 
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
                 extractorManager.CheckForMultipleActiveExtractors();
 
                 // Extractor 1 will be cancelled because there are multiple active extractors and 0 has higher priority.
@@ -288,7 +289,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow, true));
                 extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow, true));
 
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
                 extractorManager.CheckForMultipleActiveExtractors();
 
                 // Extractor 1 will not be cancelled because it has higher priority than 2 and 3.
@@ -320,7 +321,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
                 extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
 
                 // Extractor 1 will become active because 2 and 3 are not within the time threshold.
                 Assert.True(extractorManager.ShouldBecomeActive());
@@ -329,7 +330,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow, true));
                 extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
 
                 // Extractor 1 will not become active because 2 is already active and within the time threshold.
                 Assert.False(extractorManager.ShouldBecomeActive());
@@ -338,7 +339,7 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), true));
                 extractorInstances.Add(new RawExtractorInstance(3, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), true));
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
 
                 // Extractor 1 will become active because 2 and 3 are over the time threshold.
                 Assert.True(extractorManager.ShouldBecomeActive());
@@ -347,13 +348,13 @@ namespace ExtractorUtils.Test.Unit
                 extractorInstances.Add(new RawExtractorInstance(0, DateTime.UtcNow, false));
                 extractorInstances.Add(new RawExtractorInstance(1, DateTime.UtcNow, false));
                 extractorInstances.Add(new RawExtractorInstance(2, DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), true));
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
 
                 // Extractor 1 will not become active because 0 has higher priority.
                 Assert.False(extractorManager.ShouldBecomeActive());
 
                 extractorInstances.Clear();
-                extractorManager._state.CurrentState = extractorInstances;
+                extractorManager._state.CurrentState = extractorInstances.ToDictionary(ex => ex.Index);
 
                 // Extractor 1 will not become active because the state is empty.
                 Assert.False(extractorManager.ShouldBecomeActive());

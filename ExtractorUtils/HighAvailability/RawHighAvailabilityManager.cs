@@ -41,7 +41,11 @@ namespace Cognite.Extractor.Utils
 
         internal override async Task UploadLogToState()
         {
+            var now = DateTime.UtcNow;
             var log = new RawLogData(DateTime.UtcNow, _state.UpdatedStatus);
+            var state = new RawExtractorInstance(_config.Index, now, _state.UpdatedStatus);
+
+            _state.CurrentState[_config.Index] = state;
 
             var rows = new List<RawRowCreate<RawLogData>>() {
                 new RawRowCreate<RawLogData>() { Key = _config.Index.ToString(), Columns = log }
@@ -65,26 +69,14 @@ namespace Cognite.Extractor.Utils
                 var rows = await _destination.CogniteClient.Raw.ListRowsAsync<RawLogData>(_config.Raw?.DatabaseName, _config.Raw?.TableName).ConfigureAwait(false);
 
                 // Converting Raw data to ExtractorInstance object.
-                var extractorInstances = new List<IExtractorInstance>();
                 foreach (var extractor in rows.Items)
                 {
-                    var instance = new RawExtractorInstance(Int32.Parse(extractor.Key), extractor.Columns.TimeStamp, extractor.Columns.Active);
-                    extractorInstances.Add(instance);
-                }
-
-                // Checking if a row is missing from the Raw database.
-                var keys = rows.Items.Select(extractor => Int32.Parse(extractor.Key));
-                if (extractorInstances.Count < _state.CurrentState.Count)
-                {
-                    foreach(var extractor in _state.CurrentState)
+                    var instance = new RawExtractorInstance(int.Parse(extractor.Key), extractor.Columns.TimeStamp, extractor.Columns.Active);
+                    if (instance.Index != _config.Index)
                     {
-                        // Adding missing row.
-                        if (!keys.Contains(extractor.Index)) extractorInstances.Add(extractor);
-                    };
+                        _state.CurrentState[instance.Index] = instance;
+                    }
                 }
-
-                // Updating state.
-                _state.CurrentState = extractorInstances;
             }
             catch (Exception ex)
             {

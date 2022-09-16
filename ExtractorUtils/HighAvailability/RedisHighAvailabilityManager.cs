@@ -64,6 +64,8 @@ namespace Cognite.Extractor.Utils
                     Active = _state.UpdatedStatus
                 };
 
+                _state.CurrentState[_config.Index] = log;
+
                 await db.StringSetAsync(_redisKey, JsonSerializer.Serialize(log)).ConfigureAwait(false);
                 _logger.LogTrace("State has been updated.");
             }
@@ -81,7 +83,6 @@ namespace Cognite.Extractor.Utils
                 var server = _redis.GetServer(_redis.GetEndPoints().First());
                 var keys = server.Keys(pattern: _redisKeyPattern);
 
-                var extractorInstances = new List<IExtractorInstance>();
                 foreach (RedisKey key in keys)
                 {
                     var value = await db.StringGetAsync(key).ConfigureAwait(false);
@@ -89,11 +90,9 @@ namespace Cognite.Extractor.Utils
                     {
                         var doc = JsonDocument.Parse(value.ToString());
                         var instance = JsonSerializer.Deserialize<RedisExtractorInstance>(doc);
-                        if (instance != null) extractorInstances.Add(instance);
+                        if (instance != null && instance.Index != _config.Index) _state.CurrentState[instance.Index] = instance;
                     }
                 }
-
-                _state.CurrentState = extractorInstances;
             }
             catch (Exception ex)
             {

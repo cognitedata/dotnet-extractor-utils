@@ -45,7 +45,7 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// State of the current extractors.
         /// </summary>
-        public List<IExtractorInstance> CurrentState { get; set; }
+        public Dictionary<int, IExtractorInstance> CurrentState { get; set; }
 
         /// <summary>
         /// Value used by the extractor to update its own active status.
@@ -58,7 +58,7 @@ namespace Cognite.Extractor.Common
         /// <param name="initialStatus">The initial active status of the extractor.</param>
         public ExtractorState(bool initialStatus = false)
         {
-            CurrentState = new List<IExtractorInstance>();
+            CurrentState = new Dictionary<int, IExtractorInstance>();
             UpdatedStatus = initialStatus;
         }
     }
