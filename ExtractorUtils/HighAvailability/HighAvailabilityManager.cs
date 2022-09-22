@@ -50,8 +50,6 @@ namespace Cognite.Extractor.Utils
             bool firstRun = true;
             while (!_source.IsCancellationRequested)
             {
-                await Task.Delay(_cronWrapper.Value, _source.Token).ConfigureAwait(false);
-
                 await UpdateState().ConfigureAwait(false);
 
                 if (firstRun)
@@ -65,6 +63,8 @@ namespace Cognite.Extractor.Utils
                     _state.UpdatedStatus = true;
                     break;
                 }
+
+                await Task.Delay(_cronWrapper.Value, _source.Token).ConfigureAwait(false);
             }
 
             UpdateStateAtInterval();
@@ -77,13 +77,13 @@ namespace Cognite.Extractor.Utils
             // Checking if there is currently an active extractor.
             // An extractor is considered active if it is marked as active and it has been responsive within the inactivty threshold.
             bool activeExtractor = _state.CurrentState
-                .Any(extractor => extractor.Active && IsResponsive(extractor.TimeStamp, now));
+                .Any(kvp => kvp.Value.Active && IsResponsive(kvp.Value.TimeStamp, now));
 
             if (!activeExtractor)
             {
                 var responsiveStandbyExtractors = _state.CurrentState
-                    .Where(extractor => !extractor.Active && IsResponsive(extractor.TimeStamp, now))
-                    .Select(extractor => extractor.Index);
+                    .Where(kvp => !kvp.Value.Active && IsResponsive(kvp.Value.TimeStamp, now))
+                    .Select(kvp => kvp.Value.Index);
                         
                 // If there are no active extractors, start the standby extractor with highest priority.
                 if (responsiveStandbyExtractors.Any() && responsiveStandbyExtractors.Min() == _config.Index)
@@ -118,8 +118,8 @@ namespace Cognite.Extractor.Utils
 
             // Creating a list of all the active extractors.
             var activeExtractors = _state.CurrentState
-                .Where(extractor => extractor.Active && IsResponsive(extractor.TimeStamp, now))
-                .Select(extractor => extractor.Index)
+                .Where(kvp => kvp.Value.Active && IsResponsive(kvp.Value.TimeStamp, now))
+                .Select(kvp => kvp.Value.Index)
                 .ToList();
 
             // Turning off extractor if there are multiple active and it does not have the highest priority.
