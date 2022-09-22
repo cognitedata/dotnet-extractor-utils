@@ -42,7 +42,7 @@ namespace Cognite.Extractor.Utils
         internal override async Task UploadLogToState()
         {
             var now = DateTime.UtcNow;
-            var log = new RawLogData(DateTime.UtcNow, _state.UpdatedStatus);
+            var log = new RawLogData(now, _state.UpdatedStatus);
             var state = new RawExtractorInstance(_config.Index, now, _state.UpdatedStatus);
 
             _state.CurrentState[_config.Index] = state;
