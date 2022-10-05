@@ -63,7 +63,7 @@ namespace ExtractorUtils.Test.integration
                 await Assert.ThrowsAsync<ConfigurationException>(async () => await services.AddRemoteConfig<BaseConfig>(null, remoteConfigPath, null, "utils-test-app", null, true, false, null, tester.Source.Token, 2));
 
                 // Create a remote config, then try again
-                await tester.Destination.CogniteClient.Playground.ExtPipeConfigs.Create(new ExtPipeConfigCreate
+                await tester.Destination.CogniteClient.ExtPipes.CreateConfigAsync(new ExtPipeConfigCreate
                 {
                     Config = "{\"version\": 2, \"logger\": { \"console\": {\"level\": \"verbose\"}}}",
                     ExternalId = pipeline.ExternalId
@@ -156,7 +156,7 @@ namespace ExtractorUtils.Test.integration
                 Assert.Null(await manager.FetchLatest(tester.Source.Token));
 
                 // Again, this time successfully
-                await tester.Destination.CogniteClient.Playground.ExtPipeConfigs.Create(new ExtPipeConfigCreate
+                await tester.Destination.CogniteClient.ExtPipes.CreateConfigAsync(new ExtPipeConfigCreate
                 {
                     Config = "{\"version\": 2, \"logger\": { \"console\": {\"level\": \"verbose\"}}}",
                     ExternalId = pipeline.ExternalId
