@@ -161,7 +161,7 @@ namespace Cognite.Extractor.Utils
         {
             try
             {
-                var rawConfig = await _destination.CogniteClient.Playground.ExtPipeConfigs.GetCurrentConfig(_pipelineId, token).ConfigureAwait(false);
+                var rawConfig = await _destination.CogniteClient.ExtPipes.GetCurrentConfigAsync(_pipelineId, token).ConfigureAwait(false);
                 var config = ConfigurationUtils.TryReadConfigFromString<T>(rawConfig.Config, _acceptedConfigVersions);
 
                 if (_bufferFilePath != null)
