@@ -139,19 +139,23 @@ namespace Cognite.Extractor.Utils
             var cogniteProperty = typeof(T).GetProperty("Cognite");
             if (cogniteProperty != null)
             {
+                if (!typeof(CogniteConfig).IsAssignableFrom(cogniteProperty.PropertyType))
+                {
+                    _logger.LogWarning("Cognite field is not a subtype of CogniteConfig, cannot inject remote config. This behavior is heavily discouraged");
+                    return config;
+                }
+
                 var cogniteConfig = cogniteProperty.GetValue(config) as CogniteConfig;
-                if (cogniteConfig != null)
+                if (cogniteConfig == null)
                 {
-                    cogniteConfig.IdpAuthentication = _remoteConfig.Cognite.IdpAuthentication;
-                    cogniteConfig.Project = _remoteConfig.Cognite.Project;
-                    cogniteConfig.ApiKey = _remoteConfig.Cognite.ApiKey;
-                    cogniteConfig.ExtractionPipeline = _remoteConfig.Cognite.ExtractionPipeline;
-                    cogniteConfig.Host = _remoteConfig.Cognite.Host;
+                    cogniteConfig = Activator.CreateInstance(cogniteProperty.PropertyType) as CogniteConfig;
                 }
-                else
-                {
-                    cogniteProperty.SetValue(config, _remoteConfig.Cognite);
-                }
+
+                cogniteConfig!.IdpAuthentication = _remoteConfig.Cognite.IdpAuthentication;
+                cogniteConfig.Project = _remoteConfig.Cognite.Project;
+                cogniteConfig.ApiKey = _remoteConfig.Cognite.ApiKey;
+                cogniteConfig.ExtractionPipeline = _remoteConfig.Cognite.ExtractionPipeline;
+                cogniteConfig.Host = _remoteConfig.Cognite.Host;
             }
 
             return config;
