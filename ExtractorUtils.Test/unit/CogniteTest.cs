@@ -76,10 +76,10 @@ namespace ExtractorUtils.Test.Unit
                 await Task.Delay(100);
                 token = await auth.GetToken(); // same token
                 Assert.Equal("token0", token);
-                await Task.Delay(1000); // token expired
+                await Task.Delay(2000); // token expired
                 token = await auth.GetToken(); // new token
                 Assert.Equal("token1", token);
-                await Task.Delay(1100); // token expired
+                await Task.Delay(2100); // token expired
                 await Assert.ThrowsAsync<CogniteUtilsException>(() => auth.GetToken()); // failed, returns null
             }
 
@@ -690,7 +690,7 @@ namespace ExtractorUtils.Test.Unit
             // build expected response
             var reply = "{" + Environment.NewLine +
                        $"  \"token_type\": \"Bearer\",{Environment.NewLine}" +
-                       $"  \"expires_in\": 1,{Environment.NewLine}" +
+                       $"  \"expires_in\": 2,{Environment.NewLine}" +
                        $"  \"access_token\": \"token{_tokenCounter}\"{Environment.NewLine}" +
                         "}";
             _tokenCounter++;
