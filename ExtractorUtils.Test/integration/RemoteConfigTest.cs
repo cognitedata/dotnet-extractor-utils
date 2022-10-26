@@ -1,4 +1,6 @@
 ﻿using Cognite.Extractor.Common;
+using Cognite.Extractor.Configuration;
+using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ExtractorUtils.Test.integration
+namespace ExtractorUtils.Test.Integration
 {
     public class RemoteConfigTest
     {
@@ -34,7 +36,7 @@ namespace ExtractorUtils.Test.integration
         private void WriteConfig(CogniteHost host, bool remote, string path, string pipelineId)
         {
             var lines = CDFTester.GetConfig(host, true);
-            lines = lines.Prepend($"type: {(remote ? "remote" : "local")}").Append("  extraction-pipeline:").Append($"    pipeline-id: {pipelineId}").ToArray();
+            lines = lines.Prepend($"type: {(remote ? "remote" : "local")}").Append("  extraction-pipeline:").Append($"    external-id: {pipelineId}").ToArray();
             System.IO.File.WriteAllLines(path, lines);
         }
 
@@ -186,6 +188,47 @@ namespace ExtractorUtils.Test.integration
                 config = await manager.FetchLatest(tester.Source.Token);
                 Assert.Equal("verbose", config.Logger.Console.Level);
                 Assert.Equal(tester.Config.Cognite.Project, config.Cognite.Project);
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new[] { pipeline.Id });
+                System.IO.File.Delete($"_temp_{remoteConfigPath}");
+            }
+        }
+
+        class CogniteSubType : CogniteConfig
+        {
+            public string ExtraField { get; set; }
+        }
+
+        class SubTypeConfig : VersionedConfig
+        {
+            public CogniteSubType Cognite { get; set; }
+            public LoggerConfig Logger { get; set; }
+
+            public override void GenerateDefaults()
+            {
+            }
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestRemoteConfigSubtype(CogniteHost host)
+        {
+            var tester = new CDFTester(host, _output);
+            var remoteConfigPath = $"{tester.Prefix}-remote-config.yml";
+            var pipeline = await Setup(tester);
+            WriteConfig(host, true, remoteConfigPath, pipeline.ExternalId);
+            try
+            {
+                var services = new ServiceCollection();
+                await tester.Destination.CogniteClient.ExtPipes.CreateConfigAsync(new ExtPipeConfigCreate
+                {
+                    Config = "{\"version\": 2, \"logger\": { \"console\": {\"level\": \"verbose\"}}}",
+                    ExternalId = pipeline.ExternalId
+                });
+                var config = await services.AddRemoteConfig<SubTypeConfig>(null, remoteConfigPath, null, "utils-test-app", null, true, false, null, tester.Source.Token, 2);
+                Assert.NotNull(config.Cognite);
             }
             finally
             {
