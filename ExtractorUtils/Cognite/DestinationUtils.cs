@@ -147,7 +147,8 @@ namespace Cognite.Extractor.Utils
             var authClientName = "AuthenticatorClient";
             services.AddHttpClient(
                 authClientName,
-                c => {
+                c =>
+                {
                     if (userAgent != null)
                     {
                         c.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
@@ -176,12 +177,9 @@ namespace Cognite.Extractor.Utils
                     return null!;
                 var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
                 var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
-                if (conf.IdpAuthentication.Implementation == AuthenticatorConfig.AuthenticatorImplementation.MSAL)
+
+                if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant))
                 {
-                    if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.TokenUrl))
-                    {
-                        logger.LogWarning("Setting token-url directly is not supported for MSAL implementation, use Basic instead");
-                    }
                     return new MsalAuthenticator(conf.IdpAuthentication, logger, clientFactory, authClientName);
                 }
 
@@ -242,6 +240,19 @@ namespace Cognite.Extractor.Utils
             {
                 throw new CogniteUtilsException("Cannot configure Builder: Project is not configured");
             }
+
+            // Validates the details of authenticator selection
+            if (!String.IsNullOrWhiteSpace(config.IdpAuthentication?.Tenant)
+                && !String.IsNullOrWhiteSpace(config.IdpAuthentication?.TokenUrl))
+            {
+                throw new CogniteUtilsException("Cannot configure authenticator: Only either of tenant or token-url can be set");
+            }
+            else if (!String.IsNullOrWhiteSpace(config.IdpAuthentication?.Tenant)
+                && String.IsNullOrWhiteSpace(config.IdpAuthentication?.Authority))
+            {
+                throw new CogniteUtilsException("Cannot configure Authenticator: The token authority is required when tenant is provided");
+            }
+
             var builder = clientBuilder
                 .SetAppId(appId)
                 .SetProject(config.Project);
