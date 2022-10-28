@@ -50,7 +50,6 @@ namespace ExtractorUtils.Test.Integration
 
                 var configList = new List<string>(CDFTester.GetConfig(host));
                 configList.Insert(13, "    implementation: basic");
-                configList.Insert(14, "    token-url: https://login.microsoftonline.com/${BF_TEST_TENANT}/oauth2/v2.0/token");
                 var configBasic = configList.ToArray();
                 using (var tester = new CDFTester(configBasic, _output))
                 {

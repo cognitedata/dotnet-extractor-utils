@@ -247,7 +247,7 @@ namespace Cognite.Extractor.Utils
             if (!String.IsNullOrWhiteSpace(_tenant) && !String.IsNullOrWhiteSpace(_tokenUrl))
             {
                 throw new CogniteUtilsException(
-                    "Cannot configure Builder: Only either of 'idp-authentication.tenant' or 'idp-authentication.token-url' can be set"
+                    "Cannot configure Builder: Only either 'idp-authentication.tenant' or 'idp-authentication.token-url' can be set"
                 );
             }
             else if (!String.IsNullOrWhiteSpace(_tenant) && String.IsNullOrWhiteSpace(config.IdpAuthentication?.Authority))
