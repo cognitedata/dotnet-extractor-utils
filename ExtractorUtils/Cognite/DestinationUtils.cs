@@ -241,19 +241,19 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException("Cannot configure Builder: Project is not configured");
             }
 
-            string? _tenant = config.IdpAuthentication?.Tenant.TrimToNull();
-            string? _tokenUrl = config.IdpAuthentication?.TokenUrl.TrimToNull();
+            string? tenant = config.IdpAuthentication?.Tenant.TrimToNull();
+            string? tokenUrl = config.IdpAuthentication?.TokenUrl.TrimToNull();
 
-            if (!String.IsNullOrWhiteSpace(_tenant) && !String.IsNullOrWhiteSpace(_tokenUrl))
+            if (!(tenant is null) && !(tokenUrl is null))
             {
                 throw new CogniteUtilsException(
                     "Cannot configure Builder: Only either 'idp-authentication.tenant' or 'idp-authentication.token-url' can be set"
                 );
             }
-            else if (!String.IsNullOrWhiteSpace(_tenant) && String.IsNullOrWhiteSpace(config.IdpAuthentication?.Authority))
+            else if (!(tenant is null) && config.IdpAuthentication?.Authority is null)
             {
                 throw new CogniteUtilsException(
-                    "Cannot configure Builder: The 'idp-authentication.authority' is required when 'idp-authentication.tenant' is provided"
+                    "Cannot configure Builder: 'idp-authentication.authority' is required when 'idp-authentication.tenant' is provided"
                 );
             }
 

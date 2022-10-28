@@ -32,12 +32,6 @@ cognite:
         #   - scopeA
         #   - scopeB
         scopes:
-        # Which implementation to use in the authenticator. One of
-        # MSAL (recommended) - Microsoft Authentication Library, Works only with authority/tenant
-        # Basic - Post to authentication endpoint and parse JSON response, works with both authority/tenant and token-url
-        # Default is MSAL
-        # Deprecated: implementation is implied based on either token-url or tenant
-        implementation: MSAL
         # Audience
         audience:
         # Minimum time-to-live in seconds for the token (optional)
