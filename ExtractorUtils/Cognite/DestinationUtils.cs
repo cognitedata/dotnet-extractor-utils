@@ -178,7 +178,7 @@ namespace Cognite.Extractor.Utils
                 var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
                 var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
 
-                if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant))
+                if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant.TrimToNull()))
                 {
                     return new MsalAuthenticator(conf.IdpAuthentication, logger, clientFactory, authClientName);
                 }
@@ -241,16 +241,26 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException("Cannot configure Builder: Project is not configured");
             }
 
-            // Validates the details of authenticator selection
-            if (!String.IsNullOrWhiteSpace(config.IdpAuthentication?.Tenant)
-                && !String.IsNullOrWhiteSpace(config.IdpAuthentication?.TokenUrl))
+            string? _tenant = config.IdpAuthentication?.Tenant.TrimToNull();
+            string? _tokenUrl = config.IdpAuthentication?.TokenUrl.TrimToNull();
+
+            if (!String.IsNullOrWhiteSpace(_tenant) && !String.IsNullOrWhiteSpace(_tokenUrl))
             {
-                throw new CogniteUtilsException("Cannot configure authenticator: Only either of tenant or token-url can be set");
+                throw new CogniteUtilsException(
+                    "Cannot configure Builder: Only either of 'idp-authentication.tenant' or 'idp-authentication.token-url' can be set"
+                );
             }
-            else if (!String.IsNullOrWhiteSpace(config.IdpAuthentication?.Tenant)
-                && String.IsNullOrWhiteSpace(config.IdpAuthentication?.Authority))
+            else if (String.IsNullOrWhiteSpace(_tenant) && String.IsNullOrWhiteSpace(_tokenUrl))
             {
-                throw new CogniteUtilsException("Cannot configure Authenticator: The token authority is required when tenant is provided");
+                throw new CogniteUtilsException(
+                    "Cannot configure Builder: Either one of 'idp-authentication.tenant' or 'idp-authentication.token-url' has to be set"
+                );
+            }
+            else if (!String.IsNullOrWhiteSpace(_tenant) && String.IsNullOrWhiteSpace(config.IdpAuthentication?.Authority))
+            {
+                throw new CogniteUtilsException(
+                    "Cannot configure Builder: The 'idp-authentication.authority' is required when 'idp-authentication.tenant' is provided"
+                );
             }
 
             var builder = clientBuilder

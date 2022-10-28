@@ -13,7 +13,6 @@ using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using Xunit;
-using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using Microsoft.Extensions.Logging;
 using Polly;
@@ -51,7 +50,7 @@ namespace ExtractorUtils.Test.Unit
                                 "  idp-authentication:",
                                 "    implementation: Basic",
                                $"    client-id: {clientId}",
-                               $"    tenant: {_authTenant}",
+                                "    token-url: http://example.url/token",
                                 "    secret: thisIsASecret",
                                 "    scopes: ",
                                 "      - thisIsAScope",
@@ -670,7 +669,7 @@ namespace ExtractorUtils.Test.Unit
         private static Task<HttpResponseMessage> mockAuthSendAsync(HttpRequestMessage message, CancellationToken token)
         {
             // Verify endpoint and method
-            Assert.Equal($@"https://login.microsoftonline.com/{_authTenant}/oauth2/v2.0/token", message.RequestUri.ToString());
+            Assert.Equal($@"http://example.url/token", message.RequestUri.ToString());
             Assert.Equal(HttpMethod.Post, message.Method);
 
             if (_tokenCounter == 2) //third call fails
