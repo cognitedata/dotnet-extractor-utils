@@ -15,14 +15,26 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public class ExtractionRunConfig
     {
+        private string? _pipelineId;
         /// <summary>
         /// ExternalId of extraction pipeline.
         /// </summary>
-        public string? PipelineId { get; set; }
+        public string? PipelineId
+        {
+            get => _pipelineId;
+            set => _pipelineId = value;
+        }
         /// <summary>
         /// Frequency of extraction pipeline updates in seconds.
         /// </summary>
         public int Frequency { get; set; } = 600;
+        /// <summary>
+        /// Extraction pipeline external id
+        /// </summary>
+        public string? ExternalId
+        {
+            set => _pipelineId = value;
+        }
     }
 
     /// <summary>

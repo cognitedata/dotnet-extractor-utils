@@ -136,6 +136,15 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
+        public static void TestCleanException()
+        {
+            var yaml = "version: 0\nbad: foo";
+            var e = Assert.Throws<ConfigurationException>(() => ConfigurationUtils.TryReadConfigFromString<TestBaseConfig>(yaml, 0));
+            var ye = Assert.IsType<YamlDotNet.Core.YamlException>(e.InnerException);
+            Assert.Equal("Failed to load config string at Line: 2, Col: 1, Idx: 11: Property 'bad' not found on type 'ExtractorUtils.Test.Unit.TestBaseConfig'.", e.Message);
+        }
+
+        [Fact]
         public static void TestValidString()
         {
             var yaml = "version: 0\ncognite: \n  project: project\nlogger:\n  console:\n    level: debug";

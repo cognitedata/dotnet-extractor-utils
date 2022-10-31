@@ -8,14 +8,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
 {
-
     /// <summary>
     /// Base configuration object for extractors.
     /// The config should have a version property, so that versioning and compatibility can be tracked by the extractor.
     /// </summary>
     public class BaseConfig : VersionedConfig
     {
-
+        /// <summary>
+        /// Type of configuration this represents, local or remote. Will generally always be local.
+        /// </summary>
+        public ConfigurationMode Type { get; set; } = ConfigurationMode.Local;
         /// <summary>
         /// Logging configuration (optional)
         /// </summary>
@@ -52,7 +54,6 @@ namespace Cognite.Extractor.Utils
     }
 
     #region Cognite configuration
-
     /// <summary>
     /// Cognite configuration object
     /// </summary>
@@ -308,6 +309,59 @@ namespace Cognite.Extractor.Utils
         /// List of certificate thumbprints to manually allow. This is much safer.
         /// </summary>
         public IEnumerable<string>? AllowList { get; set; }
+    }
+
+    /// <summary>
+    /// Config for adding high availability.
+    /// </summary>
+    public class HighAvailabilityConfig
+    {
+        /// <summary>
+        /// The index of the extractor.
+        /// </summary>
+        public int Index { get; set; }
+        
+        /// <summary>
+        /// Config for adding high availability using Raw.
+        /// </summary>
+        public RawConfig? Raw { get; set; }
+
+        /// <summary>
+        /// Config for adding high availability using Redis.
+        /// </summary>
+        public RedisConfig? Redis { get; set; }
+    }
+        
+    /// <summary>
+    /// Config required for high availability using Raw.
+    /// </summary>
+    public class RawConfig
+    {
+        /// <summary>
+        /// Name of the shared state database.
+        /// </summary>
+        public string? DatabaseName { get; set; }
+
+        /// <summary>
+        /// Name of the shared state table.
+        /// </summary>
+        public string? TableName { get; set; }
+    }
+
+    /// <summary>
+    /// Config required for high availability using Redis.
+    /// </summary>
+    public class RedisConfig
+    {
+        /// <summary>
+        /// Connection string for the Redis database.
+        /// </summary>
+        public string? ConnectionString { get; set; }
+
+        /// <summary>
+        /// Name of the shared state table.
+        /// </summary>
+        public string? TableName { get; set; }
     }
 
     #endregion
