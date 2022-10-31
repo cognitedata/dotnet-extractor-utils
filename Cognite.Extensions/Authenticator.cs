@@ -163,20 +163,7 @@ namespace Cognite.Extensions
             _client = client;
             _logger = logger ?? new Microsoft.Extensions.Logging.Abstractions.NullLogger<Authenticator>();
 
-            if (!string.IsNullOrWhiteSpace(config.TokenUrl))
-            {
-                _tokenUri = new Uri(config.TokenUrl);
-            }
-            else if (!string.IsNullOrWhiteSpace(config.Authority))
-            {
-                var uriBuilder = new UriBuilder(_config.Authority);
-                uriBuilder.Path = $"{_config.Tenant}/oauth2/v2.0/token";
-                _tokenUri = uriBuilder.Uri;
-            }
-            else
-            {
-                throw new ConfigurationException("No OIDC tenant or token url defined");
-            }
+            _tokenUri = new Uri(config.TokenUrl);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
