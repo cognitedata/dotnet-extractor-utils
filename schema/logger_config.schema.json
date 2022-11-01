@@ -1,5 +1,5 @@
 {
-    "$id": "/dotnet/logger_config.schema.json",
+    "$id": "/schema/logger_config.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "description": "Configuration for logging to console or file.",

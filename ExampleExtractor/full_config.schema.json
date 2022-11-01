@@ -1,5 +1,5 @@
 {
-    "$id": "/dotnet/ExampleExtractor/full_config.schema.json",
+    "$id": "/ExampleExtractor/full_config.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "allOf": [{ "$ref": "../schema/base_config.schema.json" }],
