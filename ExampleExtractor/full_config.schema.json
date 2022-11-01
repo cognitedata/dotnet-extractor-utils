@@ -1,0 +1,10 @@
+{
+    "$id": "/dotnet/ExampleExtractor/full_config.schema.json",
+    "type": "object",
+    "allOf": [{ "$ref": "../schema/base_config.schema.json" }],
+    "properties": {
+        "high-availability": {
+            "$ref": "../schema/high_availability.schema.json"
+        }
+    }
+}

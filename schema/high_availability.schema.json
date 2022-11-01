@@ -1,0 +1,38 @@
+{
+    "$id": "/dotnet/high_availability.schema.json",
+    "type": "object",
+    "properties": {
+        "index": {
+            "type": "integer"
+        },
+        "raw": {
+            "type": "object",
+            "properties": {
+                "database-name": {
+                    "type": "string"
+                },
+                "table-name": {
+                    "type": "string"
+                }
+            },
+            "required": ["database-name", "table-name"]
+        },
+        "redis": {
+            "type": "object",
+            "properties": {
+                "connection-string": {
+                    "type": "string"
+                },
+                "table-name": {
+                    "type": "string"
+                }
+            },
+            "required": ["connection-string", "table-name"]
+        }
+    },
+    "oneOf": [
+        { "required": ["raw"] },
+        { "required": ["redis"] }
+    ],
+    "required": ["index"]
+}

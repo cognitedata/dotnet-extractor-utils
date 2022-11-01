@@ -1,0 +1,27 @@
+{
+    "$id": "/dotnet/base_config.schema.json",
+    "type": "object",
+    "properties": {
+        "version": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "type": {
+            "type": "string",
+            "enum": ["local", "remote"]
+        },
+        "logger": {
+            "$ref": "logger_config.schema.json"
+        },
+        "metrics": {
+            "$ref": "metrics_config.schema.json"
+        },
+        "cognite": {
+            "$ref": "cognite_config.schema.json"
+        },
+        "state-store": {
+            "$ref": "state_store_config.schema.json"
+        }
+    },
+    "required": ["version"]
+}

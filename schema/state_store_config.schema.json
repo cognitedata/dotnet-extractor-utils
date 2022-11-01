@@ -1,0 +1,14 @@
+{
+    "$id": "/dotnet/state_store_config.schema.json",
+    "type": "object",
+    "properties": {
+        "location": {
+            "type": "string"
+        },
+        "database": {
+            "type": "string",
+            "enum": ["None", "LiteDb", "Raw"],
+            "default": "None"
+        }
+    }
+}

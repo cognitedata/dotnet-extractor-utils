@@ -2,7 +2,7 @@ version: 1
 #logger:
 #  console:
 #    level: verbose
-type: remote
+type: local
 cognite:
   project: ${BF_TEST_PROJECT}
   host: ${BF_TEST_HOST}

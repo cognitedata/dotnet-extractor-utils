@@ -1,0 +1,51 @@
+{
+    "$id": "/dotnet/logger_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "console": {
+            "type": "object",
+            "properties": {
+                "console": {
+                    "type": "object",
+                    "properties": {
+                        "level": {
+                            "type": "string",
+                            "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                        },
+                        "stderr-level": {
+                            "type": "string",
+                            "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                        }
+                    }
+                }
+            }
+        },
+        "file": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "type": "string",
+                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                },
+                "path": {
+                    "type": "string"
+                },
+                "retention-limit": {
+                    "type": "integer",
+                    "min": 1
+                },
+                "rolling-interval": {
+                    "type": "string",
+                    "enum": ["day", "hour"]
+                }
+            }
+        },
+        "trace-listener": {
+            "level": {
+                "type": "string",
+                "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+            }
+        }
+    }
+}

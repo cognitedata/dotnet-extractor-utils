@@ -1,0 +1,219 @@
+{
+    "$id": "/dotnet/metrics_config.schema.json",
+    "type": "object",
+    "properties": {
+        "project": {
+            "type": "string"
+        },
+        "api-key": {
+            "type": "string"
+        },
+        "idp-authentication": {
+            "type": "object",
+            "properties": {
+                "implementation": {
+                    "type": "string",
+                    "enum": ["MSAL", "Basic"],
+                    "default": "MSAL"
+                },
+                "authority": {
+                    "type": "string",
+                    "default": "https://login.microsoftonline.com/"
+                },
+                "client-id": {
+                    "type": "string"
+                },
+                "tenant": {
+                    "type": "string"
+                },
+                "token-url": {
+                    "type": "string"
+                },
+                "secret": {
+                    "type": "string"
+                },
+                "resource": {
+                    "type": "string"
+                },
+                "scopes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "audience": {
+                    "type": "string"
+                },
+                "min-ttl": {
+                    "type": "integer",
+                    "default": 30
+                }
+            }
+        },
+        "host": {
+            "type": "string",
+            "default": "https://api.cognitedata.com"
+        },
+        "cdf-retries": {
+            "type": "object",
+            "properties": {
+                "timeout": {
+                    "type": "integer",
+                    "default": 80000
+                },
+                "max-retries": {
+                    "type": "integer",
+                    "default": 5
+                },
+                "max-delay": {
+                    "type": "integer",
+                    "default": 5000
+                }
+            }
+        },
+        "cdf-chunking": {
+            "type": "object",
+            "properties": {
+                "time-series": {
+                    "type": "integer",
+                    "default": 1000
+                },
+                "assets": {
+                    "type": "integer",
+                    "default": 1000
+                },
+                "data-point-time-series": {
+                    "type": "integer",
+                    "default": 10000
+                },
+                "data-point-delete": {
+                    "type": "integer",
+                    "default": 10000
+                },
+                "data-point-list": {
+                    "type": "integer",
+                    "default": 100
+                },
+                "data-points": {
+                    "type": "integer",
+                    "default": 100000
+                },
+                "data-points-gzip-limit": {
+                    "type": "integer",
+                    "default": 5000
+                },
+                "raw-rows": {
+                    "type": "integer",
+                    "default": 10000
+                },
+                "raw-rows-delete": {
+                    "type": "integer",
+                    "default": 1000
+                },
+                "data-point-latest": {
+                    "type": "integer",
+                    "default": 100
+                },
+                "events": {
+                    "type": "integer",
+                    "default": 1000
+                },
+                "sequences": {
+                    "type": "integer",
+                    "default": 1000
+                },
+                "sequence-row-sequences": {
+                    "type": "integer",
+                    "default": 1000
+                },
+                "sequence-rows": {
+                    "type": "integer",
+                    "default": 10000
+                }
+            }
+        },
+        "cdf-throttling": {
+            "type": "object",
+            "properties": {
+                "time-series": {
+                    "type": "integer",
+                    "default": 20
+                },
+                "assets": {
+                    "type": "integer",
+                    "default": 20
+                },
+                "data-points": {
+                    "type": "integer",
+                    "default": 10
+                },
+                "raw": {
+                    "type": "integer",
+                    "default": 10
+                },
+                "ranges": {
+                    "type": "integer",
+                    "default": 20
+                },
+                "events": {
+                    "type": "integer",
+                    "default": 20
+                },
+                "sequences": {
+                    "type": "integer",
+                    "default": 20
+                }
+            }
+        },
+        "sdk-logging": {
+            "type": "object",
+            "properties": {
+                "disable": {
+                    "type": "boolean"
+                },
+                "level": {
+                    "type": "string",
+                    "enum": ["trace", "debug", "information", "warning", "error", "critical", "none"],
+                    "default": "debug"
+                },
+                "format": {
+                    "type": "string",
+                    "default": "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms"
+                }
+            }
+        },
+        "nan-replacement": {
+            "type": ["number", "null"]
+        },
+        "extraction-pipeline": {
+            "type": "object",
+            "properties": {
+                "pipeline-id": {
+                    "type": "string",
+                    "deprecated": true
+                },
+                "external-id": {
+                    "type": "string"
+                },
+                "frequency": {
+                    "type": "integer",
+                    "default": 600
+                }
+            }
+        },
+        "certificates": {
+            "type": "object",
+            "properties": {
+                "accept-all": {
+                    "type": "boolean"
+                },
+                "allow-list": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
