@@ -1,5 +1,5 @@
 {
-    "$id": "/schema/high_availability.schema.json",
+    "$id": "high_availability.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "description": "Configuration to allow you to run multiple redundant extractors. Each extractor needs a unique index.",
