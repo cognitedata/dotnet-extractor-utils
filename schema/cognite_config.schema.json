@@ -1,5 +1,6 @@
 {
     "$id": "/dotnet/cognite_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "description": "Configure connection to Cognite Data Fusion (CDF)",
     "properties": {

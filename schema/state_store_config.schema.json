@@ -1,5 +1,6 @@
 {
     "$id": "/dotnet/state_store_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "description": "Store state in a local database or in CDF raw to start the extractor more efficiently",
     "properties": {
