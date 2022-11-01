@@ -4,11 +4,14 @@
     "properties": {
         "version": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "description": "Version of the config file, the extractor specifies which config file versions are accepted in each version of the extractor."
         },
         "type": {
             "type": "string",
-            "enum": ["local", "remote"]
+            "enum": ["local", "remote"],
+            "default": "local",
+            "description": "Configuration file type. Either `local`, meaning the full config is loaded from this file, or `remote`, which means that only the `cognite` section is loaded from this file, and the rest is loaded from extraction pipelines."
         },
         "logger": {
             "$ref": "logger_config.schema.json"
@@ -23,5 +26,6 @@
             "$ref": "state_store_config.schema.json"
         }
     },
-    "required": ["version"]
+    "required": ["version"],
+    "unevaluatedProperties": false
 }

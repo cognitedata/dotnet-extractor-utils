@@ -1,14 +1,19 @@
 {
     "$id": "/dotnet/state_store_config.schema.json",
     "type": "object",
+    "description": "Store state in a local database or in CDF raw to start the extractor more efficiently",
     "properties": {
         "location": {
-            "type": "string"
+            "type": "string",
+            "description": "Path to .db file, or name of raw database containing buffer."
         },
         "database": {
             "type": "string",
             "enum": ["None", "LiteDb", "Raw"],
-            "default": "None"
+            "default": "None",
+            "description": "Which type of database to use."
         }
-    }
+    },
+    "required": ["location"],
+    "unevaluatedProperties": false
 }

@@ -1,219 +1,286 @@
 {
-    "$id": "/dotnet/metrics_config.schema.json",
+    "$id": "/dotnet/cognite_config.schema.json",
     "type": "object",
+    "description": "Configure connection to Cognite Data Fusion (CDF)",
     "properties": {
         "project": {
-            "type": "string"
+            "type": "string",
+            "description": "CDF project to connect to"
         },
         "api-key": {
-            "type": "string"
+            "type": "string",
+            "description": "CDF API Key, deprecated in favor of token-based authentication"
         },
         "idp-authentication": {
             "type": "object",
+            "description": "Configure authentication using OIDC tokens",
             "properties": {
                 "implementation": {
                     "type": "string",
                     "enum": ["MSAL", "Basic"],
-                    "default": "MSAL"
+                    "default": "MSAL",
+                    "description": "Implementation. Either using the MSAL library, or a custom authenticator. This is deprecated, and no longer does anything.",
+                    "deprecated": true
                 },
                 "authority": {
                     "type": "string",
-                    "default": "https://login.microsoftonline.com/"
+                    "default": "https://login.microsoftonline.com/",
+                    "description": "Authority using together with `tenant` to authenticate against azure tenants."
                 },
                 "client-id": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Service principal client id."
                 },
                 "tenant": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Azure tenant"
                 },
                 "token-url": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "URL used to obtain tokens given client credentials."
                 },
                 "secret": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Service principal client secret"
                 },
                 "resource": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Resource parameter passed along with request"
                 },
                 "scopes": {
                     "type": "array",
+                    "description": "A list of scopes requested for the token",
                     "items": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "A scope requested for the token"
                     }
                 },
                 "audience": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Audience parameter passed along with request"
                 },
                 "min-ttl": {
                     "type": "integer",
-                    "default": 30
+                    "default": 30,
+                    "description": "Requested minimum time-to-live in seconds for the token"
                 }
-            }
+            },
+            "oneOf": [{ "required": ["tenant"] }, { "required": ["token-url"] }],
+            "unevaluatedProperties": false,
+            "required": ["client-id", "secret"]
         },
         "host": {
             "type": "string",
-            "default": "https://api.cognitedata.com"
+            "default": "https://api.cognitedata.com",
+            "description": "Cognite service URL."
         },
         "cdf-retries": {
             "type": "object",
+            "description": "Configure automatic retries on requests to CDF.",
             "properties": {
                 "timeout": {
                     "type": "integer",
-                    "default": 80000
+                    "default": 80000,
+                    "description": "Timeout in milliseconds for each individual try"
                 },
                 "max-retries": {
                     "type": "integer",
-                    "default": 5
+                    "default": 5,
+                    "description": "Maximum number of retries, less than 0 retries forever"
                 },
                 "max-delay": {
                     "type": "integer",
-                    "default": 5000
+                    "default": 5000,
+                    "description": "Max delay in milliseconds between each try. Base delay is calculated according to 125*2^retry milliseconds. If less than 0, there is no maximum."
                 }
-            }
+            },
+            "unevaluatedProperties": false
         },
         "cdf-chunking": {
             "type": "object",
+            "description": "Configure chunking of data on requests to CDF. Note that increasing these may cause requests to fail due to limits in the API itself",
             "properties": {
                 "time-series": {
                     "type": "integer",
-                    "default": 1000
+                    "default": 1000,
+                    "description": "Maximum number of timeseries per get/create timeseries request"
                 },
                 "assets": {
                     "type": "integer",
-                    "default": 1000
+                    "default": 1000,
+                    "description": "Maximum number of assets per get/create assets request"
                 },
                 "data-point-time-series": {
                     "type": "integer",
-                    "default": 10000
+                    "default": 10000,
+                    "description": "Maximum number of timeseries per datapoint create request"
                 },
                 "data-point-delete": {
                     "type": "integer",
-                    "default": 10000
+                    "default": 10000,
+                    "description": "Maximum number of ranges per delete datapoints request"
                 },
                 "data-point-list": {
                     "type": "integer",
-                    "default": 100
+                    "default": 100,
+                    "description": "Maximum number of timeseries per datapoint read request. Used when getting the first point in a timeseries."
                 },
                 "data-points": {
                     "type": "integer",
-                    "default": 100000
+                    "default": 100000,
+                    "description": "Maximum number of datapoints per datapoints create request"
                 },
                 "data-points-gzip-limit": {
                     "type": "integer",
-                    "default": 5000
+                    "default": 5000,
+                    "description": "Minimum number of datapoints in request to switch to using gzip. Set to -1 to disable, and 0 to always enable (not recommended). The minimum HTTP packet size is generally 1500 bytes, so this should never be set below 100 for numeric datapoints. Even for larger packages gzip is efficient enough that packages are compressed below 1500 bytes. At 5000 it is always a performance gain. It can be set lower if bandwidth is a major issue"
                 },
                 "raw-rows": {
                     "type": "integer",
-                    "default": 10000
+                    "default": 10000,
+                    "description": "Maximum number of rows per request to cdf raw"
                 },
                 "raw-rows-delete": {
                     "type": "integer",
-                    "default": 1000
+                    "default": 1000,
+                    "description": "Maximum number of row keys per delete request to raw"
                 },
                 "data-point-latest": {
                     "type": "integer",
-                    "default": 100
+                    "default": 100,
+                    "description": "Maximum number of timeseries per datapoint read latest request"
                 },
                 "events": {
                     "type": "integer",
-                    "default": 1000
+                    "default": 1000,
+                    "description": "Maximum number of events per get/create events request"
                 },
                 "sequences": {
                     "type": "integer",
-                    "default": 1000
+                    "default": 1000,
+                    "description": "Maximum number of sequences per get/create sequences request"
                 },
                 "sequence-row-sequences": {
                     "type": "integer",
-                    "default": 1000
+                    "default": 1000,
+                    "description": "Maximum number of sequences per create sequence rows request"
                 },
                 "sequence-rows": {
                     "type": "integer",
-                    "default": 10000
+                    "default": 10000,
+                    "description": "Maximum number of sequence rows per sequence when creating rows"
                 }
-            }
+            },
+            "unevaluatedProperties": false
         },
         "cdf-throttling": {
             "type": "object",
+            "description": "Configure how requests to CDF should be throttled",
             "properties": {
                 "time-series": {
                     "type": "integer",
-                    "default": 20
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per timeseries operation"
                 },
                 "assets": {
                     "type": "integer",
-                    "default": 20
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per assets operation"
                 },
                 "data-points": {
                     "type": "integer",
-                    "default": 10
+                    "default": 10,
+                    "description": "Maximum number of parallel requests per datapoints operation"
                 },
                 "raw": {
                     "type": "integer",
-                    "default": 10
+                    "default": 10,
+                    "description": "Maximum number of parallel requests per raw operation"
                 },
                 "ranges": {
                     "type": "integer",
-                    "default": 20
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per get first/last datapoint operation"
                 },
                 "events": {
                     "type": "integer",
-                    "default": 20
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per events operation"
                 },
                 "sequences": {
                     "type": "integer",
-                    "default": 20
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per sequences operation"
                 }
-            }
+            },
+            "unevaluatedProperties": false
         },
         "sdk-logging": {
             "type": "object",
+            "description": "Configure logging of requests from the SDK",
             "properties": {
                 "disable": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "True to disable logging from the SDK, it is enabled by default"
                 },
                 "level": {
                     "type": "string",
                     "enum": ["trace", "debug", "information", "warning", "error", "critical", "none"],
-                    "default": "debug"
+                    "default": "debug",
+                    "description": "Log level to log messages from the SDK at"
                 },
                 "format": {
                     "type": "string",
-                    "default": "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms"
+                    "default": "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms",
+                    "description": "Format of the log message"
                 }
-            }
+            },
+            "unevaluatedProperties": false
         },
         "nan-replacement": {
-            "type": ["number", "null"]
+            "type": ["number", "null"],
+            "description": "Replacement for NaN values when writing to CDF."
         },
         "extraction-pipeline": {
             "type": "object",
+            "description": "Configure an associated extraction pipeline",
             "properties": {
                 "pipeline-id": {
                     "type": "string",
-                    "deprecated": true
+                    "deprecated": true,
+                    "description": "ExternalId of the extraction pipeline, deprecated in favor of ExternalId"
                 },
                 "external-id": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "ExternalId of the extraction pipeline"
                 },
                 "frequency": {
                     "type": "integer",
-                    "default": 600
+                    "default": 600,
+                    "description": "Frequency to report `Seen` to the extraction pipeline in seconds. Less than or equal to zero will not report automatically"
                 }
-            }
+            },
+            "unevaluatedProperties": false
         },
         "certificates": {
             "type": "object",
+            "description": "Configure special handling of SSL certificates. This should never be considered a permanent solution to certificate problems",
             "properties": {
                 "accept-all": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "Accept all remote SSL certificates. This introduces a severe risk of man-in-the-middle attacks"
                 },
                 "allow-list": {
                     "type": "array",
+                    "description": "List of certificate thumbprints to automatically accept. This is a much smaller risk than accepting all certificates",
                     "items": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "A certificate thumbprint to automatically accept, even if it is invalid or lacking a valid root certificate"
                     }
                 }
-            }
+            },
+            "unevaluatedProperties": false
         }
-    }
+    },
+    "unevaluatedProperties": false
 }
