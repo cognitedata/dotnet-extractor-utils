@@ -1,0 +1,51 @@
+{
+    "$id": "high_availability.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "description": "Configuration to allow you to run multiple redundant extractors. Each extractor needs a unique index.",
+    "properties": {
+        "index": {
+            "type": "integer",
+            "description": "Unique index of this extractor. Each redundant extractor must have a unique index",
+            "minimum": 0
+        },
+        "raw": {
+            "type": "object",
+            "description": "Configuration to use Raw as backend for high availability",
+            "properties": {
+                "database-name": {
+                    "type": "string",
+                    "description": "Raw database to store high availability states in"
+                },
+                "table-name": {
+                    "type": "string",
+                    "description": "Raw table to store high availability states in"
+                }
+            },
+            "required": ["database-name", "table-name"],
+            "unevaluatedProperties": false
+        },
+        "redis": {
+            "type": "object",
+            "description": "Configuration to use a Redis store as backend for high availability",
+            "properties": {
+                "connection-string": {
+                    "type": "string",
+                    "description": "Connection string to connect to redis instance"
+                },
+                "table-name": {
+                    "type": "string",
+                    "description": "Redis table name to store high availability states in"
+                }
+            },
+            "required": ["connection-string", "table-name"],
+            "unevaluatedProperties": false
+        }
+    },
+    "oneOf": [
+        { "required": ["raw"] },
+        { "required": ["redis"] }
+    ],
+    "required": ["index"],
+    "unevaluatedProperties": false
+}

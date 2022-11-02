@@ -1,0 +1,20 @@
+{
+    "$id": "state_store_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "description": "Store state in a local database or in CDF raw to start the extractor more efficiently",
+    "properties": {
+        "location": {
+            "type": "string",
+            "description": "Path to .db file, or name of raw database containing buffer."
+        },
+        "database": {
+            "type": "string",
+            "enum": ["None", "LiteDb", "Raw"],
+            "default": "None",
+            "description": "Which type of database to use."
+        }
+    },
+    "required": ["location"],
+    "unevaluatedProperties": false
+}

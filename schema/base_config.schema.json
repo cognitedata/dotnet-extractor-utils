@@ -1,0 +1,32 @@
+{
+    "$id": "base_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "version": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Version of the config file, the extractor specifies which config file versions are accepted in each version of the extractor."
+        },
+        "type": {
+            "type": "string",
+            "enum": ["local", "remote"],
+            "default": "local",
+            "description": "Configuration file type. Either `local`, meaning the full config is loaded from this file, or `remote`, which means that only the `cognite` section is loaded from this file, and the rest is loaded from extraction pipelines."
+        },
+        "logger": {
+            "$ref": "logger_config.schema.json"
+        },
+        "metrics": {
+            "$ref": "metrics_config.schema.json"
+        },
+        "cognite": {
+            "$ref": "cognite_config.schema.json"
+        },
+        "state-store": {
+            "$ref": "state_store_config.schema.json"
+        }
+    },
+    "required": ["version"],
+    "unevaluatedProperties": false
+}

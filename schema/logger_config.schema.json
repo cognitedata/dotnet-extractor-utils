@@ -1,0 +1,69 @@
+{
+    "$id": "logger_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "description": "Configuration for logging to console or file.",
+    "properties": {
+        "console": {
+            "type": "object",
+            "description": "Configuration for logging to the console.",
+            "properties": {
+                "level": {
+                    "type": "string",
+                    "description": "Minimum level of log events to write to the console.",
+                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                },
+                "stderr-level": {
+                    "type": "string",
+                    "description": "Log events at this level or above are redirected to standard error.",
+                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                }
+            },
+            "required": ["level"],
+            "unevaluatedProperties": false
+        },
+        "file": {
+            "type": "object",
+            "description": "Configuration for logging to a rotating log file.",
+            "properties": {
+                "level": {
+                    "type": "string",
+                    "description": "Minimum level of log events to write to file.",
+                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                },
+                "path": {
+                    "type": "string",
+                    "description": "Path to the files to be logged. If this is set to `logs/log.txt`, logs on the form `logs/log[date].txt` will be created, depending on `rolling-interval`."
+                },
+                "retention-limit": {
+                    "type": "integer",
+                    "min": 1,
+                    "description": "Maximum number of log files that are kept in the log folder",
+                    "default": 31
+                },
+                "rolling-interval": {
+                    "type": "string",
+                    "enum": ["day", "hour"],
+                    "description": "Rolling interval for log files. Either `day` or `hour`",
+                    "default": "day"
+                }
+            },
+            "required": ["level", "path"],
+            "unevaluatedProperties": false
+        },
+        "trace-listener": {
+            "type": "object",
+            "description": "Adds a listener that uses the configured logger to output messages from `System.Diagnostics.Trace`",
+            "properties": {
+                "level": {
+                    "type": "string",
+                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"],
+                    "description": "Level to output trace messages at"
+                }
+            },
+            "required": ["level"],
+            "unevaluatedProperties": false
+        }
+    },
+    "unevaluatedProperties": false
+}
