@@ -64,6 +64,5 @@
             "required": ["level"],
             "unevaluatedProperties": false
         }
-    },
-    "unevaluatedProperties": false
+    }
 }

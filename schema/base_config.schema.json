@@ -27,6 +27,5 @@
             "$ref": "state_store_config.schema.json"
         }
     },
-    "required": ["version"],
-    "unevaluatedProperties": false
+    "required": ["version"]
 }
