@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
+using System.Linq;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
-using Cognite.Extractor.Utils;
 using Cognite.Extractor.StateStorage;
-using Cognite.Extractor.Common;
+using Cognite.Extractor.Utils;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -19,12 +21,14 @@ namespace ExtractorUtils.Test.Unit
         public int Bar { get; set; }
     }
 
-    class TestBaseConfig : BaseConfig {
+    class TestBaseConfig : BaseConfig
+    {
         public string Foo { get; set; }
 
         public string Bar { get; set; }
 
-        public override void GenerateDefaults() {
+        public override void GenerateDefaults()
+        {
             base.GenerateDefaults();
             if (Foo == null) Foo = "";
             if (Bar == null) Bar = "default";
@@ -34,11 +38,28 @@ namespace ExtractorUtils.Test.Unit
     public static class ConfigurationTest
     {
         [Fact]
-        public static void ParseNormal() 
+        public static void ParseNormal()
         {
             string yaml = "foo: bar";
             TestConfig x = ConfigurationUtils.ReadString<TestConfig>(yaml);
             Assert.Equal("bar", x.Foo);
+        }
+
+        [Fact]
+        public static void ParseNull()
+        {
+            var nullValues = new List<string>() { "null", "NULL", "Null", "", "~" };
+            var assertions = nullValues.Select<string, Action>((value, _) => AssertNull(value)).ToArray();
+            Assert.Multiple(assertions);
+        }
+
+        private static Action AssertNull(string value)
+        {
+            return () =>
+            {
+                TestConfig x = ConfigurationUtils.ReadString<TestConfig>($"foo: {value}");
+                Assert.Null(x.Foo);
+            };
         }
 
         [Fact]
@@ -108,7 +129,8 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public static void ReadFromFile() {
+        public static void ReadFromFile()
+        {
             string path = "test-file-config.yml";
             string[] lines = { "version: 1", "foo: bar" };
             File.WriteAllLines(path, lines);
@@ -183,7 +205,8 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public static void InjectConfiguration() {
+        public static void InjectConfiguration()
+        {
             string path = "test-inject-config.yml";
             string[] lines = { "version: 2", "newfoo: bar" };
 
@@ -200,7 +223,7 @@ namespace ExtractorUtils.Test.Unit
             File.WriteAllLines(path1, lines1);
             File.WriteAllLines(path2, lines2);
             File.WriteAllLines(path3, lines3);
-            
+
             var services = new ServiceCollection();
             var ex = Assert.Throws<ConfigurationException>(() => services.AddConfig<TestBaseConfig>(path, 1));
             Assert.Contains("version 2 is not supported", ex.Message);
@@ -212,7 +235,8 @@ namespace ExtractorUtils.Test.Unit
             Assert.Contains("should contain a 'version' tag", ex.Message);
 
             services.AddConfig<TestBaseConfig>(path3, 1, 2);
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var config = provider.GetRequiredService<TestBaseConfig>();
                 Assert.Equal(2, config.Version);
                 Assert.Equal("bar", config.Foo);
