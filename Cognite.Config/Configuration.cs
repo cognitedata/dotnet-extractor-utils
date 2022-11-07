@@ -319,13 +319,13 @@ namespace Cognite.Extractor.Configuration
         {
         }
 
-        private static HashSet<string> _nullLiteralValues { get; set; } = new HashSet<string>() { "null", "NULL", "Null", "", "~" };
-
         private static bool IsNumericType(Type t)
         {
             var tc = Type.GetTypeCode(t);
             return tc >= TypeCode.SByte && tc <= TypeCode.Decimal;
         }
+
+        private static readonly Regex _envRegex = new Regex(@"\$\{([A-Za-z0-9_]+)\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         bool INodeDeserializer.Deserialize(IParser parser, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
         {
@@ -335,23 +335,14 @@ namespace Cognite.Extractor.Configuration
                 return false;
             }
 
-            parser.TryConsume<Scalar>(out var scalar);
-            if (scalar == null)
+            if (parser.Accept<Scalar>(out var scalar) && scalar != null && _envRegex.IsMatch(scalar.Value))
             {
-                value = null;
-                return false;
+                parser.MoveNext();
+                value = _envRegex.Replace(scalar.Value, LookupEnvironment);
+                return true;
             }
-
-            if (_nullLiteralValues.Contains(scalar.Value))
-            {
-                value = null;
-            }
-            else
-            {
-                value = Regex.Replace(scalar.Value, @"\$\{([A-Za-z0-9_]+)\}", LookupEnvironment);
-            }
-
-            return true;
+            value = null;
+            return false;
         }
 
         static string LookupEnvironment(Match match)
