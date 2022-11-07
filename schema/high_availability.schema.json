@@ -46,6 +46,5 @@
         { "required": ["raw"] },
         { "required": ["redis"] }
     ],
-    "required": ["index"],
-    "unevaluatedProperties": false
+    "required": ["index"]
 }

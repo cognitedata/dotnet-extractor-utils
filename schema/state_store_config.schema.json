@@ -15,6 +15,5 @@
             "description": "Which type of database to use."
         }
     },
-    "required": ["location"],
-    "unevaluatedProperties": false
+    "required": ["location"]
 }

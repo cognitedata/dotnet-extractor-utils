@@ -15,18 +15,21 @@
             "description": "Configuration file type. Either `local`, meaning the full config is loaded from this file, or `remote`, which means that only the `cognite` section is loaded from this file, and the rest is loaded from extraction pipelines."
         },
         "logger": {
-            "$ref": "logger_config.schema.json"
+            "$ref": "logger_config.schema.json",
+            "unevaluatedProperties": false
         },
         "metrics": {
-            "$ref": "metrics_config.schema.json"
+            "$ref": "metrics_config.schema.json",
+            "unevaluatedProperties": false
         },
         "cognite": {
-            "$ref": "cognite_config.schema.json"
+            "$ref": "cognite_config.schema.json",
+            "unevaluatedProperties": false
         },
         "state-store": {
-            "$ref": "state_store_config.schema.json"
+            "$ref": "state_store_config.schema.json",
+            "unevaluatedProperties": false
         }
     },
-    "required": ["version"],
-    "unevaluatedProperties": false
+    "required": ["version"]
 }

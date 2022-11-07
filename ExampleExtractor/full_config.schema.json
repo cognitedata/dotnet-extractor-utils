@@ -3,9 +3,11 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "allOf": [{ "$ref": "../schema/base_config.schema.json" }],
+    "unevaluatedProperties": false,
     "properties": {
         "high-availability": {
-            "$ref": "../schema/high_availability.schema.json"
+            "$ref": "../schema/high_availability.schema.json",
+            "unevaluatedProperties": false
         }
     }
 }
