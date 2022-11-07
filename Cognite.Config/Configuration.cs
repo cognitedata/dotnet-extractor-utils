@@ -1,5 +1,3 @@
-using Cognite.Extractor.Common;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Cognite.Extractor.Common;
+using Microsoft.Extensions.DependencyInjection;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
@@ -192,20 +192,23 @@ namespace Cognite.Extractor.Configuration
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code", Justification = "Other methods using this can still pass null as parameter")]
-        private static void CheckVersion(int version, params int[]? acceptedConfigVersions) {
+        private static void CheckVersion(int version, params int[]? acceptedConfigVersions)
+        {
             if (acceptedConfigVersions == null || acceptedConfigVersions.Length == 0)
             {
                 return;
             }
             var accept = new List<int>(acceptedConfigVersions);
-            if (!accept.Contains(version)) {
+            if (!accept.Contains(version))
+            {
                 throw new ConfigurationException($"Config version {version} is not supported by this extractor");
             }
         }
 
         private static int GetVersion(Dictionary<object, object> versionedConfig)
         {
-            if (versionedConfig.TryGetValue("version", out dynamic version)) {
+            if (versionedConfig.TryGetValue("version", out dynamic version))
+            {
                 if (int.TryParse(version, out int intVersion))
                 {
                     return intVersion;
@@ -322,6 +325,8 @@ namespace Cognite.Extractor.Configuration
             return tc >= TypeCode.SByte && tc <= TypeCode.Decimal;
         }
 
+        private static readonly Regex _envRegex = new Regex(@"\$\{([A-Za-z0-9_]+)\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         bool INodeDeserializer.Deserialize(IParser parser, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
         {
             if (expectedType != typeof(string) && !IsNumericType(expectedType))
@@ -330,15 +335,14 @@ namespace Cognite.Extractor.Configuration
                 return false;
             }
 
-            parser.TryConsume<Scalar>(out var scalar);
-            if (scalar == null)
+            if (parser.Accept<Scalar>(out var scalar) && scalar != null && _envRegex.IsMatch(scalar.Value))
             {
-                value = null;
-                return false;
+                parser.MoveNext();
+                value = _envRegex.Replace(scalar.Value, LookupEnvironment);
+                return true;
             }
-
-            value = Regex.Replace(scalar.Value, @"\$\{([A-Za-z0-9_]+)\}", LookupEnvironment);
-            return true;
+            value = null;
+            return false;
         }
 
         static string LookupEnvironment(Match match)
