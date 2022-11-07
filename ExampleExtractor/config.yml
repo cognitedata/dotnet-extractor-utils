@@ -19,6 +19,7 @@ high-availability:
   raw:
     database-name: ${BF_TEST_DB}
     table-name: ${BF_TEST_TABLE}
+  foo: bar
 logger:
   console:
     level: debug
