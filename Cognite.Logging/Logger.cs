@@ -227,15 +227,16 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <param name="services">The service collection</param>
         /// <param name="buildLogger">Method to build the logger.
+        /// <param name="alternativeLogger">True to allow alternative loggers, i.e. allow config.Console and config.File to be null</param>
         /// This defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/>,
         /// which creates logging configuration for file and console using
         /// <see cref="LoggingUtils.GetConfiguration(LoggerConfig)"/></param>
-        public static void AddLogger(this IServiceCollection services, Func<LoggerConfig, Serilog.ILogger>? buildLogger = null) {
+        public static void AddLogger(this IServiceCollection services, Func<LoggerConfig, Serilog.ILogger>? buildLogger = null, bool alternativeLogger = false) {
             buildLogger ??= LoggingUtils.GetConfiguredLogger;
             services.AddSingleton<LoggerTraceListener>();
             services.AddSingleton<Serilog.ILogger>(p => {
                 var config = p.GetService<LoggerConfig>();
-                if (config == null || (config.Console == null && config.File == null)) {
+                if (config == null || !alternativeLogger && (config.Console == null && config.File == null)) {
                     // No logging configuration
                     var defLog = LoggingUtils.GetSerilogDefault();
                     defLog.Warning("No Logging configuration found. Using default logger");
