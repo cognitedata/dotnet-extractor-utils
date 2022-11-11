@@ -1,5 +1,6 @@
 ﻿using Cognite.Extractor.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
@@ -8,6 +9,7 @@ using Serilog.Formatting;
 using Serilog.Formatting.Display;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Xunit.Abstractions;
 
 namespace Cognite.Extractor.Testing
@@ -98,7 +100,7 @@ namespace Cognite.Extractor.Testing
                 return LoggingUtils.GetConfiguration(cfg)
                     .WriteTo.TestOutputHelper(output)
                     .CreateLogger();
-            });
+            }, true);
         }
 
         /// <summary>
@@ -130,6 +132,18 @@ namespace Cognite.Extractor.Testing
             });
 
             return sink;
+        }
+
+        /// <summary>
+        /// Return a simple test logger.
+        /// </summary>
+        /// <returns></returns>
+        public static ILogger<T> GetTestLogger<T>(ITestOutputHelper output)
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton(new LoggerConfig { Console = new ConsoleConfig() });
+            services.AddTestLogging(output);
+            return services.BuildServiceProvider().GetRequiredService<ILogger<T>>();
         }
     }
 

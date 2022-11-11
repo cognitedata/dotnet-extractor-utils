@@ -122,6 +122,22 @@ namespace Cognite.Extractor.Common
             return t1 < t2 ? t1 : t2;
         }
 
+        /// <summary>
+        /// Return the longest of the two given TimeSpans
+        /// </summary>
+        public static TimeSpan Max(TimeSpan t1, TimeSpan t2)
+        {
+            return t1 > t2 ? t1 : t2;
+        }
+
+        /// <summary>
+        /// Return the shortest of the two given TimeSpans.
+        /// </summary>
+        public static TimeSpan Min(TimeSpan t1, TimeSpan t2)
+        {
+            return t1 < t2 ? t1 : t2;
+        }
+
         private static TimeSpan? GetSpan(string type, long value)
         {
             switch (type)
