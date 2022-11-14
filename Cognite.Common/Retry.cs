@@ -48,7 +48,7 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Value of the initial delay parameter.
         /// </summary>
-        public TimeSpanWrapper InitialDelayValue { get; } = new TimeSpanWrapper(false, "ms", "500ms");
+        public TimeSpanWrapper InitialDelayValue { get; } = new TimeSpanWrapper(true, "ms", "500ms");
 
         /// <summary>
         /// Initial delay used for exponential backoff. Time between each retry is calculated as

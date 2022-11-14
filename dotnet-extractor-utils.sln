@@ -31,6 +31,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleExtractor", "Example
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cognite.Testing", "Cognite.Testing\Cognite.Testing.csproj", "{96149187-BA12-4F47-A4D2-B3378C026E07}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schema", "schema", "{B9F57ED9-8D44-4F92-9558-515AA83F85B9}"
+	ProjectSection(SolutionItems) = preProject
+		schema\base_config.schema.json = schema\base_config.schema.json
+		schema\cognite_config.schema.json = schema\cognite_config.schema.json
+		schema\high_availability.schema.json = schema\high_availability.schema.json
+		schema\logger_config.schema.json = schema\logger_config.schema.json
+		schema\metrics_config.schema.json = schema\metrics_config.schema.json
+		schema\retry_config.schema.json = schema\retry_config.schema.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -172,6 +182,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B9F57ED9-8D44-4F92-9558-515AA83F85B9} = {746595B3-119E-4A8B-90FD-5664B185FACC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {143EECE4-FF2C-48A9-9773-15A425EC2D43}
