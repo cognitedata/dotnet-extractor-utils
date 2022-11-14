@@ -17,7 +17,7 @@ namespace ExtractorUtils.Test.Unit
             _logger = TestLogging.GetTestLogger<RetryTest>(output);
         }
 
-        [Fact(Timeout = 2000)]
+        [Fact(Timeout = 20000)]
         public async Task TestRetry()
         {
             int counter = 0;
@@ -28,7 +28,7 @@ namespace ExtractorUtils.Test.Unit
             await RetryUtil.RetryAsync("test", Test, new RetryUtilConfig { InitialDelay = "10ms", MaxDelay = "1s", MaxTries = 3 }, _ => true, _logger, CancellationToken.None);
         }
 
-        [Fact(Timeout = 2000)]
+        [Fact(Timeout = 20000)]
         public async Task TestMaxRetry()
         {
             int counter = 0;
@@ -39,7 +39,7 @@ namespace ExtractorUtils.Test.Unit
             await Assert.ThrowsAsync<Exception>(async () => await RetryUtil.RetryAsync("test", Test, new RetryUtilConfig { InitialDelay = "10ms", MaxDelay = "1s", MaxTries = 1 }, _ => true, _logger, CancellationToken.None));
         }
 
-        [Fact(Timeout = 5000)]
+        [Fact(Timeout = 20000)]
         public async Task TestTimeout()
         {
             int counter = 0;
@@ -51,7 +51,7 @@ namespace ExtractorUtils.Test.Unit
             await Assert.ThrowsAsync<Exception>(async () => await RetryUtil.RetryAsync("test", Test, new RetryUtilConfig { InitialDelay = "10ms", MaxDelay = "1s", MaxTries = 3, Timeout = "500ms" }, _ => true, _logger, CancellationToken.None));
         }
 
-        [Fact(Timeout = 2000)]
+        [Fact(Timeout = 20000)]
         public async Task TestRetryResult()
         {
             int counter = 0;
