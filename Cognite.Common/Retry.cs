@@ -93,7 +93,14 @@ namespace Cognite.Extractor.Common
 
             while (true)
             {
-                logger.LogInformation("Run task {Task} {Tries}/{Max}. Elapsed: {Time}", name, tries, config.MaxTries, DateTime.UtcNow - start);
+                if (config.MaxTries > 0)
+                {
+                    logger.LogDebug("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries, config.MaxTries, DateTime.UtcNow - start);
+                }
+                else
+                {
+                    logger.LogDebug("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries, DateTime.UtcNow - start);
+                }
                 try
                 {
                     await generator().ConfigureAwait(false);
@@ -183,6 +190,14 @@ namespace Cognite.Extractor.Common
 
             while (true)
             {
+                if (config.MaxTries > 0)
+                {
+                    logger.LogDebug("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries, config.MaxTries, DateTime.UtcNow - start);
+                }
+                else
+                {
+                    logger.LogDebug("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries, DateTime.UtcNow - start);
+                }
                 try
                 {
                     return await generator().ConfigureAwait(false);
