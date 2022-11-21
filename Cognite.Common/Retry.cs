@@ -95,11 +95,11 @@ namespace Cognite.Extractor.Common
             {
                 if (config.MaxTries > 0)
                 {
-                    logger.LogDebug("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries, config.MaxTries, DateTime.UtcNow - start);
+                    logger.LogDebug("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries + 1, config.MaxTries, DateTime.UtcNow - start);
                 }
                 else
                 {
-                    logger.LogDebug("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries, DateTime.UtcNow - start);
+                    logger.LogDebug("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries + 1, DateTime.UtcNow - start);
                 }
                 try
                 {
@@ -108,7 +108,7 @@ namespace Cognite.Extractor.Common
                 }
                 catch (Exception ex)
                 {
-                    if (shouldRetry(ex) && (tries < config.MaxTries || config.MaxTries == 0) && ((DateTime.UtcNow - start) < config.TimeoutValue.Value || config.TimeoutValue.Value == Timeout.InfiniteTimeSpan))
+                    if (shouldRetry(ex) && (tries < config.MaxTries - 1 || config.MaxTries == 0) && ((DateTime.UtcNow - start) < config.TimeoutValue.Value || config.TimeoutValue.Value == Timeout.InfiniteTimeSpan))
                     {
                         var delay = CogniteTime.Min(config.MaxDelayValue.Value, TimeSpan.FromTicks(config.InitialDelayValue.Value.Ticks * (int)Math.Pow(2, Math.Min(tries, 13))));
                         logger.LogTrace(ex, "Operation {Op} failed with error {Message}", name, ex.Message);
@@ -192,11 +192,11 @@ namespace Cognite.Extractor.Common
             {
                 if (config.MaxTries > 0)
                 {
-                    logger.LogDebug("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries, config.MaxTries, DateTime.UtcNow - start);
+                    logger.LogDebug("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries + 1, config.MaxTries, DateTime.UtcNow - start);
                 }
                 else
                 {
-                    logger.LogDebug("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries, DateTime.UtcNow - start);
+                    logger.LogDebug("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries + 1, DateTime.UtcNow - start);
                 }
                 try
                 {
@@ -204,7 +204,7 @@ namespace Cognite.Extractor.Common
                 }
                 catch (Exception ex)
                 {
-                    if (shouldRetry(ex) && (tries < config.MaxTries || config.MaxTries == 0) && ((DateTime.UtcNow - start) < config.TimeoutValue.Value || config.TimeoutValue.Value == Timeout.InfiniteTimeSpan))
+                    if (shouldRetry(ex) && (tries < config.MaxTries - 1 || config.MaxTries == 0) && ((DateTime.UtcNow - start) < config.TimeoutValue.Value || config.TimeoutValue.Value == Timeout.InfiniteTimeSpan))
                     {
                         var delay = CogniteTime.Min(config.MaxDelayValue.Value, TimeSpan.FromTicks(config.InitialDelayValue.Value.Ticks * (int)Math.Pow(2, Math.Min(tries, 13))));
                         logger.LogTrace(ex, "Operation {Op} failed with error {Message}", name, ex.Message);

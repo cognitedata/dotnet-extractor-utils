@@ -36,7 +36,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 if (counter++ < 2) throw new Exception();
             }
-            await Assert.ThrowsAsync<Exception>(async () => await RetryUtil.RetryAsync("test", Test, new RetryUtilConfig { InitialDelay = "10ms", MaxDelay = "1s", MaxTries = 1 }, _ => true, _logger, CancellationToken.None));
+            await Assert.ThrowsAsync<Exception>(async () => await RetryUtil.RetryAsync("test", Test, new RetryUtilConfig { InitialDelay = "10ms", MaxDelay = "1s", MaxTries = 2 }, _ => true, _logger, CancellationToken.None));
         }
 
         [Fact(Timeout = 20000)]
