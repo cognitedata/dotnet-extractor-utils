@@ -202,6 +202,13 @@ namespace Cognite.Extractor.StateStorage
                 _logger.LogWarning(e, "Failed to delete extraction state from store {store}: {Message}", e.Message, tableName);
             }
         }
+
+        public async Task<IEnumerable<T>> GetAllExtractionStates<T>(string tableName, CancellationToken token) where T : BaseStorableState
+        {
+            var dt = await _destination.GetRowsAsync<T>(_dbName, tableName, Options, token).ConfigureAwait(false);
+            return dt.Values;
+        }
+
         /// <summary>
         /// For interface, nothing that should be disposed here.
         /// </summary>

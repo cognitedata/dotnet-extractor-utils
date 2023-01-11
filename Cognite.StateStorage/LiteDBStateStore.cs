@@ -9,6 +9,7 @@ using Prometheus;
 using Cognite.Extractor.Common;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Cognite.Extractor.StateStorage
 {
@@ -229,6 +230,19 @@ namespace Cognite.Extractor.StateStorage
             {
                 _logger.LogWarning("Failed to delete extraction state from store {store}: {Message}", e.Message, tableName);
             }
+        }
+
+        /// <summary>
+        /// Find all extraction states in the table.
+        /// </summary>
+        /// <typeparam name="T">Type of state to obtain</typeparam>
+        /// <param name="tableName">Name of table to restore from</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<T>> GetAllExtractionStates<T>(string tableName, CancellationToken token) where T : BaseStorableState
+        {
+            var col = Database.GetCollection<T>(tableName);
+            return await Task.Run(() => col.FindAll()).ConfigureAwait(false);
         }
         /// <summary>
         /// Dispose lite database
