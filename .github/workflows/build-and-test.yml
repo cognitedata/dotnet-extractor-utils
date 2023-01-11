@@ -32,9 +32,12 @@ jobs:
       run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
       if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
       env:
-        TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
         TEST_PROJECT: "extractor-tests"
         TEST_HOST: "https://greenfield.cognitedata.com"
+        TEST_SCOPE: "https://greenfield.cognitedata.com/.default"
+        TEST_CLIENT_ID: ${{ secrets.BF_TEST_CLIENT_ID }}
+        TEST_TENANT: ${{ secrets.BF_TEST_TENANT }}
+        TEST_SECRET: ${{ secrets.BF_TEST_SECRET }}
         BF_TEST_PROJECT: "extractor-bluefield-testing"
         BF_TEST_HOST: "https://bluefield.cognitedata.com"
         BF_TEST_SCOPE: "https://bluefield.cognitedata.com/.default"
