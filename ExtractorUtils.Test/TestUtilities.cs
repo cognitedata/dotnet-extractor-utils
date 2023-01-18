@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +45,14 @@ namespace ExtractorUtils.Test {
         {
         }
 
+        public Task<IEnumerable<T>> GetAllExtractionStates<T>(string tableName, CancellationToken token) where T : BaseStorableState
+        {
+            Assert.NotNull(tableName);
+            token.ThrowIfCancellationRequested();
+            RestoreRequests++;
+            return Task.FromResult(Enumerable.Empty<T>());
+        }
+
         public Task RestoreExtractionState<T, K>(IDictionary<string, K> extractionStates, string tableName, Action<K, T> restoreStorableState, CancellationToken token)
             where T : BaseStorableState
             where K : IExtractionState
@@ -79,5 +88,7 @@ namespace ExtractorUtils.Test {
             StoreRequests++;
             return Task.CompletedTask;
         }
+
+
     }
 }

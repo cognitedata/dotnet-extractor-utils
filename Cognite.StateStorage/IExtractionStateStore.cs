@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -76,5 +77,14 @@ namespace Cognite.Extractor.StateStorage
         /// <param name="token"></param>
         /// <returns></returns>
         Task DeleteExtractionState(IEnumerable<IExtractionState> extractionStates, string tableName, CancellationToken token);
+
+        /// <summary>
+        /// Find all extraction states in the table.
+        /// </summary>
+        /// <typeparam name="T">Type of state to obtain</typeparam>
+        /// <param name="tableName">Name of table to restore from</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> GetAllExtractionStates<T>(string tableName, CancellationToken token) where T : BaseStorableState;
     }
 }
