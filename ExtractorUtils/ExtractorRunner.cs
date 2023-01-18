@@ -232,6 +232,8 @@ namespace Cognite.Extractor.Utils
                 catch { }
             }
 
+            bool usesRemoteConfig = false;
+
             Console.CancelKeyPress += CancelKeyPressHandler;
             while (!source.IsCancellationRequested)
             {
@@ -245,8 +247,7 @@ namespace Cognite.Extractor.Utils
                 ConfigurationException? exception = null;
                 try
                 {
-                    bool usesRemoteConfig = false;
-                    if (options.AllowRemoteConfig && options.Config == null)
+                    if (options.AllowRemoteConfig && options.Config == null || usesRemoteConfig)
                     {
                         options.Config = await services.AddRemoteConfig<TConfig>(
                             options.StartupLogger,

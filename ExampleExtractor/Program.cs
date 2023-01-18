@@ -8,22 +8,28 @@ using System.Collections.Generic;
 using Cognite.Extractor.Utils.CommandLine;
 using System.CommandLine;
 using Cognite.Extractor.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 class MyExtractor : BaseExtractor<MyConfig>
 {
-    public MyExtractor(MyConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run, RemoteConfigManager<BaseConfig> configManager)
-        : base(config, provider, destination, run)
+    private ILogger _logger;
+    public MyExtractor(MyConfig config, IServiceProvider provider, CogniteDestination destination, ExtractionRun run, RemoteConfigManager<MyConfig> configManager)
+        : base(config, provider, destination, run, configManager)
     {
         // Configure extraction pipeline
         if (run != null) run.Continuous = true;
+        _logger = provider.GetRequiredService<ILogger<MyExtractor>>();
         // Configure extractor to check for updates to config every five minutes.
         // Here you could also use CronTimeSpanWrapper, or TimeSpanWrapper, to let users set this through configuration.
         if (configManager != null)
         {
-            configManager.UpdatePeriod = new BasicTimeSpanProvider(TimeSpan.FromMinutes(5));
+            _logger.LogInformation("Config is remote, begin checking for updates periodically.");
+            configManager.UpdatePeriod = new BasicTimeSpanProvider(TimeSpan.FromSeconds(20));
             // On configuration change, tell the extractor to stop.
             OnConfigUpdate += (sender, config, revision) =>
             {
+                _logger.LogInformation("New config detected, reloading extractor. Revision: {Rev}", revision);
                 Source.Cancel();
             };
         }
