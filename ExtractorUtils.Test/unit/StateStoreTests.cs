@@ -193,6 +193,9 @@ namespace ExtractorUtils.Test.Unit
 
             await stateStore.RestoreExtractionState(stateDict, _tableName, false, CancellationToken.None);
 
+            var all = await stateStore.GetAllExtractionStates<BaseExtractionStatePoco>(_tableName, CancellationToken.None);
+            Assert.Equal(4, states.Count());
+
             foreach (var state in states)
             {
                 Assert.Equal(TimeRange.Empty, state.SourceExtractedRange);

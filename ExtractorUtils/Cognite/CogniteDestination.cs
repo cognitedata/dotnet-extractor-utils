@@ -634,6 +634,24 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
+        /// Returns all rows from the given database and table
+        /// </summary>
+        /// <param name="dbName">Database to read from</param>
+        /// <param name="tableName">Table to read from</param>
+        /// <param name="options">Optional json serializer options</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>All rows</returns>
+        public Task<IDictionary<string, T>> GetRowsAsync<T>(
+            string dbName,
+            string tableName,
+            JsonSerializerOptions? options,
+            CancellationToken token)
+        {
+            _logger.LogDebug("Fetching all rows from database {db}, table {table}", dbName, tableName);
+            return _client.Raw.GetRowsAsync<T>(dbName, tableName, _config.CdfChunking.RawRows, token, options);
+        }
+
+        /// <summary>
         /// Delete the given rows from raw database
         /// </summary>
         /// <param name="dbName">Database to delete from</param>
