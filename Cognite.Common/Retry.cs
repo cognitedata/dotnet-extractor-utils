@@ -95,11 +95,11 @@ namespace Cognite.Extractor.Common
             {
                 if (config.MaxTries > 0)
                 {
-                    logger.LogDebug("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries + 1, config.MaxTries, DateTime.UtcNow - start);
+                    logger.LogTrace("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries + 1, config.MaxTries, DateTime.UtcNow - start);
                 }
                 else
                 {
-                    logger.LogDebug("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries + 1, DateTime.UtcNow - start);
+                    logger.LogTrace("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries + 1, DateTime.UtcNow - start);
                 }
                 try
                 {
@@ -192,11 +192,11 @@ namespace Cognite.Extractor.Common
             {
                 if (config.MaxTries > 0)
                 {
-                    logger.LogDebug("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries + 1, config.MaxTries, DateTime.UtcNow - start);
+                    logger.LogTrace("Run task {Task} attempt {Tries}/{Max}. Elapsed: {Time}", name, tries + 1, config.MaxTries, DateTime.UtcNow - start);
                 }
                 else
                 {
-                    logger.LogDebug("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries + 1, DateTime.UtcNow - start);
+                    logger.LogTrace("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries + 1, DateTime.UtcNow - start);
                 }
                 try
                 {
