@@ -206,6 +206,11 @@ namespace Cognite.Extractor.StateStorage
         public async Task<IEnumerable<T>> GetAllExtractionStates<T>(string tableName, CancellationToken token) where T : BaseStorableState
         {
             var dt = await _destination.GetRowsAsync<T>(_dbName, tableName, Options, token).ConfigureAwait(false);
+
+            foreach (var row in dt)
+            {
+                row.Value.Id = row.Key;
+            }
             return dt.Values;
         }
 
