@@ -18,7 +18,7 @@
             "properties": {
                 "implementation": {
                     "type": "string",
-                    "enum": ["MSAL", "Basic"],
+                    "enum": [ "MSAL", "Basic" ],
                     "default": "MSAL",
                     "description": "Implementation. Either using the MSAL library, or a custom authenticator. This is deprecated, and no longer does anything.",
                     "deprecated": true
@@ -64,11 +64,35 @@
                     "type": "integer",
                     "default": 30,
                     "description": "Requested minimum time-to-live in seconds for the token"
+                },
+                "certificate": {
+                    "type": "object",
+                    "description": "Authenticate with a client certificate",
+                    "unevaluatedProperties": false,
+                    "required": [ "path" ],
+                    "properties": {
+                        "authority-url": {
+                            "type": "string",
+                            "description": "Authentication authority URL"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "Path to the .pem or .pfx certificate to be used for authentication"
+                        },
+                        "password": {
+                            "type": "string",
+                            "description": "Certificate password"
+                        }
+                    }
                 }
             },
-            "oneOf": [{ "required": ["tenant"] }, { "required": ["token-url"] }],
+            "oneOf": [
+                { "required": [ "tenant", "secret" ] },
+                { "required": [ "token-url", "secret" ] },
+                { "required": [ "certificate" ] }
+            ],
             "unevaluatedProperties": false,
-            "required": ["client-id", "secret"]
+            "required": [ "client-id" ]
         },
         "host": {
             "type": "string",
