@@ -178,7 +178,8 @@ namespace Cognite.Extractor.Utils
                 var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
                 var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
 
-                if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant.TrimToNull()))
+                if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant.TrimToNull())
+                    || conf.IdpAuthentication.Certificate != null)
                 {
                     return new MsalAuthenticator(conf.IdpAuthentication, logger, clientFactory, authClientName);
                 }
