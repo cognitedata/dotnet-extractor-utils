@@ -100,6 +100,14 @@ namespace Cognite.Extensions
 #pragma warning restore CA2000
                     builder = builder.WithCertificate(cert);
                 }
+                else if (_config.Secret != null)
+                {
+                    builder = builder.WithClientSecret(_config.Secret);
+                }
+                else
+                {
+                    throw new ConfigurationException("Either certificate or client-secret must be configured");
+                }
 
                 _app = builder.Build();
             }
