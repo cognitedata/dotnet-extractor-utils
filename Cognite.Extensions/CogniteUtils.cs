@@ -64,11 +64,11 @@ namespace Cognite.Extensions
             }
             foreach (var ts in e.Missing)
             {
-                if (ts.TryGetValue("externalId", out MultiValue exIdValue))
+                if (ts.TryGetValue("externalId", out MultiValue? exIdValue) && exIdValue != null)
                 {
                     missing.Add(new Identity(exIdValue.ToString()));
                 }
-                else if (ts.TryGetValue("id", out MultiValue idValue))
+                else if (ts.TryGetValue("id", out MultiValue? idValue) && idValue != null)
                 {
                     missing.Add(new Identity(((MultiValue.Long)idValue).Value));
                 }

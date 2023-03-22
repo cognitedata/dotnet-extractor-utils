@@ -225,7 +225,7 @@ namespace Cognite.Extractor.Common
         /// <returns>Task which completes once the task has terminated</returns>
         public Task ExitAndWaitForTermination(string name)
         {
-            PeriodicTask task;
+            PeriodicTask? task;
             lock (_taskListMutex)
             {
                 if (!_tasks.TryGetValue(name, out task)) return Task.CompletedTask;
@@ -242,7 +242,7 @@ namespace Cognite.Extractor.Common
         /// <returns></returns>
         public async Task WaitForTermination(string name)
         {
-            PeriodicTask task;
+            PeriodicTask? task;
             lock (_taskListMutex)
             {
                 if (!_tasks.TryGetValue(name, out task)) return;
@@ -331,7 +331,7 @@ namespace Cognite.Extractor.Common
                 }
             }
             if (_source.IsCancellationRequested) return;
-            if (failedTask != null) ExceptionDispatchInfo.Capture(failedTask.Task.Exception).Throw();
+            if (failedTask != null && failedTask.Task.Exception != null) ExceptionDispatchInfo.Capture(failedTask.Task.Exception).Throw();
         }
 
         /// <summary>

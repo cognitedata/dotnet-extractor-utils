@@ -222,7 +222,7 @@ namespace Cognite.Extractor.Utils
             int waitRepeats = 1;
 
             using var source = CancellationTokenSource.CreateLinkedTokenSource(token);
-            void CancelKeyPressHandler(object sender, ConsoleCancelEventArgs eArgs)
+            void CancelKeyPressHandler(object? sender, ConsoleCancelEventArgs eArgs)
             {
                 eArgs.Cancel = true;
                 try

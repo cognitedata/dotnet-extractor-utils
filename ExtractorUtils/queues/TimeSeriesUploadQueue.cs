@@ -120,7 +120,7 @@ namespace Cognite.Extractor.Utils
         {
             try
             {
-                using (var stream = new FileStream(_bufferPath, FileMode.Append, FileAccess.Write, FileShare.None))
+                using (var stream = new FileStream(_bufferPath!, FileMode.Append, FileAccess.Write, FileShare.None))
                 {
                     await CogniteUtils.WriteDatapointsAsync(dps, stream, token);
                 }
@@ -175,7 +175,7 @@ namespace Cognite.Extractor.Utils
             IDictionary<Identity, IEnumerable<Datapoint>> dps;
             try
             {
-                using (var stream = new FileStream(_bufferPath, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None))
+                using (var stream = new FileStream(_bufferPath!, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None))
                 {
 
                     do
@@ -196,7 +196,7 @@ namespace Cognite.Extractor.Utils
                 DestLogger.LogWarning("Failed to read from buffer: {msg}", ex.Message);
                 return;
             }
-            System.IO.File.Create(_bufferPath).Close();
+            System.IO.File.Create(_bufferPath!).Close();
             _bufferAny = false;
         }
 

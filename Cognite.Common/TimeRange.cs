@@ -162,7 +162,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="obj">Object to compare</param>
         /// <returns>true, if equal. false otherwise</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(obj, this)) return true;
             if (obj == null) return false;

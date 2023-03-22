@@ -146,7 +146,7 @@ namespace Cognite.Extensions
                 return Enumerable.Empty<T>();
             }
 
-            var badValues = new HashSet<Identity>(error.Values);
+            var badValues = new HashSet<Identity>(error.Values ?? Enumerable.Empty<Identity>());
 
             var ret = new List<T>();
             var skipped = new List<T>();
@@ -334,7 +334,7 @@ namespace Cognite.Extensions
             if (Errors == null || !Errors.Any()) return Enumerable.Empty<(TError, IEnumerable<CogniteError<TError>>)>();
 
             return Errors
-                .SelectMany(err => err.Skipped.Select(skipped => (skipped, err)))
+                .SelectMany(err => (err.Skipped ?? Enumerable.Empty<TError>()).Select(skipped => (skipped, err)))
                 .GroupBy(pair => pair.skipped)
                 .Select(group => (group.Key, group.Select(pair => pair.err)))
                 .ToList();

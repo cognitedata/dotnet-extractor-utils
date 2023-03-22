@@ -141,7 +141,7 @@ namespace Cognite.Extractor.Common
             int maxSize,
             Func<T, K> idSelector,
             Func<T, K> parentIdSelector,
-            IEqualityComparer<K>? comparer = null)
+            IEqualityComparer<K>? comparer = null) where K : notnull
         {
             if (idSelector == null)
             {

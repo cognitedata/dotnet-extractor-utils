@@ -70,7 +70,7 @@ namespace Cognite.Extractor.Utils
 
                 if (config.AcceptAll) return true;
 
-                if (config.AllowList?.Any(acc => acc.ToLower() == cert.GetCertHashString().ToLower()) ?? false) return true;
+                if (cert != null && (config.AllowList?.Any(acc => acc.ToLower() == cert.GetCertHashString().ToLower()) ?? false)) return true;
 
                 return false;
             };

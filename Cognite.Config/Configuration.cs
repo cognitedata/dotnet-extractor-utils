@@ -207,7 +207,7 @@ namespace Cognite.Extractor.Configuration
 
         private static int GetVersion(Dictionary<object, object> versionedConfig)
         {
-            if (versionedConfig.TryGetValue("version", out dynamic version))
+            if (versionedConfig.TryGetValue("version", out dynamic? version))
             {
                 if (int.TryParse(version, out int intVersion))
                 {
@@ -418,7 +418,7 @@ namespace Cognite.Extractor.Configuration
                 var val = prop?.GetValue(container);
 
                 if (val != null && prop != null && !type.IsValueType
-                    && _namePrefixes.Any(prefix => prop.PropertyType.FullName.StartsWith(prefix, StringComparison.InvariantCulture)))
+                    && _namePrefixes.Any(prefix => prop.PropertyType.FullName!.StartsWith(prefix, StringComparison.InvariantCulture)))
                 {
                     var pr = GetProperties(prop.PropertyType, val);
                     if (!pr.Any()) return false;

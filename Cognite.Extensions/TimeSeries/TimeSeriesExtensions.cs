@@ -272,7 +272,7 @@ namespace Cognite.Extensions
                 || retryMode != RetryMode.OnErrorKeepDuplicates
                 && retryMode != RetryMode.OnFatalKeepDuplicates) return result;
 
-            var duplicateErrors = result.Errors.Where(err =>
+            var duplicateErrors = (result.Errors ?? Enumerable.Empty<CogniteError>()).Where(err =>
                 err.Resource == ResourceType.ExternalId
                 && err.Type == ErrorType.ItemExists)
                 .ToList();
@@ -489,7 +489,7 @@ namespace Cognite.Extensions
 
             if (createResult.Errors?.Any() ?? false)
             {
-                var badTimeSeries = new HashSet<TimeSeriesCreate>(createResult.Errors.Where(e => e.Skipped != null).SelectMany(e => e.Skipped));
+                var badTimeSeries = new HashSet<TimeSeriesCreate>(createResult.Errors.Where(e => e.Skipped != null).SelectMany(e => e.Skipped!));
                 timeSeriesDict = timeSeriesDict.Where(kvp => !badTimeSeries.Contains(kvp.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 

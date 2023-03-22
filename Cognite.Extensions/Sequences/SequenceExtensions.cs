@@ -273,7 +273,7 @@ namespace Cognite.Extensions
                 || retryMode != RetryMode.OnErrorKeepDuplicates
                 && retryMode != RetryMode.OnFatalKeepDuplicates) return result;
 
-            var duplicateErrors = result.Errors.Where(err =>
+            var duplicateErrors = (result.Errors ?? Enumerable.Empty<CogniteError>()).Where(err =>
                 err.Resource == ResourceType.ExternalId
                 && err.Type == ErrorType.ItemExists)
                 .ToList();
