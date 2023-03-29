@@ -98,7 +98,7 @@ namespace Cognite.Extractor.Metrics
 
             _logger.LogInformation("Pushing metrics to {PushgatewayHost} with job name {PushgatewayJob}", config.Host, config.Job);
 
-            var uri = new Uri(config.Host);
+            var uri = new Uri(config.Host!);
             if (uri.Segments.Last() != "metrics" && uri.Segments.Last() != "metrics/") {
                 uri = new Uri(uri, "metrics/");
             }

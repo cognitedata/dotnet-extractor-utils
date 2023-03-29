@@ -70,7 +70,7 @@ namespace Cognite.Extractor.Utils
 
                 if (config.AcceptAll) return true;
 
-                if (config.AllowList?.Any(acc => acc.ToLower() == cert.GetCertHashString().ToLower()) ?? false) return true;
+                if (cert != null && (config.AllowList?.Any(acc => acc.ToLower() == cert.GetCertHashString().ToLower()) ?? false)) return true;
 
                 return false;
             };
@@ -178,7 +178,8 @@ namespace Cognite.Extractor.Utils
                 var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
                 var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
 
-                if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant.TrimToNull()))
+                if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant.TrimToNull())
+                    || conf.IdpAuthentication.Certificate != null)
                 {
                     return new MsalAuthenticator(conf.IdpAuthentication, logger, clientFactory, authClientName);
                 }

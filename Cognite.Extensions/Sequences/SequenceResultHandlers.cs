@@ -132,7 +132,7 @@ namespace Cognite.Extensions
                 return Enumerable.Empty<SequenceDataCreate>();
             }
 
-            var items = new HashSet<Identity>(error.Values);
+            var items = new HashSet<Identity>(error.Values ?? Enumerable.Empty<Identity>());
 
             foreach (var seq in creates)
             {

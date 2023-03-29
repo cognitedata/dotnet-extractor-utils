@@ -135,7 +135,7 @@ namespace Cognite.Extractor.Common
                 timeout,
                 true);
             var tokenRegistration = token.Register(
-                state => ((TaskCompletionSource<bool>)state).TrySetCanceled(),
+                state => ((TaskCompletionSource<bool>?)state)?.TrySetCanceled(),
                 tcs);
             var task = tcs.Task;
             tcs.Task.ContinueWith(t =>

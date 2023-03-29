@@ -36,6 +36,14 @@ cognite:
         audience:
         # Minimum time-to-live in seconds for the token (optional)
         min-ttl: 30
+        # Configuration for certificate based authentication
+        certificate:
+            # Path to a .pfx or .pem certificate file (.pem only for .NET 7 extractors)
+            path:
+            # Optional certificate key password
+            password:
+            # Optional authority URL. If this is not specified, authority + tenant is used.
+            authority-url:
     # Configure automatic retries on requests to CDF. Can be left out to keep default values.
     cdf-retries:
         # Timeout in ms for each individual try

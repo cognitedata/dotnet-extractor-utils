@@ -97,7 +97,7 @@ namespace Cognite.Extensions
         {
             if (SafeByteCount(str) <= n) return str;
 
-            var a = Encoding.UTF8.GetBytes(str);
+            var a = Encoding.UTF8.GetBytes(str!);
             if (n > 0 && (a[n] & 0xC0) == 0x80)
             {
                 // remove all bytes whose two highest bits are 10
@@ -124,7 +124,7 @@ namespace Cognite.Extensions
             this IEnumerable<TInput> input,
             Func<TInput, TKey> keySelector,
             Func<TInput, TValue> valueSelector,
-            IEqualityComparer<TKey>? comparer = null)
+            IEqualityComparer<TKey>? comparer = null) where TKey : notnull
         {
             if (input == null) 
             {

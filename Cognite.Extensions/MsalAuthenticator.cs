@@ -6,6 +6,8 @@ using Microsoft.Identity.Client;
 using Cognite.Extractor.Common;
 using System.Net.Http;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Cognite.Extensions
 {
@@ -34,14 +36,80 @@ namespace Cognite.Extensions
             _config = config;
             _logger = logger ?? new NullLogger<MsalAuthenticator>();
             if (_config != null) {
-                var uriBuilder = new UriBuilder(_config.Authority);
-                uriBuilder.Path = $"{_config.Tenant}";
-                var url = uriBuilder.Uri;
-                _app = ConfidentialClientApplicationBuilder.Create(_config.ClientId)
+                Uri authorityUrl;
+                if (_config.Certificate?.AuthorityUrl != null)
+                {
+                    authorityUrl = new Uri(_config.Certificate.AuthorityUrl);
+                }
+                else if (_config.Authority != null && _config.Tenant != null)
+                {
+                    var uriBuilder = new UriBuilder(_config.Authority);
+                    uriBuilder.Path = $"{_config.Tenant}";
+                    authorityUrl = uriBuilder.Uri;
+                }
+                else
+                {
+                    throw new ConfigurationException("MSAL authenticator requires either Certificate.AuthorityUrl or Authority and Tenant");
+                }
+
+                var builder = ConfidentialClientApplicationBuilder.Create(_config.ClientId)
                     .WithHttpClientFactory(new MsalClientFactory(httpClientFactory, authClientName))
-                    .WithClientSecret(_config.Secret)
-                    .WithAuthority(url)
-                    .Build();
+                    .WithAuthority(authorityUrl);
+
+                if (_config.Certificate != null)
+                {
+                    if (_config.Certificate.Path == null) throw new ConfigurationException("Certificate path is required for certificate authentication");
+                    var ext = Path.GetExtension(_config.Certificate.Path);
+
+                    X509Certificate2 cert;
+#pragma warning disable CA2000
+                    if (ext == ".pfx")
+                    {
+                        if (_config.Certificate.Password != null)
+                        {
+                            cert = new X509Certificate2(_config.Certificate.Path, _config.Certificate.Password);
+                        }
+                        else
+                        {
+                            cert = new X509Certificate2(_config.Certificate.Path);
+                        }
+                    }
+#if NET5_0_OR_GREATER
+                    else if (ext == ".pem")
+                    {
+                        if (_config.Certificate.Password != null)
+                        {
+                            cert = X509Certificate2.CreateFromEncryptedPemFile(_config.Certificate.Path, _config.Certificate.Password);
+                        }
+                        else
+                        {
+                            cert = X509Certificate2.CreateFromPemFile(_config.Certificate.Path, _config.Certificate.Password);
+                        }
+                    }
+                    else 
+                    {
+                        throw new ConfigurationException($"Unrecognized certificate extension {ext}. Only .pem and .pfx files are supported");
+                    }
+#else
+                    else
+                    {
+                        throw new ConfigurationException($"Unrecognized certificate extension {ext}. Only .pfx files are supported");
+                    }
+#endif
+
+#pragma warning restore CA2000
+                    builder = builder.WithCertificate(cert);
+                }
+                else if (_config.Secret != null)
+                {
+                    builder = builder.WithClientSecret(_config.Secret);
+                }
+                else
+                {
+                    throw new ConfigurationException("Either certificate or client-secret must be configured");
+                }
+
+                _app = builder.Build();
             }
         }
 

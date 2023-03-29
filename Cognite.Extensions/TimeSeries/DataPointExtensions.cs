@@ -136,9 +136,9 @@ namespace Cognite.Extensions
                 timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, sanitationMode,
                 RetryMode.OnError, nanReplacement, token).ConfigureAwait(false);
 
-            if (result.Errors.Any(err => err.Type == ErrorType.FatalFailure)) return (result, null);
+            if (result.Errors?.Any(err => err.Type == ErrorType.FatalFailure) ?? false) return (result, null);
 
-            var missingIds = new HashSet<Identity>(result.Errors
+            var missingIds = new HashSet<Identity>((result.Errors ?? Enumerable.Empty<CogniteError>())
                 .Where(err => err.Type == ErrorType.ItemMissing)
                 .SelectMany(err => err.Values ?? Enumerable.Empty<Identity>())
                 .Where(idt => idt.ExternalId != null));
@@ -171,7 +171,7 @@ namespace Cognite.Extensions
                 sanitationMode,
                 token).ConfigureAwait(false);
 
-            if (tsResult.Errors.Any(err => err.Type != ErrorType.ItemExists)) return (result, tsResult);
+            if (tsResult.Errors?.Any(err => err.Type != ErrorType.ItemExists) ?? false) return (result, tsResult);
 
             var pointsToInsert = points.Where(kvp => missingIds.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 

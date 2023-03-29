@@ -165,7 +165,7 @@ namespace Cognite.Extractor.Logging
         /// Writes a trace message using the configured logger
         /// </summary>
         /// <param name="message">Trace message</param>
-        public override void Write(string message)
+        public override void Write(string? message)
         {
             WriteLine(message);
         }
@@ -174,7 +174,7 @@ namespace Cognite.Extractor.Logging
         /// Writes a trace message using the configured logger
         /// </summary>
         /// <param name="message">Trace message</param>
-        public override void WriteLine(string message)
+        public override void WriteLine(string? message)
         {
             if (_level is null) return;
             switch(_level){

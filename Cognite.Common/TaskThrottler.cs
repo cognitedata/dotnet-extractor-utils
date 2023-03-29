@@ -362,7 +362,7 @@ namespace Cognite.Extractor.Common
 
             await Task.WhenAll(
                 _runningTasks.Select(result => result.Task)
-                .Where(task => task != null && !task.IsCompleted)).ConfigureAwait(false);
+                .Where(task => task != null && !task.IsCompleted)!).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -373,7 +373,7 @@ namespace Cognite.Extractor.Common
         {
             if (_quitOnFailure)
             {
-                var failures = _results.Select(result => result.Exception).Where(exc => exc != null).ToList();
+                var failures = _results.Select(result => result.Exception!).Where(exc => exc != null).ToList();
                 if (failures.Any())
                 {
                     if (RunTask.Exception != null)

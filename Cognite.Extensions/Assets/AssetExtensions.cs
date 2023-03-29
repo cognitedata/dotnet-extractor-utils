@@ -225,7 +225,7 @@ namespace Cognite.Extensions
                 || retryMode != RetryMode.OnErrorKeepDuplicates
                 && retryMode != RetryMode.OnFatalKeepDuplicates) return result;
 
-            var duplicateErrors = result.Errors.Where(err =>
+            var duplicateErrors = result.Errors!.Where(err =>
                 err.Resource == ResourceType.ExternalId
                 && err.Type == ErrorType.ItemExists)
                 .ToList();
@@ -513,7 +513,7 @@ namespace Cognite.Extensions
 
             if (createResult.Errors?.Any() ?? false)
             {
-                var badAssets = new HashSet<AssetCreate>(createResult.Errors.Where(e => e.Skipped != null).SelectMany(e => e.Skipped));
+                var badAssets = new HashSet<AssetCreate>(createResult.Errors.Where(e => e.Skipped != null).SelectMany(e => e.Skipped!));
                 assetDict = assetDict.Where(kvp => !badAssets.Contains(kvp.Value)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 

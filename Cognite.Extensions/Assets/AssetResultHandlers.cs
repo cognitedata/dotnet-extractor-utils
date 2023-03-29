@@ -112,7 +112,7 @@ namespace Cognite.Extensions
                     .Where(id => id != null)
                     .Distinct()
                     .Select(Identity.Create)
-                    .Except(error.Values);
+                    .Except(error.Values ?? Enumerable.Empty<Identity>());
 
                 if (!ids.Any())
                 {
@@ -129,7 +129,7 @@ namespace Cognite.Extensions
                     error.Complete = true;
                     error.Values = ids
                         .Except(parents.Select(asset => Identity.Create(asset.ExternalId)))
-                        .Concat(error.Values)
+                        .Concat(error.Values ?? Enumerable.Empty<Identity>())
                         .Distinct();
                 }
                 catch

@@ -64,7 +64,7 @@ namespace Cognite.Extractor.Utils.CommandLine
                 }
                 Option option;
                 var optType = typeof(Option<>).MakeGenericType(prop.PropertyType);
-                option = (Option)Activator.CreateInstance(optType, aliases.ToArray(), attr.Description);
+                option = (Option)Activator.CreateInstance(optType, aliases.ToArray(), attr.Description)!;
 
                 Options[prop.Name] = option;
             }
@@ -93,7 +93,7 @@ namespace Cognite.Extractor.Utils.CommandLine
                 prop.SetValue(result, res);
             }
 
-            return (T)result;
+            return (T)result!;
         }
     }
 }

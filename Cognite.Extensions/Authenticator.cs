@@ -7,9 +7,30 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Cognite.Extractor.Common;
+using System.Diagnostics.Metrics;
 
 namespace Cognite.Extensions
 {
+    /// <summary>
+    /// Configuration for certificate authentication.
+    /// </summary>
+    public class CertificateConfig
+    {
+        /// <summary>
+        /// Path to base 64 encoded x509 certificate.
+        /// </summary>
+        public string? Path { get; set; }
+        /// <summary>
+        /// Authority URL. Either this or [authority]/[tenant] is used.
+        /// </summary>
+        public string? AuthorityUrl { get; set; }
+        /// <summary>
+        /// Certificate password.
+        /// </summary>
+        public string? Password { get; set; }
+    }
+
+
     /// <summary>
     /// Authenticator configuration. For more information, read the 
     /// <see href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow">OAth 2.0 client credentials flow</see>
@@ -89,6 +110,11 @@ namespace Cognite.Extensions
         /// </summary>
         /// <value>Minimum TTL</value>
         public int MinTtl { get; set; } = 30;
+
+        /// <summary>
+        /// Configuration for using certificate authentication.
+        /// </summary>
+        public CertificateConfig? Certificate { get; set; }
     }
 
     /// <summary>
@@ -159,9 +185,18 @@ namespace Cognite.Extensions
             {
                 throw new ConfigurationException("Configuration missing");
             }
+            if (config.Certificate != null)
+            {
+                throw new ConfigurationException("Certificate configuration cannot be used with basic authenticator");
+            }
             _config = config;
             _client = client;
             _logger = logger ?? new Microsoft.Extensions.Logging.Abstractions.NullLogger<Authenticator>();
+
+            if (config.TokenUrl == null)
+            {
+                throw new ConfigurationException("TokenUrl required for basic authenticator");
+            }
 
             _tokenUri = new Uri(config.TokenUrl);
         }
@@ -195,7 +230,11 @@ namespace Cognite.Extensions
             {
                 _requestTime = DateTime.UtcNow;
                 var response = await _client.PostAsync(_tokenUri, httpContent, token);
+#if NET5_0_OR_GREATER
+                var body = await response.Content.ReadAsStringAsync(token);
+#else
                 var body = await response.Content.ReadAsStringAsync();
+#endif
                 if (response.IsSuccessStatusCode)
                 {
                     var tokenResponse = JsonSerializer.Deserialize<ResponseDTO>(body);
