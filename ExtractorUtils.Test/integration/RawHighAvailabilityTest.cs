@@ -104,8 +104,8 @@ namespace ExtractorUtils.Test.Integration
         public async void TestRestartExtractor()
         {
             // Creating config for two extractors.
-            string configPath_0 = SetupConfig(index: 0);
-            string configPath_1 = SetupConfig(index: 1);
+            string configPath_0 = SetupConfig(index: 2);
+            string configPath_1 = SetupConfig(index: 3);
 
             using var source_0 = new CancellationTokenSource();
             using var source_1 = new CancellationTokenSource();
