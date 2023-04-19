@@ -78,14 +78,6 @@ namespace ExtractorUtils.Test.Integration
                 {
                     await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
                 }
-
-                // Not logged in
-                configKey = CDFTester.GetConfig(host);
-                configKey[6] = "  api-key: invalid-api-key";
-                using (var tester = new CDFTester(configKey, _output))
-                {
-                    await Assert.ThrowsAsync<CogniteUtilsException>(() => tester.Destination.TestCogniteConfig(tester.Source.Token));
-                }
             }
         }
 

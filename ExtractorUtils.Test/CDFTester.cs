@@ -55,7 +55,6 @@ namespace ExtractorUtils.Test
 
         public async Task<long> GetDataSetId()
         {
-
             var dataSets = await Destination.CogniteClient.DataSets.RetrieveAsync(new[] { "test-dataset" }, true);
             if (!dataSets.Any())
             {

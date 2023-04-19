@@ -1,9 +1,14 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Cognite.Extensions;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.StateStorage;
+using CogniteSdk;
 using Microsoft.Extensions.Logging;
 
 namespace Cognite.Extractor.Utils
@@ -362,6 +367,67 @@ namespace Cognite.Extractor.Utils
         /// Name of the shared state table.
         /// </summary>
         public string? TableName { get; set; }
+    }
+
+    /// <summary>
+    /// Config for setting a dataset.
+    /// </summary>
+    public class DataSetConfig
+    {
+        /// <summary>
+        /// Dataset external ID.
+        /// </summary>
+        public string? ExternalId { get; set; }
+        /// <summary>
+        /// Dataset ID.
+        /// </summary>
+        public long? Id { get; set; }
+
+        /// <summary>
+        /// Retrieve the configured dataset. Will throw an exception if the dataset does not exist,
+        /// or if retrieval failed.
+        /// </summary>
+        /// <param name="client">Client to use for retrieval.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Dataset if configured</returns>
+        public async Task<DataSet?> GetDataSet(Client client, CancellationToken token)
+        {
+            if (client == null) throw new ArgumentNullException(nameof(client));
+            Identity id;   
+            if (Id != null)
+            {
+                id = Identity.Create(Id.Value);
+            }
+            else if (ExternalId != null)
+            {
+                id = Identity.Create(ExternalId);
+            }
+            else
+            {
+                return null;
+            }
+            var dss = await client.DataSets.RetrieveAsync(new[] { id }, false, token).ConfigureAwait(false);
+            return dss.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Retrieve the configured data set ID. This will only make a request to CDF
+        /// if ExternalId is configured without Id.
+        /// 
+        /// Will throw an exception if configured using ExternalId and retrieval failed.
+        /// </summary>
+        /// <param name="client">Client to use for retrieval.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Dataset ID if configured</returns>
+        public async Task<long?> GetDataSetId(Client client, CancellationToken token)
+        {
+            if (Id != null) return Id.Value;
+            if (ExternalId == null) return null;
+            if (client == null) throw new ArgumentNullException(nameof(client));
+
+            var dataset = await GetDataSet(client, token).ConfigureAwait(false);
+            return dataset?.Id;
+        }
     }
 
     #endregion
