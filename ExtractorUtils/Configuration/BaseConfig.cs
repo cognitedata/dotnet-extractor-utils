@@ -422,9 +422,6 @@ namespace Cognite.Extractor.Utils
         public async Task<long?> GetDataSetId(Client client, CancellationToken token)
         {
             if (Id != null) return Id.Value;
-            if (ExternalId == null) return null;
-            if (client == null) throw new ArgumentNullException(nameof(client));
-
             var dataset = await GetDataSet(client, token).ConfigureAwait(false);
             return dataset?.Id;
         }
