@@ -363,6 +363,5 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public string? TableName { get; set; }
     }
-
     #endregion
 }
