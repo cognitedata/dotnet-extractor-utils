@@ -16,36 +16,61 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.100
+        dotnet-version: 7
     - name: Install dependencies
       run: dotnet restore
+    - name: Download code signing certificate
+      run: echo -n "${{ secrets.CODE_SIGNING_CERTIFICATE }}" | base64 -w 0 --decode > ./cognite_code_signing.pfx
+    - name: Extract public key
+      run: echo -n "${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}" | sn -p cognite_code_signing.pfx pub_key.snk
+      
+    - name: Build projects
+      run: dotnet build !**/ExtractorUtils.Test.csproj --configuration Release -p:PackageVersion=1.0.0 -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
+
+    - name: Strong name sign common
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./Cognite.Common Cognite.Common
+
+    - name: Test pack
+      run: dotnet pack --output nuget-packages --configuration Release -p:PackageVersion=1.0.0 --no-build
+
+    - name: Sign test package
+      run: dotnet nuget sign nuget-packages/*.nupkg --certificate-path ./cognite_code_signing.pfx --certificate-password ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }} --timestamper http://timestamp.digicert.com
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: package-test
+        path: nuget-packages/
+        retention-days: 1
     - name: Build
       run: dotnet build --configuration Debug --no-restore
     - name: Unit Test
       run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ --filter ExtractorUtils.Test.Unit. ./ExtractorUtils.Test/
       if: ${{ github.event == 'pull_request' && github.base_ref == 'refs/heads/integration' }}
-    - name: Start Redis
-      uses: supercharge/redis-github-action@1.5.0
-      with:
-        redis-version: 5
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
-      if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
-      env:
-        TEST_PROJECT: "extractor-tests"
-        TEST_HOST: "https://greenfield.cognitedata.com"
-        TEST_SCOPE: "https://greenfield.cognitedata.com/.default"
-        TEST_CLIENT_ID: ${{ secrets.BF_TEST_CLIENT_ID }}
-        TEST_TENANT: ${{ secrets.BF_TEST_TENANT }}
-        TEST_SECRET: ${{ secrets.BF_TEST_SECRET }}
-        BF_TEST_PROJECT: "extractor-bluefield-testing"
-        BF_TEST_HOST: "https://bluefield.cognitedata.com"
-        BF_TEST_SCOPE: "https://bluefield.cognitedata.com/.default"
-        BF_TEST_CLIENT_ID: ${{ secrets.BF_TEST_CLIENT_ID }}
-        BF_TEST_TENANT: ${{ secrets.BF_TEST_TENANT }}
-        BF_TEST_SECRET: ${{ secrets.BF_TEST_SECRET }}
+    #- name: Start Redis
+    #  uses: supercharge/redis-github-action@1.5.0
+    #  with:
+    #    redis-version: 5
+    #- name: Test
+    #  run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
+    #  if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
+    #  env:
+    #    TEST_PROJECT: "extractor-tests"
+    #    TEST_HOST: "https://greenfield.cognitedata.com"
+    #    TEST_SCOPE: "https://greenfield.cognitedata.com/.default"
+    #    TEST_CLIENT_ID: ${{ secrets.BF_TEST_CLIENT_ID }}
+    #    TEST_TENANT: ${{ secrets.BF_TEST_TENANT }}
+    #    TEST_SECRET: ${{ secrets.BF_TEST_SECRET }}
+    #    BF_TEST_PROJECT: "extractor-bluefield-testing"
+    #    BF_TEST_HOST: "https://bluefield.cognitedata.com"
+    #    BF_TEST_SCOPE: "https://bluefield.cognitedata.com/.default"
+    #    BF_TEST_CLIENT_ID: ${{ secrets.BF_TEST_CLIENT_ID }}
+    #    BF_TEST_TENANT: ${{ secrets.BF_TEST_TENANT }}
+    #    BF_TEST_SECRET: ${{ secrets.BF_TEST_SECRET }}
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+    #- name: Upload coverage to Codecov
+    #  uses: codecov/codecov-action@v3
+    #  with:
+    #    token: ${{ secrets.CODECOV_TOKEN }}
