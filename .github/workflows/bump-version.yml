@@ -17,30 +17,86 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7
+        
+    - name: Download code signing certificate
+      run: echo -n "${{ secrets.CODE_SIGNING_CERTIFICATE }}" | base64 -w 0 --decode > ./cognite_code_signing.pfx
+    - name: Extract public key
+      run: echo -n "${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}" | sn -p cognite_code_signing.pfx pub_key.snk
 
+    - name: Dotnet build Common
+      run: dotnet build Cognite.Common/Cognite.Common.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
+    - name: Strong name sign project
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./Cognite.Common Cognite.Common
     - name: Dotnet Pack Common
-      run: dotnet pack Cognite.Common/Cognite.Common.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
+      run: dotnet pack Cognite.Common/Cognite.Common.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
 
+    - name: Dotnet build Config
+      run: dotnet build Cognite.Config/Cognite.Configuration.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
+    - name: Strong name sign project
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./Cognite.Config Cognite.Configuration
     - name: Dotnet Pack Config
-      run: dotnet pack Cognite.Config/Cognite.Configuration.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
+      run: dotnet pack Cognite.Config/Cognite.Configuration.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
 
+    - name: Dotnet build Logging
+      run: dotnet build Cognite.Logging/Cognite.Logging.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
+    - name: Strong name sign project
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./Cognite.Logging Cognite.Logging
     - name: Dotnet Pack Logging
-      run: dotnet pack Cognite.Logging/Cognite.Logging.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
+      run: dotnet pack Cognite.Logging/Cognite.Logging.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
 
+    - name: Dotnet build Extensions
+      run: dotnet build Cognite.Extensions/Cognite.Extensions.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
+    - name: Strong name sign project
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./Cognite.Extensions Cognite.Extensions
     - name: Dotnet Pack Extensions
-      run: dotnet pack Cognite.Extensions/Cognite.Extensions.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}
+      run: dotnet pack Cognite.Extensions/Cognite.Extensions.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
 
+    - name: Dotnet build Metrics
+      run: dotnet build Cognite.Metrics/Cognite.Metrics.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
+    - name: Strong name sign project
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./Cognite.Metrics Cognite.Metrics
     - name: Dotnet Pack Metrics
-      run: dotnet pack Cognite.Metrics/Cognite.Metrics.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
-    
-    - name: Dotnet Pack StateStorage
-      run: dotnet pack Cognite.StateStorage/Cognite.StateStorage.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}
-    
-    - name: Dotnet Pack Utils
-      run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}  
+      run: dotnet pack Cognite.Metrics/Cognite.Metrics.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
 
+    - name: Dotnet build StateStorage
+      run: dotnet build Cognite.StateStorage/Cognite.StateStorage.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
+    - name: Strong name sign project
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./Cognite.StateStorage Cognite.StateStorage
+    - name: Dotnet Pack StateStorage
+      run: dotnet pack Cognite.StateStorage/Cognite.StateStorage.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+
+    - name: Dotnet build ExtractorUtils
+      run: dotnet build ExtractorUtils/ExtractorUtils.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True -p:BuildWithCert=True
+    - name: Strong name sign project
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./ExtractorUtils ExtractorUtils
+    - name: Dotnet Pack Utils
+      run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+
+    - name: Dotnet build Testing
+      run: dotnet build Cognite.Testing/Cognite.Testing.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True -p:BuildWithCert=True
+    - name: Strong name sign project
+      env:
+        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
+      run: ./sign.sh ./Cognite.Testing Cognite.Testing
     - name: Dotnet Pack Testing
-      run: dotnet pack Cognite.Testing/Cognite.Testing.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v}
+      run: dotnet pack Cognite.Testing/Cognite.Testing.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+
+    - name: Sign nuget packages
+      run: dotnet nuget sign nuget-packages/*.nupkg --certificate-path ./cognite_code_signing.pfx --certificate-password ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }} --timestamper http://timestamp.digicert.com
 
     - name: Dotnet Nuget Push Common
       run: dotnet nuget push nuget-packages/Cognite.Extractor.Common*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
