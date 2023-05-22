@@ -98,36 +98,8 @@ jobs:
     - name: Sign nuget packages
       run: dotnet nuget sign nuget-packages/*.nupkg --certificate-path ./cognite_code_signing.pfx --certificate-password ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }} --timestamper http://timestamp.digicert.com
 
-    - name: Dotnet Nuget Push Common
-      run: dotnet nuget push nuget-packages/Cognite.Extractor.Common*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-      continue-on-error: false
-
-    - name: Dotnet Nuget Push Config
-      run: dotnet nuget push nuget-packages/Cognite.Extractor.Configuration*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-      continue-on-error: false
-
-    - name: Dotnet Nuget Push Logging
-      run: dotnet nuget push nuget-packages/Cognite.Extractor.Logging*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-      continue-on-error: false
-
-    - name: Dotnet Nuget Push Extensions
-      run: dotnet nuget push nuget-packages/Cognite.Extensions*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-      continue-on-error: false
-
-    - name: Dotnet Nuget Push Metrics
-      run: dotnet nuget push nuget-packages/Cognite.Extractor.Metrics*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-      continue-on-error: false
-
-    - name: Dotnet Nuget Push StateStorage
-      run: dotnet nuget push nuget-packages/Cognite.Extractor.StateStorage*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-      continue-on-error: false
-
-    - name: Dotnet Nuget Push Utils
-      run: dotnet nuget push nuget-packages/Cognite.ExtractorUtils*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-      continue-on-error: false
-      
-    - name: Dotnet Nuget Push Testing
-      run: dotnet nuget push nuget-packages/Cognite.Extractor.Testing*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+    - name: Push nuget packages
+      run: dotnet nuget push nuget-packages/*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       continue-on-error: false
 
     - name: Create Release
