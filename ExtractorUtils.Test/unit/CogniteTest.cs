@@ -27,7 +27,6 @@ namespace ExtractorUtils.Test.Unit
     {
         private const string _authTenant = "someTenant";
         private const string _project = "someProject";
-        private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
         private static int _tokenCounter = 0;
 
@@ -94,109 +93,6 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public async Task TestCogniteClient()
-        {
-            string path = "test-cognite-client-config.yml";
-            string[] lines = {  "version: 2",
-                                "logger:",
-                                "  console:",
-                                "    level: verbose",
-                                "cognite:",
-                               $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
-                               $"  host: {_host}" };
-            System.IO.File.WriteAllLines(path, lines);
-
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockCogniteSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
-            // Setup services
-            var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
-            services.AddConfig<BaseConfig>(path, 2);
-            services.AddTestLogging(_output);
-            services.AddCogniteClient("testApp", "Utils-Tests/v1.0.0 (Test)", setLogger: true, setMetrics: true);
-            using (var provider = services.BuildServiceProvider()) {
-                var config = provider.GetRequiredService<CogniteConfig>();
-                var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
-                var ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.TestCogniteConfig(null, CancellationToken.None));
-                Assert.Contains("configuration missing", ex.Message);
-
-                config.Project = null;
-                ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.TestCogniteConfig(config, CancellationToken.None));
-                Assert.Contains("project is not configured", ex.Message);
-
-                config.Project = "Bogus";
-                ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.TestCogniteConfig(config, CancellationToken.None));
-                Assert.Contains("not associated with project Bogus", ex.Message);
-                config.Project = _project;
-
-                await cogniteDestination.TestCogniteConfig(CancellationToken.None);
-
-                var loginStatus = await cogniteDestination.CogniteClient.Login.StatusAsync(CancellationToken.None);
-                Assert.True(loginStatus.LoggedIn);
-                Assert.Equal("testuser", loginStatus.User);
-                Assert.Equal(_project, loginStatus.Project);
-
-                var options = new TimeSeriesQuery()
-                {
-                    Limit = 1
-                };
-                var ts = await cogniteDestination.CogniteClient.TimeSeries.ListAsync(options);
-                Assert.Empty(ts.Items);
-            }
-
-            // Verify that the authentication endpoint was called 2 times
-            mockHttpMessageHandler.Protected()
-                .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
-                    Times.Exactly(4), // 2 time trying to test the client and 2 times when using the client
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>());
-
-            System.IO.File.Delete(path);
-        }
-
-        [Fact]
-        public async Task TestInvalidApiKeyClient()
-        {
-            string path = "test-cognite-invalid-client-config.yml";
-            string[] lines = {  "version: 2",
-                                "cognite:",
-                               $"  project: {_project}",
-                               $"  api-key: otherApiKey",
-                               $"  host: {_host}" };
-            System.IO.File.WriteAllLines(path, lines);
-
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockCogniteSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
-            // Setup services
-            var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
-            services.AddConfig<BaseConfig>(path, 2);
-            services.AddTestLogging(_output);
-            services.AddCogniteClient("testApp", "Utils-Tests/v1.0.0 (Test)");
-            using (var provider = services.BuildServiceProvider()) {
-                var config = provider.GetRequiredService<CogniteConfig>();
-                var cogClient = provider.GetRequiredService<Client>();
-                var ex = await Assert.ThrowsAsync<CogniteUtilsException>(() => cogClient.TestCogniteConfig(config, CancellationToken.None));
-                Assert.Contains("credentials are invalid", ex.Message);
-            }
-
-            // Verify that the authentication endpoint was called 2 times
-            mockHttpMessageHandler.Protected()
-                .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
-                    Times.Exactly(1),
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>());
-
-            System.IO.File.Delete(path);
-        }
-        [Fact]
         public async Task TestClientRetry()
         {
             string path = "test-cognite-retry-config.yml";
@@ -206,14 +102,13 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-retries:",
                                 "    max-retries: 3",
                                 "    timeout: 10000" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockCogniteSendRetryAsync);
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockCogniteAssetsRetryAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;
             _sendRetries = 0;
@@ -232,7 +127,7 @@ namespace ExtractorUtils.Test.Unit
             }
 
             services.AddHttpClient<Client.Builder>()
-                .ConfigurePrimaryHttpMessageHandler(() => new HttpMessageHandlerStub(mockCogniteSendRetryAsync))
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpMessageHandlerStub(mockCogniteAssetsRetryAsync))
                 .AddPolicyHandler(retryPolicy)
                 .AddPolicyHandler(timeoutPolicy);
 
@@ -241,11 +136,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
-                var loginStatus = await cogniteDestination.CogniteClient.Login.StatusAsync();
-                Assert.True(loginStatus.LoggedIn);
-                Assert.Equal("testuser", loginStatus.User);
-                Assert.Equal(_project, loginStatus.Project);
-                Assert.Equal(3, _sendRetries);
+                await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery());
             }
 
         }
@@ -277,7 +168,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    time-series: 2",
@@ -364,7 +254,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    assets: 2",
@@ -612,60 +501,6 @@ namespace ExtractorUtils.Test.Unit
             return response;
         }
 
-
-        private static Task<HttpResponseMessage> mockCogniteSendAsync(HttpRequestMessage message, CancellationToken token)
-        {
-
-            var reply = "";
-            Assert.True(message.RequestUri.ToString() == $@"{_host}/api/v1/projects/{_project}/timeseries/list" ||
-                        message.RequestUri.ToString() == $@"{_host}/login/status");
-
-            Assert.NotEmpty(message.Headers);
-            Assert.NotEmpty(message.Headers.UserAgent);
-            Assert.Equal(2, message.Headers.UserAgent.Count);
-            var product = message.Headers.UserAgent.ToArray()[0].Product;
-            Assert.Equal("Utils-Tests", product.Name);
-            Assert.Equal("v1.0.0", product.Version);
-            var comment = message.Headers.UserAgent.ToArray()[1].Comment;
-            Assert.Equal("(Test)", comment);
-
-            if (message.RequestUri.ToString() == $@"{_host}/login/status")
-            {
-                Assert.Equal(HttpMethod.Get, message.Method);
-                message.Headers.TryGetValues("api-key", out IEnumerable<string> keys);
-                var loggedIn = keys.Contains(_apiKey) ? "true" : "false";
-                reply = "{" + Environment.NewLine +
-                        "  \"data\": {" + Environment.NewLine +
-                       $"    \"user\": \"testuser\",{Environment.NewLine}" +
-                       $"    \"loggedIn\": {loggedIn},{Environment.NewLine}" +
-                       $"    \"project\": \"{_project}\"" + Environment.NewLine +
-                        "  }" + Environment.NewLine +
-                        "}";
-            }
-            else
-            {
-                Assert.Equal(HttpMethod.Post, message.Method);
-                message.Headers.TryGetValues("api-key", out IEnumerable<string> keys);
-                Assert.Contains(_apiKey, keys);
-                message.Headers.TryGetValues("x-cdp-app", out IEnumerable<string> apps);
-                Assert.Contains("testApp", apps);
-                reply = "{" + Environment.NewLine +
-                        "  \"items\": [ ]" + Environment.NewLine +
-                        "}";
-            }
-
-
-            // Return 200
-            var response = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(reply)
-
-            };
-
-            return Task.FromResult(response);
-        }
-
         private static Task<HttpResponseMessage> mockAuthSendAsync(HttpRequestMessage message, CancellationToken token)
         {
             // Verify endpoint and method
@@ -706,10 +541,10 @@ namespace ExtractorUtils.Test.Unit
 
         private static int _sendRetries = 0;
 
-        private static Task<HttpResponseMessage> mockCogniteSendRetryAsync(HttpRequestMessage message, CancellationToken token)
+        private static Task<HttpResponseMessage> mockCogniteAssetsRetryAsync(HttpRequestMessage message, CancellationToken token)
         {
-            Assert.Equal($"{_host}/login/status", message.RequestUri.ToString());
-            Assert.Equal(HttpMethod.Get, message.Method);
+            Assert.Equal($"{_host}/api/v1/projects/{_project}/assets/list", message.RequestUri.ToString());
+            Assert.Equal(HttpMethod.Post, message.Method);
             if (_sendRetries++ < 2)
             {
                 var errReply = "{" + Environment.NewLine +
@@ -725,15 +560,7 @@ namespace ExtractorUtils.Test.Unit
                 };
                 return Task.FromResult(response);
             }
-            message.Headers.TryGetValues("api-key", out IEnumerable<string> keys);
-            var loggedIn = keys.Contains(_apiKey) ? "true" : "false";
-            var reply = "{" + Environment.NewLine +
-                    "  \"data\": {" + Environment.NewLine +
-                   $"    \"user\": \"testuser\",{Environment.NewLine}" +
-                   $"    \"loggedIn\": {loggedIn},{Environment.NewLine}" +
-                   $"    \"project\": \"{_project}\"" + Environment.NewLine +
-                    "  }" + Environment.NewLine +
-                    "}";
+            var reply = @"{""items"":[]}";
 
             return Task.FromResult(new HttpResponseMessage
             {

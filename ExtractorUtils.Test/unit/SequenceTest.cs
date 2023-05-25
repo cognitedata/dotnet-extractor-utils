@@ -31,7 +31,6 @@ namespace ExtractorUtils.Test.Unit
 
 
         private const string _project = "someProject";
-        private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
 
         // The primary purpose of this test versus the integration tests is to verify that 
@@ -54,7 +53,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    sequences: 2",

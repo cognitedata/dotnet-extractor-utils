@@ -15,10 +15,6 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class CogniteClientExtensions
     {
-        private static Summary loginSummary { get; } = Prometheus.Metrics.CreateSummary(
-            "extractor_utils_cdf_login_requests",
-            "Number and duration of login requests to CDF", "endpoint");
-
         private static Summary tokenSummary { get; } = Prometheus.Metrics.CreateSummary(
             "extractor_utils_cdf_token_requests",
             "Number and duration of token requests to CDF", "endpoint");
@@ -43,23 +39,7 @@ namespace Cognite.Extractor.Utils
                 throw new CogniteUtilsException("CDF project is not configured");
             }
 
-            if (config.ApiKey?.TrimToNull() != null)
-            {
-                LoginStatus loginStatus;
-                using (loginSummary.WithLabels("status").NewTimer())
-                {
-                    loginStatus = await client.Login.StatusAsync(token).ConfigureAwait(false);
-                }
-                if (!loginStatus.LoggedIn)
-                {
-                    throw new CogniteUtilsException("CDF credentials are invalid");
-                }
-                if (!loginStatus.Project.Equals(config.Project, System.StringComparison.Ordinal))
-                {
-                    throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
-                }
-            }
-            else if (config.IdpAuthentication != null)
+            if (config.IdpAuthentication != null)
             {
                 TokenInspect tokenInspect;
                 using (tokenSummary.WithLabels("inspect").NewTimer())

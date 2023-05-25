@@ -270,12 +270,7 @@ namespace Cognite.Extractor.Utils
             if (config.Host?.TrimToNull() != null)
                 builder = builder.SetBaseUrl(new Uri(config.Host));
 
-            if (config.ApiKey?.TrimToNull() != null)
-            {
-                builder = builder
-                    .SetApiKey(config.ApiKey);
-            }
-            else if (auth != null)
+            if (auth != null)
             {
                 builder = builder.SetTokenProvider(token => auth.GetToken(token));
             }

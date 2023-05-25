@@ -66,12 +66,6 @@ namespace Cognite.Extractor.Utils
         public string? Project { get; set; }
 
         /// <summary>
-        /// API key for authentication (optional)
-        /// </summary>
-        /// <value>API key</value>
-        public string? ApiKey { get; set; }
-
-        /// <summary>
         /// Authenticator config, if a bearer access token is to be used for authentication (optional)
         /// </summary>
         /// <value>Authenticator</value>

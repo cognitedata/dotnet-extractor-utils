@@ -153,7 +153,6 @@ namespace Cognite.Extractor.Utils
 
                 cogniteConfig!.IdpAuthentication = _remoteConfig.Cognite.IdpAuthentication;
                 cogniteConfig.Project = _remoteConfig.Cognite.Project;
-                cogniteConfig.ApiKey = _remoteConfig.Cognite.ApiKey;
                 cogniteConfig.ExtractionPipeline = _remoteConfig.Cognite.ExtractionPipeline;
                 cogniteConfig.Host = _remoteConfig.Cognite.Host;
                 cogniteProperty.SetValue(config, cogniteConfig);

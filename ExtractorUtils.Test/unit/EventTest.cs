@@ -27,7 +27,6 @@ namespace ExtractorUtils.Test.Unit
     public class EventTest
     {
         private const string _project = "someProject";
-        private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
 
         private bool _failInsert;
@@ -65,7 +64,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    events: 2",
@@ -135,7 +133,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    events: 2",
@@ -245,7 +242,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    events: 2",
