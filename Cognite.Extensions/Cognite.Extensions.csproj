@@ -24,7 +24,7 @@
     <ProjectReference Include="..\Cognite.Common\Cognite.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.54.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.54.1" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
     <PackageReference Include="CogniteSdk" Version="3.9.0" />
     <PackageReference Include="prometheus-net" Version="8.0.0" />
