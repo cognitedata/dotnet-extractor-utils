@@ -327,26 +327,6 @@ namespace ExtractorUtils.Test.Unit
                 return fail;
             }
 
-            if (uri.Contains("/login/status"))
-            {
-                dynamic loginResponse = new ExpandoObject();
-                loginResponse.data = new ExpandoObject();
-                loginResponse.data.user = "user";
-                loginResponse.data.project = _project;
-                loginResponse.data.loggedIn = true;
-                loginResponse.data.projectId = 1;
-
-                responseBody = JsonConvert.SerializeObject(loginResponse);
-                var login = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(responseBody)
-                };
-                login.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                login.Headers.Add("x-request-id", "1");
-                return login;
-            }
-
             var statusCode = HttpStatusCode.OK;
 
             var content = await message.Content.ReadAsStringAsync();
