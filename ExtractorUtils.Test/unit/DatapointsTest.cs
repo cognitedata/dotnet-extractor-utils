@@ -49,7 +49,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: someKey",
                                $"  host: https://test.cognitedata.com",
                                 "  cdf-chunking:",
                                 "    data-points: 4",
@@ -140,7 +139,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: someKey",
                                $"  host: https://test.cognitedata.com",
                                 "  cdf-chunking:",
                                 "    data-point-delete: 4",
@@ -209,7 +207,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: someKey",
                                $"  host: https://test.cognitedata.com",
                                 "  cdf-chunking:",
                                 "    data-points: 4",
@@ -336,7 +333,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: someKey",
                                $"  host: https://test.cognitedata.com",
                                 "  cdf-chunking:",
                                 "    data-points: 4",
@@ -427,26 +423,6 @@ namespace ExtractorUtils.Test.Unit
                 fail.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 fail.Headers.Add("x-request-id", "1");
                 return fail;
-            }
-
-            if (uri.Contains("/login/status"))
-            {
-                dynamic loginResponse = new ExpandoObject();
-                loginResponse.data = new ExpandoObject();
-                loginResponse.data.user = "user";
-                loginResponse.data.project = _project;
-                loginResponse.data.loggedIn = true;
-                loginResponse.data.projectId = 1;
-
-                responseBody = JsonConvert.SerializeObject(loginResponse);
-                var login = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(responseBody)
-                };
-                login.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                login.Headers.Add("x-request-id", "1");
-                return login;
             }
 
             if (uri.Contains("/timeseries/byids"))

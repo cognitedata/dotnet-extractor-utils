@@ -78,7 +78,6 @@ namespace ExtractorUtils.Test.Integration
                 // Pass the remote config in, this could be useful for creating extractors that just always pull configuration from env
                 var localCognite = new CogniteConfig
                 {
-                    ApiKey = tester.Config.Cognite.ApiKey,
                     Project = tester.Config.Cognite.Project,
                     IdpAuthentication = tester.Config.Cognite.IdpAuthentication,
                     Host = tester.Config.Cognite.Host,
@@ -138,7 +137,6 @@ namespace ExtractorUtils.Test.Integration
             {
                 var localCognite = new CogniteConfig
                 {
-                    ApiKey = tester.Config.Cognite.ApiKey,
                     Project = tester.Config.Cognite.Project,
                     IdpAuthentication = tester.Config.Cognite.IdpAuthentication,
                     Host = tester.Config.Cognite.Host,

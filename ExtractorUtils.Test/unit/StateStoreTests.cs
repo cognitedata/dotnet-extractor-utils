@@ -34,7 +34,6 @@ namespace ExtractorUtils.Test.Unit
         }
 
         private const string _project = "someProject";
-        private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
         private const string _dbName = "testDb";
         private const string _tableName = "testTable";
@@ -59,7 +58,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    raw-rows: 4",
@@ -216,7 +214,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    raw-rows: 4",
@@ -320,7 +317,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    raw-rows: 4",
@@ -513,7 +509,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    raw-rows: 4",

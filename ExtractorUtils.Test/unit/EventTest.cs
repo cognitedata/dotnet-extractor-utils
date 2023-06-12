@@ -27,7 +27,6 @@ namespace ExtractorUtils.Test.Unit
     public class EventTest
     {
         private const string _project = "someProject";
-        private const string _apiKey = "someApiKey";
         private const string _host = "https://test.cognitedata.com";
 
         private bool _failInsert;
@@ -65,7 +64,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    events: 2",
@@ -135,7 +133,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    events: 2",
@@ -245,7 +242,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: {_apiKey}",
                                $"  host: {_host}",
                                 "  cdf-chunking:",
                                 "    events: 2",
@@ -329,26 +325,6 @@ namespace ExtractorUtils.Test.Unit
                 fail.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 fail.Headers.Add("x-request-id", "1");
                 return fail;
-            }
-
-            if (uri.Contains("/login/status"))
-            {
-                dynamic loginResponse = new ExpandoObject();
-                loginResponse.data = new ExpandoObject();
-                loginResponse.data.user = "user";
-                loginResponse.data.project = _project;
-                loginResponse.data.loggedIn = true;
-                loginResponse.data.projectId = 1;
-
-                responseBody = JsonConvert.SerializeObject(loginResponse);
-                var login = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(responseBody)
-                };
-                login.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                login.Headers.Add("x-request-id", "1");
-                return login;
             }
 
             var statusCode = HttpStatusCode.OK;

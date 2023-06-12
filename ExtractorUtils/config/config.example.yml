@@ -10,8 +10,6 @@ version:
 cognite:
     # The project to connect to in the API
     project:
-    # Cognite api key
-    api-key:
     # Cognite service url
     host: "https://api.cognitedata.com"
     # Config for authentication if a bearer access token has to be used for authentication.

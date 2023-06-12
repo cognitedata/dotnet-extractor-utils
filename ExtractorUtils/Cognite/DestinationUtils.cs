@@ -215,8 +215,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="config">A <see cref="CogniteConfig"/> configuration object</param>
         /// <param name="appId">Identifier of the application using the Cognite API</param>
         /// <param name="userAgent">User-agent header</param>
-        /// <param name="auth">A <see cref="IAuthenticator"/> authenticator used to obtain bearer access token. 
-        /// If null, API keys are used for authentication</param>
+        /// <param name="auth">A <see cref="IAuthenticator"/> authenticator used to obtain bearer access token</param>
         /// <param name="logger">A <see cref="ILogger"/> logger that the client can use to log calls to the 
         /// Cognite API (enabled in debug mode)</param>
         /// <param name="metrics">A <see cref="IMetrics"/> metrics collector, that the client can use
@@ -270,12 +269,7 @@ namespace Cognite.Extractor.Utils
             if (config.Host?.TrimToNull() != null)
                 builder = builder.SetBaseUrl(new Uri(config.Host));
 
-            if (config.ApiKey?.TrimToNull() != null)
-            {
-                builder = builder
-                    .SetApiKey(config.ApiKey);
-            }
-            else if (auth != null)
+            if (auth != null)
             {
                 builder = builder.SetTokenProvider(token => auth.GetToken(token));
             }

@@ -65,7 +65,7 @@ cognite:
 
 See the [example configuration](ExtractorUtils/config/config.example.yml) for a full example with all available options.
 
-Set the ```COGNITE_PROJECT``` and ```COGNITE_API_KEY``` environment variables. Set the ```metrics``` tag, only if collecting metrics is required by the extractor. If using a [Prometheus pushgateway](https://prometheus.io/docs/practices/pushing/), set ```host```to a valid endpoint.
+Set the ```COGNITE_PROJECT```, ```COGNITE_TENANT_ID```, ```COGNITE_CLIENT_ID```, ```COGNITE_CLIENT_SECRET```, and ```COGNITE_SCOPE``` environment variables. Set the ```metrics``` tag, only if collecting metrics is required by the extractor. If using a [Prometheus pushgateway](https://prometheus.io/docs/practices/pushing/), set ```host```to a valid endpoint.
 
 The easiest way to use the library utilities is by using the ```BaseExtractor``` class. The following is a working implementation of an extractor writing a sine wave to CDF.
 

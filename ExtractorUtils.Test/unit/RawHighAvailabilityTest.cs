@@ -24,8 +24,6 @@ namespace ExtractorUtils.Test.Unit
 
         private const string _project = "someProject";
 
-        private const string _apiKey = "someApiKey";
-
         private const string _host = "https://test.cognitedata.com";
 
         private const string _dbName = "testDb";
@@ -377,7 +375,6 @@ namespace ExtractorUtils.Test.Unit
                     "    level: verbose",
                     "cognite:",
                     $"  project: {_project}",
-                    $"  api-key: {_apiKey}",
                     $"  host: {_host}",
                     "high-availability:",
                     $"  index: {index}",

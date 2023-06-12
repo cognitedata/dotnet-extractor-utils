@@ -44,7 +44,6 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: verbose",
                                 "cognite:",
                                $"  project: {_project}",
-                               $"  api-key: someKey",
                                $"  host: https://test.cognitedata.com",
                                 "  cdf-chunking:",
                                 "    data-points: 4",
