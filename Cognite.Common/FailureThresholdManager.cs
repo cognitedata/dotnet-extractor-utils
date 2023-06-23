@@ -52,7 +52,7 @@ namespace Cognite.Extractor.Common
         /// Remaining budget for failed jobs
         /// </summary>
         public long RemainingBudget { get { return (long)Math.Floor(FailureBudget - _failedJobs.Count); } }
-        private readonly Action<Dictionary<T, T2>> _callback;
+        private readonly Action<IDictionary<T, T2>> _callback;
 
         /// <summary>
         /// Constructor
@@ -60,7 +60,7 @@ namespace Cognite.Extractor.Common
         /// <param name="thresholdPercentage">Threshold for failed jobs, %**,*</param>
         /// <param name="totalJobCount">Total number of jobs</param>
         /// <param name="callback">Callback method for when the threshold is exceeded</param>
-        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action<Dictionary<T, T2>> callback)
+        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action<IDictionary<T, T2>> callback)
         {
 
             ThresholdPercentage = thresholdPercentage;
