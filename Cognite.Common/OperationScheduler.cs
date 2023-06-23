@@ -174,6 +174,15 @@ namespace Cognite.Extractor.Common
             return chunks;
         }
 
+        /// <summary>
+        /// Read cancellation token source.
+        /// </summary>
+        /// <returns>Cancellation token source</returns>
+        protected virtual CancellationTokenSource GetCancellationTokenSource()
+        {
+            return _source;
+        }
+
         private async Task ConsumeChunkInternal(IChunk<T> chunk, CancellationToken token)
         {
             try
@@ -254,7 +263,7 @@ namespace Cognite.Extractor.Common
                     foreach (var item in chunk.Items)
                     {
                         _numRuns++;
-                        
+
                         if (!chunk.Completed(item))
                         {
                             numContinued++;
@@ -265,7 +274,7 @@ namespace Cognite.Extractor.Common
                             numFinished++;
                         }
                     }
-                    
+
                     // Free any finished items here
                     _numPending -= numFinished;
                     _numFinished += numFinished;
