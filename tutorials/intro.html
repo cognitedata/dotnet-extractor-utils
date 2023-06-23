@@ -101,7 +101,7 @@ cognite:
           - ${COGNITE_SCOPE}
 </code></pre>
 <p>See <a href="xref:Cognite.Extractor.Utils.BaseConfig">full config object</a> for full list of options.</p>
-<p>Set the <code>COGNITE_PROJECT</code> and <code>COGNITE_API_KEY</code> environment variables. Set the <code>metrics</code> tag, only if collecting metrics is required by the extractor. If using a <a href="https://prometheus.io/docs/practices/pushing/">Prometheus pushgateway</a>, set <code>host</code>to a valid endpoint.</p>
+<p>Set the <code>COGNITE_PROJECT</code>, <code>COGNITE_TENANT_ID</code>, <code>COGNITE_CLIENT_ID</code>, <code>COGNITE_CLIENT_SECRET</code>, and <code>COGNITE_SCOPE</code> environment variables. Set the <code>metrics</code> tag, only if collecting metrics is required by the extractor. If using a <a href="https://prometheus.io/docs/practices/pushing/">Prometheus pushgateway</a>, set <code>host</code>to a valid endpoint.</p>
 <p>The library is intended to be used with dependency injection, In <code>Program.cs</code>:</p>
 <pre><code class="lang-c#">using Microsoft.Extensions.DependencyInjection;
 using Cognite.Extractor.Utils;
@@ -162,7 +162,7 @@ class Program
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/a6d66fc4621e1d866a7a24ee25bf3ecd700d58c4/docfx_project/tutorials/intro.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/79287382bea5537f71a1ede2cd90150a81ab5405/docfx_project/tutorials/intro.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
