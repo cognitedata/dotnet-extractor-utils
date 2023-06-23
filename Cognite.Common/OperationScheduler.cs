@@ -41,7 +41,11 @@ namespace Cognite.Extractor.Common
         private int _numPending;
         private readonly TaskThrottler _throttler;
         private readonly BlockingCollection<IChunk<T>> _finishedOps = new BlockingCollection<IChunk<T>>();
-        private readonly CancellationTokenSource _source;
+
+        /// <summary>
+        /// Cancellation token source
+        /// </summary>
+        protected CancellationTokenSource TokenSource { get; set; }
 
         private readonly int _chunkSize;
 
@@ -63,7 +67,7 @@ namespace Cognite.Extractor.Common
             _throttler = throttler;
             _numTotal = _activeItems.Count();
             _chunkSize = chunkSize;
-            _source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            TokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
         }
         #region abstract methods
         /// <summary>
@@ -174,15 +178,6 @@ namespace Cognite.Extractor.Common
             return chunks;
         }
 
-        /// <summary>
-        /// Read cancellation token source.
-        /// </summary>
-        /// <returns>Cancellation token source</returns>
-        protected virtual CancellationTokenSource GetCancellationTokenSource()
-        {
-            return _source;
-        }
-
         private async Task ConsumeChunkInternal(IChunk<T> chunk, CancellationToken token)
         {
             try
@@ -222,9 +217,9 @@ namespace Cognite.Extractor.Common
             // Number of items in the pending list that have not been freed.
             int numContinued = 0;
 
-            while ((_numPending > 0 || chunks.Any()) && !_source.Token.IsCancellationRequested)
+            while ((_numPending > 0 || chunks.Any()) && !TokenSource.Token.IsCancellationRequested)
             {
-                var generators = chunks.Select<IChunk<T>, Func<Task>>(chunk => () => ConsumeChunkInternal(chunk, _source.Token));
+                var generators = chunks.Select<IChunk<T>, Func<Task>>(chunk => () => ConsumeChunkInternal(chunk, TokenSource.Token));
 
                 foreach (var generator in generators)
                 {
@@ -235,7 +230,7 @@ namespace Cognite.Extractor.Common
                 var finished = new List<IChunk<T>>();
                 try
                 {
-                    finished.Add(_finishedOps.Take(_source.Token));
+                    finished.Add(_finishedOps.Take(TokenSource.Token));
                 }
                 catch (OperationCanceledException)
                 {
@@ -253,7 +248,7 @@ namespace Cognite.Extractor.Common
                 {
                     int numFinished = 0;
 
-                    var next = HandleTaskResult(chunk, _source.Token);
+                    var next = HandleTaskResult(chunk, TokenSource.Token);
                     foreach (var newItem in next)
                     {
                         newItems.Add(newItem);
@@ -319,7 +314,7 @@ namespace Cognite.Extractor.Common
             {
                 foreach (var chunk in chunks)
                 {
-                    AbortChunk(chunk, _source.Token);
+                    AbortChunk(chunk, TokenSource.Token);
                 }
             }
             if (_numPending > 0)
@@ -338,8 +333,8 @@ namespace Cognite.Extractor.Common
             {
                 if (disposing)
                 {
-                    _source.Cancel();
-                    _source.Dispose();
+                    TokenSource.Cancel();
+                    TokenSource.Dispose();
                 }
 
                 _disposed = true;
