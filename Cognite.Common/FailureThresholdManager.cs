@@ -40,7 +40,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         public long TotalJobCount { get; private set; }
         private double _failureBudget;
-        private double FailureBudget { get { return TotalJobCount * ThresholdPercentage / 100; } }
+        private double FailureBudget => TotalJobCount * ThresholdPercentage / 100;
 
         /// <summary>
         /// Remaining budget for failed jobs
