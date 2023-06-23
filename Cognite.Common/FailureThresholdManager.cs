@@ -14,6 +14,12 @@ namespace Cognite.Extractor.Common
     public class FailureThresholdManager<T> where T : IComparable
     {
         private ConcurrentDictionary<T, byte> _failedJobs = new ConcurrentDictionary<T, byte>();
+
+        /// <summary>
+        /// Get failed jobs
+        /// </summary>
+        public HashSet<T> FailedJobs => new HashSet<T>(_failedJobs.Keys);
+
         private double _thresholdPercentage;
 
         /// <summary>
@@ -39,14 +45,14 @@ namespace Cognite.Extractor.Common
         /// Total number of jobs
         /// </summary>
         public long TotalJobCount { get; private set; }
-        private double _failureBudget;
+
         private double FailureBudget => TotalJobCount * ThresholdPercentage / 100;
 
         /// <summary>
         /// Remaining budget for failed jobs
         /// </summary>
-        public long RemainingBudget { get { return (long)Math.Floor(_failureBudget - _failedJobs.Count); } }
-        private readonly Action _callback;
+        public long RemainingBudget { get { return (long)Math.Floor(FailureBudget - _failedJobs.Count); } }
+        private readonly Action<HashSet<T>> _callback;
 
         /// <summary>
         /// Constructor
@@ -54,12 +60,11 @@ namespace Cognite.Extractor.Common
         /// <param name="thresholdPercentage">Threshold for failed jobs, %**,*</param>
         /// <param name="totalJobCount">Total number of jobs</param>
         /// <param name="callback">Callback method for when the threshold is exceeded</param>
-        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action callback)
+        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action<HashSet<T>> callback)
         {
 
             ThresholdPercentage = thresholdPercentage;
             TotalJobCount = totalJobCount;
-            _failureBudget = FailureBudget;
             _callback = callback;
         }
 
@@ -83,16 +88,15 @@ namespace Cognite.Extractor.Common
         {
             ThresholdPercentage = thresholdPercentage;
             TotalJobCount = totalJobCount;
-            _failureBudget = FailureBudget;
             if (validate)
                 _checkThreshold();
         }
 
         private void _checkThreshold()
         {
-            if (_failedJobs.Count > _failureBudget)
+            if (_failedJobs.Count > FailureBudget)
             {
-                _callback();
+                _callback(FailedJobs);
             }
         }
     }
