@@ -18,7 +18,7 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Get failed jobs
         /// </summary>
-        public HashSet<T> FailedJobs => new HashSet<T>(_failedJobs.Keys);
+        public IEnumerable<T> FailedJobs => _failedJobs.Keys;
 
         private double _thresholdPercentage;
 
@@ -52,7 +52,7 @@ namespace Cognite.Extractor.Common
         /// Remaining budget for failed jobs
         /// </summary>
         public long RemainingBudget { get { return (long)Math.Floor(FailureBudget - _failedJobs.Count); } }
-        private readonly Action<HashSet<T>> _callback;
+        private readonly Action<IEnumerable<T>> _callback;
 
         /// <summary>
         /// Constructor
@@ -60,7 +60,7 @@ namespace Cognite.Extractor.Common
         /// <param name="thresholdPercentage">Threshold for failed jobs, %**,*</param>
         /// <param name="totalJobCount">Total number of jobs</param>
         /// <param name="callback">Callback method for when the threshold is exceeded</param>
-        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action<HashSet<T>> callback)
+        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action<IEnumerable<T>> callback)
         {
 
             ThresholdPercentage = thresholdPercentage;
