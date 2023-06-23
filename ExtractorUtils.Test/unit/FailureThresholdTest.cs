@@ -26,7 +26,9 @@ namespace ExtractorUtils.Test.Unit
             _thresholdManager.Failed("b", 2);
             Assert.NotNull(_failed);
             Assert.Contains("a", _failed);
+            Assert.Equal(1, _failed["a"]);
             Assert.Contains("b", _failed);
+            Assert.Equal(2, _failed["b"]);
         }
         [Fact]
         public void TestChangeThresholdTrigger()
@@ -41,6 +43,7 @@ namespace ExtractorUtils.Test.Unit
             _thresholdManager.UpdateBudget(9, 10);
             Assert.NotNull(_failed);
             Assert.Contains("c", _failed);
+            Assert.Equal(3, _failed["c"]);
         }
     }
 }
