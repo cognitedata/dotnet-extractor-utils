@@ -11,7 +11,7 @@ namespace Cognite.Extractor.Common
     /// <summary>
     /// Simple threshold manager, tracks failed jobs and cancels execution if budget is exhausted
     /// </summary>
-    public class FailureThresholdManager<T> : IDisposable where T : IComparable
+    public class FailureThresholdManager<T> where T : IComparable
     {
         private ConcurrentDictionary<T, byte> _failedJobs = new ConcurrentDictionary<T, byte>();
         private double _thresholdPercentage;
@@ -46,21 +46,21 @@ namespace Cognite.Extractor.Common
         /// Remaining budget for failed jobs
         /// </summary>
         public long RemainingBudget { get { return (long)Math.Floor(_failureBudget - _failedJobs.Count); } }
-        private readonly CancellationTokenSource _source;
+        private readonly Action _callback;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="thresholdPercentage">Threshold for failed jobs, %**,*</param>
         /// <param name="totalJobCount">Total number of jobs</param>
-        /// <param name="token">Cancellation token</param>
-        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, CancellationToken token)
+        /// <param name="callback">Callback method for when the threshold is exceeded</param>
+        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action callback)
         {
 
             ThresholdPercentage = thresholdPercentage;
             TotalJobCount = totalJobCount;
             _failureBudget = FailureBudget;
-            _source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            _callback = callback;
         }
 
         /// <summary>
@@ -92,17 +92,8 @@ namespace Cognite.Extractor.Common
         {
             if (_failedJobs.Count > _failureBudget)
             {
-                _source.Cancel();
+                _callback();
             }
-        }
-
-        /// <summary>
-        /// Dispose method.
-        /// </summary>
-        public void Dispose()
-        {
-            _source.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }
