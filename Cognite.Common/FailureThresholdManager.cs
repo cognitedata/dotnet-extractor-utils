@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 namespace Cognite.Extractor.Common
 {
     /// <summary>
-    /// Simple threshold manager, tracks failed jobs and executes callback if budget is exhausted
+    /// Simple threshold manager, tracks failed jobs and executes callback if budget is exhausted. 
+    /// The callback is executed on every failure reported, as long as the failure budget is not 
+    /// expanded, or failed items removed from the internal collection using the Success method. 
     /// </summary>
     public class FailureThresholdManager<T, T2> where T : IComparable
     {
@@ -70,7 +72,7 @@ namespace Cognite.Extractor.Common
         }
 
         /// <summary>
-        /// Adds job to failed items, checks if the failure budget has been exhausted
+        /// Adds job to failed items, checks if the failure budget has been exhausted. The value is overwritten in the case the job had previously failed. 
         /// </summary>
         /// <param name="job">Job Id</param>
         /// <param name="value">Custom value for the failed job</param>
@@ -78,6 +80,16 @@ namespace Cognite.Extractor.Common
         {
             _failedJobs[job] = value;
             _checkThreshold();
+        }
+
+        /// <summary>
+        /// Removes job from failed items. This method does not check the threshold, no callback will happen. 
+        /// </summary>
+        /// <param name="job">Job Id</param>
+        /// <returns>Removal operation success status</returns>
+        public bool Success(T job)
+        {
+            return _failedJobs.TryRemove(job, out _);
         }
 
         /// <summary>
