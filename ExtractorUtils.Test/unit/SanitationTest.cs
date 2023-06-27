@@ -707,7 +707,7 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, 1E101),
                 new Datapoint(DateTime.UtcNow, -1E101),
                 new Datapoint(DateTime.MaxValue, 1),
-                new Datapoint(CogniteTime.DateTimeEpoch, 1)
+                new Datapoint(DateTime.MinValue, 1)
             };
 
             var result = dps.Select(dp => dp.Verify()).ToArray();
@@ -942,7 +942,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 { Identity.Create("all-bad-ts"), new[] {
                     new Datapoint(DateTime.MaxValue, 1.0),
-                    new Datapoint(CogniteTime.DateTimeEpoch, 2.0)
+                    new Datapoint(DateTime.MinValue, 2.0)
                 } },
                 { Identity.Create("all-bad-value"), new[]
                 {
