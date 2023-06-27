@@ -288,7 +288,7 @@ namespace Cognite.Extractor.Utils
                     }
                     if (exception == null)
                     {
-                        exception = new ConfigurationException("Failed to load config file: ", ex);
+                        exception = new ConfigurationException($"Failed to load config file: {ex.Message}", ex);
                     }
                 }
                 catch (AggregateException ex)
@@ -296,7 +296,7 @@ namespace Cognite.Extractor.Utils
                     exception = ex.Flatten().InnerExceptions.OfType<ConfigurationException>().FirstOrDefault();
                     if (exception == null)
                     {
-                        exception = new ConfigurationException("Failed to load config file: ", ex);
+                        exception = new ConfigurationException($"Failed to load config file: {ex.Message}", ex);
                     }
                 }
                 catch (ConfigurationException ex)
@@ -305,7 +305,7 @@ namespace Cognite.Extractor.Utils
                 }
                 catch (Exception ex)
                 {
-                    exception = new ConfigurationException("Failed to load config file: ", ex);
+                    exception = new ConfigurationException($"Failed to load config file: {ex.Message}", ex);
                 }
 
                 if (exception != null)
