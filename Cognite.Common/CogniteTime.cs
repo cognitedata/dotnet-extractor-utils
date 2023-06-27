@@ -17,7 +17,9 @@ namespace Cognite.Extractor.Common
         
         private static readonly long epochTicks = DateTimeEpoch.Ticks;
         private static readonly long maxTsValue = DateTime.MaxValue.ToUnixTimeMilliseconds();
+        private static readonly long minTsValue = DateTime.MinValue.ToUnixTimeMilliseconds();
         private static readonly long maxTicksValue = DateTime.MaxValue.TicksSinceEpoch();
+        private static readonly long minTicksValue = DateTime.MinValue.TicksSinceEpoch();
 
         /// <summary>
         /// Creates an UTC DateTime object at <paramref name="msSinceEpoch"/> milliseconds after the Unix Epoch, midnight 1/1/1970.
@@ -26,9 +28,9 @@ namespace Cognite.Extractor.Common
         /// <returns>UTC DateTime object at <paramref name="msSinceEpoch"/> milliseconds after midnight 1/1/1970</returns>
         public static DateTime FromUnixTimeMilliseconds(long msSinceEpoch)
         {
-            if (msSinceEpoch < 0 || msSinceEpoch > maxTsValue)
+            if (msSinceEpoch < minTsValue || msSinceEpoch > maxTsValue)
             {
-                throw new ArgumentOutOfRangeException(nameof(msSinceEpoch), $"Timestamp value should be between {0} and {maxTsValue} ms");
+                throw new ArgumentOutOfRangeException(nameof(msSinceEpoch), $"Timestamp value should be between {minTsValue} and {maxTsValue} ms");
             }
             return DateTimeEpoch.AddMilliseconds(msSinceEpoch);
         }
@@ -40,9 +42,9 @@ namespace Cognite.Extractor.Common
         /// <returns>UTC DateTime object at <paramref name="ticksSinceEpoch"/> ticks after epoch</returns>
         public static DateTime FromTicks(long ticksSinceEpoch)
         {
-            if (ticksSinceEpoch < 0 || ticksSinceEpoch > maxTicksValue)
+            if (ticksSinceEpoch < minTicksValue || ticksSinceEpoch > maxTicksValue)
             {
-                throw new ArgumentOutOfRangeException(nameof(ticksSinceEpoch), $"Timestamp value should be between {0} and {maxTsValue} ticks");
+                throw new ArgumentOutOfRangeException(nameof(ticksSinceEpoch), $"Timestamp value should be between {minTicksValue} and {maxTicksValue} ticks");
             }
             return DateTimeEpoch.AddTicks(ticksSinceEpoch);
         }
@@ -64,15 +66,13 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Returns the how many ticks have passed since the Unix Epoch, 1/1/1970 to the
         /// date passed as parameter. A Tick corresponds to 10 000 ms (ref. TimeSpan.TicksPerMillisecond).
+        /// 
+        /// This method may return a negative number.
         /// </summary>
         /// <param name="time">UTC DateTime object to convert</param>
         /// <returns>Number of ticks since epoch</returns>
         public static long TicksSinceEpoch(this DateTime time)
         {
-            if (time < DateTimeEpoch)
-            {
-                throw new ArgumentException($"Date {time.ToISOString()} is before Unix Epoch.");
-            }
             if (time.Kind == DateTimeKind.Local)
             {
                 throw new ArgumentException("DateTime object should be represented using UTC");

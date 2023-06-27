@@ -59,10 +59,12 @@ namespace ExtractorUtils.Test.Unit
         {
             var d1 = CogniteTime.FromUnixTimeMilliseconds(0);
             Assert.Equal(CogniteTime.DateTimeEpoch, d1);
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromUnixTimeMilliseconds(-1));
+            Assert.Equal(CogniteTime.DateTimeEpoch.AddMilliseconds(-1), CogniteTime.FromUnixTimeMilliseconds(-1));
 
             var outOfRangeValue = DateTime.MaxValue.ToUnixTimeMilliseconds() + 1;
+            Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromUnixTimeMilliseconds(outOfRangeValue));
+
+            outOfRangeValue = DateTime.MinValue.ToUnixTimeMilliseconds() - 1;
             Assert.Throws<ArgumentOutOfRangeException>(() => CogniteTime.FromUnixTimeMilliseconds(outOfRangeValue));
         }
 
