@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,7 +10,9 @@ using System.Threading.Tasks;
 namespace Cognite.Extractor.Common
 {
     /// <summary>
-    /// Simple threshold manager, tracks failed jobs and executes callback if budget is exhausted
+    /// Simple threshold manager, tracks failed jobs and executes callback if budget is exhausted. 
+    /// The callback is executed on every failure reported, as long as the failure budget is not 
+    /// expanded, or failed items removed from the internal collection using the Success method. 
     /// </summary>
     public class FailureThresholdManager<T, T2> where T : IComparable
     {
@@ -18,7 +21,7 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Get failed jobs
         /// </summary>
-        public IEnumerable<T> FailedJobs => _failedJobs.Keys;
+        public IReadOnlyDictionary<T, T2> FailedJobs => new ReadOnlyDictionary<T, T2>(_failedJobs);
 
         private double _thresholdPercentage;
 
@@ -52,7 +55,7 @@ namespace Cognite.Extractor.Common
         /// Remaining budget for failed jobs
         /// </summary>
         public long RemainingBudget { get { return (long)Math.Floor(FailureBudget - _failedJobs.Count); } }
-        private readonly Action<IDictionary<T, T2>> _callback;
+        private readonly Action<IReadOnlyDictionary<T, T2>> _callback;
 
         /// <summary>
         /// Constructor
@@ -60,7 +63,7 @@ namespace Cognite.Extractor.Common
         /// <param name="thresholdPercentage">Threshold for failed jobs, %**,*</param>
         /// <param name="totalJobCount">Total number of jobs</param>
         /// <param name="callback">Callback method for when the threshold is exceeded</param>
-        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action<IDictionary<T, T2>> callback)
+        public FailureThresholdManager(double thresholdPercentage, long totalJobCount, Action<IReadOnlyDictionary<T, T2>> callback)
         {
 
             ThresholdPercentage = thresholdPercentage;
@@ -69,7 +72,7 @@ namespace Cognite.Extractor.Common
         }
 
         /// <summary>
-        /// Adds job to failed items, checks if the failure budget has been exhausted
+        /// Adds job to failed items, checks if the failure budget has been exhausted. The value is overwritten in the case the job had previously failed. 
         /// </summary>
         /// <param name="job">Job Id</param>
         /// <param name="value">Custom value for the failed job</param>
@@ -77,6 +80,16 @@ namespace Cognite.Extractor.Common
         {
             _failedJobs[job] = value;
             _checkThreshold();
+        }
+
+        /// <summary>
+        /// Removes job from failed items. This method does not check the threshold, no callback will happen. 
+        /// </summary>
+        /// <param name="job">Job Id</param>
+        /// <returns>Removal operation success status</returns>
+        public bool Success(T job)
+        {
+            return _failedJobs.TryRemove(job, out _);
         }
 
         /// <summary>
@@ -97,7 +110,7 @@ namespace Cognite.Extractor.Common
         {
             if (_failedJobs.Count > FailureBudget)
             {
-                _callback(new Dictionary<T, T2>(_failedJobs));
+                _callback(FailedJobs);
             }
         }
     }

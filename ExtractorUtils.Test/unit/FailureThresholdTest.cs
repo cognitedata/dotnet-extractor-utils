@@ -11,7 +11,7 @@ namespace ExtractorUtils.Test.Unit
     public class ThresholdTest
     {
         FailureThresholdManager<string, int> _thresholdManager;
-        IDictionary<string, int> _failed;
+        IReadOnlyDictionary<string, int> _failed;
         public ThresholdTest()
         {
             _thresholdManager = new FailureThresholdManager<string, int>(10.1, 10, (x) => { _failed = x; });
