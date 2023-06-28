@@ -313,7 +313,7 @@ namespace ExtractorUtils.Test.Unit
             wrapper.RawValue = "0 * * * *";
             Assert.True(wrapper.Value <= TimeSpan.FromHours(1));
 
-            wrapper.RawValue = "@yearly";
+            wrapper.RawValue = "0 0 1 1 *";
             Assert.True(wrapper.Value <= TimeSpan.FromDays(366));
 
             // This test can in theory fail if it runs at exactly 0:00 january 1. but I think it is unlikely.
@@ -321,7 +321,7 @@ namespace ExtractorUtils.Test.Unit
             await Task.Delay(100);
             Assert.True(wrapper.Value < val, $"Expected {wrapper.Value} < {val}");
 
-            Assert.Throws<Cronos.CronFormatException>(() => wrapper.RawValue = "ab abc");
+            Assert.Throws<NCrontab.CrontabException>(() => wrapper.RawValue = "ab abc");
 
             wrapper = new CronTimeSpanWrapper(true, true, "s", "1");
             wrapper.RawValue = "0 * * * * *";
