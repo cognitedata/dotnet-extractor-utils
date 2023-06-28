@@ -1,4 +1,4 @@
-﻿using Cronos;
+﻿using NCrontab;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -87,7 +87,7 @@ namespace Cognite.Extractor.Common
     {
         private readonly bool _includeSeconds;
 
-        private CronExpression? _expression;
+        private CrontabSchedule? _expression;
 
         /// <summary>
         /// Whether the interval is dynamic or not, e.g. cron expression
@@ -117,8 +117,8 @@ namespace Cognite.Extractor.Common
             get
             {
                 if (_expression == null) return base.Value;
-                return (_expression.GetNextOccurrence(DateTime.UtcNow.AddSeconds(0.5), true) - DateTime.UtcNow)
-                    ?? Timeout.InfiniteTimeSpan;
+
+                return _expression.GetNextOccurrence(DateTime.UtcNow.AddSeconds(0.5)) - DateTime.UtcNow;
             }
         }
 
@@ -129,10 +129,11 @@ namespace Cognite.Extractor.Common
             get => IntRawValue;
             set
             {
+
                 if (!string.IsNullOrWhiteSpace(value) && (value.StartsWith("@") || value.Trim().Contains(" ")))
                 {
                     IntRawValue = value;
-                    _expression = CronExpression.Parse(value, _includeSeconds ? CronFormat.IncludeSeconds : CronFormat.Standard);
+                    _expression = CrontabSchedule.Parse(value, new CrontabSchedule.ParseOptions { IncludingSeconds = _includeSeconds });
                 }
                 else
                 {
