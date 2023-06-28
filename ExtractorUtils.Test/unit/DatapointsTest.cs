@@ -78,7 +78,7 @@ namespace ExtractorUtils.Test.Unit
                     { new Identity(1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d))},
                     { new Identity(2), stringPoints.Select(s => new Datapoint(DateTime.UtcNow, s))},
                     { new Identity(3), new Datapoint[] { } },
-                    { new Identity(4), new Datapoint[] { new Datapoint(CogniteTime.DateTimeEpoch, 1), new Datapoint(DateTime.MaxValue, 1)}}
+                    { new Identity(4), new Datapoint[] { new Datapoint(DateTime.MinValue, 1), new Datapoint(DateTime.MaxValue, 1)}}
                 };
                 _createdDataPoints.Clear();
                 var result = await cogniteDestination.InsertDataPointsAsync(

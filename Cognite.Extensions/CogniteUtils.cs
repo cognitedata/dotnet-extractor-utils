@@ -38,14 +38,14 @@ namespace Cognite.Extensions
         public const int StringLengthMax = 255;
 
         /// <summary>
-        /// Cognite min timestamp (1971)
+        /// Cognite min timestamp (1900)
         /// </summary>
-        public const long TimestampMin = 31536000000L;
+        public const long TimestampMin = -2208988800000L;
 
         /// <summary>
-        /// Cognite max timestamp (2050)
+        /// Cognite max timestamp (2099)
         /// </summary>
-        public const long TimestampMax = 2556144000000L;
+        public const long TimestampMax = 4102444799999L;
 
         /// <summary>
         /// Write missing identities to the provided identity set.
