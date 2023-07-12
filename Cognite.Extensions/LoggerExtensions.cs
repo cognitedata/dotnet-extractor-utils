@@ -1,4 +1,4 @@
-﻿using CogniteSdk;
+using CogniteSdk;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -41,6 +41,10 @@ namespace Cognite.Extensions
             else if (error.Exception != null)
             {
                 cogniteString = $" Non-CDF Error of type: {error.Exception.GetType()}";
+                if (!string.IsNullOrWhiteSpace(error.Exception.Message))
+                {
+                    cogniteString += $", Message: {error.Exception.Message}";
+                }
             }
 
             string? valueString = null;
