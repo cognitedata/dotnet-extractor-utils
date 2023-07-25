@@ -60,7 +60,7 @@ namespace Cognite.Extractor.Utils
             var rows = items.ToDictionary(pair => pair.key, pair => pair.columns);
             if (!rows.Any())
             {
-                return new QueueUploadResult<(string key, T columns)>(Enumerable.Empty<(string key, T columns)>());
+                return new QueueUploadResult<(string key, T columns)>(Enumerable.Empty<(string key, T columns)>(), Enumerable.Empty<(string key, T columns)>());
             }
             DestLogger.LogTrace("Dequeued {Number} {Type} rows to upload to CDF Raw", rows.Count, typeof(T).Name);
             try
@@ -72,7 +72,7 @@ namespace Cognite.Extractor.Utils
                 return new QueueUploadResult<(string key, T columns)>(ex);
             }
             _numberRows.WithLabels(typeof(T).Name).Inc(rows.Count);
-            return new QueueUploadResult<(string key, T columns)>(items);
+            return new QueueUploadResult<(string key, T columns)>(items, Enumerable.Empty<(string key, T columns)>());
         }
     }
 }

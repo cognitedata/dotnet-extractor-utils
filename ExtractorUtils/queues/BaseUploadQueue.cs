@@ -69,12 +69,18 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public Exception? Exception { get; }
         /// <summary>
+        /// Items that failed to upload
+        /// </summary>
+        public IEnumerable<T>? Failed { get; }
+        /// <summary>
         /// Constructor for successfull or empty upload.
         /// </summary>
         /// <param name="uploaded"></param>
-        public QueueUploadResult(IEnumerable<T> uploaded)
+        /// <param name="failed"></param>
+        public QueueUploadResult(IEnumerable<T> uploaded, IEnumerable<T> failed)
         {
             Uploaded = uploaded;
+            Failed = failed;
         }
         /// <summary>
         /// Constructor for failed upload.
@@ -104,7 +110,7 @@ namespace Cognite.Extractor.Utils
         /// <summary>
         /// Logger to use
         /// </summary>
-        protected ILogger<CogniteDestination> DestLogger { get; private set; }
+        protected ILogger DestLogger { get; private set; }
 
         private readonly ConcurrentQueue<T> _items;
         private readonly int _maxSize;
@@ -115,11 +121,19 @@ namespace Cognite.Extractor.Utils
         private Task? _uploadLoopTask;
         private Task? _uploadTask;
 
-        internal BaseUploadQueue(
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="destination">Cognite destination used for uploads</param>
+        /// <param name="interval">Maximum interval between uploads. Set to zero or Timeout.InfiniteTimeSpan to disable periodic uploads</param>
+        /// <param name="maxSize">Maximum size of the upload queue, once it reaches this size an upload will always be triggered</param>
+        /// <param name="logger">Logger to use</param>
+        /// <param name="callback">Callback on finished upload, whether it failed or not</param>
+        protected BaseUploadQueue(
             CogniteDestination destination,
             TimeSpan interval,
             int maxSize,
-            ILogger<CogniteDestination> logger,
+            ILogger logger,
             Func<QueueUploadResult<T>, Task>? callback)
         {
             _maxSize = maxSize;
@@ -188,10 +202,17 @@ namespace Cognite.Extractor.Utils
             _timer?.Start();
             DestLogger.LogDebug("Queue of type {Type} started", GetType().Name);
 
-            // Use a separate token to avoid propagating the loop cancellation to Chunking.RunThrottled
+            // Use a separate token source to allow cancelling the uploader separate from the upload loop.
             _internalSource = new CancellationTokenSource();
 
-            _uploadLoopTask = Task.Run(() =>
+            var tokenCancellationTask = Task.Run(async () => {
+                try
+                {
+                    await Task.Delay(Timeout.Infinite, token).ConfigureAwait(false);
+                }
+                catch { }
+            }, CancellationToken.None);
+            _uploadLoopTask = Task.Run(async () =>
             {
                 try
                 {
@@ -201,7 +222,7 @@ namespace Cognite.Extractor.Utils
                         _uploadTask = TriggerUploadAndCallback(_internalSource.Token);
                         // stop waiting if the source token gets cancelled, but do not
                         // cancel the upload task
-                        _uploadTask.Wait(_tokenSource.Token);
+                        await Task.WhenAny(_uploadTask, tokenCancellationTask).ConfigureAwait(false);
                         _pushEvent?.Reset();
                         _timer?.Start();
                     }

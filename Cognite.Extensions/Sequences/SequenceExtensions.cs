@@ -441,14 +441,18 @@ namespace Cognite.Extensions
                 {
                     _logger.LogDebug("Failed to create rows for {seq} sequences", toCreate.Count());
                     var error = ResultHandlers.ParseException<SequenceRowError>(ex, RequestType.CreateSequenceRows);
-                    if (error.Complete) errors.Add(error);
+
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000, token).ConfigureAwait(false);
                     }
-                    else if (retryMode == RetryMode.None) break;
+                    else if (retryMode == RetryMode.None)
+                    {
+                        errors.Add(error);
+                        break;
+                    }
                     else
                     {
                         if (!error.Complete)
@@ -465,6 +469,7 @@ namespace Cognite.Extensions
                         }
                         else
                         {
+                            errors.Add(error);
                             toCreate = ResultHandlers.CleanFromError(error, toCreate);
                         }
 
