@@ -352,6 +352,12 @@ namespace Cognite.Extensions
         {
             return new CogniteResult<TRep>(Errors?.Select(e => e.ReplaceSkipped(replace)));
         }
+
+
+        /// <summary>
+        /// All items that were skipped in this result, accross all errors.
+        /// </summary>
+        public IEnumerable<TError> AllSkipped => Errors?.Where(e => e.Skipped != null)?.SelectMany(e => e.Skipped!) ?? Enumerable.Empty<TError>();
     }
 
     /// <summary>

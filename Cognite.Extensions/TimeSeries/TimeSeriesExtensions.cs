@@ -324,16 +324,20 @@ namespace Cognite.Extensions
                     _logger.LogDebug("Failed to create {cnt} timeseries: {msg}",
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException<TimeSeriesCreate>(ex, RequestType.CreateTimeSeries);
-                    errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000, token).ConfigureAwait(false);
                     }
-                    else if (retryMode == RetryMode.None) break;
+                    else if (retryMode == RetryMode.None)
+                    {
+                        errors.Add(error);
+                        break;
+                    }
                     else
                     {
+                        errors.Add(error);
                         toCreate = ResultHandlers.CleanFromError(error, toCreate);
                     }
                 }
@@ -428,16 +432,20 @@ namespace Cognite.Extensions
                     _logger.LogDebug("Failed to create {Count} timeseries: {Message}",
                         items.Count(), ex.Message);
                     var error = ResultHandlers.ParseException<TimeSeriesUpdateItem>(ex, RequestType.UpdateTimeSeries);
-                    errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000, token).ConfigureAwait(false);
                     }
-                    else if (retryMode == RetryMode.None) break;
+                    else if (retryMode == RetryMode.None)
+                    {
+                        errors.Add(error);
+                        break;
+                    }
                     else
                     {
+                        errors.Add(error);
                         items = ResultHandlers.CleanFromError(error, items);
                     }
                 }

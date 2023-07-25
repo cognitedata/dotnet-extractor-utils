@@ -1,6 +1,7 @@
 ﻿using Cognite.Extensions;
 using CogniteSdk;
 using Microsoft.Extensions.Logging;
+using Oryx.Cognite;
 using Prometheus;
 using System;
 using System.Collections.Generic;
@@ -96,18 +97,24 @@ namespace Cognite.Extractor.Utils
                         // If the queue is offline for a day, and generates a hundred gigabytes of events,
                         // the file could become unreadable.
                         events = await CogniteUtils.ReadEventsAsync(stream, token, 10_000);
+
                         if (events.Any())
                         {
                             var result = await Destination.EnsureEventsExistsAsync(events, RetryMode.OnError, SanitationMode.Clean, token);
 
+                            DestLogger.LogResult(result, RequestType.CreateEvents, true);
+
                             var fatalError = result.Errors?.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
                             if (fatalError != null)
                             {
-                                DestLogger.LogWarning("Failed to read from buffer: {msg}", fatalError.Message);
+                                DestLogger.LogWarning("Failed to create items from buffer: {msg}", fatalError.Message);
                                 return;
                             }
 
-                            if (Callback != null) await Callback(new QueueUploadResult<EventCreate>(events));
+                            var skipped = result.AllSkipped.ToList();
+                            var uploaded = events.Except(skipped);
+
+                            if (Callback != null) await Callback(new QueueUploadResult<EventCreate>(uploaded, skipped));
                         }
                     } while (events.Any());
                 }
@@ -153,12 +160,14 @@ namespace Cognite.Extractor.Utils
                         await ReadFromBuffer(token);
                     }
                 }
-                return new QueueUploadResult<EventCreate>(Enumerable.Empty<EventCreate>());
+                return new QueueUploadResult<EventCreate>(Enumerable.Empty<EventCreate>(), Enumerable.Empty<EventCreate>());
             }
 
             DestLogger.LogTrace("Dequeued {Number} events to upload to CDF", items.Count());
 
             var result = await Destination.EnsureEventsExistsAsync(items, RetryMode.OnError, SanitationMode.Clean, token);
+
+            DestLogger.LogResult(result, RequestType.CreateEvents, true);
 
             var fatalError = result.Errors?.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
             if (fatalError != null)
@@ -174,7 +183,9 @@ namespace Cognite.Extractor.Utils
             {
                 await ReadFromBuffer(token);
             }
-            return new QueueUploadResult<EventCreate>(items);
+            var skipped = result.AllSkipped.ToList();
+            var uploaded = items.Except(skipped);
+            return new QueueUploadResult<EventCreate>(uploaded, skipped);
         }
     }
 }

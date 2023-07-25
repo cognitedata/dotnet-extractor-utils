@@ -302,14 +302,18 @@ namespace Cognite.Extensions
                 {
                     _logger.LogDebug("Failed to create datapoints for {seq} timeseries: {msg}", points.Count, ex.Message);
                     var error = ResultHandlers.ParseException<DataPointInsertError>(ex, RequestType.CreateDatapoints);
-                    if (error.Complete) errors.Add(error);
+
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000, token).ConfigureAwait(false);
                     }
-                    else if (retryMode == RetryMode.None) break;
+                    else if (retryMode == RetryMode.None)
+                    {
+                        errors.Add(error);
+                        break;
+                    }
                     else
                     {
                         if (!error.Complete)
@@ -318,6 +322,10 @@ namespace Cognite.Extensions
                                 .VerifyDatapointsFromCDF(client.TimeSeries, error,
                                     points, timeseriesChunkSize, timeseriesThrottleSize, token)
                                 .ConfigureAwait(false);
+                            errors.Add(error);
+                        }
+                        else
+                        {
                             errors.Add(error);
                         }
                         points = ResultHandlers.CleanFromError(error, points);

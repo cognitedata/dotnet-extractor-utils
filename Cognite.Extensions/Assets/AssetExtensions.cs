@@ -438,14 +438,17 @@ namespace Cognite.Extensions
                     _logger.LogDebug("Failed to update {Count} assets: {Message}",
                         toUpdate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException<AssetUpdateItem>(ex, RequestType.UpdateAssets);
-                    if (error.Complete) errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000, token).ConfigureAwait(false);
                     }
-                    else if (retryMode == RetryMode.None) break;
+                    else if (retryMode == RetryMode.None)
+                    {
+                        errors.Add(error);
+                        break;
+                    }
                     else
                     {
                         if (!error.Complete)
@@ -461,6 +464,7 @@ namespace Cognite.Extensions
                         }
                         else
                         {
+                            errors.Add(error);
                             toUpdate = ResultHandlers.CleanFromError(error, toUpdate);
                         }
                     }
