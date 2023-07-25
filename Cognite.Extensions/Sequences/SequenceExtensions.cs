@@ -450,7 +450,7 @@ namespace Cognite.Extensions
                     }
                     else if (retryMode == RetryMode.None)
                     {
-                        if (error.Complete) errors.Add(error);
+                        errors.Add(error);
                         break;
                     }
                     else
