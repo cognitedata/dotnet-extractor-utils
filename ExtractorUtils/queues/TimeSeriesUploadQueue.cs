@@ -133,7 +133,7 @@ namespace Cognite.Extractor.Utils
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
-        private async Task InsertDataPoints(IDictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
+        private async Task<List<(Identity id, Datapoint dp)>> InsertDataPoints(IDictionary<Identity, IEnumerable<Datapoint>> dps, CancellationToken token)
         {
             CogniteResult<DataPointInsertError> result;
             if (_createMissingTimeseries)
@@ -149,6 +149,7 @@ namespace Cognite.Extractor.Utils
 
             DestLogger.LogResult(result, RequestType.CreateDatapoints, false, LogLevel.Debug);
 
+            var skipped = new List<(Identity id, Datapoint dp)>();
             if (result.Errors != null)
             {
                 var fatal = result.Errors.FirstOrDefault(err => err.Type == ErrorType.FatalFailure);
@@ -160,13 +161,26 @@ namespace Cognite.Extractor.Utils
                 {
                     if (err.Skipped != null && err.Skipped.Any())
                     {
-                        foreach (var dpErr in err.Skipped.OfType<DataPointInsertError>())
+                        foreach (var dpErr in err.Skipped)
                         {
-                            dps.Remove(dpErr.Id);
+                            if (dps.TryGetValue(dpErr.Id, out var byDp))
+                            {
+                                var uploaded = byDp.Except(dpErr.DataPoints);
+                                if (uploaded.Any())
+                                {
+                                    dps[dpErr.Id] = uploaded;
+                                    skipped.AddRange(dpErr.DataPoints.Select(dp => (dpErr.Id, dp)));
+                                }
+                                else
+                                {
+                                    dps.Remove(dpErr.Id);
+                                }
+                            }
                         }
                     }
                 }
             }
+            return skipped;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
@@ -183,10 +197,10 @@ namespace Cognite.Extractor.Utils
                         dps = await CogniteUtils.ReadDatapointsAsync(stream, token, 1_000_000);
                         if (dps.Any())
                         {
-                            await InsertDataPoints(dps, token);
+                            var skipped = await InsertDataPoints(dps, token);
                             await HandleUploadResult(dps, token);
                             if (Callback != null) await Callback(new QueueUploadResult<(Identity id, Datapoint dp)>(
-                                dps.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList()));
+                                dps.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList(), skipped));
                         }
                     } while (dps.Any());
                 }
@@ -255,18 +269,19 @@ namespace Cognite.Extractor.Utils
                         await ReadFromBuffer(token);
                     }
                 }
-                return new QueueUploadResult<(Identity id, Datapoint dp)>(Enumerable.Empty<(Identity id, Datapoint dp)>());
+                return new QueueUploadResult<(Identity id, Datapoint dp)>(Enumerable.Empty<(Identity id, Datapoint dp)>(), Enumerable.Empty<(Identity id, Datapoint dp)>());
             }
 
-            if (!dps.Any()) return new QueueUploadResult<(Identity, Datapoint)>(Enumerable.Empty<(Identity, Datapoint)>());
+            if (!dps.Any()) return new QueueUploadResult<(Identity, Datapoint)>(Enumerable.Empty<(Identity, Datapoint)>(), Enumerable.Empty<(Identity id, Datapoint dp)>());
             DestLogger.LogTrace("Dequeued {Number} datapoints to upload to CDF", dps.Count());
 
             var dpMap = dps.GroupBy(pair => pair.id, pair => pair.dp).ToDictionary(group => group.Key,
                 group => (IEnumerable<Datapoint>)group);
 
+            IEnumerable<(Identity id, Datapoint dp)> skipped;
             try
             {
-                await InsertDataPoints(dpMap, token);
+                skipped = await InsertDataPoints(dpMap, token);
             }
             catch (Exception ex)
             {
@@ -293,7 +308,7 @@ namespace Cognite.Extractor.Utils
 
             var uploaded = dpMap.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList();
             _numberPoints.Inc(uploaded.Count);
-            return new QueueUploadResult<(Identity, Datapoint)>(uploaded);
+            return new QueueUploadResult<(Identity, Datapoint)>(uploaded, skipped);
         }
     }
 }

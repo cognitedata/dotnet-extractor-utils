@@ -279,16 +279,20 @@ namespace Cognite.Extensions
                     _logger.LogDebug("Failed to create {cnt} events: {msg}",
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException<EventCreate>(ex, RequestType.CreateEvents);
-                    errors.Add(error);
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
                             || retryMode == RetryMode.OnFatalKeepDuplicates))
                     {
                         await Task.Delay(1000, token).ConfigureAwait(false);
                     }
-                    else if (retryMode == RetryMode.None) break;
+                    else if (retryMode == RetryMode.None)
+                    {
+                        errors.Add(error);
+                        break;
+                    }
                     else
                     {
+                        errors.Add(error);
                         toCreate = ResultHandlers.CleanFromError(error, toCreate);
                     }
                 }
