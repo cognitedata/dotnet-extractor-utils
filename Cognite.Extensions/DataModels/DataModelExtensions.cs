@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using CogniteSdk.Resources.Beta;
 using System.Linq;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
 
 namespace Cognite.Extensions.DataModels
 {
@@ -128,7 +129,7 @@ namespace Cognite.Extensions.DataModels
                 }
             } while (cursor != null && !cursor.Finished);
 
-            return result;
+            return result.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.DistinctBy(d => d.ExternalId).ToList());
         }
     }
 }

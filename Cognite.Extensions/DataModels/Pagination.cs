@@ -245,7 +245,7 @@ namespace Cognite.Extensions.DataModels
          */
         public static async Task<DMSQueryResult<T>> QueryPaginatedIter<T>(this DataModelsResource resource, Query query, QueryCursor cursor, CancellationToken token)
         {
-            var existingQueries = query.With.Keys.ToHashSet();
+            var existingQueries = new HashSet<string>(query.With.Keys);
 
             Query innerQuery;
             if (cursor.IsNew)

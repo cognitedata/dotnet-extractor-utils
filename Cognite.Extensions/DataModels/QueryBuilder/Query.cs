@@ -111,6 +111,37 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
         }
 
         /// <summary>
+        /// Implicitly create a value from a long
+        /// </summary>
+        /// <param name="v">Value</param>
+        public static implicit operator Value(long v) => Raw(v);
+        /// <summary>
+        /// Implicitly create a value from an int
+        /// </summary>
+        /// <param name="v">Value</param>
+        public static implicit operator Value(int v) => Raw(v);
+        /// <summary>
+        /// Implicitly create a value from a string
+        /// </summary>
+        /// <param name="v">Value</param>
+        public static implicit operator Value(string v) => Raw(v);
+        /// <summary>
+        /// Implicitly create a value from a double
+        /// </summary>
+        /// <param name="v">Value</param>
+        public static implicit operator Value(double v) => Raw(v);
+        /// <summary>
+        /// Implicitly create a value from a float
+        /// </summary>
+        /// <param name="v">Value</param>
+        public static implicit operator Value(float v) => Raw(v);
+        /// <summary>
+        /// Implicitly create a value from a bool
+        /// </summary>
+        /// <param name="v">Value</param>
+        public static implicit operator Value(bool v) => Raw(v);
+
+        /// <summary>
         /// Inner value.
         /// </summary>
         public IDMSValue Val => _inner;

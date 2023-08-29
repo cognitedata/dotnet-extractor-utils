@@ -1,5 +1,6 @@
 ﻿using CogniteSdk.Beta.DataModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Cognite.Extensions.DataModels.QueryBuilder
@@ -56,7 +57,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
             if (view == null) throw new ArgumentNullException(nameof(view));
             if (Selects.TryGetValue((view.Space, view.ExternalId, view.Version), out var oldSelect))
             {
-                oldSelect.Properties = oldSelect.Properties.Concat(properties).ToHashSet();
+                oldSelect.Properties = new HashSet<string>(oldSelect.Properties.Concat(properties));
                 return this;
             }
 

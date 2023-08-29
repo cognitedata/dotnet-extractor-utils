@@ -239,7 +239,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
         /// Require that the instance is in <paramref name="space"/>.
         /// </summary>
         /// <param name="space">Space the instances must be in</param>
-        /// <param name="forNode">Whether this filter is for nodes or instances.</param>
+        /// <param name="forNode">Whether this filter is for nodes or edges.</param>
         public static IDMSFilter Space(string space, bool forNode = true)
         {
             if (space == null) throw new ArgumentNullException(nameof(space));
@@ -257,12 +257,13 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
         /// Filter on node externalId.
         /// </summary>
         /// <param name="externalId">ExternalId to match</param>
-        public static IDMSFilter ExternalId(string externalId)
+        /// <param name="forNode">Whether this filter is for nodes or edges.</param>
+        public static IDMSFilter ExternalId(string externalId, bool forNode = true)
         {
             if (externalId == null) throw new ArgumentNullException(nameof(externalId));
             return new EqualsFilter
             {
-                Property = new[] { "node", "externalId" },
+                Property = new[] { forNode ? "node" : "edge", "externalId" },
                 Value = new RawPropertyValue<string>
                 {
                     Value = externalId

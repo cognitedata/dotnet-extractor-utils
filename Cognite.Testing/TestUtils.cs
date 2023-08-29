@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Sdk;
@@ -116,6 +117,22 @@ namespace Cognite.Extractor.Testing
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
             return RunWithTimeout(action(), seconds);
+        }
+
+        /// <summary>
+        /// Generate a random string, for testing.
+        /// </summary>
+        /// <param name="prefix">Constant prefix, should describe which application
+        /// created the data.</param>
+        /// <param name="numChars">Number of characters in the random string,
+        /// 5 is plenty unless this is generated millions of times per test run.</param>
+        /// <returns></returns>
+        public static string AlphaNumericPrefix(string prefix, int numChars = 5)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            Random random = new Random();
+            return prefix + new string(Enumerable.Repeat(chars, numChars)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }
