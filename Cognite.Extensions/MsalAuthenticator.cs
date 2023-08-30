@@ -23,6 +23,7 @@ namespace Cognite.Extensions
 
         private readonly IConfidentialClientApplication? _app;
         private DateTimeOffset _lastTokenTime;
+        private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Creates a new MSAL authenticator
@@ -126,10 +127,10 @@ namespace Cognite.Extensions
                 return null;
             }
 
-            AuthenticationResult result;
+            await _mutex.WaitAsync(token).ConfigureAwait(false);
             try
             {
-                result = await _app.AcquireTokenForClient(_config.Scopes)
+                var result = await _app.AcquireTokenForClient(_config.Scopes)
                     .ExecuteAsync(token).ConfigureAwait(false);
                 
                 // The client application will take care of caching the token and 
@@ -140,14 +141,18 @@ namespace Cognite.Extensions
                         result.ExpiresOn.UtcDateTime.ToISOString());
                     _lastTokenTime = result.ExpiresOn;
                 }
+
+                return result.AccessToken;
             }
             catch (MsalServiceException ex)
             {
                 _logger.LogError("Unable to obtain OIDC token: {Message}", ex.Message);
                 throw new CogniteUtilsException($"Could not obtain OIDC token: {ex.ErrorCode} {ex.Message}");
             }
-
-            return result.AccessToken;
+            finally
+            {
+                _mutex.Release();
+            }
         }
     }
 
