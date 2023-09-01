@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Cognite.Extractor.Common;
-using System.Diagnostics.Metrics;
 
 namespace Cognite.Extensions
 {
@@ -169,6 +168,7 @@ namespace Cognite.Extensions
         private readonly ILogger<IAuthenticator> _logger;
 
         private readonly Uri _tokenUri;
+        private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
 
         private ResponseDTO? _response;
         private DateTime _requestTime;
@@ -287,21 +287,28 @@ namespace Cognite.Extensions
         /// <exception cref="CogniteUtilsException">Thrown when it was not possible to obtain an authentication token.</exception>
         public async Task<string?> GetToken(CancellationToken token = default)
         {
-            // TODO: could start a background task to update the token so that this call does not block on the HTTP request.
             if (_config == null)
             {
                 _logger.LogInformation("OIDC authentication disabled.");
                 return null;
             }
-            if (TokenValid())
+            await _mutex.WaitAsync(token).ConfigureAwait(false);
+            try
             {
+                if (TokenValid())
+                {
+                    return _response?.AccessToken;
+                }
+
+                _requestTime = DateTime.UtcNow;
+                _response = await RequestToken(token).ConfigureAwait(false);
+
                 return _response?.AccessToken;
             }
-
-            _requestTime = DateTime.UtcNow;
-            _response = await RequestToken(token).ConfigureAwait(false);
-
-            return _response?.AccessToken;
+            finally
+            {
+                _mutex.Release();
+            }
         }
     }
 }

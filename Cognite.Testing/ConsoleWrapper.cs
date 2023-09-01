@@ -57,8 +57,8 @@ namespace Cognite.Extractor.Testing
                     _output.WriteLine(_textWriter.ToString());
                 }
                 _textWriter.Dispose();
+                disposed = true;
             }
-            disposed = true;
         }
     }
 }
