@@ -25,7 +25,7 @@ jobs:
       run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ --filter ExtractorUtils.Test.Unit. ./ExtractorUtils.Test/
       if: ${{ github.event == 'pull_request' && github.base_ref == 'refs/heads/integration' }}
     - name: Start Redis
-      uses: supercharge/redis-github-action@1.6.0
+      uses: supercharge/redis-github-action@6dc7a5eeaf9a8f860b6464e05195a15f8b9f3bbb # 1.7.0
       with:
         redis-version: 5
     - name: Test
