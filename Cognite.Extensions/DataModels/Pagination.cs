@@ -70,7 +70,8 @@ namespace Cognite.Extensions.DataModels
         /// </summary>
         /// <param name="query">DMS query to convert to a set of cursors.</param>
         /// <param name="queriesToNeverPaginate">Set of queries that shouldn't be paginated, for example if you know for sure that they
-        /// will never return more than Limit results. This is a workaround for DMS returning cursors even if there are no more results.</param>
+        /// will never return more results than will be returned in a single request.
+        /// This is a workaround for DMS returning cursors even if there are no more results.</param>
         public QueryCursor(Query query, IEnumerable<string>? queriesToNeverPaginate)
         {
             if (query == null) throw new ArgumentNullException(nameof(query));

@@ -61,7 +61,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
         /// <summary>
         /// Set whether this query goes outwards or inwards, default is true.
         /// </summary>
-        /// <param name="outwards">Set whether this query goes inwards or outwards.</param>
+        /// <param name="outwards">Set whether this query goes outwards or inwards.</param>
         /// <returns></returns>
         public EdgeQueryBuilderItem Outwards(bool outwards)
         {
@@ -70,7 +70,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
         }
 
         /// <summary>
-        /// Set the maximum number of edges out from the start the query will maximally traverse.
+        /// Set the maximum number of edges
         /// </summary>
         /// <param name="hops">Number of hops</param>
         public EdgeQueryBuilderItem WithMaxDistance(int hops)

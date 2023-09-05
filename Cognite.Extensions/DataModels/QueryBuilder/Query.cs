@@ -83,6 +83,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
 
         /// <summary>
         /// A raw value, using some primitive type, or a complex type which will be converted to JSON.
+        /// Primitive values should be either a string, a number, a boolean, or an array of these.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>

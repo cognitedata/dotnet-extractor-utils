@@ -84,7 +84,7 @@ namespace Cognite.Extensions.DataModels
         /// </summary>
         /// <typeparam name="T">Type of returned instance data</typeparam>
         /// <param name="resource">Query resource</param>
-        /// <param name="query">Query to use.</param>
+        /// <param name="query">Query to use</param>
         /// <param name="cursor">Cursor</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A result containing data and an optional new cursor.</returns>

@@ -2,6 +2,7 @@
 using Cognite.Extensions.DataModels.QueryBuilder;
 using Cognite.Extractor.Testing;
 using CogniteSdk.Beta.DataModels;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -90,6 +91,48 @@ namespace ExtractorUtils.Test.integration
             Assert.Equal(10, result["startNodes"].Count());
             Assert.Equal(10, result["edges"].Count());
             Assert.Equal(10, result["endNodes"].Count());
+        }
+
+        [Fact]
+        public void TestContainerToView()
+        {
+            var container = new ContainerCreate
+            {
+                Description = "desc",
+                ExternalId = "test",
+                Name = "name",
+                Properties = new Dictionary<string, ContainerPropertyDefinition>
+                {
+                    { "prop", new ContainerPropertyDefinition
+                    {
+                        Name = "prop",
+                        Type = BasePropertyType.Text()
+                    } },
+                    { "relProp", new ContainerPropertyDefinition
+                    {
+                        Name = "relProp",
+                        Type = BasePropertyType.Direct(new ContainerIdentifier("space", "test2"))
+                    } }
+                },
+                Space = "space"
+            };
+
+            var view = container.ToView("2", new ViewIdentifier("space", "base", "1"));
+            Assert.Equal("desc", view.Description);
+            Assert.Equal("test", view.ExternalId);
+            Assert.Equal("2", view.Version);
+            Assert.Equal("name", view.Name);
+            Assert.Equal(2, view.Properties.Count);
+            var prop = view.Properties["prop"] as ViewPropertyCreate;
+            Assert.Equal("prop", prop.Name);
+            Assert.Equal("prop", prop.ContainerPropertyIdentifier);
+            Assert.Equal("test", prop.Container.ExternalId);
+            Assert.Equal("space", prop.Container.Space);
+            var idf = (view.Properties["relProp"] as ViewPropertyCreate).Source;
+            Assert.Equal("space", idf.Space);
+            Assert.Equal("test2", idf.ExternalId);
+            Assert.Equal("2", idf.Version);
+            Assert.Single(view.Implements);
         }
     }
 }

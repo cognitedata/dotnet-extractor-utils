@@ -12,11 +12,13 @@ namespace Cognite.Extensions.DataModels
     {
         /// <summary>
         /// Create a view from this container, mapping over all properties.
-        /// Note that direct relation properties with a constraint to a container
-        /// will also be mapped over to point to a view instead, as this is required by
-        /// the API.
+        /// Note that direct relation properties constrained to a container
+        /// will be mapped over to point to a view, so if a relation is constrained to the
+        /// container (containerSpace, containerExternalId), it will point to
+        /// the view given by (containerSpace, <paramref name="version"/>, containerExternalId)
+        /// in the created view.
         /// 
-        /// This is convenient since you need views in order to query the data,
+        /// This method is convenient since you need views in order to query the data,
         /// so this can reduce boilerplate.
         /// 
         /// The new view will have the same name, description, externalId, and space

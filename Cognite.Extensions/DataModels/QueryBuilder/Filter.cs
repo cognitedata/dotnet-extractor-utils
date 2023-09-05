@@ -81,7 +81,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
         }
 
         /// <summary>
-        /// Return a filter for  <paramref name="property"/> IN <paramref name="values"/>
+        /// Return a filter for <paramref name="property"/> IN <paramref name="values"/>
         /// </summary>
         /// <param name="values">Value to compare</param>
         /// <param name="property">Property to compare</param>
@@ -117,7 +117,8 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
 
         /// <summary>
         /// Return a filter for <paramref name="value"/> being a prefix of <paramref name="property"/>.
-        /// This only works if <paramref name="property"/> is a single string value.
+        /// This only works if the value of the property referenced by <paramref name="property"/> is
+        /// a single string value.
         /// </summary>
         /// <param name="value">Value to compare</param>
         /// <param name="property">Property to compare</param>
@@ -256,7 +257,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
         /// <summary>
         /// Filter on node externalId.
         /// </summary>
-        /// <param name="externalId">ExternalId to match</param>
+        /// <param name="externalId">External ID to match</param>
         /// <param name="forNode">Whether this filter is for nodes or edges.</param>
         public static IDMSFilter ExternalId(string externalId, bool forNode = true)
         {
@@ -272,7 +273,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
         }
 
         /// <summary>
-        /// Filter on node externalIds.
+        /// Filter on node external IDs.
         /// </summary>
         /// <param name="externalIds">ExternalIds to match</param>
         public static IDMSFilter ExternalId(IEnumerable<string> externalIds)
