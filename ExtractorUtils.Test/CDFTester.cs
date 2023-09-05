@@ -43,10 +43,7 @@ namespace ExtractorUtils.Test
             Provider = services.BuildServiceProvider();
             Logger = Provider.GetRequiredService<ILogger<CDFTester>>();
             Destination = Provider.GetRequiredService<CogniteDestination>();
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            Random random = new Random();
-            Prefix = "net-utils-test-" + new string(Enumerable.Repeat(chars, 5)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
+            Prefix = TestUtils.AlphaNumericPrefix("net-utils-test-");
             Source = new CancellationTokenSource();
         }
         public CDFTester(CogniteHost host, ITestOutputHelper output) : this(GetConfig(host), output)
