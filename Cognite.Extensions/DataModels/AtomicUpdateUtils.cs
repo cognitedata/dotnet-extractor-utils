@@ -28,6 +28,8 @@ namespace Cognite.Extensions.DataModels
         /// should create a write by updating the given instances.
         /// May be called multiple times if the upsert fails with a conflict.</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="maxRetries">Maximum number of retries before giving up,
+        /// can be set to -1 to retry forever.</param>
         /// <returns>Updated instances</returns>
         public static async Task<IEnumerable<SlimInstance>> UpsertAtomic<T>(
             this DataModelsResource resource,
@@ -36,7 +38,8 @@ namespace Cognite.Extensions.DataModels
             InstanceType instanceType,
             IEnumerable<InstanceSource> sources,
             Func<IEnumerable<BaseInstance<T>>, IEnumerable<BaseInstanceWrite>> updateAction,
-            CancellationToken token)
+            CancellationToken token,
+            int maxRetries = 10)
         {
             if (updateAction == null) throw new ArgumentNullException(nameof(updateAction));
             if (externalIds.Count() > 1000 || !externalIds.Any())
@@ -44,8 +47,10 @@ namespace Cognite.Extensions.DataModels
                 throw new InvalidOperationException("Number of externalIds must be between 1 and 1000");
             }
 
-            while (!token.IsCancellationRequested)
+            int retry = 0;
+            while (!token.IsCancellationRequested && (maxRetries < 0 || retry <= maxRetries))
             {
+                retry++;
                 var data = await resource.FilterInstances<T>(new InstancesFilter
                 {
                     InstanceType = instanceType,
@@ -91,7 +96,8 @@ namespace Cognite.Extensions.DataModels
                     throw;
                 }
             }
-            throw new OperationCanceledException();
+            token.ThrowIfCancellationRequested();
+            throw new TimeoutException("Maximum number of retries reached for atomic update");
         }
     }
 }
