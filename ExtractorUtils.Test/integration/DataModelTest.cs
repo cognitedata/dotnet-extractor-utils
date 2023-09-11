@@ -134,5 +134,66 @@ namespace ExtractorUtils.Test.integration
             Assert.Equal("2", idf.Version);
             Assert.Single(view.Implements);
         }
+
+        class TestData
+        {
+            public long PropLong { get; set; }
+            public string PropText { get; set; }
+            public DirectRelationIdentifier PropRel { get; set; }
+        }
+
+        [Fact]
+        public async Task TestAtomicUpdate()
+        {
+            // Actually integration testing a conflict is really hard
+            var prefix = TestUtils.AlphaNumericPrefix("exteractor-utils-test-");
+
+            var sources = new[]
+            {
+                new InstanceSource
+                {
+                    Source = new ViewIdentifier(_tester.Model.Space, "TestType", "1")
+                }
+            };
+            var toUpsert = new NodeWrite
+            {
+                ExternalId = prefix,
+                Space = _tester.Space,
+                Sources = new[]
+                {
+                    new InstanceData<TestData>
+                    {
+                        Properties = new TestData
+                        {
+                            PropLong = 123,
+                            PropText = "test"
+                        },
+                        Source = sources[0].Source
+                    }
+                }
+            };
+
+            await _tester.Destination.CogniteClient.Beta.DataModels.UpsertAtomic<JsonNode>(
+                new[] { prefix }, _tester.Space, InstanceType.node, sources,
+                old =>
+                {
+                    Assert.Empty(old);
+                    return new[]
+                    {
+                        toUpsert
+                    };
+                }, _tester.Source.Token);
+
+            await _tester.Destination.CogniteClient.Beta.DataModels.UpsertAtomic<JsonNode>(
+                new[] { prefix }, _tester.Space, InstanceType.node, sources,
+                old =>
+                {
+                    Assert.Single(old);
+                    return new[]
+                    {
+                        toUpsert
+                    };
+                }, _tester.Source.Token);
+        }
     }
 }
