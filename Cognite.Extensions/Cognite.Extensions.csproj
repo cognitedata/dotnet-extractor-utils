@@ -16,6 +16,7 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AssemblyOriginatorKeyFile>$(SolutionDir)/strong_name.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\LICENSE" Pack="true" Visible="false" PackagePath="" />

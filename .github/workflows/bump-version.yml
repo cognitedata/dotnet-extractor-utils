@@ -17,89 +17,63 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7
-        
-    - name: Download code signing certificate
-      run: echo -n "${{ secrets.CODE_SIGNING_CERTIFICATE }}" | base64 -w 0 --decode > ./cognite_code_signing.pfx
-    - name: Extract public key
-      run: echo -n "${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}" | sn -p cognite_code_signing.pfx pub_key.snk
+    - name: Install dependencies
+      run: dotnet restore
 
-    - name: Dotnet build Common
-      run: dotnet build Cognite.Common/Cognite.Common.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
-    - name: Strong name sign project
-      env:
-        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
-      run: ./sign.sh ./Cognite.Common Cognite.Common
-    - name: Dotnet Pack Common
-      run: dotnet pack Cognite.Common/Cognite.Common.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+    - name: Build for publish
+      run: dotnet build --configuration Release --no-restore -p:PackageVersion=${GITHUB_REF##*/v} -p:FileVersion=${GITHUB_REF##*/v} -p:InformationalVersion=${GITHUB_REF##*/v}
 
-    - name: Dotnet build Config
-      run: dotnet build Cognite.Config/Cognite.Configuration.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
-    - name: Strong name sign project
-      env:
-        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
-      run: ./sign.sh ./Cognite.Config Cognite.Configuration
-    - name: Dotnet Pack Config
-      run: dotnet pack Cognite.Config/Cognite.Configuration.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+    - name: Dotnet pack
+      run: dotnet pack -c release -p:PackageVersion=${GITHUB_REF##*/v} -p:FileVersion=${GITHUB_REF##*/v} -p:InformationalVersion=${GITHUB_REF##*/v} --no-build --output nuget-packages
 
-    - name: Dotnet build Logging
-      run: dotnet build Cognite.Logging/Cognite.Logging.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
-    - name: Strong name sign project
-      env:
-        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
-      run: ./sign.sh ./Cognite.Logging Cognite.Logging
-    - name: Dotnet Pack Logging
-      run: dotnet pack Cognite.Logging/Cognite.Logging.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+    - name: Upload nuget packages
+      uses: actions/upload-artifact@v3
+      with:
+        name: nuget-packages
+        path: nuget-packages/
+        retention-days: 1
 
-    - name: Dotnet build Extensions
-      run: dotnet build Cognite.Extensions/Cognite.Extensions.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
-    - name: Strong name sign project
-      env:
-        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
-      run: ./sign.sh ./Cognite.Extensions Cognite.Extensions
-    - name: Dotnet Pack Extensions
-      run: dotnet pack Cognite.Extensions/Cognite.Extensions.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+    - name: Build documentation
+      run: sh ./build-docs.sh
 
-    - name: Dotnet build Metrics
-      run: dotnet build Cognite.Metrics/Cognite.Metrics.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
-    - name: Strong name sign project
-      env:
-        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
-      run: ./sign.sh ./Cognite.Metrics Cognite.Metrics
-    - name: Dotnet Pack Metrics
-      run: dotnet pack Cognite.Metrics/Cognite.Metrics.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+    - name: Deploy documentation to github pages
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: docfx_project/_site
+        COMMIT_MESSAGE: Release ${{ github.ref }}
 
-    - name: Dotnet build StateStorage
-      run: dotnet build Cognite.StateStorage/Cognite.StateStorage.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True
-    - name: Strong name sign project
-      env:
-        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
-      run: ./sign.sh ./Cognite.StateStorage Cognite.StateStorage
-    - name: Dotnet Pack StateStorage
-      run: dotnet pack Cognite.StateStorage/Cognite.StateStorage.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
-
-    - name: Dotnet build ExtractorUtils
-      run: dotnet build ExtractorUtils/ExtractorUtils.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True -p:BuildWithCert=True
-    - name: Strong name sign project
-      env:
-        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
-      run: ./sign.sh ./ExtractorUtils ExtractorUtils
-    - name: Dotnet Pack Utils
-      run: dotnet pack ExtractorUtils/ExtractorUtils.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
-
-    - name: Dotnet build Testing
-      run: dotnet build Cognite.Testing/Cognite.Testing.csproj --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} -p:SignAssembly=True -p:AssemblyOriginatorKeyFile="$(realpath pub_key.snk)" -p:DelaySign=True -p:BuildWithCert=True
-    - name: Strong name sign project
-      env:
-        CODE_SIGN_PASSWORD: ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }}
-      run: ./sign.sh ./Cognite.Testing Cognite.Testing
-    - name: Dotnet Pack Testing
-      run: dotnet pack Cognite.Testing/Cognite.Testing.csproj --output nuget-packages --configuration Release -p:PackageVersion=${GITHUB_REF##*/v} --no-build
+  publish:
+    name: Publish Release
+    runs-on: windows-latest
+    environment: CD
+    needs:
+     - build
+    steps:
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7
+    - name: Download nuget packages
+      uses: actions/download-artifact@v3
+      with:
+        name: nuget-packages
+        path: nuget-packages/
 
     - name: Sign nuget packages
-      run: dotnet nuget sign nuget-packages/*.nupkg --certificate-path ./cognite_code_signing.pfx --certificate-password ${{ secrets.CODE_SIGNING_CERTIFICATE_PASSWORD }} --timestamper http://timestamp.digicert.com
+      env:
+        CERTIFICATE_HOST: ${{ secrets.CODE_SIGNING_CERT_HOST }}
+        CERTIFICATE_HOST_API_KEY: ${{ secrets.CODE_SIGNING_CERT_HOST_API_KEY }}
+        CERTIFICATE_SHA1_HASH: ${{ secrets.CODE_SIGNING_CERT_SHA1_HASH }}
+        CLIENT_CERTIFICATE: ${{ secrets.CODE_SIGNING_CLIENT_CERT }}
+        CLIENT_CERTIFICATE_PASSWORD: ${{ secrets.CODE_SIGNING_CLIENT_CERT_PASSWORD }}
+      uses: cognitedata/code-sign-action/@v2
+      with:
+        path-to-binary: 'nuget-packages/'
 
     - name: Push nuget packages
-      run: dotnet nuget push nuget-packages/*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push nuget-packages/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
       continue-on-error: false
 
     - name: Create Release
@@ -111,12 +85,3 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
-    - name: Build documentation
-      run: sh ./build-docs.sh
-    - name: Deploy documentation to github pages
-      uses: JamesIves/github-pages-deploy-action@releases/v3
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: docfx_project/_site
-        COMMIT_MESSAGE: Release ${{ github.ref }}
