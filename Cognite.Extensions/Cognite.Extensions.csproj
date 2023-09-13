@@ -25,9 +25,9 @@
     <ProjectReference Include="..\Cognite.Common\Cognite.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.55.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.56.0" />
     <PackageReference Include="System.Text.Json" Version="7.0.3" />
-    <PackageReference Include="CogniteSdk" Version="3.11.2" />
+    <PackageReference Include="CogniteSdk" Version="3.12.0" />
     <PackageReference Include="prometheus-net" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.10" />
