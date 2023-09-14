@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <ApplicationIcon>black32x32.ico</ApplicationIcon>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
