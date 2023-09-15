@@ -204,7 +204,10 @@ namespace Cognite.Extensions.DataModels
         }
     }
 
-    internal static class DataModelPagination
+    /// <summary>
+    /// Extensions for paginating flexible data models.
+    /// </summary>
+    public static class DataModelPagination
     {
         /*
         This is a tool for paginating over DMS queries, which is generally very hard to do.
