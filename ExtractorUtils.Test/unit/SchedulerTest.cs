@@ -164,7 +164,8 @@ namespace ExtractorUtils.Test.Unit
             resource.Free(2);
 
             Assert.Equal(task, await Task.WhenAny(task, Task.Delay(1000)));
-            Assert.Equal(2, task.Result);
+            var res = await task;
+            Assert.Equal(2, res);
 
         }
     }
