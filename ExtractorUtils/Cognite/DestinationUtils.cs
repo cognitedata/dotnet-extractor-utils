@@ -179,7 +179,7 @@ namespace Cognite.Extractor.Utils
                 var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
 
                 if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant.TrimToNull())
-                    || conf.IdpAuthentication.Certificate != null)
+                    && !string.IsNullOrWhiteSpace(conf.IdpAuthentication.Certificate?.Path))
                 {
                     return new MsalAuthenticator(conf.IdpAuthentication, logger, clientFactory, authClientName);
                 }

@@ -1,0 +1,39 @@
+# Sample configuration file for remote config. This can be used as remote config directly.
+
+cognite:
+    # The project to connect to in the API
+    project: ${COGNITE_PROJECT}
+    # Cognite service url
+    host: ${COGNITE_BASE_URL}
+    # Config for authentication if a bearer access token has to be used for authentication.
+    # Leave empty to disable.
+    idp-authentication:
+        # URL to fetch tokens from, either this, or tenant must be present.
+        token-url: ${COGNITE_TOKEN_URL}
+        # Identity provider authority endpoint (optional, only used in combination with tenant)
+        authority: ${COGNITE_AUTHORITY_URL}
+        # Directory tenant
+        tenant: ${COGNITE_TENANT}
+        # Application Id
+        client-id: ${COGNITE_CLIENT_ID}
+        # Client secret
+        secret: ${COGNITE_CLIENT_SECRET}
+        # List of resource scopes, ex:
+        # scopes:
+        #   - scopeA
+        #   - scopeB
+        scopes: ${COGNITE_SCOPES}
+        # Audience
+        audience: ${COGNITE_AUDIENCE}
+        # Minimum time-to-live in seconds for the token (optional)
+        min-ttl: 30
+        # Configuration for certificate based authentication
+        certificate:
+            # Path to a .pfx or .pem certificate file (.pem only for .NET 7 extractors)
+            path: ${COGNITE_CERTIFICATE_PATH}
+            # Optional certificate key password
+            password: ${COGNITE_CERTIFICATE_PASSWORD}
+            # Optional authority URL. If this is not specified, authority + tenant is used.
+            authority-url: ${COGNITE_CERTIFICATE_AUTHORITY_URL}
+    extraction-pipeline:
+        external-id: ${COGNITE_EXTRACTION_PIPELINE}

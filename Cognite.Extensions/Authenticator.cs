@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Cognite.Extractor.Common;
+using Cognite.Common;
 
 namespace Cognite.Extensions
 {
@@ -37,7 +38,7 @@ namespace Cognite.Extensions
     public class AuthenticatorConfig
     {
         /// <summary>
-        /// Available authenticator implementations 
+        /// DEPRECATED: Available authenticator implementations 
         /// </summary>
         public enum AuthenticatorImplementation
         {
@@ -52,7 +53,7 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
-        /// Which implementation to use in the authenticator (optional)
+        /// DEPRECATED: Which implementation to use in the authenticator (optional)
         /// </summary>
         public AuthenticatorImplementation Implementation { get; set; } = AuthenticatorImplementation.MSAL;
 
@@ -96,7 +97,7 @@ namespace Cognite.Extensions
         /// Resource scopes
         /// </summary>
         /// <value>Scope</value>
-        public IList<string>? Scopes { get; set; }
+        public ListOrSpaceSeparated? Scopes { get; set; }
 
         /// <summary>
         /// Audience
@@ -211,7 +212,7 @@ namespace Cognite.Extensions
                 { "grant_type", "client_credentials" }
             };
 
-            if (_config.Scopes != null && _config.Scopes.Count > 0)
+            if (_config.Scopes != null && _config.Scopes.Values.Length > 0)
             {
                 form["scope"] = string.Join(" ", _config.Scopes);
             }
@@ -244,13 +245,14 @@ namespace Cognite.Extensions
                     }
 
                     _logger.LogDebug(
-                        "New OIDC token. Expires on {ttl}", 
+                        "New OIDC token. Expires on {ttl}",
                         (DateTime.UtcNow + TimeSpan.FromSeconds(tokenResponse.ExpiresIn)).ToISOString());
                     return tokenResponse;
                 }
                 else
                 {
-                    try {
+                    try
+                    {
                         var error = JsonSerializer.Deserialize<ErrorDTO>(body);
                         if (error == null)
                         {
@@ -261,9 +263,9 @@ namespace Cognite.Extensions
                     }
                     catch (JsonException ex)
                     {
-                        _logger.LogError("Unable to obtain OIDC token: R{Code} - {Message}", (int) response.StatusCode, response.ReasonPhrase);
+                        _logger.LogError("Unable to obtain OIDC token: R{Code} - {Message}", (int)response.StatusCode, response.ReasonPhrase);
                         throw new CogniteUtilsException(
-                            $"Could not obtain OIDC token: {(int) response.StatusCode} - {response.ReasonPhrase}",
+                            $"Could not obtain OIDC token: {(int)response.StatusCode} - {response.ReasonPhrase}",
                             ex);
                     }
                 }
