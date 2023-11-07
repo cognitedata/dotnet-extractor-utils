@@ -58,7 +58,7 @@ namespace Cognite.Extensions
                     .WithHttpClientFactory(new MsalClientFactory(httpClientFactory, authClientName))
                     .WithAuthority(authorityUrl);
 
-                if (_config.Certificate != null && _config.Certificate.Path != null)
+                if (_config.Certificate?.Path != null)
                 {
                     var ext = Path.GetExtension(_config.Certificate.Path);
 
