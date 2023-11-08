@@ -36,13 +36,14 @@ namespace Cognite.Extensions
         {
             _config = config;
             _logger = logger ?? new NullLogger<MsalAuthenticator>();
-            if (_config != null) {
+            if (_config != null)
+            {
                 Uri authorityUrl;
-                if (_config.Certificate?.AuthorityUrl != null)
+                if (!string.IsNullOrWhiteSpace(_config.Certificate?.AuthorityUrl))
                 {
-                    authorityUrl = new Uri(_config.Certificate.AuthorityUrl);
+                    authorityUrl = new Uri(_config.Certificate!.AuthorityUrl);
                 }
-                else if (_config.Authority != null && _config.Tenant != null)
+                else if (!string.IsNullOrWhiteSpace(_config.Authority) && !string.IsNullOrWhiteSpace(_config.Tenant))
                 {
                     var uriBuilder = new UriBuilder(_config.Authority);
                     uriBuilder.Path = $"{_config.Tenant}";
@@ -57,9 +58,8 @@ namespace Cognite.Extensions
                     .WithHttpClientFactory(new MsalClientFactory(httpClientFactory, authClientName))
                     .WithAuthority(authorityUrl);
 
-                if (_config.Certificate != null)
+                if (_config.Certificate?.Path != null)
                 {
-                    if (_config.Certificate.Path == null) throw new ConfigurationException("Certificate path is required for certificate authentication");
                     var ext = Path.GetExtension(_config.Certificate.Path);
 
                     X509Certificate2 cert;
@@ -122,7 +122,8 @@ namespace Cognite.Extensions
         /// <exception cref="CogniteUtilsException">Thrown when it was not possible to obtain an authentication token.</exception>
         public async Task<string?> GetToken(CancellationToken token = default)
         {
-            if (_config == null || _app == null) {
+            if (_config == null || _app == null)
+            {
                 _logger.LogInformation("OIDC authentication disabled.");
                 return null;
             }
@@ -130,14 +131,15 @@ namespace Cognite.Extensions
             await _mutex.WaitAsync(token).ConfigureAwait(false);
             try
             {
-                var result = await _app.AcquireTokenForClient(_config.Scopes)
+                var result = await _app.AcquireTokenForClient(_config.Scopes?.Values)
                     .ExecuteAsync(token).ConfigureAwait(false);
-                
+
                 // The client application will take care of caching the token and 
                 // renewal before expiration
-                if (result.ExpiresOn != _lastTokenTime) {
+                if (result.ExpiresOn != _lastTokenTime)
+                {
                     _logger.LogDebug(
-                        "New OIDC token. Expires on {ttl}", 
+                        "New OIDC token. Expires on {ttl}",
                         result.ExpiresOn.UtcDateTime.ToISOString());
                     _lastTokenTime = result.ExpiresOn;
                 }

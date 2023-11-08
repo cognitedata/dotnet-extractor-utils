@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Cognite.Common;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Logging;
@@ -307,7 +308,66 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal("value", customConfig.SomeValue);
 
             File.Delete(path);
+        }
 
+        class TestListOrSpaceSep
+        {
+            public ListOrSpaceSeparated Foo { get; set; }
+            public ListOrSpaceSeparated Bar { get; set; }
+            public ListOrSpaceSeparated Baz { get; set; }
+        }
+
+        [Fact]
+        public static void TestListOrSpaceSeparated()
+        {
+            string input =
+@"foo: some space separated strings
+bar:
+    - some
+    - strings
+    - in
+    - list";
+            var res = ConfigurationUtils.ReadString<TestListOrSpaceSep>(input);
+            Assert.Equal(4, res.Foo.Values.Count());
+            Assert.Equal(4, res.Bar.Values.Count());
+            Assert.Equal("list", res.Bar.Values.ElementAt(3));
+            Assert.Equal("strings", res.Foo.Values.ElementAt(3));
+            string output =
+@"foo:
+- ""some""
+- ""space""
+- ""separated""
+- ""strings""
+bar:
+- ""some""
+- ""strings""
+- ""in""
+- ""list""
+";
+            var outRes = ConfigurationUtils.ConfigToString(res, Enumerable.Empty<string>(), Enumerable.Empty<string>(), Enumerable.Empty<string>(), false);
+            Assert.Equal(output, outRes);
+        }
+
+        [Fact]
+        public static void TestListOrSpaceSeparatedWithEnv()
+        {
+            string input =
+@"foo: ${ENV_1} ${ENV_2}
+bar:
+- ${ENV_1}
+- ${ENV_2}
+";
+            Environment.SetEnvironmentVariable("ENV_1", "v1");
+            Environment.SetEnvironmentVariable("ENV_2", "v2");
+
+            var res = ConfigurationUtils.ReadString<TestListOrSpaceSep>(input);
+            Assert.Equal(2, res.Foo.Values.Count());
+            Assert.Equal(2, res.Bar.Values.Count());
+            Assert.Equal("v1", res.Bar.Values.ElementAt(0));
+            Assert.Equal("v2", res.Foo.Values.ElementAt(1));
+
+            Environment.SetEnvironmentVariable("ENV_1", null);
+            Environment.SetEnvironmentVariable("ENV_2", null);
         }
 
         [Fact]

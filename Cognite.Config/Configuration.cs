@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Cognite.Common;
 using Cognite.Extractor.Common;
 using Microsoft.Extensions.DependencyInjection;
 using YamlDotNet.Core;
@@ -24,12 +26,14 @@ namespace Cognite.Extractor.Configuration
     {
         private static DeserializerBuilder builder = new DeserializerBuilder()
             .WithNamingConvention(HyphenatedNamingConvention.Instance)
+            .WithTypeConverter(new ListOrStringConverter())
             .WithNodeDeserializer(new TemplatedValueDeserializer());
         private static IDeserializer deserializer = builder
             .Build();
         private static DeserializerBuilder ignoreUnmatchedBuilder = new DeserializerBuilder()
             .WithNamingConvention(HyphenatedNamingConvention.Instance)
             .WithNodeDeserializer(new TemplatedValueDeserializer())
+            .WithTypeConverter(new ListOrStringConverter())
             .IgnoreUnmatchedProperties();
 
         private static bool ignoreUnmatchedProperties;
@@ -286,6 +290,7 @@ namespace Cognite.Extractor.Configuration
                     toIgnore,
                     namePrefixes,
                     allowReadOnly))
+                .WithTypeConverter(new ListOrStringConverter())
                 .WithNamingConvention(HyphenatedNamingConvention.Instance)
                 .Build();
 
@@ -338,14 +343,19 @@ namespace Cognite.Extractor.Configuration
             if (parser.Accept<Scalar>(out var scalar) && scalar != null && _envRegex.IsMatch(scalar.Value))
             {
                 parser.MoveNext();
-                value = _envRegex.Replace(scalar.Value, LookupEnvironment);
+                value = Replace(scalar.Value);
                 return true;
             }
             value = null;
             return false;
         }
 
-        static string LookupEnvironment(Match match)
+        public static string Replace(string toReplace)
+        {
+            return _envRegex.Replace(toReplace, LookupEnvironment);
+        }
+
+        private static string LookupEnvironment(Match match)
         {
             return Environment.GetEnvironmentVariable(match.Groups[1].Value) ?? "";
         }
@@ -434,6 +444,51 @@ namespace Cognite.Extractor.Configuration
             });
 
             return props;
+        }
+    }
+
+    internal class ListOrStringConverter : IYamlTypeConverter
+    {
+        private static readonly Regex _whitespaceRegex = new Regex(@"\s", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        public bool Accepts(Type type)
+        {
+            return type == typeof(ListOrSpaceSeparated);
+        }
+
+        public object? ReadYaml(IParser parser, Type type)
+        {
+            if (parser.TryConsume<Scalar>(out var scalar))
+            {
+                var items = _whitespaceRegex.Split(scalar.Value);
+                return new ListOrSpaceSeparated(items.Select(TemplatedValueDeserializer.Replace).ToArray());
+            }
+            if (parser.TryConsume<SequenceStart>(out _))
+            {
+                var items = new List<string>();
+                while (!parser.Accept<SequenceEnd>(out _))
+                {
+                    var seqScalar = parser.Consume<Scalar>();
+                    items.Add(seqScalar.Value);
+                }
+
+                parser.Consume<SequenceEnd>();
+
+                return new ListOrSpaceSeparated(items.Select(TemplatedValueDeserializer.Replace).ToArray());
+            }
+
+            throw new InvalidOperationException("Expected list or value");
+        }
+
+        public void WriteYaml(IEmitter emitter, object? value, Type type)
+        {
+            emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, true,
+                SequenceStyle.Block, Mark.Empty, Mark.Empty));
+            var it = value as ListOrSpaceSeparated;
+            foreach (var elem in it!.Values)
+            {
+                emitter.Emit(new Scalar(AnchorName.Empty, TagName.Empty, elem, ScalarStyle.DoubleQuoted, false, true));
+            }
+            emitter.Emit(new SequenceEnd());
         }
     }
 }
