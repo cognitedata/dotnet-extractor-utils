@@ -136,10 +136,10 @@ namespace Cognite.Extractor.Utils
 
         /// <summary>
         /// Format of the log message.
-        /// Default is <c>"CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms"</c>
+        /// Default is <c>"CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[x-request-id]} - {Elapsed} ms"</c>
         /// </summary>
         /// <returns>String format</returns>
-        public string Format { get; set; } = "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms";
+        public string Format { get; set; } = "CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[x-request-id]} - {Elapsed} ms";
     }
 
     /// <summary>
