@@ -281,7 +281,7 @@
                 },
                 "format": {
                     "type": "string",
-                    "default": "CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[x-request-id]} - {Elapsed} ms",
+                    "default": "CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[X-Request-ID]} - {Elapsed} ms",
                     "description": "Format of the log message"
                 }
             },

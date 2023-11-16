@@ -107,7 +107,7 @@ cognite:
         # Minimum level of logging, one of trace, debug, information, warning, error, critical, none
         level: debug
         # Format of the log message
-        format: "CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[x-request-id]} - {Elapsed} ms"
+        format: "CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[X-Request-ID]} - {Elapsed} ms"
 
     # Configure an extraction pipeline manager
     extraction-pipeline:

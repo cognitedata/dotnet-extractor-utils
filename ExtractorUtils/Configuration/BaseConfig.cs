@@ -99,7 +99,8 @@ namespace Cognite.Extractor.Utils
         /// Enables logging of Cognite Sdk operations. Enabled by default.
         /// Leaving this empty also disables.
         /// </summary>
-        public SdkLoggingConfig? SdkLogging { get; set; }
+        public SdkLoggingConfig SdkLogging { get => _sdkLogging; set { _sdkLogging = value ?? _sdkLogging; } }
+        private SdkLoggingConfig _sdkLogging = new SdkLoggingConfig();
 
         /// <summary>
         /// Optional replacement for non-finite double values in datapoints
@@ -136,10 +137,10 @@ namespace Cognite.Extractor.Utils
 
         /// <summary>
         /// Format of the log message.
-        /// Default is <c>"CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[x-request-id]} - {Elapsed} ms"</c>
+        /// Default is <c>"CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[X-Request-ID]} - {Elapsed} ms"</c>
         /// </summary>
         /// <returns>String format</returns>
-        public string Format { get; set; } = "CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[x-request-id]} - {Elapsed} ms";
+        public string Format { get; set; } = "CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[X-Request-ID]} - {Elapsed} ms";
     }
 
     /// <summary>
