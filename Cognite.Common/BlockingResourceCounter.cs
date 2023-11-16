@@ -102,6 +102,7 @@ namespace Cognite.Extractor.Common
         public void Free(int count)
         {
             if (count < 0) throw new ArgumentException("count must be greater than or equal to 0");
+            if (count == 0) return;
             lock (_lock)
             {
                 Count += count;
