@@ -144,6 +144,7 @@ namespace ExtractorUtils.Test.Unit
         [Fact]
         public static void TestInvalidFile()
         {
+            ConfigurationUtils.DisallowUnmatchedProperties();
             var e = Assert.Throws<ConfigurationException>(() => ConfigurationUtils.TryReadConfigFromFile<TestBaseConfig>("./invalid", 0));
             Assert.IsType<FileNotFoundException>(e.InnerException);
         }
@@ -154,6 +155,7 @@ namespace ExtractorUtils.Test.Unit
         [InlineData("version: 0\ncognite: foo")]
         public static void TestInvalidString(string yaml)
         {
+            ConfigurationUtils.DisallowUnmatchedProperties();
             var e = Assert.Throws<ConfigurationException>(() => ConfigurationUtils.TryReadConfigFromString<TestBaseConfig>(yaml, 0));
             Assert.IsType<YamlDotNet.Core.YamlException>(e.InnerException);
         }
