@@ -167,6 +167,40 @@ namespace ExtractorUtils.Test.Unit
             var res = await task;
             Assert.Equal(2, res);
 
+            Assert.Equal(0, await resource.Take(0, true));
+            resource.Free(0);
+            Assert.Throws<ArgumentException>(() => resource.Free(-1));
+        }
+
+        [Fact]
+        public async Task TestBlockingResourceIncCapacity()
+        {
+            var resource = new BlockingResourceCounter(5);
+            Assert.Equal(5, await resource.Take(5, true));
+
+            var task = resource.Take(3, true);
+
+            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100)));
+
+            resource.SetCapacity(3);
+
+            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100)));
+            Assert.Equal(-2, resource.Count);
+
+            resource.SetCapacity(10);
+            Assert.Equal(3, await task);
+            Assert.Equal(2, resource.Count);
+
+            resource.SetCapacity(2);
+            Assert.Equal(-6, resource.Count);
+
+            var task2 = resource.Take(3, true);
+
+            Assert.NotEqual(task2, await Task.WhenAny(task2, Task.Delay(100)));
+
+            resource.SetCapacity(9);
+
+            Assert.Equal(1, await task2);
         }
     }
 }
