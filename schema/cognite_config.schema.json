@@ -14,7 +14,10 @@
             "properties": {
                 "implementation": {
                     "type": "string",
-                    "enum": [ "MSAL", "Basic" ],
+                    "enum": [
+                        "MSAL",
+                        "Basic"
+                    ],
                     "default": "MSAL",
                     "description": "Implementation. Either using the MSAL library, or a custom authenticator. This is deprecated, and no longer does anything.",
                     "deprecated": true
@@ -65,7 +68,9 @@
                     "type": "object",
                     "description": "Authenticate with a client certificate",
                     "unevaluatedProperties": false,
-                    "required": [ "path" ],
+                    "required": [
+                        "path"
+                    ],
                     "properties": {
                         "authority-url": {
                             "type": "string",
@@ -83,12 +88,28 @@
                 }
             },
             "oneOf": [
-                { "required": [ "tenant", "secret" ] },
-                { "required": [ "token-url", "secret" ] },
-                { "required": [ "certificate" ] }
+                {
+                    "required": [
+                        "tenant",
+                        "secret"
+                    ]
+                },
+                {
+                    "required": [
+                        "token-url",
+                        "secret"
+                    ]
+                },
+                {
+                    "required": [
+                        "certificate"
+                    ]
+                }
             ],
             "unevaluatedProperties": false,
-            "required": [ "client-id" ]
+            "required": [
+                "client-id"
+            ]
         },
         "host": {
             "type": "string",
@@ -246,20 +267,31 @@
                 },
                 "level": {
                     "type": "string",
-                    "enum": ["trace", "debug", "information", "warning", "error", "critical", "none"],
+                    "enum": [
+                        "trace",
+                        "debug",
+                        "information",
+                        "warning",
+                        "error",
+                        "critical",
+                        "none"
+                    ],
                     "default": "debug",
                     "description": "Log level to log messages from the SDK at"
                 },
                 "format": {
                     "type": "string",
-                    "default": "CDF ({Message}): {HttpMethod} {Url} - {Elapsed} ms",
+                    "default": "CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[X-Request-ID]} - {Elapsed} ms",
                     "description": "Format of the log message"
                 }
             },
             "unevaluatedProperties": false
         },
         "nan-replacement": {
-            "type": ["number", "null"],
+            "type": [
+                "number",
+                "null"
+            ],
             "description": "Replacement for NaN values when writing to CDF."
         },
         "extraction-pipeline": {
