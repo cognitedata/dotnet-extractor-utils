@@ -38,6 +38,8 @@ namespace Cognite.Extractor.Configuration
 
         private static bool ignoreUnmatchedProperties;
 
+        private static object _deserializerLock = new object();
+
         /// <summary>
         /// Reads the provided string containing yml and deserializes it to an object of type <typeparamref name="T"/>.
         /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
@@ -50,7 +52,10 @@ namespace Cognite.Extractor.Configuration
         {
             try
             {
-                return deserializer.Deserialize<T>(yaml);
+                lock (_deserializerLock)
+                {
+                    return deserializer.Deserialize<T>(yaml);
+                }
             }
             catch (YamlException ye)
             {
@@ -73,7 +78,10 @@ namespace Cognite.Extractor.Configuration
             {
                 using (var reader = File.OpenText(path))
                 {
-                    return deserializer.Deserialize<T>(reader);
+                    lock (_deserializerLock)
+                    {
+                        return deserializer.Deserialize<T>(reader);
+                    }
                 }
             }
             catch (System.IO.FileNotFoundException fnfe)
@@ -167,13 +175,16 @@ namespace Cognite.Extractor.Configuration
         {
             builder = builder.WithTagMapping(tag, typeof(T));
             ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
-            if (ignoreUnmatchedProperties)
+            lock (_deserializerLock)
             {
-                deserializer = ignoreUnmatchedBuilder.Build();
-            }
-            else
-            {
-                deserializer = builder.Build();
+                if (ignoreUnmatchedProperties)
+                {
+                    deserializer = ignoreUnmatchedBuilder.Build();
+                }
+                else
+                {
+                    deserializer = builder.Build();
+                }
             }
         }
 
@@ -183,7 +194,10 @@ namespace Cognite.Extractor.Configuration
         public static void IgnoreUnmatchedProperties()
         {
             ignoreUnmatchedProperties = true;
-            deserializer = ignoreUnmatchedBuilder.Build();
+            lock (_deserializerLock)
+            {
+                deserializer = ignoreUnmatchedBuilder.Build();
+            }
         }
 
         /// <summary>
@@ -192,7 +206,10 @@ namespace Cognite.Extractor.Configuration
         public static void DisallowUnmatchedProperties()
         {
             ignoreUnmatchedProperties = false;
-            deserializer = builder.Build();
+            lock (_deserializerLock)
+            {
+                deserializer = builder.Build();
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code", Justification = "Other methods using this can still pass null as parameter")]
