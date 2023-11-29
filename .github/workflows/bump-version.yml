@@ -58,8 +58,11 @@ jobs:
         path: nuget-packages/
         retention-days: 1
 
+    - name: Install docfx
+      run: dotnet tool update -g docfx
+
     - name: Build documentation
-      run: sh ./build-docs.sh
+      run: docfx docfx_project/docfx.json
 
     - name: Deploy documentation to github pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
