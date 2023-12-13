@@ -1,0 +1,913 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class PeriodicScheduler
+ </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class PeriodicScheduler
+ ">
+    
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Common.PeriodicScheduler">
+
+
+
+  <h1 id="Cognite_Extractor_Common_PeriodicScheduler" data-uid="Cognite.Extractor.Common.PeriodicScheduler" class="text-break">Class PeriodicScheduler
+</h1>
+  <div class="markdown level0 summary"><p>Utility to schedule and manage periodic tasks</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">PeriodicScheduler</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.Extractor.html">Extractor</a>.<a class="xref" href="Cognite.Extractor.Common.html">Common</a></h6>
+  <h6><strong>Assembly</strong>: Cognite.Common.dll</h6>
+  <h5 id="Cognite_Extractor_Common_PeriodicScheduler_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class PeriodicScheduler : IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler__ctor_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.%23ctor(System.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L92">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler__ctor_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.#ctor*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler__ctor_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.#ctor(System.Threading.CancellationToken)">PeriodicScheduler(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Constructor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PeriodicScheduler(CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token linked to all running tasks</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_Count.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.Count%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L84">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_Count_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.Count*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_Count" data-uid="Cognite.Extractor.Common.PeriodicScheduler.Count">Count</h4>
+  <div class="markdown level1 summary"><p>Number of currently active tasks</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Count { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_ContainsTask_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.ContainsTask(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L144">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_ContainsTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ContainsTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_ContainsTask_System_String_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ContainsTask(System.String)">ContainsTask(string)</h4>
+  <div class="markdown level1 summary"><p>Returns true if a task with the given name exists</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ContainsTask(string name)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Task to check</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><p>True if task identified by <code class="paramref">name</code> exists</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_Dispose.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.Dispose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L416">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_Dispose_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.Dispose*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_Dispose" data-uid="Cognite.Extractor.Common.PeriodicScheduler.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"><p>Dispose of scheduler. Will cancel all running tasks.
+Do not override this in subclasses.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.Dispose(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L396">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_Dispose_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.Dispose*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_Dispose_System_Boolean_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.Dispose(System.Boolean)">Dispose(bool)</h4>
+  <div class="markdown level1 summary"><p>Dispose of scheduler. Will cancel all running tasks.
+Override this in subclasses.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">disposing</span></td>
+        <td><p>True to dispose</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L257">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait">ExitAllAndWait()</h4>
+  <div class="markdown level1 summary"><p>Same as calling ExitAndWaitForTermination on all tasks.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task ExitAllAndWait()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>Task which completes once all tasks are done</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_ExitAndWaitForTermination_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.ExitAndWaitForTermination(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L226">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_ExitAndWaitForTermination_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ExitAndWaitForTermination*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_ExitAndWaitForTermination_System_String_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ExitAndWaitForTermination(System.String)">ExitAndWaitForTermination(string)</h4>
+  <div class="markdown level1 summary"><p>Signal a task should terminate then wait. This will not cancel the operation if it is running,
+but wait for it to terminate.
+Will throw an exception if the task has failed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task ExitAndWaitForTermination(string name)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of task to cancel</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>Task which completes once the task has terminated</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_Cognite_Extractor_Common_ITimeSpanProvider_System_Action_System_Threading_CancellationToken__System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String%2CCognite.Extractor.Common.ITimeSpanProvider%2CSystem.Action%7BSystem.Threading.CancellationToken%7D%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L178">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_Cognite_Extractor_Common_ITimeSpanProvider_System_Action_System_Threading_CancellationToken__System_Boolean_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,Cognite.Extractor.Common.ITimeSpanProvider,System.Action{System.Threading.CancellationToken},System.Boolean)">SchedulePeriodicTask(string?, ITimeSpanProvider, Action&lt;CancellationToken&gt;, bool)</h4>
+  <div class="markdown level1 summary"><p>Schedule a new periodic task to run with interval <code class="paramref">interval</code>.
+Exceptions are not caught, so <code class="paramref">operation</code> should catch its own errors, or the
+task from WaitForAll should be watched.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval, Action&lt;CancellationToken&gt; operation, bool runImmediately = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of task, used to refer to it later</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Common.ITimeSpanProvider.html">ITimeSpanProvider</a></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>Interval to schedule on</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>&gt;</td>
+        <td><span class="parametername">operation</span></td>
+        <td><p>Function to call on each iteration</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">runImmediately</span></td>
+        <td><p>True to execute the periodic task immediately, false to first
+wait until triggered by interval or manually</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_Cognite_Extractor_Common_ITimeSpanProvider_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String%2CCognite.Extractor.Common.ITimeSpanProvider%2CSystem.Func%7BSystem.Threading.CancellationToken%2CSystem.Threading.Tasks.Task%7D%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L108">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_Cognite_Extractor_Common_ITimeSpanProvider_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Boolean_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,Cognite.Extractor.Common.ITimeSpanProvider,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Boolean)">SchedulePeriodicTask(string?, ITimeSpanProvider, Func&lt;CancellationToken, Task&gt;, bool)</h4>
+  <div class="markdown level1 summary"><p>Schedule a new periodic task to run with interval <code class="paramref">interval</code>.
+Exceptions are not caught, so <code class="paramref">operation</code> should catch its own errors, or the
+task from WaitForAll should be watched.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval, Func&lt;CancellationToken, Task&gt; operation, bool runImmediately = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of task, used to refer to it later</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Common.ITimeSpanProvider.html">ITimeSpanProvider</a></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>Interval to schedule on</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</td>
+        <td><span class="parametername">operation</span></td>
+        <td><p>Function to call on each iteration</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">runImmediately</span></td>
+        <td><p>True to execute the periodic task immediately, false to first
+wait until triggered by interval or manually</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Action_System_Threading_CancellationToken__System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String%2CSystem.TimeSpan%2CSystem.Action%7BSystem.Threading.CancellationToken%7D%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L162">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Action_System_Threading_CancellationToken__System_Boolean_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Action{System.Threading.CancellationToken},System.Boolean)">SchedulePeriodicTask(string?, TimeSpan, Action&lt;CancellationToken&gt;, bool)</h4>
+  <div class="markdown level1 summary"><p>Schedule a new periodic task to run with interval <code class="paramref">interval</code>.
+Exceptions are not caught, so <code class="paramref">operation</code> should catch its own errors, or the
+task from WaitForAll should be watched.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SchedulePeriodicTask(string? name, TimeSpan interval, Action&lt;CancellationToken&gt; operation, bool runImmediately = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of task, used to refer to it later</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>Interval to schedule on</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>&gt;</td>
+        <td><span class="parametername">operation</span></td>
+        <td><p>Function to call on each iteration</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">runImmediately</span></td>
+        <td><p>True to execute the periodic task immediately, false to first
+wait until triggered by interval or manually</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String%2CSystem.TimeSpan%2CSystem.Func%7BSystem.Threading.CancellationToken%2CSystem.Threading.Tasks.Task%7D%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L132">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_SchedulePeriodicTask_System_String_System_TimeSpan_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__System_Boolean_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.SchedulePeriodicTask(System.String,System.TimeSpan,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Boolean)">SchedulePeriodicTask(string?, TimeSpan, Func&lt;CancellationToken, Task&gt;, bool)</h4>
+  <div class="markdown level1 summary"><p>Schedule a new periodic task to run with interval <code class="paramref">interval</code>.
+Exceptions are not caught, so <code class="paramref">operation</code> should catch its own errors, or the
+task from WaitForAll should be watched.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SchedulePeriodicTask(string? name, TimeSpan interval, Func&lt;CancellationToken, Task&gt; operation, bool runImmediately = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of task, used to refer to it later</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>Interval to schedule on</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</td>
+        <td><span class="parametername">operation</span></td>
+        <td><p>Function to call on each iteration</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">runImmediately</span></td>
+        <td><p>True to execute the periodic task immediately, false to first
+wait until triggered by interval or manually</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_System_String_System_Action_System_Threading_CancellationToken__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String%2CSystem.Action%7BSystem.Threading.CancellationToken%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L214">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_System_String_System_Action_System_Threading_CancellationToken__" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String,System.Action{System.Threading.CancellationToken})">ScheduleTask(string?, Action&lt;CancellationToken&gt;)</h4>
+  <div class="markdown level1 summary"><p>Schedule a new task to run with on the scheduler.
+Exceptions are not caught, so <code class="paramref">operation</code> should catch its own errors, or the
+task from WaitForAll should be watched. Note that this method waits on <code class="paramref">operation</code> to yield,
+so make sure that it does not contain too much synchronous code.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ScheduleTask(string? name, Action&lt;CancellationToken&gt; operation)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>&gt;</td>
+        <td><span class="parametername">operation</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_System_String_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String%2CSystem.Func%7BSystem.Threading.CancellationToken%2CSystem.Threading.Tasks.Task%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L192">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_System_String_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__" data-uid="Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task})">ScheduleTask(string?, Func&lt;CancellationToken, Task&gt;)</h4>
+  <div class="markdown level1 summary"><p>Schedule a new task to run with on the scheduler.
+Exceptions are not caught, so <code class="paramref">operation</code> should catch its own errors, or the
+task from WaitForAll should be watched. Note that this method waits on <code class="paramref">operation</code> to yield,
+so make sure that it does not contain too much synchronous code.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ScheduleTask(string? name, Func&lt;CancellationToken, Task&gt; operation)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</td>
+        <td><span class="parametername">operation</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_TryPauseTask_System_String_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask(System.String%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L345">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_TryPauseTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_TryPauseTask_System_String_System_Boolean_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.TryPauseTask(System.String,System.Boolean)">TryPauseTask(string, bool)</h4>
+  <div class="markdown level1 summary"><p>Set the paused state of the named task. In this state it will only trigger
+when manually triggered. Same as setting the timespan to infinite when creating the task.
+The task will trigger when unpaused.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryPauseTask(string name, bool paused)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of task to pause</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">paused</span></td>
+        <td><p>True to pause the task, false to unpause</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><p>True if the task was paused</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_TryTriggerTask_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L365">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_TryTriggerTask_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_TryTriggerTask_System_String_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.TryTriggerTask(System.String)">TryTriggerTask(string)</h4>
+  <div class="markdown level1 summary"><p>Manually trigger a task. The task will always run after this, but may run twice if it is about to run due to timeout.
+Either way the task will always run after this.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryTriggerTask(string name)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><p>True if the task was triggered</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_WaitForAll.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.WaitForAll%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L287">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_WaitForAll_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.WaitForAll*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_WaitForAll" data-uid="Cognite.Extractor.Common.PeriodicScheduler.WaitForAll">WaitForAll()</h4>
+  <div class="markdown level1 summary"><p>Returns the internal task monitoring all running tasks.
+It will fail if any internal task fails.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task WaitForAll()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler_WaitForTermination_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler.WaitForTermination(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L243">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Common_PeriodicScheduler_WaitForTermination_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.WaitForTermination*"></a>
+  <h4 id="Cognite_Extractor_Common_PeriodicScheduler_WaitForTermination_System_String_" data-uid="Cognite.Extractor.Common.PeriodicScheduler.WaitForTermination(System.String)">WaitForTermination(string)</h4>
+  <div class="markdown level1 summary"><p>Waits for a task to terminate. If it is periodic this may never happen.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task WaitForTermination(string name)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of task to wait for</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Common_PeriodicScheduler.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Common.PeriodicScheduler%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Common/PeriodicScheduler.cs/#L72" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

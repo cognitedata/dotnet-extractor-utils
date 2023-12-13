@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Using HistoryExtractionState </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Using HistoryExtractionState ">
-    <meta name="generator" content="docfx 2.51.0.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Using HistoryExtractionState </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Using HistoryExtractionState ">
     
-    <link rel="shortcut icon" href="../favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,7 +56,7 @@
         </div>
       </header>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -69,8 +68,8 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="using-historyextractionstate">Using HistoryExtractionState</h1>
 
-<p><a href="xref:Cognite.Extractor.StateStorage.HistoryExtractionState">HistoryExtractionState</a> is a more advanced abstraction of the history extraction process. Basic usage is fairly similar to BaseExtractionState, but using it requires a few extra steps when extracting data. It handles some more of the logic behind synchronization of data between source and destination systems.</p>
-<p>Most importantly it introduces a new <a href="xref:Cognite.Extractor.Common.TimeRange">TimeRange</a> <code>SourceExtractedRange</code>, which describes the range of data present in the source system. This is separate from the data present in destination systems and handles the &quot;Read, but not pushed&quot; case described <a href="state-store.html">here</a>.</p>
+<p><a class="xref" href="../api/Cognite.Extractor.StateStorage.HistoryExtractionState.html">HistoryExtractionState</a> is a more advanced abstraction of the history extraction process. Basic usage is fairly similar to BaseExtractionState, but using it requires a few extra steps when extracting data. It handles some more of the logic behind synchronization of data between source and destination systems.</p>
+<p>Most importantly it introduces a new <a class="xref" href="../api/Cognite.Extractor.Common.TimeRange.html">TimeRange</a> <code>SourceExtractedRange</code>, which describes the range of data present in the source system. This is separate from the data present in destination systems and handles the &quot;Read, but not pushed&quot; case described <a href="state-store.html">here</a>.</p>
 <p>Using the state consists of the source range separately from the destination range, in different ways depending on which operation is being performed.</p>
 <h2 id="initialization">Initialization</h2>
 <p>First of all, when creating a state you must specify whether frontfill/backfill is enabled for the given state. This determines how the state is synchronized, and what default values for ranges are.</p>
@@ -130,26 +129,28 @@ foreach (var kvp in points)
 }
 </code></pre>
 <p>Then after pushing to destinations, call <code>UpdateDestinationRange</code> as normal.</p>
+
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/docfx_project/tutorials/history-state.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/docfx_project/tutorials/history-state.md/#L1" class="contribution-link">Edit this page</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In this article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -157,14 +158,14 @@ foreach (var kvp in points)
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            
-            <span>Generated by <strong>DocFX</strong></span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Namespace Cognite.Extractor.Common
+ </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Namespace Cognite.Extractor.Common
+ ">
+    
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Common">
+
+  <h1 id="Cognite_Extractor_Common" data-uid="Cognite.Extractor.Common" class="text-break">Namespace Cognite.Extractor.Common
+</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+    <h3 id="classes">
+Classes
+</h3>
+      <h4><a class="xref" href="Cognite.Extractor.Common.BasicTimeSpanProvider.html">BasicTimeSpanProvider</a></h4>
+      <section><p>Implementation of ITimeSpanProvider that just exposes a constant TimeSpan.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.BlockingResourceCounter.html">BlockingResourceCounter</a></h4>
+      <section><p>Simple construct to count number of available instances of some shared resource.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.Chunking.html">Chunking</a></h4>
+      <section><p>Support for splitting sequences into sequences of sequences subject to various constraints, as well as running
+a sequence of tasks in parallel.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.CogniteTime.html">CogniteTime</a></h4>
+      <section><p>DateTime utility functions.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.CommonUtils.html">CommonUtils</a></h4>
+      <section><p>Various utility functions</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.ConfigurationException.html">ConfigurationException</a></h4>
+      <section><p>Exception produced by the configuration utils</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.CronTimeSpanWrapper.html">CronTimeSpanWrapper</a></h4>
+      <section><p>Utility for containing a string converted to timespan in config objects.
+Also supports cron expresions.</p>
+<p>To use:
+public string MyIntervalValue { get; } = new CronTimeSpanWrapper(false, &quot;s&quot;, &quot;0&quot;);
+public string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyIntervalValue.RawValue = value; }</p>
+<p>Access MyIntervalValue.Value in your code, and MyInterval is the config option.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.ExtractorState.html">ExtractorState</a></h4>
+      <section><p>Class used to store the state of the extractors.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.FailureThresholdManager-2.html">FailureThresholdManager&lt;T, T2&gt;</a></h4>
+      <section><p>Simple threshold manager, tracks failed jobs and executes callback if budget is exhausted.
+The callback is executed on every failure reported, as long as the failure budget is not
+expanded, or failed items removed from the internal collection using the Success method.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.OperationScheduler-1.html">OperationScheduler&lt;T&gt;</a></h4>
+      <section><p>Abstraction for handling some kind of recursive exploration.
+Option for shared, asynchronous limits, and using a shared TaskThrottler.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.PeriodicScheduler.html">PeriodicScheduler</a></h4>
+      <section><p>Utility to schedule and manage periodic tasks</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.RetryUtil.html">RetryUtil</a></h4>
+      <section><p>Utilities for retries.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.RetryUtilConfig.html">RetryUtilConfig</a></h4>
+      <section><p>Configuration for utility methods in the RetryUtil class. This can be used in config files for user-configured retries.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.SharedResourceScheduler-1.html">SharedResourceScheduler&lt;T&gt;</a></h4>
+      <section><p>Abstraction for handling some kind of recursive exploration.
+Simply a small extension to <a class="xref" href="Cognite.Extractor.Common.OperationScheduler-1.html">OperationScheduler&lt;T&gt;</a> that
+uses an instance of a <a class="xref" href="Cognite.Extractor.Common.IResourceCounter.html">IResourceCounter</a> for shared capacity.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.TaskResult.html">TaskResult</a></h4>
+      <section><p>Result of an executed task</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.TaskThrottler.html">TaskThrottler</a></h4>
+      <section><p>Tool to throttle the execution of tasks based on max perallelism, and max number of tasks
+scheduled per time unit.</p>
+<p>Maximum parallelism simply limits the number of parallel tasks.</p>
+<p>Per unit sets the maximum number of tasks scheduled per time unit.</p>
+<p>Tasks are enqueued and scheduled for execution in order.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a></h4>
+      <section><p>Represents a range of time from First to Last. First and Last are both considered
+to be included in the range.
+The legal range of values is from the unix epoch, midnight 1/1/1970, to DateTime.MaxValue.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.TimeSpanWrapper.html">TimeSpanWrapper</a></h4>
+      <section><p>Utility for containing a string converted to timespan in config objects.
+To use:
+public string MyIntervalValue { get; } = new TimeSpanWrapper(false, &quot;s&quot;, &quot;0&quot;);
+public string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyIntervalValue.RawValue = value; }</p>
+<p>Access MyIntervalValue.Value in your code, and MyInterval is the config option.</p>
+</section>
+    <h3 id="interfaces">
+Interfaces
+</h3>
+      <h4><a class="xref" href="Cognite.Extractor.Common.IChunk-1.html">IChunk&lt;T&gt;</a></h4>
+      <section><p>Interface representing a chunk of items in TaskScheduler</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.IExtractorInstance.html">IExtractorInstance</a></h4>
+      <section><p>Interface for the instance of an extractor.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.IHighAvailabilityManager.html">IHighAvailabilityManager</a></h4>
+      <section><p>Interface for a manager used to add high availability.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.IResourceCounter.html">IResourceCounter</a></h4>
+      <section><p>Interface for generic common resource counter, which allows instant freeing, and asynchronous taking.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.ITimeSpanProvider.html">ITimeSpanProvider</a></h4>
+      <section><p>Interface for time span providers used in the periodic scheduler.
+Allows flexible scheduling.</p>
+</section>
+
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

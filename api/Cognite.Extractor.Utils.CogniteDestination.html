@@ -1,0 +1,2640 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class CogniteDestination
+ </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class CogniteDestination
+ ">
+    
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Utils.CogniteDestination">
+
+
+
+  <h1 id="Cognite_Extractor_Utils_CogniteDestination" data-uid="Cognite.Extractor.Utils.CogniteDestination" class="text-break">Class CogniteDestination
+</h1>
+  <div class="markdown level0 summary"><p>Class with utility methods supporting extraction of data into CDF.
+These methods complement the ones offered by the <span class="xref">CogniteSdk.Client</span> and use a
+<a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of data and throttling of
+requests against the client</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">CogniteDestination</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Cognite.Extractor.StateStorage.IRawDestination.html">IRawDestination</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.Extractor.html">Extractor</a>.<a class="xref" href="Cognite.Extractor.Utils.html">Utils</a></h6>
+  <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
+  <h5 id="Cognite_Extractor_Utils_CogniteDestination_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class CogniteDestination : IRawDestination</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination__ctor_CogniteSdk_Client_Microsoft_Extensions_Logging_ILogger_Cognite_Extractor_Utils_CogniteDestination__Cognite_Extractor_Utils_CogniteConfig_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.%23ctor(CogniteSdk.Client%2CMicrosoft.Extensions.Logging.ILogger%7BCognite.Extractor.Utils.CogniteDestination%7D%2CCognite.Extractor.Utils.CogniteConfig)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L39">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination__ctor_" data-uid="Cognite.Extractor.Utils.CogniteDestination.#ctor*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination__ctor_CogniteSdk_Client_Microsoft_Extensions_Logging_ILogger_Cognite_Extractor_Utils_CogniteDestination__Cognite_Extractor_Utils_CogniteConfig_" data-uid="Cognite.Extractor.Utils.CogniteDestination.#ctor(CogniteSdk.Client,Microsoft.Extensions.Logging.ILogger{Cognite.Extractor.Utils.CogniteDestination},Cognite.Extractor.Utils.CogniteConfig)">CogniteDestination(Client, ILogger&lt;CogniteDestination&gt;, CogniteConfig)</h4>
+  <div class="markdown level1 summary"><p>Initializes the Cognite destination with the provided parameters</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CogniteDestination(Client client, ILogger&lt;CogniteDestination&gt; logger, CogniteConfig config)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Client</span></td>
+        <td><span class="parametername">client</span></td>
+        <td><p><span class="xref">CogniteSdk.Client</span> object</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1">ILogger</a>&lt;<a class="xref" href="Cognite.Extractor.Utils.CogniteDestination.html">CogniteDestination</a>&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>Logger</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a></td>
+        <td><span class="parametername">config</span></td>
+        <td><p>Configuration object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_CogniteClient.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.CogniteClient%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L31">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_CogniteClient_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CogniteClient*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_CogniteClient" data-uid="Cognite.Extractor.Utils.CogniteDestination.CogniteClient">CogniteClient</h4>
+  <div class="markdown level1 summary"><p>The configured Cognite client used by this destination. Can be used to
+access the full Cognite API</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Client CogniteClient { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Client</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_CreateEventUploadQueue_System_TimeSpan_System_Int32_System_Func_Cognite_Extractor_Utils_QueueUploadResult_CogniteSdk_EventCreate__System_Threading_Tasks_Task__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue(System.TimeSpan%2CSystem.Int32%2CSystem.Func%7BCognite.Extractor.Utils.QueueUploadResult%7BCogniteSdk.EventCreate%7D%2CSystem.Threading.Tasks.Task%7D%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L612">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_CreateEventUploadQueue_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_CreateEventUploadQueue_System_TimeSpan_System_Int32_System_Func_Cognite_Extractor_Utils_QueueUploadResult_CogniteSdk_EventCreate__System_Threading_Tasks_Task__System_String_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CreateEventUploadQueue(System.TimeSpan,System.Int32,System.Func{Cognite.Extractor.Utils.QueueUploadResult{CogniteSdk.EventCreate},System.Threading.Tasks.Task},System.String)">CreateEventUploadQueue(TimeSpan, int, Func&lt;QueueUploadResult&lt;EventCreate&gt;, Task&gt;?, string?)</h4>
+  <div class="markdown level1 summary"><p>Creates an event upload queue. It is used to queue events before uploading them to CDF.
+The items are dequeued and uploaded every <code class="paramref">interval</code>. If <code class="paramref">maxQueueSize</code> is greater than zero,
+the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
+If <code class="paramref">interval</code> is zero or infinite, the queue will never upload unless prompted or <code class="paramref">maxQueueSize</code> is reached.
+To start the upload loop, use the <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Start_System_Threading_CancellationToken_">Start(CancellationToken)</a> method. To stop it, dispose of the queue or
+cancel the token</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EventUploadQueue CreateEventUploadQueue(TimeSpan interval, int maxQueueSize = 0, Func&lt;QueueUploadResult&lt;EventCreate&gt;, Task&gt;? callback = null, string? bufferPath = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>Upload interval</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">maxQueueSize</span></td>
+        <td><p>Maximum queue size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Cognite.Extractor.Utils.QueueUploadResult-1.html">QueueUploadResult</a>&lt;<span class="xref">EventCreate</span>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</td>
+        <td><span class="parametername">callback</span></td>
+        <td><p>Callback on upload</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">bufferPath</span></td>
+        <td><p>Path to local binary buffer file. If this is non-null, points are automatically buffered to
+a local file if inserting times out or fails with status &gt;= 500</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Utils.EventUploadQueue.html">EventUploadQueue</a></td>
+        <td><p>An upload queue object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue__1_System_String_System_String_System_TimeSpan_System_Int32_System_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___System_Threading_Tasks_Task__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue%60%601(System.String%2CSystem.String%2CSystem.TimeSpan%2CSystem.Int32%2CSystem.Func%7BCognite.Extractor.Utils.QueueUploadResult%7BSystem.ValueTuple%7BSystem.String%2C%60%600%7D%7D%2CSystem.Threading.Tasks.Task%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L572">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_CreateRawUploadQueue__1_System_String_System_String_System_TimeSpan_System_Int32_System_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_System_String___0___System_Threading_Tasks_Task__" data-uid="Cognite.Extractor.Utils.CogniteDestination.CreateRawUploadQueue``1(System.String,System.String,System.TimeSpan,System.Int32,System.Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{System.String,``0}},System.Threading.Tasks.Task})">CreateRawUploadQueue&lt;T&gt;(string, string, TimeSpan, int, Func&lt;QueueUploadResult&lt;(string key, T columns)&gt;, Task&gt;?)</h4>
+  <div class="markdown level1 summary"><p>Creates a Raw upload queue. It can be used to queue DTOs (data type objects) of type <code class="typeparamref">T</code>
+before sending them to CDF Raw. The items are dequeued and uploaded every <code class="paramref">interval</code>. If <code class="paramref">maxQueueSize</code> is
+greater than zero, the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
+To start the upload loop, use the <a class="xref" href="Cognite.Extractor.Utils.IUploadQueue.html#Cognite_Extractor_Utils_IUploadQueue_Start_System_Threading_CancellationToken_">Start(CancellationToken)</a> method. To stop it, dispose of the queue or
+cancel the token</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IRawUploadQueue&lt;T&gt; CreateRawUploadQueue&lt;T&gt;(string database, string table, TimeSpan interval, int maxQueueSize = 0, Func&lt;QueueUploadResult&lt;(string key, T columns)&gt;, Task&gt;? callback = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">database</span></td>
+        <td><p>Raw database name</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">table</span></td>
+        <td><p>Raw table name</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>Upload interval</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">maxQueueSize</span></td>
+        <td><p>Maximum queue size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Cognite.Extractor.Utils.QueueUploadResult-1.html">QueueUploadResult</a>&lt;(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,--0-.key">key</a>, T <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,--0-.columns">columns</a>)&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</td>
+        <td><span class="parametername">callback</span></td>
+        <td><p>Callback on upload</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Utils.IRawUploadQueue-1.html">IRawUploadQueue</a>&lt;T&gt;</td>
+        <td><p>An upload queue object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>Type of the DTO</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_CreateTimeSeriesUploadQueue_System_TimeSpan_System_Int32_System_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_CogniteSdk_Identity_Cognite_Extensions_Datapoint___System_Threading_Tasks_Task__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue(System.TimeSpan%2CSystem.Int32%2CSystem.Func%7BCognite.Extractor.Utils.QueueUploadResult%7BSystem.ValueTuple%7BCogniteSdk.Identity%2CCognite.Extensions.Datapoint%7D%7D%2CSystem.Threading.Tasks.Task%7D%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L592">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_CreateTimeSeriesUploadQueue_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_CreateTimeSeriesUploadQueue_System_TimeSpan_System_Int32_System_Func_Cognite_Extractor_Utils_QueueUploadResult_System_ValueTuple_CogniteSdk_Identity_Cognite_Extensions_Datapoint___System_Threading_Tasks_Task__System_String_" data-uid="Cognite.Extractor.Utils.CogniteDestination.CreateTimeSeriesUploadQueue(System.TimeSpan,System.Int32,System.Func{Cognite.Extractor.Utils.QueueUploadResult{System.ValueTuple{CogniteSdk.Identity,Cognite.Extensions.Datapoint}},System.Threading.Tasks.Task},System.String)">CreateTimeSeriesUploadQueue(TimeSpan, int, Func&lt;QueueUploadResult&lt;(Identity id, Datapoint dp)&gt;, Task&gt;?, string?)</h4>
+  <div class="markdown level1 summary"><p>Creates a datapoint upload queue. It is used to queue datapoints before uploading them to timeseries in CDF.
+The items are dequeued and uploaded every <code class="paramref">interval</code>. If <code class="paramref">maxQueueSize</code> is greater than zero,
+the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
+If <code class="paramref">interval</code> is zero or infinite, the queue will never upload unless prompted or <code class="paramref">maxQueueSize</code> is reached.
+To start the upload loop, use the <a class="xref" href="Cognite.Extractor.Utils.BaseUploadQueue-1.html#Cognite_Extractor_Utils_BaseUploadQueue_1_Start_System_Threading_CancellationToken_">Start(CancellationToken)</a> method. To stop it, dispose of the queue or
+cancel the token</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSeriesUploadQueue CreateTimeSeriesUploadQueue(TimeSpan interval, int maxQueueSize = 0, Func&lt;QueueUploadResult&lt;(Identity id, Datapoint dp)&gt;, Task&gt;? callback = null, string? bufferPath = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">interval</span></td>
+        <td><p>Upload interval</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">maxQueueSize</span></td>
+        <td><p>Maximum queue size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Cognite.Extractor.Utils.QueueUploadResult-1.html">QueueUploadResult</a>&lt;(<span class="xref">Identity</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.identity,cognite.extensions.datapoint-.id">id</a>, <a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.identity,cognite.extensions.datapoint-.dp">dp</a>)&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a>&gt;</td>
+        <td><span class="parametername">callback</span></td>
+        <td><p>Callback on upload</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">bufferPath</span></td>
+        <td><p>Path to local binary buffer file. If this is non-null, points are automatically buffered to
+a local file if inserting times out or fails with status &gt;= 500</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Utils.TimeSeriesUploadQueue.html">TimeSeriesUploadQueue</a></td>
+        <td><p>An upload queue object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extractor_Common_TimeRange___System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(System.Collections.Generic.IDictionary%7BCogniteSdk.Identity%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extractor.Common.TimeRange%7D%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L461">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_DeleteDataPointsIgnoreErrorsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extractor_Common_TimeRange___System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.DeleteDataPointsIgnoreErrorsAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extractor.Common.TimeRange}},System.Threading.CancellationToken)">DeleteDataPointsIgnoreErrorsAsync(IDictionary&lt;Identity, IEnumerable&lt;TimeRange&gt;&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Deletes ranges of data points in CDF. The <code class="paramref">ranges</code> parameter contains the first (inclusive)
+and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
+the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to
+confirm the deletion does not mean that the operation failed in CDF</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;DeleteError&gt; DeleteDataPointsIgnoreErrorsAsync(IDictionary&lt;Identity, IEnumerable&lt;TimeRange&gt;&gt;? ranges, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
+        <td><span class="parametername">ranges</span></td>
+        <td><p>Ranges to delete</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancelation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.DeleteError.html">DeleteError</a>&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.DeleteError.html">DeleteError</a> object with any missing ids or ids with unconfirmed deletes</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_DeleteRowsAsync_System_String_System_String_System_Collections_Generic_IEnumerable_System_String__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.DeleteRowsAsync(System.String%2CSystem.String%2CSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L662">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_DeleteRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.DeleteRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_DeleteRowsAsync_System_String_System_String_System_Collections_Generic_IEnumerable_System_String__System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.DeleteRowsAsync(System.String,System.String,System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">DeleteRowsAsync(string, string, IEnumerable&lt;string&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Delete the given rows from raw database</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task DeleteRowsAsync(string dbName, string tableName, IEnumerable&lt;string&gt; rowKeys, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">dbName</span></td>
+        <td><p>Database to delete from</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">tableName</span></td>
+        <td><p>Table to delete from</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">rowKeys</span></td>
+        <td><p>Keys for rows to delete</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.AssetCreate%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L298">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_EnsureAssetsExistsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureAssetsExistsAsync(System.Collections.Generic.IEnumerable{CogniteSdk.AssetCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">EnsureAssetsExistsAsync(IEnumerable&lt;AssetCreate&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures that all assets in <code class="paramref">assets</code> exist in CDF.
+Tries to create the assets and returns when all are created or have been removed
+due to issues with the request.
+By default, if any items fail to be created due to missing parent, duplicated externalId or missing dataset
+they can be removed before retrying by setting <code class="paramref">retryMode</code>.
+Assets will be returned in the same order as given in <code class="paramref">assets</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Asset, AssetCreate&gt;&gt; EnsureAssetsExistsAsync(IEnumerable&lt;AssetCreate&gt; assets, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">AssetCreate</span>&gt;</td>
+        <td><span class="parametername">assets</span></td>
+        <td><p>List of CogniteSdk AssetCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to do retries. Keeping duplicates is not valid for
+this method.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to assets before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Asset</span>, <span class="xref">AssetCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created assets</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_EventCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.EventCreate%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L809">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_EnsureEventsExistsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_EventCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureEventsExistsAsync(System.Collections.Generic.IEnumerable{CogniteSdk.EventCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">EnsureEventsExistsAsync(IEnumerable&lt;EventCreate&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures that all events in <code class="paramref">events</code> exist in CDF.
+Tries to create the events and returns when all are created or removed
+due to issues with the request.
+If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+they can be removed before retrying by setting <code class="paramref">retryMode</code>
+Events will be returned in the same order as given in <code class="paramref">events</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Event, EventCreate&gt;&gt; EnsureEventsExistsAsync(IEnumerable&lt;EventCreate&gt; events, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">EventCreate</span>&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td><p>List of CogniteSdk EventCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to do retries. Keeping duplicates is not valid for
+this method.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to events before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Event</span>, <span class="xref">EventCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created events</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_EnsureSequencesExistsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_SequenceCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.SequenceCreate%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L906">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_EnsureSequencesExistsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_EnsureSequencesExistsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_SequenceCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureSequencesExistsAsync(System.Collections.Generic.IEnumerable{CogniteSdk.SequenceCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">EnsureSequencesExistsAsync(IEnumerable&lt;SequenceCreate&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures that all sequences in <code class="paramref">sequences</code> exist in CDF.
+Tries to create the sequences and returns when all are created or removed
+due to issues with the request.
+If any items fail to be pushed due to missing assetId, missing dataset, or duplicated externalId
+they can be removed before retrying by setting <code class="paramref">retryMode</code>
+Sequences will be returned in the same order as given in <code class="paramref">sequences</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Sequence, SequenceCreate&gt;&gt; EnsureSequencesExistsAsync(IEnumerable&lt;SequenceCreate&gt; sequences, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SequenceCreate</span>&gt;</td>
+        <td><span class="parametername">sequences</span></td>
+        <td><p>List of CogniteSdk SequenceCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to do retries. Keeping duplicates is not valid for
+this method.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to sequences before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>, <span class="xref">SequenceCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created sequences</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.TimeSeriesCreate%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L139">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_EnsureTimeSeriesExistsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync(System.Collections.Generic.IEnumerable{CogniteSdk.TimeSeriesCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">EnsureTimeSeriesExistsAsync(IEnumerable&lt;TimeSeriesCreate&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures that all time series in <code class="paramref">timeSeries</code> exist in CDF.
+Tries to create the time series and returns when all are created or have been removed
+due to issues with the request.
+By default, if any items fail to be created due to missing asset, duplicated externalId, duplicated
+legacy name, or missing dataSetId, they can be removed before retrying by setting
+<code class="paramref">retryMode</code>
+Timeseries will be returned in the same order as given in <code class="paramref">timeSeries</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;TimeSeries, TimeSeriesCreate&gt;&gt; EnsureTimeSeriesExistsAsync(IEnumerable&lt;TimeSeriesCreate&gt; timeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">TimeSeriesCreate</span>&gt;</td>
+        <td><span class="parametername">timeSeries</span></td>
+        <td><p>List of CogniteSdk TimeSeriesCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to do retries. Keeping duplicates is not valid for
+this method.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to timeseries before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">TimeSeries</span>, <span class="xref">TimeSeriesCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created timeseries</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_System_Collections_Generic_IEnumerable_CogniteSdk_Identity__System_Threading_CancellationToken_System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable%7BCogniteSdk.Identity%7D%2CSystem.Threading.CancellationToken%2CSystem.Boolean%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L681">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_System_Collections_Generic_IEnumerable_CogniteSdk_Identity__System_Threading_CancellationToken_System_Boolean_System_Boolean_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Threading.CancellationToken,System.Boolean,System.Boolean)">GetExtractedRanges(IEnumerable&lt;Identity&gt;, CancellationToken, bool, bool)</h4>
+  <div class="markdown level1 summary"><p>Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+Note that end limits closer to actual endpoints in CDF is considerably faster.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IDictionary&lt;Identity, TimeRange&gt;&gt; GetExtractedRanges(IEnumerable&lt;Identity&gt; ids, CancellationToken token, bool earliest = true, bool latest = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">Identity</span>&gt;</td>
+        <td><span class="parametername">ids</span></td>
+        <td><p>ExternalIds and start/end of region to look for datapoints.
+Use TimeRange.Complete for first after epoch, and last before now.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">earliest</span></td>
+        <td><p>If true, fetch earliest timestamps, default true</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">latest</span></td>
+        <td><p>If true, fetch latest timestamps, default true</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_Cognite_Extractor_Common_TimeRange___System_Threading_CancellationToken_System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable%7BSystem.ValueTuple%7BCogniteSdk.Identity%2CCognite.Extractor.Common.TimeRange%7D%7D%2CSystem.Threading.CancellationToken%2CSystem.Boolean%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L709">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_Cognite_Extractor_Common_TimeRange___System_Threading_CancellationToken_System_Boolean_System_Boolean_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Threading.CancellationToken,System.Boolean,System.Boolean)">GetExtractedRanges(IEnumerable&lt;(Identity id, TimeRange limit)&gt;, CancellationToken, bool, bool)</h4>
+  <div class="markdown level1 summary"><p>Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+Note that end limits closer to actual endpoints in CDF is considerably faster.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IDictionary&lt;Identity, TimeRange&gt;&gt; GetExtractedRanges(IEnumerable&lt;(Identity id, TimeRange limit)&gt; ids, CancellationToken token, bool earliest = true, bool latest = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<span class="xref">Identity</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.identity,cognite.extractor.common.timerange-.id">id</a>, <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.identity,cognite.extractor.common.timerange-.limit">limit</a>)&gt;</td>
+        <td><span class="parametername">ids</span></td>
+        <td><p>ExternalIds and start/end of region to look for datapoints.
+Use TimeRange.Complete for first after epoch, and last before now.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">earliest</span></td>
+        <td><p>If true, fetch earliest timestamps, default true</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">latest</span></td>
+        <td><p>If true, fetch latest timestamps, default true</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.AssetCreate%7D%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L234">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{CogniteSdk.AssetCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateAssetsAsync(IEnumerable&lt;string&gt;, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;AssetCreate&gt;&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the assets with the provided <code class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildAssets</code> function to construct
+the missing asset objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF
+If any items fail to be created due to missing parent, duplicated externalId or missing dataset
+they can be removed before retrying by setting <code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Asset, AssetCreate&gt;&gt; GetOrCreateAssetsAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;AssetCreate&gt;&gt; buildAssets, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">AssetCreate</span>&gt;&gt;</td>
+        <td><span class="parametername">buildAssets</span></td>
+        <td><p>Function that builds CogniteSdk AssetCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to assets before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Asset</span>, <span class="xref">AssetCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found assets</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Threading.Tasks.Task%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.AssetCreate%7D%7D%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L266">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateAssetsAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateAssetsAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.AssetCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateAssetsAsync(IEnumerable&lt;string&gt;, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;AssetCreate&gt;&gt;&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the assets with the provided <code class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildAssets</code> function to construct
+the missing asset objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF
+If any items fail to be created due to missing parent, duplicated externalId or missing dataset
+they can be removed before retrying by setting <code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Asset, AssetCreate&gt;&gt; GetOrCreateAssetsAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;AssetCreate&gt;&gt;&gt; buildAssets, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">AssetCreate</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildAssets</span></td>
+        <td><p>Async function that builds CogniteSdk AssetCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to assets before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Asset</span>, <span class="xref">AssetCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found assets</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_EventCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.EventCreate%7D%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L745">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_EventCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{CogniteSdk.EventCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateEventsAsync(IEnumerable&lt;string&gt;, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;EventCreate&gt;&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the events with the provided <code class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildEvents</code> function to construct
+the missing event objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF
+If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+they can be removed before retrying by setting <code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Event, EventCreate&gt;&gt; GetOrCreateEventsAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;EventCreate&gt;&gt; buildEvents, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">EventCreate</span>&gt;&gt;</td>
+        <td><span class="parametername">buildEvents</span></td>
+        <td><p>Function that builds CogniteSdk EventCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to events before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Event</span>, <span class="xref">EventCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found events</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_EventCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Threading.Tasks.Task%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.EventCreate%7D%7D%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L777">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateEventsAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_EventCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateEventsAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.EventCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateEventsAsync(IEnumerable&lt;string&gt;, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;EventCreate&gt;&gt;&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the events with the provided <code class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildEvents</code> function to construct
+the missing event objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF
+If any items fail to be pushed due to missing assetIds, missing dataset, or duplicated externalId
+they can be removed before retrying by setting <code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Event, EventCreate&gt;&gt; GetOrCreateEventsAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;EventCreate&gt;&gt;&gt; buildEvents, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">EventCreate</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildEvents</span></td>
+        <td><p>Async function that builds CogniteSdk EventCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to events before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Event</span>, <span class="xref">EventCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found events</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_SequenceCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.SequenceCreate%7D%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L842">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_SequenceCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{CogniteSdk.SequenceCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateSequencesAsync(IEnumerable&lt;string&gt;, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;SequenceCreate&gt;&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the sequences with the provided <code class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildSequences</code> function to construct
+the missing sequence objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF
+If any items fail to be pushed due to missing assetId, missing dataset, or duplicated externalId
+they can be removed before retrying by setting <code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Sequence, SequenceCreate&gt;&gt; GetOrCreateSequencesAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;SequenceCreate&gt;&gt; buildSequences, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SequenceCreate</span>&gt;&gt;</td>
+        <td><span class="parametername">buildSequences</span></td>
+        <td><p>Function that builds CogniteSdk SequenceCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to sequences before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>, <span class="xref">SequenceCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found sequences</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_SequenceCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Threading.Tasks.Task%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.SequenceCreate%7D%7D%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L874">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateSequencesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_SequenceCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.SequenceCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateSequencesAsync(IEnumerable&lt;string&gt;, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;SequenceCreate&gt;&gt;&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the sequences with the provided <code class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildSequences</code> function to construct
+the missing sequence objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF
+If any items fail to be pushed due to missing assetId, missing dataset, or duplicated externalId
+they can be removed before retrying by setting <code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Sequence, SequenceCreate&gt;&gt; GetOrCreateSequencesAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;SequenceCreate&gt;&gt;&gt; buildSequences, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SequenceCreate</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildSequences</span></td>
+        <td><p>Async function that builds CogniteSdk SequenceCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to sequences before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Sequence</span>, <span class="xref">SequenceCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found sequences</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.TimeSeriesCreate%7D%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L73">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{CogniteSdk.TimeSeriesCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateTimeSeriesAsync(IEnumerable&lt;string&gt;, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;TimeSeriesCreate&gt;&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the time series with the provided <code class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildTimeSeries</code> function to construct
+the missing time series objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF
+If any items fail to be created due to missing asset, duplicated externalId, duplicated
+legacy name, or missing dataSetId, they can be removed before retrying by setting
+<code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;TimeSeries, TimeSeriesCreate&gt;&gt; GetOrCreateTimeSeriesAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, IEnumerable&lt;TimeSeriesCreate&gt;&gt; buildTimeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">TimeSeriesCreate</span>&gt;&gt;</td>
+        <td><span class="parametername">buildTimeSeries</span></td>
+        <td><p>Function that builds CogniteSdk TimeSeriesCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to timeseries before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">TimeSeries</span>, <span class="xref">TimeSeriesCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occurred and a list of the created and found timeseries</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(System.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BSystem.String%7D%2CSystem.Threading.Tasks.Task%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.TimeSeriesCreate%7D%7D%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L106">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate____Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.TimeSeriesCreate}}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateTimeSeriesAsync(IEnumerable&lt;string&gt;, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;TimeSeriesCreate&gt;&gt;&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures the the time series with the provided <code class="paramref">externalIds</code> exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildTimeSeries</code> function to construct
+the missing time series objects and upload them to CDF.
+This method uses the <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html">CogniteConfig</a> object to determine chunking of items and throttling
+against CDF
+By default, if any items fail to be created due to missing asset, duplicated externalId, duplicated
+legacy name, or missing dataSetId, they can be removed before retrying by setting
+<code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;TimeSeries, TimeSeriesCreate&gt;&gt; GetOrCreateTimeSeriesAsync(IEnumerable&lt;string&gt; externalIds, Func&lt;IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt;TimeSeriesCreate&gt;&gt;&gt; buildTimeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
+        <td><span class="parametername">externalIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">TimeSeriesCreate</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildTimeSeries</span></td>
+        <td><p>Async function that builds CogniteSdk TimeSeriesCreate objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to timeseries before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">TimeSeries</span>, <span class="xref">TimeSeriesCreate</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found timeseries</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_System_String_System_String_System_Text_Json_JsonSerializerOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String%2CSystem.String%2CSystem.Text.Json.JsonSerializerOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L626">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_System_String_System_String_System_Text_Json_JsonSerializerOptions_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync(System.String,System.String,System.Text.Json.JsonSerializerOptions,System.Threading.CancellationToken)">GetRowsAsync(string, string, JsonSerializerOptions?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Returns all rows from the given database and table</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IDictionary&lt;string, IDictionary&lt;string, JsonElement&gt;&gt;&gt; GetRowsAsync(string dbName, string tableName, JsonSerializerOptions? options, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">dbName</span></td>
+        <td><p>Database to read from</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">tableName</span></td>
+        <td><p>Table to read from</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions">JsonSerializerOptions</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Optional json serializer options</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsonelement">JsonElement</a>&gt;&gt;&gt;</td>
+        <td><p>All rows</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync__1_System_String_System_String_System_Text_Json_JsonSerializerOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync%60%601(System.String%2CSystem.String%2CSystem.Text.Json.JsonSerializerOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L644">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_GetRowsAsync__1_System_String_System_String_System_Text_Json_JsonSerializerOptions_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.GetRowsAsync``1(System.String,System.String,System.Text.Json.JsonSerializerOptions,System.Threading.CancellationToken)">GetRowsAsync&lt;T&gt;(string, string, JsonSerializerOptions?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Returns all rows from the given database and table</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;IDictionary&lt;string, T&gt;&gt; GetRowsAsync&lt;T&gt;(string dbName, string tableName, JsonSerializerOptions? options, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">dbName</span></td>
+        <td><p>Database to read from</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">tableName</span></td>
+        <td><p>Table to read from</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions">JsonSerializerOptions</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Optional json serializer options</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;&gt;</td>
+        <td><p>All rows</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(System.Collections.Generic.IDictionary%7BCogniteSdk.Identity%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L390">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)">InsertDataPointsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;?, SanitationMode, RetryMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert the provided data points into CDF. The data points are chunked
+according to <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html#Cognite_Extractor_Utils_CogniteConfig_CdfChunking">CdfChunking</a> and trimmed according to the
+<a href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</a>.
+The <code class="paramref">points</code> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points</p>
+<p>On error, the offending timeseries/datapoints can optionally be removed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;DataPointInsertError&gt;&gt; InsertDataPointsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;? points, SanitationMode sanitationMode, RetryMode retryMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
+        <td><span class="parametername">points</span></td>
+        <td><p>Data points</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataPointInsertError.html">DataPointInsertError</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsCreateMissingAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Int64__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync(System.Collections.Generic.IDictionary%7BCogniteSdk.Identity%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Nullable%7BSystem.Int64%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L427">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsCreateMissingAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsCreateMissingAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Int64__System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertDataPointsCreateMissingAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Int64},System.Threading.CancellationToken)">InsertDataPointsCreateMissingAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;?, SanitationMode, RetryMode, long?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
+they are created before the points are inserted again.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;(CogniteResult&lt;DataPointInsertError&gt; DataPointResult, CogniteResult&lt;TimeSeries, TimeSeriesCreate&gt;? TimeSeriesResult)&gt; InsertDataPointsCreateMissingAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;? points, SanitationMode sanitationMode, RetryMode retryMode, long? dataSetId, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
+        <td><span class="parametername">points</span></td>
+        <td><p>Datapoints to insert</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>How to sanitize datapoints</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle retries</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</td>
+        <td><span class="parametername">dataSetId</span></td>
+        <td><p>Optional data set id</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;(<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataPointInsertError.html">DataPointInsertError</a>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognite.extensions.cogniteresult-cognite.extensions.datapointinserterror-,cognite.extensions.cogniteresult-cognitesdk.timeseries,cognitesdk.timeseriescreate--.datapointresult">DataPointResult</a>, <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">TimeSeries</span>, <span class="xref">TimeSeriesCreate</span>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognite.extensions.cogniteresult-cognite.extensions.datapointinserterror-,cognite.extensions.cogniteresult-cognitesdk.timeseries,cognitesdk.timeseriescreate--.timeseriesresult">TimeSeriesResult</a>)&gt;</td>
+        <td><p>Results with a list of errors. If TimeSeriesResult is null, no timeseries were attempted created.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_System_Collections_Generic_IDictionary_System_String___0__System_Text_Json_JsonSerializerOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync%60%601(System.String%2CSystem.String%2CSystem.Collections.Generic.IDictionary%7BSystem.String%2C%60%600%7D%2CSystem.Text.Json.JsonSerializerOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L498">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_System_Collections_Generic_IDictionary_System_String___0__System_Text_Json_JsonSerializerOptions_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,System.Collections.Generic.IDictionary{System.String,``0},System.Text.Json.JsonSerializerOptions,System.Threading.CancellationToken)">InsertRawRowsAsync&lt;T&gt;(string, string, IDictionary&lt;string, T&gt;, JsonSerializerOptions?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert the provided <code class="paramref">rows</code> into CDF Raw. The rows are a dictionary of
+keys and DTOs (data type objects). The DTOs  of type <code class="typeparamref">T</code> are serialized to JSON
+before they are sent to Raw. If the <code class="paramref">database</code> or <code class="paramref">table</code> do not
+exist, they are created</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task InsertRawRowsAsync&lt;T&gt;(string database, string table, IDictionary&lt;string, T&gt; rows, JsonSerializerOptions? options, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">database</span></td>
+        <td><p>Raw database name</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">table</span></td>
+        <td><p>Raw table name</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;</td>
+        <td><span class="parametername">rows</span></td>
+        <td><p>Rows of keys and columns</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions">JsonSerializerOptions</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>Optional JSON options parameter, to be used when converting dto to JsonElement</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>Task</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>DTO type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_System_Collections_Generic_IDictionary_System_String___0__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync%60%601(System.String%2CSystem.String%2CSystem.Collections.Generic.IDictionary%7BSystem.String%2C%60%600%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L535">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertRawRowsAsync__1_System_String_System_String_System_Collections_Generic_IDictionary_System_String___0__System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync``1(System.String,System.String,System.Collections.Generic.IDictionary{System.String,``0},System.Threading.CancellationToken)">InsertRawRowsAsync&lt;T&gt;(string, string, IDictionary&lt;string, T&gt;?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert the provided <code class="paramref">rows</code> into CDF Raw. The rows are a dictionary of
+keys and DTOs (data type objects). The DTOs  of type <code class="typeparamref">T</code> are serialized to JSON
+before they are sent to Raw. If the <code class="paramref">database</code> or <code class="paramref">table</code> do not
+exist, they are created</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task InsertRawRowsAsync&lt;T&gt;(string database, string table, IDictionary&lt;string, T&gt;? rows, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">database</span></td>
+        <td><p>Raw database name</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">table</span></td>
+        <td><p>Raw table name</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, T&gt;</td>
+        <td><span class="parametername">rows</span></td>
+        <td><p>Rows of keys and columns</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td><p>Task</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>DTO type</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_InsertSequenceRowsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_SequenceDataCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.SequenceDataCreate%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L934">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_InsertSequenceRowsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_InsertSequenceRowsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_SequenceDataCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync(System.Collections.Generic.IEnumerable{CogniteSdk.SequenceDataCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">InsertSequenceRowsAsync(IEnumerable&lt;SequenceDataCreate&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert the given list of rows into CDF.
+Both individual rows and full sequences can be removed due to mismatched datatypes,
+duplicated externalIds, or similar, by setting <code class="paramref">retryMode</code>
+and <code class="paramref">sanitationMode</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SequenceRowError&gt;&gt; InsertSequenceRowsAsync(IEnumerable&lt;SequenceDataCreate&gt; sequences, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SequenceDataCreate</span>&gt;</td>
+        <td><span class="parametername">sequences</span></td>
+        <td><p>Sequences with rows to insert</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle retries. Keeping duplicates is not valid for this method.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to sequences before creating.
+Errors that are normally handled by sanitation will not be handled if received from CDF.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.SequenceRowError.html">SequenceRowError</a>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult&lt;TError&gt;</a> containing errors that occured during insertion</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_TestCogniteConfig_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.TestCogniteConfig(System.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L51">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_TestCogniteConfig_" data-uid="Cognite.Extractor.Utils.CogniteDestination.TestCogniteConfig*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_TestCogniteConfig_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.TestCogniteConfig(System.Threading.CancellationToken)">TestCogniteConfig(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Verifies that the currently configured Cognite client can access Cognite Data Fusion</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task TestCogniteConfig(CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.CogniteUtilsException.html">CogniteUtilsException</a></td>
+        <td><p>Thrown when credentials are invalid</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_UpdateAssetsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_AssetUpdateItem__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.AssetUpdateItem%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L325">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_UpdateAssetsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_UpdateAssetsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_AssetUpdateItem__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.UpdateAssetsAsync(System.Collections.Generic.IEnumerable{CogniteSdk.AssetUpdateItem},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">UpdateAssetsAsync(IEnumerable&lt;AssetUpdateItem&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Update assets in <code class="paramref">updates</code>.
+If items fail due to bad parent ids, id, labels or dataset they can be removed before retrying
+by setting <code class="paramref">retryMode</code>.
+Assets will be returned in the same order as given.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Asset, AssetUpdateItem&gt;&gt; UpdateAssetsAsync(IEnumerable&lt;AssetUpdateItem&gt; updates, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">AssetUpdateItem</span>&gt;</td>
+        <td><span class="parametername">updates</span></td>
+        <td><p>List of CogniteSdk AssetUpdateItem objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to do retries. Keeping duplicates is not valid for this method.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to assets before updating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Asset</span>, <span class="xref">AssetUpdateItem</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the updated assets</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_UpdateTimeSeriesAsync_System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesUpdateItem__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.TimeSeriesUpdateItem%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L166">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_UpdateTimeSeriesAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_UpdateTimeSeriesAsync_System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesUpdateItem__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.UpdateTimeSeriesAsync(System.Collections.Generic.IEnumerable{CogniteSdk.TimeSeriesUpdateItem},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">UpdateTimeSeriesAsync(IEnumerable&lt;TimeSeriesUpdateItem&gt;, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Update timeseries in <code class="paramref">updates</code>.
+If items fail due to bad asset ids, id, or dataset they can be removed before retrying
+by setting <code class="paramref">retryMode</code>.
+TimeSeries will be returned in the same order as given.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;TimeSeries, TimeSeriesUpdateItem&gt;&gt; UpdateTimeSeriesAsync(IEnumerable&lt;TimeSeriesUpdateItem&gt; updates, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">TimeSeriesUpdateItem</span>&gt;</td>
+        <td><span class="parametername">updates</span></td>
+        <td><p>List of CogniteSdk TimeSeriesUpdateItem objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to do retries. Keeping duplicates is not valid for this method.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to assets before updating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">TimeSeries</span>, <span class="xref">TimeSeriesUpdateItem</span>&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the updated timeseries</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_UpsertAssetsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.AssetCreate%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.UpsertParams%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L357">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_UpsertAssetsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_UpsertAssetsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.UpsertAssetsAsync(System.Collections.Generic.IEnumerable{CogniteSdk.AssetCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,System.Threading.CancellationToken)">UpsertAssetsAsync(IEnumerable&lt;AssetCreate&gt;, RetryMode, SanitationMode, UpsertParams?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert or update a list of assets, handling errors that come up during both insert and update.
+Only assets that differ from assets in CDF are updated.</p>
+<p>All given assets must have an external id, so it is not in practice possible to use this to change
+the externalId of assets.</p>
+<p>Assets are returned in the same order as given.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;Asset, AssetCreate&gt;&gt; UpsertAssetsAsync(IEnumerable&lt;AssetCreate&gt; upserts, RetryMode retryMode, SanitationMode sanitationMode, UpsertParams? options, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">AssetCreate</span>&gt;</td>
+        <td><span class="parametername">upserts</span></td>
+        <td><p>Assets to upsert</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle retries on errors</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>How to sanitize creates and updates</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.UpsertParams.html">UpsertParams</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>How to update existing assets</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">Asset</span>, <span class="xref">AssetCreate</span>&gt;&gt;</td>
+        <td><p>Result with failed creates/updates and list of assets</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>All upserted assets must have external id</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination_UpsertTimeSeriesAsync_System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync(System.Collections.Generic.IEnumerable%7BCogniteSdk.TimeSeriesCreate%7D%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.UpsertParams%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L198">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestination_UpsertTimeSeriesAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestination_UpsertTimeSeriesAsync_System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestination.UpsertTimeSeriesAsync(System.Collections.Generic.IEnumerable{CogniteSdk.TimeSeriesCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,Cognite.Extensions.UpsertParams,System.Threading.CancellationToken)">UpsertTimeSeriesAsync(IEnumerable&lt;TimeSeriesCreate&gt;, RetryMode, SanitationMode, UpsertParams?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert or update a list of timeseries, handling errors that come up during both insert and update.
+Only timeseries that differ from timeseries in CDF are updated.</p>
+<p>All given timeseries must have an external id, so it is not in practice possible to use this to change
+the externalId of timeseries.</p>
+<p>Timeseries are returned in the same order as given.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;TimeSeries, TimeSeriesCreate&gt;&gt; UpsertTimeSeriesAsync(IEnumerable&lt;TimeSeriesCreate&gt; upserts, RetryMode retryMode, SanitationMode sanitationMode, UpsertParams? options, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">TimeSeriesCreate</span>&gt;</td>
+        <td><span class="parametername">upserts</span></td>
+        <td><p>Assets to upsert</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle retries on errors</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>How to sanitize creates and updates</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.UpsertParams.html">UpsertParams</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>How to update existing assets</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">TimeSeries</span>, <span class="xref">TimeSeriesCreate</span>&gt;&gt;</td>
+        <td><p>Result with failed creates/updates and list of assets</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>All upserted assets must have external id</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Cognite.Extractor.StateStorage.IRawDestination.html">IRawDestination</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestination.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestination%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestination.cs/#L21" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

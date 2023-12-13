@@ -1,0 +1,647 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class HistoryExtractionState
+ </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class HistoryExtractionState
+ ">
+    
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState">
+
+
+
+  <h1 id="Cognite_Extractor_StateStorage_HistoryExtractionState" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState" class="text-break">Class HistoryExtractionState
+</h1>
+  <div class="markdown level0 summary"><p>Represents an object to be extracted from the source system.
+This object is intended to be used with a system that can both feed live data
+and read historical data.</p>
+<p>This is intended to be used with more complicated setups involving multiple destination systems,
+and large amounts of historical data.</p>
+<p>It works by keeping track of two <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>, SourceExtractedRange and DestinationExtractedRange.</p>
+<p>SourceExtractedRange is the range of timestamps extracted from the source system, DestinationExtractedRange is a subset
+of SourceExtractedRange, representing the range of timestamps pushed to destination systems.</p>
+<p>The intended mechanism of this state is to update the source range after each iteration of frontfill
+(reading forwards in time), and backfill (reading backwards), as well as handling &quot;streamed&quot; points,
+which may appear at any point in time.</p>
+<p>Once these points are pushed to destinations, the DestinationExtractedRange is updated, this is the range that
+gets synchronized to state-stores.</p>
+<p>On startup, the state can be initialized from one or more systems, and the most conservative number will be used.
+After calling InitExtractedRange from each destination system, FinalizeRangeInit must be called before reading history.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionState.html">BaseExtractionState</a></div>
+    <div class="level2"><span class="xref">HistoryExtractionState</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Cognite.Extractor.StateStorage.IExtractionState.html">IExtractionState</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_Mutex">BaseExtractionState.Mutex</a>
+    </div>
+    <div>
+      <a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_Id">BaseExtractionState.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_DestinationExtractedRange">BaseExtractionState.DestinationExtractedRange</a>
+    </div>
+    <div>
+      <a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_LastTimeModified">BaseExtractionState.LastTimeModified</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.Extractor.html">Extractor</a>.<a class="xref" href="Cognite.Extractor.StateStorage.html">StateStorage</a></h6>
+  <h6><strong>Assembly</strong>: Cognite.StateStorage.dll</h6>
+  <h5 id="Cognite_Extractor_StateStorage_HistoryExtractionState_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class HistoryExtractionState : BaseExtractionState, IExtractionState</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState__ctor_System_String_System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.%23ctor(System.String%2CSystem.Boolean%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L61">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState__ctor_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.#ctor*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState__ctor_System_String_System_Boolean_System_Boolean_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.#ctor(System.String,System.Boolean,System.Boolean)">HistoryExtractionState(string, bool, bool)</h4>
+  <div class="markdown level1 summary"><p>Create an extraction state with given id.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HistoryExtractionState(string id, bool frontfill = false, bool backfill = false)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Unique id of extraction state</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">frontfill</span></td>
+        <td><p>True if this state will be frontfilled</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">backfill</span></td>
+        <td><p>True if this state will be backfilled</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_BackfillEnabled.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.BackfillEnabled%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L39">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_BackfillEnabled_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.BackfillEnabled*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_BackfillEnabled" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.BackfillEnabled">BackfillEnabled</h4>
+  <div class="markdown level1 summary"><p>True if this state has backfill enabled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool BackfillEnabled { get; protected set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_FrontfillEnabled.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.FrontfillEnabled%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L43">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_FrontfillEnabled_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.FrontfillEnabled*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_FrontfillEnabled" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.FrontfillEnabled">FrontfillEnabled</h4>
+  <div class="markdown level1 summary"><p>True if this state has frontfill enabled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool FrontfillEnabled { get; protected set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_IsBackfilling.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.IsBackfilling%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L48">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_IsBackfilling_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.IsBackfilling*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_IsBackfilling" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.IsBackfilling">IsBackfilling</h4>
+  <div class="markdown level1 summary"><p>True if state is actively backfilling, or should start.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsBackfilling { get; protected set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_IsFrontfilling.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.IsFrontfilling%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L53">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_IsFrontfilling_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.IsFrontfilling*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_IsFrontfilling" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.IsFrontfilling">IsFrontfilling</h4>
+  <div class="markdown level1 summary"><p>True if state is actively frontfilling, or should start.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsFrontfilling { get; protected set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_SourceExtractedRange.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.SourceExtractedRange%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L34">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_SourceExtractedRange_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.SourceExtractedRange*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_SourceExtractedRange" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.SourceExtractedRange">SourceExtractedRange</h4>
+  <div class="markdown level1 summary"><p>Range of data extracted from source system</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeRange SourceExtractedRange { get; protected set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_FinalizeRangeInit.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.FinalizeRangeInit%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L95">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_FinalizeRangeInit_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.FinalizeRangeInit*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_FinalizeRangeInit" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.FinalizeRangeInit">FinalizeRangeInit()</h4>
+  <div class="markdown level1 summary"><p>Called after range initialization to set uninitialized ranges to proper default values depending on whether
+backfill is enabled or not.</p>
+<p>This means that uninitialized ranges (ranges that are complete after contracting), are set to
+(now, now) unless only frontfill is enabled, in which case it is set to (epoch, epoch).</p>
+<p>Either way, SourceExtractedRange is set equal to DestinationExtractedRange, to start extracting from history.</p>
+<p>If the destination range starts at epoch, backfilling is considered to be done.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void FinalizeRangeInit()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_InitExtractedRange_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.InitExtractedRange(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L77">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_InitExtractedRange_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.InitExtractedRange*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_InitExtractedRange_System_DateTime_System_DateTime_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.InitExtractedRange(System.DateTime,System.DateTime)">InitExtractedRange(DateTime, DateTime)</h4>
+  <div class="markdown level1 summary"><p>Called when initializing extracted range from destinations and state storage.
+This will always contract the believed range.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void InitExtractedRange(DateTime first, DateTime last)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">first</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">last</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_InitExtractedRange_System_DateTime_System_DateTime_">BaseExtractionState.InitExtractedRange(DateTime, DateTime)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_RestartHistory.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.RestartHistory%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L225">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_RestartHistory_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.RestartHistory*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_RestartHistory" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.RestartHistory">RestartHistory()</h4>
+  <div class="markdown level1 summary"><p>Restart history by reseting the source range to the destination range,
+and resetting IsFrontfilling and IsBackfilling based on FrontfillEnabled and BackfillEnabled,
+as well as the destination range.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void RestartHistory()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateDestinationRange_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateDestinationRange(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L191">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateDestinationRange_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateDestinationRange*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateDestinationRange_System_DateTime_System_DateTime_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateDestinationRange(System.DateTime,System.DateTime)">UpdateDestinationRange(DateTime, DateTime)</h4>
+  <div class="markdown level1 summary"><p>Update the state with first and last points successfully pushed to destination(s).
+If backfill/frontfill is enabled, this will not extend the destination range outside of the
+first/last point in the source range.
+If backfill is enabled and done, and first is at or before the earliest extracted point,
+the destination range start will be set to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void UpdateDestinationRange(DateTime first, DateTime last)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">first</span></td>
+        <td><p>Earliest timestamp in successful push to destination(s)</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">last</span></td>
+        <td><p>Latest timestamp in successful push to destination(s)</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Cognite.Extractor.StateStorage.BaseExtractionState.html#Cognite_Extractor_StateStorage_BaseExtractionState_UpdateDestinationRange_System_DateTime_System_DateTime_">BaseExtractionState.UpdateDestinationRange(DateTime, DateTime)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromBackfill_System_DateTime_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromBackfill(System.DateTime%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L125">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromBackfill_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromBackfill*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromBackfill_System_DateTime_System_Boolean_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromBackfill(System.DateTime,System.Boolean)">UpdateFromBackfill(DateTime, bool)</h4>
+  <div class="markdown level1 summary"><p>Update start of source range from history backfill. If <code class="paramref">final</code> is true, IsBackfilling is set to false.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void UpdateFromBackfill(DateTime first, bool final)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">first</span></td>
+        <td><p>Earliest timestamp in backfilled chunk</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">final</span></td>
+        <td><p>True if this is the end of history</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromFrontfill_System_DateTime_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromFrontfill(System.DateTime%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L143">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromFrontfill_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromFrontfill*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromFrontfill_System_DateTime_System_Boolean_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromFrontfill(System.DateTime,System.Boolean)">UpdateFromFrontfill(DateTime, bool)</h4>
+  <div class="markdown level1 summary"><p>Update end of source range from history frontfill. If <code class="paramref">final</code> is true, IsFrontfilling is set to false.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void UpdateFromFrontfill(DateTime last, bool final)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">last</span></td>
+        <td><p>Last timestamp in frontfilled chunk</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">final</span></td>
+        <td><p>True if this is the end of history</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromStream_System_DateTime_System_DateTime_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromStream(System.DateTime%2CSystem.DateTime)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L162">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromStream_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromStream*"></a>
+  <h4 id="Cognite_Extractor_StateStorage_HistoryExtractionState_UpdateFromStream_System_DateTime_System_DateTime_" data-uid="Cognite.Extractor.StateStorage.HistoryExtractionState.UpdateFromStream(System.DateTime,System.DateTime)">UpdateFromStream(DateTime, DateTime)</h4>
+  <div class="markdown level1 summary"><p>Update source range from streamed points.
+Streamed data may come from anywhere. If backfill/frontfill is running,
+only points after/before the first/last timestamp are considered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void UpdateFromStream(DateTime first, DateTime last)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">first</span></td>
+        <td><p>First timestamp in streamed chunk</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">last</span></td>
+        <td><p>Last timestamp in streamed chunk</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Cognite.Extractor.StateStorage.IExtractionState.html">IExtractionState</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_StateStorage_HistoryExtractionState.md&amp;value=---%0Auid%3A%20Cognite.Extractor.StateStorage.HistoryExtractionState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.StateStorage/HistoryExtractionState.cs/#L29" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
