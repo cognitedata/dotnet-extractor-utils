@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
-using Cognite.Extractor.Common;
-using Xunit.Sdk;
 using Cognite.Extensions;
-using CogniteSdk;
-using Xunit.Abstractions;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.Testing;
+using CogniteSdk;
+using Xunit;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace ExtractorUtils.Test.Unit
 {
-    public class ChunkingTest : ConsoleWrapper
+    public class ChunkingTest
     {
-        public ChunkingTest(ITestOutputHelper output) : base(output)
+        private readonly ITestOutputHelper _output;
+        public ChunkingTest(ITestOutputHelper output)
         {
+            _output = output;
         }
 
         [Fact]
@@ -26,14 +28,15 @@ namespace ExtractorUtils.Test.Unit
             var token = CancellationToken.None;
             var taskNum = 0;
             var generators = Enumerable.Range(1, 5).Select<int, Func<Task>>(
-                i => async () => {
-                    Console.Out.WriteLine($"Starting {i}");
+                (i) => async () =>
+                {
+                    _output.WriteLine($"Starting {i}");
                     await Task.Delay(i * 100, token);
-                    Console.Out.WriteLine($"Completed {i}");
+                    _output.WriteLine($"Completed {i}");
                     completed.Add(i);
                 });
 
-            Action<Task> taskDone = (task) => { Console.Out.WriteLine($"Task completed {++taskNum}: {task.Id} - {task.Status}"); };
+            void taskDone(Task task) { _output.WriteLine($"Task completed {++taskNum}: {task.Id} - {task.Status}"); }
             await generators.RunThrottled(2, taskDone, token);
             Assert.Equal(5, completed.Count);
             Assert.Equal(15, completed.Sum());
@@ -45,19 +48,21 @@ namespace ExtractorUtils.Test.Unit
             var completed = new List<int>();
             var token = CancellationToken.None;
             var generators = Enumerable.Range(1, 5).Select<int, Func<Task>>(
-                i => async () => {
-                    Console.Out.WriteLine($"Starting {i}");
+                i => async () =>
+                {
+                    _output.WriteLine($"Starting {i}");
                     await Task.Delay(i * 100, token);
                     if (i == 3)
                     {
                         throw new Exception("Failed on 3!!!");
                     }
-                    Console.Out.WriteLine($"Completed {i}");
+                    _output.WriteLine($"Completed {i}");
                     completed.Add(i);
                 });
 
             await Assert.ThrowsAsync<Exception>(
-                async () => {
+                async () =>
+                {
                     await generators.RunThrottled(2, token);
                     await Task.Delay(2000);
                 }
@@ -77,7 +82,7 @@ namespace ExtractorUtils.Test.Unit
         public void TestEnumerableChunkBy(int chunkSize, int datapoints)
         {
             var left = datapoints % chunkSize;
-            var numChunks = datapoints/chunkSize + (left > 0 ? 1 : 0);
+            var numChunks = datapoints / chunkSize + (left > 0 ? 1 : 0);
             Datapoint[] dps = new Datapoint[datapoints];
             for (int i = 0; i < datapoints; i++)
             {

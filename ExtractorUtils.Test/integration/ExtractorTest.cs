@@ -1,15 +1,15 @@
-﻿using Cognite.Extensions;
-using Cognite.Extractor.Testing;
-using Cognite.Extractor.Utils;
-using CogniteSdk;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Utils;
+using CogniteSdk;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -43,8 +43,7 @@ namespace ExtractorUtils.Test.Integration
             TableName = $"{_prefix}-test-table";
             CreateEventQueue(10, TimeSpan.FromSeconds(1), null);
             CreateTimeseriesQueue(10, TimeSpan.FromSeconds(1), null);
-            CreateRawQueue<TestRawItem>(DBName, TableName, 
-                10, TimeSpan.FromSeconds(1), null);
+            CreateRawQueue<TestRawItem>(DBName, TableName, 10, TimeSpan.FromSeconds(1), null);
 
             TSId = $"{_prefix}-test-db";
 
@@ -88,7 +87,7 @@ namespace ExtractorUtils.Test.Integration
             ScheduleDatapointsRun("datapoints", TimeSpan.FromMilliseconds(100), token =>
             {
                 var dp = (Identity.Create(TSId), new Datapoint(DateTime.UtcNow, Math.Sin(DateTime.UtcNow.Ticks)));
-                return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new [] { dp });
+                return Task.FromResult<IEnumerable<(Identity, Datapoint)>>(new[] { dp });
             });
         }
 
@@ -145,10 +144,10 @@ namespace ExtractorUtils.Test.Integration
         }
     }
 
-    public class ExtractorTest : ConsoleWrapper
+    public class ExtractorTest
     {
         private readonly ITestOutputHelper _output;
-        public ExtractorTest(ITestOutputHelper output) : base(output)
+        public ExtractorTest(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -160,7 +159,7 @@ namespace ExtractorUtils.Test.Integration
             var config = CDFTester.GetConfig(CogniteHost.BlueField);
 
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            Random random = new Random();
+            Random random = new();
             var prefix = "net-utils-test-" + new string(Enumerable.Repeat(chars, 5)
               .Select(s => s[random.Next(s.Length)]).ToArray());
 
@@ -236,7 +235,7 @@ namespace ExtractorUtils.Test.Integration
 
                 Assert.True(eventsOk && timeseriesOk && rawOk, $"{eventsOk}, {rawOk}, {timeseriesOk}");
 
-               
+
             }
             finally
             {
@@ -246,7 +245,7 @@ namespace ExtractorUtils.Test.Integration
                 System.IO.File.Delete(configPath);
                 Assert.True(task.IsCompleted);
             }
-            
+
         }
 
         [Theory]
