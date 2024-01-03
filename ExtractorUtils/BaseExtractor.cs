@@ -1,14 +1,14 @@
-﻿using Cognite.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extractor.Utils
@@ -179,7 +179,7 @@ namespace Cognite.Extractor.Utils
                 }
             }
         }
-        
+
         /// <summary>
         /// Method called to add high availability to an extractor.
         /// </summary>
@@ -195,7 +195,7 @@ namespace Cognite.Extractor.Utils
             var highAvailabilityManager = HighAvailabilityUtils
                 .CreateHighAvailabilityManager(config, Provider, Scheduler, Source, interval, inactivityThreshold);
 
-            if (highAvailabilityManager != null) 
+            if (highAvailabilityManager != null)
             {
                 await highAvailabilityManager.WaitToBecomeActive().ConfigureAwait(false);
             }
@@ -464,7 +464,7 @@ namespace Cognite.Extractor.Utils
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Failed to dispose of extractor: ", ex.Message);
+                _logger?.LogError(ex, "Failed to dispose of extractor: {}", ex.Message);
             }
             Dispose(false);
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
