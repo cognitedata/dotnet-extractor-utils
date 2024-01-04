@@ -62,7 +62,7 @@ jobs:
       run: dotnet tool update -g docfx
 
     - name: Build documentation
-      run: docfx docfx_project/docfx.json --property SolutionDir=$(pwd)
+      run: docfx docfx_project/docfx.json
 
     - name: Deploy documentation to github pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
