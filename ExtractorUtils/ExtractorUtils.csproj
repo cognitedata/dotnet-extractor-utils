@@ -43,8 +43,6 @@
     <Folder Include="config\" />
   </ItemGroup>
   <ItemGroup Condition="'$(BuildWithCert)' != 'True'">
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>ExtractorUtils.Test</_Parameter1>
-    </AssemblyAttribute>
+	<InternalsVisibleTo Include="ExtractorUtils.Test" Key="0024000004800000940000000602000000240000525341310004000001000100bde6ca813c4cc0cf79be8182f864b5337c00d71150f6ff8919d75f8a3402c0577d344b12a1b44e0d626ab4e3f1e94bdb74cdcd1fffa66a33eba89bb2a2c87e2aa0f8948263335ff452e78f8a9861a7d00bdba043edbe554779742c82781d9d11eead3d9fcef5dcfaa0c73caeab1212e46bbbfdb31181b9a141e9a0fc93a4a3ca" />
   </ItemGroup>
 </Project>
