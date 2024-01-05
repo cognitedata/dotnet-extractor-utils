@@ -22,7 +22,10 @@
       ],
       "dest": "api",
       "disableGitFeatures": false,
-      "disableDefaultFilter": false
+      "disableDefaultFilter": false,
+      "properties": {
+        "SolutionDir": ".."
+      }
     }
   ],
   "build": {

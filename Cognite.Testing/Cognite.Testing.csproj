@@ -19,12 +19,13 @@
     <IsPackable>true</IsPackable>
     <IsTestProject>false</IsTestProject>
     <AssemblyOriginatorKeyFile>$(SolutionDir)/strong_name.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>True</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\LICENSE" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="xunit.assert" Version="2.6.4" />
     <PackageReference Include="xunit.core" Version="2.6.4" />
