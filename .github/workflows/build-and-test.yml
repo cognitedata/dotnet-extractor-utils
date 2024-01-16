@@ -22,14 +22,14 @@ jobs:
     - name: Build
       run: dotnet build --configuration Debug --no-restore
     - name: Unit Test
-      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ /p:SolutionDir=$(pwd) --filter ExtractorUtils.Test.Unit. ./ExtractorUtils.Test/
+      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ --filter ExtractorUtils.Test.Unit. ./ExtractorUtils.Test/
       if: ${{ github.event == 'pull_request' && github.base_ref == 'refs/heads/integration' }}
     - name: Start Redis
       uses: supercharge/redis-github-action@ea9b21c6ecece47bd99595c532e481390ea0f044 # 1.8.0
       with:
         redis-version: 5
     - name: Test
-      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ /p:SolutionDir=$(pwd) ./ExtractorUtils.Test/
+      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
       if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
       env:
         TEST_PROJECT: "extractor-tests"
@@ -44,6 +44,9 @@ jobs:
         BF_TEST_CLIENT_ID: ${{ secrets.BF_TEST_CLIENT_ID }}
         BF_TEST_TENANT: ${{ secrets.BF_TEST_TENANT }}
         BF_TEST_SECRET: ${{ secrets.BF_TEST_SECRET }}
+        KEYVAULT_CLIENT_ID: ${{ secrets.KEYVAULT_CLIENT_ID }}
+        KEYVAULT_CLIENT_SECRET: ${{ secrets.KEYVAULT_CLIENT_SECRET }}
+        KEYVAULT_TENANT_ID: ${{ secrets.KEYVAULT_TENANT_ID }}
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3

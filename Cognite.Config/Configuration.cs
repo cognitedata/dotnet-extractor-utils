@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using Cognite.Common;
 using Cognite.Extractor.Common;
+using Cognite.Extractor.KeyVault;
 using Microsoft.Extensions.DependencyInjection;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
@@ -27,13 +28,17 @@ namespace Cognite.Extractor.Configuration
         private static DeserializerBuilder builder = new DeserializerBuilder()
             .WithNamingConvention(HyphenatedNamingConvention.Instance)
             .WithTypeConverter(new ListOrStringConverter())
-            .WithNodeDeserializer(new TemplatedValueDeserializer());
+            .WithTagMapping("!keyvault", typeof(object))
+            .WithNodeDeserializer(new TemplatedValueDeserializer())
+            .WithTypeConverter(new YamlEnumConverter());
         private static IDeserializer deserializer = builder
             .Build();
         private static DeserializerBuilder ignoreUnmatchedBuilder = new DeserializerBuilder()
             .WithNamingConvention(HyphenatedNamingConvention.Instance)
             .WithNodeDeserializer(new TemplatedValueDeserializer())
+            .WithTagMapping("!keyvault", typeof(object))
             .WithTypeConverter(new ListOrStringConverter())
+            .WithTypeConverter(new YamlEnumConverter())
             .IgnoreUnmatchedProperties();
 
         private static bool ignoreUnmatchedProperties;
@@ -165,6 +170,18 @@ namespace Cognite.Extractor.Configuration
             return config;
         }
 
+        private static void Rebuild()
+        {
+            if (ignoreUnmatchedProperties)
+            {
+                deserializer = ignoreUnmatchedBuilder.Build();
+            }
+            else
+            {
+                deserializer = builder.Build();
+            }
+        }
+
         /// <summary>
         /// Maps the given tag to the type T.
         /// Mapping is only required for custom tags.
@@ -174,17 +191,10 @@ namespace Cognite.Extractor.Configuration
         public static void AddTagMapping<T>(string tag)
         {
             builder = builder.WithTagMapping(tag, typeof(T));
-            ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
             lock (_deserializerLock)
             {
-                if (ignoreUnmatchedProperties)
-                {
-                    deserializer = ignoreUnmatchedBuilder.Build();
-                }
-                else
-                {
-                    deserializer = builder.Build();
-                }
+                ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
+                Rebuild();
             }
         }
 
@@ -196,7 +206,7 @@ namespace Cognite.Extractor.Configuration
             ignoreUnmatchedProperties = true;
             lock (_deserializerLock)
             {
-                deserializer = ignoreUnmatchedBuilder.Build();
+                Rebuild();
             }
         }
 
@@ -208,7 +218,23 @@ namespace Cognite.Extractor.Configuration
             ignoreUnmatchedProperties = false;
             lock (_deserializerLock)
             {
-                deserializer = builder.Build();
+                Rebuild();
+            }
+        }
+
+        /// <summary>
+        /// Add key vault support to the config loader, given a key vault config.
+        /// </summary>
+        /// <param name="config"></param>
+        public static void AddKeyVault(KeyVaultConfig config)
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+
+            lock (_deserializerLock)
+            {
+                config.AddKeyVault(builder);
+                config.AddKeyVault(ignoreUnmatchedBuilder);
+                Rebuild();
             }
         }
 
@@ -506,6 +532,49 @@ namespace Cognite.Extractor.Configuration
                 emitter.Emit(new Scalar(AnchorName.Empty, TagName.Empty, elem, ScalarStyle.DoubleQuoted, false, true));
             }
             emitter.Emit(new SequenceEnd());
+        }
+    }
+
+    internal class YamlEnumConverter : IYamlTypeConverter
+    {
+        public bool Accepts(Type type)
+        {
+            return type.IsEnum || (Nullable.GetUnderlyingType(type)?.IsEnum ?? false);
+        }
+
+        public object? ReadYaml(IParser parser, Type type)
+        {
+            var scalar = parser.Consume<Scalar>();
+
+            if (scalar.Value == null)
+            {
+                if (Nullable.GetUnderlyingType(type) != null)
+                {
+                    return null;
+                }
+                throw new YamlException($"Failed to deserialize null value to enum {type.Name}");
+            }
+
+            type = Nullable.GetUnderlyingType(type) ?? type;
+
+            var values = type.GetMembers()
+                .Select(m => (m.GetCustomAttributes<EnumMemberAttribute>(true).Select(f => f.Value).FirstOrDefault(), m))
+                .Where(pair => !string.IsNullOrEmpty(pair.Item1))
+                .ToDictionary(pair => pair.Item1!, pair => pair.m);
+
+            if (values.TryGetValue(scalar.Value, out var enumMember))
+            {
+                return Enum.Parse(type, enumMember.Name);
+            }
+            return Enum.Parse(type, scalar.Value);
+        }
+
+        public void WriteYaml(IEmitter emitter, object? value, Type type)
+        {
+            if (value == null) return;
+            var member = type.GetMember(value.ToString() ?? "").FirstOrDefault();
+            var stringValue = member?.GetCustomAttributes<EnumMemberAttribute>(true)?.Select(f => f.Value)?.FirstOrDefault() ?? value.ToString();
+            emitter.Emit(new Scalar(AnchorName.Empty, TagName.Empty, stringValue!, ScalarStyle.DoubleQuoted, false, true));
         }
     }
 }
