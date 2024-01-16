@@ -67,11 +67,11 @@ namespace ExtractorUtils.Test.Unit
             services.AddSingleton<AuthenticatorConfig>(config.Cognite.IdpAuthentication);
             services.AddTestLogging(_output);
             services.AddHttpClient<IAuthenticator, Authenticator>();
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var auth = provider.GetRequiredService<IAuthenticator>();
                 var token = await auth.GetToken();
                 Assert.Equal("token0", token);
-                await Task.Delay(100);
                 token = await auth.GetToken(); // same token
                 Assert.Equal("token0", token);
                 await Task.Delay(2000); // token expired
@@ -84,7 +84,7 @@ namespace ExtractorUtils.Test.Unit
             // Verify that the authentication endpoint was called 3 times
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
+                    "SendAsync",
                     Times.Exactly(3),
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
@@ -185,11 +185,13 @@ namespace ExtractorUtils.Test.Unit
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
-                
-                Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> createFunction = 
-                    (ids) => {
+
+                Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> createFunction =
+                    (ids) =>
+                    {
                         var toCreate = new List<TimeSeriesCreate>();
                         foreach (var id in ids)
                         {
@@ -276,7 +278,8 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 Func<IEnumerable<string>, IEnumerable<AssetCreate>> createFunction =
-                    (ids) => {
+                    (ids) =>
+                    {
                         var toCreate = new List<AssetCreate>();
                         foreach (var id in ids)
                         {
