@@ -41,7 +41,8 @@ namespace Cognite.Extractor.KeyVault
         /// <summary>
         /// Azure key vault name.
         /// </summary>
-        public string? VaultName { get; set; }
+        [YamlMember(Alias = "keyvault-name")]
+        public string? KeyVaultName { get; set; }
         /// <summary>
         /// Azure tenant ID.
         /// </summary>
@@ -76,7 +77,7 @@ namespace Cognite.Extractor.KeyVault
             }
             else if (AuthenticationMethod == KeyVaultAuthenticationMethod.ClientSecret)
             {
-                if (string.IsNullOrWhiteSpace(VaultName)) throw new ConfigurationException("Missing KeyVault vault name");
+                if (string.IsNullOrWhiteSpace(KeyvaultName)) throw new ConfigurationException("Missing KeyVault vault name");
                 if (string.IsNullOrWhiteSpace(TenantId)) throw new ConfigurationException("Missing KeyVault tenant ID");
                 if (string.IsNullOrWhiteSpace(ClientId)) throw new ConfigurationException("Missing KeyVault client ID");
                 if (string.IsNullOrWhiteSpace(Secret)) throw new ConfigurationException("Missing KeyVault client secret");
@@ -91,7 +92,7 @@ namespace Cognite.Extractor.KeyVault
             if (credentials == null) throw new ConfigurationException("Missing authentication-method in KeyVault config");
 
             _client = new SecretClient(
-                new Uri($"https://{VaultName}.vault.azure.net"),
+                new Uri($"https://{KeyvaultName}.vault.azure.net"),
                 credentials
             );
             return _client;

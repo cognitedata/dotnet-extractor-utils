@@ -277,7 +277,7 @@ namespace ExtractorUtils.Test.Unit
                 "baz: !keyvault test-secret",
                 "key-vault:",
                 "    authentication-method: client-secret",
-                "    vault-name: extractor-keyvault",
+                "    keyvault-name: extractor-keyvault",
                 "    tenant-id: ${KEYVAULT_TENANT_ID}",
                 "    client-id: ${KEYVAULT_CLIENT_ID}",
                 "    secret: ${KEYVAULT_CLIENT_SECRET}"
