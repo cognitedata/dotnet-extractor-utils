@@ -18,7 +18,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
     <IsTestProject>false</IsTestProject>
-    <AssemblyOriginatorKeyFile>$(SolutionDir)/strong_name.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>../strong_name.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>True</SignAssembly>
   </PropertyGroup>
 

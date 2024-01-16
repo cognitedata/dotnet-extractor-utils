@@ -9,7 +9,6 @@ using Cognite.Extractor.Common;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO;
 using System.Threading;
 
 namespace Cognite.Extractor.Utils
@@ -20,6 +19,21 @@ namespace Cognite.Extractor.Utils
     /// </summary>
     public static class ConfigurationExtensions
     {
+        internal class KeyVaultConfigWrapper : VersionedConfig
+        {
+            public override void GenerateDefaults()
+            {
+            }
+        }
+
+        private static void TryAddKeyVault(string path)
+        {
+            var keyVaultConfig = ConfigurationUtils.TryReadConfigFromFile<KeyVaultConfigWrapper>(path, true);
+            if (keyVaultConfig.KeyVault != null)
+            {
+                ConfigurationUtils.AddKeyVault(keyVaultConfig.KeyVault);
+            }
+        }
 
         /// <summary>
         /// Read the config of type <typeparamref name="T"/> from the yaml file in <paramref name="path"/>
@@ -38,6 +52,7 @@ namespace Cognite.Extractor.Utils
                                         string path,
                                         params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
+            TryAddKeyVault(path);
             var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
             services.AddConfig<T>(config,
@@ -69,6 +84,7 @@ namespace Cognite.Extractor.Utils
                                         Type[] types,
                                         params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
+            TryAddKeyVault(path);
             var config = ConfigurationUtils.TryReadConfigFromFile<T>(path, acceptedConfigVersions);
             services.AddSingleton<T>(config);
             services.AddConfig<T>(config, types);
@@ -124,18 +140,23 @@ namespace Cognite.Extractor.Utils
 
             if (types != null) configTypes = configTypes.Concat(types).Distinct().ToArray();
 
+            if (path != null)
+            {
+                TryAddKeyVault(path);
+            }
+
             if (remoteConfig == null)
             {
                 if (path == null) throw new ConfigurationException("No config object specified, config file path is required");
-                ConfigurationUtils.IgnoreUnmatchedProperties();
-                remoteConfig = ConfigurationUtils.TryReadConfigFromFile<RemoteConfig>(path, null);
-                ConfigurationUtils.DisallowUnmatchedProperties();
+                remoteConfig = ConfigurationUtils.TryReadConfigFromFile<RemoteConfig>(path, true, null);
 
+#pragma warning disable CA1062 // Validate arguments of public methods: bizarre false positive
                 if (remoteConfig.Type == ConfigurationMode.Local)
                 {
                     services.AddSingleton<RemoteConfigManager<T>>(provider => null!);
                     return services.AddConfig<T>(path, configTypes, acceptedConfigVersions);
                 }
+#pragma warning restore CA1062 // Validate arguments of public methods
 
                 // Try read config again, to get checking of unmatched properties.
                 remoteConfig = ConfigurationUtils.TryReadConfigFromFile<RemoteConfig>(path, null);

@@ -3,7 +3,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
-	<AssemblyOriginatorKeyFile>$(SolutionDir)/strong_name.snk</AssemblyOriginatorKeyFile>
+	<AssemblyOriginatorKeyFile>../strong_name.snk</AssemblyOriginatorKeyFile>
 	<SignAssembly>True</SignAssembly>
   </PropertyGroup>
   <ItemGroup>

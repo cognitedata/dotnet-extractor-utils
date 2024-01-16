@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using Cognite.Common;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Configuration;
@@ -15,11 +17,16 @@ using Xunit;
 namespace ExtractorUtils.Test.Unit
 {
 #pragma warning disable CA1812
-    class TestConfig
+    class TestConfig : VersionedConfig
 #pragma warning restore CA1812
     {
         public string Foo { get; set; } = "";
         public int Bar { get; set; }
+        public string Baz { get; set; }
+
+        public override void GenerateDefaults()
+        {
+        }
     }
 
     class TestBaseConfig : BaseConfig
@@ -34,6 +41,13 @@ namespace ExtractorUtils.Test.Unit
             if (Foo == null) Foo = "";
             if (Bar == null) Bar = "default";
         }
+    }
+
+    enum TestEnum
+    {
+        [EnumMember(Value = "not-foo-at-all")]
+        Foo,
+        Bar,
     }
 
     public static class ConfigurationTest
@@ -254,6 +268,30 @@ namespace ExtractorUtils.Test.Unit
             File.Delete(path3);
         }
 
+        [Fact]
+        public static void TestKeyVault()
+        {
+            var lines = new[] {
+                "version: 1",
+                "foo: !keyvault test-id",
+                "baz: !keyvault test-secret",
+                "key-vault:",
+                "    authentication-method: client-secret",
+                "    keyvault-name: extractor-keyvault",
+                "    tenant-id: ${KEYVAULT_TENANT_ID}",
+                "    client-id: ${KEYVAULT_CLIENT_ID}",
+                "    secret: ${KEYVAULT_CLIENT_SECRET}"
+            };
+            string path = "test-keyvault-config.yml";
+
+            File.WriteAllLines(path, lines);
+            var services = new ServiceCollection();
+            var res = ConfigurationExtensions.AddConfig<TestConfig>(services, path);
+
+            Assert.Equal("12345", res.Foo);
+            Assert.Equal("abcde", res.Baz);
+        }
+
         public class ExtendedCogniteConfig : CogniteConfig
         {
             public int DataSetId { get; set; }
@@ -402,6 +440,16 @@ custom-config:
     some-value: Some Value
 version: 1
 ", str);
+        }
+
+        [Fact]
+        public static void TestEnumConversion()
+        {
+            Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("not-foo-at-all"));
+            Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("foo"));
+            Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("FOO"));
+            Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("Foo"));
+            Assert.Equal(TestEnum.Bar, ConfigurationUtils.ReadString<TestEnum>("bar"));
         }
     }
 }
