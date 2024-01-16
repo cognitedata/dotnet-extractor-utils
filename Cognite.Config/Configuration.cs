@@ -40,6 +40,8 @@ namespace Cognite.Extractor.Configuration
             .WithTypeConverter(new ListOrStringConverter())
             .WithTypeConverter(new YamlEnumConverter())
             .IgnoreUnmatchedProperties();
+        private static IDeserializer ignoreUnmatchedDeserializer = ignoreUnmatchedBuilder.Build();
+        private static IDeserializer failOnUnmatchedDeserializer = builder.Build();
 
         private static bool ignoreUnmatchedProperties;
 
@@ -50,16 +52,17 @@ namespace Cognite.Extractor.Configuration
         /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
         /// </summary>
         /// <param name="yaml">Yaml string to parse</param>
+        /// <param name="ignoreUnmatched">Set to true to ignore unmatched properties</param>
         /// <typeparam name="T">Type to read to</typeparam>
         /// <returns>Object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown in case of yaml parsing errors, with an inner <see cref="YamlException"/></exception>
-        public static T ReadString<T>(string yaml)
+        public static T ReadString<T>(string yaml, bool ignoreUnmatched = false)
         {
             try
             {
                 lock (_deserializerLock)
                 {
-                    return deserializer.Deserialize<T>(yaml);
+                    return GetDeserializer(ignoreUnmatched).Deserialize<T>(yaml);
                 }
             }
             catch (YamlException ye)
@@ -68,16 +71,24 @@ namespace Cognite.Extractor.Configuration
             }
         }
 
+        private static IDeserializer GetDeserializer(bool? ignoreUnmatched)
+        {
+            if (ignoreUnmatched == null) return deserializer;
+
+            return ignoreUnmatched.Value ? ignoreUnmatchedDeserializer : failOnUnmatchedDeserializer;
+        }
+
         /// <summary>
         /// Reads the yaml file found in the provided path and deserializes it to an object of type <typeparamref name="T"/> 
         /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
         /// </summary>
         /// <param name="path">String containing the path to a yaml file</param>
+        /// <param name="ignoreUnmatched">Set to true to ignore unmatched properties</param>
         /// <typeparam name="T">Type to read to</typeparam>
         /// <returns>Object of type <typeparamref name="T"/></returns>
         /// <exception cref="ConfigurationException">Thrown in case of yaml parsing errors, with an inner <see cref="YamlException"/>.
         /// Or in case the config file is not found, with an inner <see cref="FileNotFoundException"/></exception>
-        public static T Read<T>(string path)
+        public static T Read<T>(string path, bool? ignoreUnmatched = null)
         {
             try
             {
@@ -85,7 +96,7 @@ namespace Cognite.Extractor.Configuration
                 {
                     lock (_deserializerLock)
                     {
-                        return deserializer.Deserialize<T>(reader);
+                        return GetDeserializer(ignoreUnmatched).Deserialize<T>(reader);
                     }
                 }
             }
@@ -170,15 +181,65 @@ namespace Cognite.Extractor.Configuration
             return config;
         }
 
+        /// <summary>
+        /// Try to read a configuration object of type <typeparamref name="T"/> from the provided <paramref name="yaml"/>
+        /// string. Matching the configuration object version with the versions provided in <paramref name="acceptedConfigVersions"/>.
+        /// Also calls GenerateDefaults() on the retrieved configuration object after reading.
+        /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
+        /// </summary>
+        /// <param name="yaml">String containing a yaml configuration</param>
+        /// <param name="ignoreUnmatched">Set to true to ignore unmatched properties</param>
+        /// <param name="acceptedConfigVersions">Accepted versions</param>
+        /// <typeparam name="T">A type that inherits from <see cref="VersionedConfig"/></typeparam>
+        /// <returns>A configuration object of type <typeparamref name="T"/></returns>
+        /// <exception cref="ConfigurationException">Thrown when the version is not valid or
+        /// in case of yaml parsing errors.</exception>
+        public static T TryReadConfigFromString<T>(string yaml, bool ignoreUnmatched, params int[]? acceptedConfigVersions) where T : VersionedConfig
+        {
+            int configVersion = GetVersionFromString(yaml);
+            CheckVersion(configVersion, acceptedConfigVersions);
+
+            var config = ReadString<T>(yaml);
+            config.GenerateDefaults();
+            return config;
+        }
+
+        /// <summary>
+        /// Try to read a configuration object of type <typeparamref name="T"/> from the yaml file located in
+        /// the provided <paramref name="path"/>. Matching the configuration object version with the versions 
+        /// provided in <paramref name="acceptedConfigVersions"/>.
+        /// Also calls GenerateDefaults() on the retrieved configuration object after reading.
+        /// Values containing ${ENV_VARIABLE} will be replaced by the environment variable of the same name.
+        /// </summary>
+        /// <param name="path">Path to the yaml file</param>
+        /// <param name="ignoreUnmatched">Set to true to ignore unmatched properties</param>
+        /// <param name="acceptedConfigVersions">Accepted versions</param>
+        /// <typeparam name="T">A type that inherits from <see cref="VersionedConfig"/></typeparam>
+        /// <returns>A configuration object of type <typeparamref name="T"/></returns>
+        /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
+        /// the yaml file is not found or in case of yaml parsing error.</exception>
+        public static T TryReadConfigFromFile<T>(string path, bool ignoreUnmatched, params int[]? acceptedConfigVersions) where T : VersionedConfig
+        {
+            int configVersion = GetVersionFromFile(path);
+            CheckVersion(configVersion, acceptedConfigVersions);
+
+            var config = Read<T>(path);
+            config.GenerateDefaults();
+            return config;
+        }
+
         private static void Rebuild()
         {
+            ignoreUnmatchedDeserializer = ignoreUnmatchedBuilder.Build();
+            failOnUnmatchedDeserializer = builder.Build();
+
             if (ignoreUnmatchedProperties)
             {
-                deserializer = ignoreUnmatchedBuilder.Build();
+                deserializer = ignoreUnmatchedDeserializer;
             }
             else
             {
-                deserializer = builder.Build();
+                deserializer = failOnUnmatchedDeserializer;
             }
         }
 

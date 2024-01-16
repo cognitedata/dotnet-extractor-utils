@@ -28,18 +28,10 @@ namespace Cognite.Extractor.Utils
 
         private static void TryAddKeyVault(string path)
         {
-            ConfigurationUtils.IgnoreUnmatchedProperties();
-            try
+            var keyVaultConfig = ConfigurationUtils.TryReadConfigFromFile<KeyVaultConfigWrapper>(path, true);
+            if (keyVaultConfig.KeyVault != null)
             {
-                var keyVaultConfig = ConfigurationUtils.TryReadConfigFromFile<KeyVaultConfigWrapper>(path);
-                if (keyVaultConfig.KeyVault != null)
-                {
-                    ConfigurationUtils.AddKeyVault(keyVaultConfig.KeyVault);
-                }
-            }
-            finally
-            {
-                ConfigurationUtils.DisallowUnmatchedProperties();
+                ConfigurationUtils.AddKeyVault(keyVaultConfig.KeyVault);
             }
         }
 
@@ -156,15 +148,7 @@ namespace Cognite.Extractor.Utils
             if (remoteConfig == null)
             {
                 if (path == null) throw new ConfigurationException("No config object specified, config file path is required");
-                ConfigurationUtils.IgnoreUnmatchedProperties();
-                try
-                {
-                    remoteConfig = ConfigurationUtils.TryReadConfigFromFile<RemoteConfig>(path, null);
-                }
-                finally
-                {
-                    ConfigurationUtils.DisallowUnmatchedProperties();
-                }
+                remoteConfig = ConfigurationUtils.TryReadConfigFromFile<RemoteConfig>(path, true, null);
 
 #pragma warning disable CA1062 // Validate arguments of public methods: bizarre false positive
                 if (remoteConfig.Type == ConfigurationMode.Local)
