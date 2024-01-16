@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using Cognite.Common;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Configuration;
@@ -39,6 +41,13 @@ namespace ExtractorUtils.Test.Unit
             if (Foo == null) Foo = "";
             if (Bar == null) Bar = "default";
         }
+    }
+
+    enum TestEnum
+    {
+        [EnumMember(Value = "not-foo-at-all")]
+        Foo,
+        Bar,
     }
 
     public static class ConfigurationTest
@@ -431,6 +440,16 @@ custom-config:
     some-value: Some Value
 version: 1
 ", str);
+        }
+
+        [Fact]
+        public static void TestEnumConversion()
+        {
+            Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("not-foo-at-all"));
+            Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("foo"));
+            Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("FOO"));
+            Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("Foo"));
+            Assert.Equal(TestEnum.Bar, ConfigurationUtils.ReadString<TestEnum>("bar"));
         }
     }
 }

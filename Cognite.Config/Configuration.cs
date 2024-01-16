@@ -564,9 +564,9 @@ namespace Cognite.Extractor.Configuration
 
             if (values.TryGetValue(scalar.Value, out var enumMember))
             {
-                return Enum.Parse(type, enumMember.Name);
+                return Enum.Parse(type, enumMember.Name, true);
             }
-            return Enum.Parse(type, scalar.Value);
+            return Enum.Parse(type, scalar.Value, true);
         }
 
         public void WriteYaml(IEmitter emitter, object? value, Type type)
