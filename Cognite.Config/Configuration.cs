@@ -199,7 +199,7 @@ namespace Cognite.Extractor.Configuration
             int configVersion = GetVersionFromString(yaml);
             CheckVersion(configVersion, acceptedConfigVersions);
 
-            var config = ReadString<T>(yaml);
+            var config = ReadString<T>(yaml, ignoreUnmatched);
             config.GenerateDefaults();
             return config;
         }
@@ -223,7 +223,7 @@ namespace Cognite.Extractor.Configuration
             int configVersion = GetVersionFromFile(path);
             CheckVersion(configVersion, acceptedConfigVersions);
 
-            var config = Read<T>(path);
+            var config = Read<T>(path, ignoreUnmatched);
             config.GenerateDefaults();
             return config;
         }
