@@ -3,9 +3,11 @@ using Cognite.Extensions.DataModels.QueryBuilder;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
+using CogniteSdk;
 using CogniteSdk.Beta.DataModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
@@ -103,9 +105,25 @@ namespace ExtractorUtils.Test
                 }, Source.Token);
                 if (edges.Items.Any())
                 {
-                    await Destination.CogniteClient.Beta.DataModels.DeleteInstances(
-                        edges.Items.Select(e => new InstanceIdentifier(InstanceType.edge, space, e.ExternalId)),
-                        Source.Token);
+                    int i = 0;
+                    while (true)
+                    {
+                        try
+                        {
+                            await Destination.CogniteClient.Beta.DataModels.DeleteInstances(
+                                edges.Items.Select(e => new InstanceIdentifier(InstanceType.edge, e.Space, e.ExternalId)),
+                                Source.Token);
+                            break;
+                        }
+                        catch
+                        {
+                            if (i++ == 5)
+                            {
+                                throw;
+                            }
+                            await Task.Delay(500);
+                        }
+                    }
                 }
                 cursor = edges.NextCursor;
             } while (cursor != null);
@@ -124,14 +142,33 @@ namespace ExtractorUtils.Test
                 }, Source.Token);
                 if (nodes.Items.Any())
                 {
-                    await Destination.CogniteClient.Beta.DataModels.DeleteInstances(
-                        nodes.Items.Select(e => new InstanceIdentifier(InstanceType.node, space, e.ExternalId)),
-                        Source.Token);
+                    int i = 0;
+                    while (true)
+                    {
+                        try
+                        {
+                            await Destination.CogniteClient.Beta.DataModels.DeleteInstances(
+                                nodes.Items.Select(e => new InstanceIdentifier(InstanceType.node, e.Space, e.ExternalId)),
+                                Source.Token);
+                            break;
+                        }
+                        catch
+                        {
+                            if (i++ == 5)
+                            {
+                                throw;
+                            }
+                            await Task.Delay(500);
+                        }
+                    }
+
+
                 }
                 cursor = nodes.NextCursor;
             } while (cursor != null);
 
             // Delete space
+
             await Destination.CogniteClient.Beta.DataModels.DeleteSpaces(new[]
             {
                 space
