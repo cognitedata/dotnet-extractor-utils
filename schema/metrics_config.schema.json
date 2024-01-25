@@ -2,40 +2,48 @@
     "$id": "metrics_config.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "description": "Configuration for prometheus metrics destinations.",
+    "description": "Configuration for publishing metrics.",
     "properties": {
         "server": {
             "type": "object",
-            "description": "Configuration for a prometheus scrape server.",
+            "description": "Configuration for having the extractor start a Prometheus scrape server on a local port.",
             "properties": {
                 "host": {
                     "type": "string",
-                    "description": "Host name for the server.",
-                    "examples": ["localhost"]
+                    "description": "Host name for local Prometheus server, must be exposed to some prometheus instance for scraping.",
+                    "examples": [
+                        "localhost",
+                        "0.0.0.0"
+                    ]
                 },
                 "port": {
                     "type": "integer",
-                    "description": "Port to host the prometheus scrape server on"
+                    "description": "The port used for a local Prometheus server."
                 }
             },
-            "required": ["host", "port"],
+            "required": [
+                "host",
+                "port"
+            ],
             "unevaluatedProperties": false
         },
         "push-gateways": {
             "type": "array",
             "uniqueItems": true,
-            "description": "A list of push gateway destinations to push metrics to",
+            "description": "A list of pushgateway destinations to push metrics to. The extractor will automatically push metrics to each of these.",
             "items": {
                 "type": "object",
                 "properties": {
                     "host": {
                         "type": "string",
                         "description": "URI of the pushgateway host",
-                        "examples": ["http://localhost:9091"]
+                        "examples": [
+                            "http://my.pushgateway:9091"
+                        ]
                     },
                     "job": {
                         "type": "string",
-                        "description": "Name of the job"
+                        "description": "Name of the Prometheus pushgateway job."
                     },
                     "username": {
                         "type": "string",
@@ -51,7 +59,10 @@
                         "description": "Interval in seconds between each push to the gateway"
                     }
                 },
-                "required": ["host", "job"],
+                "required": [
+                    "host",
+                    "job"
+                ],
                 "unevaluatedProperties": false
             }
         }

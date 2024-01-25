@@ -1,0 +1,35 @@
+{
+    "$id": "state_store_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "description": "Configure access to an Azure KeyVault instance. If this is configured, you can use the `!keyvault` tag on entries to dynamically replace values with secrets from KeyVault when the configuration is loaded. For example: `secret: !keyvault my-secret`.",
+    "properties": {
+        "keyvault-name": {
+            "type": "string",
+            "description": "Enter the name of the Azure KeyVault to use.",
+            "examples": [
+                "my-keyvault"
+            ]
+        },
+        "authentication-method": {
+            "type": "string",
+            "description": "Method used to authenticate with KeyVault. If this is set to `client-secret`, both `client-id` and `secret` are required."
+        },
+        "tenant-id": {
+            "type": "string",
+            "description": "Enter the Azure tenant containing the KeyVault."
+        },
+        "client-id": {
+            "type": "string",
+            "description": "Client ID of the service principal used to access the KeyVault."
+        },
+        "secret": {
+            "type": "string",
+            "description": "Client secret for the service principal used to access the KeyVault."
+        }
+    },
+    "required": [
+        "tenant-id",
+        "authentication-method"
+    ]
+}

@@ -1,10 +1,14 @@
 {
     "$id": "retry_config.schema.json",
-    "description": "Retry configuration",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "Configuration for retries towards the source.",
     "type": "object",
     "properties": {
         "timeout": {
-            "type": [ "string", "integer" ],
+            "type": [
+                "string",
+                "integer"
+            ],
             "description": "Global timeout. After this much time has passed, new retries will not be created. Set this to zero for no timeout. Syntax is `N[timeUnit]` where `timeUnit` is `d`, `h`, `m`, `s` or `ms`",
             "default": "0s"
         },
@@ -14,12 +18,18 @@
             "default": 5
         },
         "max-delay": {
-            "type": [ "string", "integer" ],
+            "type": [
+                "string",
+                "integer"
+            ],
             "description": "Maximum delay between attempts, incremented using exponential backoff. Set this to 0 for no upper limit. Syntax is `N[timeUnit]` where `timeUnit` is `d`, `h`, `m`, `s` or `ms`",
             "default": "0s"
         },
         "initial-delay": {
-            "type": [ "string", "integer" ],
+            "type": [
+                "string",
+                "integer"
+            ],
             "description": "Initial delay used for exponential backoff. Time between each retry is calculated as `min(max-delay, initial-delay * 2 ^ retry)`, where 0 is treated as infinite for `max-delay`. The maximum delay is about 10 minutes (13 retries). Syntax is `N[timeUnit]` where `timeUnit` is `d`, `h`, `m`, `s` or `ms`",
             "default": "500ms"
         }

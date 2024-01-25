@@ -2,7 +2,7 @@
     "$id": "logger_config.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "description": "Configuration for logging to console or file.",
+    "description": "Configuration for logging to console or file. Log entries are either `Fatal`, `Error`, `Warning`, `Information`, `Debug`, or `Verbose`, in order of decreasing priority. The extractor will log any messages at an equal or higher log level than the configured level for each sink.",
     "properties": {
         "console": {
             "type": "object",
@@ -10,16 +10,32 @@
             "properties": {
                 "level": {
                     "type": "string",
-                    "description": "Minimum level of log events to write to the console.",
-                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                    "description": "Minimum level of log events to write to the console. If not present, or invalid, logging to console is disabled.",
+                    "enum": [
+                        "verbose",
+                        "debug",
+                        "information",
+                        "warning",
+                        "error",
+                        "fatal"
+                    ]
                 },
                 "stderr-level": {
                     "type": "string",
                     "description": "Log events at this level or above are redirected to standard error.",
-                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                    "enum": [
+                        "verbose",
+                        "debug",
+                        "information",
+                        "warning",
+                        "error",
+                        "fatal"
+                    ]
                 }
             },
-            "required": ["level"],
+            "required": [
+                "level"
+            ],
             "unevaluatedProperties": false
         },
         "file": {
@@ -29,7 +45,14 @@
                 "level": {
                     "type": "string",
                     "description": "Minimum level of log events to write to file.",
-                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"]
+                    "enum": [
+                        "verbose",
+                        "debug",
+                        "information",
+                        "warning",
+                        "error",
+                        "fatal"
+                    ]
                 },
                 "path": {
                     "type": "string",
@@ -43,12 +66,18 @@
                 },
                 "rolling-interval": {
                     "type": "string",
-                    "enum": ["day", "hour"],
+                    "enum": [
+                        "day",
+                        "hour"
+                    ],
                     "description": "Rolling interval for log files. Either `day` or `hour`",
                     "default": "day"
                 }
             },
-            "required": ["level", "path"],
+            "required": [
+                "level",
+                "path"
+            ],
             "unevaluatedProperties": false
         },
         "trace-listener": {
@@ -57,11 +86,20 @@
             "properties": {
                 "level": {
                     "type": "string",
-                    "enum": ["verbose", "debug", "information", "warning", "error", "fatal"],
+                    "enum": [
+                        "verbose",
+                        "debug",
+                        "information",
+                        "warning",
+                        "error",
+                        "fatal"
+                    ],
                     "description": "Level to output trace messages at"
                 }
             },
-            "required": ["level"],
+            "required": [
+                "level"
+            ],
             "unevaluatedProperties": false
         }
     }
