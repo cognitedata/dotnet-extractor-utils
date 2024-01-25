@@ -70,7 +70,7 @@
                         "day",
                         "hour"
                     ],
-                    "description": "Rolling interval for log files. Either `day` or `hour`",
+                    "description": "Rolling interval for log files.",
                     "default": "day"
                 }
             },
