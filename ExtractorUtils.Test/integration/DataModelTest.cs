@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ExtractorUtils.Test.integration
+namespace ExtractorUtils.Test.Integration
 {
     public class DataModelTest : IClassFixture<DataModelTestFixture>
     {
