@@ -395,10 +395,50 @@ namespace Cognite.Extractor.Utils
         {
             if (points == null || !points.Any()) return new CogniteResult<DataPointInsertError>(null);
 
-            _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series", 
+            _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series",
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
             return await DataPointExtensions.InsertAsync(
+                _client,
+                points,
+                _config.CdfChunking.DataPointTimeSeries,
+                _config.CdfChunking.DataPoints,
+                _config.CdfThrottling.DataPoints,
+                _config.CdfChunking.TimeSeries,
+                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.DataPointsGzipLimit,
+                sanitationMode,
+                retryMode,
+                _config.NanReplacement,
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// ALPHA: Insert the provided data points into CDF. The data points are chunked
+        /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the
+        /// <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
+        /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
+        /// 
+        /// On error, the offending timeseries/datapoints can optionally be removed.
+        /// 
+        /// This version includes alpha support for status codes.
+        /// </summary>
+        /// <param name="points">Data points</param>
+        /// <param name="sanitationMode"></param>
+        /// <param name="retryMode"></param>
+        /// <param name="token">Cancellation token</param>
+        public async Task<CogniteResult<DataPointInsertError>> AlphaInsertDataPointsAsync(
+            IDictionary<Identity, IEnumerable<Datapoint>>? points,
+            SanitationMode sanitationMode,
+            RetryMode retryMode,
+            CancellationToken token)
+        {
+            if (points == null || !points.Any()) return new CogniteResult<DataPointInsertError>(null);
+
+            _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series",
+                points.Values.Select(dp => dp.Count()).Sum(),
+                points.Keys.Count);
+            return await Extensions.Alpha.DataPointExtensions.InsertAsync(
                 _client,
                 points,
                 _config.CdfChunking.DataPointTimeSeries,
@@ -450,6 +490,44 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
+        /// ALPHA: Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+        /// and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
+        /// they are created before the points are inserted again.
+        /// 
+        /// This version includes alpha support for status codes.
+        /// </summary>
+        /// <param name="points">Datapoints to insert</param>
+        /// <param name="sanitationMode">How to sanitize datapoints</param>
+        /// <param name="retryMode">How to handle retries</param>
+        /// <param name="dataSetId">Optional data set id</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Results with a list of errors. If TimeSeriesResult is null, no timeseries were attempted created.</returns>
+        public async Task<(CogniteResult<DataPointInsertError> DataPointResult, CogniteResult<TimeSeries, TimeSeriesCreate>? TimeSeriesResult)> AlphaInsertDataPointsCreateMissingAsync(
+            IDictionary<Identity, IEnumerable<Datapoint>>? points,
+            SanitationMode sanitationMode,
+            RetryMode retryMode,
+            long? dataSetId,
+            CancellationToken token)
+        {
+            if (points == null || !points.Any()) return (new CogniteResult<DataPointInsertError>(null), null);
+
+            return await Extensions.Alpha.DataPointExtensions.InsertAsyncCreateMissing(
+                _client,
+                points,
+                _config.CdfChunking.DataPointTimeSeries,
+                _config.CdfChunking.DataPoints,
+                _config.CdfThrottling.DataPoints,
+                _config.CdfChunking.TimeSeries,
+                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.DataPointsGzipLimit,
+                sanitationMode,
+                retryMode,
+                _config.NanReplacement,
+                dataSetId,
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
         /// and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
         /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 
@@ -466,7 +544,7 @@ namespace Cognite.Extractor.Utils
             {
                 return new DeleteError(new List<Identity>(), new List<Identity>());
             }
-            _logger.LogDebug("Deleting data points in CDF for {NumberTs} time series", 
+            _logger.LogDebug("Deleting data points in CDF for {NumberTs} time series",
                 ranges.Keys.Count);
             var errors = await _client.DataPoints.DeleteIgnoreErrorsAsync(
                 ranges,
@@ -475,7 +553,7 @@ namespace Cognite.Extractor.Utils
                 _config.CdfThrottling.DataPoints,
                 _config.CdfThrottling.DataPoints,
                 token).ConfigureAwait(false);
-            _logger.LogDebug("During deletion, {NumMissing} ids where not found and {NumNotConfirmed} range deletions could not be confirmed", 
+            _logger.LogDebug("During deletion, {NumMissing} ids where not found and {NumNotConfirmed} range deletions could not be confirmed",
                 errors.IdsNotFound.Count(), errors.IdsDeleteNotConfirmed.Count());
             return errors;
         }
@@ -533,8 +611,8 @@ namespace Cognite.Extractor.Utils
         /// <typeparam name="T">DTO type</typeparam>
         /// <returns>Task</returns>
         public async Task InsertRawRowsAsync<T>(
-            string database, 
-            string table, 
+            string database,
+            string table,
             IDictionary<string, T>? rows,
             CancellationToken token)
         {
@@ -542,7 +620,7 @@ namespace Cognite.Extractor.Utils
             {
                 return;
             }
-            _logger.LogDebug("Uploading {Number} rows to CDF Raw. Database: {Db}. Table: {Table}", 
+            _logger.LogDebug("Uploading {Number} rows to CDF Raw. Database: {Db}. Table: {Table}",
                 rows.Count,
                 database,
                 table);
