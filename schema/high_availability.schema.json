@@ -2,49 +2,68 @@
     "$id": "high_availability.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "description": "Configuration to allow you to run multiple redundant extractors. Each extractor needs a unique index.",
+    "description": "Configuration for running the extractor with a rudimentary form of redundancy. Multiple extractors on different machines are on standby, with one actively extracting from the source. Each extractor must have a unique `index`.",
     "properties": {
         "index": {
             "type": "integer",
-            "description": "Unique index of this extractor. Each redundant extractor must have a unique index",
+            "description": "Unique index of this extractor. Indices must be unique, or high availability will not work correctly.",
             "minimum": 0
         },
         "raw": {
             "type": "object",
-            "description": "Configuration to use Raw as backend for high availability",
+            "description": "Use the CDF staging area as a shared store for the extractor. This configuration must be the same for each redundant extractor.",
             "properties": {
                 "database-name": {
                     "type": "string",
-                    "description": "Raw database to store high availability states in"
+                    "description": "Name of the database in CDF."
                 },
                 "table-name": {
                     "type": "string",
-                    "description": "Raw table to store high availability states in"
+                    "description": "Name of the table in CDF."
                 }
             },
-            "required": ["database-name", "table-name"],
+            "required": [
+                "database-name",
+                "table-name"
+            ],
             "unevaluatedProperties": false
         },
         "redis": {
             "type": "object",
-            "description": "Configuration to use a Redis store as backend for high availability",
+            "description": "Use a redis store as shared state for the extractor. This configuration must be the same for each redundant extractor.",
             "properties": {
                 "connection-string": {
                     "type": "string",
-                    "description": "Connection string to connect to redis instance"
+                    "description": "Redis connection string.",
+                    "examples": [
+                        "HOST_NAME:PORT_NUMBER,password=PASSWORD"
+                    ]
                 },
                 "table-name": {
                     "type": "string",
-                    "description": "Redis table name to store high availability states in"
+                    "description": "Redis table name."
                 }
             },
-            "required": ["connection-string", "table-name"],
+            "required": [
+                "connection-string",
+                "table-name"
+            ],
             "unevaluatedProperties": false
         }
     },
     "oneOf": [
-        { "required": ["raw"] },
-        { "required": ["redis"] }
+        {
+            "required": [
+                "raw"
+            ]
+        },
+        {
+            "required": [
+                "redis"
+            ]
+        }
     ],
-    "required": ["index"]
+    "required": [
+        "index"
+    ]
 }

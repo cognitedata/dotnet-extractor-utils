@@ -2,18 +2,24 @@
     "$id": "state_store_config.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "description": "Store state in a local database or in CDF raw to start the extractor more efficiently",
+    "description": "Use a local LiteDb database or a set of tables in CDF RAW to store persistent information between runs. This can be used to avoid loading large volumes of data from CDF on startup, which can greatly speed up the extractor.",
     "properties": {
         "location": {
             "type": "string",
-            "description": "Path to .db file, or name of raw database containing buffer."
+            "description": "Path to .db file used for storage, or name of a CDF RAW database."
         },
         "database": {
             "type": "string",
-            "enum": ["None", "LiteDb", "Raw"],
+            "enum": [
+                "None",
+                "LiteDb",
+                "Raw"
+            ],
             "default": "None",
             "description": "Which type of database to use."
         }
     },
-    "required": ["location"]
+    "required": [
+        "location"
+    ]
 }

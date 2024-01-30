@@ -6,63 +6,67 @@
     "properties": {
         "project": {
             "type": "string",
-            "description": "CDF project to connect to"
+            "description": "CDF project to connect to."
         },
         "idp-authentication": {
             "type": "object",
-            "description": "Configure authentication using OIDC tokens",
+            "description": "The `idp-authentication` section enables the extractor to authenticate to CDF using an external identity provider (IdP), such as Microsoft Entra ID (formerly Azure Active Directory).\nSee [OAuth 2.0 client credentials flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-client-creds-grant-flow)",
             "properties": {
-                "implementation": {
-                    "type": "string",
-                    "enum": [
-                        "MSAL",
-                        "Basic"
-                    ],
-                    "default": "MSAL",
-                    "description": "Implementation. Either using the MSAL library, or a custom authenticator. This is deprecated, and no longer does anything.",
-                    "deprecated": true
-                },
                 "authority": {
                     "type": "string",
                     "default": "https://login.microsoftonline.com/",
-                    "description": "Authority using together with `tenant` to authenticate against azure tenants."
+                    "description": "AInsert the authority together with `tenant` to authenticate against Azure tenants."
                 },
                 "client-id": {
                     "type": "string",
-                    "description": "Service principal client id."
+                    "description": "Enter the service principal client id from the IdP."
                 },
                 "tenant": {
                     "type": "string",
-                    "description": "Azure tenant"
+                    "description": "Enter the Azure tenant."
                 },
                 "token-url": {
                     "type": "string",
-                    "description": "URL used to obtain tokens given client credentials."
+                    "description": "Insert the URL to fetch tokens from."
                 },
                 "secret": {
                     "type": "string",
-                    "description": "Service principal client secret"
+                    "description": "Enter the service principal client secret from the IdP."
                 },
                 "resource": {
                     "type": "string",
-                    "description": "Resource parameter passed along with request"
-                },
-                "scopes": {
-                    "type": "array",
-                    "description": "A list of scopes requested for the token",
-                    "items": {
-                        "type": "string",
-                        "description": "A scope requested for the token"
-                    }
+                    "description": "Resource parameter passed along with token requests."
                 },
                 "audience": {
                     "type": "string",
-                    "description": "Audience parameter passed along with request"
+                    "description": "Audience parameter passed along with token requests."
+                },
+                "scopes": {
+                    "oneOf": [
+                        {
+                            "type": "array",
+                            "description": "Enter a list of scopes requested for the token",
+                            "items": {
+                                "type": "string",
+                                "description": "A scope requested for the token",
+                                "examples": [
+                                    "https://api.cognitedata.com/.default"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "string",
+                            "description": "Enter a space separated list of scopes requested for the token",
+                            "examples": [
+                                "https://api.cognitedata.com/.default"
+                            ]
+                        }
+                    ]
                 },
                 "min-ttl": {
                     "type": "integer",
                     "default": 30,
-                    "description": "Requested minimum time-to-live in seconds for the token"
+                    "description": "Insert the minimum time in seconds a token will be valid. If the cached token expires in less than `min-ttl` seconds, it will be refreshed even if it is still valid."
                 },
                 "certificate": {
                     "type": "object",
@@ -78,11 +82,11 @@
                         },
                         "path": {
                             "type": "string",
-                            "description": "Path to the .pem or .pfx certificate to be used for authentication"
+                            "description": "Enter the path to the .pem or .pfx certificate to be used for authentication"
                         },
                         "password": {
                             "type": "string",
-                            "description": "Certificate password"
+                            "description": "Enter the password for the key file, if it is encrypted."
                         }
                     }
                 }
@@ -114,7 +118,7 @@
         "host": {
             "type": "string",
             "default": "https://api.cognitedata.com",
-            "description": "Cognite service URL."
+            "description": "Insert the base URL of the CDF project."
         },
         "cdf-retries": {
             "type": "object",
@@ -123,17 +127,17 @@
                 "timeout": {
                     "type": "integer",
                     "default": 80000,
-                    "description": "Timeout in milliseconds for each individual try"
+                    "description": "Timeout in milliseconds for each individual request to CDF."
                 },
                 "max-retries": {
                     "type": "integer",
                     "default": 5,
-                    "description": "Maximum number of retries, less than 0 retries forever"
+                    "description": "Maximum number of retries on requests to CDF. If this is less than 0, retry forever."
                 },
                 "max-delay": {
                     "type": "integer",
                     "default": 5000,
-                    "description": "Max delay in milliseconds between each try. Base delay is calculated according to 125*2^retry milliseconds. If less than 0, there is no maximum."
+                    "description": "Max delay in milliseconds between each retry. Base delay is calculated according to 125*2^retry milliseconds. If less than 0, there is no maximum."
                 }
             },
             "unevaluatedProperties": false
@@ -145,114 +149,149 @@
                 "time-series": {
                     "type": "integer",
                     "default": 1000,
-                    "description": "Maximum number of timeseries per get/create timeseries request"
+                    "description": "Maximum number of timeseries per get/create timeseries request",
+                    "max": 1000,
+                    "min": 1
                 },
                 "assets": {
                     "type": "integer",
                     "default": 1000,
-                    "description": "Maximum number of assets per get/create assets request"
+                    "description": "Maximum number of assets per get/create assets request",
+                    "max": 1000,
+                    "min": 1
                 },
                 "data-point-time-series": {
                     "type": "integer",
                     "default": 10000,
-                    "description": "Maximum number of timeseries per datapoint create request"
+                    "description": "Maximum number of timeseries per datapoint create request",
+                    "max": 10000,
+                    "min": 1
                 },
                 "data-point-delete": {
                     "type": "integer",
                     "default": 10000,
-                    "description": "Maximum number of ranges per delete datapoints request"
+                    "description": "Maximum number of ranges per delete datapoints request",
+                    "max": 10000,
+                    "min": 1
                 },
                 "data-point-list": {
                     "type": "integer",
                     "default": 100,
-                    "description": "Maximum number of timeseries per datapoint read request. Used when getting the first point in a timeseries."
+                    "description": "Maximum number of timeseries per datapoint read request. Used when getting the first point in a timeseries.",
+                    "max": 100,
+                    "min": 1
                 },
                 "data-points": {
                     "type": "integer",
                     "default": 100000,
-                    "description": "Maximum number of datapoints per datapoints create request"
+                    "description": "Maximum number of datapoints per datapoints create request",
+                    "max": 100000,
+                    "min": 1
                 },
                 "data-points-gzip-limit": {
                     "type": "integer",
                     "default": 5000,
-                    "description": "Minimum number of datapoints in request to switch to using gzip. Set to -1 to disable, and 0 to always enable (not recommended). The minimum HTTP packet size is generally 1500 bytes, so this should never be set below 100 for numeric datapoints. Even for larger packages gzip is efficient enough that packages are compressed below 1500 bytes. At 5000 it is always a performance gain. It can be set lower if bandwidth is a major issue"
+                    "description": "Minimum number of datapoints in request to switch to using gzip. Set to -1 to disable, and 0 to always enable (not recommended). The minimum HTTP packet size is generally 1500 bytes, so this should never be set below 100 for numeric datapoints. Even for larger packages gzip is efficient enough that packages are compressed below 1500 bytes. At 5000 it is always a performance gain. It can be set lower if bandwidth is a major issue",
+                    "max": 100000,
+                    "min": 1
                 },
                 "raw-rows": {
                     "type": "integer",
                     "default": 10000,
-                    "description": "Maximum number of rows per request to cdf raw"
+                    "description": "Maximum number of rows per request to cdf raw",
+                    "max": 10000,
+                    "min": 1
                 },
                 "raw-rows-delete": {
                     "type": "integer",
                     "default": 1000,
-                    "description": "Maximum number of row keys per delete request to raw"
+                    "description": "Maximum number of row keys per delete request to raw",
+                    "max": 1000,
+                    "min": 1
                 },
                 "data-point-latest": {
                     "type": "integer",
                     "default": 100,
-                    "description": "Maximum number of timeseries per datapoint read latest request"
+                    "description": "Maximum number of timeseries per datapoint read latest request",
+                    "max": 100,
+                    "min": 1
                 },
                 "events": {
                     "type": "integer",
                     "default": 1000,
-                    "description": "Maximum number of events per get/create events request"
+                    "description": "Maximum number of events per get/create events request",
+                    "max": 1000,
+                    "min": 1
                 },
                 "sequences": {
                     "type": "integer",
                     "default": 1000,
-                    "description": "Maximum number of sequences per get/create sequences request"
+                    "description": "Maximum number of sequences per get/create sequences request",
+                    "max": 1000,
+                    "min": 1
                 },
                 "sequence-row-sequences": {
                     "type": "integer",
                     "default": 1000,
-                    "description": "Maximum number of sequences per create sequence rows request"
+                    "description": "Maximum number of sequences per create sequence rows request",
+                    "max": 1000,
+                    "min": 1
                 },
                 "sequence-rows": {
                     "type": "integer",
                     "default": 10000,
-                    "description": "Maximum number of sequence rows per sequence when creating rows"
+                    "description": "Maximum number of sequence rows per sequence when creating rows",
+                    "max": 10000,
+                    "min": 1
                 }
             },
             "unevaluatedProperties": false
         },
         "cdf-throttling": {
             "type": "object",
-            "description": "Configure how requests to CDF should be throttled",
+            "description": "Configure the maximum number of parallel requests for different CDF resources.",
             "properties": {
                 "time-series": {
                     "type": "integer",
                     "default": 20,
-                    "description": "Maximum number of parallel requests per timeseries operation"
+                    "description": "Maximum number of parallel requests per timeseries operation",
+                    "min": 1
                 },
                 "assets": {
                     "type": "integer",
                     "default": 20,
-                    "description": "Maximum number of parallel requests per assets operation"
+                    "description": "Maximum number of parallel requests per assets operation",
+                    "min": 1
                 },
                 "data-points": {
                     "type": "integer",
                     "default": 10,
-                    "description": "Maximum number of parallel requests per datapoints operation"
+                    "description": "Maximum number of parallel requests per datapoints operation",
+                    "min": 1
                 },
                 "raw": {
                     "type": "integer",
                     "default": 10,
-                    "description": "Maximum number of parallel requests per raw operation"
+                    "description": "Maximum number of parallel requests per raw operation",
+                    "min": 1
                 },
                 "ranges": {
                     "type": "integer",
                     "default": 20,
-                    "description": "Maximum number of parallel requests per get first/last datapoint operation"
+                    "description": "Maximum number of parallel requests per get first/last datapoint operation",
+                    "min": 1
                 },
                 "events": {
                     "type": "integer",
                     "default": 20,
-                    "description": "Maximum number of parallel requests per events operation"
+                    "description": "Maximum number of parallel requests per events operation",
+                    "min": 1
                 },
                 "sequences": {
                     "type": "integer",
-                    "default": 20,
-                    "description": "Maximum number of parallel requests per sequences operation"
+                    "default": 10,
+                    "description": "Maximum number of parallel requests per sequences operation",
+                    "min": 1
                 }
             },
             "unevaluatedProperties": false
@@ -292,20 +331,15 @@
                 "number",
                 "null"
             ],
-            "description": "Replacement for NaN values when writing to CDF."
+            "description": "Replacement for NaN values when writing to CDF. If left out, NaN values are skipped."
         },
         "extraction-pipeline": {
             "type": "object",
             "description": "Configure an associated extraction pipeline",
             "properties": {
-                "pipeline-id": {
-                    "type": "string",
-                    "deprecated": true,
-                    "description": "ExternalId of the extraction pipeline, deprecated in favor of ExternalId"
-                },
                 "external-id": {
                     "type": "string",
-                    "description": "ExternalId of the extraction pipeline"
+                    "description": "External ID of the extraction pipeline"
                 },
                 "frequency": {
                     "type": "integer",

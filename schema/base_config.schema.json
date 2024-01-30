@@ -10,7 +10,10 @@
         },
         "type": {
             "type": "string",
-            "enum": ["local", "remote"],
+            "enum": [
+                "local",
+                "remote"
+            ],
             "default": "local",
             "description": "Configuration file type. Either `local`, meaning the full config is loaded from this file, or `remote`, which means that only the `cognite` section is loaded from this file, and the rest is loaded from extraction pipelines."
         },
@@ -29,7 +32,13 @@
         "state-store": {
             "$ref": "state_store_config.schema.json",
             "unevaluatedProperties": false
+        },
+        "key-vault": {
+            "$ref": "key_vault_config.schema.json",
+            "unevaluatedProperties": false
         }
     },
-    "required": ["version"]
+    "required": [
+        "version"
+    ]
 }
