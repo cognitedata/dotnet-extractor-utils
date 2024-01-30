@@ -24,6 +24,86 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Alpha.DataPointExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Alpha.DataPointExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Alpha.InvalidStatusCodeException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Alpha.InvalidStatusCodeException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Alpha.Limit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Alpha.Limit.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Alpha.Severity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Alpha.Severity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Alpha.StatusCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Alpha.StatusCode.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Alpha.StatusCodeCategory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Alpha.StatusCodeCategory.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Alpha.ValueType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Alpha.ValueType.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Alpha.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Alpha.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.ApiUtils.yml",
       "output": {
         ".html": {
