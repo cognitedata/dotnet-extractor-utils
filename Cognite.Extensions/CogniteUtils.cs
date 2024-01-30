@@ -14,6 +14,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using Com.Cognite.V1.Timeseries.Proto.Alpha;
+using Cognite.Extensions.Alpha;
 
 namespace Cognite.Extensions
 {
@@ -26,12 +28,12 @@ namespace Cognite.Extensions
         /// Cognite min double value
         /// </summary>
         public const double NumericValueMin = -1e+100;
-        
+
         /// <summary>
         /// Cognite max double value
         /// </summary>
         public const double NumericValueMax = 1e+100;
-        
+
         /// <summary>
         /// Cognite max string length
         /// </summary>
@@ -256,7 +258,7 @@ namespace Cognite.Extensions
                     total++;
                     dps.Add(dp);
                 }
-                
+
                 if (!ret.TryGetValue(id, out var datapoints))
                 {
                     ret[id] = dps;
@@ -570,7 +572,7 @@ namespace Cognite.Extensions
                     retry => TimeSpan.FromMilliseconds(Math.Min(125 * Math.Pow(2, Math.Min(retry - 1, numRetries)), delay)),
                     GetRetryHandler(logger));
             }
-                
+
         }
         /// <summary>
         /// Get a polly timeout policy with a timeout set to <paramref name="timeout"/> milliseconds
@@ -611,7 +613,8 @@ namespace Cognite.Extensions
         private readonly long _timestamp;
         private readonly double? _numericValue;
         private readonly string? _stringValue;
-        
+        private readonly StatusCode _statusCode;
+
         /// <summary>
         /// Timestamp in Unix time milliseconds
         /// </summary>
@@ -633,15 +636,23 @@ namespace Cognite.Extensions
         public bool IsString => _numericValue == null;
 
         /// <summary>
+        /// Datapoint status code.
+        /// </summary>
+        public StatusCode Status => _statusCode;
+
+        /// <summary>
         /// Creates a numeric data point
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="numericValue">double value</param>
-        public Datapoint(DateTime timestamp, double numericValue)
+        /// <param name="statusCode">ALPHA: set the data point status code.
+        /// This is only used if the alpha datapoints endpoint is used.</param>
+        public Datapoint(DateTime timestamp, double numericValue, StatusCode? statusCode = null)
         {
             _timestamp = timestamp.ToUnixTimeMilliseconds();
             _numericValue = numericValue;
             _stringValue = null;
+            _statusCode = statusCode ?? new StatusCode(0);
         }
 
         /// <summary>
@@ -654,17 +665,21 @@ namespace Cognite.Extensions
             _timestamp = timestamp.ToUnixTimeMilliseconds();
             _numericValue = null;
             _stringValue = stringValue;
+            _statusCode = new StatusCode(0);
         }
         /// <summary>
         /// Creates a numeric data point
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="numericValue">double value</param>
-        public Datapoint(long timestamp, double numericValue)
+        /// <param name="statusCode">ALPHA: set the data point status code.
+        /// This is only used if the alpha datapoints endpoint is used.</param>
+        public Datapoint(long timestamp, double numericValue, StatusCode? statusCode = null)
         {
             _timestamp = timestamp;
             _numericValue = numericValue;
             _stringValue = null;
+            _statusCode = statusCode ?? new StatusCode(0);
         }
 
         /// <summary>
@@ -677,6 +692,7 @@ namespace Cognite.Extensions
             _timestamp = timestamp;
             _numericValue = null;
             _stringValue = stringValue;
+            _statusCode = new StatusCode(0);
         }
         /// <summary>
         /// Convert datapoint into an array of bytes on the form
@@ -685,7 +701,7 @@ namespace Cognite.Extensions
         /// <returns></returns>
         public byte[] ToStorableBytes()
         {
-            ushort size = sizeof(long) + sizeof(bool);
+            ushort size = sizeof(long) + sizeof(bool) + sizeof(ulong);
 
             byte[] valBytes;
 
@@ -705,6 +721,8 @@ namespace Cognite.Extensions
             pos += sizeof(long);
             Buffer.BlockCopy(BitConverter.GetBytes(IsString), 0, bytes, pos, sizeof(bool));
             pos += sizeof(bool);
+            Buffer.BlockCopy(BitConverter.GetBytes(_statusCode.Code), 0, bytes, pos, sizeof(ulong));
+            pos += sizeof(ulong);
 
             Buffer.BlockCopy(valBytes, 0, bytes, pos, valBytes.Length);
 
@@ -720,12 +738,14 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            var baseBytes = new byte[sizeof(long) + sizeof(bool)];
-            int read = stream.Read(baseBytes, 0, sizeof(long) + sizeof(bool));
-            if (read < sizeof(long) + sizeof(bool)) return null;
+            var readLength = sizeof(long) + sizeof(bool) + sizeof(ulong);
+            var baseBytes = new byte[readLength];
+            int read = stream.Read(baseBytes, 0, readLength);
+            if (read < readLength) return null;
 
             var timestamp = BitConverter.ToInt64(baseBytes, 0);
             var isString = BitConverter.ToBoolean(baseBytes, sizeof(long));
+            var statusCode = BitConverter.ToUInt64(baseBytes, sizeof(long) + sizeof(bool));
 
             if (isString)
             {
@@ -737,7 +757,7 @@ namespace Cognite.Extensions
                 var valueBytes = new byte[sizeof(double)];
                 if (stream.Read(valueBytes, 0, sizeof(double)) < sizeof(double)) return null;
                 double value = BitConverter.ToDouble(valueBytes, 0);
-                return new Datapoint(timestamp, value);
+                return new Datapoint(timestamp, value, new StatusCode(statusCode));
             }
         }
     }
