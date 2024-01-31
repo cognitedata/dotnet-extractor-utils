@@ -49,6 +49,6 @@ jobs:
         KEYVAULT_TENANT_ID: ${{ secrets.KEYVAULT_TENANT_ID }}
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
