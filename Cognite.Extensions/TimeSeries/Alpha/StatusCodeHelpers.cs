@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -156,14 +157,16 @@ namespace Cognite.Extensions.Alpha
     /// </summary>
     public struct StatusCode
     {
+        private ulong _code;
+
         /// <summary>
         /// Status code
         /// </summary>
-        public ulong Code { get; }
+        public ulong Code { get => _code; }
 
         internal StatusCode(ulong code)
         {
-            Code = code;
+            _code = code;
         }
 
         /// <summary>
@@ -270,19 +273,19 @@ namespace Cognite.Extensions.Alpha
         /// <inheritdoc />
         public override readonly bool Equals(object? obj)
         {
-            return obj is StatusCode code && code.Code == Code;
+            return obj is StatusCode code && code.Code == _code;
         }
 
         /// <inheritdoc />
         public override readonly int GetHashCode()
         {
-            return Code.GetHashCode();
+            return _code.GetHashCode();
         }
 
         /// <inheritdoc />
         public override readonly string ToString()
         {
-            if (Code == 0) return "Good";
+            if (_code == 0) return "Good";
             var builder = new StringBuilder();
 
             builder.Append(Category);
@@ -298,57 +301,111 @@ namespace Cognite.Extensions.Alpha
             return builder.ToString();
         }
 
+        private void SetBool(bool value, byte offset)
+        {
+            _code = _code & ~(1ul << offset) | ((value ? 1ul : 0ul) << offset);
+        }
+
+        private readonly bool GetBool(byte offset)
+        {
+            return (_code & (1ul << offset)) != 0;
+        }
+
         /// <summary>
         /// Type of status code.
         /// </summary>
-        public readonly Severity Severity => (Severity)((Code >> 30) & 0b11);
+        public Severity Severity
+        {
+            readonly get => (Severity)((_code >> 30) & 0b11);
+            set => _code = _code & ~StatusCodeHelpers.CATEGORY_MASK | ((((ulong)value) & 0b11) << 30);
+        }
 
         /// <summary>
         /// Structure changed flag.
         /// </summary>
-        public readonly bool StructureChanged => (Code & (1 << 15)) != 0;
+        public bool StructureChanged
+        {
+            readonly get => GetBool(15);
+            set => SetBool(value, 15);
+        }
         /// <summary>
         /// Semantics changed flag.
         /// </summary>
-        public readonly bool SemanticsChanged => (Code & (1 << 14)) != 0;
+        public bool SemanticsChanged
+        {
+            readonly get => GetBool(14);
+            set => SetBool(value, 14);
+        }
 
         /// <summary>
         /// Whether this is a data value info type.
         /// </summary>
-        public readonly bool IsDataValueInfoType => (Code & (1 << 10)) != 0;
+        public bool IsDataValueInfoType
+        {
+            readonly get => GetBool(10);
+            set => SetBool(value, 10);
+        }
 
         /// <summary>
         /// Whether the value is bounded by some limit.
         /// </summary>
-        public readonly Limit Limit => (Limit)((Code >> 8) & 0b11);
+        public Limit Limit
+        {
+            readonly get => (Limit)((_code >> 8) & 0b11);
+            set => _code = _code & ~(0b11ul << 8) | ((((ulong)value) & 0b11) << 8);
+        }
 
         /// <summary>
         /// Status code category.
         /// </summary>
-        public readonly StatusCodeCategory Category => (StatusCodeCategory)(Code & StatusCodeHelpers.CATEGORY_MASK);
+        public StatusCodeCategory Category
+        {
+            readonly get => (StatusCodeCategory)(_code & StatusCodeHelpers.CATEGORY_MASK);
+            set => _code = _code & ~StatusCodeHelpers.CATEGORY_MASK | ((ulong)value) & StatusCodeHelpers.CATEGORY_MASK;
+        }
 
         /// <summary>
         /// Whether the value is overflowed.
         /// </summary>
-        public readonly bool IsOverflow => (Code & (1 << 7)) != 0;
+        public bool IsOverflow
+        {
+            readonly get => GetBool(7);
+            set => SetBool(value, 7);
+        }
 
         /// <summary>
         /// Multi value flag.
         /// </summary>
-        public readonly bool IsMultiValue => (Code & (1 << 4)) != 0;
+        public bool IsMultiValue
+        {
+            readonly get => GetBool(4);
+            set => SetBool(value, 4);
+        }
         /// <summary>
         /// Has extra data flag.
         /// </summary>
-        public readonly bool HasExtraData => (Code & (1 << 3)) != 0;
+        public bool HasExtraData
+        {
+            readonly get => GetBool(3);
+            set => SetBool(value, 3);
+        }
         /// <summary>
         /// Is partial flag.
         /// </summary>
-        public readonly bool IsPartial => (Code & (1 << 2)) != 0;
+        public bool IsPartial
+        {
+            readonly get => GetBool(2);
+            set => SetBool(value, 2);
+        }
 
         /// <summary>
         /// Type of value origin.
         /// </summary>
-        public readonly ValueType ValueType => (ValueType)(Code & 0b11);
+        public ValueType ValueType
+        {
+            readonly get => (ValueType)(_code & 0b11);
+            set => _code = _code & ~0b11ul | ((ulong)value) & 0b11ul;
+        }
     }
 
     /// <summary>
