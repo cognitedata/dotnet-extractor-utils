@@ -317,7 +317,7 @@ namespace Cognite.Extensions.Alpha
         public Severity Severity
         {
             readonly get => (Severity)((_code >> 30) & 0b11);
-            set => _code = _code & ~(0b11ul << 30) | ((((ulong)value) & 0b11) << 30);
+            set => _code = _code & ~StatusCodeHelpers.CATEGORY_MASK | ((((ulong)value) & 0b11) << 30);
         }
 
         /// <summary>
