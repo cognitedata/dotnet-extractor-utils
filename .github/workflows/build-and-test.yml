@@ -61,4 +61,4 @@ jobs:
         with:
           dotnet-version: 7
       - name: Build service manager
-        run: dotnet build ServiceManager
+        run: dotnet build .\ServiceManager\ServiceManager.csproj

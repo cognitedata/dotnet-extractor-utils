@@ -103,7 +103,7 @@ jobs:
         path-to-binary: 'nuget-packages/'
 
     - name: Build service manager
-      run: dotnet publish ServiceManager -c Release
+      run: dotnet publish .\ServiceManager\ServiceManager.csproj -c Release
 
     - name: Sign service manager
       env:
