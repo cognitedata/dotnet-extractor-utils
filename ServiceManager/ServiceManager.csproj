@@ -2,15 +2,17 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <TargetFramework>net4.8</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="7.0.2" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />
+    <Reference Include="System.ServiceProcess" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <ApplicationIcon>Icon\black16x16.ico</ApplicationIcon>
+  </PropertyGroup>
 </Project>

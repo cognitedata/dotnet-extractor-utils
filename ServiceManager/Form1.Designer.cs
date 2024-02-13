@@ -371,7 +371,6 @@ namespace ServiceManager
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Name = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load_1);
             this.panel1.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();

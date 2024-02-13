@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ServiceManager
+﻿namespace ServiceManager
 {
     internal abstract class KnownExtractor
     {
@@ -15,7 +9,7 @@ namespace ServiceManager
         public abstract string ServiceCommand { get; }
         public abstract string WorkingDirFlag { get; }
 
-        public string? FullExePath { get; set; }
+        public string FullExePath { get; set; }
 
         public override string ToString()
         {

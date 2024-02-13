@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Management;
-using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Windows.Forms;
 
@@ -13,7 +11,7 @@ namespace ServiceManager
 {
     public partial class Form1 : Form
     {
-        private List<KnownExtractor> _knownExtractors = null!;
+        private List<KnownExtractor> _knownExtractors;
 
         public Form1()
         {
@@ -48,20 +46,13 @@ namespace ServiceManager
                 }
                 var installFolder = reg.GetValue("InstallFolder");
                 if (installFolder == null) continue;
-                var path = Path.Join(installFolder.ToString(), config.WellKnownExePath);
-                if (!Path.Exists(path)) continue;
+                var path = Path.Combine(installFolder.ToString(), config.WellKnownExePath);
+                if (!File.Exists(path)) continue;
 
                 config.FullExePath = path;
 
                 yield return config;
             }
-        }
-
-        private void Form1_Load_1(object sender, EventArgs e)
-        {
-            
-            
-            
         }
 
         private void ReloadServiceList()
@@ -175,7 +166,7 @@ namespace ServiceManager
             }
             else
             {
-                // Error("Failed to create service:", result);
+                Error("Failed to create service:", result);
             }
 
             ReloadServiceList();

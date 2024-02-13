@@ -23,7 +23,7 @@ namespace ServiceManager
 
             try
             {
-                using (Process? exeProcess = Process.Start(pinfo))
+                using (Process exeProcess = Process.Start(pinfo))
                 {
                     if (exeProcess == null) return $"Failed to run command: {argument}";
 
