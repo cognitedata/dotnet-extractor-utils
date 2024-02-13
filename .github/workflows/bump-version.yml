@@ -102,16 +102,37 @@ jobs:
       with:
         path-to-binary: 'nuget-packages/'
 
+    - name: Build service manager
+      run: dotnet publish ServiceManager -c Release
+
+    - name: Sign service manager
+      env:
+        CERTIFICATE_HOST: ${{ secrets.CODE_SIGNING_CERT_HOST }}
+        CERTIFICATE_HOST_API_KEY: ${{ secrets.CODE_SIGNING_CERT_HOST_API_KEY }}
+        CERTIFICATE_SHA1_HASH: ${{ secrets.CODE_SIGNING_CERT_SHA1_HASH }}
+        CLIENT_CERTIFICATE: ${{ secrets.CODE_SIGNING_CLIENT_CERT }}
+        CLIENT_CERTIFICATE_PASSWORD: ${{ secrets.CODE_SIGNING_CLIENT_CERT_PASSWORD }}
+      uses: cognitedata/code-sign-action@v2
+      with:
+        path-to-binary: .\ServiceManager\bin\Release\net4.8\win-x64\publish\ServiceManager.exe
+
     - name: Push nuget packages
       run: dotnet nuget push .\nuget-packages\*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
       continue-on-error: false
 
-    - name: Create Release
-      uses: actions/create-release@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create tag
+      uses: rickstaa/action-create-tag@v1
+      id: "tag_create"
       with:
+        tag: v${{ needs.build.outputs.version }}
+        tag_exists_error: true
+        message: Release v${{ needs.build.outputs.version }}
+    - name: Upload to github releases
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+            ServiceManager/bin/Release/net4.8/win-x64/publish/ServiceManager.exe
         tag_name: v${{ needs.build.outputs.version }}
-        release_name: Release v${{ needs.build.outputs.version }}
+        name: Release v${{ needs.build.outputs.version }}
         draft: false
         prerelease: false

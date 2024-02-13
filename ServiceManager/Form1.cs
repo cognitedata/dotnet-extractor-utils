@@ -18,6 +18,7 @@ namespace ServiceManager
             InitializeComponent();
             _knownExtractors = FindWellKnownExtractors().ToList();
             PopulateExtractorsDropdown();
+            Icon = Icon.ExtractAssociatedIcon(AppDomain.CurrentDomain.FriendlyName);
         }
 
         private void PopulateExtractorsDropdown()

@@ -52,3 +52,13 @@ jobs:
       uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+  build-win:
+    runs-on: windows-latest
+
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 7
+      - name: Build service manager
+        run: dotnet build ServiceManager
