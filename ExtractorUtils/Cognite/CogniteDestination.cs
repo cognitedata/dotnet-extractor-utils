@@ -414,20 +414,20 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// ALPHA: Insert the provided data points into CDF. The data points are chunked
+        /// BETA: Insert the provided data points into CDF. The data points are chunked
         /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the
         /// <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
         /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
         /// 
         /// On error, the offending timeseries/datapoints can optionally be removed.
         /// 
-        /// This version includes alpha support for status codes.
+        /// This version includes beta support for status codes.
         /// </summary>
         /// <param name="points">Data points</param>
         /// <param name="sanitationMode"></param>
         /// <param name="retryMode"></param>
         /// <param name="token">Cancellation token</param>
-        public async Task<CogniteResult<DataPointInsertError>> AlphaInsertDataPointsAsync(
+        public async Task<CogniteResult<DataPointInsertError>> BetaInsertDataPointsAsync(
             IDictionary<Identity, IEnumerable<Datapoint>>? points,
             SanitationMode sanitationMode,
             RetryMode retryMode,
@@ -438,7 +438,7 @@ namespace Cognite.Extractor.Utils
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series",
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
-            return await Extensions.Alpha.DataPointExtensions.InsertAsync(
+            return await Extensions.Beta.DataPointExtensions.InsertAsync(
                 _client,
                 points,
                 _config.CdfChunking.DataPointTimeSeries,
@@ -490,11 +490,11 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
-        /// ALPHA: Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+        /// BETA: Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
         /// and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
         /// they are created before the points are inserted again.
         /// 
-        /// This version includes alpha support for status codes.
+        /// This version includes beta support for status codes.
         /// </summary>
         /// <param name="points">Datapoints to insert</param>
         /// <param name="sanitationMode">How to sanitize datapoints</param>
@@ -502,7 +502,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="dataSetId">Optional data set id</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Results with a list of errors. If TimeSeriesResult is null, no timeseries were attempted created.</returns>
-        public async Task<(CogniteResult<DataPointInsertError> DataPointResult, CogniteResult<TimeSeries, TimeSeriesCreate>? TimeSeriesResult)> AlphaInsertDataPointsCreateMissingAsync(
+        public async Task<(CogniteResult<DataPointInsertError> DataPointResult, CogniteResult<TimeSeries, TimeSeriesCreate>? TimeSeriesResult)> BetaInsertDataPointsCreateMissingAsync(
             IDictionary<Identity, IEnumerable<Datapoint>>? points,
             SanitationMode sanitationMode,
             RetryMode retryMode,
@@ -511,7 +511,7 @@ namespace Cognite.Extractor.Utils
         {
             if (points == null || !points.Any()) return (new CogniteResult<DataPointInsertError>(null), null);
 
-            return await Extensions.Alpha.DataPointExtensions.InsertAsyncCreateMissing(
+            return await Extensions.Beta.DataPointExtensions.InsertAsyncCreateMissing(
                 _client,
                 points,
                 _config.CdfChunking.DataPointTimeSeries,

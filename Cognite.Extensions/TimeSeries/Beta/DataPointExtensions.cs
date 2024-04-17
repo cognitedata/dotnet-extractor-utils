@@ -1,7 +1,7 @@
 ﻿using Cognite.Extractor.Common;
 using CogniteSdk;
 using CogniteSdk.Resources;
-using Com.Cognite.V1.Timeseries.Proto.Alpha;
+using Com.Cognite.V1.Timeseries.Proto.Beta;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Prometheus;
@@ -16,7 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
 
-namespace Cognite.Extensions.Alpha
+namespace Cognite.Extensions.Beta
 {
     /// <summary>
     /// Extensions to datapoints
@@ -61,14 +61,20 @@ namespace Cognite.Extensions.Alpha
                     .Select(dp => new StringDatapoint
                     {
                         Timestamp = dp.Timestamp,
-                        Value = dp.StringValue
+                        Value = dp.StringValue,
+                        NullValue = dp.StringValue is null,
+                        Status = new Status
+                        {
+                            Code = (long)dp.Status.Code
+                        }
                     });
                 var numericPoints = kvp.Value
                     .Where(dp => dp.NumericValue.HasValue)
                     .Select(dp => new NumericDatapoint
                     {
                         Timestamp = dp.Timestamp,
-                        Value = dp.NumericValue!.Value,
+                        Value = dp.NumericValue ?? 0,
+                        NullValue = dp.NumericValue is null,
                         Status = new Status
                         {
                             Code = (long)dp.Status.Code
@@ -289,14 +295,14 @@ namespace Cognite.Extensions.Alpha
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.Alpha.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            await client.Beta.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
                         }
                     }
                     else
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.Alpha.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            await client.Beta.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
                         }
                     }
 
@@ -358,7 +364,7 @@ namespace Cognite.Extensions.Alpha
         /// <param name="token">Cancelation token</param>
         /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
         public static async Task<DeleteError> DeleteIgnoreErrorsAsync(
-            this AlphaDataPointsResource dataPoints,
+            this BetaDataPointsResource dataPoints,
             IDictionary<Identity, IEnumerable<TimeRange>> ranges,
             int deleteChunkSize,
             int listChunkSize,
@@ -419,7 +425,7 @@ namespace Cognite.Extensions.Alpha
         }
 
         private static async Task<HashSet<Identity>> DeleteDataPointsIgnoreErrorsChunk(
-            AlphaDataPointsResource dataPoints,
+            BetaDataPointsResource dataPoints,
             IEnumerable<IdentityWithRange> chunks,
             CancellationToken token)
         {
@@ -459,7 +465,7 @@ namespace Cognite.Extensions.Alpha
         /// <param name="token">Cancellation token</param>
         /// <returns>Dictionary from externalId to last timestamp, only contains existing timeseries</returns>
         public static async Task<IDictionary<Identity, DateTime>> GetLatestTimestamps(
-            this AlphaDataPointsResource dataPoints,
+            this BetaDataPointsResource dataPoints,
             IEnumerable<(Identity id, DateTime before)> ids,
             int chunkSize,
             int throttleSize,
@@ -536,7 +542,7 @@ namespace Cognite.Extensions.Alpha
         /// <param name="token">Cancellation token</param>
         /// <returns>Dictionary from externalId to first timestamp, only contains existing timeseries</returns>
         public static async Task<IDictionary<Identity, DateTime>> GetEarliestTimestamps(
-            this AlphaDataPointsResource dataPoints,
+            this BetaDataPointsResource dataPoints,
             IEnumerable<(Identity id, DateTime after)> ids,
             int chunkSize,
             int throttleSize,
@@ -630,7 +636,7 @@ namespace Cognite.Extensions.Alpha
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
         public static async Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
-            this AlphaDataPointsResource dataPoints,
+            this BetaDataPointsResource dataPoints,
             IEnumerable<(Identity id, TimeRange limit)> ids,
             int chunkSizeEarliest,
             int chunkSizeLatest,

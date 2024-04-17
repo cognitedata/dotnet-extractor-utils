@@ -18,25 +18,29 @@ namespace Cognite.Extensions
         {
             if (point.IsString)
             {
-                if (point.StringValue == null || point.StringValue.Length > CogniteUtils.StringLengthMax)
+                if (point.StringValue == null && point.Status.IsGood || (point.StringValue?.Length ?? 0) > CogniteUtils.StringLengthMax)
                 {
-                    return new Datapoint(point.Timestamp, point.StringValue.Truncate(CogniteUtils.StringLengthMax) ?? "");
+                    return new Datapoint(point.Timestamp, point.StringValue.Truncate(CogniteUtils.StringLengthMax) ?? "", point.Status);
                 }
                 return point;
             }
-            else
+            else if (point.Status.IsGood)
             {
-                double value = point.NumericValue!.Value;
+                if (!point.NumericValue.HasValue)
+                {
+                    return new Datapoint(point.Timestamp, 0, point.Status);
+                }
+                double value = point.NumericValue.Value;
                 if (!double.IsNaN(value))
                 {
                     value = Math.Max(CogniteUtils.NumericValueMin, value);
                     value = Math.Min(CogniteUtils.NumericValueMax, value);
                     return value == point.NumericValue.Value ? point :
-                        new Datapoint(point.Timestamp, value);
+                        new Datapoint(point.Timestamp, value, point.Status);
                 }
                 else if (nanReplacement.HasValue)
                 {
-                    return new Datapoint(point.Timestamp, nanReplacement.Value);
+                    return new Datapoint(point.Timestamp, nanReplacement.Value, point.Status);
                 }
             }
             return point;
