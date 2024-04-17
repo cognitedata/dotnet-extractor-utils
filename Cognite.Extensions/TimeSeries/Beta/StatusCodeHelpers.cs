@@ -271,6 +271,18 @@ namespace Cognite.Extensions.Beta
         }
 
         /// <inheritdoc />
+        public static bool operator ==(StatusCode lhs, StatusCode rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(StatusCode lhs, StatusCode rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+
+        /// <inheritdoc />
         public override readonly bool Equals(object? obj)
         {
             return obj is StatusCode code && code.Code == _code;

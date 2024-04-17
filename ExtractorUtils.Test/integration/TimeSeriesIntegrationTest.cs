@@ -1,4 +1,5 @@
 ﻿using Cognite.Extensions;
+using Cognite.Extensions.Beta;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
@@ -676,22 +677,22 @@ namespace ExtractorUtils.Test.Integration
                     {
                         new Datapoint(DateTime.UtcNow, 1.0),
                         new Datapoint(DateTime.MaxValue, 2.0),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(1), double.NaN),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(1), double.NaN, StatusCode.FromCategory(StatusCodeCategory.Good)),
                         new Datapoint(DateTime.MinValue, 3.0),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(2), double.PositiveInfinity),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(3), double.NegativeInfinity),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(4), 1E101),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(5), -1E101),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(2), double.PositiveInfinity, StatusCode.FromCategory(StatusCodeCategory.Good)),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(3), double.NegativeInfinity, StatusCode.FromCategory(StatusCodeCategory.Good)),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(4), 1E101, StatusCode.FromCategory(StatusCodeCategory.Good)),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(5), -1E101, StatusCode.FromCategory(StatusCodeCategory.Good)),
                     } },
                     { Identity.Create(tss[1].extId), new []
                     {
                         new Datapoint(DateTime.UtcNow, new string('æ', 400)),
                         new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
-                        new Datapoint(DateTime.UtcNow, null)
+                        new Datapoint(DateTime.UtcNow, null, StatusCode.FromCategory(StatusCodeCategory.Good))
                     } },
                     { Identity.Create(tss[2].id), new[]
                     {
-                        new Datapoint(DateTime.UtcNow, double.NaN)
+                        new Datapoint(DateTime.UtcNow, double.NaN, StatusCode.FromCategory(StatusCodeCategory.Good))
                     } }
                 };
             }
@@ -940,14 +941,16 @@ namespace ExtractorUtils.Test.Integration
                 result2.Throw();
                 Assert.Equal(5, result3.Results.Count());
                 result3.Throw();
-                Assert.All(result3.Results, res => {
+                Assert.All(result3.Results, res =>
+                {
                     Assert.Single(res.Metadata);
                     Assert.Equal("someValue", res.Metadata["someKey"]);
                     Assert.Equal("Some description", res.Description);
                 });
                 Assert.Equal(7, result4.Results.Count());
                 result4.Throw();
-                Assert.All(result4.Results.Take(5), res => {
+                Assert.All(result4.Results.Take(5), res =>
+                {
                     if (replaceMeta)
                     {
                         Assert.Single(res.Metadata);
@@ -963,7 +966,8 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(7, result5.Results.Count());
                 Assert.Single(result5.Errors);
                 Assert.Equal(2, result5.Errors.First().Skipped.Count());
-                Assert.All(result5.Results, res => {
+                Assert.All(result5.Results, res =>
+                {
                     Assert.Equal("Some unit", res.Unit);
                 });
             }
