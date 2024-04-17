@@ -18,7 +18,11 @@ namespace Cognite.Extensions
         {
             if (point.IsString)
             {
-                if (point.StringValue == null && point.Status.IsGood || (point.StringValue?.Length ?? 0) > CogniteUtils.StringLengthMax)
+                if (point.StringValue == null && point.Status.IsGood)
+                {
+                    return new Datapoint(point.Timestamp, "", point.Status);
+                }
+                else if ((point.StringValue?.Length ?? 0) > CogniteUtils.StringLengthMax)
                 {
                     return new Datapoint(point.Timestamp, point.StringValue.Truncate(CogniteUtils.StringLengthMax) ?? "", point.Status);
                 }
