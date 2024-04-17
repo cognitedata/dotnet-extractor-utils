@@ -56,14 +56,14 @@ namespace Cognite.Extensions
                     continue;
                 }
                 var stringPoints = kvp.Value
-                    .Where(dp => dp.StringValue != null)
+                    .Where(dp => dp.IsString && dp.Status.IsGood)
                     .Select(dp => new StringDatapoint
                     {
                         Timestamp = dp.Timestamp,
                         Value = dp.StringValue
                     });
                 var numericPoints = kvp.Value
-                    .Where(dp => dp.NumericValue.HasValue)
+                    .Where(dp => !dp.IsString && dp.Status.IsGood)
                     .Select(dp => new NumericDatapoint
                     {
                         Timestamp = dp.Timestamp,
@@ -236,7 +236,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Inserting timeseries datapoints. Number of timeseries: {Number}. Number of chunks: {Chunks}", points.Count, chunks.Count);
             var generators = chunks
                 .Select<IDictionary<Identity, IEnumerable<Datapoint>>, Func<Task>>(
-                (chunk, idx) => async () => {
+                (chunk, idx) => async () =>
+                {
                     var result = await
                         InsertDataPointsHandleErrors(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, retryMode, token)
                         .ConfigureAwait(false);
@@ -246,7 +247,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(InsertAsync), ++taskNum, chunks.Count);
@@ -400,7 +402,8 @@ namespace Cognite.Extensions
             var taskNum = 0;
             await generators.RunThrottled(
                 deleteThrottleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(DeleteIgnoreErrorsAsync), ++taskNum, chunks.Count);

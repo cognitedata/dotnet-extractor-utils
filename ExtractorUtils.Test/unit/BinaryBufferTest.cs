@@ -1,4 +1,5 @@
 ﻿using Cognite.Extensions;
+using Cognite.Extensions.Beta;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using System;
@@ -27,7 +28,11 @@ namespace ExtractorUtils.Test.Unit
                 // To check if it handles non utf8 symbols...
                 { Identity.Create("idæøå1"), new[] { new Datapoint(t1, 123.123), new Datapoint(t2, "123") } },
                 { Identity.Create(123), new [] {new Datapoint(t1, "321"), new Datapoint(t2, 321.321) } },
-                { Identity.Create("empty"), Array.Empty<Datapoint>() }
+                { Identity.Create("empty"), Array.Empty<Datapoint>() },
+                { Identity.Create("status"), new[] {
+                    new Datapoint(t1, 123.123, StatusCode.FromCategory(StatusCodeCategory.GoodCascade)),
+                    new Datapoint(t2, 321.321, StatusCode.FromCategory(StatusCodeCategory.BadNoCommunication))
+                } }
             };
             var dps2 = new Dictionary<Identity, IEnumerable<Datapoint>>() {
                 { Identity.Create("idæøå1"), new[] { new Datapoint(t3, 123.123), new Datapoint(t4, "123") } },
@@ -39,6 +44,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 if (lhs.Timestamp != rhs.Timestamp) return false;
                 if (lhs.IsString != rhs.IsString) return false;
+                if (lhs.Status != rhs.Status) return false;
                 if (lhs.IsString) return lhs.StringValue == rhs.StringValue;
                 return lhs.NumericValue == rhs.NumericValue;
             }
@@ -54,7 +60,7 @@ namespace ExtractorUtils.Test.Unit
 
                 readDps = await CogniteUtils.ReadDatapointsAsync(stream, CancellationToken.None);
             }
-            Assert.Equal(3, readDps.Count);
+            Assert.Equal(4, readDps.Count);
             Assert.False(readDps.ContainsKey(Identity.Create("empty")));
             Assert.True(readDps.ContainsKey(Identity.Create("idæøå1")));
             Assert.True(readDps.ContainsKey(Identity.Create(123)));

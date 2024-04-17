@@ -642,7 +642,7 @@ namespace ExtractorUtils.Test.Unit
                         };
                         else seq.Rows = null;
                         break;
-                        
+
                 }
             }
         }
@@ -891,7 +891,7 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(8, errors.Count());
 
             var errs = errors.ToList();
-            
+
             var err = errs[4];
             Assert.Equal(ResourceType.SequenceRowNumber, err.Resource);
             Assert.Equal(ErrorType.ItemDuplicated, err.Type);

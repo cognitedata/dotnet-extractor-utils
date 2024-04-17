@@ -940,14 +940,16 @@ namespace ExtractorUtils.Test.Integration
                 result2.Throw();
                 Assert.Equal(5, result3.Results.Count());
                 result3.Throw();
-                Assert.All(result3.Results, res => {
+                Assert.All(result3.Results, res =>
+                {
                     Assert.Single(res.Metadata);
                     Assert.Equal("someValue", res.Metadata["someKey"]);
                     Assert.Equal("Some description", res.Description);
                 });
                 Assert.Equal(7, result4.Results.Count());
                 result4.Throw();
-                Assert.All(result4.Results.Take(5), res => {
+                Assert.All(result4.Results.Take(5), res =>
+                {
                     if (replaceMeta)
                     {
                         Assert.Single(res.Metadata);
@@ -963,7 +965,8 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(7, result5.Results.Count());
                 Assert.Single(result5.Errors);
                 Assert.Equal(2, result5.Errors.First().Skipped.Count());
-                Assert.All(result5.Results, res => {
+                Assert.All(result5.Results, res =>
+                {
                     Assert.Equal("Some unit", res.Unit);
                 });
             }

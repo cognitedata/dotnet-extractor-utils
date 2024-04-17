@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-namespace Cognite.Extensions.Alpha
+namespace Cognite.Extensions.Beta
 {
     // NOTE: This entire section is largely taken from the time series backend,
     // it more or less replicates the behavior of the API when it comes to parsing and handling status codes.
@@ -271,6 +271,18 @@ namespace Cognite.Extensions.Alpha
         }
 
         /// <inheritdoc />
+        public static bool operator ==(StatusCode lhs, StatusCode rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(StatusCode lhs, StatusCode rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+
+        /// <inheritdoc />
         public override readonly bool Equals(object? obj)
         {
             return obj is StatusCode code && code.Code == _code;
@@ -310,6 +322,21 @@ namespace Cognite.Extensions.Alpha
         {
             return (_code & (1ul << offset)) != 0;
         }
+
+        /// <summary>
+        /// Whether this status code is good.
+        /// </summary>
+        public bool IsGood => Severity == Severity.Good;
+
+        /// <summary>
+        /// Whether this status code is bad.
+        /// </summary>
+        public bool IsBad => Severity == Severity.Bad;
+
+        /// <summary>
+        /// Whether this status code is uncertain.
+        /// </summary>
+        public bool IsUncertain => Severity == Severity.Uncertain;
 
         /// <summary>
         /// Type of status code.

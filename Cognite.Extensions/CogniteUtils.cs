@@ -14,8 +14,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Com.Cognite.V1.Timeseries.Proto.Alpha;
-using Cognite.Extensions.Alpha;
+using Com.Cognite.V1.Timeseries.Proto.Beta;
+using Cognite.Extensions.Beta;
 
 namespace Cognite.Extensions
 {
@@ -633,7 +633,7 @@ namespace Cognite.Extensions
         /// <summary>
         /// True if datapoint is string
         /// </summary>
-        public bool IsString => _numericValue == null;
+        public bool IsString { get; }
 
         /// <summary>
         /// Datapoint status code.
@@ -645,14 +645,10 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="numericValue">double value</param>
-        /// <param name="statusCode">ALPHA: set the data point status code.
-        /// This is only used if the alpha datapoints endpoint is used.</param>
-        public Datapoint(DateTime timestamp, double numericValue, StatusCode? statusCode = null)
+        /// <param name="statusCode">BETA: set the data point status code.
+        /// This is only used if the beta datapoints endpoint is used.</param>
+        public Datapoint(DateTime timestamp, double numericValue, StatusCode? statusCode = null) : this(timestamp.ToUnixTimeMilliseconds(), numericValue, statusCode)
         {
-            _timestamp = timestamp.ToUnixTimeMilliseconds();
-            _numericValue = numericValue;
-            _stringValue = null;
-            _statusCode = statusCode ?? new StatusCode(0);
         }
 
         /// <summary>
@@ -660,26 +656,38 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="stringValue">string value</param>
-        public Datapoint(DateTime timestamp, string? stringValue)
+        /// <param name="statusCode">BETA: set the data point status code.
+        /// This is only used if the beta datapoints endpoint is used.</param>
+        public Datapoint(DateTime timestamp, string? stringValue, StatusCode? statusCode = null) : this(timestamp.ToUnixTimeMilliseconds(), stringValue, statusCode)
         {
-            _timestamp = timestamp.ToUnixTimeMilliseconds();
-            _numericValue = null;
-            _stringValue = stringValue;
-            _statusCode = new StatusCode(0);
+        }
+
+        /// <summary>
+        /// Creates a data point without a value. You still need to specify whether
+        /// the time series it is being written to is a string or numeric time series.
+        /// Default quality is bad.
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="isString">Whether the time series is string.</param>
+        /// <param name="statusCode">BETA: set the data point status code.
+        /// This is only used if the beta datapoints endpoint is used.</param>
+        public Datapoint(DateTime timestamp, bool isString, StatusCode? statusCode = null) : this(timestamp.ToUnixTimeMilliseconds(), isString, statusCode)
+        {
         }
         /// <summary>
         /// Creates a numeric data point
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="numericValue">double value</param>
-        /// <param name="statusCode">ALPHA: set the data point status code.
-        /// This is only used if the alpha datapoints endpoint is used.</param>
+        /// <param name="statusCode">BETA: set the data point status code.
+        /// This is only used if the beta datapoints endpoint is used.</param>
         public Datapoint(long timestamp, double numericValue, StatusCode? statusCode = null)
         {
             _timestamp = timestamp;
             _numericValue = numericValue;
+            IsString = false;
             _stringValue = null;
-            _statusCode = statusCode ?? new StatusCode(0);
+            _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Good);
         }
 
         /// <summary>
@@ -687,12 +695,32 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="stringValue">string value</param>
-        public Datapoint(long timestamp, string? stringValue)
+        /// <param name="statusCode">BETA: set the data point status code.
+        /// This is only used if the beta datapoints endpoint is used.</param>
+        public Datapoint(long timestamp, string? stringValue, StatusCode? statusCode = null)
         {
             _timestamp = timestamp;
             _numericValue = null;
             _stringValue = stringValue;
-            _statusCode = new StatusCode(0);
+            IsString = true;
+            _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Good);
+        }
+
+        /// <summary>
+        /// Creates a data point without a value. You still need to specify whether
+        /// the time series it is being written to is a string or numeric time series.
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="isString">Whether the time series is string.</param>
+        /// <param name="statusCode">BETA: set the data point status code.
+        /// This is only used if the beta datapoints endpoint is used.</param>
+        public Datapoint(long timestamp, bool isString, StatusCode? statusCode = null)
+        {
+            _timestamp = timestamp;
+            _numericValue = null;
+            _stringValue = null;
+            IsString = isString;
+            _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Bad);
         }
         /// <summary>
         /// Convert datapoint into an array of bytes on the form
@@ -750,7 +778,7 @@ namespace Cognite.Extensions
             if (isString)
             {
                 string? value = CogniteUtils.StringFromStream(stream);
-                return new Datapoint(timestamp, value);
+                return new Datapoint(timestamp, value, new StatusCode(statusCode));
             }
             else
             {
