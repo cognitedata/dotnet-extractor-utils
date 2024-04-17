@@ -24,86 +24,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Alpha.DataPointExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Alpha.DataPointExtensions.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Alpha.InvalidStatusCodeException.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Alpha.InvalidStatusCodeException.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Alpha.Limit.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Alpha.Limit.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Alpha.Severity.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Alpha.Severity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Alpha.StatusCode.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Alpha.StatusCode.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Alpha.StatusCodeCategory.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Alpha.StatusCodeCategory.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Alpha.ValueType.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Alpha.ValueType.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Alpha.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Alpha.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.ApiUtils.yml",
       "output": {
         ".html": {
@@ -148,6 +68,86 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.AuthenticatorConfig.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Beta.DataPointExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Beta.DataPointExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Beta.InvalidStatusCodeException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Beta.InvalidStatusCodeException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Beta.Limit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Beta.Limit.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Beta.Severity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Beta.Severity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Beta.StatusCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Beta.StatusCode.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Beta.StatusCodeCategory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Beta.StatusCodeCategory.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Beta.ValueType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Beta.ValueType.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Beta.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Beta.html"
         }
       },
       "version": ""
@@ -1576,11 +1576,11 @@
       "type": "Toc",
       "source_relative_path": "api/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "api/toc.html"
-        },
         ".json": {
           "relative_path": "api/toc.json"
+        },
+        ".html": {
+          "relative_path": "api/toc.html"
         }
       },
       "version": ""
@@ -1599,11 +1599,11 @@
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "toc.html"
-        },
         ".json": {
           "relative_path": "toc.json"
+        },
+        ".html": {
+          "relative_path": "toc.html"
         }
       },
       "version": ""
@@ -1722,11 +1722,11 @@
       "type": "Toc",
       "source_relative_path": "tutorials/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "tutorials/toc.html"
-        },
         ".json": {
           "relative_path": "tutorials/toc.json"
+        },
+        ".html": {
+          "relative_path": "tutorials/toc.html"
         }
       },
       "version": ""
