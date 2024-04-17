@@ -57,7 +57,7 @@ namespace Cognite.Extensions.Beta
                     continue;
                 }
                 var stringPoints = kvp.Value
-                    .Where(dp => dp.StringValue != null)
+                    .Where(dp => dp.IsString)
                     .Select(dp => new StringDatapoint
                     {
                         Timestamp = dp.Timestamp,
@@ -69,7 +69,7 @@ namespace Cognite.Extensions.Beta
                         }
                     });
                 var numericPoints = kvp.Value
-                    .Where(dp => dp.NumericValue.HasValue)
+                    .Where(dp => !dp.IsString)
                     .Select(dp => new NumericDatapoint
                     {
                         Timestamp = dp.Timestamp,
