@@ -1,5 +1,4 @@
 ﻿using Cognite.Extensions;
-using Cognite.Extensions.Beta;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
@@ -677,22 +676,22 @@ namespace ExtractorUtils.Test.Integration
                     {
                         new Datapoint(DateTime.UtcNow, 1.0),
                         new Datapoint(DateTime.MaxValue, 2.0),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(1), double.NaN, StatusCode.FromCategory(StatusCodeCategory.Good)),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(1), double.NaN),
                         new Datapoint(DateTime.MinValue, 3.0),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(2), double.PositiveInfinity, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(3), double.NegativeInfinity, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(4), 1E101, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(5), -1E101, StatusCode.FromCategory(StatusCodeCategory.Good)),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(2), double.PositiveInfinity),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(3), double.NegativeInfinity),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(4), 1E101),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(5), -1E101),
                     } },
                     { Identity.Create(tss[1].extId), new []
                     {
                         new Datapoint(DateTime.UtcNow, new string('æ', 400)),
                         new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
-                        new Datapoint(DateTime.UtcNow, null, StatusCode.FromCategory(StatusCodeCategory.Good))
+                        new Datapoint(DateTime.UtcNow, null)
                     } },
                     { Identity.Create(tss[2].id), new[]
                     {
-                        new Datapoint(DateTime.UtcNow, double.NaN, StatusCode.FromCategory(StatusCodeCategory.Good))
+                        new Datapoint(DateTime.UtcNow, double.NaN)
                     } }
                 };
             }

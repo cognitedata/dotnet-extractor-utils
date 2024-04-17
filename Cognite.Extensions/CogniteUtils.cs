@@ -687,14 +687,7 @@ namespace Cognite.Extensions
             _numericValue = numericValue;
             IsString = false;
             _stringValue = null;
-            if (double.IsNaN(numericValue) || numericValue > 1E100 || numericValue < -1E100)
-            {
-                _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Bad);
-            }
-            else
-            {
-                _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Good);
-            }
+            _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Good);
         }
 
         /// <summary>
@@ -710,7 +703,7 @@ namespace Cognite.Extensions
             _numericValue = null;
             _stringValue = stringValue;
             IsString = true;
-            _statusCode = statusCode ?? StatusCode.FromCategory(stringValue == null ? StatusCodeCategory.Bad : StatusCodeCategory.Good);
+            _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Good);
         }
 
         /// <summary>

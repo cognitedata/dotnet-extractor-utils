@@ -1,5 +1,4 @@
 ﻿using Cognite.Extensions;
-using Cognite.Extensions.Beta;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using System;
@@ -659,14 +658,14 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, 123.123),
                 new Datapoint(DateTime.UtcNow, "test"),
                 new Datapoint(DateTime.UtcNow, new string('æ', 500)),
-                new Datapoint(DateTime.UtcNow, null, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                new Datapoint(DateTime.UtcNow, double.PositiveInfinity, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                new Datapoint(DateTime.UtcNow, double.NegativeInfinity, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                new Datapoint(DateTime.UtcNow, double.NaN, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                new Datapoint(DateTime.UtcNow, double.MaxValue, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                new Datapoint(DateTime.UtcNow, double.MinValue, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                new Datapoint(DateTime.UtcNow, 1E101, StatusCode.FromCategory(StatusCodeCategory.Good)),
-                new Datapoint(DateTime.UtcNow, -1E101, StatusCode.FromCategory(StatusCodeCategory.Good))
+                new Datapoint(DateTime.UtcNow, null),
+                new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
+                new Datapoint(DateTime.UtcNow, double.NegativeInfinity),
+                new Datapoint(DateTime.UtcNow, double.NaN),
+                new Datapoint(DateTime.UtcNow, double.MaxValue),
+                new Datapoint(DateTime.UtcNow, double.MinValue),
+                new Datapoint(DateTime.UtcNow, 1E101),
+                new Datapoint(DateTime.UtcNow, -1E101)
             };
 
             var cleanDps = dps.Select(dp => dp.Sanitize(nanRepl)).ToArray();
@@ -947,18 +946,18 @@ namespace ExtractorUtils.Test.Unit
                 } },
                 { Identity.Create("all-bad-value"), new[]
                 {
-                    new Datapoint(DateTime.UtcNow, double.NaN, StatusCode.FromCategory(StatusCodeCategory.Good))
+                    new Datapoint(DateTime.UtcNow, double.NaN)
                 } },
                 { Identity.Create("all-bad-mixed"), new[]
                 {
                     new Datapoint(DateTime.MaxValue, 1.0),
-                    new Datapoint(DateTime.UtcNow, double.NaN, StatusCode.FromCategory(StatusCodeCategory.Good))
+                    new Datapoint(DateTime.UtcNow, double.NaN)
                 } },
                 { Identity.Create("some-bad"), new[]
                 {
-                    new Datapoint(DateTime.UtcNow, double.NaN, StatusCode.FromCategory(StatusCodeCategory.Good)),
+                    new Datapoint(DateTime.UtcNow, double.NaN),
                     new Datapoint(DateTime.UtcNow, 2.0),
-                    new Datapoint(DateTime.UtcNow, double.PositiveInfinity, StatusCode.FromCategory(StatusCodeCategory.Good))
+                    new Datapoint(DateTime.UtcNow, double.PositiveInfinity)
                 } },
                 { Identity.Create("all-good"), new[]
                 {
