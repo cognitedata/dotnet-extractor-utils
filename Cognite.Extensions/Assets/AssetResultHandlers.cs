@@ -108,11 +108,17 @@ namespace Cognite.Extensions
 
             if (error.Resource == ResourceType.ParentExternalId)
             {
+                // Retrieve all parents, unless they are already checked (i.e. retrieved from the initial request),
+                // or if they are included in the request itself.
                 var ids = assets.Select(asset => asset.ParentExternalId)
                     .Where(id => id != null)
                     .Distinct()
                     .Select(Identity.Create)
-                    .Except(error.Values ?? Enumerable.Empty<Identity>());
+                    .Except(error.Values ?? Enumerable.Empty<Identity>())
+                    .Except(assets
+                        .Where(asset => asset.ExternalId != null)
+                        .Select(asset => Identity.Create(asset.ExternalId))
+                    );
 
                 if (!ids.Any())
                 {

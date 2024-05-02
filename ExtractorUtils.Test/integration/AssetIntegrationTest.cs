@@ -108,7 +108,7 @@ namespace ExtractorUtils.Test.Integration
         public async Task TestSanitation(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
-            
+
             var assets = new[] {
                 new AssetCreate
                 {
@@ -176,7 +176,7 @@ namespace ExtractorUtils.Test.Integration
                 }, tester.Source.Token);
             }
         }
-        
+
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
@@ -262,6 +262,11 @@ namespace ExtractorUtils.Test.Integration
                 {
                     Name = "final-asset-ok",
                     ExternalId = $"{tester.Prefix} final-asset-ok"
+                },
+                new AssetCreate {
+                    Name = "asset-ok-local-parent",
+                    ExternalId = $"{tester.Prefix} asset-ok-local-parent",
+                    ParentExternalId = $"{tester.Prefix} final-asset-ok"
                 }
             };
             try
@@ -270,7 +275,7 @@ namespace ExtractorUtils.Test.Integration
 
                 tester.Logger.LogResult(result, RequestType.CreateAssets, false);
 
-                Assert.Single(result.Results);
+                Assert.Equal(2, result.Results.Count());
                 Assert.Equal(6, result.Errors.Count());
                 Assert.Equal("final-asset-ok", result.Results.First().Name);
                 foreach (var error in result.Errors)
@@ -334,7 +339,8 @@ namespace ExtractorUtils.Test.Integration
                     $"{tester.Prefix} test-missing-dataset",
                     $"{tester.Prefix} test-missing-dataset-2",
                     $"{tester.Prefix} final-asset-ok",
-                    $"{tester.Prefix} test-null-metadata"
+                    $"{tester.Prefix} test-null-metadata",
+                    $"{tester.Prefix} asset-ok-local-parent"
                 };
                 await tester.Destination.CogniteClient.Assets.DeleteAsync(new AssetDelete
                 {
@@ -500,7 +506,7 @@ namespace ExtractorUtils.Test.Integration
                 new AssetUpdateItem(assets[1].ExternalId)
                 {
                     Update = new AssetUpdate
-                    { 
+                    {
                         Description = new UpdateNullable<string>("New description")
                     }
                 },
@@ -736,14 +742,16 @@ namespace ExtractorUtils.Test.Integration
                 result2.Throw();
                 Assert.Equal(5, result3.Results.Count());
                 result3.Throw();
-                Assert.All(result3.Results, res => {
+                Assert.All(result3.Results, res =>
+                {
                     Assert.Single(res.Metadata);
                     Assert.Equal("someValue", res.Metadata["someKey"]);
                     Assert.Equal("Some description", res.Description);
                 });
                 Assert.Equal(7, result4.Results.Count());
                 result4.Throw();
-                Assert.All(result4.Results.Take(5), res => {
+                Assert.All(result4.Results.Take(5), res =>
+                {
                     if (replaceMeta)
                     {
                         Assert.Single(res.Metadata);
@@ -759,7 +767,8 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(7, result5.Results.Count());
                 Assert.Single(result5.Errors);
                 Assert.Equal(2, result5.Errors.First().Skipped.Count());
-                Assert.All(result5.Results, res => {
+                Assert.All(result5.Results, res =>
+                {
                     Assert.Equal("Some source", res.Source);
                 });
             }
