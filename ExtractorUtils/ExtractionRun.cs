@@ -78,9 +78,11 @@ namespace Cognite.Extractor.Utils
         public void Start()
         {
             if (_runTask != null) return;
+            _source = new CancellationTokenSource();
+            _finished = false;
             _runTask = Run();
         }
-        
+
         private async Task Run()
         {
             IEnumerable<ExtPipe> pipe;
@@ -122,7 +124,7 @@ namespace Cognite.Extractor.Utils
                     await Report(ExtPipeRunStatus.seen, false, null, _source.Token).ConfigureAwait(false);
                     await waitTask.ConfigureAwait(false);
                 }
-                catch (TaskCanceledException) {}
+                catch (TaskCanceledException) { }
             }
         }
 
@@ -140,7 +142,8 @@ namespace Cognite.Extractor.Utils
             {
                 _finished = true;
                 _source.Cancel();
-                if (_runTask != null) await _runTask.ConfigureAwait(false);
+                token = CancellationToken.None;
+                _runTask = null;
             }
             message = message?.Truncate(1000);
             try
