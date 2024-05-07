@@ -58,12 +58,13 @@ namespace Cognite.Extensions
         {
             if (point.IsString)
             {
-                if (point.StringValue == null || point.StringValue.Length > CogniteUtils.StringLengthMax)
+                if (point.StringValue == null && point.Status.IsGood
+                    || (point.StringValue?.Length ?? 0) > CogniteUtils.StringLengthMax)
                 {
                     return ResourceType.DataPointValue;
                 }
             }
-            else
+            else if (point.Status.IsGood)
             {
                 double value = point.NumericValue!.Value;
                 if (double.IsNaN(value)
