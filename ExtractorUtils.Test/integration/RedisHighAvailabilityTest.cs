@@ -23,7 +23,7 @@ namespace ExtractorUtils.Test.Integration
         }
 
         [Fact(Timeout = 30000)]
-        public async void TestRedisExtractorManagerRun()
+        public async Task TestRedisExtractorManagerRun()
         {
             Assert.True(_redis.IsConnected);
 
@@ -58,7 +58,7 @@ namespace ExtractorUtils.Test.Integration
         }
 
         [Fact(Timeout = 45000)]
-        public async void TestRedisRestartExtractor()
+        public async Task TestRedisRestartExtractor()
         {
             Assert.True(_redis.IsConnected);
 

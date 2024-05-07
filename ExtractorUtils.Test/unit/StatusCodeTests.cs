@@ -1,4 +1,4 @@
-using Cognite.Extensions.Beta;
+using Cognite.Extensions;
 using Xunit;
 
 namespace ExtractorUtils.Test.Unit

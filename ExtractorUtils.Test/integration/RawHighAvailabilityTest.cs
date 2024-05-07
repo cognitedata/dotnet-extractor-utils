@@ -66,7 +66,7 @@ namespace ExtractorUtils.Test.Integration
         }
 
         [Fact(Timeout = 30000)]
-        public async void TestExtractorManagerRun()
+        public async Task TestExtractorManagerRun()
         {
             // Creating configs for two different extractors.
             string configPath_0 = SetupConfig(index: 0);
@@ -101,7 +101,7 @@ namespace ExtractorUtils.Test.Integration
         }
 
         [Fact(Timeout = 45000)]
-        public async void TestRestartExtractor()
+        public async Task TestRestartExtractor()
         {
             // Creating config for two extractors.
             string configPath_0 = SetupConfig(index: 2);
