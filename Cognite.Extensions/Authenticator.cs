@@ -229,7 +229,6 @@ namespace Cognite.Extensions
 
             using (var httpContent = new FormUrlEncodedContent(form))
             {
-                _requestTime = DateTime.UtcNow;
                 var response = await _client.PostAsync(_tokenUri, httpContent, token);
 #if NET5_0_OR_GREATER
                 var body = await response.Content.ReadAsStringAsync(token);
@@ -242,6 +241,11 @@ namespace Cognite.Extensions
                     if (tokenResponse == null)
                     {
                         throw new CogniteUtilsException("Could not obtain OIDC token: Empty response");
+                    }
+
+                    if (tokenResponse.AccessToken == null)
+                    {
+                        throw new CogniteUtilsException("Successfully requested OIDC token, but the access-token was null");
                     }
 
                     _logger.LogDebug(
@@ -302,10 +306,11 @@ namespace Cognite.Extensions
                     return _response?.AccessToken;
                 }
 
-                _requestTime = DateTime.UtcNow;
+                var time = DateTime.UtcNow;
                 _response = await RequestToken(token).ConfigureAwait(false);
+                _requestTime = time;
 
-                return _response?.AccessToken;
+                return _response.AccessToken;
             }
             finally
             {
