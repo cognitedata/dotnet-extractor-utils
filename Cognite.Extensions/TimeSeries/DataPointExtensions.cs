@@ -55,52 +55,49 @@ namespace Cognite.Extensions
                 {
                     continue;
                 }
-                var stringPoints = kvp.Value
-                    .Where(dp => dp.IsString)
-                    .Select(dp => new StringDatapoint
-                    {
-                        Timestamp = dp.Timestamp,
-                        Value = dp.StringValue,
-                        NullValue = dp.StringValue is null,
-                        Status = new Status
-                        {
-                            Code = (long)dp.Status.Code
-                        }
-                    });
-                var numericPoints = kvp.Value
-                    .Where(dp => !dp.IsString)
-                    .Select(dp => new NumericDatapoint
-                    {
-                        Timestamp = dp.Timestamp,
-                        Value = dp.NumericValue!.Value,
-                        NullValue = dp.NumericValue is null,
-                        Status = new Status
-                        {
-                            Code = (long)dp.Status.Code
-                        }
-                    });
-                if (stringPoints.Any())
+                var isString = kvp.Value.First().IsString;
+                if (isString)
                 {
-                    var stringData = new StringDatapoints();
-                    stringData.Datapoints.AddRange(stringPoints);
-                    if (stringData.Datapoints.Count > 0)
+                    var finalDps = new StringDatapoints();
+                    foreach (var dp in kvp.Value)
                     {
-                        item.StringDatapoints = stringData;
-                        request.Items.Add(item);
-                        dataPointCount += stringData.Datapoints.Count;
+                        if (!dp.IsString) continue;
+                        finalDps.Datapoints.Add(new StringDatapoint
+                        {
+                            Timestamp = dp.Timestamp,
+                            Value = dp.StringValue ?? "",
+                            NullValue = dp.StringValue is null,
+                            Status = new Status
+                            {
+                                Code = (long)dp.Status.Code
+                            }
+                        });
                     }
+                    dataPointCount += finalDps.Datapoints.Count;
+                    item.StringDatapoints = finalDps;
                 }
                 else
                 {
-                    var doubleData = new NumericDatapoints();
-                    doubleData.Datapoints.AddRange(numericPoints);
-                    if (doubleData.Datapoints.Count > 0)
+                    var finalDps = new NumericDatapoints();
+                    foreach (var dp in kvp.Value)
                     {
-                        item.NumericDatapoints = doubleData;
-                        request.Items.Add(item);
-                        dataPointCount += doubleData.Datapoints.Count;
+                        if (dp.IsString) continue;
+                        finalDps.Datapoints.Add(new NumericDatapoint
+                        {
+                            Timestamp = dp.Timestamp,
+                            Value = dp.NumericValue ?? 0,
+                            NullValue = dp.NumericValue is null,
+                            Status = new Status
+                            {
+                                Code = (long)dp.Status.Code
+                            }
+                        });
                     }
+                    dataPointCount += finalDps.Datapoints.Count;
+                    item.NumericDatapoints = finalDps;
                 }
+
+                request.Items.Add(item);
             }
             return request;
         }
