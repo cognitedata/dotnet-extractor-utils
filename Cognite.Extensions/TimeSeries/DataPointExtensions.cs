@@ -60,14 +60,24 @@ namespace Cognite.Extensions
                     .Select(dp => new StringDatapoint
                     {
                         Timestamp = dp.Timestamp,
-                        Value = dp.StringValue
+                        Value = dp.StringValue,
+                        NullValue = dp.StringValue is null,
+                        Status = new Status
+                        {
+                            Code = (long)dp.Status.Code
+                        }
                     });
                 var numericPoints = kvp.Value
                     .Where(dp => !dp.IsString && dp.Status.IsGood)
                     .Select(dp => new NumericDatapoint
                     {
                         Timestamp = dp.Timestamp,
-                        Value = dp.NumericValue!.Value
+                        Value = dp.NumericValue!.Value,
+                        NullValue = dp.NumericValue is null,
+                        Status = new Status
+                        {
+                            Code = (long)dp.Status.Code
+                        }
                     });
                 if (stringPoints.Any())
                 {

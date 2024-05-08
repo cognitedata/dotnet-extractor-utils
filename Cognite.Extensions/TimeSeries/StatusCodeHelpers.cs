@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-namespace Cognite.Extensions.Beta
+namespace Cognite.Extensions
 {
     // NOTE: This entire section is largely taken from the time series backend,
     // it more or less replicates the behavior of the API when it comes to parsing and handling status codes.
@@ -238,11 +238,6 @@ namespace Cognite.Extensions.Beta
                 if ((code & 0b11) == 0b11)
                 {
                     return "Calculated and Interpolated flags are mutually exclusive";
-                }
-
-                if (infoBits == 0)
-                {
-                    return "When info type is 01, info bits must not be 0";
                 }
             }
             else if (infoBits != 0)

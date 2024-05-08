@@ -14,8 +14,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Com.Cognite.V1.Timeseries.Proto.Beta;
-using Cognite.Extensions.Beta;
 
 namespace Cognite.Extensions
 {
