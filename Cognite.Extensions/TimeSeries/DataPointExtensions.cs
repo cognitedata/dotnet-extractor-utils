@@ -49,14 +49,14 @@ namespace Cognite.Extensions
                 }
                 else
                 {
-                    item.ExternalId = kvp.Key.ExternalId.ToString();
+                    item.ExternalId = kvp.Key.ExternalId;
                 }
                 if (!kvp.Value.Any())
                 {
                     continue;
                 }
                 var stringPoints = kvp.Value
-                    .Where(dp => dp.IsString && dp.Status.IsGood)
+                    .Where(dp => dp.IsString)
                     .Select(dp => new StringDatapoint
                     {
                         Timestamp = dp.Timestamp,
@@ -68,7 +68,7 @@ namespace Cognite.Extensions
                         }
                     });
                 var numericPoints = kvp.Value
-                    .Where(dp => !dp.IsString && dp.Status.IsGood)
+                    .Where(dp => !dp.IsString)
                     .Select(dp => new NumericDatapoint
                     {
                         Timestamp = dp.Timestamp,
@@ -284,7 +284,7 @@ namespace Cognite.Extensions
                 try
                 {
                     bool useGzip = false;
-                    int count = points.Sum(kvp => kvp.Value.Count());
+                    int count = request.Items.Sum(r => r.NumericDatapoints?.Datapoints?.Count ?? 0 + r.StringDatapoints?.Datapoints?.Count ?? 0);
                     if (gzipCountLimit >= 0 && count >= gzipCountLimit)
                     {
                         useGzip = true;

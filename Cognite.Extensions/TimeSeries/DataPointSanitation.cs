@@ -109,6 +109,10 @@ namespace Cognite.Extensions
 
             foreach (var kvp in points)
             {
+                if (!kvp.Value.Any()) continue;
+
+                var isString = kvp.Value.First().IsString;
+
                 var id = kvp.Key;
                 var dps = kvp.Value;
 
@@ -117,6 +121,13 @@ namespace Cognite.Extensions
 
                 foreach (var dp in dps)
                 {
+                    if (dp.IsString != isString)
+                    {
+                        badDps.Add((ResourceType.DataPointValue, dp));
+                        CdfMetrics.DatapointsSkipped.Inc();
+                        continue;
+                    }
+
                     var cleanDp = dp;
                     if (mode == SanitationMode.Clean)
                     {
@@ -142,7 +153,7 @@ namespace Cognite.Extensions
                 {
                     CdfMetrics.DatapointTimeseriesSkipped.Inc();
                 }
-                if (badDps.Any())
+                if (badDps.Count > 0)
                 {
                     badDpGroups.AddRange(badDps
                         .GroupBy(pair => pair.type)
@@ -152,7 +163,7 @@ namespace Cognite.Extensions
 
             IEnumerable<CogniteError<DataPointInsertError>> errors;
 
-            if (badDpGroups.Any())
+            if (badDpGroups.Count > 0)
             {
                 errors = badDpGroups
                     .GroupBy(group => group.type)
