@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Xunit;
+using StatusCode = Cognite.Extensions.StatusCode;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -967,7 +968,8 @@ namespace ExtractorUtils.Test.Unit
                 {
                     new Datapoint(DateTime.UtcNow, double.NaN),
                     new Datapoint(DateTime.UtcNow, 2.0),
-                    new Datapoint(DateTime.UtcNow, double.PositiveInfinity)
+                    new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
+                    new Datapoint(DateTime.UtcNow, false, StatusCode.FromCategory(StatusCodeCategory.Good))
                 } },
                 { Identity.Create("all-good"), new[]
                 {
@@ -980,7 +982,7 @@ namespace ExtractorUtils.Test.Unit
             var (result, errors) = Sanitation.CleanDataPointsRequest(dps, SanitationMode.Clean, null);
             Assert.Equal(2, result.Count());
             Assert.True(result.TryGetValue(Identity.Create("some-bad"), out var ts));
-            Assert.Equal(2, ts.Count());
+            Assert.Equal(3, ts.Count());
             Assert.True(result.TryGetValue(Identity.Create("all-good"), out ts));
             Assert.Equal(3, ts.Count());
 
