@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
+using StatusCode = Cognite.Extensions.StatusCode;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -67,12 +68,13 @@ namespace ExtractorUtils.Test.Unit
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 double[] doublePoints = { 0.0, 1.1, 2.2, double.NaN, 3.3, 4.4, double.NaN, 5.5, double.NegativeInfinity };
-                string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringLengthMax), new string('2', CogniteUtils.StringLengthMax + 1), "3"};
-                
+                string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringLengthMax), new string('2', CogniteUtils.StringLengthMax + 1), "3" };
+
                 var datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
                     { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1"), new Datapoint(DateTime.UtcNow, "2") }},
                     { new Identity(1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d))},
@@ -157,9 +159,10 @@ namespace ExtractorUtils.Test.Unit
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
-                
+
                 var ranges = new Dictionary<Identity, IEnumerable<TimeRange>>() {
                     { new Identity("A"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow),
                                                            new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(4), DateTime.UtcNow - TimeSpan.FromDays(2))}},
@@ -169,10 +172,10 @@ namespace ExtractorUtils.Test.Unit
                 var errors = await cogniteDestination.DeleteDataPointsIgnoreErrorsAsync(
                     ranges,
                     CancellationToken.None);
-                
+
                 mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
+                    "SendAsync",
                     Times.Exactly(1), // 1 delete
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
@@ -180,17 +183,17 @@ namespace ExtractorUtils.Test.Unit
                 Assert.Empty(errors.IdsDeleteNotConfirmed);
                 Assert.Empty(errors.IdsNotFound);
 
-                ranges.Add(new Identity("missing-C"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow)});
-                ranges.Add(new Identity("D"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow)});
-                ranges.Add(new Identity("nc-E"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow)});
-                ranges.Add(new Identity("missing-F"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow)});
-                ranges.Add(new Identity("G"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow)});
-                ranges.Add(new Identity("nc-H"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow)});
-                
+                ranges.Add(new Identity("missing-C"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow) });
+                ranges.Add(new Identity("D"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow) });
+                ranges.Add(new Identity("nc-E"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow) });
+                ranges.Add(new Identity("missing-F"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow) });
+                ranges.Add(new Identity("G"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow) });
+                ranges.Add(new Identity("nc-H"), new TimeRange[] { new TimeRange(DateTime.UtcNow - TimeSpan.FromDays(2), DateTime.UtcNow) });
+
                 errors = await cogniteDestination.DeleteDataPointsIgnoreErrorsAsync(
                     ranges,
                     CancellationToken.None);
-                
+
                 Assert.Contains(new Identity("missing-C"), errors.IdsNotFound);
                 Assert.Contains(new Identity("missing-F"), errors.IdsNotFound);
             }
@@ -262,7 +265,8 @@ namespace ExtractorUtils.Test.Unit
                 }))
                 {
                     queue.AddStateStorage(stateMap, stateStore, "test-states");
-                    var enqueueTask = Task.Run(async () => {
+                    var enqueueTask = Task.Run(async () =>
+                    {
                         while (index < 13)
                         {
                             var dps = uploadGenerator(index);
@@ -292,7 +296,8 @@ namespace ExtractorUtils.Test.Unit
                 }))
                 {
                     queue.AddStateStorage(stateMap, stateStore, "test-states");
-                    var enqueueTask = Task.Run(async () => {
+                    var enqueueTask = Task.Run(async () =>
+                    {
                         while (index < 23)
                         {
                             var dps = uploadGenerator(index);
@@ -398,11 +403,11 @@ namespace ExtractorUtils.Test.Unit
             System.IO.File.Delete(path);
         }
 
-
         #region mock
         private Dictionary<string, List<Datapoint>> _createdDataPoints = new Dictionary<string, List<Datapoint>>();
 
-        private async Task<HttpResponseMessage> mockInsertDataPointsAsync(HttpRequestMessage message , CancellationToken token) {
+        private async Task<HttpResponseMessage> mockInsertDataPointsAsync(HttpRequestMessage message, CancellationToken token)
+        {
             var uri = message.RequestUri.ToString();
 
             var responseBody = "{ }";
@@ -439,7 +444,7 @@ namespace ExtractorUtils.Test.Unit
                 .Select(i => i.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.NumericDatapoints ?
                         i.NumericDatapoints.Datapoints.Count : i.StringDatapoints.Datapoints.Count)
                 .Sum() <= 4); // data-points chunk size
-            
+
 
 
 
@@ -469,7 +474,8 @@ namespace ExtractorUtils.Test.Unit
                     {
                         mismatchedResponse.error.message = "Expected string value for datapoint";
                     }
-                    else {
+                    else
+                    {
                         mismatchedResponse.error.message = "Expected numeric value for datapoint";
                     }
                     break;
@@ -480,11 +486,12 @@ namespace ExtractorUtils.Test.Unit
                 statusCode = HttpStatusCode.BadRequest;
                 responseBody = JsonConvert.SerializeObject(mismatchedResponse);
             }
-            else if (missingResponse.error.missing.Count > 0) {
+            else if (missingResponse.error.missing.Count > 0)
+            {
                 statusCode = HttpStatusCode.BadRequest;
                 responseBody = JsonConvert.SerializeObject(missingResponse);
             }
-            else 
+            else
             {
                 foreach (var item in data.Items)
                 {
@@ -514,14 +521,15 @@ namespace ExtractorUtils.Test.Unit
             var response = new HttpResponseMessage
             {
                 StatusCode = statusCode,
-                Content = new StringContent(responseBody)               
+                Content = new StringContent(responseBody)
             };
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             response.Headers.Add("x-request-id", "1");
             return response;
         }
 
-        private static async Task<HttpResponseMessage> mockDeleteDataPointsAsync(HttpRequestMessage message , CancellationToken token) {
+        private static async Task<HttpResponseMessage> mockDeleteDataPointsAsync(HttpRequestMessage message, CancellationToken token)
+        {
             var uri = message.RequestUri.ToString();
             HttpContent responseBody = new StringContent("{ }");
             var statusCode = HttpStatusCode.OK;
@@ -530,7 +538,8 @@ namespace ExtractorUtils.Test.Unit
             var ids = JsonConvert.DeserializeObject<dynamic>(content);
             IEnumerable<dynamic> items = ids.items;
 
-            if (uri.Contains($"{_project}/timeseries/data/list")) {
+            if (uri.Contains($"{_project}/timeseries/data/list"))
+            {
                 Assert.True(items.Count() <= 2);
                 DataPointListResponse dpList = new DataPointListResponse();
                 foreach (var item in items)
@@ -541,7 +550,7 @@ namespace ExtractorUtils.Test.Unit
                     dp.NumericDatapoints = new NumericDatapoints();
                     dpList.Items.Add(dp);
                 }
-                using(MemoryStream stream = new MemoryStream())
+                using (MemoryStream stream = new MemoryStream())
                 {
                     dpList.WriteTo(stream);
                     responseBody = new ByteArrayContent(stream.ToArray());
@@ -579,7 +588,7 @@ namespace ExtractorUtils.Test.Unit
             var response = new HttpResponseMessage
             {
                 StatusCode = statusCode,
-                Content = responseBody              
+                Content = responseBody
             };
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             response.Headers.Add("x-request-id", "1");
