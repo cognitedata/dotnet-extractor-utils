@@ -74,86 +74,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Beta.DataPointExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Beta.DataPointExtensions.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Beta.InvalidStatusCodeException.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Beta.InvalidStatusCodeException.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Beta.Limit.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Beta.Limit.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Beta.Severity.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Beta.Severity.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Beta.StatusCode.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Beta.StatusCode.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Beta.StatusCodeCategory.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Beta.StatusCodeCategory.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Beta.ValueType.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Beta.ValueType.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.Beta.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.Beta.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.CertificateConfig.yml",
       "output": {
         ".html": {
@@ -474,6 +394,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.InvalidStatusCodeException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.InvalidStatusCodeException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Limit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Limit.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.LoggerExtensions.yml",
       "output": {
         ".html": {
@@ -584,6 +524,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Severity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Severity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.StatusCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.StatusCode.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.StatusCodeCategory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.StatusCodeCategory.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.TimeSeriesExtensions.yml",
       "output": {
         ".html": {
@@ -608,6 +578,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extensions.UpsertParams.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.ValueType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.ValueType.html"
         }
       },
       "version": ""
