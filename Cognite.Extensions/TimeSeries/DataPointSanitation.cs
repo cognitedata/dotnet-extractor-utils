@@ -18,7 +18,7 @@ namespace Cognite.Extensions
         {
             if (point.IsString)
             {
-                if (point.StringValue == null && point.Status.IsGood)
+                if (point.StringValue == null && !point.Status.IsBad)
                 {
                     return new Datapoint(point.Timestamp, "", point.Status);
                 }
@@ -28,7 +28,7 @@ namespace Cognite.Extensions
                 }
                 return point;
             }
-            else if (point.Status.IsGood)
+            else if (!point.Status.IsBad)
             {
                 if (!point.NumericValue.HasValue)
                 {
@@ -58,15 +58,19 @@ namespace Cognite.Extensions
         {
             if (point.IsString)
             {
-                if (point.StringValue == null && point.Status.IsGood
+                if (point.StringValue == null && !point.Status.IsBad
                     || (point.StringValue?.Length ?? 0) > CogniteUtils.StringLengthMax)
                 {
                     return ResourceType.DataPointValue;
                 }
             }
-            else if (point.Status.IsGood)
+            else if (!point.Status.IsBad)
             {
-                double value = point.NumericValue!.Value;
+                if (!point.NumericValue.HasValue)
+                {
+                    return ResourceType.DataPointValue;
+                }
+                double value = point.NumericValue.Value;
                 if (double.IsNaN(value)
                     || double.IsInfinity(value)
                     || value > CogniteUtils.NumericValueMax

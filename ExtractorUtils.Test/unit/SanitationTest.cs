@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Xunit;
+using StatusCode = Cognite.Extensions.StatusCode;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -658,14 +659,17 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, 123.123),
                 new Datapoint(DateTime.UtcNow, "test"),
                 new Datapoint(DateTime.UtcNow, new string('æ', 500)),
-                new Datapoint(DateTime.UtcNow, null),
+                new Datapoint(DateTime.UtcNow, true, Cognite.Extensions.StatusCode.Parse("Good")),
                 new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
                 new Datapoint(DateTime.UtcNow, double.NegativeInfinity),
                 new Datapoint(DateTime.UtcNow, double.NaN),
                 new Datapoint(DateTime.UtcNow, double.MaxValue),
                 new Datapoint(DateTime.UtcNow, double.MinValue),
                 new Datapoint(DateTime.UtcNow, 1E101),
-                new Datapoint(DateTime.UtcNow, -1E101)
+                new Datapoint(DateTime.UtcNow, -1E101),
+                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Bad")),
+                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Good")),
+                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Uncertain"))
             };
 
             var cleanDps = dps.Select(dp => dp.Sanitize(nanRepl)).ToArray();
@@ -688,6 +692,9 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(-1E100, cleanDps[8].NumericValue.Value);
             Assert.Equal(1E100, cleanDps[9].NumericValue.Value);
             Assert.Equal(-1E100, cleanDps[10].NumericValue.Value);
+            Assert.Null(cleanDps[11].NumericValue);
+            Assert.Equal(0.0, cleanDps[12].NumericValue.Value);
+            Assert.Equal(0.0, cleanDps[13].NumericValue.Value);
         }
 
         [Fact]
@@ -697,6 +704,9 @@ namespace ExtractorUtils.Test.Unit
             {
                 new Datapoint(DateTime.UtcNow, 123.123),
                 new Datapoint(DateTime.UtcNow, "test"),
+                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Bad")),
+                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Uncertain")),
+                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Good")),
                 new Datapoint(DateTime.UtcNow, new string('æ', 500)),
                 new Datapoint(DateTime.UtcNow, null),
                 new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
@@ -712,11 +722,12 @@ namespace ExtractorUtils.Test.Unit
 
             var result = dps.Select(dp => dp.Verify()).ToArray();
 
-            Assert.Null(result[0]);
-            Assert.Null(result[1]);
-            for (int i = 2; i < 11; i++) Assert.Equal(ResourceType.DataPointValue, result[i]);
-            Assert.Equal(ResourceType.DataPointTimestamp, result[11]);
-            Assert.Equal(ResourceType.DataPointTimestamp, result[12]);
+            var countGood = 3;
+            var countValue = 11;
+
+            for (int i = 0; i < countGood; i++) Assert.Null(result[i]);
+            for (int i = countGood; i < countGood + countValue; i++) Assert.Equal(ResourceType.DataPointValue, result[i]);
+            for (int i = countGood + countValue; i < dps.Length; i++) Assert.Equal(ResourceType.DataPointTimestamp, result[i]);
         }
 
         [Theory]
@@ -957,7 +968,8 @@ namespace ExtractorUtils.Test.Unit
                 {
                     new Datapoint(DateTime.UtcNow, double.NaN),
                     new Datapoint(DateTime.UtcNow, 2.0),
-                    new Datapoint(DateTime.UtcNow, double.PositiveInfinity)
+                    new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
+                    new Datapoint(DateTime.UtcNow, false, StatusCode.FromCategory(StatusCodeCategory.Good))
                 } },
                 { Identity.Create("all-good"), new[]
                 {
@@ -970,7 +982,7 @@ namespace ExtractorUtils.Test.Unit
             var (result, errors) = Sanitation.CleanDataPointsRequest(dps, SanitationMode.Clean, null);
             Assert.Equal(2, result.Count());
             Assert.True(result.TryGetValue(Identity.Create("some-bad"), out var ts));
-            Assert.Equal(2, ts.Count());
+            Assert.Equal(3, ts.Count());
             Assert.True(result.TryGetValue(Identity.Create("all-good"), out ts));
             Assert.Equal(3, ts.Count());
 
