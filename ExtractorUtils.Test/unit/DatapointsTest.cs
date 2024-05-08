@@ -403,6 +403,60 @@ namespace ExtractorUtils.Test.Unit
             System.IO.File.Delete(path);
         }
 
+        [Fact]
+        public void TestToInsertRequest()
+        {
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>> {
+                { Identity.Create("dp-double"), new[] {
+                    new Datapoint(DateTime.UtcNow, 123, StatusCode.Parse("Bad")),
+                    new Datapoint(DateTime.UtcNow, 123, StatusCode.Parse("Good")),
+                    new Datapoint(DateTime.UtcNow, 123),
+                    new Datapoint(DateTime.UtcNow, false),
+                    new Datapoint(DateTime.UtcNow, "foo"),
+                }}, { Identity.Create("dp-string"), new[] {
+                    new Datapoint(DateTime.UtcNow, "foo", StatusCode.Parse("Bad")),
+                    new Datapoint(DateTime.UtcNow, "foo", StatusCode.Parse("Good")),
+                    new Datapoint(DateTime.UtcNow, "foo"),
+                    new Datapoint(DateTime.UtcNow, true),
+                    new Datapoint(DateTime.UtcNow, 123),
+                }}
+            };
+
+            var req = dps.ToInsertRequest();
+            var byId = req.Items.ToDictionary(r => r.ExternalId);
+            var c1 = byId["dp-double"];
+            Assert.Equal(4, c1.NumericDatapoints.Datapoints.Count);
+            var d1 = c1.NumericDatapoints.Datapoints;
+            Assert.Equal(StatusCode.Parse("Bad").Code, (ulong)d1[0].Status.Code);
+            Assert.Equal(123, d1[0].Value);
+            Assert.False(d1[0].NullValue);
+            Assert.Equal(StatusCode.Parse("Good").Code, (ulong)d1[1].Status.Code);
+            Assert.Equal(123, d1[1].Value);
+            Assert.False(d1[1].NullValue);
+            Assert.Equal(StatusCode.Parse("Good").Code, (ulong)d1[2].Status.Code);
+            Assert.Equal(123, d1[2].Value);
+            Assert.False(d1[2].NullValue);
+            Assert.Equal(StatusCode.Parse("Bad").Code, (ulong)d1[3].Status.Code);
+            Assert.Equal(0, d1[3].Value);
+            Assert.True(d1[3].NullValue);
+
+            var c2 = byId["dp-string"];
+            Assert.Equal(4, c2.StringDatapoints.Datapoints.Count);
+            var d2 = c2.StringDatapoints.Datapoints;
+            Assert.Equal(StatusCode.Parse("Bad").Code, (ulong)d2[0].Status.Code);
+            Assert.Equal("foo", d2[0].Value);
+            Assert.False(d2[0].NullValue);
+            Assert.Equal(StatusCode.Parse("Good").Code, (ulong)d2[1].Status.Code);
+            Assert.Equal("foo", d2[1].Value);
+            Assert.False(d2[1].NullValue);
+            Assert.Equal(StatusCode.Parse("Good").Code, (ulong)d2[2].Status.Code);
+            Assert.Equal("foo", d2[2].Value);
+            Assert.False(d2[2].NullValue);
+            Assert.Equal(StatusCode.Parse("Bad").Code, (ulong)d2[3].Status.Code);
+            Assert.Equal("", d2[3].Value);
+            Assert.True(d2[3].NullValue);
+        }
+
         #region mock
         private Dictionary<string, List<Datapoint>> _createdDataPoints = new Dictionary<string, List<Datapoint>>();
 
