@@ -48,9 +48,10 @@ namespace ExtractorUtils.Test.Unit
         }
 
 
-        protected override void AbortChunk(IChunk<SchedulerItem> chunk, CancellationToken token)
+        protected override Task AbortChunk(IChunk<SchedulerItem> chunk, CancellationToken token)
         {
             Aborted++;
+            return Task.CompletedTask;
         }
 
         protected override async Task ConsumeChunk(IChunk<SchedulerItem> chunk, CancellationToken token)
@@ -66,9 +67,10 @@ namespace ExtractorUtils.Test.Unit
             };
         }
 
-        protected override IEnumerable<SchedulerItem> HandleTaskResult(IChunk<SchedulerItem> chunk, CancellationToken token)
+        protected override Task<IEnumerable<SchedulerItem>> HandleTaskResult(IChunk<SchedulerItem> chunk, CancellationToken token)
         {
             CountChunks++;
+            var res = new List<SchedulerItem>();
             foreach (var item in chunk.Items)
             {
                 item.NumRemaining--;
@@ -78,16 +80,17 @@ namespace ExtractorUtils.Test.Unit
                     {
                         item.FoundChildren++;
                         CountItems++;
-                        yield return new SchedulerItem
+                        res.Add(new SchedulerItem
                         {
                             DepthRemaining = item.DepthRemaining - 1,
                             NumChildren = item.NumChildren,
                             NumRemaining = item.MaxRemaining,
                             MaxRemaining = item.MaxRemaining
-                        };
+                        });
                     }
                 }
             }
+            return Task.FromResult(res as IEnumerable<SchedulerItem>);
         }
 
         protected override void OnIteration(int pending, int operations, int finished, int total)

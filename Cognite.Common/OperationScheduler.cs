@@ -109,7 +109,7 @@ namespace Cognite.Extractor.Common
         /// <param name="chunk">Chunk to handle</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>New elements</returns>
-        protected abstract IEnumerable<T> HandleTaskResult(IChunk<T> chunk, CancellationToken token);
+        protected abstract Task<IEnumerable<T>> HandleTaskResult(IChunk<T> chunk, CancellationToken token);
 
         /// <summary>
         /// Called if the scheduler is aborted before it finishes running.
@@ -118,7 +118,7 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="chunk">Chunk to free</param>
         /// <param name="token">Cancellation token</param>
-        protected abstract void AbortChunk(IChunk<T> chunk, CancellationToken token);
+        protected abstract Task AbortChunk(IChunk<T> chunk, CancellationToken token);
 
         /// <summary>
         /// Called on each iteration of the scheduler loop, for reporting.
@@ -195,19 +195,17 @@ namespace Cognite.Extractor.Common
         /// Start the scheduler loop.
         /// </summary>
         /// <returns> Task which terminates when the scheduler is finished</returns>
-        public Task RunAsync()
+        public async Task RunAsync()
         {
-            return Task.Run(() => Run(), CancellationToken.None);
+            await Run().ConfigureAwait(false);
         }
-
-
 
         /// <summary>
         /// Runs in a single thread, so that logic in the ThreadScheduler is thread safe.
         /// </summary>
-        private void Run()
+        private async Task Run()
         {
-            var capacity = GetCapacity(_activeItems.Count(), true).Result;
+            var capacity = await GetCapacity(_activeItems.Count(), true).ConfigureAwait(false);
             var chunks = GetNextChunks(_activeItems, capacity, out _activeItems).ToList();
             foreach (var chunk in chunks)
             {
@@ -248,7 +246,7 @@ namespace Cognite.Extractor.Common
                 {
                     int numFinished = 0;
 
-                    var next = HandleTaskResult(chunk, TokenSource.Token);
+                    var next = await HandleTaskResult(chunk, TokenSource.Token).ConfigureAwait(false);
                     foreach (var newItem in next)
                     {
                         newItems.Add(newItem);
@@ -314,7 +312,7 @@ namespace Cognite.Extractor.Common
             {
                 foreach (var chunk in chunks)
                 {
-                    AbortChunk(chunk, TokenSource.Token);
+                    await AbortChunk(chunk, TokenSource.Token).ConfigureAwait(false);
                 }
             }
             if (_numPending > 0)
