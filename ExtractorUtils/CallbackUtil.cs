@@ -1,8 +1,6 @@
-﻿using CogniteSdk;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -57,15 +55,17 @@ namespace Cognite.Extractor.Utils
         /// <param name="arguments"></param>
         /// <param name="token"></param>
         /// <returns>True if call was successful</returns>
-        public async Task<bool> TryCall(T arguments, CancellationToken token)
+        public Task<bool> TryCall(T arguments, CancellationToken token)
         {
             if (!_id.HasValue && string.IsNullOrEmpty(_externalId))
             {
                 _log.LogWarning("Missing function configuration, not calling");
-                return false;
+                return Task.FromResult(false);
             }
 
-            if (!_id.HasValue)
+            _log.LogWarning("Function calls are currently broken in the extractor. Nothing will happen");
+
+            /* if (!_id.HasValue)
             {
                 try
                 {
@@ -90,9 +90,9 @@ namespace Cognite.Extractor.Utils
             {
                 _log.LogError("Failed to call function in CDF: {Message}", ex.Message);
                 return false;
-            }
+            } */
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }
