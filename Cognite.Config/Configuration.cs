@@ -251,10 +251,24 @@ namespace Cognite.Extractor.Configuration
         /// <typeparam name="T">Type to map to</typeparam>
         public static void AddTagMapping<T>(string tag)
         {
-            builder = builder.WithTagMapping(tag, typeof(T));
             lock (_deserializerLock)
             {
+                builder = builder.WithTagMapping(tag, typeof(T));
                 ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
+                Rebuild();
+            }
+        }
+
+        /// <summary>
+        /// Adds a YAML type converter to the config deserializer.
+        /// </summary>
+        /// <param name="converter">Type converter to add</param>
+        public static void AddTypeConverter(IYamlTypeConverter converter)
+        {
+            lock (_deserializerLock)
+            {
+                builder = builder.WithTypeConverter(converter);
+                ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTypeConverter(converter);
                 Rebuild();
             }
         }
