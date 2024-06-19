@@ -15,6 +15,7 @@ using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization.TypeInspectors;
+using YamlDotNet.Serialization.Utilities;
 
 namespace Cognite.Extractor.Configuration
 {
@@ -42,6 +43,11 @@ namespace Cognite.Extractor.Configuration
             .IgnoreUnmatchedProperties();
         private static IDeserializer ignoreUnmatchedDeserializer = ignoreUnmatchedBuilder.Build();
         private static IDeserializer failOnUnmatchedDeserializer = builder.Build();
+
+        private static readonly List<IYamlTypeConverter> converters = new List<IYamlTypeConverter>() {
+            new ListOrStringConverter(),
+            new YamlEnumConverter(),
+        };
 
         private static bool ignoreUnmatchedProperties;
 
@@ -269,6 +275,7 @@ namespace Cognite.Extractor.Configuration
             {
                 builder = builder.WithTypeConverter(converter);
                 ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTypeConverter(converter);
+                converters.Add(converter);
                 Rebuild();
             }
         }
@@ -401,16 +408,21 @@ namespace Cognite.Extractor.Configuration
         {
             if (config is null) return "";
 
-            var serializer = new SerializerBuilder()
+            var builder = new SerializerBuilder()
                 .WithTypeInspector(insp => new DefaultFilterTypeInspector(
                     insp,
                     toAlwaysKeep,
                     toIgnore,
                     namePrefixes,
                     allowReadOnly))
-                .WithTypeConverter(new ListOrStringConverter())
-                .WithNamingConvention(HyphenatedNamingConvention.Instance)
-                .Build();
+                .WithNamingConvention(HyphenatedNamingConvention.Instance);
+
+            foreach (var converter in converters)
+            {
+                builder.WithTypeConverter(converter);
+            }
+
+            var serializer = builder.Build();
 
             string raw = serializer.Serialize(config);
 
