@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
@@ -259,7 +260,17 @@ namespace Cognite.Extractor.Configuration
         {
             lock (_deserializerLock)
             {
+                try
+                {
+                    builder.WithoutTagMapping(tag);
+                }
+                catch { }
                 builder = builder.WithTagMapping(tag, typeof(T));
+                try
+                {
+                    ignoreUnmatchedBuilder.WithoutTagMapping(tag);
+                }
+                catch { }
                 ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
                 Rebuild();
             }
@@ -271,10 +282,22 @@ namespace Cognite.Extractor.Configuration
         /// <param name="converter">Type converter to add</param>
         public static void AddTypeConverter(IYamlTypeConverter converter)
         {
+            if (converter == null) throw new ArgumentNullException(nameof(converter));
             lock (_deserializerLock)
             {
+                try
+                {
+                    builder.WithoutTypeConverter(converter.GetType());
+                }
+                catch { }
                 builder = builder.WithTypeConverter(converter);
+                try
+                {
+                    ignoreUnmatchedBuilder.WithoutTypeConverter(converter.GetType());
+                }
+                catch { }
                 ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTypeConverter(converter);
+                converters.RemoveAll(conv => converter.GetType() == conv.GetType());
                 converters.Add(converter);
                 Rebuild();
             }
