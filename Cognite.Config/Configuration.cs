@@ -414,6 +414,7 @@ namespace Cognite.Extractor.Configuration
                     toAlwaysKeep,
                     toIgnore,
                     namePrefixes,
+                    converters,
                     allowReadOnly))
                 .WithNamingConvention(HyphenatedNamingConvention.Instance);
 
@@ -503,6 +504,7 @@ namespace Cognite.Extractor.Configuration
         private readonly HashSet<string> _toAlwaysKeep;
         private readonly HashSet<string> _toIgnore;
         private readonly IEnumerable<string> _namePrefixes;
+        private readonly IEnumerable<IYamlTypeConverter> _customConverters;
         private readonly bool _allowReadOnly;
         /// <summary>
         /// Constructor
@@ -511,12 +513,14 @@ namespace Cognite.Extractor.Configuration
         /// <param name="toAlwaysKeep">Fields to always keep</param>
         /// <param name="toIgnore">Fields to exclude</param>
         /// <param name="namePrefixes">Prefixes on full type names for types that should be explored internally</param>
+        /// <param name="customConverters">List of registered custom converters.</param>
         /// <param name="allowReadOnly">Allow read only properties</param>
         public DefaultFilterTypeInspector(
             ITypeInspector innerTypeDescriptor,
             IEnumerable<string> toAlwaysKeep,
             IEnumerable<string> toIgnore,
             IEnumerable<string> namePrefixes,
+            IEnumerable<IYamlTypeConverter> customConverters,
             bool allowReadOnly)
         {
             _innerTypeDescriptor = innerTypeDescriptor;
@@ -524,6 +528,7 @@ namespace Cognite.Extractor.Configuration
             _toIgnore = new HashSet<string>(toIgnore);
             _namePrefixes = namePrefixes;
             _allowReadOnly = allowReadOnly;
+            _customConverters = customConverters;
         }
 
         /// <inheritdoc />
@@ -558,7 +563,10 @@ namespace Cognite.Extractor.Configuration
                 var val = prop?.GetValue(container);
 
                 if (val != null && prop != null && !type.IsValueType
-                    && _namePrefixes.Any(prefix => prop.PropertyType.FullName!.StartsWith(prefix, StringComparison.InvariantCulture)))
+                    && _namePrefixes.Any(prefix => prop.PropertyType.FullName!.StartsWith(prefix, StringComparison.InvariantCulture))
+                    // Any type covered by a custom converter shouldn't be passed through here. We don't know
+                    // how those are serialized, it is likely not just by listing their properties.
+                    && _customConverters.All(conv => !conv.Accepts(prop.PropertyType)))
                 {
                     var pr = GetProperties(prop.PropertyType, val);
                     if (!pr.Any()) return false;
