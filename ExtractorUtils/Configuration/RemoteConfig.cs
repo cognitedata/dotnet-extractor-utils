@@ -177,7 +177,7 @@ namespace Cognite.Extractor.Utils
                     }
                     catch (Exception write_ex)
                     {
-                        _logger.LogError("Failed to write remote config to local config file buffer, disabling local config buffer: {}", write_ex.Message);
+                        _logger.LogWarning("Failed to write remote config to local config file buffer, disabling local config buffer: {}", write_ex.Message);
                         bufferFileFailed = true;
                     }
                 }
