@@ -1,14 +1,14 @@
-﻿using Cognite.Extractor.Common;
-using Cognite.Extractor.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extractor.Utils
 {
@@ -163,6 +163,7 @@ namespace Cognite.Extractor.Utils
 
         private async Task<(T config, int revision)> FetchLatestInternal(CancellationToken token)
         {
+            bool bufferFileFailed = false;
             try
             {
                 var rawConfig = await _destination.CogniteClient.ExtPipes.GetCurrentConfigAsync(_pipelineId, token).ConfigureAwait(false);
@@ -170,19 +171,27 @@ namespace Cognite.Extractor.Utils
 
                 if (_bufferFilePath != null)
                 {
-                    File.WriteAllText(_bufferFilePath, rawConfig.Config);
+                    try
+                    {
+                        File.WriteAllText(_bufferFilePath, rawConfig.Config);
+                    }
+                    catch (Exception write_ex)
+                    {
+                        _logger.LogWarning("Failed to write remote config to local config file buffer, disabling local config buffer: {}", write_ex.Message);
+                        bufferFileFailed = true;
+                    }
                 }
 
                 config = InjectRemoteConfig(config);
 
                 _state.Config = config;
-               
+
                 return (config, rawConfig.Revision);
             }
             catch (Exception ex)
             {
                 _logger.LogError("Failed to retrieve configuration from pipeline {Pipeline} file: {Message}", _pipelineId, ex.Message);
-                if (Config == null && _bufferFilePath != null)
+                if (Config == null && _bufferFilePath != null && !bufferFileFailed)
                 {
                     if (!File.Exists(_bufferFilePath)) throw new ConfigurationException($"Could not retrieve remote configuration, and local buffer does not exist: {ex.Message}", ex);
                     var config = ConfigurationUtils.TryReadConfigFromFile<T>(_bufferFilePath, _acceptedConfigVersions);
