@@ -154,7 +154,7 @@ namespace Cognite.Extensions
                     hasParent = true;
                 }
 
-                
+
                 if (hasParent)
                 {
                     var idt = item.ExternalId != null ? Identity.Create(item.ExternalId) : Identity.Create(item.Id!.Value);
@@ -179,7 +179,7 @@ namespace Cognite.Extensions
                 var err = ParseSimpleError(ex, assetsToFetch, items);
                 return new[] { err };
             }
-            
+
             var byId = assets.ToDictionary(asset => asset.Id);
             var byExtId = assets.Where(asset => asset.ExternalId != null).ToDictionary(asset => asset.ExternalId);
 
@@ -188,9 +188,11 @@ namespace Cognite.Extensions
 
             foreach (var item in items)
             {
-                Asset self;
-                if (item.Id.HasValue) self = byId[item.Id.Value];
-                else self = byExtId[item.ExternalId];
+                Asset? self = null;
+                if (item.Id.HasValue) byId.TryGetValue(item.Id.Value, out self);
+                else byExtId.TryGetValue(item.ExternalId, out self);
+
+                if (self == null) continue;
 
                 Asset? parent = null;
 
@@ -205,7 +207,7 @@ namespace Cognite.Extensions
                     missingParents.Add((Identity.Create(item.Update.ParentExternalId.Set), item));
                     continue;
                 }
-                
+
                 // No parentId is set
                 if (parent == null) continue;
 
