@@ -1,11 +1,4 @@
-﻿using Cognite.Extractor.Common;
-using CogniteSdk;
-using CogniteSdk.Resources;
-using Com.Cognite.V1.Timeseries.Proto;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Prometheus;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO.Compression;
@@ -13,17 +6,26 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
+using CogniteSdk.Alpha;
+using CogniteSdk.Beta.DataModels;
+using CogniteSdk.Beta.DataModels.Core;
+using CogniteSdk.Resources;
+using Com.Cognite.V1.Timeseries.Proto;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Prometheus;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
 
-namespace Cognite.Extensions
+namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
     /// <summary>
     /// Extensions to datapoints
     /// </summary>
-    public static class DataPointExtensions
+    public static class DataPointExtensionsWithInstanceId
     {
         private const int _maxNumOfVerifyRequests = 10;
-        private static ILogger _logger = new NullLogger<Client>();
+        private static ILogger _logger = new NullLogger<CogniteSdk.Client>();
 
         internal static void SetLogger(ILogger logger)
         {
@@ -35,22 +37,14 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="dps">Datapoints to insert</param>
         /// <returns>Converted request</returns>
-        public static DataPointInsertionRequest ToInsertRequest(this IDictionary<Identity, IEnumerable<Datapoint>> dps)
+        public static DataPointInsertionRequest ToInsertRequest(this IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> dps)
         {
             if (dps == null) throw new ArgumentNullException(nameof(dps));
             var request = new DataPointInsertionRequest();
             var dataPointCount = 0;
             foreach (var kvp in dps)
             {
-                var item = new DataPointInsertionItem();
-                if (kvp.Key.Id.HasValue)
-                {
-                    item.Id = kvp.Key.Id.Value;
-                }
-                else
-                {
-                    item.ExternalId = kvp.Key.ExternalId;
-                }
+                var item = new DataPointInsertionItem() { InstanceId = new InstanceId() { Space = kvp.Key.InstanceId.Space, ExternalId = kvp.Key.InstanceId.ExternalId } };
                 if (!kvp.Value.Any())
                 {
                     continue;
@@ -118,12 +112,11 @@ namespace Cognite.Extensions
         /// <param name="sanitationMode">How to sanitize datapoints</param>
         /// <param name="retryMode">How to handle retries</param>
         /// <param name="nanReplacement">Optional replacement for NaN double values</param>
-        /// <param name="dataSetId">Optional data set id</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Results with a list of errors. If TimeSeriesResult is null, no timeseries were attempted created.</returns>
-        public static async Task<(CogniteResult<DataPointInsertError> DataPointResult, CogniteResult<TimeSeries, TimeSeriesCreate>? TimeSeriesResult)> InsertAsyncCreateMissing(
-            Client client,
-            IDictionary<Identity, IEnumerable<Datapoint>> points,
+        public static async Task<(CogniteResult<DataPointInsertErrorWithInstanceId> DataPointResult, CogniteResult<SourcedNode<CogniteTimeSeriesBase>, SourcedNodeWrite<CogniteTimeSeriesBase>>? TimeSeriesResult)> InsertAsyncCreateMissing(
+            CogniteSdk.Client client,
+            IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> points,
             int keyChunkSize,
             int valueChunkSize,
             int throttleSize,
@@ -133,29 +126,27 @@ namespace Cognite.Extensions
             SanitationMode sanitationMode,
             RetryMode retryMode,
             double? nanReplacement,
-            long? dataSetId,
             CancellationToken token)
         {
             if (client == null) throw new ArgumentNullException(nameof(client));
             if (points == null) throw new ArgumentNullException(nameof(points));
 
-            var result = await InsertAsync(client, points, keyChunkSize, valueChunkSize, throttleSize,
+            var result = await InsertAsync<CogniteTimeSeriesBase>(client, points, keyChunkSize, valueChunkSize, throttleSize,
                 timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, sanitationMode,
                 RetryMode.OnError, nanReplacement, token).ConfigureAwait(false);
 
             if (result.Errors?.Any(err => err.Type == ErrorType.FatalFailure) ?? false) return (result, null);
 
-            var missingIds = new HashSet<Identity>((result.Errors ?? Enumerable.Empty<CogniteError>())
+            var missingIds = new HashSet<IdentityWithInstanceId>((result.Errors ?? Enumerable.Empty<CogniteError>())
                 .Where(err => err.Type == ErrorType.ItemMissing)
-                .SelectMany(err => err.Values ?? Enumerable.Empty<IIdentity>())
-                .Where(idt => idt.ExternalId != null)
-                .ToIdentity());
+                .SelectMany(err => err.Values?.Select(x => (IdentityWithInstanceId)x) ?? Enumerable.Empty<IdentityWithInstanceId>())
+                .Where(idt => idt.InstanceId != null));
 
-            if (!missingIds.Any()) return (result, null);
+            if (missingIds.Count == 0) return (result, null);
 
             _logger.LogInformation("Creating {Count} missing timeseries", missingIds.Count);
 
-            var toCreate = new List<TimeSeriesCreate>();
+            var toCreate = new List<SourcedNodeWrite<CogniteTimeSeriesBase>>();
             foreach (var id in missingIds)
             {
                 var dp = points[id].FirstOrDefault();
@@ -163,15 +154,15 @@ namespace Cognite.Extensions
 
                 bool isString = dp.NumericValue == null;
 
-                toCreate.Add(new TimeSeriesCreate
+                toCreate.Add(new SourcedNodeWrite<CogniteTimeSeriesBase>
                 {
-                    ExternalId = id.ExternalId,
-                    IsString = isString,
-                    DataSetId = dataSetId
+                    Space = id.InstanceId.Space,
+                    ExternalId = id.InstanceId.ExternalId,
+                    Properties = new CogniteTimeSeriesBase() { Type = isString ? TimeSeriesType.String : TimeSeriesType.Numeric }
                 });
             }
 
-            var tsResult = await client.TimeSeries.EnsureTimeSeriesExistsAsync(
+            var tsResult = await client.CoreDataModel.TimeSeries<CogniteTimeSeriesBase>().EnsureTimeSeriesExistsAsync(
                 toCreate,
                 timeseriesChunkSize,
                 timeseriesThrottleSize,
@@ -183,7 +174,7 @@ namespace Cognite.Extensions
 
             var pointsToInsert = points.Where(kvp => missingIds.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            var result2 = await InsertAsync(client, pointsToInsert, keyChunkSize, valueChunkSize, throttleSize,
+            var result2 = await InsertAsync<CogniteTimeSeriesBase>(client, pointsToInsert, keyChunkSize, valueChunkSize, throttleSize,
                 timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, sanitationMode,
                 RetryMode.OnError, nanReplacement, token).ConfigureAwait(false);
 
@@ -208,9 +199,9 @@ namespace Cognite.Extensions
         /// <param name="nanReplacement">Optional replacement for NaN double values</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Result with a list of errors</returns>
-        public static async Task<CogniteResult<DataPointInsertError>> InsertAsync(
-            Client client,
-            IDictionary<Identity, IEnumerable<Datapoint>> points,
+        public static async Task<CogniteResult<DataPointInsertErrorWithInstanceId>> InsertAsync<T>(
+            CogniteSdk.Client client,
+            IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> points,
             int keyChunkSize,
             int valueChunkSize,
             int throttleSize,
@@ -220,12 +211,10 @@ namespace Cognite.Extensions
             SanitationMode sanitationMode,
             RetryMode retryMode,
             double? nanReplacement,
-            CancellationToken token)
+            CancellationToken token) where T : CogniteTimeSeriesBase
         {
-            IEnumerable<CogniteError<DataPointInsertError>> errors;
-            var ret = Sanitation.CleanDataPointsRequest(points.ToDictionary(x => (IIdentity)x.Key, x => x.Value) , sanitationMode, nanReplacement);
-            points = ret.Item1.ToDictionary(x=> (Identity)x.Key, x=>x.Value);
-            errors = ret.Item2;
+            IEnumerable<CogniteError<DataPointInsertErrorWithInstanceId>> errors;
+            (points, errors) = CoreTSSanitation.CleanDataPointsRequest(points, sanitationMode, nanReplacement);
 
             var chunks = points
                 .Select(p => (p.Key, p.Value))
@@ -234,22 +223,22 @@ namespace Cognite.Extensions
                 .ToList();
 
             int size = chunks.Count + (errors.Any() ? 1 : 0);
-            var results = new CogniteResult<DataPointInsertError>[size];
+            var results = new CogniteResult<DataPointInsertErrorWithInstanceId>[size];
 
             if (errors.Any())
             {
-                results[size - 1] = new CogniteResult<DataPointInsertError>(errors);
+                results[size - 1] = new CogniteResult<DataPointInsertErrorWithInstanceId>(errors);
                 if (size == 1) return results[size - 1];
             }
-            if (size == 0) return new CogniteResult<DataPointInsertError>(null);
+            if (size == 0) return new CogniteResult<DataPointInsertErrorWithInstanceId>(null);
 
             _logger.LogDebug("Inserting timeseries datapoints. Number of timeseries: {Number}. Number of chunks: {Chunks}", points.Count, chunks.Count);
             var generators = chunks
-                .Select<IDictionary<Identity, IEnumerable<Datapoint>>, Func<Task>>(
+                .Select<IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, Func<Task>>(
                 (chunk, idx) => async () =>
                 {
                     var result = await
-                        InsertDataPointsHandleErrors(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, retryMode, token)
+                        InsertDataPointsHandleErrors<T>(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, retryMode, token)
                         .ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -265,19 +254,19 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return CogniteResult<DataPointInsertError>.Merge(results);
+            return CogniteResult<DataPointInsertErrorWithInstanceId>.Merge(results);
         }
 
-        private static async Task<CogniteResult<DataPointInsertError>> InsertDataPointsHandleErrors(
-            Client client,
-            IDictionary<Identity, IEnumerable<Datapoint>> points,
+        private static async Task<CogniteResult<DataPointInsertErrorWithInstanceId>> InsertDataPointsHandleErrors<T>(
+            CogniteSdk.Client client,
+            IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> points,
             int timeseriesChunkSize,
             int timeseriesThrottleSize,
             int gzipCountLimit,
             RetryMode retryMode,
-            CancellationToken token)
+            CancellationToken token) where T : CogniteTimeSeriesBase
         {
-            var errors = new List<CogniteError<DataPointInsertError>>();
+            var errors = new List<CogniteError<DataPointInsertErrorWithInstanceId>>();
             while (points != null && points.Any() && !token.IsCancellationRequested)
             {
                 var request = points.ToInsertRequest();
@@ -294,26 +283,26 @@ namespace Cognite.Extensions
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            await client.Alpha.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
                         }
                     }
                     else
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            await client.Alpha.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
                         }
                     }
 
                     CdfMetrics.NumberDatapoints.Inc(count);
 
                     _logger.LogDebug("Created {cnt} datapoints for {ts} timeseries in CDF", count, points.Count);
-                    return new CogniteResult<DataPointInsertError>(errors);
+                    return new CogniteResult<DataPointInsertErrorWithInstanceId>(errors);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogDebug("Failed to create datapoints for {seq} timeseries: {msg}", points.Count, ex.Message);
-                    var error = ResultHandlers.ParseException<DataPointInsertError>(ex, RequestType.CreateDatapoints);
+                    var error = ResultHandlers.ParseException<DataPointInsertErrorWithInstanceId>(ex, RequestType.CreateDatapoints);
 
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal
@@ -331,7 +320,7 @@ namespace Cognite.Extensions
                         if (!error.Complete)
                         {
                             (error, points) = await ResultHandlers
-                                .VerifyDatapointsFromCDF(client.TimeSeries, error,
+                                .VerifyDatapointsFromCDF(client.CoreDataModel.TimeSeries<T>(), error,
                                     points, timeseriesChunkSize, timeseriesThrottleSize, token)
                                 .ConfigureAwait(false);
                             errors.Add(error);
@@ -345,7 +334,7 @@ namespace Cognite.Extensions
                 }
             }
 
-            return new CogniteResult<DataPointInsertError>(errors);
+            return new CogniteResult<DataPointInsertErrorWithInstanceId>(errors);
         }
 
         /// <summary>
@@ -363,8 +352,8 @@ namespace Cognite.Extensions
         /// <param name="token">Cancelation token</param>
         /// <returns>A <see cref="DeleteError"/> object with any missing ids or ids with unconfirmed deletes</returns>
         public static async Task<DeleteError> DeleteIgnoreErrorsAsync(
-            this DataPointsResource dataPoints,
-            IDictionary<Identity, IEnumerable<TimeRange>> ranges,
+            this CogniteSdk.Resources.Alpha.DataPointsResource dataPoints,
+            IDictionary<IdentityWithInstanceId, IEnumerable<TimeRange>> ranges,
             int deleteChunkSize,
             int listChunkSize,
             int deleteThrottleSize,
@@ -383,7 +372,7 @@ namespace Cognite.Extensions
                 toDelete.AddRange(kvp.Value.Select(r =>
                     new IdentityWithRange
                     {
-                        ExternalId = kvp.Key.ExternalId,
+                        InstanceId = kvp.Key.InstanceId,
                         Id = kvp.Key.Id,
                         InclusiveBegin = r.First.ToUnixTimeMilliseconds(),
                         ExclusiveEnd = r.Last.ToUnixTimeMilliseconds() + 1 // exclusive
@@ -395,7 +384,7 @@ namespace Cognite.Extensions
                 .ChunkBy(deleteChunkSize)
                 .ToList(); // Maximum number of items in the /timeseries/data/delete endpoint.
 
-            var missing = new HashSet<Identity>();
+            var missing = new HashSet<IdentityWithInstanceId>();
             var mutex = new object();
 
             var generators = chunks
@@ -420,15 +409,15 @@ namespace Cognite.Extensions
                 },
                 token).ConfigureAwait(false);
 
-            return new DeleteError(missing, Enumerable.Empty<Identity>());
+            return new DeleteError(missing, Enumerable.Empty<IdentityWithInstanceId>());
         }
 
-        private static async Task<HashSet<Identity>> DeleteDataPointsIgnoreErrorsChunk(
-            DataPointsResource dataPoints,
+        private static async Task<HashSet<IdentityWithInstanceId>> DeleteDataPointsIgnoreErrorsChunk(
+            CogniteSdk.Resources.Alpha.DataPointsResource dataPoints,
             IEnumerable<IdentityWithRange> chunks,
             CancellationToken token)
         {
-            var missing = new HashSet<Identity>();
+            var missing = new HashSet<IdentityWithInstanceId>();
             if (!chunks.Any()) return missing;
 
             var deleteQuery = new DataPointsDelete()
@@ -442,10 +431,10 @@ namespace Cognite.Extensions
                     await dataPoints.DeleteAsync(deleteQuery, token).ConfigureAwait(false);
                 }
             }
-            catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
+            catch (CogniteSdk.ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
             {
                 CogniteUtils.ExtractMissingFromResponseException(missing, e);
-                var remaining = chunks.Where(i => !missing.Contains(i.Id.HasValue ? new Identity(i.Id.Value) : new Identity(i.ExternalId)));
+                var remaining = chunks.Where(i => !missing.Contains(new IdentityWithInstanceId(i.InstanceId)));
                 var errors = await DeleteDataPointsIgnoreErrorsChunk(dataPoints, remaining, token).ConfigureAwait(false);
                 missing.UnionWith(errors);
             }
@@ -463,21 +452,21 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Maximum number of parallel requests</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Dictionary from externalId to last timestamp, only contains existing timeseries</returns>
-        public static async Task<IDictionary<Identity, DateTime>> GetLatestTimestamps(
-            this DataPointsResource dataPoints,
-            IEnumerable<(Identity id, DateTime before)> ids,
+        public static async Task<IDictionary<IdentityWithInstanceId, DateTime>> GetLatestTimestamps(
+            this CogniteSdk.Resources.Alpha.DataPointsResource dataPoints,
+            IEnumerable<(IdentityWithInstanceId id, DateTime before)> ids,
             int chunkSize,
             int throttleSize,
             CancellationToken token)
         {
-            var ret = new ConcurrentDictionary<Identity, DateTime>();
-            var idSet = new HashSet<Identity>(ids.Select(id => id.id));
+            var ret = new ConcurrentDictionary<IdentityWithInstanceId, DateTime>();
+            var idSet = new HashSet<IdentityWithInstanceId>(ids.Select(id => id.id));
 
             var chunks = ids
                 .Select((pair) =>
                 {
                     var id = pair.id;
-                    IdentityWithBefore idt = id.ExternalId == null ? IdentityWithBefore.Create(id.Id!.Value) : IdentityWithBefore.Create(id.ExternalId);
+                    IdentityWithBefore idt = IdentityWithBefore.Create(id.InstanceId);
                     if (pair.before != DateTime.MaxValue)
                     {
                         idt.Before = pair.before.ToUnixTimeMilliseconds().ToString();
@@ -490,7 +479,7 @@ namespace Cognite.Extensions
             var generators = chunks.Select<IEnumerable<IdentityWithBefore>, Func<Task>>(
                 chunk => async () =>
                 {
-                    IEnumerable<DataPointsItem<DataPoint>> dps;
+                    IEnumerable<DataPointsItem<CogniteSdk.DataPoint>> dps;
                     using (CdfMetrics.Datapoints.WithLabels("latest").NewTimer())
                     {
                         dps = await dataPoints.LatestAsync(
@@ -505,19 +494,7 @@ namespace Cognite.Extensions
                     {
                         if (dp.DataPoints.Any())
                         {
-                            Identity id;
-                            if (dp.ExternalId != null)
-                            {
-                                id = new Identity(dp.ExternalId);
-                                if (!idSet.Contains(id))
-                                {
-                                    id = new Identity(dp.Id);
-                                }
-                            }
-                            else
-                            {
-                                id = new Identity(dp.Id);
-                            }
+                            IdentityWithInstanceId id = new IdentityWithInstanceId(dp.InstanceId);
                             ret[id] = CogniteTime.FromUnixTimeMilliseconds(dp.DataPoints.First().Timestamp);
                         }
                     }
@@ -540,28 +517,22 @@ namespace Cognite.Extensions
         /// <param name="throttleSize">Maximum number of parallel requests</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Dictionary from externalId to first timestamp, only contains existing timeseries</returns>
-        public static async Task<IDictionary<Identity, DateTime>> GetEarliestTimestamps(
-            this DataPointsResource dataPoints,
-            IEnumerable<(Identity id, DateTime after)> ids,
+        public static async Task<IDictionary<IdentityWithInstanceId, DateTime>> GetEarliestTimestamps(
+            this CogniteSdk.Resources.Alpha.DataPointsResource dataPoints,
+            IEnumerable<(IdentityWithInstanceId id, DateTime after)> ids,
             int chunkSize,
             int throttleSize,
             CancellationToken token)
         {
-            var ret = new ConcurrentDictionary<Identity, DateTime>();
-            var idSet = new HashSet<Identity>(ids.Select(id => id.id));
+            var ret = new ConcurrentDictionary<IdentityWithInstanceId, DateTime>();
+            var idSet = new HashSet<IdentityWithInstanceId>(ids.Select(id => id.id));
 
             var chunks = ids
                 .Select((pair) =>
                 {
                     var query = new DataPointsQueryItem();
-                    if (pair.id.Id.HasValue)
-                    {
-                        query.Id = pair.id.Id.Value;
-                    }
-                    else
-                    {
-                        query.ExternalId = pair.id.ExternalId;
-                    }
+                    query.InstanceId = pair.id.InstanceId;
+
                     if (pair.after > CogniteTime.DateTimeEpoch)
                     {
                         query.Start = pair.after.ToUnixTimeMilliseconds().ToString();
@@ -588,19 +559,8 @@ namespace Cognite.Extensions
 
                     foreach (var dp in dps.Items)
                     {
-                        Identity id;
-                        if (dp.ExternalId != null)
-                        {
-                            id = new Identity(dp.ExternalId);
-                            if (!idSet.Contains(id))
-                            {
-                                id = new Identity(dp.Id);
-                            }
-                        }
-                        else
-                        {
-                            id = new Identity(dp.Id);
-                        }
+                        IdentityWithInstanceId id = new IdentityWithInstanceId(new InstanceIdentifier(dp.InstanceId.Space, dp.InstanceId.ExternalId));
+
                         if (dp.DatapointTypeCase == DataPointListItem.DatapointTypeOneofCase.NumericDatapoints
                             && dp.NumericDatapoints.Datapoints.Any())
                         {
@@ -634,9 +594,9 @@ namespace Cognite.Extensions
         /// <param name="earliest">If true, fetch earliest timestamps</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
-            this DataPointsResource dataPoints,
-            IEnumerable<(Identity id, TimeRange limit)> ids,
+        public static async Task<IDictionary<IdentityWithInstanceId, TimeRange>> GetExtractedRanges(
+            this CogniteSdk.Resources.Alpha.DataPointsResource dataPoints,
+            IEnumerable<(IdentityWithInstanceId id, TimeRange limit)> ids,
             int chunkSizeEarliest,
             int chunkSizeLatest,
             int throttleSize,
@@ -653,7 +613,7 @@ namespace Cognite.Extensions
             if (latest && earliest) throttleSize = Math.Max(1, throttleSize / 2);
 
             var ranges = ids.ToDictionary(pair => pair.id, pair => TimeRange.Empty);
-            var tasks = new List<Task<IDictionary<Identity, DateTime>>>();
+            var tasks = new List<Task<IDictionary<IdentityWithInstanceId, DateTime>>>();
             if (latest)
             {
                 tasks.Add(dataPoints.GetLatestTimestamps(ids.Select(pair => (pair.id, pair.limit?.Last ?? DateTime.MaxValue)),

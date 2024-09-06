@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
+using Cognite.Extractor.Common;
 using CogniteSdk;
+using CogniteSdk.Alpha;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Timeout;
-using Cognite.Extractor.Common;
-using System.Linq;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extensions
 {
@@ -52,7 +53,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="missing">Set to add missing ids to</param>
         /// <param name="e">Error containing missing ids</param>
-        public static void ExtractMissingFromResponseException(HashSet<Identity> missing, ResponseException e)
+        public static void ExtractMissingFromResponseException(HashSet<Identity> missing, CogniteSdk.ResponseException e)
         {
             if (missing is null)
             {
@@ -71,6 +72,38 @@ namespace Cognite.Extensions
                 else if (ts.TryGetValue("id", out MultiValue? idValue) && idValue != null)
                 {
                     missing.Add(new Identity(((MultiValue.Long)idValue).Value));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Write missing identities to the provided identity set.
+        /// </summary>
+        /// <param name="missing">Set to add missing ids to</param>
+        /// <param name="e">Error containing missing ids</param>
+        public static void ExtractMissingFromResponseException(HashSet<IdentityWithInstanceId> missing, ResponseException e)
+        {
+            if (missing is null)
+            {
+                throw new ArgumentNullException(nameof(missing));
+            }
+            if (e is null)
+            {
+                throw new ArgumentNullException(nameof(e));
+            }
+            foreach (var ts in e.Missing)
+            {
+                if (ts.TryGetValue("externalId", out MultiValue? exIdValue) && exIdValue != null)
+                {
+                    missing.Add(new IdentityWithInstanceId(exIdValue.ToString()));
+                }
+                else if (ts.TryGetValue("id", out MultiValue? idValue) && idValue != null)
+                {
+                    missing.Add(new IdentityWithInstanceId(((MultiValue.Long)idValue).Value));
+                }
+                else if (ts.TryGetValue("instanceId", out MultiValue? instanceIdValue) && instanceIdValue != null)
+                {
+                    missing.Add(new IdentityWithInstanceId(((MultiValue.InstanceId)instanceIdValue).Value));
                 }
             }
         }
@@ -776,14 +809,14 @@ namespace Cognite.Extensions
             if (isString)
             {
                 string? value = CogniteUtils.StringFromStream(stream);
-                return new Datapoint(timestamp, value, new StatusCode(statusCode));
+                return new Datapoint(timestamp, value, StatusCode.Create(statusCode));
             }
             else
             {
                 var valueBytes = new byte[sizeof(double)];
                 if (stream.Read(valueBytes, 0, sizeof(double)) < sizeof(double)) return null;
                 double value = BitConverter.ToDouble(valueBytes, 0);
-                return new Datapoint(timestamp, value, new StatusCode(statusCode));
+                return new Datapoint(timestamp, value, StatusCode.Create(statusCode));
             }
         }
     }

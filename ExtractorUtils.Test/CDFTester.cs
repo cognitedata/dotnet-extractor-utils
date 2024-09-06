@@ -1,13 +1,16 @@
-﻿using Cognite.Extractor.Testing;
-using Cognite.Extractor.Utils;
-using CogniteSdk;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Utils;
+using Cognite.Extractor.Utils.Beta;
+using CogniteSdk;
+using CogniteSdk.Beta.DataModels;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test
@@ -24,17 +27,20 @@ namespace ExtractorUtils.Test
         public ILogger<CDFTester> Logger { get; }
         public ServiceProvider Provider { get; }
         public CogniteDestination Destination { get; }
+        public CogniteDestinationWithIDM DestinationWithIDM { get; }
         public CancellationTokenSource Source { get; }
         public string Project { get; private set; }
         public string Host { get; private set; }
         public string Prefix { get; private set; }
         public BaseConfig Config { get; }
         private readonly string _configPath;
+        public string SpaceId { get; private set; }
 
         public CDFTester(string[] config, ITestOutputHelper output)
         {
             // Thread safe increment and store
-            _configPath = $"test-config-{Interlocked.Increment(ref _configIdx)}";
+            var i = Interlocked.Increment(ref _configIdx);
+            _configPath = $"test-config-{i}";
             System.IO.File.WriteAllLines(_configPath, config);
             var services = new ServiceCollection();
             Config = services.AddConfig<BaseConfig>(_configPath, 2);
@@ -43,11 +49,14 @@ namespace ExtractorUtils.Test
             Provider = services.BuildServiceProvider();
             Logger = Provider.GetRequiredService<ILogger<CDFTester>>();
             Destination = Provider.GetRequiredService<CogniteDestination>();
+            DestinationWithIDM = Provider.GetRequiredService<CogniteDestinationWithIDM>();
             Prefix = TestUtils.AlphaNumericPrefix("net-utils-test-");
             Source = new CancellationTokenSource();
+            SpaceId = $"dotnet-extractor-utils-test-space{i}";
         }
         public CDFTester(CogniteHost host, ITestOutputHelper output) : this(GetConfig(host), output)
         {
+            DestinationWithIDM.CogniteClient.Beta.DataModels.UpsertSpaces(new List<SpaceCreate>() { new() { Space = SpaceId } }).GetAwaiter().GetResult();
         }
 
         public async Task<long> GetDataSetId()
@@ -137,6 +146,7 @@ namespace ExtractorUtils.Test
                 if (disposing)
                 {
                     System.IO.File.Delete(_configPath);
+                    DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteSpaces(new List<string>() { SpaceId });
                     Provider.Dispose();
                     Source.Dispose();
                 }

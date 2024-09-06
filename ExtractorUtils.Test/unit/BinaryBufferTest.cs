@@ -1,13 +1,13 @@
-﻿using Cognite.Extensions;
-using Cognite.Extractor.Utils;
-using CogniteSdk;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions;
+using Cognite.Extractor.Utils;
+using CogniteSdk;
 using Xunit;
 
 namespace ExtractorUtils.Test.Unit
@@ -29,8 +29,8 @@ namespace ExtractorUtils.Test.Unit
                 { Identity.Create(123), new [] {new Datapoint(t1, "321"), new Datapoint(t2, 321.321) } },
                 { Identity.Create("empty"), Array.Empty<Datapoint>() },
                 { Identity.Create("status"), new[] {
-                    new Datapoint(t1, 123.123, Cognite.Extensions.StatusCode.FromCategory(StatusCodeCategory.GoodCascade)),
-                    new Datapoint(t2, 321.321, Cognite.Extensions.StatusCode.FromCategory(StatusCodeCategory.BadNoCommunication))
+                    new Datapoint(t1, 123.123, StatusCode.FromCategory(StatusCodeCategory.GoodCascade)),
+                    new Datapoint(t2, 321.321, StatusCode.FromCategory(StatusCodeCategory.BadNoCommunication))
                 } }
             };
             var dps2 = new Dictionary<Identity, IEnumerable<Datapoint>>() {

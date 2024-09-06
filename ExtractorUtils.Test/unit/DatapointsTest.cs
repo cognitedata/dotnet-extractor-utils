@@ -12,8 +12,8 @@ using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.StateStorage;
-using Cognite.Extractor.Utils;
 using Cognite.Extractor.Testing;
+using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
 using Google.Protobuf;
@@ -25,7 +25,6 @@ using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
-using StatusCode = Cognite.Extensions.StatusCode;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -92,11 +91,9 @@ namespace ExtractorUtils.Test.Unit
                 Assert.False(_createdDataPoints.ContainsKey(4 + "")); // Invalid timestamps
                 Assert.Equal(7, _createdDataPoints[1 + ""].Count());
                 Assert.Equal(2, _createdDataPoints["A"].Count());
-                Assert.Empty(_createdDataPoints[1 + ""]
-                    .Where(dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity));
+                Assert.DoesNotContain(_createdDataPoints[1 + ""], dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity);
                 Assert.Equal(6, _createdDataPoints[2 + ""].Count());
-                Assert.Empty(_createdDataPoints[2 + ""]
-                    .Where(dp => dp.StringValue == null || dp.StringValue.Length > CogniteUtils.StringLengthMax));
+                Assert.DoesNotContain(_createdDataPoints[2 + ""], dp => dp.StringValue == null || dp.StringValue.Length > CogniteUtils.StringLengthMax);
 
                 _createdDataPoints.Clear();
                 datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {

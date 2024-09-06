@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions;
+using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.StateStorage;
 using CogniteSdk;
 using Microsoft.Extensions.Logging;

@@ -64,7 +64,7 @@ namespace Cognite.Extensions
 
         private static bool IsAffected(
             TimeSeriesUpdateItem item,
-            HashSet<Identity> badValues,
+            HashSet<IIdentity> badValues,
             CogniteError<TimeSeriesUpdateItem> error)
         {
             var update = item.Update;
