@@ -71,7 +71,7 @@ namespace Cognite.Extensions
             }
         }
 
-        private static bool IsAffected(AssetUpdateItem item, HashSet<Identity> badValues, CogniteError<AssetUpdateItem> error)
+        private static bool IsAffected(AssetUpdateItem item, HashSet<IIdentity> badValues, CogniteError<AssetUpdateItem> error)
         {
             var update = item.Update;
             switch (error.Resource)

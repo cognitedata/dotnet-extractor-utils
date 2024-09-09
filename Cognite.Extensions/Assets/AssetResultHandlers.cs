@@ -60,7 +60,7 @@ namespace Cognite.Extensions
             }
         }
 
-        private static bool IsAffected(AssetCreate asset, HashSet<Identity> badValues, CogniteError<AssetCreate> error)
+        private static bool IsAffected(AssetCreate asset, HashSet<IIdentity> badValues, CogniteError<AssetCreate> error)
         {
             return error.Resource switch
             {
@@ -129,7 +129,7 @@ namespace Cognite.Extensions
                 try
                 {
                     var parents = await resource
-                        .GetAssetsByIdsIgnoreErrors(ids, assetChunkSize, assetThrottleSize, token)
+                        .GetAssetsByIdsIgnoreErrors(ids.ToIdentity(), assetChunkSize, assetThrottleSize, token)
                         .ConfigureAwait(false);
 
                     error.Complete = true;

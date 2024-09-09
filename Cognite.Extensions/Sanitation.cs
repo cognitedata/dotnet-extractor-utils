@@ -18,6 +18,16 @@ namespace Cognite.Extensions
         public const int ExternalIdMax = 255;
 
         /// <summary>
+        /// Maximum length of DM Space ID
+        /// </summary>
+        public const int SpaceIdMax = 43;
+
+        /// <summary>
+        /// Maximum length of Instance ID
+        /// </summary>
+        public const int ExternalIdMaxBytes = 256;
+
+        /// <summary>
         /// Reduce the length of given string to maxLength, if it is longer.
         /// </summary>
         /// <param name="str">String to be shortened</param>
@@ -32,7 +42,22 @@ namespace Cognite.Extensions
             return str.Substring(0, maxLength);
         }
 
-        private static bool CheckLength(this string? str, int maxLength)
+        /// <summary>
+        /// Reduce the length of given string to maxLength of UTF-8 bytes, if it is longer.
+        /// </summary>
+        /// <param name="str">String to be shortened</param>
+        /// <param name="maxLength">Maximum length of final string in bytes</param>
+        /// <returns>String which contains the characters fitting in <paramref name="maxLength"/> bytes from the start of the passed string.</returns>
+#if NETSTANDARD2_1_OR_GREATER
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("str")]
+#endif
+        public static string? TruncateBytes(this string? str, int maxLength)
+        {
+            if (string.IsNullOrEmpty(str)) return str;
+            return str.LimitUtf8ByteCount(maxLength);
+        }
+
+        internal static bool CheckLength(this string? str, int maxLength)
         {
             return string.IsNullOrEmpty(str) || str!.Length <= maxLength;
         }
@@ -235,9 +260,9 @@ namespace Cognite.Extensions
         }
 
 
-        private class DistinctResource<T>
+        internal class DistinctResource<T>
         {
-            public DistinctResource(string text, ResourceType resource, Func<T, Identity?> selector)
+            public DistinctResource(string text, ResourceType resource, Func<T, IIdentity?> selector)
             {
                 Text = text;
                 Resource = resource;
@@ -246,10 +271,10 @@ namespace Cognite.Extensions
 
             public string Text { get; }
             public ResourceType Resource { get; }
-            public Func<T, Identity?> Selector { get; }
+            public Func<T, IIdentity?> Selector { get; }
         }
 
-        private static (List<T>, List<CogniteError<T>>) CleanRequest<T>(
+        internal static (List<T>, List<CogniteError<T>>) CleanRequest<T>(
             DistinctResource<T>[] distinctResources,
             IEnumerable<T> items,
             Func<T, ResourceType?> verify,
@@ -262,15 +287,15 @@ namespace Cognite.Extensions
             var result = new List<T>();
             var errors = new List<CogniteError<T>>();
 
-            var existingResources = new HashSet<Identity>[distinctResources.Length];
-            var duplicates = new List<(T Item, Identity Idt)>[distinctResources.Length];
+            var existingResources = new HashSet<IIdentity>[distinctResources.Length];
+            var duplicates = new List<(T Item, IIdentity Idt)>[distinctResources.Length];
 
             var bad = new List<(ResourceType Type, T Item)>();
 
             for (int i = 0; i < distinctResources.Length; i++)
             {
-                existingResources[i] = new HashSet<Identity>();
-                duplicates[i] = new List<(T Item, Identity Idt)>();
+                existingResources[i] = new HashSet<IIdentity>();
+                duplicates[i] = new List<(T Item, IIdentity Idt)>();
             }
 
             foreach (var item in items)

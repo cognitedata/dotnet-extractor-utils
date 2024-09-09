@@ -163,17 +163,17 @@ namespace Cognite.Extractor.Utils
                     {
                         foreach (var dpErr in err.Skipped)
                         {
-                            if (dps.TryGetValue(dpErr.Id, out var byDp))
+                            if (dps.TryGetValue((Identity)dpErr.Id, out var byDp))
                             {
                                 var uploaded = byDp.Except(dpErr.DataPoints);
                                 if (uploaded.Any())
                                 {
-                                    dps[dpErr.Id] = uploaded;
-                                    skipped.AddRange(dpErr.DataPoints.Select(dp => (dpErr.Id, dp)));
+                                    dps[(Identity)dpErr.Id] = uploaded;
+                                    skipped.AddRange(dpErr.DataPoints.Select(dp => ((Identity)dpErr.Id, dp)));
                                 }
                                 else
                                 {
-                                    dps.Remove(dpErr.Id);
+                                    dps.Remove((Identity)dpErr.Id);
                                 }
                             }
                         }

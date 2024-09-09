@@ -1,4 +1,6 @@
-﻿using CogniteSdk;
+﻿using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
+using CogniteSdk;
+using CogniteSdk.Beta.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -160,6 +162,11 @@ namespace Cognite.Extensions
                 && upd.SecurityCategories == null && upd.Unit == null) return null;
 
             return new TimeSeriesUpdateItem(old.Id) { Update = upd };
+        }
+
+        internal static IEnumerable<Identity> ToIdentity(this IEnumerable<IIdentity>? identities)
+        {
+            return identities?.Select(x => (Identity)x) ?? new List<Identity>();
         }
     }
 

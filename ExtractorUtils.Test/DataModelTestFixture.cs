@@ -1,4 +1,10 @@
-﻿using Cognite.Extensions.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Nodes;
+using System.Threading;
+using System.Threading.Tasks;
+using Cognite.Extensions.DataModels;
 using Cognite.Extensions.DataModels.QueryBuilder;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Testing;
@@ -7,12 +13,6 @@ using CogniteSdk;
 using CogniteSdk.Beta.DataModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Nodes;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace ExtractorUtils.Test
@@ -111,7 +111,7 @@ namespace ExtractorUtils.Test
                         try
                         {
                             await Destination.CogniteClient.Beta.DataModels.DeleteInstances(
-                                edges.Items.Select(e => new InstanceIdentifier(InstanceType.edge, e.Space, e.ExternalId)),
+                                edges.Items.Select(e => new InstanceIdentifierWithType(InstanceType.edge, e.Space, e.ExternalId)),
                                 Source.Token);
                             break;
                         }
@@ -148,7 +148,7 @@ namespace ExtractorUtils.Test
                         try
                         {
                             await Destination.CogniteClient.Beta.DataModels.DeleteInstances(
-                                nodes.Items.Select(e => new InstanceIdentifier(InstanceType.node, e.Space, e.ExternalId)),
+                                nodes.Items.Select(e => new InstanceIdentifierWithType(InstanceType.node, e.Space, e.ExternalId)),
                                 Source.Token);
                             break;
                         }

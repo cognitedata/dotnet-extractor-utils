@@ -1,11 +1,10 @@
-﻿using CogniteSdk;
-using CogniteSdk.Resources;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using CogniteSdk;
+using CogniteSdk.Alpha;
+using CogniteSdk.Beta.DataModels;
 
 namespace Cognite.Extensions
 {
@@ -47,6 +46,39 @@ namespace Cognite.Extensions
         public static CogniteError<TError> ParseSimpleError<TError>(
             Exception ex,
             IEnumerable<Identity>? failed,
+            IEnumerable<TError>? skipped)
+        {
+            if (ex == null) throw new ArgumentNullException(nameof(ex));
+
+            var err = new CogniteError<TError>
+            {
+                Message = ex.Message,
+                Exception = ex,
+                Type = ErrorType.FatalFailure,
+                Values = failed,
+                Skipped = skipped
+            };
+
+            if (ex is ResponseException rex)
+            {
+                err.Status = rex.Code;
+            }
+
+            return err;
+        }
+
+        /// <summary>
+        /// Create a CogniteError from exception thrown when doing some simple operation to CDF.
+        /// Just creates a fatal error based on the exception.
+        /// </summary>
+        /// <typeparam name="TError">Errortype on result</typeparam>
+        /// <param name="ex">Exception thrown by method</param>
+        /// <param name="failed">Items that failed, optional</param>
+        /// <param name="skipped">Items that were skipped, optional</param>
+        /// <returns></returns>
+        public static CogniteError<TError> ParseSimpleError<TError>(
+            Exception ex,
+            IEnumerable<IdentityWithInstanceId>? failed,
             IEnumerable<TError>? skipped)
         {
             if (ex == null) throw new ArgumentNullException(nameof(ex));
@@ -133,8 +165,8 @@ namespace Cognite.Extensions
         private static IEnumerable<T> CleanFromErrorCommon<T>(
             CogniteError<T> error,
             IEnumerable<T> items,
-            Func<T, HashSet<Identity>, CogniteError<T>, bool> isAffected,
-            Func<T, Identity?> getIdentity,
+            Func<T, HashSet<IIdentity>, CogniteError<T>, bool> isAffected,
+            Func<T, IIdentity?> getIdentity,
             Prometheus.Counter skippedCounter)
         {
             if (items == null) throw new ArgumentNullException(nameof(items));
@@ -146,7 +178,7 @@ namespace Cognite.Extensions
                 return Enumerable.Empty<T>();
             }
 
-            var badValues = new HashSet<Identity>(error.Values ?? Enumerable.Empty<Identity>());
+            var badValues = new HashSet<IIdentity>(error.Values ?? Enumerable.Empty<IIdentity>());
 
             var ret = new List<T>();
             var skipped = new List<T>();
@@ -182,7 +214,7 @@ namespace Cognite.Extensions
         /// <param name="set">Set of identities</param>
         /// <param name="idt">ExternalId to test</param>
         /// <returns>True if externalId is non-null and set contains it, false otherwise</returns>
-        public static bool ContainsIdentity(this HashSet<Identity> set, string? idt)
+        public static bool ContainsIdentity(this HashSet<IIdentity> set, string? idt)
         {
             if (idt == null) return false;
             return set.Contains(Identity.Create(idt));
@@ -194,10 +226,22 @@ namespace Cognite.Extensions
         /// <param name="set">Set of identities</param>
         /// <param name="idt">ExternalId to test</param>
         /// <returns>True if internal id is non-null and set contains it, false otherwise</returns>
-        public static bool ContainsIdentity(this HashSet<Identity> set, long? idt)
+        public static bool ContainsIdentity(this HashSet<IIdentity> set, long? idt)
         {
             if (idt == null) return false;
             return set.Contains(Identity.Create(idt.Value));
+        }
+
+        /// <summary>
+        /// Utility method for checking if set of identities contains instance id.
+        /// </summary>
+        /// <param name="set">Set of identities</param>
+        /// <param name="idt">IntanceId to test</param>
+        /// <returns>True if instance id is non-null and set contains it, false otherwise</returns>
+        public static bool ContainsIdentity(this HashSet<IdentityWithInstanceId> set, InstanceIdentifier idt)
+        {
+            if (idt == null) return false;
+            return set.Contains(IdentityWithInstanceId.Create(idt));
         }
     }
 
@@ -383,7 +427,7 @@ namespace Cognite.Extensions
             Results = results;
         }
 
-        
+
 
         /// <summary>
         /// Return a new CogniteResult that contains errors and results from both
@@ -462,7 +506,7 @@ namespace Cognite.Extensions
         /// <summary>
         /// Values of the affected resources as CogniteSdk identities.
         /// </summary>
-        public IEnumerable<Identity>? Values { get; set; }
+        public IEnumerable<IIdentity>? Values { get; set; }
         /// <summary>
         /// Exception that caused this error, if any.
         /// </summary>
@@ -505,7 +549,7 @@ namespace Cognite.Extensions
             var initial = errs.First();
 
             var skipped = initial.Skipped?.ToList() ?? new List<TError>();
-            var values = initial.Values?.ToList() ?? new List<Identity>();
+            var values = initial.Values?.ToList() ?? new List<IIdentity>();
 
             foreach (var err in errs.Skip(1))
             {
@@ -750,9 +794,17 @@ namespace Cognite.Extensions
         /// </summary>
         Update,
         /// <summary>
+        /// Data modeling space id
+        /// </summary>
+        SpaceId,
+        /// <summary>
+        /// Data modeling instance id
+        /// </summary>
+        InstanceId,
+        /// <summary>
         /// None or unknown
         /// </summary>
-        None = -1
+        None = -1,
     }
     /// <summary>
     /// Type of request that caused an error
@@ -792,7 +844,7 @@ namespace Cognite.Extensions
         /// </summary>
         UpdateTimeSeries
     }
-    
+
 
     /// <summary>
     /// When to retry a request

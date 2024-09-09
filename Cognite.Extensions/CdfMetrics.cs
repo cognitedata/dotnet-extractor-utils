@@ -8,6 +8,8 @@ namespace Cognite.Extensions
             "Number and duration of asset requests to CDF", "endpoint");
         public static Summary TimeSeries { get; } = Metrics.CreateSummary("extractor_utils_cdf_timeseries_requests",
             "Number and duration of time-series requests to CDF", "endpoint");
+        public static Summary CoreTimeSeries { get; } = Metrics.CreateSummary("extractor_utils_cdf_core_timeseries_requests",
+            "Number and duration of core data model time-series requests to CDF", "endpoint");
         public static Summary Datapoints { get; } = Metrics.CreateSummary("extractor_utils_cdf_datapoint_requests",
             "Number and duration of datapoint requests to CDF", "endpoint");
         public static Summary Events { get; } = Metrics.CreateSummary("extractor_utils_cdf_event_requests",

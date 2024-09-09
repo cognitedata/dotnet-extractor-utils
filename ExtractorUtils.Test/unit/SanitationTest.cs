@@ -1,13 +1,12 @@
-﻿using Cognite.Extensions;
-using Cognite.Extractor.Common;
-using CogniteSdk;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Cognite.Extensions;
+using Cognite.Extractor.Common;
+using CogniteSdk;
 using Xunit;
-using StatusCode = Cognite.Extensions.StatusCode;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -659,7 +658,7 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, 123.123),
                 new Datapoint(DateTime.UtcNow, "test"),
                 new Datapoint(DateTime.UtcNow, new string('æ', 500)),
-                new Datapoint(DateTime.UtcNow, true, Cognite.Extensions.StatusCode.Parse("Good")),
+                new Datapoint(DateTime.UtcNow, true, StatusCode.Parse("Good")),
                 new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
                 new Datapoint(DateTime.UtcNow, double.NegativeInfinity),
                 new Datapoint(DateTime.UtcNow, double.NaN),
@@ -667,9 +666,9 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, double.MinValue),
                 new Datapoint(DateTime.UtcNow, 1E101),
                 new Datapoint(DateTime.UtcNow, -1E101),
-                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Bad")),
-                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Good")),
-                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Uncertain"))
+                new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Bad")),
+                new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Good")),
+                new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Uncertain"))
             };
 
             var cleanDps = dps.Select(dp => dp.Sanitize(nanRepl)).ToArray();
@@ -704,9 +703,9 @@ namespace ExtractorUtils.Test.Unit
             {
                 new Datapoint(DateTime.UtcNow, 123.123),
                 new Datapoint(DateTime.UtcNow, "test"),
-                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Bad")),
-                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Uncertain")),
-                new Datapoint(DateTime.UtcNow, false, Cognite.Extensions.StatusCode.Parse("Good")),
+                new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Bad")),
+                new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Uncertain")),
+                new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Good")),
                 new Datapoint(DateTime.UtcNow, new string('æ', 500)),
                 new Datapoint(DateTime.UtcNow, null),
                 new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
@@ -949,7 +948,7 @@ namespace ExtractorUtils.Test.Unit
         [Fact]
         public void SanitizeDataPointRequest()
         {
-            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
+            var dps = new Dictionary<IIdentity, IEnumerable<Datapoint>>()
             {
                 { Identity.Create("all-bad-ts"), new[] {
                     new Datapoint(DateTime.MaxValue, 1.0),

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Linq;
 using System.Net.Security;
+using Cognite.Extractor.Utils.Beta;
 
 namespace Cognite.Extractor.Utils
 {
@@ -27,6 +28,15 @@ namespace Cognite.Extractor.Utils
             var config = provider.GetService<CogniteConfig>();
             if (client == null || config == null) return null!;
             return new CogniteDestination(client, logger ?? new NullLogger<CogniteDestination>(), config);
+        }
+
+        private static CogniteDestinationWithIDM GetCogniteDestinationWithIDM(IServiceProvider provider)
+        {
+            var client = provider.GetService<Client>();
+            var logger = provider.GetService<ILogger<CogniteDestinationWithIDM>>();
+            var config = provider.GetService<CogniteConfig>();
+            if (client == null || config == null) return null!;
+            return new CogniteDestinationWithIDM(client, logger ?? new NullLogger<CogniteDestinationWithIDM>(), config);
         }
 
 #if NETSTANDARD2_1_OR_GREATER
@@ -205,6 +215,8 @@ namespace Cognite.Extractor.Utils
             });
             services.AddTransient(GetCogniteDestination);
             services.AddTransient<IRawDestination, CogniteDestination>(GetCogniteDestination);
+            services.AddTransient(GetCogniteDestinationWithIDM);
+            services.AddTransient<IRawDestination, CogniteDestinationWithIDM>(GetCogniteDestinationWithIDM);
         }
 
 

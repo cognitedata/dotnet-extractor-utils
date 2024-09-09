@@ -95,17 +95,17 @@ namespace Cognite.Extensions
         /// <param name="mode">Sanitation mode</param>
         /// <param name="nonFiniteReplacement">Optional replacement for non-finite values</param>
         /// <returns>Cleaned request and optional list of errors</returns>
-        public static (IDictionary<Identity, IEnumerable<Datapoint>>, IEnumerable<CogniteError<DataPointInsertError>>) CleanDataPointsRequest(
-            IDictionary<Identity, IEnumerable<Datapoint>> points,
+        public static (IDictionary<IIdentity, IEnumerable<Datapoint>>, IEnumerable<CogniteError<DataPointInsertError>>) CleanDataPointsRequest(
+            IDictionary<IIdentity, IEnumerable<Datapoint>> points,
             SanitationMode mode,
             double? nonFiniteReplacement)
         {
             if (mode == SanitationMode.None) return (points, Enumerable.Empty<CogniteError<DataPointInsertError>>());
             if (points == null) throw new ArgumentNullException(nameof(points));
 
-            var result = new Dictionary<Identity, IEnumerable<Datapoint>>();
+            var result = new Dictionary<IIdentity, IEnumerable<Datapoint>>();
 
-            var badDpGroups = new List<(ResourceType type, Identity id, IEnumerable<Datapoint> dps)>();
+            var badDpGroups = new List<(ResourceType type, IIdentity id, IEnumerable<Datapoint> dps)>();
 
             foreach (var kvp in points)
             {
@@ -198,14 +198,14 @@ namespace Cognite.Extensions
         /// <summary>
         /// Id of timeseries skipped for
         /// </summary>
-        public Identity Id { get; }
+        public IIdentity Id { get; }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="id">Id of timeseries skipped for</param>
         /// <param name="dps">Skipped datapoints</param>
-        public DataPointInsertError(Identity id, IEnumerable<Datapoint> dps)
+        public DataPointInsertError(IIdentity id, IEnumerable<Datapoint> dps)
         {
             DataPoints = dps;
             Id = id;
