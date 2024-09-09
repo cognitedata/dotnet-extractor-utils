@@ -1,13 +1,10 @@
-﻿using CogniteSdk;
-using CogniteSdk.Beta.DataModels;
-using CogniteSdk.Resources;
-using CogniteSdk.Alpha;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using CogniteSdk;
+using CogniteSdk.Alpha;
+using CogniteSdk.Beta.DataModels;
 
 namespace Cognite.Extensions
 {
@@ -430,7 +427,7 @@ namespace Cognite.Extensions
             Results = results;
         }
 
-        
+
 
         /// <summary>
         /// Return a new CogniteResult that contains errors and results from both
@@ -797,17 +794,17 @@ namespace Cognite.Extensions
         /// </summary>
         Update,
         /// <summary>
-        /// None or unknown
-        /// </summary>
-        None = -1,
-        /// <summary>
         /// Data modeling space id
         /// </summary>
         SpaceId,
         /// <summary>
         /// Data modeling instance id
         /// </summary>
-        InstanceId
+        InstanceId,
+        /// <summary>
+        /// None or unknown
+        /// </summary>
+        None = -1,
     }
     /// <summary>
     /// Type of request that caused an error
@@ -847,7 +844,7 @@ namespace Cognite.Extensions
         /// </summary>
         UpdateTimeSeries
     }
-    
+
 
     /// <summary>
     /// When to retry a request

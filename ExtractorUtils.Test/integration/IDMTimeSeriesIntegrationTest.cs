@@ -127,7 +127,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Single(result.Errors);
                 var error1 = result.Errors.First();
                 Assert.Equal(ErrorType.ItemDuplicated, error1.Type);
-                Assert.Equal(ResourceType.ExternalId, error1.Resource);
+                Assert.Equal(ResourceType.InstanceId, error1.Resource);
                 Assert.Equal(2, result.Results.Count());
                 Assert.Equal((tester.Prefix + new string('æ', 255 - tester.Prefix.Length)).TruncateBytes(256)!, result.Results.First().ExternalId);
                 Assert.Equal($"{tester.Prefix} test-duplicate-externalId", result.Results.Last().ExternalId);
@@ -206,7 +206,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Single(errs);
 
                 Assert.Equal(ErrorType.ItemDuplicated, errs[0].Type);
-                Assert.Equal(ResourceType.ExternalId, errs[0].Resource);
+                Assert.Equal(ResourceType.InstanceId, errs[0].Resource);
                 Assert.Single(errs[0].Values);
             }
             finally
