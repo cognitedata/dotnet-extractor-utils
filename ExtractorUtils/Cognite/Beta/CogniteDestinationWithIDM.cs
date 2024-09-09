@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace Cognite.Extractor.Utils.Beta
 {
     /// <summary>
-    /// Class with utility methods supporting extraction of data into CDF.
+    /// Beta: Class with utility methods supporting extraction of data into CDF.
     /// These methods complement the ones offered by the <see cref="Client"/> and use a
     /// <see cref="CogniteConfig"/> object to determine chunking of data and throttling of
     /// requests against the client
@@ -51,7 +51,7 @@ namespace Cognite.Extractor.Utils.Beta
 
         #region timeseries
         /// <summary>
-        /// Ensures the the time series with the provided <paramref name="instanceIds"/> exist in CDF.
+        /// Beta: Ensures the the time series with the provided <paramref name="instanceIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
@@ -86,7 +86,7 @@ namespace Cognite.Extractor.Utils.Beta
                 ).ConfigureAwait(false);
         }
         /// <summary>
-        /// Ensures the the time series with the provided <paramref name="instanceIds"/> exist in CDF.
+        /// Beta: Ensures the the time series with the provided <paramref name="instanceIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF.
         /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
@@ -120,7 +120,7 @@ namespace Cognite.Extractor.Utils.Beta
         }
 
         /// <summary>
-        /// Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
+        /// Beta: Ensures that all time series in <paramref name="timeSeries"/> exist in CDF.
         /// Tries to create the time series and returns when all are created or have been removed
         /// due to issues with the request.
         /// By default, if any items fail to be created due to missing asset, duplicated externalId, duplicated
@@ -151,7 +151,7 @@ namespace Cognite.Extractor.Utils.Beta
         }
 
         /// <summary>
-        /// Gets TimeSeries by ids in <paramref name="timeSeries"/>, ignoring errors.
+        /// Beta: Gets TimeSeries by ids in <paramref name="timeSeries"/>, ignoring errors.
         /// </summary>
         /// <param name="timeSeries">List of TimeSeries instance ids to fetch</param>
         /// <param name="token">Cancellation token</param>
@@ -169,7 +169,7 @@ namespace Cognite.Extractor.Utils.Beta
         }
 
         /// <summary>
-        /// Upsert timeseries in <paramref name="updates"/>.
+        /// Beta: Upsert timeseries in <paramref name="updates"/>.
         /// If items fail due to duplicated instance ids, they can be removed before retrying
         /// by setting <paramref name="retryMode"/>.
         /// TimeSeries will be returned in the same order as given.
@@ -198,7 +198,7 @@ namespace Cognite.Extractor.Utils.Beta
 
         #region datapoints
         /// <summary>
-        /// Insert the provided data points into CDF. The data points are chunked
+        /// Alpha: Insert the provided data points into CDF. The data points are chunked
         /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the
         /// <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
         /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
@@ -236,7 +236,7 @@ namespace Cognite.Extractor.Utils.Beta
         }
 
         /// <summary>
-        /// Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+        /// Alpha: Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
         /// and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
         /// they are created before the points are inserted again.
         /// </summary>
@@ -269,7 +269,7 @@ namespace Cognite.Extractor.Utils.Beta
         }
 
         /// <summary>
-        /// Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
+        /// Alpha: Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
         /// and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
         /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 
         /// confirm the deletion does not mean that the operation failed in CDF
@@ -302,7 +302,7 @@ namespace Cognite.Extractor.Utils.Beta
 
         #region ranges
         /// <summary>
-        /// Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+        /// Alpha: Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
         /// Note that end limits closer to actual endpoints in CDF is considerably faster.
         /// </summary>
         /// <param name="ids">ExternalIds and start/end of region to look for datapoints.
@@ -329,7 +329,7 @@ namespace Cognite.Extractor.Utils.Beta
         }
 
         /// <summary>
-        /// Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+        /// Alpha: Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
         /// Note that end limits closer to actual endpoints in CDF is considerably faster.
         /// </summary>
         /// <param name="ids">ExternalIds and start/end of region to look for datapoints.

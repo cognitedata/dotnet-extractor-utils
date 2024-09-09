@@ -29,7 +29,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Get or create the time series with the provided <paramref name="instanceIds"/> exist in CDF.
+        /// Beta: Get or create the time series with the provided <paramref name="instanceIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
@@ -64,7 +64,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Get or create the time series with the provided <paramref name="instanceIds"/> exist in CDF.
+        /// Beta: Get or create the time series with the provided <paramref name="instanceIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
@@ -122,7 +122,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
+        /// Beta: Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
         /// Tries to create the time series and returns when all are created or have been removed
         /// due to issues with the request.
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
@@ -188,7 +188,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Get the time series with the provided <paramref name="ids"/>. Ignore any
+        /// Beta: Get the time series with the provided <paramref name="ids"/>. Ignore any
         /// unknown ids
         /// </summary>
         /// <param name="timeSeries">A CogniteSdk TimeSeries resource</param>
@@ -362,7 +362,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Upsert time series.
+        /// Beta: Upsert time series.
         /// If any items fail to be created due to duplicated instance ids, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// Timeseries will be returned in the same order as given in <paramref name="items"/>
         /// </summary>

@@ -33,7 +33,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Create a protobuf insertion request from dictionary
+        /// Alpha: Create a protobuf insertion request from dictionary
         /// </summary>
         /// <param name="dps">Datapoints to insert</param>
         /// <returns>Converted request</returns>
@@ -97,7 +97,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+        /// Alpha: Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
         /// and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
         /// they are created before the points are inserted again.
         /// </summary>
@@ -183,7 +183,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 
 
         /// <summary>
-        /// Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+        /// Alpha: Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
         /// and can optionally handle errors.
         /// </summary>
         /// <param name="client">Cognite client</param>
@@ -338,7 +338,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
+        /// Alpha: Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
         /// and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
         /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 
         /// confirm the deletion does not mean that the operation failed in CDF
@@ -442,7 +442,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Get the last timestamp for each time series given in <paramref name="ids"/> before each given timestamp.
+        /// Alpha: Get the last timestamp for each time series given in <paramref name="ids"/> before each given timestamp.
         /// Ignores timeseries not in CDF. The return dictionary contains only ids that exist in CDF.
         /// Note that end limits closer to actual endpoints in CDF is considerably faster.
         /// </summary>
@@ -508,7 +508,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Get the first timestamp for each time series given in <paramref name="ids"/> after each given timestamp.
+        /// Alpha: Get the first timestamp for each time series given in <paramref name="ids"/> after each given timestamp.
         /// Ignores timeseries not in CDF. The return dictionary contains only ids that exist in CDF.
         /// </summary>
         /// <param name="dataPoints">DataPointsResource to use</param>
@@ -581,7 +581,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             return ret;
         }
         /// <summary>
-        /// Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
+        /// Alpha: Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
         /// Note that end limits closer to actual endpoints in CDF is considerably faster.
         /// </summary>
         /// <param name="dataPoints">DataPointsResource to use</param>
