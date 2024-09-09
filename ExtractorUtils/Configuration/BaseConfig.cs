@@ -224,6 +224,11 @@ namespace Cognite.Extractor.Utils
         /// Maximum number of rows per sequence per row insert request
         /// </summary>
         public int SequenceRows { get; set; } = 10_000;
+
+        /// <summary>
+        /// Maximum number of data modeling instances per get/create instance request
+        /// </summary>
+        public int Instances { get; set; } = 1000;
     }
 
     /// <summary>
@@ -269,6 +274,11 @@ namespace Cognite.Extractor.Utils
         /// Maximum number of parallel requests per sequence operation
         /// </summary>
         public int Sequences { get; set; } = 10;
+
+        /// <summary>
+        /// Maximum number of parallel requests per data modeling instances operation
+        /// </summary>
+        public int Instances { get; set; } = 4;
     }
     /// <summary>
     /// Configure automatic retries on requests to CDF.
@@ -314,7 +324,7 @@ namespace Cognite.Extractor.Utils
         /// The index of the extractor.
         /// </summary>
         public int Index { get; set; }
-        
+
         /// <summary>
         /// Config for adding high availability using Raw.
         /// </summary>
@@ -325,7 +335,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         public RedisConfig? Redis { get; set; }
     }
-        
+
     /// <summary>
     /// Config required for high availability using Raw.
     /// </summary>

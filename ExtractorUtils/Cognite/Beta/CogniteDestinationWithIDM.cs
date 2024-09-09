@@ -78,8 +78,8 @@ namespace Cognite.Extractor.Utils.Beta
                 .GetOrCreateTimeSeriesAsync(
                     instanceIds,
                     buildTimeSeries,
-                    _config.CdfChunking.TimeSeries,
-                    _config.CdfThrottling.TimeSeries,
+                    _config.CdfChunking.Instances,
+                    _config.CdfThrottling.Instances,
                     retryMode,
                     sanitationMode,
                     token
@@ -112,8 +112,8 @@ namespace Cognite.Extractor.Utils.Beta
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetOrCreateTimeSeriesAsync(
                 instanceIds,
                 buildTimeSeries,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.Instances,
+                _config.CdfThrottling.Instances,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -143,8 +143,8 @@ namespace Cognite.Extractor.Utils.Beta
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).EnsureTimeSeriesExistsAsync<T>(
                 timeSeries,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.Instances,
+                _config.CdfThrottling.Instances,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -163,8 +163,8 @@ namespace Cognite.Extractor.Utils.Beta
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetTimeSeriesByIdsIgnoreErrors<T>(
                 timeSeries,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.Instances,
+                _config.CdfThrottling.Instances,
                 token).ConfigureAwait(false);
         }
 
@@ -188,8 +188,8 @@ namespace Cognite.Extractor.Utils.Beta
             _logger.LogInformation("Updating {Number} timeseries in CDF", updates.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).UpsertAsync(
                 updates,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.Instances,
+                _config.CdfThrottling.Instances,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -226,8 +226,8 @@ namespace Cognite.Extractor.Utils.Beta
                 _config.CdfChunking.DataPointTimeSeries,
                 _config.CdfChunking.DataPoints,
                 _config.CdfThrottling.DataPoints,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.Instances,
+                _config.CdfThrottling.Instances,
                 _config.CdfChunking.DataPointsGzipLimit,
                 sanitationMode,
                 retryMode,
@@ -259,8 +259,8 @@ namespace Cognite.Extractor.Utils.Beta
                 _config.CdfChunking.DataPointTimeSeries,
                 _config.CdfChunking.DataPoints,
                 _config.CdfThrottling.DataPoints,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.Instances,
+                _config.CdfThrottling.Instances,
                 _config.CdfChunking.DataPointsGzipLimit,
                 sanitationMode,
                 retryMode,
