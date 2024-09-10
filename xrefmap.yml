@@ -1445,6 +1445,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetLatestTimestamps
   nameWithType: DataPointExtensionsWithInstanceId.GetLatestTimestamps
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(CogniteSdk.Client,System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Threading.CancellationToken)
+  name: InsertAsync(Client, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, int, int, int, int, int, int, SanitationMode, RetryMode, double?, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsync_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(CogniteSdk.Client,System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Threading.CancellationToken)
+  name.vb: InsertAsync(Client, IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), Integer, Integer, Integer, Integer, Integer, Integer, SanitationMode, RetryMode, Double?, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(CogniteSdk.Client, System.Collections.Generic.IDictionary<CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable<Cognite.Extensions.Datapoint>>, int, int, int, int, int, int, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, double?, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(CogniteSdk.Client, System.Collections.Generic.IDictionary(Of CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable(Of Cognite.Extensions.Datapoint)), Integer, Integer, Integer, Integer, Integer, Integer, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, Double?, System.Threading.CancellationToken)
+  nameWithType: DataPointExtensionsWithInstanceId.InsertAsync(Client, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, int, int, int, int, int, int, SanitationMode, RetryMode, double?, CancellationToken)
+  nameWithType.vb: DataPointExtensionsWithInstanceId.InsertAsync(Client, IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), Integer, Integer, Integer, Integer, Integer, Integer, SanitationMode, RetryMode, Double?, CancellationToken)
 - uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync*
   name: InsertAsync
   href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsync_
@@ -1468,15 +1477,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing
   nameWithType: DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing
-- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync``1(CogniteSdk.Client,System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Threading.CancellationToken)
-  name: InsertAsync<T>(Client, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, int, int, int, int, int, int, SanitationMode, RetryMode, double?, CancellationToken)
-  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsync__1_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_
-  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync``1(CogniteSdk.Client,System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Threading.CancellationToken)
-  name.vb: InsertAsync(Of T)(Client, IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), Integer, Integer, Integer, Integer, Integer, Integer, SanitationMode, RetryMode, Double?, CancellationToken)
-  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync<T>(CogniteSdk.Client, System.Collections.Generic.IDictionary<CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable<Cognite.Extensions.Datapoint>>, int, int, int, int, int, int, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, double?, System.Threading.CancellationToken)
-  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(Of T)(CogniteSdk.Client, System.Collections.Generic.IDictionary(Of CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable(Of Cognite.Extensions.Datapoint)), Integer, Integer, Integer, Integer, Integer, Integer, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, Double?, System.Threading.CancellationToken)
-  nameWithType: DataPointExtensionsWithInstanceId.InsertAsync<T>(Client, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, int, int, int, int, int, int, SanitationMode, RetryMode, double?, CancellationToken)
-  nameWithType.vb: DataPointExtensionsWithInstanceId.InsertAsync(Of T)(Client, IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), Integer, Integer, Integer, Integer, Integer, Integer, SanitationMode, RetryMode, Double?, CancellationToken)
 - uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.ToInsertRequest(System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}})
   name: ToInsertRequest(IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>)
   href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_ToInsertRequest_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___
@@ -3820,6 +3820,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.ResultHandlers.VerifyAssetUpdateParents
   nameWithType: ResultHandlers.VerifyAssetUpdateParents
+- uid: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(CogniteSdk.Resources.DataModels.CoreTimeSeriesResource{CogniteSdk.Beta.DataModels.Core.CogniteTimeSeriesBase},Cognite.Extensions.CogniteError{Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId},System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Threading.CancellationToken)
+  name: VerifyDatapointsFromCDF(CoreTimeSeriesResource<CogniteTimeSeriesBase>, CogniteError<DataPointInsertErrorWithInstanceId>, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, int, int, CancellationToken)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifyDatapointsFromCDF_CogniteSdk_Resources_DataModels_CoreTimeSeriesResource_CogniteSdk_Beta_DataModels_Core_CogniteTimeSeriesBase__Cognite_Extensions_CogniteError_Cognite_Extensions_DataModels_DataPointInsertErrorWithInstanceId__System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(CogniteSdk.Resources.DataModels.CoreTimeSeriesResource{CogniteSdk.Beta.DataModels.Core.CogniteTimeSeriesBase},Cognite.Extensions.CogniteError{Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId},System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Threading.CancellationToken)
+  name.vb: VerifyDatapointsFromCDF(CoreTimeSeriesResource(Of CogniteTimeSeriesBase), CogniteError(Of DataPointInsertErrorWithInstanceId), IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), Integer, Integer, CancellationToken)
+  fullName: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(CogniteSdk.Resources.DataModels.CoreTimeSeriesResource<CogniteSdk.Beta.DataModels.Core.CogniteTimeSeriesBase>, Cognite.Extensions.CogniteError<Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId>, System.Collections.Generic.IDictionary<CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable<Cognite.Extensions.Datapoint>>, int, int, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(CogniteSdk.Resources.DataModels.CoreTimeSeriesResource(Of CogniteSdk.Beta.DataModels.Core.CogniteTimeSeriesBase), Cognite.Extensions.CogniteError(Of Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId), System.Collections.Generic.IDictionary(Of CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable(Of Cognite.Extensions.Datapoint)), Integer, Integer, System.Threading.CancellationToken)
+  nameWithType: ResultHandlers.VerifyDatapointsFromCDF(CoreTimeSeriesResource<CogniteTimeSeriesBase>, CogniteError<DataPointInsertErrorWithInstanceId>, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, int, int, CancellationToken)
+  nameWithType.vb: ResultHandlers.VerifyDatapointsFromCDF(CoreTimeSeriesResource(Of CogniteTimeSeriesBase), CogniteError(Of DataPointInsertErrorWithInstanceId), IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), Integer, Integer, CancellationToken)
 - uid: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(CogniteSdk.Resources.TimeSeriesResource,Cognite.Extensions.CogniteError{Cognite.Extensions.DataPointInsertError},System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Threading.CancellationToken)
   name: VerifyDatapointsFromCDF(TimeSeriesResource, CogniteError<DataPointInsertError>, IDictionary<Identity, IEnumerable<Datapoint>>, int, int, CancellationToken)
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifyDatapointsFromCDF_CogniteSdk_Resources_TimeSeriesResource_Cognite_Extensions_CogniteError_Cognite_Extensions_DataPointInsertError__System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Threading_CancellationToken_
@@ -3836,15 +3845,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF
   nameWithType: ResultHandlers.VerifyDatapointsFromCDF
-- uid: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF``1(CogniteSdk.Resources.DataModels.CoreTimeSeriesResource{``0},Cognite.Extensions.CogniteError{Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId},System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Threading.CancellationToken)
-  name: VerifyDatapointsFromCDF<T>(CoreTimeSeriesResource<T>, CogniteError<DataPointInsertErrorWithInstanceId>, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, int, int, CancellationToken)
-  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifyDatapointsFromCDF__1_CogniteSdk_Resources_DataModels_CoreTimeSeriesResource___0__Cognite_Extensions_CogniteError_Cognite_Extensions_DataModels_DataPointInsertErrorWithInstanceId__System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Threading_CancellationToken_
-  commentId: M:Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF``1(CogniteSdk.Resources.DataModels.CoreTimeSeriesResource{``0},Cognite.Extensions.CogniteError{Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId},System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Threading.CancellationToken)
-  name.vb: VerifyDatapointsFromCDF(Of T)(CoreTimeSeriesResource(Of T), CogniteError(Of DataPointInsertErrorWithInstanceId), IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), Integer, Integer, CancellationToken)
-  fullName: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF<T>(CogniteSdk.Resources.DataModels.CoreTimeSeriesResource<T>, Cognite.Extensions.CogniteError<Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId>, System.Collections.Generic.IDictionary<CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable<Cognite.Extensions.Datapoint>>, int, int, System.Threading.CancellationToken)
-  fullName.vb: Cognite.Extensions.ResultHandlers.VerifyDatapointsFromCDF(Of T)(CogniteSdk.Resources.DataModels.CoreTimeSeriesResource(Of T), Cognite.Extensions.CogniteError(Of Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId), System.Collections.Generic.IDictionary(Of CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable(Of Cognite.Extensions.Datapoint)), Integer, Integer, System.Threading.CancellationToken)
-  nameWithType: ResultHandlers.VerifyDatapointsFromCDF<T>(CoreTimeSeriesResource<T>, CogniteError<DataPointInsertErrorWithInstanceId>, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>, int, int, CancellationToken)
-  nameWithType.vb: ResultHandlers.VerifyDatapointsFromCDF(Of T)(CoreTimeSeriesResource(Of T), CogniteError(Of DataPointInsertErrorWithInstanceId), IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), Integer, Integer, CancellationToken)
 - uid: Cognite.Extensions.ResultHandlers.VerifySequencesFromCDF(CogniteSdk.Resources.SequencesResource,System.Collections.Generic.IEnumerable{CogniteSdk.SequenceDataCreate},System.Int32,System.Int32,System.Threading.CancellationToken)
   name: VerifySequencesFromCDF(SequencesResource, IEnumerable<SequenceDataCreate>, int, int, CancellationToken)
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_VerifySequencesFromCDF_CogniteSdk_Resources_SequencesResource_System_Collections_Generic_IEnumerable_CogniteSdk_SequenceDataCreate__System_Int32_System_Int32_System_Threading_CancellationToken_
@@ -9596,6 +9596,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.IDMViewIdentifier
   nameWithType: CogniteDestinationWithIDM.IDMViewIdentifier
+- uid: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
+  name: InsertDataPointsAsync(IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_Beta_CogniteDestinationWithIDM_InsertDataPointsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
+  name.vb: InsertDataPointsAsync(IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary<CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable<Cognite.Extensions.Datapoint>>?, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary(Of CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable(Of Cognite.Extensions.Datapoint)), Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Threading.CancellationToken)
+  nameWithType: CogniteDestinationWithIDM.InsertDataPointsAsync(IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
+  nameWithType.vb: CogniteDestinationWithIDM.InsertDataPointsAsync(IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync*
   name: InsertDataPointsAsync
   href: api/Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_Beta_CogniteDestinationWithIDM_InsertDataPointsAsync_
@@ -9603,15 +9612,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync
   nameWithType: CogniteDestinationWithIDM.InsertDataPointsAsync
-- uid: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync``1(System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
-  name: InsertDataPointsAsync<T>(IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
-  href: api/Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_Beta_CogniteDestinationWithIDM_InsertDataPointsAsync__1_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync``1(System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
-  name.vb: InsertDataPointsAsync(Of T)(IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
-  fullName: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync<T>(System.Collections.Generic.IDictionary<CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable<Cognite.Extensions.Datapoint>>?, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Threading.CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsAsync(Of T)(System.Collections.Generic.IDictionary(Of CogniteSdk.Alpha.IdentityWithInstanceId, System.Collections.Generic.IEnumerable(Of Cognite.Extensions.Datapoint)), Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Threading.CancellationToken)
-  nameWithType: CogniteDestinationWithIDM.InsertDataPointsAsync<T>(IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
-  nameWithType.vb: CogniteDestinationWithIDM.InsertDataPointsAsync(Of T)(IDictionary(Of IdentityWithInstanceId, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
 - uid: Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.InsertDataPointsCreateMissingAsync(System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
   name: InsertDataPointsCreateMissingAsync(IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
   href: api/Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_Beta_CogniteDestinationWithIDM_InsertDataPointsCreateMissingAsync_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_
@@ -9786,6 +9786,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ChunkingConfig.Events
   nameWithType: ChunkingConfig.Events
+- uid: Cognite.Extractor.Utils.ChunkingConfig.Instances
+  name: Instances
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_Instances
+  commentId: P:Cognite.Extractor.Utils.ChunkingConfig.Instances
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.Instances
+  nameWithType: ChunkingConfig.Instances
+- uid: Cognite.Extractor.Utils.ChunkingConfig.Instances*
+  name: Instances
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_Instances_
+  commentId: Overload:Cognite.Extractor.Utils.ChunkingConfig.Instances
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.Instances
+  nameWithType: ChunkingConfig.Instances
 - uid: Cognite.Extractor.Utils.ChunkingConfig.RawRows
   name: RawRows
   href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_RawRows
@@ -12185,6 +12198,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ThrottlingConfig.Events
   nameWithType: ThrottlingConfig.Events
+- uid: Cognite.Extractor.Utils.ThrottlingConfig.Instances
+  name: Instances
+  href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_Instances
+  commentId: P:Cognite.Extractor.Utils.ThrottlingConfig.Instances
+  fullName: Cognite.Extractor.Utils.ThrottlingConfig.Instances
+  nameWithType: ThrottlingConfig.Instances
+- uid: Cognite.Extractor.Utils.ThrottlingConfig.Instances*
+  name: Instances
+  href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_Instances_
+  commentId: Overload:Cognite.Extractor.Utils.ThrottlingConfig.Instances
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ThrottlingConfig.Instances
+  nameWithType: ThrottlingConfig.Instances
 - uid: Cognite.Extractor.Utils.ThrottlingConfig.Ranges
   name: Ranges
   href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_Ranges
