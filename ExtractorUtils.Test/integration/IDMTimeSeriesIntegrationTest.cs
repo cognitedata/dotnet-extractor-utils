@@ -75,7 +75,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.True(result.IsAllGood);
                 Assert.Equal(3, result.Results.Count());
 
-                var timeseries2 = new[] { GetWritableTS(tester, $"{tester.Prefix} ts-1"),  GetWritableTS(tester, $"{tester.Prefix} ts-4") };
+                var timeseries2 = new[] { GetWritableTS(tester, $"{tester.Prefix} ts-1"), GetWritableTS(tester, $"{tester.Prefix} ts-4") };
 
                 result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries2, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
 
@@ -283,7 +283,7 @@ namespace ExtractorUtils.Test.Integration
 
             try
             {
-                var result = await tester.DestinationWithIDM.InsertDataPointsAsync<CogniteExtractorTimeSeries>(dps, SanitationMode.None, RetryMode.None, tester.Source.Token);
+                var result = await tester.DestinationWithIDM.InsertDataPointsAsync(dps, SanitationMode.None, RetryMode.None, tester.Source.Token);
                 Assert.Empty(result.Errors);
 
                 int[] counts = new int[3];
@@ -352,7 +352,7 @@ namespace ExtractorUtils.Test.Integration
 
             try
             {
-                var result = await tester.DestinationWithIDM.InsertDataPointsAsync<CogniteExtractorTimeSeries>(GetCreates(), SanitationMode.Remove, RetryMode.None, tester.Source.Token);
+                var result = await tester.DestinationWithIDM.InsertDataPointsAsync(GetCreates(), SanitationMode.Remove, RetryMode.None, tester.Source.Token);
 
                 var errs = result.Errors.ToArray();
                 Assert.Equal(2, errs.Length);
@@ -383,7 +383,7 @@ namespace ExtractorUtils.Test.Integration
 
                 tester.Config.Cognite.NanReplacement = 123;
 
-                result = await tester.DestinationWithIDM.InsertDataPointsAsync<CogniteExtractorTimeSeries>(GetCreates(), SanitationMode.Clean, RetryMode.None, tester.Source.Token);
+                result = await tester.DestinationWithIDM.InsertDataPointsAsync(GetCreates(), SanitationMode.Clean, RetryMode.None, tester.Source.Token);
 
                 errs = result.Errors.ToArray();
                 Assert.Single(errs);
@@ -435,7 +435,7 @@ namespace ExtractorUtils.Test.Integration
 
             try
             {
-                var result = await tester.DestinationWithIDM.InsertDataPointsAsync<CogniteExtractorTimeSeries>(dps, SanitationMode.None, RetryMode.OnError, tester.Source.Token);
+                var result = await tester.DestinationWithIDM.InsertDataPointsAsync(dps, SanitationMode.None, RetryMode.OnError, tester.Source.Token);
 
                 var errs = result.Errors.ToArray();
                 // Greenfield reports missing twice, once for each id type.

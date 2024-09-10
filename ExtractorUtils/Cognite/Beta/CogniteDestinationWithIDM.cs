@@ -209,18 +209,18 @@ namespace Cognite.Extractor.Utils.Beta
         /// <param name="sanitationMode"></param>
         /// <param name="retryMode"></param>
         /// <param name="token">Cancellation token</param>
-        public async Task<CogniteResult<DataPointInsertErrorWithInstanceId>> InsertDataPointsAsync<T>(
+        public async Task<CogniteResult<DataPointInsertErrorWithInstanceId>> InsertDataPointsAsync(
             IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>? points,
             SanitationMode sanitationMode,
             RetryMode retryMode,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token)
         {
             if (points == null || !points.Any()) return new CogniteResult<DataPointInsertErrorWithInstanceId>(null);
 
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series",
                 points.Values.Select(dp => dp.Count()).Sum(),
                 points.Keys.Count);
-            return await DataPointExtensionsWithInstanceId.InsertAsync<T>(
+            return await DataPointExtensionsWithInstanceId.InsertAsync(
                 _client,
                 points,
                 _config.CdfChunking.DataPointTimeSeries,
