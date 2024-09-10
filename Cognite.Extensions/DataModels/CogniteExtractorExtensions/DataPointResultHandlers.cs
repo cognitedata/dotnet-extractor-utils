@@ -76,22 +76,22 @@ namespace Cognite.Extensions
         /// <param name="timeseriesThrottleSize">Maximum number of parallel requests for timeseries</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Verified datapoint insertions and optional error</returns>
-        public static async Task<(CogniteError<DataPointInsertErrorWithInstanceId>, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>)> VerifyDatapointsFromCDF<T>(
-            CoreTimeSeriesResource<T> resource,
+        public static async Task<(CogniteError<DataPointInsertErrorWithInstanceId>, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>)> VerifyDatapointsFromCDF(
+            CoreTimeSeriesResource<CogniteTimeSeriesBase> resource,
             CogniteError<DataPointInsertErrorWithInstanceId> error,
             IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> datapoints,
             int timeseriesChunkSize,
             int timeseriesThrottleSize,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token)
         {
             if (datapoints == null) throw new ArgumentNullException(nameof(datapoints));
-            IEnumerable<SourcedNode<T>> timeseries;
+            IEnumerable<SourcedNode<CogniteTimeSeriesBase>> timeseries;
             using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
             {
                 try
                 {
                     timeseries = await resource
-                        .GetTimeSeriesByIdsIgnoreErrors<T>(datapoints.Select(kvp => kvp.Key),
+                        .GetTimeSeriesByIdsIgnoreErrors<CogniteTimeSeriesBase>(datapoints.Select(kvp => kvp.Key),
                             timeseriesChunkSize, timeseriesThrottleSize, token)
                         .ConfigureAwait(false);
                 }

@@ -243,6 +243,13 @@
                     "description": "Maximum number of sequence rows per sequence when creating rows",
                     "max": 10000,
                     "min": 1
+                },
+                "instances": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of data modeling instances per get/create instance request",
+                    "max": 1000,
+                    "min": 1
                 }
             },
             "unevaluatedProperties": false
@@ -291,6 +298,12 @@
                     "type": "integer",
                     "default": 10,
                     "description": "Maximum number of parallel requests per sequences operation",
+                    "min": 1
+                },
+                "instances": {
+                    "type": "integer",
+                    "default": 4,
+                    "description": "Maximum number of parallel requests per data modeling instances operation",
                     "min": 1
                 }
             },

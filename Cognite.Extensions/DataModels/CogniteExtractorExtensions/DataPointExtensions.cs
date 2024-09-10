@@ -131,7 +131,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (client == null) throw new ArgumentNullException(nameof(client));
             if (points == null) throw new ArgumentNullException(nameof(points));
 
-            var result = await InsertAsync<CogniteTimeSeriesBase>(client, points, keyChunkSize, valueChunkSize, throttleSize,
+            var result = await InsertAsync(client, points, keyChunkSize, valueChunkSize, throttleSize,
                 timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, sanitationMode,
                 RetryMode.OnError, nanReplacement, token).ConfigureAwait(false);
 
@@ -174,7 +174,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 
             var pointsToInsert = points.Where(kvp => missingIds.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            var result2 = await InsertAsync<CogniteTimeSeriesBase>(client, pointsToInsert, keyChunkSize, valueChunkSize, throttleSize,
+            var result2 = await InsertAsync(client, pointsToInsert, keyChunkSize, valueChunkSize, throttleSize,
                 timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, sanitationMode,
                 RetryMode.OnError, nanReplacement, token).ConfigureAwait(false);
 
@@ -199,7 +199,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="nanReplacement">Optional replacement for NaN double values</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Result with a list of errors</returns>
-        public static async Task<CogniteResult<DataPointInsertErrorWithInstanceId>> InsertAsync<T>(
+        public static async Task<CogniteResult<DataPointInsertErrorWithInstanceId>> InsertAsync(
             CogniteSdk.Client client,
             IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> points,
             int keyChunkSize,
@@ -211,7 +211,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             SanitationMode sanitationMode,
             RetryMode retryMode,
             double? nanReplacement,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token)
         {
             IEnumerable<CogniteError<DataPointInsertErrorWithInstanceId>> errors;
             (points, errors) = CoreTSSanitation.CleanDataPointsRequest(points, sanitationMode, nanReplacement);
@@ -238,7 +238,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 (chunk, idx) => async () =>
                 {
                     var result = await
-                        InsertDataPointsHandleErrors<T>(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, retryMode, token)
+                        InsertDataPointsHandleErrors(client, chunk, timeseriesChunkSize, timeseriesThrottleSize, gzipCountLimit, retryMode, token)
                         .ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -257,14 +257,14 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             return CogniteResult<DataPointInsertErrorWithInstanceId>.Merge(results);
         }
 
-        private static async Task<CogniteResult<DataPointInsertErrorWithInstanceId>> InsertDataPointsHandleErrors<T>(
+        private static async Task<CogniteResult<DataPointInsertErrorWithInstanceId>> InsertDataPointsHandleErrors(
             CogniteSdk.Client client,
             IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> points,
             int timeseriesChunkSize,
             int timeseriesThrottleSize,
             int gzipCountLimit,
             RetryMode retryMode,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token)
         {
             var errors = new List<CogniteError<DataPointInsertErrorWithInstanceId>>();
             while (points != null && points.Any() && !token.IsCancellationRequested)
@@ -320,7 +320,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                         if (!error.Complete)
                         {
                             (error, points) = await ResultHandlers
-                                .VerifyDatapointsFromCDF(client.CoreDataModel.TimeSeries<T>(), error,
+                                .VerifyDatapointsFromCDF(client.CoreDataModel.TimeSeries<CogniteTimeSeriesBase>(), error,
                                     points, timeseriesChunkSize, timeseriesThrottleSize, token)
                                 .ConfigureAwait(false);
                             errors.Add(error);
