@@ -579,9 +579,10 @@ namespace Cognite.Extensions
             int? maxRetries,
             int? maxDelay)
         {
+            var random = new Random();
             logger = logger ?? new NullLogger<Client>();
             int numRetries = maxRetries ?? 5;
-            int delay = maxDelay ?? 5_000;
+            int delay = maxDelay ?? 5 * 60 * 1000;
             if (maxDelay < 0) maxDelay = int.MaxValue;
             var builder = Policy
                 .HandleResult<HttpResponseMessage>(msg =>
@@ -600,7 +601,14 @@ namespace Cognite.Extensions
                 return builder.WaitAndRetryAsync(
                     // retry interval 0.125, 0.25, 0.5, 1, 2, ..., i.e. max 0.125 * 2^numRetries
                     numRetries,
-                    retry => TimeSpan.FromMilliseconds(Math.Min(125 * Math.Pow(2, Math.Min(retry - 1, numRetries)), delay)),
+                    retry =>
+                    {
+                        var retryDelay = Math.Min(125 * Math.Pow(2, retry - 1), delay);
+                        // Jitter so we land between initial * 2 ** attempt * 3/4 and initial * 2 ** attempt * 5/4
+                        retryDelay = retryDelay / 4 * 3 + random.Next((int)(retryDelay / 2));
+
+                        return TimeSpan.FromMilliseconds(retryDelay);
+                    },
                     GetRetryHandler(logger));
             }
 
