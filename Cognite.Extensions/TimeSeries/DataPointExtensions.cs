@@ -1,5 +1,6 @@
 ﻿using Cognite.Extractor.Common;
 using CogniteSdk;
+using CogniteSdk.DataModels;
 using CogniteSdk.Resources;
 using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
@@ -47,10 +48,15 @@ namespace Cognite.Extensions
                 {
                     item.Id = kvp.Key.Id.Value;
                 }
-                else
+                else if (kvp.Key.ExternalId != null)
                 {
                     item.ExternalId = kvp.Key.ExternalId;
                 }
+                else
+                {
+                    item.InstanceId = new InstanceId() { Space = kvp.Key.InstanceId.Space, ExternalId = kvp.Key.InstanceId.ExternalId };
+                }
+
                 if (!kvp.Value.Any())
                 {
                     continue;
@@ -147,9 +153,8 @@ namespace Cognite.Extensions
 
             var missingIds = new HashSet<Identity>((result.Errors ?? Enumerable.Empty<CogniteError>())
                 .Where(err => err.Type == ErrorType.ItemMissing)
-                .SelectMany(err => err.Values ?? Enumerable.Empty<IIdentity>())
-                .Where(idt => idt.ExternalId != null)
-                .ToIdentity());
+                .SelectMany(err => err.Values ?? Enumerable.Empty<Identity>())
+                .Where(idt => idt.ExternalId != null));
 
             if (!missingIds.Any()) return (result, null);
 
@@ -223,9 +228,7 @@ namespace Cognite.Extensions
             CancellationToken token)
         {
             IEnumerable<CogniteError<DataPointInsertError>> errors;
-            var ret = Sanitation.CleanDataPointsRequest(points.ToDictionary(x => (IIdentity)x.Key, x => x.Value) , sanitationMode, nanReplacement);
-            points = ret.Item1.ToDictionary(x=> (Identity)x.Key, x=>x.Value);
-            errors = ret.Item2;
+            (points, errors) = Sanitation.CleanDataPointsRequest(points, sanitationMode, nanReplacement);
 
             var chunks = points
                 .Select(p => (p.Key, p.Value))
@@ -384,6 +387,7 @@ namespace Cognite.Extensions
                     new IdentityWithRange
                     {
                         ExternalId = kvp.Key.ExternalId,
+                        InstanceId = kvp.Key.InstanceId,
                         Id = kvp.Key.Id,
                         InclusiveBegin = r.First.ToUnixTimeMilliseconds(),
                         ExclusiveEnd = r.Last.ToUnixTimeMilliseconds() + 1 // exclusive
@@ -445,7 +449,7 @@ namespace Cognite.Extensions
             catch (ResponseException e) when (e.Code == 400 && e.Missing != null && e.Missing.Any())
             {
                 CogniteUtils.ExtractMissingFromResponseException(missing, e);
-                var remaining = chunks.Where(i => !missing.Contains(i.Id.HasValue ? new Identity(i.Id.Value) : new Identity(i.ExternalId)));
+                var remaining = chunks.Where(i => !missing.Contains(i.Id.HasValue ? new Identity(i.Id.Value) : (i.ExternalId != null ? new Identity(i.ExternalId) : new Identity(i.InstanceId))));
                 var errors = await DeleteDataPointsIgnoreErrorsChunk(dataPoints, remaining, token).ConfigureAwait(false);
                 missing.UnionWith(errors);
             }
@@ -476,8 +480,19 @@ namespace Cognite.Extensions
             var chunks = ids
                 .Select((pair) =>
                 {
-                    var id = pair.id;
-                    IdentityWithBefore idt = id.ExternalId == null ? IdentityWithBefore.Create(id.Id!.Value) : IdentityWithBefore.Create(id.ExternalId);
+                    IdentityWithBefore idt;
+                    if (pair.id.Id.HasValue)
+                    {
+                        idt = IdentityWithBefore.Create(pair.id.Id.Value);
+                    }
+                    else if (pair.id.ExternalId != null)
+                    {
+                        idt = IdentityWithBefore.Create(pair.id.ExternalId);
+                    }
+                    else
+                    {
+                        idt = IdentityWithBefore.Create(pair.id.InstanceId);
+                    }
                     if (pair.before != DateTime.MaxValue)
                     {
                         idt.Before = pair.before.ToUnixTimeMilliseconds().ToString();
@@ -513,6 +528,10 @@ namespace Cognite.Extensions
                                 {
                                     id = new Identity(dp.Id);
                                 }
+                            }
+                            else if (dp.InstanceId != null)
+                            {
+                                id = new Identity(new InstanceIdentifier(dp.InstanceId.Space, dp.InstanceId.ExternalId));
                             }
                             else
                             {
@@ -558,9 +577,13 @@ namespace Cognite.Extensions
                     {
                         query.Id = pair.id.Id.Value;
                     }
-                    else
+                    else if (pair.id.ExternalId != null)
                     {
                         query.ExternalId = pair.id.ExternalId;
+                    }
+                    else
+                    {
+                        query.InstanceId = pair.id.InstanceId;
                     }
                     if (pair.after > CogniteTime.DateTimeEpoch)
                     {
@@ -596,6 +619,10 @@ namespace Cognite.Extensions
                             {
                                 id = new Identity(dp.Id);
                             }
+                        }
+                        else if(dp.InstanceId != null)
+                        {
+                            id = new Identity(new InstanceIdentifier(dp.InstanceId.Space, dp.InstanceId.ExternalId));
                         }
                         else
                         {

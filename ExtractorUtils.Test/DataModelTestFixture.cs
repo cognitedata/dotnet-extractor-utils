@@ -10,7 +10,7 @@ using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
-using CogniteSdk.Beta.DataModels;
+using CogniteSdk.DataModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -76,7 +76,7 @@ namespace ExtractorUtils.Test
             await EnsureDataModel();
 
             Space = Prefix + "-space";
-            await Destination.CogniteClient.Beta.DataModels.UpsertSpaces(new[]
+            await Destination.CogniteClient.DataModels.UpsertSpaces(new[]
             {
                 new SpaceCreate
                 {
@@ -95,7 +95,7 @@ namespace ExtractorUtils.Test
             string cursor = null;
             do
             {
-                var edges = await Destination.CogniteClient.Beta.DataModels.FilterInstances<JsonNode>(new InstancesFilter
+                var edges = await Destination.CogniteClient.DataModels.FilterInstances<JsonNode>(new InstancesFilter
                 {
                     Cursor = cursor,
                     Filter = Filter.Space(space, false),
@@ -110,7 +110,7 @@ namespace ExtractorUtils.Test
                     {
                         try
                         {
-                            await Destination.CogniteClient.Beta.DataModels.DeleteInstances(
+                            await Destination.CogniteClient.DataModels.DeleteInstances(
                                 edges.Items.Select(e => new InstanceIdentifierWithType(InstanceType.edge, e.Space, e.ExternalId)),
                                 Source.Token);
                             break;
@@ -132,7 +132,7 @@ namespace ExtractorUtils.Test
             cursor = null;
             do
             {
-                var nodes = await Destination.CogniteClient.Beta.DataModels.FilterInstances<JsonNode>(new InstancesFilter
+                var nodes = await Destination.CogniteClient.DataModels.FilterInstances<JsonNode>(new InstancesFilter
                 {
                     Cursor = cursor,
                     Filter = Filter.Space(space, true),
@@ -147,7 +147,7 @@ namespace ExtractorUtils.Test
                     {
                         try
                         {
-                            await Destination.CogniteClient.Beta.DataModels.DeleteInstances(
+                            await Destination.CogniteClient.DataModels.DeleteInstances(
                                 nodes.Items.Select(e => new InstanceIdentifierWithType(InstanceType.node, e.Space, e.ExternalId)),
                                 Source.Token);
                             break;
@@ -169,7 +169,7 @@ namespace ExtractorUtils.Test
 
             // Delete space
 
-            await Destination.CogniteClient.Beta.DataModels.DeleteSpaces(new[]
+            await Destination.CogniteClient.DataModels.DeleteSpaces(new[]
             {
                 space
             });
@@ -180,7 +180,7 @@ namespace ExtractorUtils.Test
             var version = "1";
             var modelSpace = "utils-test-space";
 
-            var retModels = await Destination.CogniteClient.Beta.DataModels.RetrieveDataModels(new[]
+            var retModels = await Destination.CogniteClient.DataModels.RetrieveDataModels(new[]
             {
                 new FDMExternalId("TestModel", modelSpace, version)
             }, false, Source.Token);
@@ -235,7 +235,7 @@ namespace ExtractorUtils.Test
                 Views = views
             };
 
-            await Destination.CogniteClient.Beta.DataModels.UpsertSpaces(new[]
+            await Destination.CogniteClient.DataModels.UpsertSpaces(new[]
             {
                 new SpaceCreate
                 {
@@ -244,9 +244,9 @@ namespace ExtractorUtils.Test
                     Space = modelSpace
                 }
             }, Source.Token);
-            await Destination.CogniteClient.Beta.DataModels.UpsertContainers(containers, Source.Token);
-            await Destination.CogniteClient.Beta.DataModels.UpsertViews(views, Source.Token);
-            var modelRes = await Destination.CogniteClient.Beta.DataModels.UpsertDataModels(new[] { model }, Source.Token);
+            await Destination.CogniteClient.DataModels.UpsertContainers(containers, Source.Token);
+            await Destination.CogniteClient.DataModels.UpsertViews(views, Source.Token);
+            var modelRes = await Destination.CogniteClient.DataModels.UpsertDataModels(new[] { model }, Source.Token);
 
             Model = modelRes.First();
         }

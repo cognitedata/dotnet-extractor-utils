@@ -1,6 +1,5 @@
 ﻿using CogniteSdk;
-using CogniteSdk.Alpha;
-using CogniteSdk.Beta.DataModels;
+using CogniteSdk.DataModels;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,11 +7,11 @@ namespace Cognite.Extensions
 {
     public static partial class ResultHandlers
     {
-        private static bool IsAffected<T>(SourcedNodeWrite<T> ts, HashSet<IIdentity> badValues, CogniteError<SourcedNodeWrite<T>> error)
+        private static bool IsAffected<T>(SourcedNodeWrite<T> ts, HashSet<Identity> badValues, CogniteError<SourcedNodeWrite<T>> error)
         {
             return error.Resource switch
             {
-                ResourceType.InstanceId => new HashSet<IdentityWithInstanceId>(badValues.Where(x => x is IdentityWithInstanceId).Select(x => (IdentityWithInstanceId)x)).ContainsIdentity(new InstanceIdentifier(ts.Space, ts.ExternalId)),
+                ResourceType.InstanceId => badValues.ContainsIdentity(new InstanceIdentifier(ts.Space, ts.ExternalId)),
                 _ => false,
             };
         }
@@ -28,7 +27,7 @@ namespace Cognite.Extensions
             IEnumerable<SourcedNodeWrite<T>> timeseries)
         {
             return CleanFromErrorCommon(error, timeseries, IsAffected,
-                ts => ts.ExternalId == null || ts.Space == null ? null : IdentityWithInstanceId.Create(new InstanceIdentifier(ts.Space, ts.ExternalId)),
+                ts => ts.ExternalId == null || ts.Space == null ? null : Identity.Create(new InstanceIdentifier(ts.Space, ts.ExternalId)),
                 CdfMetrics.TimeSeriesSkipped);
         }
     }

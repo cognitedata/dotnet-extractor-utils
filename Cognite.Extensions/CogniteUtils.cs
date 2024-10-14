@@ -53,7 +53,7 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="missing">Set to add missing ids to</param>
         /// <param name="e">Error containing missing ids</param>
-        public static void ExtractMissingFromResponseException(HashSet<Identity> missing, CogniteSdk.ResponseException e)
+        public static void ExtractMissingFromResponseException(HashSet<Identity> missing, ResponseException e)
         {
             if (missing is null)
             {
@@ -73,37 +73,9 @@ namespace Cognite.Extensions
                 {
                     missing.Add(new Identity(((MultiValue.Long)idValue).Value));
                 }
-            }
-        }
-
-        /// <summary>
-        /// Write missing identities to the provided identity set.
-        /// </summary>
-        /// <param name="missing">Set to add missing ids to</param>
-        /// <param name="e">Error containing missing ids</param>
-        public static void ExtractMissingFromResponseException(HashSet<IdentityWithInstanceId> missing, ResponseException e)
-        {
-            if (missing is null)
-            {
-                throw new ArgumentNullException(nameof(missing));
-            }
-            if (e is null)
-            {
-                throw new ArgumentNullException(nameof(e));
-            }
-            foreach (var ts in e.Missing)
-            {
-                if (ts.TryGetValue("externalId", out MultiValue? exIdValue) && exIdValue != null)
-                {
-                    missing.Add(new IdentityWithInstanceId(exIdValue.ToString()));
-                }
-                else if (ts.TryGetValue("id", out MultiValue? idValue) && idValue != null)
-                {
-                    missing.Add(new IdentityWithInstanceId(((MultiValue.Long)idValue).Value));
-                }
                 else if (ts.TryGetValue("instanceId", out MultiValue? instanceIdValue) && instanceIdValue != null)
                 {
-                    missing.Add(new IdentityWithInstanceId(((MultiValue.InstanceId)instanceIdValue).Value));
+                    missing.Add(new Identity(((MultiValue.InstanceId)instanceIdValue).Value));
                 }
             }
         }

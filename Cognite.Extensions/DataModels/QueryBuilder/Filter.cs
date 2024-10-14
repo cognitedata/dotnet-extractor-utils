@@ -1,4 +1,4 @@
-﻿using CogniteSdk.Beta.DataModels;
+﻿using CogniteSdk.DataModels;
 using Oryx.Cognite;
 using System;
 using System.Collections.Generic;

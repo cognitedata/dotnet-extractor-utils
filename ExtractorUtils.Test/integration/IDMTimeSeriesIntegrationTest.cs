@@ -7,9 +7,9 @@ using Cognite.Extensions;
 using Cognite.Extensions.DataModels;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Common;
-using CogniteSdk.Alpha;
-using CogniteSdk.Beta.DataModels;
-using CogniteSdk.Beta.DataModels.Core;
+using CogniteSdk;
+using CogniteSdk.DataModels;
+using CogniteSdk.DataModels.Core;
 using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -94,7 +94,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(ids.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(ids.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
             }
         }
 
@@ -137,7 +137,7 @@ namespace ExtractorUtils.Test.Integration
                 if (created != null)
                 {
                     var ids = created?.Select(x => new InstanceIdentifier(tester.SpaceId, x.ExternalId));
-                    await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(ids.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                    await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(ids.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
                 }
             }
         }
@@ -161,12 +161,12 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(3, result.Results.Count());
                 Assert.True(result.IsAllGood);
 
-                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(tss.Select(x => new IdentityWithInstanceId(x)), tester.Source.Token);
+                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(tss.Select(x => new Identity(x)), tester.Source.Token);
                 Assert.All(retrieved, ts => Assert.Equal("new description", ts.Properties.Description));
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
             }
         }
 
@@ -211,7 +211,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
             }
         }
 
@@ -255,7 +255,7 @@ namespace ExtractorUtils.Test.Integration
         //    }
         //    finally
         //    {
-        //        await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+        //        await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
         //    }
         //}
 
@@ -268,13 +268,13 @@ namespace ExtractorUtils.Test.Integration
 
             var tss = await CreateTestTimeSeries(tester);
 
-            var dps = new Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>()
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
-                { new IdentityWithInstanceId(tss[0]), Enumerable.Range(0, 10)
+                { new Identity(tss[0]), Enumerable.Range(0, 10)
                     .Select(i => new Datapoint(DateTime.UtcNow.AddSeconds(i), i)).ToList() },
-                { new IdentityWithInstanceId(tss[1]), Enumerable.Range(0, 10)
+                { new Identity(tss[1]), Enumerable.Range(0, 10)
                     .Select(i => new Datapoint(DateTime.UtcNow.AddSeconds(i), $"value{i}")).ToList() },
-                { new IdentityWithInstanceId(tss[2]), Enumerable.Range(0, 10)
+                { new Identity(tss[2]), Enumerable.Range(0, 10)
                     .Select(i => new Datapoint(DateTime.UtcNow.AddSeconds(i), i)).ToList() }
             };
 
@@ -289,7 +289,7 @@ namespace ExtractorUtils.Test.Integration
                 int[] counts = new int[3];
                 for (int i = 0; i < 10; i++)
                 {
-                    var foundDps = await tester.DestinationWithIDM.CogniteClient.Alpha.DataPoints.ListAsync(new DataPointsQuery
+                    var foundDps = await tester.DestinationWithIDM.CogniteClient.DataPoints.ListAsync(new DataPointsQuery
                     {
                         Items = tss.Select(ts => new DataPointsQueryItem
                         {
@@ -310,7 +310,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
             }
         }
         [Theory]
@@ -322,11 +322,11 @@ namespace ExtractorUtils.Test.Integration
 
             var tss = await CreateTestTimeSeries(tester);
 
-            Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> GetCreates()
+            Dictionary<Identity, IEnumerable<Datapoint>> GetCreates()
             {
-                return new Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>()
+                return new Dictionary<Identity, IEnumerable<Datapoint>>()
                 {
-                    { IdentityWithInstanceId.Create(tss[0]), new []
+                    { Identity.Create(tss[0]), new []
                     {
                         new Datapoint(DateTime.UtcNow, 1.0),
                         new Datapoint(DateTime.MaxValue, 2.0),
@@ -337,13 +337,13 @@ namespace ExtractorUtils.Test.Integration
                         new Datapoint(DateTime.UtcNow.AddSeconds(4), 1E101),
                         new Datapoint(DateTime.UtcNow.AddSeconds(5), -1E101),
                     } },
-                    { IdentityWithInstanceId.Create(tss[1]), new []
+                    { Identity.Create(tss[1]), new []
                     {
                         new Datapoint(DateTime.UtcNow, new string('æ', 400)),
                         new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
                         new Datapoint(DateTime.UtcNow, null)
                     } },
-                    { IdentityWithInstanceId.Create(tss[2]), new[]
+                    { Identity.Create(tss[2]), new[]
                     {
                         new Datapoint(DateTime.UtcNow, double.NaN)
                     } }
@@ -361,25 +361,25 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(ResourceType.DataPointTimestamp, err.Resource);
                 Assert.Equal(ErrorType.SanitationFailed, err.Type);
                 Assert.Single(err.Skipped);
-                var iErr = err.Skipped.OfType<DataPointInsertErrorWithInstanceId>().First();
+                var iErr = err.Skipped.OfType<DataPointInsertError>().First();
                 Assert.Equal(2, iErr.DataPoints.Count());
-                Assert.Equal(tss[0].ToString(), ((IdentityWithInstanceId)iErr.Id).ToString());
+                Assert.Equal(tss[0].ToString(), ((Identity)iErr.Id).ToString());
 
                 err = errs[1];
                 Assert.Equal(ResourceType.DataPointValue, err.Resource);
                 Assert.Equal(ErrorType.SanitationFailed, err.Type);
                 Assert.Equal(3, err.Skipped.Count());
-                var insertErrs = err.Skipped.OfType<DataPointInsertErrorWithInstanceId>().ToArray();
+                var insertErrs = err.Skipped.OfType<DataPointInsertError>().ToArray();
 
                 iErr = insertErrs[0];
                 Assert.Equal(5, iErr.DataPoints.Count());
-                Assert.Equal(tss[0].ToString(), ((IdentityWithInstanceId)iErr.Id).ToString());
+                Assert.Equal(tss[0].ToString(), ((Identity)iErr.Id).ToString());
                 iErr = insertErrs[1];
                 Assert.Equal(2, iErr.DataPoints.Count());
-                Assert.Equal(tss[1].ToString(), ((IdentityWithInstanceId)iErr.Id).ToString());
+                Assert.Equal(tss[1].ToString(), ((Identity)iErr.Id).ToString());
                 iErr = insertErrs[2];
                 Assert.Single(iErr.DataPoints);
-                Assert.Equal(tss[2].ToString(), ((IdentityWithInstanceId)iErr.Id).ToString());
+                Assert.Equal(tss[2].ToString(), ((Identity)iErr.Id).ToString());
 
                 tester.Config.Cognite.NanReplacement = 123;
 
@@ -392,13 +392,13 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(ResourceType.DataPointTimestamp, err.Resource);
                 Assert.Equal(ErrorType.SanitationFailed, err.Type);
                 Assert.Single(err.Skipped);
-                iErr = err.Skipped.OfType<DataPointInsertErrorWithInstanceId>().First();
+                iErr = err.Skipped.OfType<DataPointInsertError>().First();
                 Assert.Equal(2, iErr.DataPoints.Count());
-                Assert.Equal(tss[0].ToString(), ((IdentityWithInstanceId)iErr.Id).ToString());
+                Assert.Equal(tss[0].ToString(), ((Identity)iErr.Id).ToString());
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
             }
         }
         [Theory]
@@ -410,27 +410,27 @@ namespace ExtractorUtils.Test.Integration
 
             var tss = await CreateTestTimeSeries(tester);
 
-            var dps = new Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>()
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
                 // All mismatched
-                { IdentityWithInstanceId.Create(tss[0]), new [] {
+                { Identity.Create(tss[0]), new [] {
                     new Datapoint(DateTime.UtcNow, "test"),
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), "test2")
                 } },
                 // Some mismatched datapoints
-                { IdentityWithInstanceId.Create(tss[1]), new[]
+                { Identity.Create(tss[1]), new[]
                 {
                     new Datapoint(DateTime.UtcNow, 1.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), 2.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(2), "test")
                 } },
-                { IdentityWithInstanceId.Create(tss[2]), new[]
+                { Identity.Create(tss[2]), new[]
                 {
                     new Datapoint(DateTime.UtcNow, 1.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
                     new Datapoint(DateTime.UtcNow.AddSeconds(2), "test2")
                 } },
-                { IdentityWithInstanceId.Create(new InstanceIdentifier(tester.SpaceId, "missing-ts-1")), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
+                { Identity.Create(new InstanceIdentifier(tester.SpaceId, "missing-ts-1")), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
             };
 
             try
@@ -439,7 +439,7 @@ namespace ExtractorUtils.Test.Integration
 
                 var errs = result.Errors.ToArray();
                 // Greenfield reports missing twice, once for each id type.
-                CogniteError<DataPointInsertErrorWithInstanceId> err;
+                CogniteError<DataPointInsertError> err;
 
                 Assert.Equal(2, errs.Length);
                 err = errs[0];
@@ -458,7 +458,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
             }
         }
         [Theory]
@@ -470,16 +470,16 @@ namespace ExtractorUtils.Test.Integration
 
             var tss = await CreateTestTimeSeries(tester);
 
-            var dps = new Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>()
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
-                { IdentityWithInstanceId.Create(tss[0]), new[]
+                { Identity.Create(tss[0]), new[]
                 {
                     new Datapoint(DateTime.UtcNow, 1.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), 2.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(2), 3.0)
                 } },
-                { IdentityWithInstanceId.Create(new InstanceIdentifier(tester.SpaceId, $"{tester.Prefix} utils-test-ts-missing-1")), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
-                { IdentityWithInstanceId.Create(new InstanceIdentifier(tester.SpaceId, $"{tester.Prefix} utils-test-ts-missing-2")), new[] { new Datapoint(DateTime.UtcNow, "test") } },
+                { Identity.Create(new InstanceIdentifier(tester.SpaceId, $"{tester.Prefix} utils-test-ts-missing-1")), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
+                { Identity.Create(new InstanceIdentifier(tester.SpaceId, $"{tester.Prefix} utils-test-ts-missing-2")), new[] { new Datapoint(DateTime.UtcNow, "test") } },
             };
 
             try
@@ -500,7 +500,7 @@ namespace ExtractorUtils.Test.Integration
                     .Select(ts => ts.ExternalId)
                     .Concat(new[] { $"{tester.Prefix} utils-test-ts-missing-1", $"{tester.Prefix} utils-test-ts-missing-2" })
                     .Select(x => new InstanceIdentifier(tester.SpaceId, x));
-                await tester.DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteInstances(toDel.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(toDel.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
             }
         }
     }

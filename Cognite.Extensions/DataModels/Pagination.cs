@@ -1,6 +1,6 @@
 ﻿using CogniteSdk;
-using CogniteSdk.Beta.DataModels;
-using CogniteSdk.Resources.Beta;
+using CogniteSdk.DataModels;
+using CogniteSdk.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;

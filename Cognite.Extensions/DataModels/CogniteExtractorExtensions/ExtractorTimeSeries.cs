@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using CogniteSdk.Beta.DataModels.Core;
+using CogniteSdk.DataModels.Core;
 
 namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
     /// <summary>
-    /// Beta: CDM TimeSeries extended for use with extractors
+    /// CDM TimeSeries extended for use with extractors
     /// </summary>
     public class CogniteExtractorTimeSeries : CogniteTimeSeriesBase
     {

@@ -49,7 +49,7 @@ namespace Cognite.Extensions
             }
         }
 
-        private static bool IsAffected(SequenceCreate seq, HashSet<IIdentity> badValues, CogniteError<SequenceCreate> error)
+        private static bool IsAffected(SequenceCreate seq, HashSet<Identity> badValues, CogniteError<SequenceCreate> error)
         {
             return error.Resource switch
             {
@@ -132,7 +132,7 @@ namespace Cognite.Extensions
                 return Enumerable.Empty<SequenceDataCreate>();
             }
 
-            var items = new HashSet<Identity>(error.Values.ToIdentity());
+            var items = new HashSet<Identity>(error.Values ?? new List<Identity>());
 
             foreach (var seq in creates)
             {
