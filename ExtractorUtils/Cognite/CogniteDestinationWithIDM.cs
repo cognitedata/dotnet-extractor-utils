@@ -196,6 +196,44 @@ namespace Cognite.Extractor.Utils
 
         #region datapoints
         /// <summary>
+        /// Insert the provided data points into CDF. The data points are chunked
+        /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the
+        /// <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
+        /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
+        /// 
+        /// On error, the offending timeseries/datapoints can optionally be removed.
+        /// </summary>
+        /// <param name="points">Data points</param>
+        /// <param name="sanitationMode"></param>
+        /// <param name="retryMode"></param>
+        /// <param name="token">Cancellation token</param>
+        public new async Task<CogniteResult<DataPointInsertError>> InsertDataPointsAsync(
+            IDictionary<Identity, IEnumerable<Datapoint>>? points,
+            SanitationMode sanitationMode,
+            RetryMode retryMode,
+            CancellationToken token)
+        {
+            if (points == null || !points.Any()) return new CogniteResult<DataPointInsertError>(null);
+
+            _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series",
+                points.Values.Select(dp => dp.Count()).Sum(),
+                points.Keys.Count);
+            return await DataPointExtensionsWithInstanceId.InsertAsync(
+                _client,
+                points,
+                _config.CdfChunking.DataPointTimeSeries,
+                _config.CdfChunking.DataPoints,
+                _config.CdfThrottling.DataPoints,
+                _config.CdfChunking.TimeSeries,
+                _config.CdfThrottling.TimeSeries,
+                _config.CdfChunking.DataPointsGzipLimit,
+                sanitationMode,
+                retryMode,
+                _config.NanReplacement,
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
         /// and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
         /// they are created before the points are inserted again.
