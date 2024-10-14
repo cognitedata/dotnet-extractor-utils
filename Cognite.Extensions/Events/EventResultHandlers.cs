@@ -42,7 +42,7 @@ namespace Cognite.Extensions
             }
         }
 
-        private static bool IsAffected(EventCreate evt, HashSet<IIdentity> badValues, CogniteError<EventCreate> error)
+        private static bool IsAffected(EventCreate evt, HashSet<Identity> badValues, CogniteError<EventCreate> error)
         {
             return error.Resource switch
             {

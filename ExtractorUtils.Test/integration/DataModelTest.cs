@@ -1,7 +1,7 @@
 ﻿using Cognite.Extensions.DataModels;
 using Cognite.Extensions.DataModels.QueryBuilder;
 using Cognite.Extractor.Testing;
-using CogniteSdk.Beta.DataModels;
+using CogniteSdk.DataModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -61,7 +61,7 @@ namespace ExtractorUtils.Test.Integration
                 Space = _tester.Space
             });
 
-            await _tester.Destination.CogniteClient.Beta.DataModels.UpsertInstances(new InstanceWriteRequest
+            await _tester.Destination.CogniteClient.DataModels.UpsertInstances(new InstanceWriteRequest
             {
                 AutoCreateEndNodes = true,
                 AutoCreateStartNodes = true,
@@ -84,7 +84,7 @@ namespace ExtractorUtils.Test.Integration
                     .WithFrom("edges"))
                 .Build();
 
-            var result = await _tester.Destination.CogniteClient.Beta.DataModels.QueryPaginated<JsonNode>(
+            var result = await _tester.Destination.CogniteClient.DataModels.QueryPaginated<JsonNode>(
                 query, Enumerable.Empty<string>(), _tester.Source.Token);
 
             Assert.Equal(3, result.Count);
@@ -173,7 +173,7 @@ namespace ExtractorUtils.Test.Integration
                 }
             };
 
-            await _tester.Destination.CogniteClient.Beta.DataModels.UpsertAtomic<JsonNode>(
+            await _tester.Destination.CogniteClient.DataModels.UpsertAtomic<JsonNode>(
                 new[] { prefix }, _tester.Space, InstanceType.node, sources,
                 old =>
                 {
@@ -184,7 +184,7 @@ namespace ExtractorUtils.Test.Integration
                     };
                 }, _tester.Source.Token);
 
-            await _tester.Destination.CogniteClient.Beta.DataModels.UpsertAtomic<JsonNode>(
+            await _tester.Destination.CogniteClient.DataModels.UpsertAtomic<JsonNode>(
                 new[] { prefix }, _tester.Space, InstanceType.node, sources,
                 old =>
                 {

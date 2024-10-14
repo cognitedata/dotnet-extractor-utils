@@ -262,7 +262,7 @@ namespace Cognite.Extensions
 
         internal class DistinctResource<T>
         {
-            public DistinctResource(string text, ResourceType resource, Func<T, IIdentity?> selector)
+            public DistinctResource(string text, ResourceType resource, Func<T, Identity?> selector)
             {
                 Text = text;
                 Resource = resource;
@@ -271,7 +271,7 @@ namespace Cognite.Extensions
 
             public string Text { get; }
             public ResourceType Resource { get; }
-            public Func<T, IIdentity?> Selector { get; }
+            public Func<T, Identity?> Selector { get; }
         }
 
         internal static (List<T>, List<CogniteError<T>>) CleanRequest<T>(
@@ -287,15 +287,15 @@ namespace Cognite.Extensions
             var result = new List<T>();
             var errors = new List<CogniteError<T>>();
 
-            var existingResources = new HashSet<IIdentity>[distinctResources.Length];
-            var duplicates = new List<(T Item, IIdentity Idt)>[distinctResources.Length];
+            var existingResources = new HashSet<Identity>[distinctResources.Length];
+            var duplicates = new List<(T Item, Identity Idt)>[distinctResources.Length];
 
             var bad = new List<(ResourceType Type, T Item)>();
 
             for (int i = 0; i < distinctResources.Length; i++)
             {
-                existingResources[i] = new HashSet<IIdentity>();
-                duplicates[i] = new List<(T Item, IIdentity Idt)>();
+                existingResources[i] = new HashSet<Identity>();
+                duplicates[i] = new List<(T Item, Identity Idt)>();
             }
 
             foreach (var item in items)

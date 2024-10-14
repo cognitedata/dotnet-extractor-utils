@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using CogniteSdk;
 using CogniteSdk.Alpha;
-using CogniteSdk.Beta.DataModels;
+using CogniteSdk.DataModels;
 
 namespace Cognite.Extensions
 {
@@ -46,39 +46,6 @@ namespace Cognite.Extensions
         public static CogniteError<TError> ParseSimpleError<TError>(
             Exception ex,
             IEnumerable<Identity>? failed,
-            IEnumerable<TError>? skipped)
-        {
-            if (ex == null) throw new ArgumentNullException(nameof(ex));
-
-            var err = new CogniteError<TError>
-            {
-                Message = ex.Message,
-                Exception = ex,
-                Type = ErrorType.FatalFailure,
-                Values = failed,
-                Skipped = skipped
-            };
-
-            if (ex is ResponseException rex)
-            {
-                err.Status = rex.Code;
-            }
-
-            return err;
-        }
-
-        /// <summary>
-        /// Create a CogniteError from exception thrown when doing some simple operation to CDF.
-        /// Just creates a fatal error based on the exception.
-        /// </summary>
-        /// <typeparam name="TError">Errortype on result</typeparam>
-        /// <param name="ex">Exception thrown by method</param>
-        /// <param name="failed">Items that failed, optional</param>
-        /// <param name="skipped">Items that were skipped, optional</param>
-        /// <returns></returns>
-        public static CogniteError<TError> ParseSimpleError<TError>(
-            Exception ex,
-            IEnumerable<IdentityWithInstanceId>? failed,
             IEnumerable<TError>? skipped)
         {
             if (ex == null) throw new ArgumentNullException(nameof(ex));
@@ -165,8 +132,8 @@ namespace Cognite.Extensions
         private static IEnumerable<T> CleanFromErrorCommon<T>(
             CogniteError<T> error,
             IEnumerable<T> items,
-            Func<T, HashSet<IIdentity>, CogniteError<T>, bool> isAffected,
-            Func<T, IIdentity?> getIdentity,
+            Func<T, HashSet<Identity>, CogniteError<T>, bool> isAffected,
+            Func<T, Identity?> getIdentity,
             Prometheus.Counter skippedCounter)
         {
             if (items == null) throw new ArgumentNullException(nameof(items));
@@ -178,7 +145,7 @@ namespace Cognite.Extensions
                 return Enumerable.Empty<T>();
             }
 
-            var badValues = new HashSet<IIdentity>(error.Values ?? Enumerable.Empty<IIdentity>());
+            var badValues = new HashSet<Identity>(error.Values ?? Enumerable.Empty<Identity>());
 
             var ret = new List<T>();
             var skipped = new List<T>();
@@ -214,7 +181,7 @@ namespace Cognite.Extensions
         /// <param name="set">Set of identities</param>
         /// <param name="idt">ExternalId to test</param>
         /// <returns>True if externalId is non-null and set contains it, false otherwise</returns>
-        public static bool ContainsIdentity(this HashSet<IIdentity> set, string? idt)
+        public static bool ContainsIdentity(this HashSet<Identity> set, string? idt)
         {
             if (idt == null) return false;
             return set.Contains(Identity.Create(idt));
@@ -226,7 +193,7 @@ namespace Cognite.Extensions
         /// <param name="set">Set of identities</param>
         /// <param name="idt">ExternalId to test</param>
         /// <returns>True if internal id is non-null and set contains it, false otherwise</returns>
-        public static bool ContainsIdentity(this HashSet<IIdentity> set, long? idt)
+        public static bool ContainsIdentity(this HashSet<Identity> set, long? idt)
         {
             if (idt == null) return false;
             return set.Contains(Identity.Create(idt.Value));
@@ -238,10 +205,10 @@ namespace Cognite.Extensions
         /// <param name="set">Set of identities</param>
         /// <param name="idt">IntanceId to test</param>
         /// <returns>True if instance id is non-null and set contains it, false otherwise</returns>
-        public static bool ContainsIdentity(this HashSet<IdentityWithInstanceId> set, InstanceIdentifier idt)
+        public static bool ContainsIdentity(this HashSet<Identity> set, InstanceIdentifier idt)
         {
             if (idt == null) return false;
-            return set.Contains(IdentityWithInstanceId.Create(idt));
+            return set.Contains(Identity.Create(idt));
         }
     }
 
@@ -506,7 +473,7 @@ namespace Cognite.Extensions
         /// <summary>
         /// Values of the affected resources as CogniteSdk identities.
         /// </summary>
-        public IEnumerable<IIdentity>? Values { get; set; }
+        public IEnumerable<Identity>? Values { get; set; }
         /// <summary>
         /// Exception that caused this error, if any.
         /// </summary>
@@ -549,7 +516,7 @@ namespace Cognite.Extensions
             var initial = errs.First();
 
             var skipped = initial.Skipped?.ToList() ?? new List<TError>();
-            var values = initial.Values?.ToList() ?? new List<IIdentity>();
+            var values = initial.Values?.ToList() ?? new List<Identity>();
 
             foreach (var err in errs.Skip(1))
             {

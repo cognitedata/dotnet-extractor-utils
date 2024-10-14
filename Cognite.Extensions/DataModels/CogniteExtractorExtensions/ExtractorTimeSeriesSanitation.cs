@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using CogniteSdk;
-using CogniteSdk.Alpha;
-using CogniteSdk.Beta.DataModels;
-using CogniteSdk.Beta.DataModels.Core;
+using CogniteSdk.DataModels;
+using CogniteSdk.DataModels.Core;
 using static Cognite.Extensions.Sanitation;
 
 namespace Cognite.Extensions.DataModels
@@ -107,7 +106,7 @@ namespace Cognite.Extensions.DataModels
             DistinctResource<SourcedNodeWrite<T>>[] timeSeriesDistinct = new[]
             {
                 new DistinctResource<SourcedNodeWrite<T>>("Duplicated instance ids", ResourceType.InstanceId,
-                    ts => ts.ExternalId != null && ts.Space != null ? IdentityWithInstanceId.Create(new InstanceIdentifier(ts.Space, ts.ExternalId)) : null),
+                    ts => ts.ExternalId != null && ts.Space != null ? Identity.Create(new InstanceIdentifier(ts.Space, ts.ExternalId)) : null),
             };
             return CleanRequest(timeSeriesDistinct, timeseries, Verify, Sanitize, mode);
         }

@@ -5,9 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using CogniteSdk;
-using CogniteSdk.Alpha;
-using CogniteSdk.Beta.DataModels;
-using CogniteSdk.Beta.DataModels.Core;
+using CogniteSdk.DataModels;
+using CogniteSdk.DataModels.Core;
 using CogniteSdk.Resources;
 using CogniteSdk.Resources.DataModels;
 using Microsoft.Extensions.Logging;
@@ -29,7 +28,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Beta: Get or create the time series with the provided <paramref name="instanceIds"/> exist in CDF.
+        /// Get or create the time series with the provided <paramref name="instanceIds"/> if they exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
@@ -64,7 +63,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Beta: Get or create the time series with the provided <paramref name="instanceIds"/> exist in CDF.
+        /// Get or create the time series with the provided <paramref name="instanceIds"/> if they exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
         /// the missing time series objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
@@ -122,7 +121,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Beta: Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exist in CDF.
+        /// Ensures that all time series in <paramref name="timeSeriesToEnsure"/> exists in CDF.
         /// Tries to create the time series and returns when all are created or have been removed
         /// due to issues with the request.
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
@@ -188,7 +187,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Beta: Get the time series with the provided <paramref name="ids"/>. Ignore any
+        /// Get the time series with the provided <paramref name="ids"/>. Ignore any
         /// unknown ids
         /// </summary>
         /// <param name="timeSeries">A CogniteSdk TimeSeries resource</param>
@@ -199,7 +198,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <returns></returns>
         public static async Task<IEnumerable<SourcedNode<T>>> GetTimeSeriesByIdsIgnoreErrors<T>(
             this CoreTimeSeriesResource<T> timeSeries,
-            IEnumerable<IdentityWithInstanceId> ids,
+            IEnumerable<Identity> ids,
             int chunkSize,
             int throttleSize,
             CancellationToken token) where T : CogniteTimeSeriesBase
@@ -212,8 +211,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 .ToList();
 
             var generators = chunks
-                .Select<IEnumerable<IdentityWithInstanceId>, Func<Task>>(
-                chunk => async () =>
+                .Select(
+                (Func<IEnumerable<Identity>, Func<Task>>)(                chunk => async () =>
                 {
                     IEnumerable<SourcedInstance<T>> found;
                     using (CdfMetrics.CoreTimeSeries.WithLabels("retrieve").NewTimer())
@@ -224,7 +223,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     {
                         result.AddRange(found.Select(x => new SourcedNode<T>(x)));
                     }
-                });
+                }));
             int numTasks = 0;
             await generators.RunThrottled(throttleSize, (_) =>
                 _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetTimeSeriesByIdsIgnoreErrors), ++numTasks, chunks.Count),
@@ -251,7 +250,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 }
                 catch (Exception ex)
                 {
-                    var err = ResultHandlers.ParseSimpleError<SourcedNodeWrite<T>>(ex, idts?.Select(x => IdentityWithInstanceId.Create(x)), null);
+                    var err = ResultHandlers.ParseSimpleError<SourcedNodeWrite<T>>(ex, idts?.Select(x => Identity.Create(x)), null);
                     return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(new[] { err }, null);
                 }
             }
@@ -293,7 +292,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 foreach (var error in duplicateErrors)
                 {
                     if (error.Values == null || !error.Values.Any()) continue;
-                    foreach (var idt in error.Values) duplicatedIds.Add(((IdentityWithInstanceId)idt).InstanceId);
+                    foreach (var idt in error.Values) duplicatedIds.Add(idt.InstanceId);
                 }
             }
 
@@ -327,13 +326,13 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     }
 
                     _logger.LogDebug("Created {New} new timeseries in CDF", newTimeseries.Count());
-                    var toCreateDict = new Dictionary<IdentityWithInstanceId, T>();
+                    var toCreateDict = new Dictionary<Identity, T>();
                     foreach (var cr in toCreate)
                     {
-                        toCreateDict[new IdentityWithInstanceId(new InstanceIdentifier(cr.Space, cr.ExternalId))] = cr.Properties;
+                        toCreateDict[new Identity(new InstanceIdentifier(cr.Space, cr.ExternalId))] = cr.Properties;
                     }
 
-                    return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(errors, newTimeseries.Select(x => new SourcedNode<T>(x, toCreateDict[new IdentityWithInstanceId(new InstanceIdentifier(x.Space, x.ExternalId))])));
+                    return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(errors, newTimeseries.Select(x => new SourcedNode<T>(x, toCreateDict[new Identity(new InstanceIdentifier(x.Space, x.ExternalId))])));
                 }
                 catch (Exception ex)
                 {
@@ -362,7 +361,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Beta: Upsert time series.
+        /// Upsert time series.
         /// If any items fail to be created due to duplicated instance ids, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// Timeseries will be returned in the same order as given in <paramref name="items"/>
         /// </summary>

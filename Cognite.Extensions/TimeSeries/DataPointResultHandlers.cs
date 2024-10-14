@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CogniteSdk;
 using CogniteSdk.Alpha;
-using CogniteSdk.Beta.DataModels;
+using CogniteSdk.DataModels;
 using CogniteSdk.Resources;
 using Prometheus;
 
@@ -23,15 +23,15 @@ namespace Cognite.Extensions
                 {
                     if (dict.TryGetValue("id", out var idVal) && idVal is MultiValue.Long longVal)
                     {
-                        return (IIdentity)Identity.Create(longVal.Value);
+                        return Identity.Create(longVal.Value);
                     }
                     else if (dict.TryGetValue("externalId", out var extIdVal) && extIdVal is MultiValue.String stringVal)
                     {
-                        return (IIdentity)Identity.Create(stringVal.Value);
+                        return Identity.Create(stringVal.Value);
                     }
                     else if (dict.TryGetValue("instanceId", out var instanceIdVal) && instanceIdVal is MultiValue.InstanceId instIdVal)
                     {
-                        return (IIdentity)IdentityWithInstanceId.Create(new InstanceIdentifier(instIdVal.Value.Space, instIdVal.Value.ExternalId));
+                        return Identity.Create(new InstanceIdentifier(instIdVal.Value.Space, instIdVal.Value.ExternalId));
                     }
                     return null!;
                 }).Where(id => id != null);
@@ -69,7 +69,7 @@ namespace Cognite.Extensions
 
             var skipped = new List<DataPointInsertError>();
 
-            foreach (var idt in error.Values.ToIdentity())
+            foreach (var idt in error.Values)
             {
                 if (!datapoints.TryGetValue(idt, out var dps)) continue;
                 skipped.Add(new DataPointInsertError(idt, dps));

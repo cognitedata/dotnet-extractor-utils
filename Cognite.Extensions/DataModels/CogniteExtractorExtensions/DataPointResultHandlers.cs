@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Cognite.Extensions.DataModels;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using CogniteSdk;
-using CogniteSdk.Alpha;
-using CogniteSdk.Beta.DataModels;
-using CogniteSdk.Beta.DataModels.Core;
-using CogniteSdk.Resources;
+using CogniteSdk.DataModels;
+using CogniteSdk.DataModels.Core;
 using CogniteSdk.Resources.DataModels;
 using Prometheus;
 
@@ -18,52 +14,6 @@ namespace Cognite.Extensions
 {
     public static partial class ResultHandlers
     {
-        /// <summary>
-        /// Clean a list of identity/datapoint pairs based on CogniteError
-        /// </summary>
-        /// <param name="error">Error to clean from</param>
-        /// <param name="datapoints">Datapoints to remove</param>
-        /// <returns>A modified version of <paramref name="datapoints"/> or an empty dictionary</returns>
-        public static IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> CleanFromError(
-            CogniteError<DataPointInsertErrorWithInstanceId> error,
-            IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> datapoints)
-        {
-            if (datapoints == null) throw new ArgumentNullException(nameof(datapoints));
-            if (error == null) return datapoints;
-            // In this case we've already finished the skipping.
-            if (error.Skipped?.Any() ?? false) return datapoints;
-            if (error.Values == null || !error.Values.Any())
-            {
-                error.Skipped = datapoints.Select(kvp => new DataPointInsertErrorWithInstanceId(kvp.Key, kvp.Value)).ToList();
-
-                error.Values = error.Skipped.Select(pair => pair.Id);
-                return new Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>();
-            }
-
-            var skipped = new List<DataPointInsertErrorWithInstanceId>();
-
-            foreach (IdentityWithInstanceId idt in error.Values)
-            {
-                if (!datapoints.TryGetValue(idt, out var dps)) continue;
-                skipped.Add(new DataPointInsertErrorWithInstanceId(idt, dps));
-                CdfMetrics.DatapointsSkipped.Inc(dps.Count());
-                datapoints.Remove(idt);
-                CdfMetrics.DatapointTimeseriesSkipped.Inc();
-            }
-
-            if (skipped.Any())
-            {
-                error.Skipped = skipped;
-            }
-            else
-            {
-                error.Skipped = datapoints.Select(kvp => new DataPointInsertErrorWithInstanceId(kvp.Key, kvp.Value)).ToList();
-                return new Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>();
-            }
-
-            return datapoints;
-        }
-
         /// <summary>
         /// Ensure that the given list of datapoints have timeseries with matching types in CDF.
         /// Does not report missing timeseries, but will skip them. Typically this will be called
@@ -76,10 +26,10 @@ namespace Cognite.Extensions
         /// <param name="timeseriesThrottleSize">Maximum number of parallel requests for timeseries</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Verified datapoint insertions and optional error</returns>
-        public static async Task<(CogniteError<DataPointInsertErrorWithInstanceId>, IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>)> VerifyDatapointsFromCDF(
+        public static async Task<(CogniteError<DataPointInsertError>, IDictionary<Identity, IEnumerable<Datapoint>>)> VerifyDatapointsFromCDF(
             CoreTimeSeriesResource<CogniteTimeSeriesBase> resource,
-            CogniteError<DataPointInsertErrorWithInstanceId> error,
-            IDictionary<IdentityWithInstanceId, IEnumerable<Datapoint>> datapoints,
+            CogniteError<DataPointInsertError> error,
+            IDictionary<Identity, IEnumerable<Datapoint>> datapoints,
             int timeseriesChunkSize,
             int timeseriesThrottleSize,
             CancellationToken token)
@@ -100,17 +50,17 @@ namespace Cognite.Extensions
                     var err = ParseSimpleError(
                         ex,
                         datapoints.Select(kvp => kvp.Key),
-                        datapoints.Select(kvp => new DataPointInsertErrorWithInstanceId(kvp.Key, kvp.Value)));
-                    return (err, new Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>());
+                        datapoints.Select(kvp => new DataPointInsertError(kvp.Key, kvp.Value)));
+                    return (err, new Dictionary<Identity, IEnumerable<Datapoint>>());
                 }
             }
 
-            var badDps = new List<DataPointInsertErrorWithInstanceId>();
-            var result = new Dictionary<IdentityWithInstanceId, IEnumerable<Datapoint>>();
+            var badDps = new List<DataPointInsertError>();
+            var result = new Dictionary<Identity, IEnumerable<Datapoint>>();
 
             foreach (var ts in timeseries)
             {
-                var idt = IdentityWithInstanceId.Create(new InstanceIdentifier(ts.Space, ts.ExternalId));
+                var idt = Identity.Create(new InstanceIdentifier(ts.Space, ts.ExternalId));
                 var points = datapoints[idt];
 
                 var bad = new List<Datapoint>();
@@ -125,7 +75,7 @@ namespace Cognite.Extensions
                 if (bad.Any())
                 {
                     CdfMetrics.DatapointsSkipped.Inc(bad.Count);
-                    badDps.Add(new DataPointInsertErrorWithInstanceId(idt, bad));
+                    badDps.Add(new DataPointInsertError(idt, bad));
                 }
                 if (good.Any())
                 {
@@ -139,7 +89,7 @@ namespace Cognite.Extensions
 
             if (badDps.Any())
             {
-                if (error == null) error = new CogniteError<DataPointInsertErrorWithInstanceId> { Message = "Mismatched timeseries" };
+                if (error == null) error = new CogniteError<DataPointInsertError> { Message = "Mismatched timeseries" };
                 error.Type = ErrorType.MismatchedType;
                 error.Resource = ResourceType.DataPointValue;
                 error.Skipped = badDps;

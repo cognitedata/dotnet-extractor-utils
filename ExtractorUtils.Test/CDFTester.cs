@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
-using Cognite.Extractor.Utils.Beta;
 using CogniteSdk;
-using CogniteSdk.Beta.DataModels;
+using CogniteSdk.DataModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -56,7 +55,7 @@ namespace ExtractorUtils.Test
         }
         public CDFTester(CogniteHost host, ITestOutputHelper output) : this(GetConfig(host), output)
         {
-            DestinationWithIDM.CogniteClient.Beta.DataModels.UpsertSpaces(new List<SpaceCreate>() { new() { Space = SpaceId } }).GetAwaiter().GetResult();
+            DestinationWithIDM.CogniteClient.DataModels.UpsertSpaces(new List<SpaceCreate>() { new() { Space = SpaceId } }).GetAwaiter().GetResult();
         }
 
         public async Task<long> GetDataSetId()
@@ -146,7 +145,7 @@ namespace ExtractorUtils.Test
                 if (disposing)
                 {
                     System.IO.File.Delete(_configPath);
-                    DestinationWithIDM.CogniteClient.Beta.DataModels.DeleteSpaces(new List<string>() { SpaceId });
+                    DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { SpaceId });
                     Provider.Dispose();
                     Source.Dispose();
                 }

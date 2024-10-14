@@ -1,12 +1,12 @@
-﻿using CogniteSdk.Beta.DataModels;
+﻿using CogniteSdk.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.CompilerServices;
-using CogniteSdk.Resources.Beta;
 using System.Linq;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
+using CogniteSdk.Resources;
 
 namespace Cognite.Extensions.DataModels
 {

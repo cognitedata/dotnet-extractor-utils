@@ -56,7 +56,7 @@ namespace Cognite.Extensions
             }
         }
 
-        private static bool IsAffected(TimeSeriesCreate ts, HashSet<IIdentity> badValues, CogniteError<TimeSeriesCreate> error)
+        private static bool IsAffected(TimeSeriesCreate ts, HashSet<Identity> badValues, CogniteError<TimeSeriesCreate> error)
         {
             return error.Resource switch
             {

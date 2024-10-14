@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Linq;
 using System.Net.Security;
-using Cognite.Extractor.Utils.Beta;
 
 namespace Cognite.Extractor.Utils
 {
