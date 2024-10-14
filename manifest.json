@@ -254,16 +254,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.EdgeQueryBuilderItem.yml",
       "output": {
         ".html": {
@@ -1184,26 +1174,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.Beta.CogniteDestinationWithIDM.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.Beta.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.Beta.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.CertificateConfig.yml",
       "output": {
         ".html": {
@@ -1248,6 +1218,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Cognite.Extractor.Utils.CogniteDestination.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.html"
         }
       },
       "version": ""
@@ -1576,11 +1556,11 @@
       "type": "Toc",
       "source_relative_path": "api/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "api/toc.html"
-        },
         ".json": {
           "relative_path": "api/toc.json"
+        },
+        ".html": {
+          "relative_path": "api/toc.html"
         }
       },
       "version": ""
@@ -1599,11 +1579,11 @@
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "toc.html"
-        },
         ".json": {
           "relative_path": "toc.json"
+        },
+        ".html": {
+          "relative_path": "toc.html"
         }
       },
       "version": ""
@@ -1722,11 +1702,11 @@
       "type": "Toc",
       "source_relative_path": "tutorials/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "tutorials/toc.html"
-        },
         ".json": {
           "relative_path": "tutorials/toc.json"
+        },
+        ".html": {
+          "relative_path": "tutorials/toc.html"
         }
       },
       "version": ""

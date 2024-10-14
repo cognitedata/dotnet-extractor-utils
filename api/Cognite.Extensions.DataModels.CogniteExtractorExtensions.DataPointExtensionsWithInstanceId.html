@@ -113,353 +113,20 @@
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_DeleteIgnoreErrorsAsync_CogniteSdk_Resources_Alpha_DataPointsResource_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extractor_Common_TimeRange___System_Int32_System_Int32_System_Int32_System_Int32_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.DeleteIgnoreErrorsAsync(CogniteSdk.Resources.Alpha.DataPointsResource%2CSystem.Collections.Generic.IDictionary%7BCogniteSdk.Alpha.IdentityWithInstanceId%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extractor.Common.TimeRange%7D%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsync_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(CogniteSdk.Client%2CSystem.Collections.Generic.IDictionary%7BCogniteSdk.Identity%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Nullable%7BSystem.Double%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L354">View Source</a>
-  </span>
-  <a id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_DeleteIgnoreErrorsAsync_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.DeleteIgnoreErrorsAsync*"></a>
-  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_DeleteIgnoreErrorsAsync_CogniteSdk_Resources_Alpha_DataPointsResource_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extractor_Common_TimeRange___System_Int32_System_Int32_System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.DeleteIgnoreErrorsAsync(CogniteSdk.Resources.Alpha.DataPointsResource,System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Int32,System.Threading.CancellationToken)">DeleteIgnoreErrorsAsync(DataPointsResource, IDictionary&lt;IdentityWithInstanceId, IEnumerable&lt;TimeRange&gt;&gt;, int, int, int, int, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Alpha: Deletes ranges of data points in CDF. The <code class="paramref">ranges</code> parameter contains the first (inclusive)
-and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
-the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to
-confirm the deletion does not mean that the operation failed in CDF</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;DeleteError&gt; DeleteIgnoreErrorsAsync(this DataPointsResource dataPoints, IDictionary&lt;IdentityWithInstanceId, IEnumerable&lt;TimeRange&gt;&gt; ranges, int deleteChunkSize, int listChunkSize, int deleteThrottleSize, int listThrottleSize, CancellationToken token)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">DataPointsResource</span></td>
-        <td><span class="parametername">dataPoints</span></td>
-        <td><p>Cognite datapoints resource</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">IdentityWithInstanceId</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
-        <td><span class="parametername">ranges</span></td>
-        <td><p>Ranges to delete</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">deleteChunkSize</span></td>
-        <td><p>Chunk size for delete operations</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">listChunkSize</span></td>
-        <td><p>Chunk size for list operations</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">deleteThrottleSize</span></td>
-        <td><p>Throttle size for delete operations</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">listThrottleSize</span></td>
-        <td><p>Throttle size for list operations</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">token</span></td>
-        <td><p>Cancelation token</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.DeleteError.html">DeleteError</a>&gt;</td>
-        <td><p>A <a class="xref" href="Cognite.Extensions.DeleteError.html">DeleteError</a> object with any missing ids or ids with unconfirmed deletes</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetEarliestTimestamps_CogniteSdk_Resources_Alpha_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Alpha_IdentityWithInstanceId_System_DateTime___System_Int32_System_Int32_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetEarliestTimestamps(CogniteSdk.Resources.Alpha.DataPointsResource%2CSystem.Collections.Generic.IEnumerable%7BSystem.ValueTuple%7BCogniteSdk.Alpha.IdentityWithInstanceId%2CSystem.DateTime%7D%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L520">View Source</a>
-  </span>
-  <a id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetEarliestTimestamps_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetEarliestTimestamps*"></a>
-  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetEarliestTimestamps_CogniteSdk_Resources_Alpha_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Alpha_IdentityWithInstanceId_System_DateTime___System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetEarliestTimestamps(CogniteSdk.Resources.Alpha.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Alpha.IdentityWithInstanceId,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken)">GetEarliestTimestamps(DataPointsResource, IEnumerable&lt;(IdentityWithInstanceId id, DateTime after)&gt;, int, int, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Alpha: Get the first timestamp for each time series given in <code class="paramref">ids</code> after each given timestamp.
-Ignores timeseries not in CDF. The return dictionary contains only ids that exist in CDF.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;IDictionary&lt;IdentityWithInstanceId, DateTime&gt;&gt; GetEarliestTimestamps(this DataPointsResource dataPoints, IEnumerable&lt;(IdentityWithInstanceId id, DateTime after)&gt; ids, int chunkSize, int throttleSize, CancellationToken token)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">DataPointsResource</span></td>
-        <td><span class="parametername">dataPoints</span></td>
-        <td><p>DataPointsResource to use</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<span class="xref">IdentityWithInstanceId</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.alpha.identitywithinstanceid,system.datetime-.id">id</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.alpha.identitywithinstanceid,system.datetime-.before">before</a>)&gt;</td>
-        <td><span class="parametername">ids</span></td>
-        <td><p>ExternalIds and last timestamp. Let last timestamp be Epoch to use default.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">chunkSize</span></td>
-        <td><p>Number of timeseries per request</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">throttleSize</span></td>
-        <td><p>Maximum number of parallel requests</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">token</span></td>
-        <td><p>Cancellation token</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">IdentityWithInstanceId</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a>&gt;&gt;</td>
-        <td><p>Dictionary from externalId to first timestamp, only contains existing timeseries</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetExtractedRanges_CogniteSdk_Resources_Alpha_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Alpha_IdentityWithInstanceId_Cognite_Extractor_Common_TimeRange___System_Int32_System_Int32_System_Int32_System_Boolean_System_Boolean_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetExtractedRanges(CogniteSdk.Resources.Alpha.DataPointsResource%2CSystem.Collections.Generic.IEnumerable%7BSystem.ValueTuple%7BCogniteSdk.Alpha.IdentityWithInstanceId%2CCognite.Extractor.Common.TimeRange%7D%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Boolean%2CSystem.Boolean%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L597">View Source</a>
-  </span>
-  <a id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetExtractedRanges_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetExtractedRanges*"></a>
-  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetExtractedRanges_CogniteSdk_Resources_Alpha_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Alpha_IdentityWithInstanceId_Cognite_Extractor_Common_TimeRange___System_Int32_System_Int32_System_Int32_System_Boolean_System_Boolean_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetExtractedRanges(CogniteSdk.Resources.Alpha.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Alpha.IdentityWithInstanceId,Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Threading.CancellationToken)">GetExtractedRanges(DataPointsResource, IEnumerable&lt;(IdentityWithInstanceId id, TimeRange limit)&gt;, int, int, int, bool, bool, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Alpha: Fetches the range of datapoints present in CDF. Limited by given ranges for each id.
-Note that end limits closer to actual endpoints in CDF is considerably faster.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;IDictionary&lt;IdentityWithInstanceId, TimeRange&gt;&gt; GetExtractedRanges(this DataPointsResource dataPoints, IEnumerable&lt;(IdentityWithInstanceId id, TimeRange limit)&gt; ids, int chunkSizeEarliest, int chunkSizeLatest, int throttleSize, bool latest, bool earliest, CancellationToken token)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">DataPointsResource</span></td>
-        <td><span class="parametername">dataPoints</span></td>
-        <td><p>DataPointsResource to use</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<span class="xref">IdentityWithInstanceId</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.alpha.identitywithinstanceid,cognite.extractor.common.timerange-.id">id</a>, <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.alpha.identitywithinstanceid,cognite.extractor.common.timerange-.limit">limit</a>)&gt;</td>
-        <td><span class="parametername">ids</span></td>
-        <td><p>ExternalIds and start/end of region to look for datapoints.
-Use TimeRange.Complete for first after epoch, and last before now.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">chunkSizeEarliest</span></td>
-        <td><p>Number of timeseries to read for each earliest request</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">chunkSizeLatest</span></td>
-        <td><p>Number of timeseries to read for each latest request</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">throttleSize</span></td>
-        <td><p>Max number of parallel requests</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">latest</span></td>
-        <td><p>If true, fetch latest timestamps</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">earliest</span></td>
-        <td><p>If true, fetch earliest timestamps</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">token</span></td>
-        <td><p>Cancellation token</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">IdentityWithInstanceId</span>, <a class="xref" href="Cognite.Extractor.Common.TimeRange.html">TimeRange</a>&gt;&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetLatestTimestamps_CogniteSdk_Resources_Alpha_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Alpha_IdentityWithInstanceId_System_DateTime___System_Int32_System_Int32_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetLatestTimestamps(CogniteSdk.Resources.Alpha.DataPointsResource%2CSystem.Collections.Generic.IEnumerable%7BSystem.ValueTuple%7BCogniteSdk.Alpha.IdentityWithInstanceId%2CSystem.DateTime%7D%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L455">View Source</a>
-  </span>
-  <a id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetLatestTimestamps_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetLatestTimestamps*"></a>
-  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_GetLatestTimestamps_CogniteSdk_Resources_Alpha_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Alpha_IdentityWithInstanceId_System_DateTime___System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.GetLatestTimestamps(CogniteSdk.Resources.Alpha.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Alpha.IdentityWithInstanceId,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken)">GetLatestTimestamps(DataPointsResource, IEnumerable&lt;(IdentityWithInstanceId id, DateTime before)&gt;, int, int, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Alpha: Get the last timestamp for each time series given in <code class="paramref">ids</code> before each given timestamp.
-Ignores timeseries not in CDF. The return dictionary contains only ids that exist in CDF.
-Note that end limits closer to actual endpoints in CDF is considerably faster.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;IDictionary&lt;IdentityWithInstanceId, DateTime&gt;&gt; GetLatestTimestamps(this DataPointsResource dataPoints, IEnumerable&lt;(IdentityWithInstanceId id, DateTime before)&gt; ids, int chunkSize, int throttleSize, CancellationToken token)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">DataPointsResource</span></td>
-        <td><span class="parametername">dataPoints</span></td>
-        <td><p>DataPointsResource to use</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<span class="xref">IdentityWithInstanceId</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.alpha.identitywithinstanceid,system.datetime-.id">id</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognitesdk.alpha.identitywithinstanceid,system.datetime-.before">before</a>)&gt;</td>
-        <td><span class="parametername">ids</span></td>
-        <td><p>ExternalIds and last timestamp. Let last timestamp be DateTime.MaxValue to use default (&quot;now&quot;).</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">chunkSize</span></td>
-        <td><p>Number of timeseries per request</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">throttleSize</span></td>
-        <td><p>Maximum number of parallel requests</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">token</span></td>
-        <td><p>Cancellation token</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">IdentityWithInstanceId</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a>&gt;&gt;</td>
-        <td><p>Dictionary from externalId to last timestamp, only contains existing timeseries</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsync_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(CogniteSdk.Client%2CSystem.Collections.Generic.IDictionary%7BCogniteSdk.Alpha.IdentityWithInstanceId%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Nullable%7BSystem.Double%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L202">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L138">View Source</a>
   </span>
   <a id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsync_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync*"></a>
-  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsync_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(CogniteSdk.Client,System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Threading.CancellationToken)">InsertAsync(Client, IDictionary&lt;IdentityWithInstanceId, IEnumerable&lt;Datapoint&gt;&gt;, int, int, int, int, int, int, SanitationMode, RetryMode, double?, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Alpha: Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsync_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsync(CogniteSdk.Client,System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Threading.CancellationToken)">InsertAsync(Client, IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;, int, int, int, int, int, int, SanitationMode, RetryMode, double?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
 and can optionally handle errors.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;DataPointInsertErrorWithInstanceId&gt;&gt; InsertAsync(Client client, IDictionary&lt;IdentityWithInstanceId, IEnumerable&lt;Datapoint&gt;&gt; points, int keyChunkSize, int valueChunkSize, int throttleSize, int timeseriesChunkSize, int timeseriesThrottleSize, int gzipCountLimit, SanitationMode sanitationMode, RetryMode retryMode, double? nanReplacement, CancellationToken token)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;DataPointInsertError&gt;&gt; InsertAsync(Client client, IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt; points, int keyChunkSize, int valueChunkSize, int throttleSize, int timeseriesChunkSize, int timeseriesThrottleSize, int gzipCountLimit, SanitationMode sanitationMode, RetryMode retryMode, double? nanReplacement, CancellationToken token)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -478,7 +145,7 @@ and can optionally handle errors.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">IdentityWithInstanceId</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
         <td><span class="parametername">points</span></td>
         <td><p>Datapoints to insert</p>
 </td>
@@ -555,7 +222,7 @@ and can optionally handle errors.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId.html">DataPointInsertErrorWithInstanceId</a>&gt;&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataPointInsertError.html">DataPointInsertError</a>&gt;&gt;</td>
         <td><p>Result with a list of errors</p>
 </td>
       </tr>
@@ -563,21 +230,21 @@ and can optionally handle errors.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsyncCreateMissing_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing(CogniteSdk.Client%2CSystem.Collections.Generic.IDictionary%7BCogniteSdk.Alpha.IdentityWithInstanceId%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Nullable%7BSystem.Double%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsyncCreateMissing_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing(CogniteSdk.Client%2CSystem.Collections.Generic.IDictionary%7BCogniteSdk.Identity%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Nullable%7BSystem.Double%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L117">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L53">View Source</a>
   </span>
   <a id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsyncCreateMissing_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing*"></a>
-  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsyncCreateMissing_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing(CogniteSdk.Client,System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Threading.CancellationToken)">InsertAsyncCreateMissing(Client, IDictionary&lt;IdentityWithInstanceId, IEnumerable&lt;Datapoint&gt;&gt;, int, int, int, int, int, int, SanitationMode, RetryMode, double?, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Alpha: Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
+  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_InsertAsyncCreateMissing_CogniteSdk_Client_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Double__System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing(CogniteSdk.Client,System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Nullable{System.Double},System.Threading.CancellationToken)">InsertAsyncCreateMissing(Client, IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;, int, int, int, int, int, int, SanitationMode, RetryMode, double?, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert datapoints to timeseries. Insertions are chunked and cleaned according to configuration,
 and can optionally handle errors. If any timeseries missing from the result and inserted by externalId,
 they are created before the points are inserted again.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;(CogniteResult&lt;DataPointInsertErrorWithInstanceId&gt; DataPointResult, CogniteResult&lt;SourcedNode&lt;CogniteTimeSeriesBase&gt;, SourcedNodeWrite&lt;CogniteTimeSeriesBase&gt;&gt;? TimeSeriesResult)&gt; InsertAsyncCreateMissing(Client client, IDictionary&lt;IdentityWithInstanceId, IEnumerable&lt;Datapoint&gt;&gt; points, int keyChunkSize, int valueChunkSize, int throttleSize, int timeseriesChunkSize, int timeseriesThrottleSize, int gzipCountLimit, SanitationMode sanitationMode, RetryMode retryMode, double? nanReplacement, CancellationToken token)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;(CogniteResult&lt;DataPointInsertError&gt; DataPointResult, CogniteResult&lt;SourcedNode&lt;CogniteTimeSeriesBase&gt;, SourcedNodeWrite&lt;CogniteTimeSeriesBase&gt;&gt;? TimeSeriesResult)&gt; InsertAsyncCreateMissing(Client client, IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt; points, int keyChunkSize, int valueChunkSize, int throttleSize, int timeseriesChunkSize, int timeseriesThrottleSize, int gzipCountLimit, SanitationMode sanitationMode, RetryMode retryMode, double? nanReplacement, CancellationToken token)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -596,7 +263,7 @@ they are created before the points are inserted again.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">IdentityWithInstanceId</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
         <td><span class="parametername">points</span></td>
         <td><p>Datapoints to insert</p>
 </td>
@@ -673,58 +340,8 @@ they are created before the points are inserted again.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;(<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataModels.DataPointInsertErrorWithInstanceId.html">DataPointInsertErrorWithInstanceId</a>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognite.extensions.cogniteresult-cognite.extensions.datamodels.datapointinserterrorwithinstanceid-,cognite.extensions.cogniteresult-cognitesdk.beta.datamodels.sourcednode-cognitesdk.beta.datamodels.core.cognitetimeseriesbase-,cognitesdk.beta.datamodels.sourcednodewrite-cognitesdk.beta.datamodels.core.cognitetimeseriesbase---.datapointresult">DataPointResult</a>, <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">SourcedNode</span>&lt;<span class="xref">CogniteTimeSeriesBase</span>&gt;, <span class="xref">SourcedNodeWrite</span>&lt;<span class="xref">CogniteTimeSeriesBase</span>&gt;&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognite.extensions.cogniteresult-cognite.extensions.datamodels.datapointinserterrorwithinstanceid-,cognite.extensions.cogniteresult-cognitesdk.beta.datamodels.sourcednode-cognitesdk.beta.datamodels.core.cognitetimeseriesbase-,cognitesdk.beta.datamodels.sourcednodewrite-cognitesdk.beta.datamodels.core.cognitetimeseriesbase---.timeseriesresult">TimeSeriesResult</a>)&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;(<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataPointInsertError.html">DataPointInsertError</a>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognite.extensions.cogniteresult-cognite.extensions.datapointinserterror-,cognite.extensions.cogniteresult-cognitesdk.datamodels.sourcednode-cognitesdk.datamodels.core.cognitetimeseriesbase-,cognitesdk.datamodels.sourcednodewrite-cognitesdk.datamodels.core.cognitetimeseriesbase---.datapointresult">DataPointResult</a>, <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">SourcedNode</span>&lt;<span class="xref">CogniteTimeSeriesBase</span>&gt;, <span class="xref">SourcedNodeWrite</span>&lt;<span class="xref">CogniteTimeSeriesBase</span>&gt;&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognite.extensions.cogniteresult-cognite.extensions.datapointinserterror-,cognite.extensions.cogniteresult-cognitesdk.datamodels.sourcednode-cognitesdk.datamodels.core.cognitetimeseriesbase-,cognitesdk.datamodels.sourcednodewrite-cognitesdk.datamodels.core.cognitetimeseriesbase---.timeseriesresult">TimeSeriesResult</a>)&gt;</td>
         <td><p>Results with a list of errors. If TimeSeriesResult is null, no timeseries were attempted created.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_ToInsertRequest_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.ToInsertRequest(System.Collections.Generic.IDictionary%7BCogniteSdk.Alpha.IdentityWithInstanceId%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/DataPointExtensions.cs/#L40">View Source</a>
-  </span>
-  <a id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_ToInsertRequest_" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.ToInsertRequest*"></a>
-  <h4 id="Cognite_Extensions_DataModels_CogniteExtractorExtensions_DataPointExtensionsWithInstanceId_ToInsertRequest_System_Collections_Generic_IDictionary_CogniteSdk_Alpha_IdentityWithInstanceId_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___" data-uid="Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.ToInsertRequest(System.Collections.Generic.IDictionary{CogniteSdk.Alpha.IdentityWithInstanceId,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}})">ToInsertRequest(IDictionary&lt;IdentityWithInstanceId, IEnumerable&lt;Datapoint&gt;&gt;)</h4>
-  <div class="markdown level1 summary"><p>Alpha: Create a protobuf insertion request from dictionary</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static DataPointInsertionRequest ToInsertRequest(this IDictionary&lt;IdentityWithInstanceId, IEnumerable&lt;Datapoint&gt;&gt; dps)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">IdentityWithInstanceId</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
-        <td><span class="parametername">dps</span></td>
-        <td><p>Datapoints to insert</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">DataPointInsertionRequest</span></td>
-        <td><p>Converted request</p>
 </td>
       </tr>
     </tbody>
