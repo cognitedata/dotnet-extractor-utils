@@ -207,7 +207,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="sanitationMode"></param>
         /// <param name="retryMode"></param>
         /// <param name="token">Cancellation token</param>
-        public new async Task<CogniteResult<DataPointInsertError>> InsertDataPointsAsync(
+        public async Task<CogniteResult<DataPointInsertError>> InsertDataPointsIDMAsync(
             IDictionary<Identity, IEnumerable<Datapoint>>? points,
             SanitationMode sanitationMode,
             RetryMode retryMode,
