@@ -10236,22 +10236,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestinationWithIDM.IDMViewIdentifier
   nameWithType: CogniteDestinationWithIDM.IDMViewIdentifier
-- uid: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
-  name: InsertDataPointsAsync(IDictionary<Identity, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
-  name.vb: InsertDataPointsAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary<CogniteSdk.Identity, System.Collections.Generic.IEnumerable<Cognite.Extensions.Datapoint>>?, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Threading.CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary(Of CogniteSdk.Identity, System.Collections.Generic.IEnumerable(Of Cognite.Extensions.Datapoint)), Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Threading.CancellationToken)
-  nameWithType: CogniteDestinationWithIDM.InsertDataPointsAsync(IDictionary<Identity, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
-  nameWithType.vb: CogniteDestinationWithIDM.InsertDataPointsAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
-- uid: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync*
-  name: InsertDataPointsAsync
-  href: api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsAsync_
-  commentId: Overload:Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync
-  nameWithType: CogniteDestinationWithIDM.InsertDataPointsAsync
 - uid: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsCreateMissingAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
   name: InsertDataPointsCreateMissingAsync(IDictionary<Identity, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
   href: api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsCreateMissingAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_
@@ -10268,6 +10252,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsCreateMissingAsync
   nameWithType: CogniteDestinationWithIDM.InsertDataPointsCreateMissingAsync
+- uid: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
+  name: InsertDataPointsIDMAsync(IDictionary<Identity, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsIDMAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)
+  name.vb: InsertDataPointsIDMAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync(System.Collections.Generic.IDictionary<CogniteSdk.Identity, System.Collections.Generic.IEnumerable<Cognite.Extensions.Datapoint>>?, Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync(System.Collections.Generic.IDictionary(Of CogniteSdk.Identity, System.Collections.Generic.IEnumerable(Of Cognite.Extensions.Datapoint)), Cognite.Extensions.SanitationMode, Cognite.Extensions.RetryMode, System.Threading.CancellationToken)
+  nameWithType: CogniteDestinationWithIDM.InsertDataPointsIDMAsync(IDictionary<Identity, IEnumerable<Datapoint>>?, SanitationMode, RetryMode, CancellationToken)
+  nameWithType.vb: CogniteDestinationWithIDM.InsertDataPointsIDMAsync(IDictionary(Of Identity, IEnumerable(Of Datapoint)), SanitationMode, RetryMode, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync*
+  name: InsertDataPointsIDMAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsIDMAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync
+  nameWithType: CogniteDestinationWithIDM.InsertDataPointsIDMAsync
 - uid: Cognite.Extractor.Utils.CogniteDestinationWithIDM.UpsertTimeSeriesAsync*
   name: UpsertTimeSeriesAsync
   href: api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.html#Cognite_Extractor_Utils_CogniteDestinationWithIDM_UpsertTimeSeriesAsync_

@@ -126,6 +126,9 @@ requests against the client</p>
       <a class="xref" href="Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_UpsertAssetsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_Cognite_Extensions_UpsertParams_System_Threading_CancellationToken_">CogniteDestination.UpsertAssetsAsync(IEnumerable&lt;AssetCreate&gt;, RetryMode, SanitationMode, UpsertParams, CancellationToken)</a>
     </div>
     <div>
+      <a class="xref" href="Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_">CogniteDestination.InsertDataPointsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;, SanitationMode, RetryMode, CancellationToken)</a>
+    </div>
+    <div>
       <a class="xref" href="Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertDataPointsCreateMissingAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Nullable_System_Int64__System_Threading_CancellationToken_">CogniteDestination.InsertDataPointsCreateMissingAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;, SanitationMode, RetryMode, long?, CancellationToken)</a>
     </div>
     <div>
@@ -654,75 +657,6 @@ legacy name, or missing dataSetId, they can be removed before retrying by settin
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary%7BCogniteSdk.Identity%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestinationWithIDM.cs/#L210">View Source</a>
-  </span>
-  <a id="Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync*"></a>
-  <h4 id="Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)">InsertDataPointsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;?, SanitationMode, RetryMode, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Insert the provided data points into CDF. The data points are chunked
-according to <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html#Cognite_Extractor_Utils_CogniteConfig_CdfChunking">CdfChunking</a> and trimmed according to the
-<a href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</a>.
-The <code class="paramref">points</code> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points</p>
-<p>On error, the offending timeseries/datapoints can optionally be removed.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;DataPointInsertError&gt;&gt; InsertDataPointsAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;? points, SanitationMode sanitationMode, RetryMode retryMode, CancellationToken token)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
-        <td><span class="parametername">points</span></td>
-        <td><p>Data points</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
-        <td><span class="parametername">sanitationMode</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
-        <td><span class="parametername">retryMode</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
-        <td><span class="parametername">token</span></td>
-        <td><p>Cancellation token</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataPointInsertError.html">DataPointInsertError</a>&gt;&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsCreateMissingAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsCreateMissingAsync(System.Collections.Generic.IDictionary%7BCogniteSdk.Identity%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
@@ -788,6 +722,75 @@ they are created before the points are inserted again.</p>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;(<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataPointInsertError.html">DataPointInsertError</a>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognite.extensions.cogniteresult-cognite.extensions.datapointinserterror-,cognite.extensions.cogniteresult-cognitesdk.datamodels.sourcednode-cognitesdk.datamodels.core.cognitetimeseriesbase-,cognitesdk.datamodels.sourcednodewrite-cognitesdk.datamodels.core.cognitetimeseriesbase---.datapointresult">DataPointResult</a>, <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">SourcedNode</span>&lt;<span class="xref">CogniteTimeSeriesBase</span>&gt;, <span class="xref">SourcedNodeWrite</span>&lt;<span class="xref">CogniteTimeSeriesBase</span>&gt;&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-cognite.extensions.cogniteresult-cognite.extensions.datapointinserterror-,cognite.extensions.cogniteresult-cognitesdk.datamodels.sourcednode-cognitesdk.datamodels.core.cognitetimeseriesbase-,cognitesdk.datamodels.sourcednodewrite-cognitesdk.datamodels.core.cognitetimeseriesbase---.timeseriesresult">TimeSeriesResult</a>)&gt;</td>
         <td><p>Results with a list of errors. If TimeSeriesResult is null, no timeseries were attempted created.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsIDMAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync(System.Collections.Generic.IDictionary%7BCogniteSdk.Identity%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.Datapoint%7D%7D%2CCognite.Extensions.SanitationMode%2CCognite.Extensions.RetryMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Cognite/CogniteDestinationWithIDM.cs/#L210">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsIDMAsync_" data-uid="Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync*"></a>
+  <h4 id="Cognite_Extractor_Utils_CogniteDestinationWithIDM_InsertDataPointsIDMAsync_System_Collections_Generic_IDictionary_CogniteSdk_Identity_System_Collections_Generic_IEnumerable_Cognite_Extensions_Datapoint___Cognite_Extensions_SanitationMode_Cognite_Extensions_RetryMode_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.CogniteDestinationWithIDM.InsertDataPointsIDMAsync(System.Collections.Generic.IDictionary{CogniteSdk.Identity,System.Collections.Generic.IEnumerable{Cognite.Extensions.Datapoint}},Cognite.Extensions.SanitationMode,Cognite.Extensions.RetryMode,System.Threading.CancellationToken)">InsertDataPointsIDMAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;?, SanitationMode, RetryMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Insert the provided data points into CDF. The data points are chunked
+according to <a class="xref" href="Cognite.Extractor.Utils.CogniteConfig.html#Cognite_Extractor_Utils_CogniteConfig_CdfChunking">CdfChunking</a> and trimmed according to the
+<a href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</a>.
+The <code class="paramref">points</code> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points</p>
+<p>On error, the offending timeseries/datapoints can optionally be removed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;DataPointInsertError&gt;&gt; InsertDataPointsIDMAsync(IDictionary&lt;Identity, IEnumerable&lt;Datapoint&gt;&gt;? points, SanitationMode sanitationMode, RetryMode retryMode, CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<span class="xref">Identity</span>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.Datapoint.html">Datapoint</a>&gt;&gt;</td>
+        <td><span class="parametername">points</span></td>
+        <td><p>Data points</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-1.html">CogniteResult</a>&lt;<a class="xref" href="Cognite.Extensions.DataPointInsertError.html">DataPointInsertError</a>&gt;&gt;</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
