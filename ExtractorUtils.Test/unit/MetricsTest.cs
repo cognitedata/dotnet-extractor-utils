@@ -32,7 +32,7 @@ namespace ExtractorUtils.Test.Unit
         private const string job = "unit-test-job";
 
         private static async Task<HttpResponseMessage> MockSendAsync(HttpRequestMessage message , CancellationToken token) {
-            var content = await message.Content.ReadAsStringAsync();
+            var content = await message.Content.ReadAsStringAsync(token);
             var auth = message.Headers.Authorization;
 
             // Verify endpoint, content and authentication

@@ -56,7 +56,7 @@ namespace ExtractorUtils.Test.Unit
 
         protected override async Task ConsumeChunk(IChunk<SchedulerItem> chunk, CancellationToken token)
         {
-            await Task.Delay(10);
+            await Task.Delay(10, token);
         }
 
         protected override IChunk<SchedulerItem> GetChunk(IEnumerable<SchedulerItem> items)

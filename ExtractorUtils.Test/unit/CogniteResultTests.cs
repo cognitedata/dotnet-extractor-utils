@@ -111,7 +111,7 @@ namespace ExtractorUtils.Test.Unit
                 var error = ResultHandlers.ParseException<AssetCreate>(exceptions[i], RequestType.CreateAssets);
                 logger.LogCogniteError(error, RequestType.CreateAssets, false, LogLevel.Debug, LogLevel.Warning);
                 assets = ResultHandlers.CleanFromError(error, assets).ToArray();
-                Assert.Equal(9 - i * 2 - 2, assets.Count());
+                Assert.Equal(9 - i * 2 - 2, assets.Length);
                 errors.Add(error);
             }
 
@@ -207,7 +207,7 @@ namespace ExtractorUtils.Test.Unit
                 logger.LogCogniteError(error, RequestType.CreateTimeSeries, false, LogLevel.Debug, LogLevel.Warning);
                 timeseries = (ResultHandlers.CleanFromError(error, timeseries))
                     .ToArray();
-                Assert.Equal(9 - i * 2 - 2, timeseries.Count());
+                Assert.Equal(9 - i * 2 - 2, timeseries.Length);
                 errors.Add(error);
             }
 
@@ -281,7 +281,7 @@ namespace ExtractorUtils.Test.Unit
                 logger.LogCogniteError(error, RequestType.CreateEvents, false, LogLevel.Debug, LogLevel.Warning);
                 events = (ResultHandlers.CleanFromError(error, events))
                     .ToArray();
-                Assert.Equal(7 - i * 2 - 2, events.Count());
+                Assert.Equal(7 - i * 2 - 2, events.Length);
                 errors.Add(error);
             }
 

@@ -273,7 +273,7 @@ namespace ExtractorUtils.Test.Unit
             scheduler.SchedulePeriodicTask("periodic", TimeSpan.FromMilliseconds(100), async token =>
             {
                 periodicRuns++;
-                await Task.Delay(100);
+                await Task.Delay(100, token);
             });
             Assert.Throws<InvalidOperationException>(() =>
                 scheduler.SchedulePeriodicTask("periodic", TimeSpan.Zero, token => Task.CompletedTask));
@@ -281,7 +281,7 @@ namespace ExtractorUtils.Test.Unit
             // Schedule anonymous periodic
             scheduler.SchedulePeriodicTask(null, TimeSpan.FromMilliseconds(100), async token =>
             {
-                await Task.Delay(100);
+                await Task.Delay(100, token);
             });
 
             Assert.Equal(2, scheduler.Count);
@@ -291,13 +291,13 @@ namespace ExtractorUtils.Test.Unit
             scheduler.ScheduleTask("single", async token =>
             {
                 singleRuns++;
-                await Task.Delay(500);
+                await Task.Delay(500, token);
             });
 
             // Schedule anonymous single
             scheduler.ScheduleTask(null, async token =>
             {
-                await Task.Delay(100);
+                await Task.Delay(100, token);
             });
 
             Assert.Equal(4, scheduler.Count);
@@ -312,7 +312,7 @@ namespace ExtractorUtils.Test.Unit
             {
                 while (shouldLoop)
                 {
-                    await Task.Delay(100);
+                    await Task.Delay(100, token);
                 }
             });
             Assert.Throws<InvalidOperationException>(() => scheduler.ScheduleTask("intLoop", token => Task.CompletedTask));
@@ -357,12 +357,12 @@ namespace ExtractorUtils.Test.Unit
 
             scheduler.SchedulePeriodicTask(null, TimeSpan.FromSeconds(1), async token =>
             {
-                await Task.Delay(100);
+                await Task.Delay(100, token);
             });
 
             scheduler.ScheduleTask("failing", async token =>
             {
-                await Task.Delay(100);
+                await Task.Delay(100, token);
                 throw new CogniteUtilsException();
             });
 

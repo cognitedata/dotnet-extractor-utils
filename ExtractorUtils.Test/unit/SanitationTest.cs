@@ -979,7 +979,7 @@ namespace ExtractorUtils.Test.Unit
             };
 
             var (result, errors) = Sanitation.CleanDataPointsRequest(dps, SanitationMode.Clean, null);
-            Assert.Equal(2, result.Count());
+            Assert.Equal(2, result.Count);
             Assert.True(result.TryGetValue(Identity.Create("some-bad"), out var ts));
             Assert.Equal(3, ts.Count());
             Assert.True(result.TryGetValue(Identity.Create("all-good"), out ts));

@@ -546,7 +546,7 @@ namespace ExtractorUtils.Test.Integration
                 for (int i = 0; i < 20; i++)
                 {
                     dpsFromCDF = await tester.Destination.CogniteClient.DataPoints.ListAsync(dataPointsQuery, tester.Source.Token);
-                    if (dpsFromCDF.Items.All(item => (item.NumericDatapoints?.Datapoints?.Count() ?? 0) == 20)) break;
+                    if (dpsFromCDF.Items.All(item => (item.NumericDatapoints?.Datapoints?.Count ?? 0) == 20)) break;
                     await Task.Delay(1000);
                 }
 
@@ -639,11 +639,11 @@ namespace ExtractorUtils.Test.Integration
                             ExternalId = ts.extId
                         }).ToArray()
                     });
-                    if (foundDps.Items.Count() == 3)
+                    if (foundDps.Items.Count == 3)
                     {
-                        counts[0] = foundDps.Items[0]?.NumericDatapoints?.Datapoints?.Count() ?? 0;
-                        counts[1] = foundDps.Items[1]?.StringDatapoints?.Datapoints?.Count() ?? 0;
-                        counts[2] = foundDps.Items[2]?.NumericDatapoints?.Datapoints?.Count() ?? 0;
+                        counts[0] = foundDps.Items[0]?.NumericDatapoints?.Datapoints?.Count ?? 0;
+                        counts[1] = foundDps.Items[1]?.StringDatapoints?.Datapoints?.Count ?? 0;
+                        counts[2] = foundDps.Items[2]?.NumericDatapoints?.Datapoints?.Count ?? 0;
                         if (counts.All(cnt => cnt == 10)) break;
                     }
                     await Task.Delay(1000);

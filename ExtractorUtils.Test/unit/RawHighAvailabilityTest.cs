@@ -32,9 +32,9 @@ namespace ExtractorUtils.Test.Unit
 
         private readonly ITestOutputHelper _output;
 
-        private static bool _failInsert = false;
+        private static bool _failInsert;
 
-        private static bool _failUpdateState = false;
+        private static bool _failUpdateState;
 
         public RawHighAvailabilityTest(ITestOutputHelper output)
         {
@@ -428,7 +428,7 @@ namespace ExtractorUtils.Test.Unit
             }
             else
             {
-                var content = await message.Content.ReadAsStringAsync();
+                var content = await message.Content.ReadAsStringAsync(token);
                 var items = JsonSerializer.Deserialize<RawItems>(content,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
@@ -484,7 +484,7 @@ namespace ExtractorUtils.Test.Unit
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             response.Headers.Add("x-request-id", "1");
 
-            await Task.Delay(200);
+            await Task.Delay(200, token);
 
             return response;
         }

@@ -28,7 +28,9 @@ namespace ExtractorUtils.Test.Unit
         private const string _authTenant = "someTenant";
         private const string _project = "someProject";
         private const string _host = "https://test.cognitedata.com";
+#pragma warning disable CA1805 // Do not initialize unnecessarily
         private static int _tokenCounter = 0;
+#pragma warning restore CA1805 // Do not initialize unnecessarily
 
         private readonly ITestOutputHelper _output;
         public CogniteTest(ITestOutputHelper output)
@@ -190,10 +192,10 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> createFunction =
-                    (ids) =>
+                    (idxs) =>
                     {
                         var toCreate = new List<TimeSeriesCreate>();
-                        foreach (var id in ids)
+                        foreach (var id in idxs)
                         {
                             toCreate.Add(new TimeSeriesCreate
                             {
@@ -210,10 +212,10 @@ namespace ExtractorUtils.Test.Unit
                     SanitationMode.Remove,
                     CancellationToken.None
                 );
-                Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
+                Assert.Equal(ids?.Length, ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
                 foreach (var t in ts.Results)
                 {
-                    _ensuredTimeSeries.Remove(t.ExternalId, out _);
+                    _ensuredTimeSeries.TryRemove(t.ExternalId, out _);
                 }
 
                 var newTs = createFunction(ids);
@@ -222,7 +224,7 @@ namespace ExtractorUtils.Test.Unit
                     // a timeout would fail the test
                     await cogniteDestination.EnsureTimeSeriesExistsAsync(newTs, RetryMode.OnFatal, SanitationMode.Remove, source.Token);
                 }
-                Assert.Equal(ids.Count(), _ensuredTimeSeries
+                Assert.Equal(ids.Length, _ensuredTimeSeries
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
             }
 
@@ -278,10 +280,10 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 Func<IEnumerable<string>, IEnumerable<AssetCreate>> createFunction =
-                    (ids) =>
+                    (idx) =>
                     {
                         var toCreate = new List<AssetCreate>();
-                        foreach (var id in ids)
+                        foreach (var id in idx)
                         {
                             toCreate.Add(new AssetCreate
                             {
@@ -298,7 +300,7 @@ namespace ExtractorUtils.Test.Unit
                     SanitationMode.Remove,
                     CancellationToken.None
                 );
-                Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
+                Assert.Equal(ids?.Length, ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
                 foreach (var t in ts.Results)
                 {
                     _ensuredAssets.Remove(t.ExternalId, out _);
@@ -310,7 +312,7 @@ namespace ExtractorUtils.Test.Unit
                     // a timeout would fail the test
                     await cogniteDestination.EnsureAssetsExistsAsync(newAssets, RetryMode.OnFatal, SanitationMode.Remove, source.Token);
                 }
-                Assert.Equal(ids.Count(), _ensuredAssets
+                Assert.Equal(ids.Length, _ensuredAssets
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
             }
 
@@ -328,7 +330,7 @@ namespace ExtractorUtils.Test.Unit
             var responseBody = "";
             var statusCode = HttpStatusCode.OK;
 
-            var content = await message.Content.ReadAsStringAsync();
+            var content = await message.Content.ReadAsStringAsync(token);
             var ids = JsonConvert.DeserializeObject<dynamic>(content);
             IEnumerable<dynamic> items = ids.items;
 
@@ -374,7 +376,7 @@ namespace ExtractorUtils.Test.Unit
                     if ((!hasValue || countdown > 0) && id.StartsWith("duplicated"))
                     {
                         var splittedId = id.Split('-');
-                        var count = splittedId.Count() == 2 ? int.Parse(splittedId[1]) - 1 : 0;
+                        var count = splittedId.Length == 2 ? int.Parse(splittedId[1]) - 1 : 0;
                         dynamic duplicatedId = new ExpandoObject();
                         duplicatedId.externalId = id;
                         duplicateData.error.duplicated.Add(duplicatedId);
@@ -422,7 +424,7 @@ namespace ExtractorUtils.Test.Unit
             var responseBody = "";
             var statusCode = HttpStatusCode.OK;
 
-            var content = await message.Content.ReadAsStringAsync();
+            var content = await message.Content.ReadAsStringAsync(token);
             var ids = JsonConvert.DeserializeObject<dynamic>(content);
             IEnumerable<dynamic> items = ids.items;
 
@@ -466,7 +468,7 @@ namespace ExtractorUtils.Test.Unit
                     if ((!hasValue || countdown > 0) && id.StartsWith("duplicated"))
                     {
                         var splittedId = id.Split('-');
-                        var count = splittedId.Count() == 2 ? int.Parse(splittedId[1]) - 1 : 0;
+                        var count = splittedId.Length == 2 ? int.Parse(splittedId[1]) - 1 : 0;
                         dynamic duplicatedId = new ExpandoObject();
                         duplicatedId.externalId = id;
                         duplicateData.error.duplicated.Add(duplicatedId);
@@ -542,7 +544,9 @@ namespace ExtractorUtils.Test.Unit
             return Task.FromResult(response);
         }
 
+#pragma warning disable CA1805 // Do not initialize unnecessarily
         private static int _sendRetries = 0;
+#pragma warning restore CA1805 // Do not initialize unnecessarily
 
         private static Task<HttpResponseMessage> mockCogniteAssetsRetryAsync(HttpRequestMessage message, CancellationToken token)
         {

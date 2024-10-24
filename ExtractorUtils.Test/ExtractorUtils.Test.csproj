@@ -2,9 +2,11 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <EnableNETAnalyzers>false</EnableNETAnalyzers>
-	<AssemblyOriginatorKeyFile>../strong_name.snk</AssemblyOriginatorKeyFile>
-	<SignAssembly>True</SignAssembly>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>Default</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AssemblyOriginatorKeyFile>../strong_name.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>True</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />

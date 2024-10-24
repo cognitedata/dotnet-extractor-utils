@@ -452,7 +452,7 @@ namespace ExtractorUtils.Test.Integration
                     if (found) break;
                     await Task.Delay(1000);
                 }
-                Assert.True(found, string.Join(',', counts));
+                Assert.True(found, string.Join(",", counts));
             }
             finally
             {

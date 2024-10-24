@@ -157,7 +157,7 @@ namespace ExtractorUtils.Test.Unit
             string uri = message.RequestUri.ToString();
             if (uri.Contains("timeseries/data/latest"))
             {
-                var content = await message.Content.ReadAsStringAsync();
+                var content = await message.Content.ReadAsStringAsync(token);
                 var data = JsonSerializer.Deserialize<MockLatestQuery>(content);
 
                 Assert.True(data.IgnoreUnknownIds);
@@ -197,7 +197,7 @@ namespace ExtractorUtils.Test.Unit
             }
             else
             {
-                var content = await message.Content.ReadAsStringAsync();
+                var content = await message.Content.ReadAsStringAsync(token);
                 var data = JsonSerializer.Deserialize<MockQuery>(content);
 
                 Assert.True(data.IgnoreUnknownIds);

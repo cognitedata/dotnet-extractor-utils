@@ -136,7 +136,7 @@ namespace ExtractorUtils.Test.Integration
             {
                 if (created != null)
                 {
-                    var ids = created?.Select(x => new InstanceIdentifier(tester.SpaceId, x.ExternalId));
+                    var ids = created.Select(x => new InstanceIdentifier(tester.SpaceId, x.ExternalId));
                     await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(ids.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
                 }
             }
@@ -297,11 +297,11 @@ namespace ExtractorUtils.Test.Integration
                             End = DateTime.UtcNow.AddDays(1).ToUnixTimeMilliseconds().ToString()
                         }).ToArray()
                     });
-                    if (foundDps.Items.Count() == 3)
+                    if (foundDps.Items.Count == 3)
                     {
-                        counts[0] = foundDps.Items[0]?.NumericDatapoints?.Datapoints?.Count() ?? 0;
-                        counts[1] = foundDps.Items[1]?.StringDatapoints?.Datapoints?.Count() ?? 0;
-                        counts[2] = foundDps.Items[2]?.NumericDatapoints?.Datapoints?.Count() ?? 0;
+                        counts[0] = foundDps.Items[0]?.NumericDatapoints?.Datapoints?.Count ?? 0;
+                        counts[1] = foundDps.Items[1]?.StringDatapoints?.Datapoints?.Count ?? 0;
+                        counts[2] = foundDps.Items[2]?.NumericDatapoints?.Datapoints?.Count ?? 0;
                         if (counts.All(cnt => cnt == 10)) break;
                     }
                     await Task.Delay(1000);

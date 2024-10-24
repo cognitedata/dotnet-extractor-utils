@@ -1,5 +1,4 @@
 ﻿using Cognite.Extensions;
-using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using Cognite.Extractor.Testing;
 using CogniteSdk;
@@ -13,7 +12,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -75,9 +73,9 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 Func<IEnumerable<string>, IEnumerable<SequenceCreate>> createFunction =
-                    (ids) => {
+                    (idxs) => {
                         var toCreate = new List<SequenceCreate>();
-                        foreach (var id in ids)
+                        foreach (var id in idxs)
                         {
                             toCreate.Add(new SequenceCreate
                             {
@@ -101,7 +99,7 @@ namespace ExtractorUtils.Test.Unit
                     SanitationMode.Remove,
                     CancellationToken.None
                 );
-                Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
+                Assert.Equal(ids?.Length, ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
                 foreach (var t in ts.Results)
                 {
                     _ensuredSequences.Remove(t.ExternalId, out _);
@@ -113,7 +111,7 @@ namespace ExtractorUtils.Test.Unit
                     // a timeout would fail the test
                     await cogniteDestination.EnsureSequencesExistsAsync(newSequences, RetryMode.OnFatal, SanitationMode.Remove, source.Token);
                 }
-                Assert.Equal(ids.Count(), _ensuredSequences
+                Assert.Equal(ids.Length, _ensuredSequences
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
             }
         }
@@ -129,7 +127,7 @@ namespace ExtractorUtils.Test.Unit
             string responseBody;
             var statusCode = HttpStatusCode.OK;
 
-            var content = await message.Content.ReadAsStringAsync();
+            var content = await message.Content.ReadAsStringAsync(token);
             var data = JsonConvert.DeserializeObject<dynamic>(content);
             IEnumerable<dynamic> items = data.items;
 
