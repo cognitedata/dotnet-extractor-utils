@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions;
 using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
 using Cognite.Extractor.StateStorage;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
@@ -31,7 +30,7 @@ namespace ExtractorUtils.Test.Unit
     public class DatapointsTest
     {
         private const string _project = "someProject";
-        private bool _failInsert = false;
+        private bool _failInsert;
 
         private readonly ITestOutputHelper _output;
         public DatapointsTest(ITestOutputHelper output)
@@ -78,7 +77,7 @@ namespace ExtractorUtils.Test.Unit
                     { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1"), new Datapoint(DateTime.UtcNow, "2") }},
                     { new Identity(1), doublePoints.Select(d => new Datapoint(DateTime.UtcNow, d))},
                     { new Identity(2), stringPoints.Select(s => new Datapoint(DateTime.UtcNow, s))},
-                    { new Identity(3), new Datapoint[] { } },
+                    { new Identity(3), Array.Empty<Datapoint>() },
                     { new Identity(4), new Datapoint[] { new Datapoint(DateTime.MinValue, 1), new Datapoint(DateTime.MaxValue, 1)}}
                 };
                 _createdDataPoints.Clear();
@@ -89,10 +88,10 @@ namespace ExtractorUtils.Test.Unit
                     CancellationToken.None);
                 Assert.False(_createdDataPoints.ContainsKey(3 + "")); // No data points
                 Assert.False(_createdDataPoints.ContainsKey(4 + "")); // Invalid timestamps
-                Assert.Equal(7, _createdDataPoints[1 + ""].Count());
-                Assert.Equal(2, _createdDataPoints["A"].Count());
+                Assert.Equal(7, _createdDataPoints[1 + ""].Count);
+                Assert.Equal(2, _createdDataPoints["A"].Count);
                 Assert.DoesNotContain(_createdDataPoints[1 + ""], dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity);
-                Assert.Equal(6, _createdDataPoints[2 + ""].Count());
+                Assert.Equal(6, _createdDataPoints[2 + ""].Count);
                 Assert.DoesNotContain(_createdDataPoints[2 + ""], dp => dp.StringValue == null || dp.StringValue.Length > CogniteUtils.StringLengthMax);
 
                 _createdDataPoints.Clear();
@@ -488,7 +487,7 @@ namespace ExtractorUtils.Test.Unit
             Assert.Contains($"{_project}/timeseries/data", uri);
 
             var statusCode = HttpStatusCode.OK;
-            var bytes = await message.Content.ReadAsByteArrayAsync();
+            var bytes = await message.Content.ReadAsByteArrayAsync(token);
             var data = DataPointInsertionRequest.Parser.ParseFrom(bytes);
             Assert.True(data.Items.Count <= 2); // data-points-time-series chunk size
             Assert.True(data.Items
@@ -585,7 +584,7 @@ namespace ExtractorUtils.Test.Unit
             HttpContent responseBody = new StringContent("{ }");
             var statusCode = HttpStatusCode.OK;
 
-            var content = await message.Content.ReadAsStringAsync();
+            var content = await message.Content.ReadAsStringAsync(token);
             var ids = JsonConvert.DeserializeObject<dynamic>(content);
             IEnumerable<dynamic> items = ids.items;
 

@@ -123,10 +123,11 @@ namespace ExtractorUtils.Test.Unit
                 // queue with 1 sec upload interval
                 await using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromSeconds(1)))
                 {
-                    var enqueueTask = Task.Run(async () => {
+                    var enqueueTask = Task.Run(async () =>
+                    {
                         while (index < 13)
                         {
-                            queue.EnqueueRow($"r{index}", new TestDto {Name = "Test", Number = index});
+                            queue.EnqueueRow($"r{index}", new TestDto { Name = "Test", Number = index });
                             await Task.Delay(100, source.Token);
                             index++;
                         }
@@ -216,7 +217,7 @@ namespace ExtractorUtils.Test.Unit
 
             var responseBody = "{ }";
             var statusCode = HttpStatusCode.OK;
-            var content = await message.Content.ReadAsStringAsync();
+            var content = await message.Content.ReadAsStringAsync(token);
             var items = JsonSerializer.Deserialize<RawItems>(content,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 

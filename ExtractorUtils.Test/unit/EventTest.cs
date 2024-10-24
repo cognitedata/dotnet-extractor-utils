@@ -1,6 +1,5 @@
 ﻿using Cognite.Extensions;
 using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using Cognite.Extractor.Testing;
 using CogniteSdk;
@@ -16,7 +15,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -86,9 +84,9 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 Func<IEnumerable<string>, IEnumerable<EventCreate>> createFunction =
-                    (ids) => {
+                    (idxs) => {
                         var toCreate = new List<EventCreate>();
-                        foreach (var id in ids)
+                        foreach (var id in idxs)
                         {
                             toCreate.Add(new EventCreate
                             {
@@ -104,7 +102,7 @@ namespace ExtractorUtils.Test.Unit
                     SanitationMode.Remove,
                     CancellationToken.None
                 );
-                Assert.Equal(ids.Count(), ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
+                Assert.Equal(ids?.Length, ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
                 foreach (var t in ts.Results)
                 {
                     _ensuredEvents.Remove(t.ExternalId, out _);
@@ -116,7 +114,7 @@ namespace ExtractorUtils.Test.Unit
                     // a timeout would fail the test
                     await cogniteDestination.EnsureEventsExistsAsync(newEvents, RetryMode.OnFatal, SanitationMode.Remove, source.Token);
                 }
-                Assert.Equal(ids.Count(), _ensuredEvents
+                Assert.Equal(ids.Length, _ensuredEvents
                     .Where(kvp => ids.Contains(kvp.Key)).Count());
             }
 
@@ -329,7 +327,7 @@ namespace ExtractorUtils.Test.Unit
 
             var statusCode = HttpStatusCode.OK;
 
-            var content = await message.Content.ReadAsStringAsync();
+            var content = await message.Content.ReadAsStringAsync(token);
             var ids = JsonConvert.DeserializeObject<dynamic>(content);
             IEnumerable<dynamic> items = ids.items;
 
@@ -374,7 +372,7 @@ namespace ExtractorUtils.Test.Unit
                     if ((!hasValue || countdown > 0) && id.StartsWith("duplicated"))
                     {
                         var splittedId = id.Split('-');
-                        var count = splittedId.Count() == 2 ? int.Parse(splittedId[1]) - 1 : 0;
+                        var count = splittedId.Length == 2 ? int.Parse(splittedId[1]) - 1 : 0;
                         dynamic duplicatedId = new ExpandoObject();
                         duplicatedId.externalId = id;
                         duplicateData.error.duplicated.Add(duplicatedId);

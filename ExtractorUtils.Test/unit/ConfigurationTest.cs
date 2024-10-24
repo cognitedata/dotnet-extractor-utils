@@ -344,8 +344,8 @@ bar:
     - in
     - list";
             var res = ConfigurationUtils.ReadString<TestListOrSpaceSep>(input);
-            Assert.Equal(4, res.Foo.Values.Count());
-            Assert.Equal(4, res.Bar.Values.Count());
+            Assert.Equal(4, res.Foo.Values.Length);
+            Assert.Equal(4, res.Bar.Values.Length);
             Assert.Equal("list", res.Bar.Values.ElementAt(3));
             Assert.Equal("strings", res.Foo.Values.ElementAt(3));
             string output =
@@ -377,8 +377,8 @@ bar:
             Environment.SetEnvironmentVariable("ENV_2", "v2");
 
             var res = ConfigurationUtils.ReadString<TestListOrSpaceSep>(input);
-            Assert.Equal(2, res.Foo.Values.Count());
-            Assert.Equal(2, res.Bar.Values.Count());
+            Assert.Equal(2, res.Foo.Values.Length);
+            Assert.Equal(2, res.Bar.Values.Length);
             Assert.Equal("v1", res.Bar.Values.ElementAt(0));
             Assert.Equal("v2", res.Foo.Values.ElementAt(1));
 

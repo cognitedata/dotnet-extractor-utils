@@ -192,7 +192,7 @@ namespace ExtractorUtils.Test.Unit
             await stateStore.RestoreExtractionState(stateDict, _tableName, false, CancellationToken.None);
 
             var all = await stateStore.GetAllExtractionStates<BaseExtractionStatePoco>(_tableName, CancellationToken.None);
-            Assert.Equal(4, states.Count());
+            Assert.Equal(4, states.Length);
 
             foreach (var state in states)
             {
@@ -623,7 +623,7 @@ namespace ExtractorUtils.Test.Unit
                 $"{_host}/api/v1/projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows/delete"))
             {
 
-                var content = await message.Content.ReadAsStringAsync();
+                var content = await message.Content.ReadAsStringAsync(token);
                 var items = JsonSerializer.Deserialize<RawDelete>(content, options);
                 foreach (var item in items.Items)
                 {
@@ -645,7 +645,7 @@ namespace ExtractorUtils.Test.Unit
 
                 var responseBody = "{ }";
                 var statusCode = HttpStatusCode.OK;
-                var content = await message.Content.ReadAsStringAsync();
+                var content = await message.Content.ReadAsStringAsync(token);
                 var items = JsonSerializer.Deserialize<RawItems>(content, options);
 
                 foreach (var item in items.Items)

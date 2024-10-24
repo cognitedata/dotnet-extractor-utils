@@ -88,9 +88,9 @@ namespace ExtractorUtils.Test.Integration
                 query, Enumerable.Empty<string>(), _tester.Source.Token);
 
             Assert.Equal(3, result.Count);
-            Assert.Equal(10, result["startNodes"].Count());
-            Assert.Equal(10, result["edges"].Count());
-            Assert.Equal(10, result["endNodes"].Count());
+            Assert.Equal(10, result["startNodes"].Count);
+            Assert.Equal(10, result["edges"].Count);
+            Assert.Equal(10, result["endNodes"].Count);
         }
 
         [Fact]

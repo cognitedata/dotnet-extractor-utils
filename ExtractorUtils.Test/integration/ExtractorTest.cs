@@ -275,13 +275,13 @@ namespace ExtractorUtils.Test.Integration
 
             try
             {
-                var run = new ExtractionRun(new ExtractionRunConfig
+                var newRun = new ExtractionRun(new ExtractionRunConfig
                 {
                     Frequency = 1,
                     PipelineId = id
                 }, tester.Destination, tester.Provider.GetService<ILogger<ExtractionRun>>());
-                run.Continuous = true;
-                run.Start();
+                newRun.Continuous = true;
+                newRun.Start();
                 await Task.Delay(1000);
 
                 ItemsWithCursor<ExtPipeRun> runs = null;
@@ -300,8 +300,8 @@ namespace ExtractorUtils.Test.Integration
 
                 Assert.True(runs.Items.Count() > 1 && runs.Items.Any(item => item.Status == ExtPipeRunStatus.success));
 
-                await run.Report(ExtPipeRunStatus.failure, false, "Some failure");
-                await run.DisposeAsync();
+                await newRun.Report(ExtPipeRunStatus.failure, false, "Some failure");
+                await newRun.DisposeAsync();
 
                 runs = null;
                 for (int i = 0; i < 10; i++)

@@ -597,60 +597,60 @@ namespace ExtractorUtils.Test.Integration
                 var result4 = await tester.Destination.UpdateAssetsAsync(updates4, RetryMode.OnError, SanitationMode.Remove, tester.Source.Token);
                 result4.ThrowOnFatal();
 
-                var errs = result1.Errors.ToArray();
-                Assert.Equal(3, errs.Length);
+                var errors = result1.Errors.ToArray();
+                Assert.Equal(3, errors.Length);
 
-                var err = errs.First(err => err.Resource == ResourceType.Id && err.Type == ErrorType.ItemDuplicated);
-                Assert.Contains(err.Values, e => e.ExternalId == assets[0].ExternalId);
-                Assert.Contains(err.Values, e => e.Id == assets[2].Id);
+                var error = errors.First(err => err.Resource == ResourceType.Id && err.Type == ErrorType.ItemDuplicated);
+                Assert.Contains(error.Values, e => e.ExternalId == assets[0].ExternalId);
+                Assert.Contains(error.Values, e => e.Id == assets[2].Id);
 
-                err = errs.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemExists);
-                Assert.Single(err.Skipped);
-                Assert.Contains(err.Values, e => e.ExternalId == assets[1].ExternalId);
+                error = errors.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemExists);
+                Assert.Single(error.Skipped);
+                Assert.Contains(error.Values, e => e.ExternalId == assets[1].ExternalId);
 
-                err = errs.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemMissing);
-                Assert.Single(err.Skipped);
-                Assert.Contains(err.Values, e => e.ExternalId == "missing-parent");
+                error = errors.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemMissing);
+                Assert.Single(error.Skipped);
+                Assert.Contains(error.Values, e => e.ExternalId == "missing-parent");
 
                 Assert.Single(result1.Results);
 
-                errs = result2.Errors.ToArray();
-                Assert.Equal(2, errs.Length);
+                errors = result2.Errors.ToArray();
+                Assert.Equal(2, errors.Length);
 
-                err = errs.First(err => err.Resource == ResourceType.Labels && err.Type == ErrorType.ItemMissing);
-                Assert.Single(err.Skipped);
-                Assert.Contains(err.Values, e => e.ExternalId == "missing-label");
+                error = errors.First(err => err.Resource == ResourceType.Labels && err.Type == ErrorType.ItemMissing);
+                Assert.Single(error.Skipped);
+                Assert.Contains(error.Values, e => e.ExternalId == "missing-label");
 
-                err = errs.First(err => err.Resource == ResourceType.DataSetId && err.Type == ErrorType.ItemMissing);
-                Assert.Single(err.Skipped);
-                Assert.Contains(err.Values, e => e.Id == 123);
+                error = errors.First(err => err.Resource == ResourceType.DataSetId && err.Type == ErrorType.ItemMissing);
+                Assert.Single(error.Skipped);
+                Assert.Contains(error.Values, e => e.Id == 123);
 
                 Assert.Single(result2.Results);
 
-                errs = result3.Errors.ToArray();
-                Assert.Equal(2, errs.Length);
+                errors = result3.Errors.ToArray();
+                Assert.Equal(2, errors.Length);
 
-                err = errs.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemMissing);
-                Assert.Single(err.Skipped);
-                Assert.Contains(err.Values, e => e.ExternalId == "missing-asset");
+                error = errors.First(err => err.Resource == ResourceType.ExternalId && err.Type == ErrorType.ItemMissing);
+                Assert.Single(error.Skipped);
+                Assert.Contains(error.Values, e => e.ExternalId == "missing-asset");
 
-                err = errs.First(err => err.Resource == ResourceType.Id && err.Type == ErrorType.ItemMissing);
-                Assert.Single(err.Skipped);
-                Assert.Contains(err.Values, e => e.Id == 123);
+                error = errors.First(err => err.Resource == ResourceType.Id && err.Type == ErrorType.ItemMissing);
+                Assert.Single(error.Skipped);
+                Assert.Contains(error.Values, e => e.Id == 123);
 
                 Assert.Single(result3.Results);
 
-                errs = result4.Errors.ToArray();
-                Assert.Equal(2, errs.Length);
+                errors = result4.Errors.ToArray();
+                Assert.Equal(2, errors.Length);
 
-                err = errs.First(err => err.Resource == ResourceType.ParentId && err.Type == ErrorType.ItemMissing);
-                Assert.Single(err.Skipped);
-                Assert.Contains(err.Values, e => e.Id == 123);
+                error = errors.First(err => err.Resource == ResourceType.ParentId && err.Type == ErrorType.ItemMissing);
+                Assert.Single(error.Skipped);
+                Assert.Contains(error.Values, e => e.Id == 123);
 
-                err = errs.First(err => err.Resource == ResourceType.ParentId && err.Type == ErrorType.IllegalItem);
-                Assert.Equal(2, err.Skipped.Count());
-                Assert.Contains(err.Values, e => e.ExternalId == assets[2].ExternalId);
-                Assert.Contains(err.Values, e => e.ExternalId == assets[1].ExternalId);
+                error = errors.First(err => err.Resource == ResourceType.ParentId && err.Type == ErrorType.IllegalItem);
+                Assert.Equal(2, error.Skipped.Count());
+                Assert.Contains(error.Values, e => e.ExternalId == assets[2].ExternalId);
+                Assert.Contains(error.Values, e => e.ExternalId == assets[1].ExternalId);
 
                 Assert.Empty(result4.Results);
             }

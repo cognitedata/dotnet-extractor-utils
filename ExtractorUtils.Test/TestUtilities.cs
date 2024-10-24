@@ -43,6 +43,7 @@ namespace ExtractorUtils.Test {
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
 
         public Task<IEnumerable<T>> GetAllExtractionStates<T>(string tableName, CancellationToken token) where T : BaseStorableState
@@ -88,7 +89,5 @@ namespace ExtractorUtils.Test {
             StoreRequests++;
             return Task.CompletedTask;
         }
-
-
     }
 }

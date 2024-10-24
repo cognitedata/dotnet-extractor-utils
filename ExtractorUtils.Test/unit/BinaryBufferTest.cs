@@ -141,7 +141,7 @@ namespace ExtractorUtils.Test.Unit
                 Assert.True(ev2.Metadata == null && ev1.Metadata == null || ev1.Metadata != null && ev2.Metadata != null);
                 if (ev1.Metadata != null)
                 {
-                    Assert.Equal(ev1.Metadata.Count(), ev2.Metadata.Count());
+                    Assert.Equal(ev1.Metadata.Count, ev2.Metadata.Count);
                     foreach (var kvp in ev1.Metadata) Assert.Equal(kvp.Value, ev2.Metadata[kvp.Key]);
                 }
 
