@@ -33,7 +33,7 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(error));
             }
-            string? cogniteString = null;
+            string cogniteString = "";
             if (error.Exception != null && error.Exception is ResponseException rex)
             {
                 cogniteString = $" RequestId: {rex.RequestId}, CDF Message: {rex.Message}";
@@ -46,11 +46,15 @@ namespace Cognite.Extensions
                     cogniteString += $", Message: {error.Exception.Message}";
                 }
             }
+            else if (error.Message != null)
+            {
+                cogniteString = $" {error.Message}";
+            }
 
-            string? valueString = null;
+            string valueString = "";
             if (error.Values != null && error.Values.Any())
             {
-                valueString = string.Join(", ", error.Values.Select(idt => idt.ExternalId ?? idt.Id.ToString()));
+                valueString = " Values: " + string.Join(", ", error.Values.Select(idt => idt.ExternalId ?? idt.Id.ToString())) + ".";
             }
             string resourceName;
             switch (requestType)
@@ -105,9 +109,9 @@ namespace Cognite.Extensions
                         error.Resource, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
                     break;
                 case ErrorType.SanitationFailed:
-                    logger.Log(handledLevel, "Sanitation of {resource} with values: {values} failed, " +
-                        "resulting in the full or partial removal of {cnt} {name} from the request.{cdf}",
-                        error.Resource, valueString, error.Skipped?.Count() ?? 0, resourceName, cogniteString);
+                    logger.Log(handledLevel, "Sanitation of {resource} failed due to invalid {field}, " +
+                        "resulting in the full or partial removal of {cnt} {name} from the request.{valueString}{cdf}",
+                        resourceName, error.Resource, error.Skipped?.Count() ?? 0, resourceName, valueString, cogniteString);
                     break;
             }
         }
@@ -142,7 +146,7 @@ namespace Cognite.Extensions
                 logger.Log(infoLevel, "Request of type {type} had {cnt} results with {cnt2} errors",
                     requestType, successCount, errorCount);
             }
-            
+
 
             if (result.Errors != null)
             {
