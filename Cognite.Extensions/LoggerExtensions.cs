@@ -33,22 +33,18 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(error));
             }
-            string cogniteString = "";
+            string cogniteString = error.Message ?? "";
             if (error.Exception != null && error.Exception is ResponseException rex)
             {
-                cogniteString = $" RequestId: {rex.RequestId}, CDF Message: {rex.Message}";
+                cogniteString += $" RequestId: {rex.RequestId}, CDF Message: {rex.Message}";
             }
             else if (error.Exception != null)
             {
-                cogniteString = $" Non-CDF Error of type: {error.Exception.GetType()}";
+                cogniteString += $" Non-CDF Error of type: {error.Exception.GetType()}";
                 if (!string.IsNullOrWhiteSpace(error.Exception.Message))
                 {
                     cogniteString += $", Message: {error.Exception.Message}";
                 }
-            }
-            else if (error.Message != null)
-            {
-                cogniteString = $" {error.Message}";
             }
 
             string valueString = "";
