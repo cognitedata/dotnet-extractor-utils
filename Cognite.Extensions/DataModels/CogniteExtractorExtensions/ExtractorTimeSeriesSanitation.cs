@@ -56,11 +56,7 @@ namespace Cognite.Extensions.DataModels
         /// <param name="ts">TimeSeries to sanitize</param>
         public static void Sanitize<T>(this SourcedNodeWrite<T> ts) where T : CogniteTimeSeriesBase
         {
-            if (ts == null) throw new ArgumentNullException(nameof(ts));
-            if (ts.Space == null) throw new ArgumentNullException(nameof(ts.Space));
-            if (ts.ExternalId == null) throw new ArgumentNullException(nameof(ts.ExternalId));
-            ts.Space = ts.Space.Truncate(SpaceIdMax);
-            ts.ExternalId = ts.ExternalId.TruncateBytes(ExternalIdMaxBytes)!;
+            DataModelSanitation.Sanitize(ts);
             ts.Properties.Name = ts.Properties.Name.Truncate(TimeSeriesNameMax);
             ts.Properties.Description = ts.Properties.Description.Truncate(TimeSeriesDescriptionMax);
             ts.Properties.SourceUnit = ts.Properties.SourceUnit.Truncate(TimeSeriesUnitMax);
@@ -78,12 +74,11 @@ namespace Cognite.Extensions.DataModels
         /// <returns>True if timeseries satisfies limits</returns>
         public static ResourceType? Verify<T>(this SourcedNodeWrite<T> ts) where T : CogniteTimeSeriesBase
         {
-            if (ts == null) throw new ArgumentNullException(nameof(ts));
-            if (ts.Space == null) throw new ArgumentNullException(nameof(ts.Space));
-            if (ts.ExternalId == null) throw new ArgumentNullException(nameof(ts.ExternalId));
-            if (!ts.Space.CheckLength(SpaceIdMax)) return ResourceType.SpaceId;
-            if (!ts.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
-            if (!$"{ts.Space}{ts.ExternalId}".CheckLength(ExternalIdMaxBytes)) return ResourceType.InstanceId;
+            var baseChecks = DataModelSanitation.Verify(ts);
+            if (baseChecks != null)
+            {
+                return baseChecks;
+            }
             if (!ts.Properties.Name.CheckLength(TimeSeriesNameMax)) return ResourceType.Name;
             if (!ts.Properties.Description.CheckLength(TimeSeriesDescriptionMax)) return ResourceType.Description;
             if (!ts.Properties.SourceUnit.CheckLength(TimeSeriesUnitMax)) return ResourceType.Unit;

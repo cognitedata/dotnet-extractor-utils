@@ -8,8 +8,8 @@ namespace Cognite.Extensions
             "Number and duration of asset requests to CDF", "endpoint");
         public static Summary TimeSeries { get; } = Metrics.CreateSummary("extractor_utils_cdf_timeseries_requests",
             "Number and duration of time-series requests to CDF", "endpoint");
-        public static Summary CoreTimeSeries { get; } = Metrics.CreateSummary("extractor_utils_cdf_core_timeseries_requests",
-            "Number and duration of core data model time-series requests to CDF", "endpoint");
+        public static Summary Instances { get; } = Metrics.CreateSummary("extractor_utils_cdf_instances_requests",
+            "Number and duration of data modeling instances requests to CDF", "endpoint");
         public static Summary Datapoints { get; } = Metrics.CreateSummary("extractor_utils_cdf_datapoint_requests",
             "Number and duration of datapoint requests to CDF", "endpoint");
         public static Summary Events { get; } = Metrics.CreateSummary("extractor_utils_cdf_event_requests",
@@ -42,5 +42,7 @@ namespace Cognite.Extensions
             "Number of asset updates skipped due to errors");
         public static Counter TimeSeriesUpdatesSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_timeseries_updates_skipped",
             "Number of timeseries updates skipped due to errors");
+        public static Counter InstanceUpsertsSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_instance_upserts_skipped",
+            "Number of data modeling instance upserts skipped due to errors");
     }
 }
