@@ -1,4 +1,5 @@
-﻿using Prometheus;
+﻿using CogniteSdk.DataModels;
+using Prometheus;
 
 namespace Cognite.Extensions
 {
@@ -8,8 +9,10 @@ namespace Cognite.Extensions
             "Number and duration of asset requests to CDF", "endpoint");
         public static Summary TimeSeries { get; } = Metrics.CreateSummary("extractor_utils_cdf_timeseries_requests",
             "Number and duration of time-series requests to CDF", "endpoint");
-        public static Summary Instances { get; } = Metrics.CreateSummary("extractor_utils_cdf_instances_requests",
-            "Number and duration of data modeling instances requests to CDF", "endpoint");
+        public static Summary.Child Instances(ViewIdentifier view, string operation)
+        {
+            return Metrics.CreateSummary("extractor_utils_cdf_instances_requests", "Number and duration of instance requests CDF data modeling", "endpoint", "view_identifier").WithLabels(operation, $"{view.Space}-{view.ExternalId}");
+        }
         public static Summary Datapoints { get; } = Metrics.CreateSummary("extractor_utils_cdf_datapoint_requests",
             "Number and duration of datapoint requests to CDF", "endpoint");
         public static Summary Events { get; } = Metrics.CreateSummary("extractor_utils_cdf_event_requests",

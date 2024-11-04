@@ -223,7 +223,7 @@ namespace Cognite.Extensions.DataModels
                 .Select((Func<IEnumerable<Identity>, Func<Task>>)(chunk => async () =>
                 {
                     IEnumerable<SourcedInstance<T>> found;
-                    using (CdfMetrics.Instances.WithLabels("retrieve").NewTimer())
+                    using (CdfMetrics.Instances(resource.View, "retrieve").NewTimer())
                     {
                         found = await resource.RetrieveAsync(chunk.Select(x => new InstanceIdentifierWithType(InstanceType.node, x.InstanceId)), token).ConfigureAwait(false);
                     }
@@ -250,7 +250,7 @@ namespace Cognite.Extensions.DataModels
             CancellationToken token) where T2 : BaseDataModelResource<T>
         {
             IEnumerable<SourcedInstance<T>> found;
-            using (CdfMetrics.Instances.WithLabels("retrieve").NewTimer())
+            using (CdfMetrics.Instances(resource.View, "retrieve").NewTimer())
             {
                 var idts = instanceIds;
 
@@ -330,7 +330,7 @@ namespace Cognite.Extensions.DataModels
                 try
                 {
                     IEnumerable<SlimInstance> newResource;
-                    using (CdfMetrics.Instances.WithLabels("create").NewTimer())
+                    using (CdfMetrics.Instances(resource.View, "create").NewTimer())
                     {
                         newResource = await resource.UpsertAsync(toCreate, null, token).ConfigureAwait(false);
                     }
@@ -452,7 +452,7 @@ namespace Cognite.Extensions.DataModels
                     var toUpdate = new List<SourcedNodeWrite<T>>();
 
                     IEnumerable<SlimInstance> updated;
-                    using (CdfMetrics.Instances.WithLabels("update").NewTimer())
+                    using (CdfMetrics.Instances(resource.View, "update").NewTimer())
                     {
                         updated = await resource.UpsertAsync(items, null, token).ConfigureAwait(false);
                     }
