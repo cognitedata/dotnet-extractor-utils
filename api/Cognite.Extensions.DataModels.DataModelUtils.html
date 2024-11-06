@@ -113,10 +113,464 @@
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_DataModelUtils_EnsureResourcesExistsAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync%60%602(%60%601%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CCognite.Extensions.SanitationMode%2CSystem.ValueTuple%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.CogniteError%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%7D%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L144">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_DataModels_DataModelUtils_EnsureResourcesExistsAsync_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync*"></a>
+  <h4 id="Cognite_Extensions_DataModels_DataModelUtils_EnsureResourcesExistsAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">EnsureResourcesExistsAsync&lt;T, T2&gt;(T2, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt;, int, int, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Ensures that all resources in <code class="paramref">resourcesToEnsure</code> exists in CDF.
+Tries to create resources and returns when all are created or have been removed
+due to issues with the request.
+If any items fail to be created due to missing asset, duplicated externalId, duplicated
+legacy name, or missing dataSetId, they can be removed before retrying by setting <code class="paramref">retryMode</code>
+Resources will be returned in the same order as given in <code class="paramref">resourcesToEnsure</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; EnsureResourcesExistsAsync&lt;T, T2&gt;(T2 resource, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; resourcesToEnsure, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt; sanitizationMethod, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T2 : BaseDataModelResource&lt;T&gt;</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T2</span></td>
+        <td><span class="parametername">resource</span></td>
+        <td><p>CogniteSdk CDM Asset resource</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;</td>
+        <td><span class="parametername">resourcesToEnsure</span></td>
+        <td><p>List of CogniteSdk SourcedNodeWrite objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;, <a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a>, (<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteError-1.html">CogniteError</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;)&gt;</td>
+        <td><span class="parametername">sanitizationMethod</span></td>
+        <td><p>Function that sanitizes CogniteSdk SourcedNodeWrite objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">chunkSize</span></td>
+        <td><p>Chunk size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">throttleSize</span></td>
+        <td><p>Throttle size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to do retries. Keeping duplicates is not valid for
+this method.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to resources before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">SourcedNode</span>&lt;T&gt;, <span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created resources</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0____System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync%60%602(%60%601%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.InstanceIdentifier%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.InstanceIdentifier%7D%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CCognite.Extensions.SanitationMode%2CSystem.ValueTuple%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.CogniteError%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%7D%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L47">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync*"></a>
+  <h4 id="Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0____System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateResourcesAsync&lt;T, T2&gt;(T2, IEnumerable&lt;InstanceIdentifier&gt;, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt;, int, int, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Get or create the resources with the provided <code class="paramref">instanceIds</code> if they exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildResources</code> function to construct
+the missing resource objects and upload them to CDF using the chunking of items and throttling
+passed as parameters
+If any items fail to be created due to missing asset, duplicated externalId, duplicated
+legacy name, or missing dataSetId, they can be removed before retrying by setting <code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; GetOrCreateResourcesAsync&lt;T, T2&gt;(this T2 resource, IEnumerable&lt;InstanceIdentifier&gt; instanceIds, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt; buildResources, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt; sanitizationMethod, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T2 : BaseDataModelResource&lt;T&gt;</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T2</span></td>
+        <td><span class="parametername">resource</span></td>
+        <td><p>CogniteSdk CDM Asset resource</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">InstanceIdentifier</span>&gt;</td>
+        <td><span class="parametername">instanceIds</span></td>
+        <td><p>Instance Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">InstanceIdentifier</span>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildResources</span></td>
+        <td><p>Function that builds CogniteSdk SourcedNodeWrite objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;, <a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a>, (<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteError-1.html">CogniteError</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;)&gt;</td>
+        <td><span class="parametername">sanitizationMethod</span></td>
+        <td><p>Function that sanitizes CogniteSdk SourcedNodeWrite objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">chunkSize</span></td>
+        <td><p>Chunk size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">throttleSize</span></td>
+        <td><p>Throttle size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to resources before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">SourcedNode</span>&lt;T&gt;, <span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found resources</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0_____System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync%60%602(%60%601%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.InstanceIdentifier%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.InstanceIdentifier%7D%2CSystem.Threading.Tasks.Task%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%7D%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CCognite.Extensions.SanitationMode%2CSystem.ValueTuple%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.CogniteError%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%7D%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L84">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync*"></a>
+  <h4 id="Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0_____System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">GetOrCreateResourcesAsync&lt;T, T2&gt;(T2, IEnumerable&lt;InstanceIdentifier&gt;, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, Task&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;&gt;, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt;, int, int, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Get or create the resources with the provided <code class="paramref">instanceIds</code> if they exist in CDF.
+If one or more do not exist, use the <code class="paramref">buildResources</code> function to construct
+the missing resource objects and upload them to CDF using the chunking of items and throttling
+passed as parameters
+If any items fail to be created due to missing asset, duplicated externalId, duplicated
+legacy name, or missing dataSetId, they can be removed before retrying by setting <code class="paramref">retryMode</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; GetOrCreateResourcesAsync&lt;T, T2&gt;(T2 resource, IEnumerable&lt;InstanceIdentifier&gt; instanceIds, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, Task&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;&gt; buildResources, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt; sanitizationMethod, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T2 : BaseDataModelResource&lt;T&gt;</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T2</span></td>
+        <td><span class="parametername">resource</span></td>
+        <td><p>CogniteSdk CDM Asset resource</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">InstanceIdentifier</span>&gt;</td>
+        <td><span class="parametername">instanceIds</span></td>
+        <td><p>External Ids</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">InstanceIdentifier</span>&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;&gt;</td>
+        <td><span class="parametername">buildResources</span></td>
+        <td><p>Async function that builds CogniteSdk SourcedNodeWrite objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;, <a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a>, (<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteError-1.html">CogniteError</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;)&gt;</td>
+        <td><span class="parametername">sanitizationMethod</span></td>
+        <td><p>Function that sanitizes CogniteSdk SourcedNodeWrite objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">chunkSize</span></td>
+        <td><p>Chunk size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">throttleSize</span></td>
+        <td><p>Throttle size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle failed requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>The type of sanitation to apply to resources before creating</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">SourcedNode</span>&lt;T&gt;, <span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the created and found resources</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_DataModelUtils_GetResourcesByIdsIgnoreErrors__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_Identity__System_Int32_System_Int32_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors%60%602(%60%601%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.Identity%7D%2CSystem.Int32%2CSystem.Int32%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L208">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_DataModels_DataModelUtils_GetResourcesByIdsIgnoreErrors_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors*"></a>
+  <h4 id="Cognite_Extensions_DataModels_DataModelUtils_GetResourcesByIdsIgnoreErrors__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_Identity__System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Int32,System.Int32,System.Threading.CancellationToken)">GetResourcesByIdsIgnoreErrors&lt;T, T2&gt;(T2, IEnumerable&lt;Identity&gt;, int, int, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Get the resources with the provided <code class="paramref">ids</code>. Ignore any
+unknown ids</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;IEnumerable&lt;SourcedNode&lt;T&gt;&gt;&gt; GetResourcesByIdsIgnoreErrors&lt;T, T2&gt;(T2 resource, IEnumerable&lt;Identity&gt; ids, int chunkSize, int throttleSize, CancellationToken token) where T2 : BaseDataModelResource&lt;T&gt;</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T2</span></td>
+        <td><span class="parametername">resource</span></td>
+        <td><p>CogniteSdk CDM Asset resource</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">Identity</span>&gt;</td>
+        <td><span class="parametername">ids</span></td>
+        <td><p>List of <span class="xref">CogniteSdk.Identity</span> objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">chunkSize</span></td>
+        <td><p>Chunk size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">throttleSize</span></td>
+        <td><p>Throttle size</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNode</span>&lt;T&gt;&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_DataModelUtils_ToView_CogniteSdk_DataModels_ContainerCreate_System_String_CogniteSdk_DataModels_ViewIdentifier___.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.DataModelUtils.ToView(CogniteSdk.DataModels.ContainerCreate%2CSystem.String%2CCogniteSdk.DataModels.ViewIdentifier%5B%5D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L31">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L508">View Source</a>
   </span>
   <a id="Cognite_Extensions_DataModels_DataModelUtils_ToView_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.ToView*"></a>
   <h4 id="Cognite_Extensions_DataModels_DataModelUtils_ToView_CogniteSdk_DataModels_ContainerCreate_System_String_CogniteSdk_DataModels_ViewIdentifier___" data-uid="Cognite.Extensions.DataModels.DataModelUtils.ToView(CogniteSdk.DataModels.ContainerCreate,System.String,CogniteSdk.DataModels.ViewIdentifier[])">ToView(ContainerCreate, string, params ViewIdentifier[])</h4>
@@ -182,6 +636,119 @@ as the container.</p>
       </tr>
     </tbody>
   </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_DataModelUtils_UpsertAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync%60%602(%60%601%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CCognite.Extensions.SanitationMode%2CSystem.ValueTuple%7BSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Collections.Generic.IEnumerable%7BCognite.Extensions.CogniteError%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%7D%7D%7D%2CSystem.Int32%2CSystem.Int32%2CCognite.Extensions.RetryMode%2CCognite.Extensions.SanitationMode%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L387">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_DataModels_DataModelUtils_UpsertAsync_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync*"></a>
+  <h4 id="Cognite_Extensions_DataModels_DataModelUtils_UpsertAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)">UpsertAsync&lt;T, T2&gt;(T2, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt;, int, int, RetryMode, SanitationMode, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Upsert resources.
+If any items fail to be created due to duplicated instance ids, they can be removed before retrying by setting <code class="paramref">retryMode</code>
+Resources will be returned in the same order as given in <code class="paramref">items</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;CogniteResult&lt;SlimInstance, SourcedNodeWrite&lt;T&gt;&gt;&gt; UpsertAsync&lt;T, T2&gt;(T2 resource, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; items, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt; sanitizationMethod, int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T2 : BaseDataModelResource&lt;T&gt;</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T2</span></td>
+        <td><span class="parametername">resource</span></td>
+        <td><p>CogniteSdk CDM Asset resource</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;</td>
+        <td><span class="parametername">items</span></td>
+        <td><p>List of resource updates</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;, <a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a>, (<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteError-1.html">CogniteError</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;)&gt;</td>
+        <td><span class="parametername">sanitizationMethod</span></td>
+        <td><p>Function that sanitizes CogniteSdk SourcedNodeWrite objects</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">chunkSize</span></td>
+        <td><p>Maximum number of resources per request</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">throttleSize</span></td>
+        <td><p>Maximum number of parallel requests</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.RetryMode.html">RetryMode</a></td>
+        <td><span class="parametername">retryMode</span></td>
+        <td><p>How to handle retries</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.Extensions.SanitationMode.html">SanitationMode</a></td>
+        <td><span class="parametername">sanitationMode</span></td>
+        <td><p>What kind of pre-request sanitation to perform</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult</a>&lt;<span class="xref">SlimInstance</span>, <span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;</td>
+        <td><p>A <a class="xref" href="Cognite.Extensions.CogniteResult-2.html">CogniteResult&lt;TResult, TError&gt;</a> containing errors that occured and a list of the updated resources</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 
 </article>
           </div>
@@ -194,7 +761,7 @@ as the container.</p>
                     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_DataModels_DataModelUtils.md&amp;value=---%0Auid%3A%20Cognite.Extensions.DataModels.DataModelUtils%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L11" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/DataModelUtils.cs/#L20" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

@@ -1328,6 +1328,44 @@ references:
   commentId: N:Cognite.Extensions.DataModels.CogniteExtractorExtensions
   fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions
   nameWithType: Cognite.Extensions.DataModels.CogniteExtractorExtensions
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset
+  name: CogniteExtractorAsset
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.html
+  commentId: T:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset
+  nameWithType: CogniteExtractorAsset
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.#ctor
+  name: CogniteExtractorAsset()
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorAsset__ctor
+  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.#ctor
+  name.vb: New()
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.CogniteExtractorAsset()
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.New()
+  nameWithType: CogniteExtractorAsset.CogniteExtractorAsset()
+  nameWithType.vb: CogniteExtractorAsset.New()
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.#ctor*
+  name: CogniteExtractorAsset
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorAsset__ctor_
+  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.CogniteExtractorAsset
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.New
+  nameWithType: CogniteExtractorAsset.CogniteExtractorAsset
+  nameWithType.vb: CogniteExtractorAsset.New
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.extractedData
+  name: extractedData
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorAsset_extractedData
+  commentId: P:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.extractedData
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.extractedData
+  nameWithType: CogniteExtractorAsset.extractedData
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.extractedData*
+  name: extractedData
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorAsset_extractedData_
+  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.extractedData
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.extractedData
+  nameWithType: CogniteExtractorAsset.extractedData
 - uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries
   name: CogniteExtractorTimeSeries
   href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.html
@@ -1404,6 +1442,85 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing
   nameWithType: DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions
+  name: ExtractorAssetExtensions
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html
+  commentId: T:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions
+  nameWithType: ExtractorAssetExtensions
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.EnsureAssetsExistsAsync*
+  name: EnsureAssetsExistsAsync
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_EnsureAssetsExistsAsync_
+  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.EnsureAssetsExistsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.EnsureAssetsExistsAsync
+  nameWithType: ExtractorAssetExtensions.EnsureAssetsExistsAsync
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.EnsureAssetsExistsAsync``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name: EnsureAssetsExistsAsync<T>(CoreAssetResource<T>, IEnumerable<SourcedNodeWrite<T>>, int, int, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_EnsureAssetsExistsAsync__1_CogniteSdk_Resources_DataModels_CoreAssetResource___0__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.EnsureAssetsExistsAsync``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name.vb: EnsureAssetsExistsAsync(Of T)(CoreAssetResource(Of T), IEnumerable(Of SourcedNodeWrite(Of T)), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.EnsureAssetsExistsAsync<T>(CogniteSdk.Resources.DataModels.CoreAssetResource<T>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, int, int, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.EnsureAssetsExistsAsync(Of T)(CogniteSdk.Resources.DataModels.CoreAssetResource(Of T), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), Integer, Integer, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  nameWithType: ExtractorAssetExtensions.EnsureAssetsExistsAsync<T>(CoreAssetResource<T>, IEnumerable<SourcedNodeWrite<T>>, int, int, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: ExtractorAssetExtensions.EnsureAssetsExistsAsync(Of T)(CoreAssetResource(Of T), IEnumerable(Of SourcedNodeWrite(Of T)), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors*
+  name: GetAssetsByIdsIgnoreErrors
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_GetAssetsByIdsIgnoreErrors_
+  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors
+  nameWithType: ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Int32,System.Int32,System.Threading.CancellationToken)
+  name: GetAssetsByIdsIgnoreErrors<T>(CoreAssetResource<T>, IEnumerable<Identity>, int, int, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_GetAssetsByIdsIgnoreErrors__1_CogniteSdk_Resources_DataModels_CoreAssetResource___0__System_Collections_Generic_IEnumerable_CogniteSdk_Identity__System_Int32_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Int32,System.Int32,System.Threading.CancellationToken)
+  name.vb: GetAssetsByIdsIgnoreErrors(Of T)(CoreAssetResource(Of T), IEnumerable(Of Identity), Integer, Integer, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors<T>(CogniteSdk.Resources.DataModels.CoreAssetResource<T>, System.Collections.Generic.IEnumerable<CogniteSdk.Identity>, int, int, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors(Of T)(CogniteSdk.Resources.DataModels.CoreAssetResource(Of T), System.Collections.Generic.IEnumerable(Of CogniteSdk.Identity), Integer, Integer, System.Threading.CancellationToken)
+  nameWithType: ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors<T>(CoreAssetResource<T>, IEnumerable<Identity>, int, int, CancellationToken)
+  nameWithType.vb: ExtractorAssetExtensions.GetAssetsByIdsIgnoreErrors(Of T)(CoreAssetResource(Of T), IEnumerable(Of Identity), Integer, Integer, CancellationToken)
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync*
+  name: GetOrCreateAssetsAsync
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_GetOrCreateAssetsAsync_
+  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync
+  nameWithType: ExtractorAssetExtensions.GetOrCreateAssetsAsync
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name: GetOrCreateAssetsAsync<T>(CoreAssetResource<T>, IEnumerable<InstanceIdentifier>, Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>>, int, int, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_GetOrCreateAssetsAsync__1_CogniteSdk_Resources_DataModels_CoreAssetResource___0__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name.vb: GetOrCreateAssetsAsync(Of T)(CoreAssetResource(Of T), IEnumerable(Of InstanceIdentifier), Func(Of IEnumerable(Of InstanceIdentifier), IEnumerable(Of SourcedNodeWrite(Of T))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync<T>(CogniteSdk.Resources.DataModels.CoreAssetResource<T>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.InstanceIdentifier>, System.Func<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.InstanceIdentifier>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>>, int, int, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync(Of T)(CogniteSdk.Resources.DataModels.CoreAssetResource(Of T), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.InstanceIdentifier), System.Func(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.InstanceIdentifier), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T))), Integer, Integer, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  nameWithType: ExtractorAssetExtensions.GetOrCreateAssetsAsync<T>(CoreAssetResource<T>, IEnumerable<InstanceIdentifier>, Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>>, int, int, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: ExtractorAssetExtensions.GetOrCreateAssetsAsync(Of T)(CoreAssetResource(Of T), IEnumerable(Of InstanceIdentifier), Func(Of IEnumerable(Of InstanceIdentifier), IEnumerable(Of SourcedNodeWrite(Of T))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name: GetOrCreateAssetsAsync<T>(CoreAssetResource<T>, IEnumerable<InstanceIdentifier>, Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>>, int, int, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_GetOrCreateAssetsAsync__1_CogniteSdk_Resources_DataModels_CoreAssetResource___0__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0_____System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name.vb: GetOrCreateAssetsAsync(Of T)(CoreAssetResource(Of T), IEnumerable(Of InstanceIdentifier), Func(Of IEnumerable(Of InstanceIdentifier), Task(Of IEnumerable(Of SourcedNodeWrite(Of T)))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync<T>(CogniteSdk.Resources.DataModels.CoreAssetResource<T>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.InstanceIdentifier>, System.Func<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.InstanceIdentifier>, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>>>, int, int, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.GetOrCreateAssetsAsync(Of T)(CogniteSdk.Resources.DataModels.CoreAssetResource(Of T), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.InstanceIdentifier), System.Func(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.InstanceIdentifier), System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)))), Integer, Integer, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  nameWithType: ExtractorAssetExtensions.GetOrCreateAssetsAsync<T>(CoreAssetResource<T>, IEnumerable<InstanceIdentifier>, Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>>, int, int, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: ExtractorAssetExtensions.GetOrCreateAssetsAsync(Of T)(CoreAssetResource(Of T), IEnumerable(Of InstanceIdentifier), Func(Of IEnumerable(Of InstanceIdentifier), Task(Of IEnumerable(Of SourcedNodeWrite(Of T)))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.UpsertAsync*
+  name: UpsertAsync
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_UpsertAsync_
+  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.UpsertAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.UpsertAsync
+  nameWithType: ExtractorAssetExtensions.UpsertAsync
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.UpsertAsync``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name: UpsertAsync<T>(CoreAssetResource<T>, IEnumerable<SourcedNodeWrite<T>>, int, int, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_ExtractorAssetExtensions_UpsertAsync__1_CogniteSdk_Resources_DataModels_CoreAssetResource___0__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.UpsertAsync``1(CogniteSdk.Resources.DataModels.CoreAssetResource{``0},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name.vb: UpsertAsync(Of T)(CoreAssetResource(Of T), IEnumerable(Of SourcedNodeWrite(Of T)), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.UpsertAsync<T>(CogniteSdk.Resources.DataModels.CoreAssetResource<T>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, int, int, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.UpsertAsync(Of T)(CogniteSdk.Resources.DataModels.CoreAssetResource(Of T), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), Integer, Integer, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  nameWithType: ExtractorAssetExtensions.UpsertAsync<T>(CoreAssetResource<T>, IEnumerable<SourcedNodeWrite<T>>, int, int, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: ExtractorAssetExtensions.UpsertAsync(Of T)(CoreAssetResource(Of T), IEnumerable(Of SourcedNodeWrite(Of T)), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
 - uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorTimeSeriesExtensions
   name: ExtractorTimeSeriesExtensions
   href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorTimeSeriesExtensions.html
@@ -1701,12 +1818,123 @@ references:
   fullName.vb: Cognite.Extensions.DataModels.DataModelExtensions.QueryPaginated(Of T)(CogniteSdk.Resources.DataModelsResource, CogniteSdk.DataModels.Query, System.Collections.Generic.IEnumerable(Of String), System.Threading.CancellationToken)
   nameWithType: DataModelExtensions.QueryPaginated<T>(DataModelsResource, Query, IEnumerable<string>?, CancellationToken)
   nameWithType.vb: DataModelExtensions.QueryPaginated(Of T)(DataModelsResource, Query, IEnumerable(Of String), CancellationToken)
+- uid: Cognite.Extensions.DataModels.DataModelSanitation
+  name: DataModelSanitation
+  href: api/Cognite.Extensions.DataModels.DataModelSanitation.html
+  commentId: T:Cognite.Extensions.DataModels.DataModelSanitation
+  fullName: Cognite.Extensions.DataModels.DataModelSanitation
+  nameWithType: DataModelSanitation
+- uid: Cognite.Extensions.DataModels.DataModelSanitation.CleanInstanceRequest*
+  name: CleanInstanceRequest
+  href: api/Cognite.Extensions.DataModels.DataModelSanitation.html#Cognite_Extensions_DataModels_DataModelSanitation_CleanInstanceRequest_
+  commentId: Overload:Cognite.Extensions.DataModels.DataModelSanitation.CleanInstanceRequest
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.DataModelSanitation.CleanInstanceRequest
+  nameWithType: DataModelSanitation.CleanInstanceRequest
+- uid: Cognite.Extensions.DataModels.DataModelSanitation.CleanInstanceRequest``1(System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode)
+  name: CleanInstanceRequest<T>(IEnumerable<SourcedNodeWrite<T>>, SanitationMode)
+  href: api/Cognite.Extensions.DataModels.DataModelSanitation.html#Cognite_Extensions_DataModels_DataModelSanitation_CleanInstanceRequest__1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_
+  commentId: M:Cognite.Extensions.DataModels.DataModelSanitation.CleanInstanceRequest``1(System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode)
+  name.vb: CleanInstanceRequest(Of T)(IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode)
+  fullName: Cognite.Extensions.DataModels.DataModelSanitation.CleanInstanceRequest<T>(System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, Cognite.Extensions.SanitationMode)
+  fullName.vb: Cognite.Extensions.DataModels.DataModelSanitation.CleanInstanceRequest(Of T)(System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), Cognite.Extensions.SanitationMode)
+  nameWithType: DataModelSanitation.CleanInstanceRequest<T>(IEnumerable<SourcedNodeWrite<T>>, SanitationMode)
+  nameWithType.vb: DataModelSanitation.CleanInstanceRequest(Of T)(IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode)
+- uid: Cognite.Extensions.DataModels.DataModelSanitation.Sanitize*
+  name: Sanitize
+  href: api/Cognite.Extensions.DataModels.DataModelSanitation.html#Cognite_Extensions_DataModels_DataModelSanitation_Sanitize_
+  commentId: Overload:Cognite.Extensions.DataModels.DataModelSanitation.Sanitize
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.DataModelSanitation.Sanitize
+  nameWithType: DataModelSanitation.Sanitize
+- uid: Cognite.Extensions.DataModels.DataModelSanitation.Sanitize``1(CogniteSdk.DataModels.SourcedNodeWrite{``0})
+  name: Sanitize<T>(SourcedNodeWrite<T>)
+  href: api/Cognite.Extensions.DataModels.DataModelSanitation.html#Cognite_Extensions_DataModels_DataModelSanitation_Sanitize__1_CogniteSdk_DataModels_SourcedNodeWrite___0__
+  commentId: M:Cognite.Extensions.DataModels.DataModelSanitation.Sanitize``1(CogniteSdk.DataModels.SourcedNodeWrite{``0})
+  name.vb: Sanitize(Of T)(SourcedNodeWrite(Of T))
+  fullName: Cognite.Extensions.DataModels.DataModelSanitation.Sanitize<T>(CogniteSdk.DataModels.SourcedNodeWrite<T>)
+  fullName.vb: Cognite.Extensions.DataModels.DataModelSanitation.Sanitize(Of T)(CogniteSdk.DataModels.SourcedNodeWrite(Of T))
+  nameWithType: DataModelSanitation.Sanitize<T>(SourcedNodeWrite<T>)
+  nameWithType.vb: DataModelSanitation.Sanitize(Of T)(SourcedNodeWrite(Of T))
+- uid: Cognite.Extensions.DataModels.DataModelSanitation.Verify*
+  name: Verify
+  href: api/Cognite.Extensions.DataModels.DataModelSanitation.html#Cognite_Extensions_DataModels_DataModelSanitation_Verify_
+  commentId: Overload:Cognite.Extensions.DataModels.DataModelSanitation.Verify
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.DataModelSanitation.Verify
+  nameWithType: DataModelSanitation.Verify
+- uid: Cognite.Extensions.DataModels.DataModelSanitation.Verify``1(CogniteSdk.DataModels.SourcedNodeWrite{``0})
+  name: Verify<T>(SourcedNodeWrite<T>)
+  href: api/Cognite.Extensions.DataModels.DataModelSanitation.html#Cognite_Extensions_DataModels_DataModelSanitation_Verify__1_CogniteSdk_DataModels_SourcedNodeWrite___0__
+  commentId: M:Cognite.Extensions.DataModels.DataModelSanitation.Verify``1(CogniteSdk.DataModels.SourcedNodeWrite{``0})
+  name.vb: Verify(Of T)(SourcedNodeWrite(Of T))
+  fullName: Cognite.Extensions.DataModels.DataModelSanitation.Verify<T>(CogniteSdk.DataModels.SourcedNodeWrite<T>)
+  fullName.vb: Cognite.Extensions.DataModels.DataModelSanitation.Verify(Of T)(CogniteSdk.DataModels.SourcedNodeWrite(Of T))
+  nameWithType: DataModelSanitation.Verify<T>(SourcedNodeWrite<T>)
+  nameWithType.vb: DataModelSanitation.Verify(Of T)(SourcedNodeWrite(Of T))
 - uid: Cognite.Extensions.DataModels.DataModelUtils
   name: DataModelUtils
   href: api/Cognite.Extensions.DataModels.DataModelUtils.html
   commentId: T:Cognite.Extensions.DataModels.DataModelUtils
   fullName: Cognite.Extensions.DataModels.DataModelUtils
   nameWithType: DataModelUtils
+- uid: Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync*
+  name: EnsureResourcesExistsAsync
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_EnsureResourcesExistsAsync_
+  commentId: Overload:Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync
+  nameWithType: DataModelUtils.EnsureResourcesExistsAsync
+- uid: Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name: EnsureResourcesExistsAsync<T, T2>(T2, IEnumerable<SourcedNodeWrite<T>>, Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)>, int, int, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_EnsureResourcesExistsAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name.vb: EnsureResourcesExistsAsync(Of T, T2)(T2, IEnumerable(Of SourcedNodeWrite(Of T)), Func(Of IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode, (IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of CogniteError(Of SourcedNodeWrite(Of T))))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync<T, T2>(T2, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Func<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, Cognite.Extensions.SanitationMode, (System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Collections.Generic.IEnumerable<Cognite.Extensions.CogniteError<CogniteSdk.DataModels.SourcedNodeWrite<T>>>)>, int, int, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.DataModelUtils.EnsureResourcesExistsAsync(Of T, T2)(T2, System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Func(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), Cognite.Extensions.SanitationMode, (System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Collections.Generic.IEnumerable(Of Cognite.Extensions.CogniteError(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T))))), Integer, Integer, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  nameWithType: DataModelUtils.EnsureResourcesExistsAsync<T, T2>(T2, IEnumerable<SourcedNodeWrite<T>>, Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)>, int, int, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: DataModelUtils.EnsureResourcesExistsAsync(Of T, T2)(T2, IEnumerable(Of SourcedNodeWrite(Of T)), Func(Of IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode, (IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of CogniteError(Of SourcedNodeWrite(Of T))))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync*
+  name: GetOrCreateResourcesAsync
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync_
+  commentId: Overload:Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync
+  nameWithType: DataModelUtils.GetOrCreateResourcesAsync
+- uid: Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name: GetOrCreateResourcesAsync<T, T2>(T2, IEnumerable<InstanceIdentifier>, Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>>, Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)>, int, int, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0____System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name.vb: GetOrCreateResourcesAsync(Of T, T2)(T2, IEnumerable(Of InstanceIdentifier), Func(Of IEnumerable(Of InstanceIdentifier), IEnumerable(Of SourcedNodeWrite(Of T))), Func(Of IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode, (IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of CogniteError(Of SourcedNodeWrite(Of T))))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync<T, T2>(T2, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.InstanceIdentifier>, System.Func<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.InstanceIdentifier>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>>, System.Func<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, Cognite.Extensions.SanitationMode, (System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Collections.Generic.IEnumerable<Cognite.Extensions.CogniteError<CogniteSdk.DataModels.SourcedNodeWrite<T>>>)>, int, int, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync(Of T, T2)(T2, System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.InstanceIdentifier), System.Func(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.InstanceIdentifier), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T))), System.Func(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), Cognite.Extensions.SanitationMode, (System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Collections.Generic.IEnumerable(Of Cognite.Extensions.CogniteError(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T))))), Integer, Integer, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  nameWithType: DataModelUtils.GetOrCreateResourcesAsync<T, T2>(T2, IEnumerable<InstanceIdentifier>, Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>>, Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)>, int, int, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: DataModelUtils.GetOrCreateResourcesAsync(Of T, T2)(T2, IEnumerable(Of InstanceIdentifier), Func(Of IEnumerable(Of InstanceIdentifier), IEnumerable(Of SourcedNodeWrite(Of T))), Func(Of IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode, (IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of CogniteError(Of SourcedNodeWrite(Of T))))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name: GetOrCreateResourcesAsync<T, T2>(T2, IEnumerable<InstanceIdentifier>, Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>>, Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)>, int, int, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Threading_Tasks_Task_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0_____System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.InstanceIdentifier},System.Threading.Tasks.Task{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name.vb: GetOrCreateResourcesAsync(Of T, T2)(T2, IEnumerable(Of InstanceIdentifier), Func(Of IEnumerable(Of InstanceIdentifier), Task(Of IEnumerable(Of SourcedNodeWrite(Of T)))), Func(Of IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode, (IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of CogniteError(Of SourcedNodeWrite(Of T))))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync<T, T2>(T2, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.InstanceIdentifier>, System.Func<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.InstanceIdentifier>, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>>>, System.Func<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, Cognite.Extensions.SanitationMode, (System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Collections.Generic.IEnumerable<Cognite.Extensions.CogniteError<CogniteSdk.DataModels.SourcedNodeWrite<T>>>)>, int, int, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.DataModelUtils.GetOrCreateResourcesAsync(Of T, T2)(T2, System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.InstanceIdentifier), System.Func(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.InstanceIdentifier), System.Threading.Tasks.Task(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)))), System.Func(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), Cognite.Extensions.SanitationMode, (System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Collections.Generic.IEnumerable(Of Cognite.Extensions.CogniteError(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T))))), Integer, Integer, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  nameWithType: DataModelUtils.GetOrCreateResourcesAsync<T, T2>(T2, IEnumerable<InstanceIdentifier>, Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>>, Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)>, int, int, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: DataModelUtils.GetOrCreateResourcesAsync(Of T, T2)(T2, IEnumerable(Of InstanceIdentifier), Func(Of IEnumerable(Of InstanceIdentifier), Task(Of IEnumerable(Of SourcedNodeWrite(Of T)))), Func(Of IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode, (IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of CogniteError(Of SourcedNodeWrite(Of T))))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+- uid: Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors*
+  name: GetResourcesByIdsIgnoreErrors
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_GetResourcesByIdsIgnoreErrors_
+  commentId: Overload:Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors
+  nameWithType: DataModelUtils.GetResourcesByIdsIgnoreErrors
+- uid: Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Int32,System.Int32,System.Threading.CancellationToken)
+  name: GetResourcesByIdsIgnoreErrors<T, T2>(T2, IEnumerable<Identity>, int, int, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_GetResourcesByIdsIgnoreErrors__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_Identity__System_Int32_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Int32,System.Int32,System.Threading.CancellationToken)
+  name.vb: GetResourcesByIdsIgnoreErrors(Of T, T2)(T2, IEnumerable(Of Identity), Integer, Integer, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors<T, T2>(T2, System.Collections.Generic.IEnumerable<CogniteSdk.Identity>, int, int, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.DataModelUtils.GetResourcesByIdsIgnoreErrors(Of T, T2)(T2, System.Collections.Generic.IEnumerable(Of CogniteSdk.Identity), Integer, Integer, System.Threading.CancellationToken)
+  nameWithType: DataModelUtils.GetResourcesByIdsIgnoreErrors<T, T2>(T2, IEnumerable<Identity>, int, int, CancellationToken)
+  nameWithType.vb: DataModelUtils.GetResourcesByIdsIgnoreErrors(Of T, T2)(T2, IEnumerable(Of Identity), Integer, Integer, CancellationToken)
 - uid: Cognite.Extensions.DataModels.DataModelUtils.ToView(CogniteSdk.DataModels.ContainerCreate,System.String,CogniteSdk.DataModels.ViewIdentifier[])
   name: ToView(ContainerCreate, string, params ViewIdentifier[])
   href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_ToView_CogniteSdk_DataModels_ContainerCreate_System_String_CogniteSdk_DataModels_ViewIdentifier___
@@ -1723,6 +1951,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.DataModels.DataModelUtils.ToView
   nameWithType: DataModelUtils.ToView
+- uid: Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync*
+  name: UpsertAsync
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_UpsertAsync_
+  commentId: Overload:Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync
+  nameWithType: DataModelUtils.UpsertAsync
+- uid: Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name: UpsertAsync<T, T2>(T2, IEnumerable<SourcedNodeWrite<T>>, Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)>, int, int, RetryMode, SanitationMode, CancellationToken)
+  href: api/Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_UpsertAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync``2(``1,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Func{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},Cognite.Extensions.SanitationMode,System.ValueTuple{System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}}}}},System.Int32,System.Int32,Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
+  name.vb: UpsertAsync(Of T, T2)(T2, IEnumerable(Of SourcedNodeWrite(Of T)), Func(Of IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode, (IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of CogniteError(Of SourcedNodeWrite(Of T))))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
+  fullName: Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync<T, T2>(T2, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Func<System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, Cognite.Extensions.SanitationMode, (System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Collections.Generic.IEnumerable<Cognite.Extensions.CogniteError<CogniteSdk.DataModels.SourcedNodeWrite<T>>>)>, int, int, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.DataModels.DataModelUtils.UpsertAsync(Of T, T2)(T2, System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Func(Of System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), Cognite.Extensions.SanitationMode, (System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Collections.Generic.IEnumerable(Of Cognite.Extensions.CogniteError(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T))))), Integer, Integer, Cognite.Extensions.RetryMode, Cognite.Extensions.SanitationMode, System.Threading.CancellationToken)
+  nameWithType: DataModelUtils.UpsertAsync<T, T2>(T2, IEnumerable<SourcedNodeWrite<T>>, Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)>, int, int, RetryMode, SanitationMode, CancellationToken)
+  nameWithType.vb: DataModelUtils.UpsertAsync(Of T, T2)(T2, IEnumerable(Of SourcedNodeWrite(Of T)), Func(Of IEnumerable(Of SourcedNodeWrite(Of T)), SanitationMode, (IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of CogniteError(Of SourcedNodeWrite(Of T))))), Integer, Integer, RetryMode, SanitationMode, CancellationToken)
 - uid: Cognite.Extensions.DataModels.QueryBuilder
   name: Cognite.Extensions.DataModels.QueryBuilder
   href: api/Cognite.Extensions.DataModels.QueryBuilder.html
@@ -3253,6 +3497,12 @@ references:
   commentId: F:Cognite.Extensions.RequestType.UpdateTimeSeries
   fullName: Cognite.Extensions.RequestType.UpdateTimeSeries
   nameWithType: RequestType.UpdateTimeSeries
+- uid: Cognite.Extensions.RequestType.UpsertInstances
+  name: UpsertInstances
+  href: api/Cognite.Extensions.RequestType.html#Cognite_Extensions_RequestType_UpsertInstances
+  commentId: F:Cognite.Extensions.RequestType.UpsertInstances
+  fullName: Cognite.Extensions.RequestType.UpsertInstances
+  nameWithType: RequestType.UpsertInstances
 - uid: Cognite.Extensions.ResourceType
   name: ResourceType
   href: api/Cognite.Extensions.ResourceType.html
