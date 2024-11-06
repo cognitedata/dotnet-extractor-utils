@@ -15,22 +15,26 @@ namespace Cognite.Extractor.Testing
         /// Returns a task that polls an asynchronous method every 200 milliseconds and returns once it
         /// is true. This throws an exception if the condition does not become true within <paramref name="seconds"/>.
         /// </summary>
-        /// <param name="condition">Method to poll</param>
+        /// <param name="valueMethod">Method to call</param>
+        /// <param name="condition">Method to check condition</param>
         /// <param name="seconds">Number of seconds to wait before failing</param>
         /// <param name="assertion">Method returning a string to include in the thrown exception</param>
         /// <exception cref="ArgumentNullException">if condition or assertion are null</exception>
         /// <exception cref="TrueException">
         /// If <paramref name="condition"/> does not become true within <paramref name="seconds"/>
         /// </exception>
-        public static async Task WaitForCondition(Func<Task<bool>> condition, int seconds, Func<string> assertion)
+        public static async Task<T> WaitForCondition<T>(Func<Task<T>> valueMethod, Func<T, bool> condition, int seconds, Func<string> assertion)
         {
+            if (valueMethod == null) throw new ArgumentNullException(nameof(valueMethod));
             if (condition == null) throw new ArgumentNullException(nameof(condition));
             if (assertion == null) throw new ArgumentNullException(nameof(assertion));
             bool triggered = false;
             int i;
+            T val = default;
             for (i = 0; i < seconds * 5; i++)
             {
-                if (await condition().ConfigureAwait(false))
+                val = await valueMethod().ConfigureAwait(false);
+                if (condition(val))
                 {
                     triggered = true;
                     break;
@@ -40,7 +44,40 @@ namespace Cognite.Extractor.Testing
             }
 
             Assert.True(triggered, assertion());
+            return val!;
         }
+        /// <summary>
+        /// Returns a task that polls an asynchronous method every 200 milliseconds and returns once it
+        /// is true. This throws an exception if the condition does not become true within <paramref name="seconds"/>.
+        /// </summary>
+        /// <param name="valueMethod">Method to call</param>
+        /// <param name="condition">Method to check condition</param>
+        /// <param name="seconds">Number of seconds to wait before failing</param>
+        /// <param name="assertion">String to include in the thrown exception</param>
+        /// <exception cref="ArgumentNullException">if condition or assertion are null</exception>
+        /// <exception cref="TrueException">
+        /// If <paramref name="condition"/> does not become true within <paramref name="seconds"/>
+        /// </exception>
+        public static async Task<T> WaitForCondition<T>(Func<Task<T>> valueMethod, Func<T, bool> condition, int seconds, string assertion = "Expected condition to trigger")
+        {
+            return await WaitForCondition<T>(valueMethod, condition, seconds, () => assertion).ConfigureAwait(false);
+        }
+        /// <summary>
+        /// Returns a task that polls an asynchronous method every 200 milliseconds and returns once it
+        /// is true. This throws an exception if the condition does not become true within <paramref name="seconds"/>.
+        /// </summary>
+        /// <param name="condition">Method to poll</param>
+        /// <param name="seconds">Number of seconds to wait before failing</param>
+        /// <param name="assertion">Method returning a string to include in the thrown exception</param>
+        /// <exception cref="ArgumentNullException">if condition or assertion are null</exception>
+        /// <exception cref="TrueException">
+        /// If <paramref name="condition"/> does not become true within <paramref name="seconds"/>
+        /// </exception>
+        public static async Task WaitForCondition(Func<Task<bool>> condition, int seconds, Func<string> assertion)
+        {
+            await WaitForCondition(condition, (bool x) => x == true, seconds, assertion).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Returns a task that polls a method every 200 milliseconds and returns once it
         /// is true. This throws an exception if the condition does not become true within <paramref name="seconds"/>.

@@ -108,7 +108,7 @@ namespace Cognite.Extensions
 
 
         /// <summary>
-        /// Clean list of AssetCreate objects based on CogniteError object
+        /// Clean list of AssetUpdate objects based on CogniteError object
         /// </summary>
         /// <param name="error">Error that occured with a previous push</param>
         /// <param name="items">Assets to clean</param>
@@ -117,7 +117,7 @@ namespace Cognite.Extensions
             CogniteError<AssetUpdateItem> error,
             IEnumerable<AssetUpdateItem> items)
         {
-            return CleanFromErrorCommon(error, items, IsAffected, item => item, CdfMetrics.TimeSeriesUpdatesSkipped);
+            return CleanFromErrorCommon(error, items, IsAffected, item => item, CdfMetrics.AssetUpdatesSkipped);
         }
 
         /// <summary>

@@ -809,7 +809,11 @@ namespace Cognite.Extensions
         /// <summary>
         /// Update timeseries
         /// </summary>
-        UpdateTimeSeries
+        UpdateTimeSeries,
+        /// <summary>
+        /// Upsert instances to data modeling
+        /// </summary>
+        UpsertInstances,
     }
 
 
