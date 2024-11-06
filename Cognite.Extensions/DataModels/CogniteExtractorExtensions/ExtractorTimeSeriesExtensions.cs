@@ -22,7 +22,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
-        /// <param name="timeSeries">Cognite timeseries resource</param>
+        /// <param name="timeSeries">CogniteSdk CDM TimeSeries resource</param>
         /// <param name="instanceIds">Instance Ids</param>
         /// <param name="buildTimeSeries">Function that builds CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="chunkSize">Chunk size</param>
@@ -57,7 +57,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
-        /// <param name="timeSeries">Cognite client</param>
+        /// <param name="timeSeries">CogniteSdk CDM TimeSeries resource</param>
         /// <param name="instanceIds">External Ids</param>
         /// <param name="buildTimeSeries">Async function that builds CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="chunkSize">Chunk size</param>
@@ -76,7 +76,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             SanitationMode sanitationMode,
             CancellationToken token) where T : CogniteExtractorTimeSeries
         {
-            return await DataModelUtils.GetOrCreateResourceAsync(timeSeries, instanceIds, buildTimeSeries, CoreTSSanitation.CleanTimeSeriesRequest, chunkSize, throttleSize, retryMode, sanitationMode, token).ConfigureAwait(false);
+            return await DataModelUtils.GetOrCreateResourcesAsync(timeSeries, instanceIds, buildTimeSeries, CoreTSSanitation.CleanTimeSeriesRequest, chunkSize, throttleSize, retryMode, sanitationMode, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// Timeseries will be returned in the same order as given in <paramref name="timeSeriesToEnsure"/>
         /// </summary>
-        /// <param name="timeSeries">Cognite client</param>
+        /// <param name="timeSeries">CogniteSdk CDM TimeSeries resource</param>
         /// <param name="timeSeriesToEnsure">List of CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
@@ -105,14 +105,14 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             SanitationMode sanitationMode,
             CancellationToken token) where T : CogniteTimeSeriesBase
         {
-            return await DataModelUtils.EnsureResourceExistsAsync(timeSeries, timeSeriesToEnsure, CoreTSSanitation.CleanTimeSeriesRequest, chunkSize, throttleSize, retryMode, sanitationMode, token).ConfigureAwait(false);
+            return await DataModelUtils.EnsureResourcesExistsAsync(timeSeries, timeSeriesToEnsure, CoreTSSanitation.CleanTimeSeriesRequest, chunkSize, throttleSize, retryMode, sanitationMode, token).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Get the time series with the provided <paramref name="ids"/>. Ignore any
         /// unknown ids
         /// </summary>
-        /// <param name="timeSeries">A CogniteSdk TimeSeries resource</param>
+        /// <param name="timeSeries">CogniteSdk CDM TimeSeries resource</param>
         /// <param name="ids">List of <see cref="Identity"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
@@ -125,7 +125,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             int throttleSize,
             CancellationToken token) where T : CogniteTimeSeriesBase
         {
-            return await DataModelUtils.GetResourceByIdsIgnoreErrors<T, CoreTimeSeriesResource<T>>(timeSeries, ids, chunkSize, throttleSize, token).ConfigureAwait(false);
+            return await DataModelUtils.GetResourcesByIdsIgnoreErrors<T, CoreTimeSeriesResource<T>>(timeSeries, ids, chunkSize, throttleSize, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// If any items fail to be created due to duplicated instance ids, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// Timeseries will be returned in the same order as given in <paramref name="items"/>
         /// </summary>
-        /// <param name="resource">CogniteSdk time series resource</param>
+        /// <param name="resource">CogniteSdk CDM TimeSeries resource</param>
         /// <param name="items">List of timeseries updates</param>
         /// <param name="chunkSize">Maximum number of timeseries per request</param>
         /// <param name="throttleSize">Maximum number of parallel requests</param>

@@ -8,7 +8,7 @@ namespace Cognite.Extensions.DataModels
 {
     /// <summary>
     /// Collection of methods for cleaning and sanitizing objects used in
-    /// requests to CDM Instance
+    /// requests to CDM Instances
     /// </summary>
     public static partial class DataModelSanitation
     {
@@ -16,29 +16,29 @@ namespace Cognite.Extensions.DataModels
         /// Sanitize a T object so that it can be safely sent to CDF.
         /// Requests may still fail due to conflicts or missing ids.
         /// </summary>
-        /// <param name="ts">Instance to sanitize</param>
-        public static void Sanitize<T>(this SourcedNodeWrite<T> ts)
+        /// <param name="instance">Instance to sanitize</param>
+        public static void Sanitize<T>(this SourcedNodeWrite<T> instance)
         {
-            if (ts == null) throw new ArgumentNullException(nameof(ts));
-            if (ts.Space == null) throw new ArgumentNullException(nameof(ts.Space));
-            if (ts.ExternalId == null) throw new ArgumentNullException(nameof(ts.ExternalId));
-            ts.Space = ts.Space.Truncate(SpaceIdMax);
-            ts.ExternalId = ts.ExternalId.TruncateBytes(ExternalIdMaxBytes)!;
+            if (instance == null) throw new ArgumentNullException(nameof(instance));
+            if (instance.Space == null) throw new ArgumentNullException(nameof(instance.Space));
+            if (instance.ExternalId == null) throw new ArgumentNullException(nameof(instance.ExternalId));
+            instance.Space = instance.Space.Truncate(SpaceIdMax);
+            instance.ExternalId = instance.ExternalId.TruncateBytes(ExternalIdMaxBytes)!;
         }
 
         /// <summary>
         /// Check that given T satisfies CDF limits.
         /// </summary>
-        /// <param name="ts">Instance to check</param>
+        /// <param name="instance">Instance to check</param>
         /// <returns>True if instance satisfies limits</returns>
-        public static ResourceType? Verify<T>(this SourcedNodeWrite<T> ts)
+        public static ResourceType? Verify<T>(this SourcedNodeWrite<T> instance)
         {
-            if (ts == null) throw new ArgumentNullException(nameof(ts));
-            if (ts.Space == null) throw new ArgumentNullException(nameof(ts.Space));
-            if (ts.ExternalId == null) throw new ArgumentNullException(nameof(ts.ExternalId));
-            if (!ts.Space.CheckLength(SpaceIdMax)) return ResourceType.SpaceId;
-            if (!ts.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
-            if (!$"{ts.Space}{ts.ExternalId}".CheckLength(ExternalIdMaxBytes)) return ResourceType.InstanceId;
+            if (instance == null) throw new ArgumentNullException(nameof(instance));
+            if (instance.Space == null) throw new ArgumentNullException(nameof(instance.Space));
+            if (instance.ExternalId == null) throw new ArgumentNullException(nameof(instance.ExternalId));
+            if (!instance.Space.CheckLength(SpaceIdMax)) return ResourceType.SpaceId;
+            if (!instance.ExternalId.CheckLength(ExternalIdMax)) return ResourceType.ExternalId;
+            if (!$"{instance.Space}{instance.ExternalId}".CheckLength(ExternalIdMaxBytes)) return ResourceType.InstanceId;
             return null;
         }
 

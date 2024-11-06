@@ -27,27 +27,27 @@ namespace Cognite.Extensions.DataModels
         }
 
         /// <summary>
-        /// Get or create the resource with the provided <paramref name="instanceIds"/> if they exist in CDF.
-        /// If one or more do not exist, use the <paramref name="buildResource"/> function to construct
+        /// Get or create the resources with the provided <paramref name="instanceIds"/> if they exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildResources"/> function to construct
         /// the missing resource objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
-        /// <param name="resource">Cognite resource resource</param>
+        /// <param name="resource">CogniteSdk CDM Asset resource</param>
         /// <param name="instanceIds">Instance Ids</param>
-        /// <param name="buildResource">Function that builds CogniteSdk SourcedNodeWrite objects</param>
+        /// <param name="buildResources">Function that builds CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="sanitizationMethod">Function that sanitizes CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
-        /// <param name="sanitationMode">The type of sanitation to apply to resource before creating</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to resources before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found resource</returns>
-        public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateResourceAsync<T, T2>(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found resources</returns>
+        public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateResourcesAsync<T, T2>(
             this T2 resource,
             IEnumerable<InstanceIdentifier> instanceIds,
-            Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildResource,
+            Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildResources,
             Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)> sanitizationMethod,
             int chunkSize,
             int throttleSize,
@@ -57,34 +57,34 @@ namespace Cognite.Extensions.DataModels
         {
             Task<IEnumerable<SourcedNodeWrite<T>>> asyncBuildResource(IEnumerable<InstanceIdentifier> ids)
             {
-                return Task.FromResult(buildResource(ids));
+                return Task.FromResult(buildResources(ids));
             }
-            return GetOrCreateResourceAsync(resource, instanceIds, asyncBuildResource, sanitizationMethod,
+            return GetOrCreateResourcesAsync(resource, instanceIds, asyncBuildResource, sanitizationMethod,
                 chunkSize, throttleSize, retryMode, sanitationMode, token);
         }
 
         /// <summary>
-        /// Get or create the resource with the provided <paramref name="instanceIds"/> if they exist in CDF.
-        /// If one or more do not exist, use the <paramref name="buildResource"/> function to construct
+        /// Get or create the resources with the provided <paramref name="instanceIds"/> if they exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildResources"/> function to construct
         /// the missing resource objects and upload them to CDF using the chunking of items and throttling
         /// passed as parameters
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
         /// </summary>
-        /// <param name="resource">Cognite client</param>
+        /// <param name="resource">CogniteSdk CDM Asset resource</param>
         /// <param name="instanceIds">External Ids</param>
-        /// <param name="buildResource">Async function that builds CogniteSdk SourcedNodeWrite objects</param>
+        /// <param name="buildResources">Async function that builds CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="sanitizationMethod">Function that sanitizes CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to handle failed requests</param>
-        /// <param name="sanitationMode">The type of sanitation to apply to resource before creating</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to resources before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found resource</returns>
-        public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateResourceAsync<T, T2>(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found resources</returns>
+        public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateResourcesAsync<T, T2>(
             T2 resource,
             IEnumerable<InstanceIdentifier> instanceIds,
-            Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildResource,
+            Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildResources,
             Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)> sanitizationMethod,
             int chunkSize,
             int throttleSize,
@@ -104,8 +104,8 @@ namespace Cognite.Extensions.DataModels
                 .Select<IEnumerable<InstanceIdentifier>, Func<Task>>(
                     (chunk, idx) => async () =>
                     {
-                        var result = await GetOrCreateResourceChunk(resource, chunk,
-                            buildResource, sanitizationMethod, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
+                        var result = await GetOrCreateResourcesChunk(resource, chunk,
+                            buildResources, sanitizationMethod, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
                     });
 
@@ -116,7 +116,7 @@ namespace Cognite.Extensions.DataModels
                 {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(GetOrCreateResourceAsync), ++taskNum, chunks.Count);
+                            nameof(GetOrCreateResourcesAsync), ++taskNum, chunks.Count);
                 },
                 token).ConfigureAwait(false);
 
@@ -124,26 +124,26 @@ namespace Cognite.Extensions.DataModels
         }
 
         /// <summary>
-        /// Ensures that all resource in <paramref name="resourceToEnsure"/> exists in CDF.
-        /// Tries to create the resource and returns when all are created or have been removed
+        /// Ensures that all resources in <paramref name="resourcesToEnsure"/> exists in CDF.
+        /// Tries to create resources and returns when all are created or have been removed
         /// due to issues with the request.
         /// If any items fail to be created due to missing asset, duplicated externalId, duplicated
         /// legacy name, or missing dataSetId, they can be removed before retrying by setting <paramref name="retryMode"/>
-        /// Resource will be returned in the same order as given in <paramref name="resourceToEnsure"/>
+        /// Resources will be returned in the same order as given in <paramref name="resourcesToEnsure"/>
         /// </summary>
-        /// <param name="resource">Cognite client</param>
-        /// <param name="resourceToEnsure">List of CogniteSdk SourcedNodeWrite objects</param>
+        /// <param name="resource">CogniteSdk CDM Asset resource</param>
+        /// <param name="resourcesToEnsure">List of CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="sanitizationMethod">Function that sanitizes CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
         /// this method.</param>
-        /// <param name="sanitationMode">The type of sanitation to apply to resource before creating</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to resources before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created resource</returns>
-        public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureResourceExistsAsync<T, T2>(
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created resources</returns>
+        public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureResourcesExistsAsync<T, T2>(
             T2 resource,
-            IEnumerable<SourcedNodeWrite<T>> resourceToEnsure,
+            IEnumerable<SourcedNodeWrite<T>> resourcesToEnsure,
             Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)> sanitizationMethod,
             int chunkSize,
             int throttleSize,
@@ -156,9 +156,9 @@ namespace Cognite.Extensions.DataModels
             {
                 throw new ArgumentNullException(nameof(sanitizationMethod));
             }
-            (resourceToEnsure, errors) = sanitizationMethod(resourceToEnsure, sanitationMode);
+            (resourcesToEnsure, errors) = sanitizationMethod(resourcesToEnsure, sanitationMode);
 
-            var chunks = resourceToEnsure
+            var chunks = resourcesToEnsure
                 .ChunkBy(chunkSize)
                 .ToList();
 
@@ -172,12 +172,12 @@ namespace Cognite.Extensions.DataModels
             }
             if (size == 0) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
 
-            _logger.LogDebug("Ensuring resource. Number of resource: {Number}. Number of chunks: {Chunks}", resourceToEnsure.Count(), chunks.Count);
+            _logger.LogDebug("Ensuring resources. Number of resources: {Number}. Number of chunks: {Chunks}", resourcesToEnsure.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<SourcedNodeWrite<T>>, Func<Task>>(
                 (chunk, idx) => async () =>
                 {
-                    var result = await CreateResourceHandleErrors(resource, chunk, retryMode, token).ConfigureAwait(false);
+                    var result = await CreateResourcesHandleErrors(resource, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
 
@@ -188,7 +188,7 @@ namespace Cognite.Extensions.DataModels
                 {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
-                            nameof(EnsureResourceExistsAsync), ++taskNum, chunks.Count);
+                            nameof(EnsureResourcesExistsAsync), ++taskNum, chunks.Count);
                 },
                 token).ConfigureAwait(false);
 
@@ -196,16 +196,16 @@ namespace Cognite.Extensions.DataModels
         }
 
         /// <summary>
-        /// Get the resource with the provided <paramref name="ids"/>. Ignore any
+        /// Get the resources with the provided <paramref name="ids"/>. Ignore any
         /// unknown ids
         /// </summary>
-        /// <param name="resource">A CogniteSdk Resource resource</param>
+        /// <param name="resource">CogniteSdk CDM Asset resource</param>
         /// <param name="ids">List of <see cref="Identity"/> objects</param>
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        public static async Task<IEnumerable<SourcedNode<T>>> GetResourceByIdsIgnoreErrors<T, T2>(
+        public static async Task<IEnumerable<SourcedNode<T>>> GetResourcesByIdsIgnoreErrors<T, T2>(
             T2 resource,
             IEnumerable<Identity> ids,
             int chunkSize,
@@ -234,15 +234,15 @@ namespace Cognite.Extensions.DataModels
                 }));
             int numTasks = 0;
             await generators.RunThrottled(throttleSize, (_) =>
-                _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetResourceByIdsIgnoreErrors), ++numTasks, chunks.Count),
+                _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks", nameof(GetResourcesByIdsIgnoreErrors), ++numTasks, chunks.Count),
                 token).ConfigureAwait(false);
             return result;
         }
 
-        private static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateResourceChunk<T, T2>(
+        private static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateResourcesChunk<T, T2>(
             T2 resource,
             IEnumerable<InstanceIdentifier> instanceIds,
-            Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildResource,
+            Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildResources,
             Func<IEnumerable<SourcedNodeWrite<T>>, SanitationMode, (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>)> sanitizationMethod,
             int backoff,
             RetryMode retryMode,
@@ -273,13 +273,13 @@ namespace Cognite.Extensions.DataModels
                 return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, found.Select(x => new SourcedNode<T>(x)));
             }
 
-            _logger.LogDebug("Could not fetch {Missing} out of {Found} resource. Attempting to create the missing ones", missing.Count, instanceIds.Count());
-            var toCreate = await buildResource(missing).ConfigureAwait(false);
+            _logger.LogDebug("Could not fetch {Missing} out of {Found} resources. Attempting to create the missing ones", missing.Count, instanceIds.Count());
+            var toCreate = await buildResources(missing).ConfigureAwait(false);
 
             IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
             (toCreate, errors) = sanitizationMethod(toCreate, sanitationMode);
 
-            var result = await CreateResourceHandleErrors(resource, toCreate, retryMode, token).ConfigureAwait(false);
+            var result = await CreateResourcesHandleErrors(resource, toCreate, retryMode, token).ConfigureAwait(false);
             result.Results = (result.Results == null ? found : result.Results.Concat(found)).Select(x => new SourcedNode<T>(x));
 
             if (errors.Any())
@@ -307,18 +307,18 @@ namespace Cognite.Extensions.DataModels
             }
 
             if (!duplicatedIds.Any()) return result;
-            _logger.LogDebug("Found {cnt} duplicated resource, retrying", duplicatedIds.Count);
+            _logger.LogDebug("Found {cnt} duplicated resources, retrying", duplicatedIds.Count);
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)), token).ConfigureAwait(false);
-            var nextResult = await GetOrCreateResourceChunk(resource, duplicatedIds,
-                buildResource, sanitizationMethod, backoff + 1, retryMode, sanitationMode, token)
+            var nextResult = await GetOrCreateResourcesChunk(resource, duplicatedIds,
+                buildResources, sanitizationMethod, backoff + 1, retryMode, sanitationMode, token)
                 .ConfigureAwait(false);
             result = result.Merge(nextResult);
 
             return result;
         }
 
-        private static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> CreateResourceHandleErrors<T, T2>(
+        private static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> CreateResourcesHandleErrors<T, T2>(
             T2 resource,
             IEnumerable<SourcedNodeWrite<T>> toCreate,
             RetryMode retryMode,
@@ -335,7 +335,7 @@ namespace Cognite.Extensions.DataModels
                         newResource = await resource.UpsertAsync(toCreate, null, token).ConfigureAwait(false);
                     }
 
-                    _logger.LogDebug("Created {New} new resource in CDF", newResource.Count());
+                    _logger.LogDebug("Created {New} new resources in CDF", newResource.Count());
                     var toCreateDict = new Dictionary<Identity, T>();
                     foreach (var cr in toCreate)
                     {
@@ -346,7 +346,7 @@ namespace Cognite.Extensions.DataModels
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogDebug("Failed to create {cnt} resource: {msg}",
+                    _logger.LogDebug("Failed to create {cnt} resources: {msg}",
                         toCreate.Count(), ex.Message);
                     var error = ResultHandlers.ParseException<SourcedNodeWrite<T>>(ex, RequestType.UpsertInstances);
                     if (error.Type == ErrorType.FatalFailure
@@ -371,19 +371,19 @@ namespace Cognite.Extensions.DataModels
         }
 
         /// <summary>
-        /// Upsert resource.
+        /// Upsert resources.
         /// If any items fail to be created due to duplicated instance ids, they can be removed before retrying by setting <paramref name="retryMode"/>
-        /// Resource will be returned in the same order as given in <paramref name="items"/>
+        /// Resources will be returned in the same order as given in <paramref name="items"/>
         /// </summary>
-        /// <param name="resource">CogniteSdk resource resource</param>
+        /// <param name="resource">CogniteSdk CDM Asset resource</param>
         /// <param name="items">List of resource updates</param>
         /// <param name="sanitizationMethod">Function that sanitizes CogniteSdk SourcedNodeWrite objects</param>
-        /// <param name="chunkSize">Maximum number of resource per request</param>
+        /// <param name="chunkSize">Maximum number of resources per request</param>
         /// <param name="throttleSize">Maximum number of parallel requests</param>
         /// <param name="retryMode">How to handle retries</param>
         /// <param name="sanitationMode">What kind of pre-request sanitation to perform</param>
         /// <param name="token">Cancellation token</param>
-        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated resource</returns>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated resources</returns>
         public static async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertAsync<T, T2>(
             T2 resource,
             IEnumerable<SourcedNodeWrite<T>> items,
@@ -415,12 +415,12 @@ namespace Cognite.Extensions.DataModels
             }
             if (size == 0) return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(null, null);
 
-            _logger.LogDebug("Updating resource. Number of resource: {Number}. Number of chunks: {Chunks}", items.Count(), chunks.Count);
+            _logger.LogDebug("Updating resources. Number of resources: {Number}. Number of chunks: {Chunks}", items.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<SourcedNodeWrite<T>>, Func<Task>>(
                 (chunk, idx) => async () =>
                 {
-                    var result = await UpsertResourceHandleErrors(resource, chunk, retryMode, token).ConfigureAwait(false);
+                    var result = await UpsertResourcesHandleErrors(resource, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
 
@@ -438,7 +438,7 @@ namespace Cognite.Extensions.DataModels
             return CogniteResult<SlimInstance, SourcedNodeWrite<T>>.Merge(results);
         }
 
-        private static async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertResourceHandleErrors<T, T2>(
+        private static async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertResourcesHandleErrors<T, T2>(
             T2 resource,
             IEnumerable<SourcedNodeWrite<T>> items,
             RetryMode retryMode,
@@ -457,12 +457,12 @@ namespace Cognite.Extensions.DataModels
                         updated = await resource.UpsertAsync(items, null, token).ConfigureAwait(false);
                     }
 
-                    _logger.LogDebug("Updated {Count} resource in CDF", updated.Count());
+                    _logger.LogDebug("Updated {Count} resources in CDF", updated.Count());
                     return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(errors, updated);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogDebug("Failed to create {Count} resource: {Message}",
+                    _logger.LogDebug("Failed to create {Count} resources: {Message}",
                         items.Count(), ex.Message);
                     var error = ResultHandlers.ParseException<SourcedNodeWrite<T>>(ex, RequestType.UpsertInstances);
                     if (error.Type == ErrorType.FatalFailure
