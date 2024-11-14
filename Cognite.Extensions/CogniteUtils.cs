@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions.DataModels;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using CogniteSdk.Alpha;
@@ -613,6 +614,7 @@ namespace Cognite.Extensions
             RawExtensions.SetLogger(logger);
             EventExtensions.SetLogger(logger);
             SequenceExtensions.SetLogger(logger);
+            StreamRecordExtensions.SetLogger(logger);
         }
     }
 
