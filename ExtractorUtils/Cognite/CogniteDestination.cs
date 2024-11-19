@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -8,6 +9,7 @@ using Cognite.Extensions;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.StateStorage;
 using CogniteSdk;
+using CogniteSdk.Beta;
 using Microsoft.Extensions.Logging;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
 
@@ -949,6 +951,50 @@ namespace Cognite.Extractor.Utils
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
+        }
+        #endregion
+
+        #region stream_records
+        /// <summary>
+        /// Retrieve a stream, or create it if it does not exist.
+        /// </summary>
+        /// <param name="stream">Stream to create or retrieve</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Created or retrieved stream</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public async Task<CogniteSdk.Beta.Stream> GetOrCreateStreamAsync(
+            StreamWrite stream,
+            CancellationToken token)
+        {
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            _logger.LogDebug("Getting or creating stream with ID {Stream}", stream.ExternalId);
+            return await _client.Beta.StreamRecords.GetOrCreateStreamAsync(stream, token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Insert the given stream records into <paramref name="stream"/>. The stream
+        /// must exist.
+        /// </summary>
+        /// <param name="stream">Stream to ingest into</param>
+        /// <param name="records">Stream records to insert</param>
+        /// <param name="token">Cancellation token</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public async Task InsertRecordsAsync(
+            string stream,
+            ICollection<StreamRecordWrite> records,
+            CancellationToken token)
+        {
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            if (records == null) throw new ArgumentNullException(nameof(records));
+            _logger.LogDebug("Inserting {Count} records into the stream {Stream}",
+                records.Count, stream);
+            await _client.Beta.StreamRecords.InsertRecordsAsync(
+                stream,
+                records,
+                _config.CdfChunking.StreamRecords,
+                _config.CdfThrottling.StreamRecords,
+                token
+            ).ConfigureAwait(false);
         }
         #endregion
     }

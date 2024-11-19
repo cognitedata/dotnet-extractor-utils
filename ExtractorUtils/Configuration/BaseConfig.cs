@@ -229,6 +229,11 @@ namespace Cognite.Extractor.Utils
         /// Maximum number of data modeling instances per get/create instance request
         /// </summary>
         public int Instances { get; set; } = 1000;
+
+        /// <summary>
+        /// Maximum number of stream records per ingest request.
+        /// </summary>
+        public int StreamRecords { get; set; } = 1000;
     }
 
     /// <summary>
@@ -279,6 +284,11 @@ namespace Cognite.Extractor.Utils
         /// Maximum number of parallel requests per data modeling instances operation
         /// </summary>
         public int Instances { get; set; } = 4;
+
+        /// <summary>
+        /// Maximum number of parallel requests per stream record ingest operation.
+        /// </summary>
+        public int StreamRecords { get; set; } = 4;
     }
     /// <summary>
     /// Configure automatic retries on requests to CDF.

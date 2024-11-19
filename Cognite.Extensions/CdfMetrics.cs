@@ -26,6 +26,8 @@ namespace Cognite.Extensions
             "Number and duration of sequence row requests to CDF", "endpoint");
         public static Counter NumberDatapoints { get; } = Metrics.CreateCounter(
             "extractor_utils_cdf_datapoints", "Number of data points uploaded to CDF");
+        public static Summary StreamRecords { get; } = Metrics.CreateSummary("extractor_utils_cdf_stream_records",
+            "Number and duration of requests to endpoints for streams and records", "endpoint");
 
         public static Counter AssetsSkipped { get; } = Metrics.CreateCounter("extractor_utils_cdf_assets_skipped",
             "Number of assets skipped due to errors");
