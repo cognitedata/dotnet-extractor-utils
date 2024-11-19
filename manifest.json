@@ -584,6 +584,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.StreamRecordExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.StreamRecordExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.TimeSeriesExtensions.yml",
       "output": {
         ".html": {

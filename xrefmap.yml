@@ -4732,6 +4732,41 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.SequenceRowError.SkippedRows
   nameWithType: SequenceRowError.SkippedRows
+- uid: Cognite.Extensions.StreamRecordExtensions
+  name: StreamRecordExtensions
+  href: api/Cognite.Extensions.StreamRecordExtensions.html
+  commentId: T:Cognite.Extensions.StreamRecordExtensions
+  fullName: Cognite.Extensions.StreamRecordExtensions
+  nameWithType: StreamRecordExtensions
+- uid: Cognite.Extensions.StreamRecordExtensions.GetOrCreateStreamAsync(CogniteSdk.Resources.Beta.StreamRecordsResource,CogniteSdk.Beta.StreamWrite,System.Threading.CancellationToken)
+  name: GetOrCreateStreamAsync(StreamRecordsResource, StreamWrite, CancellationToken)
+  href: api/Cognite.Extensions.StreamRecordExtensions.html#Cognite_Extensions_StreamRecordExtensions_GetOrCreateStreamAsync_CogniteSdk_Resources_Beta_StreamRecordsResource_CogniteSdk_Beta_StreamWrite_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.StreamRecordExtensions.GetOrCreateStreamAsync(CogniteSdk.Resources.Beta.StreamRecordsResource,CogniteSdk.Beta.StreamWrite,System.Threading.CancellationToken)
+  fullName: Cognite.Extensions.StreamRecordExtensions.GetOrCreateStreamAsync(CogniteSdk.Resources.Beta.StreamRecordsResource, CogniteSdk.Beta.StreamWrite, System.Threading.CancellationToken)
+  nameWithType: StreamRecordExtensions.GetOrCreateStreamAsync(StreamRecordsResource, StreamWrite, CancellationToken)
+- uid: Cognite.Extensions.StreamRecordExtensions.GetOrCreateStreamAsync*
+  name: GetOrCreateStreamAsync
+  href: api/Cognite.Extensions.StreamRecordExtensions.html#Cognite_Extensions_StreamRecordExtensions_GetOrCreateStreamAsync_
+  commentId: Overload:Cognite.Extensions.StreamRecordExtensions.GetOrCreateStreamAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.StreamRecordExtensions.GetOrCreateStreamAsync
+  nameWithType: StreamRecordExtensions.GetOrCreateStreamAsync
+- uid: Cognite.Extensions.StreamRecordExtensions.InsertRecordsAsync(CogniteSdk.Resources.Beta.StreamRecordsResource,System.String,System.Collections.Generic.ICollection{CogniteSdk.Beta.StreamRecordWrite},System.Int32,System.Int32,System.Threading.CancellationToken)
+  name: InsertRecordsAsync(StreamRecordsResource, string, ICollection<StreamRecordWrite>, int, int, CancellationToken)
+  href: api/Cognite.Extensions.StreamRecordExtensions.html#Cognite_Extensions_StreamRecordExtensions_InsertRecordsAsync_CogniteSdk_Resources_Beta_StreamRecordsResource_System_String_System_Collections_Generic_ICollection_CogniteSdk_Beta_StreamRecordWrite__System_Int32_System_Int32_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.StreamRecordExtensions.InsertRecordsAsync(CogniteSdk.Resources.Beta.StreamRecordsResource,System.String,System.Collections.Generic.ICollection{CogniteSdk.Beta.StreamRecordWrite},System.Int32,System.Int32,System.Threading.CancellationToken)
+  name.vb: InsertRecordsAsync(StreamRecordsResource, String, ICollection(Of StreamRecordWrite), Integer, Integer, CancellationToken)
+  fullName: Cognite.Extensions.StreamRecordExtensions.InsertRecordsAsync(CogniteSdk.Resources.Beta.StreamRecordsResource, string, System.Collections.Generic.ICollection<CogniteSdk.Beta.StreamRecordWrite>, int, int, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.StreamRecordExtensions.InsertRecordsAsync(CogniteSdk.Resources.Beta.StreamRecordsResource, String, System.Collections.Generic.ICollection(Of CogniteSdk.Beta.StreamRecordWrite), Integer, Integer, System.Threading.CancellationToken)
+  nameWithType: StreamRecordExtensions.InsertRecordsAsync(StreamRecordsResource, string, ICollection<StreamRecordWrite>, int, int, CancellationToken)
+  nameWithType.vb: StreamRecordExtensions.InsertRecordsAsync(StreamRecordsResource, String, ICollection(Of StreamRecordWrite), Integer, Integer, CancellationToken)
+- uid: Cognite.Extensions.StreamRecordExtensions.InsertRecordsAsync*
+  name: InsertRecordsAsync
+  href: api/Cognite.Extensions.StreamRecordExtensions.html#Cognite_Extensions_StreamRecordExtensions_InsertRecordsAsync_
+  commentId: Overload:Cognite.Extensions.StreamRecordExtensions.InsertRecordsAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.StreamRecordExtensions.InsertRecordsAsync
+  nameWithType: StreamRecordExtensions.InsertRecordsAsync
 - uid: Cognite.Extensions.TimeSeriesExtensions
   name: TimeSeriesExtensions
   href: api/Cognite.Extensions.TimeSeriesExtensions.html
@@ -9741,6 +9776,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ChunkingConfig.Sequences
   nameWithType: ChunkingConfig.Sequences
+- uid: Cognite.Extractor.Utils.ChunkingConfig.StreamRecords
+  name: StreamRecords
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_StreamRecords
+  commentId: P:Cognite.Extractor.Utils.ChunkingConfig.StreamRecords
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.StreamRecords
+  nameWithType: ChunkingConfig.StreamRecords
+- uid: Cognite.Extractor.Utils.ChunkingConfig.StreamRecords*
+  name: StreamRecords
+  href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_StreamRecords_
+  commentId: Overload:Cognite.Extractor.Utils.ChunkingConfig.StreamRecords
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ChunkingConfig.StreamRecords
+  nameWithType: ChunkingConfig.StreamRecords
 - uid: Cognite.Extractor.Utils.ChunkingConfig.TimeSeries
   name: TimeSeries
   href: api/Cognite.Extractor.Utils.ChunkingConfig.html#Cognite_Extractor_Utils_ChunkingConfig_TimeSeries
@@ -10191,6 +10239,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateSequencesAsync
   nameWithType: CogniteDestination.GetOrCreateSequencesAsync
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateStreamAsync(CogniteSdk.Beta.StreamWrite,System.Threading.CancellationToken)
+  name: GetOrCreateStreamAsync(StreamWrite, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateStreamAsync_CogniteSdk_Beta_StreamWrite_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateStreamAsync(CogniteSdk.Beta.StreamWrite,System.Threading.CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateStreamAsync(CogniteSdk.Beta.StreamWrite, System.Threading.CancellationToken)
+  nameWithType: CogniteDestination.GetOrCreateStreamAsync(StreamWrite, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateStreamAsync*
+  name: GetOrCreateStreamAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateStreamAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.GetOrCreateStreamAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateStreamAsync
+  nameWithType: CogniteDestination.GetOrCreateStreamAsync
 - uid: Cognite.Extractor.Utils.CogniteDestination.GetOrCreateTimeSeriesAsync(System.Collections.Generic.IEnumerable{System.String},System.Func{System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{CogniteSdk.TimeSeriesCreate}},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
   name: GetOrCreateTimeSeriesAsync(IEnumerable<string>, Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>>, RetryMode, SanitationMode, CancellationToken)
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetOrCreateTimeSeriesAsync_System_Collections_Generic_IEnumerable_System_String__System_Func_System_Collections_Generic_IEnumerable_System_String__System_Collections_Generic_IEnumerable_CogniteSdk_TimeSeriesCreate___Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
@@ -10298,6 +10359,22 @@ references:
   fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertRawRowsAsync(Of T)(String, String, System.Collections.Generic.IDictionary(Of String, T), System.Threading.CancellationToken)
   nameWithType: CogniteDestination.InsertRawRowsAsync<T>(string, string, IDictionary<string, T>?, CancellationToken)
   nameWithType.vb: CogniteDestination.InsertRawRowsAsync(Of T)(String, String, IDictionary(Of String, T), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertRecordsAsync(System.String,System.Collections.Generic.ICollection{CogniteSdk.Beta.StreamRecordWrite},System.Threading.CancellationToken)
+  name: InsertRecordsAsync(string, ICollection<StreamRecordWrite>, CancellationToken)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertRecordsAsync_System_String_System_Collections_Generic_ICollection_CogniteSdk_Beta_StreamRecordWrite__System_Threading_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.InsertRecordsAsync(System.String,System.Collections.Generic.ICollection{CogniteSdk.Beta.StreamRecordWrite},System.Threading.CancellationToken)
+  name.vb: InsertRecordsAsync(String, ICollection(Of StreamRecordWrite), CancellationToken)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertRecordsAsync(string, System.Collections.Generic.ICollection<CogniteSdk.Beta.StreamRecordWrite>, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.InsertRecordsAsync(String, System.Collections.Generic.ICollection(Of CogniteSdk.Beta.StreamRecordWrite), System.Threading.CancellationToken)
+  nameWithType: CogniteDestination.InsertRecordsAsync(string, ICollection<StreamRecordWrite>, CancellationToken)
+  nameWithType.vb: CogniteDestination.InsertRecordsAsync(String, ICollection(Of StreamRecordWrite), CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteDestination.InsertRecordsAsync*
+  name: InsertRecordsAsync
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertRecordsAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CogniteDestination.InsertRecordsAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CogniteDestination.InsertRecordsAsync
+  nameWithType: CogniteDestination.InsertRecordsAsync
 - uid: Cognite.Extractor.Utils.CogniteDestination.InsertSequenceRowsAsync(System.Collections.Generic.IEnumerable{CogniteSdk.SequenceDataCreate},Cognite.Extensions.RetryMode,Cognite.Extensions.SanitationMode,System.Threading.CancellationToken)
   name: InsertSequenceRowsAsync(IEnumerable<SequenceDataCreate>, RetryMode, SanitationMode, CancellationToken)
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_InsertSequenceRowsAsync_System_Collections_Generic_IEnumerable_CogniteSdk_SequenceDataCreate__Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_
@@ -12270,6 +12347,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ThrottlingConfig.Sequences
   nameWithType: ThrottlingConfig.Sequences
+- uid: Cognite.Extractor.Utils.ThrottlingConfig.StreamRecords
+  name: StreamRecords
+  href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_StreamRecords
+  commentId: P:Cognite.Extractor.Utils.ThrottlingConfig.StreamRecords
+  fullName: Cognite.Extractor.Utils.ThrottlingConfig.StreamRecords
+  nameWithType: ThrottlingConfig.StreamRecords
+- uid: Cognite.Extractor.Utils.ThrottlingConfig.StreamRecords*
+  name: StreamRecords
+  href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_StreamRecords_
+  commentId: Overload:Cognite.Extractor.Utils.ThrottlingConfig.StreamRecords
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.ThrottlingConfig.StreamRecords
+  nameWithType: ThrottlingConfig.StreamRecords
 - uid: Cognite.Extractor.Utils.ThrottlingConfig.TimeSeries
   name: TimeSeries
   href: api/Cognite.Extractor.Utils.ThrottlingConfig.html#Cognite_Extractor_Utils_ThrottlingConfig_TimeSeries
