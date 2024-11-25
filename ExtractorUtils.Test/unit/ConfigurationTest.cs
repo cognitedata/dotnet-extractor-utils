@@ -427,5 +427,46 @@ version: 1
             Assert.Equal(TestEnum.Foo, ConfigurationUtils.ReadString<TestEnum>("Foo"));
             Assert.Equal(TestEnum.Bar, ConfigurationUtils.ReadString<TestEnum>("bar"));
         }
+
+        class UnionWrapper
+        {
+            public List<DiscriminatedUnionBase> Items { get; set; }
+        }
+
+        abstract class DiscriminatedUnionBase
+        {
+            public string Type { get; set; }
+        }
+
+        class DiscriminatedUnionA : DiscriminatedUnionBase
+        {
+            public string FieldA { get; set; }
+        }
+
+        class DiscriminatedUnionB : DiscriminatedUnionBase
+        {
+            public string FieldB { get; set; }
+        }
+
+        [Fact]
+        public static void TestDiscriminatedUnion()
+        {
+            ConfigurationUtils.AddDiscriminatedType<DiscriminatedUnionBase>("type", new Dictionary<string, Type> {
+                { "typeA", typeof(DiscriminatedUnionA) },
+                { "typeB", typeof(DiscriminatedUnionB) }
+            });
+
+            var val = ConfigurationUtils.ReadString<UnionWrapper>(@"items:
+    - type: typeA
+      field-a: it's an A!
+    - type: typeB
+      field-b: it's a B!
+    ");
+            Assert.Equal(2, val.Items.Count);
+            var it = Assert.IsType<DiscriminatedUnionA>(val.Items[0]);
+            Assert.Equal("it's an A!", it.FieldA);
+            var it2 = Assert.IsType<DiscriminatedUnionB>(val.Items[1]);
+            Assert.Equal("it's a B!", it2.FieldB);
+        }
     }
 }

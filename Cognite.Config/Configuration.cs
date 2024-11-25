@@ -3,20 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using Cognite.Common;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.KeyVault;
 using Microsoft.Extensions.DependencyInjection;
 using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization.TypeInspectors;
-using YamlDotNet.Serialization.Utilities;
 
 namespace Cognite.Extractor.Configuration
 {
@@ -27,32 +21,7 @@ namespace Cognite.Extractor.Configuration
     /// </summary>
     public static class ConfigurationUtils
     {
-        private static DeserializerBuilder builder = new DeserializerBuilder()
-            .WithNamingConvention(HyphenatedNamingConvention.Instance)
-            .WithTypeConverter(new ListOrStringConverter())
-            .WithTagMapping("!keyvault", typeof(object))
-            .WithNodeDeserializer(new TemplatedValueDeserializer())
-            .WithTypeConverter(new YamlEnumConverter());
-        private static IDeserializer deserializer = builder
-            .Build();
-        private static DeserializerBuilder ignoreUnmatchedBuilder = new DeserializerBuilder()
-            .WithNamingConvention(HyphenatedNamingConvention.Instance)
-            .WithNodeDeserializer(new TemplatedValueDeserializer())
-            .WithTagMapping("!keyvault", typeof(object))
-            .WithTypeConverter(new ListOrStringConverter())
-            .WithTypeConverter(new YamlEnumConverter())
-            .IgnoreUnmatchedProperties();
-        private static IDeserializer ignoreUnmatchedDeserializer = ignoreUnmatchedBuilder.Build();
-        private static IDeserializer failOnUnmatchedDeserializer = builder.Build();
-
-        private static readonly List<IYamlTypeConverter> converters = new List<IYamlTypeConverter>() {
-            new ListOrStringConverter(),
-            new YamlEnumConverter(),
-        };
-
-        private static bool ignoreUnmatchedProperties;
-
-        private static object _deserializerLock = new object();
+        private static YamlConfigBuilder _builder = new YamlConfigBuilder();
 
         /// <summary>
         /// Reads the provided string containing yml and deserializes it to an object of type <typeparamref name="T"/>.
@@ -67,22 +36,13 @@ namespace Cognite.Extractor.Configuration
         {
             try
             {
-                lock (_deserializerLock)
-                {
-                    return GetDeserializer(ignoreUnmatched).Deserialize<T>(yaml);
-                }
+                _builder.IgnoreUnmatchedProperties = ignoreUnmatched;
+                return _builder.Deserializer.Deserialize<T>(yaml);
             }
             catch (YamlException ye)
             {
                 throw new ConfigurationException($"Failed to load config string at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
             }
-        }
-
-        private static IDeserializer GetDeserializer(bool? ignoreUnmatched)
-        {
-            if (ignoreUnmatched == null) return deserializer;
-
-            return ignoreUnmatched.Value ? ignoreUnmatchedDeserializer : failOnUnmatchedDeserializer;
         }
 
         /// <summary>
@@ -101,10 +61,8 @@ namespace Cognite.Extractor.Configuration
             {
                 using (var reader = File.OpenText(path))
                 {
-                    lock (_deserializerLock)
-                    {
-                        return GetDeserializer(ignoreUnmatched).Deserialize<T>(reader);
-                    }
+                    _builder.IgnoreUnmatchedProperties = ignoreUnmatched ?? false;
+                    return _builder.Deserializer.Deserialize<T>(reader);
                 }
             }
             catch (System.IO.FileNotFoundException fnfe)
@@ -235,21 +193,6 @@ namespace Cognite.Extractor.Configuration
             return config;
         }
 
-        private static void Rebuild()
-        {
-            ignoreUnmatchedDeserializer = ignoreUnmatchedBuilder.Build();
-            failOnUnmatchedDeserializer = builder.Build();
-
-            if (ignoreUnmatchedProperties)
-            {
-                deserializer = ignoreUnmatchedDeserializer;
-            }
-            else
-            {
-                deserializer = failOnUnmatchedDeserializer;
-            }
-        }
-
         /// <summary>
         /// Maps the given tag to the type T.
         /// Mapping is only required for custom tags.
@@ -258,22 +201,7 @@ namespace Cognite.Extractor.Configuration
         /// <typeparam name="T">Type to map to</typeparam>
         public static void AddTagMapping<T>(string tag)
         {
-            lock (_deserializerLock)
-            {
-                try
-                {
-                    builder.WithoutTagMapping(tag);
-                }
-                catch { }
-                builder = builder.WithTagMapping(tag, typeof(T));
-                try
-                {
-                    ignoreUnmatchedBuilder.WithoutTagMapping(tag);
-                }
-                catch { }
-                ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
-                Rebuild();
-            }
+            _builder.AddTagMapping<T>(tag);
         }
 
         /// <summary>
@@ -282,25 +210,20 @@ namespace Cognite.Extractor.Configuration
         /// <param name="converter">Type converter to add</param>
         public static void AddTypeConverter(IYamlTypeConverter converter)
         {
-            if (converter == null) throw new ArgumentNullException(nameof(converter));
-            lock (_deserializerLock)
-            {
-                try
-                {
-                    builder.WithoutTypeConverter(converter.GetType());
-                }
-                catch { }
-                builder = builder.WithTypeConverter(converter);
-                try
-                {
-                    ignoreUnmatchedBuilder.WithoutTypeConverter(converter.GetType());
-                }
-                catch { }
-                ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTypeConverter(converter);
-                converters.RemoveAll(conv => converter.GetType() == conv.GetType());
-                converters.Add(converter);
-                Rebuild();
-            }
+            _builder.AddTypeConverter(converter);
+        }
+
+        /// <summary>
+        /// Add an internally tagged type to the yaml deserializer.
+        /// </summary>
+        /// <typeparam name="TBase">The type in your actual config structure that
+        /// indicates that this is a custom mapping.
+        /// </typeparam>
+        /// <param name="key">The key for the discriminator, i.e. "type"</param>
+        /// <param name="variants">A map from discriminator key value to type</param>
+        public static void AddDiscriminatedType<TBase>(string key, IDictionary<string, Type> variants)
+        {
+            _builder.AddDiscriminatedType<TBase>(key, variants);
         }
 
         /// <summary>
@@ -308,11 +231,7 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         public static void IgnoreUnmatchedProperties()
         {
-            ignoreUnmatchedProperties = true;
-            lock (_deserializerLock)
-            {
-                Rebuild();
-            }
+            _builder.IgnoreUnmatchedProperties = true;
         }
 
         /// <summary>
@@ -320,11 +239,7 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         public static void DisallowUnmatchedProperties()
         {
-            ignoreUnmatchedProperties = false;
-            lock (_deserializerLock)
-            {
-                Rebuild();
-            }
+            _builder.IgnoreUnmatchedProperties = false;
         }
 
         /// <summary>
@@ -333,14 +248,7 @@ namespace Cognite.Extractor.Configuration
         /// <param name="config"></param>
         public static void AddKeyVault(KeyVaultConfig config)
         {
-            if (config == null) throw new ArgumentNullException(nameof(config));
-
-            lock (_deserializerLock)
-            {
-                config.AddKeyVault(builder);
-                config.AddKeyVault(ignoreUnmatchedBuilder);
-                Rebuild();
-            }
+            _builder.AddKeyVault(config);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code", Justification = "Other methods using this can still pass null as parameter")]
@@ -431,22 +339,7 @@ namespace Cognite.Extractor.Configuration
         {
             if (config is null) return "";
 
-            var builder = new SerializerBuilder()
-                .WithTypeInspector(insp => new DefaultFilterTypeInspector(
-                    insp,
-                    toAlwaysKeep,
-                    toIgnore,
-                    namePrefixes,
-                    converters,
-                    allowReadOnly))
-                .WithNamingConvention(HyphenatedNamingConvention.Instance);
-
-            foreach (var converter in converters)
-            {
-                builder.WithTypeConverter(converter);
-            }
-
-            var serializer = builder.Build();
+            var serializer = _builder.GetSafeSerializer(toAlwaysKeep, toIgnore, namePrefixes, allowReadOnly);
 
             string raw = serializer.Serialize(config);
 
