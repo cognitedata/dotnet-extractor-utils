@@ -1,22 +1,14 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using Cognite.Common;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.KeyVault;
 using Microsoft.Extensions.DependencyInjection;
 using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization.TypeInspectors;
-using YamlDotNet.Serialization.Utilities;
 
 namespace Cognite.Extractor.Configuration
 {
@@ -27,32 +19,7 @@ namespace Cognite.Extractor.Configuration
     /// </summary>
     public static class ConfigurationUtils
     {
-        private static DeserializerBuilder builder = new DeserializerBuilder()
-            .WithNamingConvention(HyphenatedNamingConvention.Instance)
-            .WithTypeConverter(new ListOrStringConverter())
-            .WithTagMapping("!keyvault", typeof(object))
-            .WithNodeDeserializer(new TemplatedValueDeserializer())
-            .WithTypeConverter(new YamlEnumConverter());
-        private static IDeserializer deserializer = builder
-            .Build();
-        private static DeserializerBuilder ignoreUnmatchedBuilder = new DeserializerBuilder()
-            .WithNamingConvention(HyphenatedNamingConvention.Instance)
-            .WithNodeDeserializer(new TemplatedValueDeserializer())
-            .WithTagMapping("!keyvault", typeof(object))
-            .WithTypeConverter(new ListOrStringConverter())
-            .WithTypeConverter(new YamlEnumConverter())
-            .IgnoreUnmatchedProperties();
-        private static IDeserializer ignoreUnmatchedDeserializer = ignoreUnmatchedBuilder.Build();
-        private static IDeserializer failOnUnmatchedDeserializer = builder.Build();
-
-        private static readonly List<IYamlTypeConverter> converters = new List<IYamlTypeConverter>() {
-            new ListOrStringConverter(),
-            new YamlEnumConverter(),
-        };
-
-        private static bool ignoreUnmatchedProperties;
-
-        private static object _deserializerLock = new object();
+        private static YamlConfigBuilder _builder = new YamlConfigBuilder();
 
         /// <summary>
         /// Reads the provided string containing yml and deserializes it to an object of type <typeparamref name="T"/>.
@@ -67,22 +34,13 @@ namespace Cognite.Extractor.Configuration
         {
             try
             {
-                lock (_deserializerLock)
-                {
-                    return GetDeserializer(ignoreUnmatched).Deserialize<T>(yaml);
-                }
+                _builder.IgnoreUnmatchedProperties = ignoreUnmatched;
+                return _builder.Deserializer.Deserialize<T>(yaml);
             }
             catch (YamlException ye)
             {
                 throw new ConfigurationException($"Failed to load config string at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
             }
-        }
-
-        private static IDeserializer GetDeserializer(bool? ignoreUnmatched)
-        {
-            if (ignoreUnmatched == null) return deserializer;
-
-            return ignoreUnmatched.Value ? ignoreUnmatchedDeserializer : failOnUnmatchedDeserializer;
         }
 
         /// <summary>
@@ -101,10 +59,8 @@ namespace Cognite.Extractor.Configuration
             {
                 using (var reader = File.OpenText(path))
                 {
-                    lock (_deserializerLock)
-                    {
-                        return GetDeserializer(ignoreUnmatched).Deserialize<T>(reader);
-                    }
+                    _builder.IgnoreUnmatchedProperties = ignoreUnmatched ?? false;
+                    return _builder.Deserializer.Deserialize<T>(reader);
                 }
             }
             catch (System.IO.FileNotFoundException fnfe)
@@ -235,21 +191,6 @@ namespace Cognite.Extractor.Configuration
             return config;
         }
 
-        private static void Rebuild()
-        {
-            ignoreUnmatchedDeserializer = ignoreUnmatchedBuilder.Build();
-            failOnUnmatchedDeserializer = builder.Build();
-
-            if (ignoreUnmatchedProperties)
-            {
-                deserializer = ignoreUnmatchedDeserializer;
-            }
-            else
-            {
-                deserializer = failOnUnmatchedDeserializer;
-            }
-        }
-
         /// <summary>
         /// Maps the given tag to the type T.
         /// Mapping is only required for custom tags.
@@ -258,22 +199,7 @@ namespace Cognite.Extractor.Configuration
         /// <typeparam name="T">Type to map to</typeparam>
         public static void AddTagMapping<T>(string tag)
         {
-            lock (_deserializerLock)
-            {
-                try
-                {
-                    builder.WithoutTagMapping(tag);
-                }
-                catch { }
-                builder = builder.WithTagMapping(tag, typeof(T));
-                try
-                {
-                    ignoreUnmatchedBuilder.WithoutTagMapping(tag);
-                }
-                catch { }
-                ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTagMapping(tag, typeof(T));
-                Rebuild();
-            }
+            _builder.AddTagMapping<T>(tag);
         }
 
         /// <summary>
@@ -282,25 +208,20 @@ namespace Cognite.Extractor.Configuration
         /// <param name="converter">Type converter to add</param>
         public static void AddTypeConverter(IYamlTypeConverter converter)
         {
-            if (converter == null) throw new ArgumentNullException(nameof(converter));
-            lock (_deserializerLock)
-            {
-                try
-                {
-                    builder.WithoutTypeConverter(converter.GetType());
-                }
-                catch { }
-                builder = builder.WithTypeConverter(converter);
-                try
-                {
-                    ignoreUnmatchedBuilder.WithoutTypeConverter(converter.GetType());
-                }
-                catch { }
-                ignoreUnmatchedBuilder = ignoreUnmatchedBuilder.WithTypeConverter(converter);
-                converters.RemoveAll(conv => converter.GetType() == conv.GetType());
-                converters.Add(converter);
-                Rebuild();
-            }
+            _builder.AddTypeConverter(converter);
+        }
+
+        /// <summary>
+        /// Add an internally tagged type to the yaml deserializer.
+        /// </summary>
+        /// <typeparam name="TBase">The type in your actual config structure that
+        /// indicates that this is a custom mapping.
+        /// </typeparam>
+        /// <param name="key">The key for the discriminator, i.e. "type"</param>
+        /// <param name="variants">A map from discriminator key value to type</param>
+        public static void AddDiscriminatedType<TBase>(string key, IDictionary<string, Type> variants)
+        {
+            _builder.AddDiscriminatedType<TBase>(key, variants);
         }
 
         /// <summary>
@@ -308,11 +229,7 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         public static void IgnoreUnmatchedProperties()
         {
-            ignoreUnmatchedProperties = true;
-            lock (_deserializerLock)
-            {
-                Rebuild();
-            }
+            _builder.IgnoreUnmatchedProperties = true;
         }
 
         /// <summary>
@@ -320,11 +237,7 @@ namespace Cognite.Extractor.Configuration
         /// </summary>
         public static void DisallowUnmatchedProperties()
         {
-            ignoreUnmatchedProperties = false;
-            lock (_deserializerLock)
-            {
-                Rebuild();
-            }
+            _builder.IgnoreUnmatchedProperties = false;
         }
 
         /// <summary>
@@ -333,14 +246,7 @@ namespace Cognite.Extractor.Configuration
         /// <param name="config"></param>
         public static void AddKeyVault(KeyVaultConfig config)
         {
-            if (config == null) throw new ArgumentNullException(nameof(config));
-
-            lock (_deserializerLock)
-            {
-                config.AddKeyVault(builder);
-                config.AddKeyVault(ignoreUnmatchedBuilder);
-                Rebuild();
-            }
+            _builder.AddKeyVault(config);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508: Avoid dead conditional code", Justification = "Other methods using this can still pass null as parameter")]
@@ -431,22 +337,7 @@ namespace Cognite.Extractor.Configuration
         {
             if (config is null) return "";
 
-            var builder = new SerializerBuilder()
-                .WithTypeInspector(insp => new DefaultFilterTypeInspector(
-                    insp,
-                    toAlwaysKeep,
-                    toIgnore,
-                    namePrefixes,
-                    converters,
-                    allowReadOnly))
-                .WithNamingConvention(HyphenatedNamingConvention.Instance);
-
-            foreach (var converter in converters)
-            {
-                builder.WithTypeConverter(converter);
-            }
-
-            var serializer = builder.Build();
+            var serializer = _builder.GetSafeSerializer(toAlwaysKeep, toIgnore, namePrefixes, allowReadOnly);
 
             string raw = serializer.Serialize(config);
 
@@ -469,230 +360,6 @@ namespace Cognite.Extractor.Configuration
             raw = fixListIndentRegex.Replace(raw, "  $1");
 
             return raw;
-        }
-    }
-
-    internal class TemplatedValueDeserializer : INodeDeserializer
-    {
-        public TemplatedValueDeserializer()
-        {
-        }
-
-        private static bool IsNumericType(Type t)
-        {
-            var tc = Type.GetTypeCode(t);
-            return tc >= TypeCode.SByte && tc <= TypeCode.Decimal;
-        }
-
-        private static readonly Regex _envRegex = new Regex(@"\$\{([A-Za-z0-9_]+)\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
-        bool INodeDeserializer.Deserialize(IParser parser, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
-        {
-            if (expectedType != typeof(string) && !IsNumericType(expectedType))
-            {
-                value = null;
-                return false;
-            }
-
-            if (parser.Accept<Scalar>(out var scalar) && scalar != null && _envRegex.IsMatch(scalar.Value))
-            {
-                parser.MoveNext();
-                value = Replace(scalar.Value);
-                return true;
-            }
-            value = null;
-            return false;
-        }
-
-        public static string Replace(string toReplace)
-        {
-            return _envRegex.Replace(toReplace, LookupEnvironment);
-        }
-
-        private static string LookupEnvironment(Match match)
-        {
-            return Environment.GetEnvironmentVariable(match.Groups[1].Value) ?? "";
-        }
-    }
-
-    /// <summary>
-    /// YamlDotNet type inspector, used to filter out default values from the generated config.
-    /// Instead of serializing the entire config file, which ends up being complicated and difficult to read,
-    /// this just serializes the properties that do not simply equal the default values.
-    /// This does sometimes produce empty arrays, but we can strip those later.
-    /// </summary>
-    internal class DefaultFilterTypeInspector : TypeInspectorSkeleton
-    {
-        private readonly ITypeInspector _innerTypeDescriptor;
-        private readonly HashSet<string> _toAlwaysKeep;
-        private readonly HashSet<string> _toIgnore;
-        private readonly IEnumerable<string> _namePrefixes;
-        private readonly IEnumerable<IYamlTypeConverter> _customConverters;
-        private readonly bool _allowReadOnly;
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="innerTypeDescriptor">Inner type descriptor</param>
-        /// <param name="toAlwaysKeep">Fields to always keep</param>
-        /// <param name="toIgnore">Fields to exclude</param>
-        /// <param name="namePrefixes">Prefixes on full type names for types that should be explored internally</param>
-        /// <param name="customConverters">List of registered custom converters.</param>
-        /// <param name="allowReadOnly">Allow read only properties</param>
-        public DefaultFilterTypeInspector(
-            ITypeInspector innerTypeDescriptor,
-            IEnumerable<string> toAlwaysKeep,
-            IEnumerable<string> toIgnore,
-            IEnumerable<string> namePrefixes,
-            IEnumerable<IYamlTypeConverter> customConverters,
-            bool allowReadOnly)
-        {
-            _innerTypeDescriptor = innerTypeDescriptor;
-            _toAlwaysKeep = new HashSet<string>(toAlwaysKeep);
-            _toIgnore = new HashSet<string>(toIgnore);
-            _namePrefixes = namePrefixes;
-            _allowReadOnly = allowReadOnly;
-            _customConverters = customConverters;
-        }
-
-        /// <inheritdoc />
-        public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
-        {
-            if (container is null || type is null) return Enumerable.Empty<IPropertyDescriptor>();
-            var props = _innerTypeDescriptor.GetProperties(type, container);
-
-            object? dfs = null;
-            try
-            {
-                dfs = Activator.CreateInstance(type);
-                var genD = type.GetMethod("GenerateDefaults");
-                genD?.Invoke(dfs, null);
-            }
-            catch { }
-
-            props = props.Where(p =>
-            {
-                var name = PascalCaseNamingConvention.Instance.Apply(p.Name);
-
-                // Some config objects have private properties, since this is a write-back of config we shouldn't save those
-                if (!p.CanWrite && !_allowReadOnly) return false;
-                // Some custom properties are kept on the config object for convenience
-                if (_toIgnore.Contains(name)) return false;
-                // Some should be kept to encourage users to set them
-                if (_toAlwaysKeep.Contains(name)) return true;
-
-                var prop = type.GetProperty(name);
-                object? df = null;
-                if (dfs != null) df = prop?.GetValue(dfs);
-                var val = prop?.GetValue(container);
-
-                if (val != null && prop != null && !type.IsValueType
-                    && _namePrefixes.Any(prefix => prop.PropertyType.FullName!.StartsWith(prefix, StringComparison.InvariantCulture))
-                    // Any type covered by a custom converter shouldn't be passed through here. We don't know
-                    // how those are serialized, it is likely not just by listing their properties.
-                    && _customConverters.All(conv => !conv.Accepts(prop.PropertyType)))
-                {
-                    var pr = GetProperties(prop.PropertyType, val);
-                    if (!pr.Any()) return false;
-                }
-
-
-                // No need to emit empty lists.
-                if (val != null && (val is IEnumerable list) && !list.GetEnumerator().MoveNext()) return false;
-
-                // Compare the value of each property with its default, and check for empty arrays, don't save those.
-                // This creates minimal config files
-                return df != null && !df.Equals(val) || df == null && val != null;
-            });
-
-            return props;
-        }
-    }
-
-    internal class ListOrStringConverter : IYamlTypeConverter
-    {
-        private static readonly Regex _whitespaceRegex = new Regex(@"\s", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        public bool Accepts(Type type)
-        {
-            return type == typeof(ListOrSpaceSeparated);
-        }
-
-        public object? ReadYaml(IParser parser, Type type)
-        {
-            if (parser.TryConsume<Scalar>(out var scalar))
-            {
-                var items = _whitespaceRegex.Split(scalar.Value);
-                return new ListOrSpaceSeparated(items.Select(TemplatedValueDeserializer.Replace).ToArray());
-            }
-            if (parser.TryConsume<SequenceStart>(out _))
-            {
-                var items = new List<string>();
-                while (!parser.Accept<SequenceEnd>(out _))
-                {
-                    var seqScalar = parser.Consume<Scalar>();
-                    items.Add(seqScalar.Value);
-                }
-
-                parser.Consume<SequenceEnd>();
-
-                return new ListOrSpaceSeparated(items.Select(TemplatedValueDeserializer.Replace).ToArray());
-            }
-
-            throw new InvalidOperationException("Expected list or value");
-        }
-
-        public void WriteYaml(IEmitter emitter, object? value, Type type)
-        {
-            emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, true,
-                SequenceStyle.Block, Mark.Empty, Mark.Empty));
-            var it = value as ListOrSpaceSeparated;
-            foreach (var elem in it!.Values)
-            {
-                emitter.Emit(new Scalar(AnchorName.Empty, TagName.Empty, elem, ScalarStyle.DoubleQuoted, false, true));
-            }
-            emitter.Emit(new SequenceEnd());
-        }
-    }
-
-    internal class YamlEnumConverter : IYamlTypeConverter
-    {
-        public bool Accepts(Type type)
-        {
-            return type.IsEnum || (Nullable.GetUnderlyingType(type)?.IsEnum ?? false);
-        }
-
-        public object? ReadYaml(IParser parser, Type type)
-        {
-            var scalar = parser.Consume<Scalar>();
-
-            if (scalar.Value == null)
-            {
-                if (Nullable.GetUnderlyingType(type) != null)
-                {
-                    return null;
-                }
-                throw new YamlException($"Failed to deserialize null value to enum {type.Name}");
-            }
-
-            type = Nullable.GetUnderlyingType(type) ?? type;
-
-            var values = type.GetMembers()
-                .Select(m => (m.GetCustomAttributes<EnumMemberAttribute>(true).Select(f => f.Value).FirstOrDefault(), m))
-                .Where(pair => !string.IsNullOrEmpty(pair.Item1))
-                .ToDictionary(pair => pair.Item1!, pair => pair.m);
-
-            if (values.TryGetValue(scalar.Value, out var enumMember))
-            {
-                return Enum.Parse(type, enumMember.Name, true);
-            }
-            return Enum.Parse(type, scalar.Value, true);
-        }
-
-        public void WriteYaml(IEmitter emitter, object? value, Type type)
-        {
-            if (value == null) return;
-            var member = type.GetMember(value.ToString() ?? "").FirstOrDefault();
-            var stringValue = member?.GetCustomAttributes<EnumMemberAttribute>(true)?.Select(f => f.Value)?.FirstOrDefault() ?? value.ToString();
-            emitter.Emit(new Scalar(AnchorName.Empty, TagName.Empty, stringValue!, ScalarStyle.DoubleQuoted, false, true));
         }
     }
 }

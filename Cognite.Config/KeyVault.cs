@@ -97,22 +97,6 @@ namespace Cognite.Extractor.KeyVault
             );
             return _client;
         }
-
-        /// <summary>
-        /// Add a key vault node deserializer and tag mapping to a yaml deserializer builder.
-        /// </summary>
-        /// <param name="builder">Builder to add key vault support to</param>
-        internal void AddKeyVault(DeserializerBuilder builder)
-        {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
-            try
-            {
-                builder.WithoutNodeDeserializer(typeof(KeyVaultResolver));
-            }
-            catch { }
-
-            builder.WithNodeDeserializer(new KeyVaultResolver(this));
-        }
     }
 
     internal class KeyVaultResolver : INodeDeserializer
