@@ -273,7 +273,7 @@ namespace Cognite.Extractor.Utils
             services.AddCogniteClient(appId, userAgent, addLogger, addMetrics, true, requireDestination);
             if (addStateStore) services.AddStateStore();
             if (addLogger) services.AddLogger(buildLogger);
-            if (addMetrics) services.AddMetrics();
+            if (addMetrics) services.AddCogniteMetrics();
             services.AddExtractionRun(addLogger);
             return config;
         }

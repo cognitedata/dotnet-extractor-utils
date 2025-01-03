@@ -14,7 +14,7 @@ using Polly.Timeout;
 using Prometheus;
 using Cognite.Extractor.Common;
 
-namespace Cognite.Extractor.Metrics 
+namespace Cognite.Extractor.Metrics
 {
     /// <summary>
     /// Utility class for configuring <see href="https://prometheus.io/">Prometheus</see> for monitoring and metrics.
@@ -35,7 +35,8 @@ namespace Cognite.Extractor.Metrics
         /// <param name="clientFactory">A pre-configured http client factory</param>
         /// <param name="config">Configuration object</param>
         /// <param name="logger">Logger</param>
-        public MetricsService(IHttpClientFactory clientFactory, ILogger<MetricsService> logger, MetricsConfig? config = null) {
+        public MetricsService(IHttpClientFactory clientFactory, ILogger<MetricsService> logger, MetricsConfig? config = null)
+        {
             _clientFactory = clientFactory;
             _config = config;
             _logger = logger;
@@ -45,8 +46,9 @@ namespace Cognite.Extractor.Metrics
         /// <summary>
         /// Starts a Prometheus server for scrape and multiple push gateway destinations, based on the configuration. 
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000: Dispose objects before losing scope", Justification = "StopAsync() will dispose of the pusher")]        
-        public void Start() {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000: Dispose objects before losing scope", Justification = "StopAsync() will dispose of the pusher")]
+        public void Start()
+        {
             if (_config == null || (_config.PushGateways == null && _config.Server == null))
             {
                 _logger.LogWarning("Metrics disabled: metrics configuration missing");
@@ -66,7 +68,8 @@ namespace Cognite.Extractor.Metrics
                 }
             }
 
-            if (_config.Server != null) {
+            if (_config.Server != null)
+            {
                 _server = StartServer(_config.Server);
             }
         }
@@ -89,7 +92,8 @@ namespace Cognite.Extractor.Metrics
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000: Dispose objects before losing scope", Justification = "StopAsync() will dispose of the pusher")]
-        private MetricPusher? StartPusher(PushGatewayConfig config) {
+        private MetricPusher? StartPusher(PushGatewayConfig config)
+        {
             if (config.Host.TrimToNull() == null || config.Job.TrimToNull() == null)
             {
                 _logger.LogWarning("Invalid metrics push destination (missing Host or Job)");
@@ -99,17 +103,19 @@ namespace Cognite.Extractor.Metrics
             _logger.LogInformation("Pushing metrics to {PushgatewayHost} with job name {PushgatewayJob}", config.Host, config.Job);
 
             var uri = new Uri(config.Host!);
-            if (uri.Segments.Last() != "metrics" && uri.Segments.Last() != "metrics/") {
+            if (uri.Segments.Last() != "metrics" && uri.Segments.Last() != "metrics/")
+            {
                 uri = new Uri(uri, "metrics/");
             }
 
             var pusher = new MetricPusher(new MetricPusherOptions
             {
-                Endpoint =  uri.ToString(),
+                Endpoint = uri.ToString(),
                 Job = config.Job,
                 IntervalMilliseconds = config.PushInterval * 1_000L,
                 HttpClientProvider = () => CreateClient(config),
-                OnError = (e) => {
+                OnError = (e) =>
+                {
                     if (e is TimeoutRejectedException)
                     {
                         _logger.LogError("Metrics push attempt timed out after retrying");
@@ -120,7 +126,7 @@ namespace Cognite.Extractor.Metrics
                     }
                 },
             });
-            try 
+            try
             {
                 pusher.Start();
             }
@@ -191,8 +197,9 @@ namespace Cognite.Extractor.Metrics
     /// <summary>
     /// Extension utilities for metrics.
     /// </summary>
-    public static class MetricsExtensions {
-        
+    public static class MetricsExtensions
+    {
+
         /// <summary>
         /// Adds a configured metrics service to the <paramref name="services"/> collection
         /// Also adds a named <see cref="IHttpClientFactory"/> to be used by the push gateways, with
@@ -200,7 +207,7 @@ namespace Cognite.Extractor.Metrics
         /// </summary>
         /// <param name="services"></param>
         /// <param name="pushTimeout">Timeout in milliseconds for each push attempt</param>
-        public static void AddMetrics(this IServiceCollection services, int pushTimeout = 80_000)
+        public static void AddCogniteMetrics(this IServiceCollection services, int pushTimeout = 80_000)
         {
             services.AddHttpClient(MetricsService.HttpClientName, c => c.Timeout = Timeout.InfiniteTimeSpan)
                 .AddPolicyHandler((p, m) => GetRetryPolicy(p.GetRequiredService<ILogger<MetricServer>>()))
@@ -218,7 +225,8 @@ namespace Cognite.Extractor.Metrics
                 .WaitAndRetryAsync(
                     3, // Don't need to retry too many times, as data will be pushed in the next push interval.
                     retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                    (ex, ts) => {
+                    (ex, ts) =>
+                    {
                         if (ex.Result != null)
                         {
                             logger.LogWarning("{Method} {Uri} failed with status code: {Code}. Retrying in {Time} s. {Message}",

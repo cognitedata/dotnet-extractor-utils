@@ -18,7 +18,7 @@ using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {
-    public class MetricsTest 
+    public class MetricsTest
     {
         private readonly ITestOutputHelper _output;
         public MetricsTest(ITestOutputHelper output)
@@ -31,7 +31,8 @@ namespace ExtractorUtils.Test.Unit
         private const string endpoint = @"http://localhost101:9091";
         private const string job = "unit-test-job";
 
-        private static async Task<HttpResponseMessage> MockSendAsync(HttpRequestMessage message , CancellationToken token) {
+        private static async Task<HttpResponseMessage> MockSendAsync(HttpRequestMessage message, CancellationToken token)
+        {
             var content = await message.Content.ReadAsStringAsync(token);
             var auth = message.Headers.Authorization;
 
@@ -41,7 +42,7 @@ namespace ExtractorUtils.Test.Unit
             Assert.Contains("TYPE extractor_utils_test_count counter", content);
             Assert.NotNull(auth);
             Assert.Equal("Basic", auth.Scheme);
-            
+
             // Return 200
             var response = new HttpResponseMessage
             {
@@ -51,7 +52,8 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public async Task TestMetricsAsync() {
+        public async Task TestMetricsAsync()
+        {
             Metrics.SuppressDefaultMetrics();
 
             string path = "test-metrics-config.yml";
@@ -70,15 +72,16 @@ namespace ExtractorUtils.Test.Unit
 
             // Mock http client factory
             var (factory, handler) = TestUtilities.GetMockedHttpClientFactory(MockSendAsync);
-            
+
             // Setup services
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(factory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
-            services.AddMetrics();
+            services.AddCogniteMetrics();
 
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var metrics = provider.GetRequiredService<MetricsService>();
                 metrics.Start();
                 testCount.Inc();
@@ -89,16 +92,17 @@ namespace ExtractorUtils.Test.Unit
             // Verify that the metrics are sent the prometheus endpoint at least once 
             handler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
+                    "SendAsync",
                     Times.AtLeastOnce(), // push every second
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
-            
+
             File.Delete(path);
         }
 
         [Fact]
-        public async Task TestDisableMetricsAsync() {
+        public async Task TestDisableMetricsAsync()
+        {
             Metrics.SuppressDefaultMetrics();
 
             string path = "test-disable-metrics-config.yml";
@@ -108,14 +112,15 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: warning",
                                @"    path: metrics-logs/log.txt"};
             File.WriteAllLines(path, lines);
-            
+
             // Setup services
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
-            services.AddMetrics();
+            services.AddCogniteMetrics();
 
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var metrics = provider.GetRequiredService<MetricsService>();
                 metrics.Start();
                 await metrics.Stop();
@@ -134,7 +139,8 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public async Task TestInvalidPushGatewayAsync() {
+        public async Task TestInvalidPushGatewayAsync()
+        {
             Metrics.SuppressDefaultMetrics();
 
             string path = "test-invalid-pg-config.yml";
@@ -148,14 +154,15 @@ namespace ExtractorUtils.Test.Unit
                                 "    level: warning",
                                @"    path: pg-logs/log.txt"};
             File.WriteAllLines(path, lines);
-            
+
             // Setup services
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
-            services.AddMetrics();
+            services.AddCogniteMetrics();
 
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var metrics = provider.GetRequiredService<MetricsService>();
                 metrics.Start();
                 await metrics.Stop();
@@ -173,7 +180,8 @@ namespace ExtractorUtils.Test.Unit
             File.Delete(path);
         }
 
-        private static Task<HttpResponseMessage> MockNoAssertSendAsync(HttpRequestMessage message , CancellationToken token) {
+        private static Task<HttpResponseMessage> MockNoAssertSendAsync(HttpRequestMessage message, CancellationToken token)
+        {
             return Task.FromResult(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK
@@ -181,7 +189,8 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public async Task TestMultipeGatewaysAsync() {
+        public async Task TestMultipeGatewaysAsync()
+        {
             Metrics.SuppressDefaultMetrics();
             string endpoint2 = @"http://localhost202:9091";
             string job2 = "unit-test-job2";
@@ -201,15 +210,16 @@ namespace ExtractorUtils.Test.Unit
 
             // Mock http client factory
             var (factory, handler) = TestUtilities.GetMockedHttpClientFactory(MockNoAssertSendAsync);
-            
+
             // Setup services
             var services = new ServiceCollection();
             services.AddSingleton<IHttpClientFactory>(factory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
-            services.AddMetrics();
+            services.AddCogniteMetrics();
 
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var metrics = provider.GetRequiredService<MetricsService>();
                 metrics.Start();
                 testCount.Inc();
@@ -220,14 +230,14 @@ namespace ExtractorUtils.Test.Unit
             // Verify that the metrics are sent to both endpoints at least once 
             handler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
+                    "SendAsync",
                     Times.AtLeastOnce(), // push every second
                     ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint}/metrics/job/{job}"),
                     ItExpr.IsAny<CancellationToken>());
 
             handler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
+                    "SendAsync",
                     Times.AtLeastOnce(), // push every second
                     ItExpr.Is<HttpRequestMessage>(m => m.RequestUri.ToString() == $@"{endpoint2}/metrics/job/{job2}"),
                     ItExpr.IsAny<CancellationToken>());
