@@ -34,8 +34,11 @@ namespace Cognite.Extractor.Configuration
         {
             try
             {
-                _builder.IgnoreUnmatchedProperties = ignoreUnmatched;
-                return _builder.Deserializer.Deserialize<T>(yaml);
+                lock (_builder)
+                {
+                    _builder.IgnoreUnmatchedProperties = ignoreUnmatched;
+                    return _builder.Deserializer.Deserialize<T>(yaml);
+                }
             }
             catch (YamlException ye)
             {
@@ -59,8 +62,11 @@ namespace Cognite.Extractor.Configuration
             {
                 using (var reader = File.OpenText(path))
                 {
-                    _builder.IgnoreUnmatchedProperties = ignoreUnmatched ?? false;
-                    return _builder.Deserializer.Deserialize<T>(reader);
+                    lock (_builder)
+                    {
+                        _builder.IgnoreUnmatchedProperties = ignoreUnmatched ?? false;
+                        return _builder.Deserializer.Deserialize<T>(reader);
+                    }
                 }
             }
             catch (System.IO.FileNotFoundException fnfe)
