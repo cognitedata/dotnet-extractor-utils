@@ -492,7 +492,9 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(ErrorType.ItemMissing, err.Type);
 
                 Assert.True(tsResult.Errors == null || !tsResult.Errors.Any());
-                Assert.Equal(2, tsResult.Results.Count());
+                var createdCount = tsResult.Results.Count();
+                // Not perfectly consistent, since FDM isn't immediately consistent.
+                Assert.True(createdCount == 2 || createdCount == 3);
             }
             finally
             {
