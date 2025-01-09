@@ -480,6 +480,26 @@ namespace ExtractorUtils.Test.Unit
                 return fail;
             }
 
+            if (uri.Contains("/token/inspect"))
+            {
+                dynamic inspectResponse = new ExpandoObject();
+                inspectResponse.projects = new List<ExpandoObject>();
+                dynamic project = new ExpandoObject();
+                project.projectUrlName = _project;
+                inspectResponse.projects.Add(project);
+
+                responseBody = JsonConvert.SerializeObject(inspectResponse);
+                var msg = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(responseBody)
+                };
+
+                msg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                msg.Headers.Add("x-request-id", "1");
+                return msg;
+            }
+
             if (uri.Contains("/timeseries/byids"))
             {
                 return await CogniteTest.MockEnsureTimeSeriesSendAsync(message, token);

@@ -84,7 +84,8 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 Func<IEnumerable<string>, IEnumerable<EventCreate>> createFunction =
-                    (idxs) => {
+                    (idxs) =>
+                    {
                         var toCreate = new List<EventCreate>();
                         foreach (var id in idxs)
                         {
@@ -165,7 +166,8 @@ namespace ExtractorUtils.Test.Unit
                     return Task.CompletedTask;
                 }))
                 {
-                    var enqueueTask = Task.Run(async () => {
+                    var enqueueTask = Task.Run(async () =>
+                    {
                         while (index < 13)
                         {
                             queue.Enqueue(new EventCreate
@@ -198,7 +200,8 @@ namespace ExtractorUtils.Test.Unit
                     return Task.CompletedTask;
                 }))
                 {
-                    var enqueueTask = Task.Run(async () => {
+                    var enqueueTask = Task.Run(async () =>
+                    {
                         while (index < 23)
                         {
                             queue.Enqueue(new EventCreate
@@ -323,6 +326,26 @@ namespace ExtractorUtils.Test.Unit
                 fail.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 fail.Headers.Add("x-request-id", "1");
                 return fail;
+            }
+
+            if (uri.Contains("/token/inspect"))
+            {
+                dynamic inspectResponse = new ExpandoObject();
+                inspectResponse.projects = new List<ExpandoObject>();
+                dynamic project = new ExpandoObject();
+                project.projectUrlName = _project;
+                inspectResponse.projects.Add(project);
+
+                responseBody = JsonConvert.SerializeObject(inspectResponse);
+                var msg = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(responseBody)
+                };
+
+                msg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                msg.Headers.Add("x-request-id", "1");
+                return msg;
             }
 
             var statusCode = HttpStatusCode.OK;

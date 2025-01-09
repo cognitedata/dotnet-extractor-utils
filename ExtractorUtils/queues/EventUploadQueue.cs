@@ -151,7 +151,7 @@ namespace Cognite.Extractor.Utils
                     }
                     catch (Exception ex)
                     {
-                        DestLogger.LogTrace("Failed to connect to CDF for inserting events: {msg}", ex.Message);
+                        DestLogger.LogTrace(ex, "Failed to connect to CDF for inserting events: {msg}", ex.Message);
                         connected = false;
                     }
                     if (connected)
