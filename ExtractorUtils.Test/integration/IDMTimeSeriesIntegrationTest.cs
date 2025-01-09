@@ -2,11 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Cognite.Extensions;
 using Cognite.Extensions.DataModels;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Common;
+using Cognite.Extractor.Utils;
 using CogniteSdk;
 using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
@@ -381,7 +383,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Single(iErr.DataPoints);
                 Assert.Equal(tss[2].ToString(), ((Identity)iErr.Id).ToString());
 
-                tester.Config.Cognite.NanReplacement = 123;
+                typeof(CogniteDestination).GetField("_nanReplacement", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(tester.DestinationWithIDM, new double?(123));
 
                 result = await tester.DestinationWithIDM.InsertDataPointsIDMAsync(GetCreates(), SanitationMode.Clean, RetryMode.None, tester.Source.Token);
 

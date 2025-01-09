@@ -76,7 +76,6 @@ namespace ExtractorUtils.Test.Unit
 
                 return new Authenticator(conf.IdpAuthentication, clientFactory.CreateClient("AuthenticatorClient"), logger);
             });
-            services.AddHttpClient<IAuthenticator, Authenticator>();
             using (var provider = services.BuildServiceProvider())
             {
                 var auth = provider.GetRequiredService<IAuthenticator>();

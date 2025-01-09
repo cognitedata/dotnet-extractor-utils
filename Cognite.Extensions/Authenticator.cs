@@ -241,7 +241,7 @@ namespace Cognite.Extensions
 
                 ClientId = config.ClientId ?? throw new ConfigurationException("Missing client ID");
                 ClientSecret = config.Secret ?? throw new ConfigurationException("Missing client secret");
-                TokenUrl = new Uri(config.TokenUrl);
+                TokenUrl = new Uri(config.TokenUrl ?? throw new ConfigurationException("Missing token URL"));
                 Scopes = config.Scopes != null ? string.Join(" ", config.Scopes) : null;
                 Audience = config.Audience;
                 Resource = config.Resource;
@@ -260,7 +260,7 @@ namespace Cognite.Extensions
 
                 ClientId = config.ClientId ?? throw new ConfigurationException("Missing client ID");
                 ClientSecret = config.ClientSecret ?? throw new ConfigurationException("Missing client secret");
-                TokenUrl = new Uri(config.TokenUrl);
+                TokenUrl = new Uri(config.TokenUrl ?? throw new ConfigurationException("Missing token URL"));
                 Scopes = config.Scopes != null ? string.Join(" ", config.Scopes) : null;
                 Audience = config.Audience;
                 Resource = config.Resource;
