@@ -7,7 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.StateStorage;
+using Cognite.Extractor.Utils.Unstable;
+using Cognite.ExtractorUtils.Unstable.Configuration;
 using CogniteSdk;
 using CogniteSdk.Beta;
 using Microsoft.Extensions.Logging;
@@ -25,7 +28,23 @@ namespace Cognite.Extractor.Utils
     {
         private readonly Client _client;
         private readonly ILogger<CogniteDestination> _logger;
-        private readonly CogniteConfig _config;
+        private readonly ChunkingConfig _chunking;
+        private readonly ThrottlingConfig _throttling;
+        private readonly string _project;
+        private readonly double? _nanReplacement;
+
+        /// <summary>
+        /// Configuration for throttling.
+        /// </summary>
+        protected ThrottlingConfig Throttling => _throttling;
+        /// <summary>
+        /// Configuration for chunking.
+        /// </summary>
+        protected ChunkingConfig Chunking => _chunking;
+        /// <summary>
+        /// Configuration for replacing NaN with a number.
+        /// </summary>
+        protected double? NanReplacement => _nanReplacement;
 
         /// <summary>
         /// The configured Cognite client used by this destination. Can be used to
@@ -41,9 +60,31 @@ namespace Cognite.Extractor.Utils
         /// <param name="config">Configuration object</param>
         public CogniteDestination(Client client, ILogger<CogniteDestination> logger, CogniteConfig config)
         {
+            if (config == null) throw new ArgumentNullException(nameof(config));
             _client = client;
             _logger = logger;
-            _config = config;
+            _chunking = config.CdfChunking;
+            _throttling = config.CdfThrottling;
+            _project = config.Project ?? throw new ConfigurationException("Missing project");
+            _nanReplacement = config.NanReplacement;
+        }
+
+        /// <summary>
+        /// Initializes the Cognite destination with the provided parameters
+        /// </summary>
+        /// <param name="client"><see cref="Client"/> object</param>
+        /// <param name="logger">Logger</param>
+        /// <param name="config">Configuration object</param>
+        /// <param name="project">Configured project</param>
+        public CogniteDestination(Client client, ILogger<CogniteDestination> logger, BaseCogniteConfig config, string project)
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            _client = client;
+            _logger = logger;
+            _chunking = config.CdfChunking;
+            _throttling = config.CdfThrottling;
+            _project = project ?? throw new ConfigurationException("Missing project");
+            _nanReplacement = config.NanReplacement;
         }
 
         /// <summary>
@@ -53,7 +94,7 @@ namespace Cognite.Extractor.Utils
         /// <exception cref="CogniteUtilsException">Thrown when credentials are invalid</exception>
         public async Task TestCogniteConfig(CancellationToken token)
         {
-            await _client.TestCogniteConfig(_config, token).ConfigureAwait(false);
+            await _client.TestCogniteConfig(_project, token).ConfigureAwait(false);
         }
 
         #region timeseries
@@ -84,8 +125,8 @@ namespace Cognite.Extractor.Utils
             return await _client.TimeSeries.GetOrCreateTimeSeriesAsync(
                 externalIds,
                 buildTimeSeries,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _chunking.TimeSeries,
+                _throttling.TimeSeries,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -117,8 +158,8 @@ namespace Cognite.Extractor.Utils
             return await _client.TimeSeries.GetOrCreateTimeSeriesAsync(
                 externalIds,
                 buildTimeSeries,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _chunking.TimeSeries,
+                _throttling.TimeSeries,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -148,8 +189,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
             return await _client.TimeSeries.EnsureTimeSeriesExistsAsync(
                 timeSeries,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _chunking.TimeSeries,
+                _throttling.TimeSeries,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -175,8 +216,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Updating {Number} timeseries in CDF", updates.Count());
             return await _client.TimeSeries.UpdateAsync(
                 updates,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _chunking.TimeSeries,
+                _throttling.TimeSeries,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -208,8 +249,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Upserting {Number} timseries in CDF", upserts.Count());
             return await _client.TimeSeries.UpsertAsync(
                 upserts,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
+                _chunking.TimeSeries,
+                _throttling.TimeSeries,
                 retryMode,
                 sanitationMode,
                 options,
@@ -245,8 +286,8 @@ namespace Cognite.Extractor.Utils
             return await _client.Assets.GetOrCreateAsync(
                 externalIds,
                 buildAssets,
-                _config.CdfChunking.Assets,
-                _config.CdfThrottling.Assets,
+                _chunking.Assets,
+                _throttling.Assets,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -277,8 +318,8 @@ namespace Cognite.Extractor.Utils
             return await _client.Assets.GetOrCreateAsync(
                 externalIds,
                 buildAssets,
-                _config.CdfChunking.Assets,
-                _config.CdfThrottling.Assets,
+                _chunking.Assets,
+                _throttling.Assets,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -307,8 +348,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Ensuring that {Number} assets exist in CDF", assets.Count());
             return await _client.Assets.EnsureExistsAsync(
                 assets,
-                _config.CdfChunking.Assets,
-                _config.CdfThrottling.Assets,
+                _chunking.Assets,
+                _throttling.Assets,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -334,8 +375,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Updating {Number} assets in CDF", updates.Count());
             return await _client.Assets.UpdateAsync(
                 updates,
-                _config.CdfChunking.Assets,
-                _config.CdfThrottling.Assets,
+                _chunking.Assets,
+                _throttling.Assets,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -367,8 +408,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Upserting {Number} assets in CDF", upserts.Count());
             return await _client.Assets.UpsertAsync(
                 upserts,
-                _config.CdfChunking.Assets,
-                _config.CdfThrottling.Assets,
+                _chunking.Assets,
+                _throttling.Assets,
                 retryMode,
                 sanitationMode,
                 options,
@@ -404,15 +445,15 @@ namespace Cognite.Extractor.Utils
             return await DataPointExtensions.InsertAsync(
                 _client,
                 points,
-                _config.CdfChunking.DataPointTimeSeries,
-                _config.CdfChunking.DataPoints,
-                _config.CdfThrottling.DataPoints,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
-                _config.CdfChunking.DataPointsGzipLimit,
+                _chunking.DataPointTimeSeries,
+                _chunking.DataPoints,
+                _throttling.DataPoints,
+                _chunking.TimeSeries,
+                _throttling.TimeSeries,
+                _chunking.DataPointsGzipLimit,
                 sanitationMode,
                 retryMode,
-                _config.NanReplacement,
+                _nanReplacement,
                 token).ConfigureAwait(false);
         }
 
@@ -439,15 +480,15 @@ namespace Cognite.Extractor.Utils
             return await DataPointExtensions.InsertAsyncCreateMissing(
                 _client,
                 points,
-                _config.CdfChunking.DataPointTimeSeries,
-                _config.CdfChunking.DataPoints,
-                _config.CdfThrottling.DataPoints,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
-                _config.CdfChunking.DataPointsGzipLimit,
+                _chunking.DataPointTimeSeries,
+                _chunking.DataPoints,
+                _throttling.DataPoints,
+                _chunking.TimeSeries,
+                _throttling.TimeSeries,
+                _chunking.DataPointsGzipLimit,
                 sanitationMode,
                 retryMode,
-                _config.NanReplacement,
+                _nanReplacement,
                 dataSetId,
                 token).ConfigureAwait(false);
         }
@@ -473,10 +514,10 @@ namespace Cognite.Extractor.Utils
                 ranges.Keys.Count);
             var errors = await _client.DataPoints.DeleteIgnoreErrorsAsync(
                 ranges,
-                _config.CdfChunking.DataPointDelete,
-                _config.CdfChunking.DataPointList,
-                _config.CdfThrottling.DataPoints,
-                _config.CdfThrottling.DataPoints,
+                _chunking.DataPointDelete,
+                _chunking.DataPointList,
+                _throttling.DataPoints,
+                _throttling.DataPoints,
                 token).ConfigureAwait(false);
             _logger.LogDebug("During deletion, {NumMissing} ids where not found and {NumNotConfirmed} range deletions could not be confirmed",
                 errors.IdsNotFound.Count(), errors.IdsDeleteNotConfirmed.Count());
@@ -517,8 +558,8 @@ namespace Cognite.Extractor.Utils
                 database,
                 table,
                 rows,
-                _config.CdfChunking.RawRows,
-                _config.CdfThrottling.Raw,
+                _chunking.RawRows,
+                _throttling.Raw,
                 token,
                 options).ConfigureAwait(false);
         }
@@ -553,8 +594,8 @@ namespace Cognite.Extractor.Utils
                 database,
                 table,
                 rows,
-                _config.CdfChunking.RawRows,
-                _config.CdfThrottling.Raw,
+                _chunking.RawRows,
+                _throttling.Raw,
                 token).ConfigureAwait(false);
         }
 
@@ -633,7 +674,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogDebug("Fetching all rows from database {db}, table {table}", dbName, tableName);
-            return _client.Raw.GetRowsAsync<IDictionary<string, JsonElement>>(dbName, tableName, _config.CdfChunking.RawRows, token, options);
+            return _client.Raw.GetRowsAsync<IDictionary<string, JsonElement>>(dbName, tableName, _chunking.RawRows, token, options);
         }
 
         /// <summary>
@@ -651,7 +692,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token)
         {
             _logger.LogDebug("Fetching all rows from database {db}, table {table}", dbName, tableName);
-            return _client.Raw.GetRowsAsync<T>(dbName, tableName, _config.CdfChunking.RawRows, token, options);
+            return _client.Raw.GetRowsAsync<T>(dbName, tableName, _chunking.RawRows, token, options);
         }
 
         /// <summary>
@@ -665,7 +706,7 @@ namespace Cognite.Extractor.Utils
         public Task DeleteRowsAsync(string dbName, string tableName, IEnumerable<string> rowKeys, CancellationToken token)
         {
             _logger.LogDebug("Deleting {count} rows from database {db}, table {table}", rowKeys.Count(), dbName, tableName);
-            return _client.Raw.DeleteRowsAsync(dbName, tableName, rowKeys, _config.CdfChunking.RawRowsDelete, _config.CdfThrottling.Raw, token);
+            return _client.Raw.DeleteRowsAsync(dbName, tableName, rowKeys, _chunking.RawRowsDelete, _throttling.Raw, token);
         }
         #endregion
 
@@ -690,9 +731,9 @@ namespace Cognite.Extractor.Utils
         {
             return _client.DataPoints.GetExtractedRanges(
                 ids.Select(id => (id, TimeRange.Complete)).ToList(),
-                _config.CdfChunking.DataPointList,
-                _config.CdfChunking.DataPointLatest,
-                _config.CdfThrottling.Ranges,
+                _chunking.DataPointList,
+                _chunking.DataPointLatest,
+                _throttling.Ranges,
                 latest,
                 earliest,
                 token);
@@ -718,9 +759,9 @@ namespace Cognite.Extractor.Utils
         {
             return _client.DataPoints.GetExtractedRanges(
                 ids,
-                _config.CdfChunking.DataPointList,
-                _config.CdfChunking.DataPointLatest,
-                _config.CdfThrottling.Ranges,
+                _chunking.DataPointList,
+                _chunking.DataPointLatest,
+                _throttling.Ranges,
                 latest,
                 earliest,
                 token);
@@ -756,8 +797,8 @@ namespace Cognite.Extractor.Utils
             return await _client.Events.GetOrCreateAsync(
                 externalIds,
                 buildEvents,
-                _config.CdfChunking.Events,
-                _config.CdfThrottling.Events,
+                _chunking.Events,
+                _throttling.Events,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -788,8 +829,8 @@ namespace Cognite.Extractor.Utils
             return await _client.Events.GetOrCreateAsync(
                 externalIds,
                 buildEvents,
-                _config.CdfChunking.Events,
-                _config.CdfThrottling.Events,
+                _chunking.Events,
+                _throttling.Events,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -818,8 +859,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Ensuring that {Number} events exist in CDF", events.Count());
             return await _client.Events.EnsureExistsAsync(
                 events,
-                _config.CdfChunking.Events,
-                _config.CdfThrottling.Events,
+                _chunking.Events,
+                _throttling.Events,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -853,8 +894,8 @@ namespace Cognite.Extractor.Utils
             return await _client.Sequences.GetOrCreateAsync(
                 externalIds,
                 buildSequences,
-                _config.CdfChunking.Sequences,
-                _config.CdfThrottling.Sequences,
+                _chunking.Sequences,
+                _throttling.Sequences,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -885,8 +926,8 @@ namespace Cognite.Extractor.Utils
             return await _client.Sequences.GetOrCreateAsync(
                 externalIds,
                 buildSequences,
-                _config.CdfChunking.Sequences,
-                _config.CdfThrottling.Sequences,
+                _chunking.Sequences,
+                _throttling.Sequences,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -915,8 +956,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Ensuring that {Number} events exist in CDF", sequences.Count());
             return await _client.Sequences.EnsureExistsAsync(
                 sequences,
-                _config.CdfChunking.Sequences,
-                _config.CdfThrottling.Sequences,
+                _chunking.Sequences,
+                _throttling.Sequences,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -944,10 +985,10 @@ namespace Cognite.Extractor.Utils
                 sequences.Sum(seq => seq.Rows?.Count() ?? 0), sequences.Count());
             return await _client.Sequences.InsertAsync(
                 sequences,
-                _config.CdfChunking.SequenceRowSequences,
-                _config.CdfChunking.SequenceRows,
-                _config.CdfChunking.Sequences,
-                _config.CdfThrottling.Sequences,
+                _chunking.SequenceRowSequences,
+                _chunking.SequenceRows,
+                _chunking.Sequences,
+                _throttling.Sequences,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -991,8 +1032,8 @@ namespace Cognite.Extractor.Utils
             await _client.Beta.StreamRecords.InsertRecordsAsync(
                 stream,
                 records,
-                _config.CdfChunking.StreamRecords,
-                _config.CdfThrottling.StreamRecords,
+                _chunking.StreamRecords,
+                _throttling.StreamRecords,
                 token
             ).ConfigureAwait(false);
         }

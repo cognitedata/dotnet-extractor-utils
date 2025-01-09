@@ -24,7 +24,7 @@ namespace Cognite.Extensions.Unstable
         /// </summary>
         /// <param name="provider">Service provider, must contain an HTTP client.</param>
         /// <returns>Authenticator.</returns>
-        public abstract IAuthenticator GetAuthenticator(ServiceProvider provider);
+        public abstract IAuthenticator GetAuthenticator(IServiceProvider provider);
 
         /// <summary>
         /// Get a map from discriminator value to type for this union.
@@ -97,7 +97,7 @@ namespace Cognite.Extensions.Unstable
         }
 
         /// <inheritdoc />
-        public override IAuthenticator GetAuthenticator(ServiceProvider provider)
+        public override IAuthenticator GetAuthenticator(IServiceProvider provider)
         {
             return new Authenticator(this, provider.GetRequiredService<HttpClient>(), provider.GetService<ILogger<IAuthenticator>>());
         }
@@ -136,7 +136,7 @@ namespace Cognite.Extensions.Unstable
         public ListOrSpaceSeparated? Scopes { get; set; }
 
         /// <inheritdoc />
-        public override IAuthenticator GetAuthenticator(ServiceProvider provider)
+        public override IAuthenticator GetAuthenticator(IServiceProvider provider)
         {
             return new MsalAuthenticator(
                 this,

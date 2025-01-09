@@ -18,6 +18,12 @@ namespace Cognite.Extractor.Utils.Unstable
         public string? Project { get; set; }
 
         /// <summary>
+        /// API base URL
+        /// </summary>
+        /// <value>Absolute Uri for the host. Default: https://api.cognitedata.com</value>
+        public string BaseUrl { get; set; } = "https://api.cognitedata.com";
+
+        /// <summary>
         /// Authentication config.
         /// </summary>
         public BaseAuthenticationConfig? Authentication { get; set; }
@@ -32,18 +38,6 @@ namespace Cognite.Extractor.Utils.Unstable
         /// </summary>
         public RetryConfig CdfRetries { get => _cdfRetries; set { _cdfRetries = value ?? _cdfRetries; } }
         private RetryConfig _cdfRetries = new RetryConfig();
-
-        /// <summary>
-        /// Chunking sizes towards CDF 
-        /// </summary>
-        public ChunkingConfig CdfChunking { get => _cdfChunking; set { _cdfChunking = value ?? _cdfChunking; } }
-        private ChunkingConfig _cdfChunking = new ChunkingConfig();
-
-        /// <summary>
-        /// Throttling of requests to CDF
-        /// </summary>
-        public ThrottlingConfig CdfThrottling { get => _cdfThrottling; set { _cdfThrottling = value ?? _cdfThrottling; } }
-        private ThrottlingConfig _cdfThrottling = new ThrottlingConfig();
 
         /// <summary>
         /// Enables logging of Cognite Sdk operations. Enabled by default.
