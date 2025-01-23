@@ -68,7 +68,14 @@ namespace ExtractorUtils.Test.Unit
             var config = services.AddConfig<BaseConfig>(path, 2);
             services.AddSingleton<AuthenticatorConfig>(config.Cognite.IdpAuthentication);
             services.AddTestLogging(_output);
-            services.AddHttpClient<IAuthenticator, Authenticator>();
+            services.AddTransient<IAuthenticator>(provider =>
+            {
+                var conf = provider.GetRequiredService<CogniteConfig>();
+                var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
+                var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
+
+                return new Authenticator(conf.IdpAuthentication, clientFactory.CreateClient("AuthenticatorClient"), logger);
+            });
             using (var provider = services.BuildServiceProvider())
             {
                 var auth = provider.GetRequiredService<IAuthenticator>();

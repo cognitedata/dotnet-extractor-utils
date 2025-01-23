@@ -1,41 +1,45 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
 using System;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Security;
 using System.Threading;
 using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.StateStorage;
+using Cognite.Extractor.Utils;
+using Cognite.Extractor.Utils.Unstable;
+using Cognite.ExtractorUtils.Unstable.Configuration;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.Linq;
-using System.Net.Security;
 
-namespace Cognite.Extractor.Utils
+namespace Cognite.ExtractorUtils.Unstable
 {
     /// <summary>
-    /// Utilities for the setting up a cognite destination.
+    /// Unstable version of DestinationUtils, containing methods to register clients.
     /// </summary>
-    public static class DestinationUtils
+    public static class DestinationUtilsUnstable
     {
         private static CogniteDestination GetCogniteDestination(IServiceProvider provider)
         {
             var client = provider.GetService<Client>();
             var logger = provider.GetService<ILogger<CogniteDestination>>();
-            var config = provider.GetService<CogniteConfig>();
-            if (client == null || config == null) return null!;
-            return new CogniteDestination(client, logger ?? new NullLogger<CogniteDestination>(), config);
+            var config = provider.GetService<BaseCogniteConfig>();
+            var connection = provider.GetService<ConnectionConfig>();
+            if (client == null || config == null || connection == null) return null!;
+            return new CogniteDestination(client, logger ?? new NullLogger<CogniteDestination>(), config, connection.Project!);
         }
 
         private static CogniteDestinationWithIDM GetCogniteDestinationWithIDM(IServiceProvider provider)
         {
             var client = provider.GetService<Client>();
             var logger = provider.GetService<ILogger<CogniteDestinationWithIDM>>();
-            var config = provider.GetService<CogniteConfig>();
-            if (client == null || config == null) return null!;
-            return new CogniteDestinationWithIDM(client, logger ?? new NullLogger<CogniteDestinationWithIDM>(), config);
+            var config = provider.GetService<BaseCogniteConfig>();
+            var connection = provider.GetService<ConnectionConfig>();
+            if (client == null || config == null || connection == null) return null!;
+            return new CogniteDestinationWithIDM(client, logger ?? new NullLogger<CogniteDestinationWithIDM>(), config, connection.Project!);
         }
 
 #if NETSTANDARD2_1_OR_GREATER
@@ -43,12 +47,13 @@ namespace Cognite.Extractor.Utils
         /// Return a http handler configured to ignore certificate errors based on passed CertificateConfig.
         /// </summary>
         /// <param name="config">Certificate config to use</param>
-        public static HttpClientHandler GetClientHandler(CertificateConfig? config)
+        public static HttpClientHandler GetClientHandler(Extractor.Utils.CertificateConfig? config)
         {
             var handler = new HttpClientHandler();
             if (config == null) return handler;
 
-            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => {
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
+            {
                 if (sslPolicyErrors == SslPolicyErrors.None) return true;
 
                 if (config.AcceptAll) return true;
@@ -61,7 +66,6 @@ namespace Cognite.Extractor.Utils
             return handler;
         }
 #endif
-
         private static bool _sslPolicyConfigured;
         /// <summary>
         /// Configure global handling of SSL certificates.
@@ -69,7 +73,7 @@ namespace Cognite.Extractor.Utils
         /// since .NET framework lacks local ignoring of SSL errors.
         /// </summary>
         /// <param name="config"></param>
-        public static void ConfigureSslPolicy(CertificateConfig config)
+        public static void ConfigureSslPolicy(Extractor.Utils.CertificateConfig config)
         {
             if (_sslPolicyConfigured) return;
             _sslPolicyConfigured = true;
@@ -84,6 +88,7 @@ namespace Cognite.Extractor.Utils
                 return false;
             };
         }
+
 
         /// <summary>
         /// Adds a configured Cognite client to the <paramref name="services"/> collection as a transient service
@@ -113,7 +118,7 @@ namespace Cognite.Extractor.Utils
                     {
                         try
                         {
-                            var retryConfig = provider.GetService<CogniteConfig>()?.CdfRetries;
+                            var retryConfig = provider.GetService<ConnectionConfig>()?.CdfRetries;
                             return CogniteExtensions.GetRetryPolicy(provider.GetService<ILogger<Client>>(),
                                 retryConfig?.MaxRetries, retryConfig?.MaxDelay);
                         }
@@ -126,7 +131,7 @@ namespace Cognite.Extractor.Utils
                     {
                         try
                         {
-                            var retryConfig = provider.GetService<CogniteConfig>()?.CdfRetries;
+                            var retryConfig = provider.GetService<ConnectionConfig>()?.CdfRetries;
                             return CogniteExtensions.GetTimeoutPolicy(retryConfig?.Timeout);
                         }
                         catch (ObjectDisposedException)
@@ -139,10 +144,10 @@ namespace Cognite.Extractor.Utils
                     {
                         try
                         {
-                            var certConfig = provider.GetService<CogniteConfig>()?.Certificates;
+                            var certConfig = provider.GetService<ConnectionConfig>()?.Certificates;
                             return GetClientHandler(certConfig);
                         }
-                        catch (ObjectDisposedException) 
+                        catch (ObjectDisposedException)
                         {
                             return GetClientHandler(null);
                         }
@@ -168,10 +173,10 @@ namespace Cognite.Extractor.Utils
                 {
                     try
                     {
-                        var certConfig = provider.GetService<CogniteConfig>()?.Certificates;
+                        var certConfig = provider.GetService<ConnectionConfig>()?.Certificates;
                         return GetClientHandler(certConfig);
                     }
-                    catch (ObjectDisposedException) 
+                    catch (ObjectDisposedException)
                     {
                         return GetClientHandler(null);
                     }
@@ -179,28 +184,22 @@ namespace Cognite.Extractor.Utils
 #else
                 ;
 #endif
-            services.AddTransient<IAuthenticator>(provider =>
+            services.AddTransient(provider =>
             {
-                var conf = provider.GetService<CogniteConfig>();
-                if (conf?.IdpAuthentication == null)
-                    return null!;
-                var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
-                var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
+                var conf = provider.GetService<ConnectionConfig>();
 
-                if (!string.IsNullOrWhiteSpace(conf.IdpAuthentication.Tenant)
-                    || !string.IsNullOrWhiteSpace(conf.IdpAuthentication.Certificate?.Path))
+                if (conf == null)
                 {
-                    return new MsalAuthenticator(conf.IdpAuthentication, logger, clientFactory, authClientName);
+                    return null!;
                 }
 
-                var client = clientFactory.CreateClient(authClientName);
-                return new Authenticator(conf.IdpAuthentication, client, logger);
+                return conf.Authentication?.GetAuthenticator(provider)!;
             });
 
             services.AddSingleton<IMetrics, CdfMetricCollector>();
             services.AddTransient(provider =>
             {
-                var conf = provider.GetService<CogniteConfig>();
+                var conf = provider.GetService<ConnectionConfig>();
                 if ((conf == null || conf.Project?.TrimToNull() == null) && !required) return null!;
                 var auth = provider.GetService<IAuthenticator>();
                 var cdfBuilder = provider.GetRequiredService<Client.Builder>();
@@ -223,7 +222,7 @@ namespace Cognite.Extractor.Utils
         /// Configure a CogniteSdk Client.Builder according to the <paramref name="config"/> object
         /// </summary>
         /// <param name="clientBuilder">This builder</param>
-        /// <param name="config">A <see cref="CogniteConfig"/> configuration object</param>
+        /// <param name="config">A <see cref="ConnectionConfig"/> configuration object</param>
         /// <param name="appId">Identifier of the application using the Cognite API</param>
         /// <param name="userAgent">User-agent header</param>
         /// <param name="auth">A <see cref="IAuthenticator"/> authenticator used to obtain bearer access token</param>
@@ -232,11 +231,11 @@ namespace Cognite.Extractor.Utils
         /// <param name="metrics">A <see cref="IMetrics"/> metrics collector, that the client can use
         /// to report metrics on the number and duration of API requests</param>
         /// <returns>A configured builder</returns>
-        /// <exception cref="CogniteUtilsException">Thrown when <paramref name="config"/> is null or 
+        /// <exception cref="ConfigurationException">Thrown when <paramref name="config"/> is null or 
         /// the configured project is empty</exception>
         public static Client.Builder Configure(
             this Client.Builder clientBuilder,
-            CogniteConfig config,
+            ConnectionConfig config,
             string? appId,
             string? userAgent = null,
             IAuthenticator? auth = null,
@@ -245,11 +244,11 @@ namespace Cognite.Extractor.Utils
         {
             if (config == null)
             {
-                throw new CogniteUtilsException("Cannot configure Builder: Configuration is missing");
+                throw new ConfigurationException("Cannot configure Builder: Configuration is missing");
             }
             if (config.Project?.TrimToNull() == null)
             {
-                throw new CogniteUtilsException("Cannot configure Builder: Project is not configured");
+                throw new ConfigurationException("Cannot configure Builder: Project is not configured");
             }
 
             var builder = clientBuilder
@@ -261,15 +260,15 @@ namespace Cognite.Extractor.Utils
                 builder = builder.SetUserAgent(userAgent);
             }
 
-            if (config.Host?.TrimToNull() != null)
-                builder = builder.SetBaseUrl(new Uri(config.Host));
+            if (config.BaseUrl?.TrimToNull() != null)
+                builder = builder.SetBaseUrl(new Uri(config.BaseUrl));
 
             if (auth != null)
             {
                 builder = builder.SetTokenProvider(token => auth.GetToken(token));
             }
 
-            if (config.SdkLogging != null && !config.SdkLogging.Disable && logger != null)
+            if (config.SdkLogging != null && config.SdkLogging.Enabled && logger != null)
             {
                 builder = builder
                     .SetLogLevel(config.SdkLogging.Level)

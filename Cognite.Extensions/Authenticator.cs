@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Cognite.Extractor.Common;
 using Cognite.Common;
+using Cognite.Extensions.Unstable;
 
 namespace Cognite.Extensions
 {
@@ -164,15 +165,135 @@ namespace Cognite.Extensions
         }
 
         // Injected properties
-        private readonly AuthenticatorConfig _config;
+        private readonly Options _config;
         private readonly HttpClient _client;
         private readonly ILogger<IAuthenticator> _logger;
 
-        private readonly Uri _tokenUri;
         private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
 
         private ResponseDTO? _response;
         private DateTime _requestTime;
+
+        /// <summary>
+        /// Authenticator options.
+        /// </summary>
+        public class Options
+        {
+            /// <summary>
+            /// The application (client) Id. Required.
+            /// </summary>
+            /// <value>Client Id</value>
+            public string ClientId { get; set; }
+            /// <summary>
+            /// The client secret. Required.
+            /// </summary>
+            /// <value>Secret</value>
+            public string ClientSecret { get; set; }
+            /// <summary>
+            /// Resource scopes, space separated.
+            /// </summary>
+            /// <value>Scope</value>
+            public string? Scopes { get; set; }
+            /// <summary>
+            /// Audience (optional)
+            /// </summary>
+            /// <value>Audience</value>
+            public string? Audience { get; set; }
+            /// <summary>
+            /// Resource (optional).
+            /// </summary>
+            /// <value>Secret</value>
+            public string? Resource { get; set; }
+
+            /// <summary>
+            /// URL to fetch tokens from. Required.
+            /// </summary>
+            /// <value>Tenant</value>
+            public Uri TokenUrl { get; set; }
+
+            /// <summary>
+            /// Minimum time-to-live for the token.
+            /// </summary>
+            public TimeSpan MinTtl { get; set; } = TimeSpan.FromSeconds(30);
+
+            /// <summary>
+            /// Create a new set of authenticator options with the required parameters.
+            /// </summary>
+            /// <param name="clientId">Client ID</param>
+            /// <param name="clientSecret">Client secret</param>
+            /// <param name="tokenUrl">Token URL</param>
+            public Options(string clientId, string clientSecret, Uri tokenUrl)
+            {
+                ClientId = clientId;
+                ClientSecret = clientSecret;
+                TokenUrl = tokenUrl;
+            }
+
+            /// <summary>
+            /// Create a new set of authenticator options from authenticator config.
+            /// </summary>
+            /// <param name="config"></param>
+            /// <exception cref="ArgumentNullException"></exception>
+            /// <exception cref="ConfigurationException"></exception>
+            public Options(AuthenticatorConfig config)
+            {
+                if (config is null) throw new ArgumentNullException(nameof(config));
+
+                ClientId = config.ClientId ?? throw new ConfigurationException("Missing client ID");
+                ClientSecret = config.Secret ?? throw new ConfigurationException("Missing client secret");
+                TokenUrl = new Uri(config.TokenUrl ?? throw new ConfigurationException("Missing token URL"));
+                Scopes = config.Scopes != null ? string.Join(" ", config.Scopes) : null;
+                Audience = config.Audience;
+                Resource = config.Resource;
+                MinTtl = TimeSpan.FromSeconds(config.MinTtl);
+            }
+
+            /// <summary>
+            /// Create a new set of authenticator options from client credentials config.
+            /// </summary>
+            /// <param name="config"></param>
+            /// <exception cref="ArgumentNullException"></exception>
+            /// <exception cref="ConfigurationException"></exception>
+            public Options(ClientCredentialsConfig config)
+            {
+                if (config is null) throw new ArgumentNullException(nameof(config));
+
+                ClientId = config.ClientId ?? throw new ConfigurationException("Missing client ID");
+                ClientSecret = config.ClientSecret ?? throw new ConfigurationException("Missing client secret");
+                TokenUrl = new Uri(config.TokenUrl ?? throw new ConfigurationException("Missing token URL"));
+                Scopes = config.Scopes != null ? string.Join(" ", config.Scopes) : null;
+                Audience = config.Audience;
+                Resource = config.Resource;
+                MinTtl = config.MinTtlValue.Value;
+            }
+
+            internal Dictionary<string, string> GetFormdata()
+            {
+                var form = new Dictionary<string, string>
+                {
+                    { "client_id", ClientId! },
+                    { "client_secret", ClientSecret! },
+                    { "grant_type", "client_credentials" }
+                };
+
+                if (!string.IsNullOrWhiteSpace(Scopes))
+                {
+                    form["scope"] = Scopes!;
+                }
+
+                if (!string.IsNullOrWhiteSpace(Audience))
+                {
+                    form["audience"] = Audience!;
+                }
+
+                if (!string.IsNullOrWhiteSpace(Resource))
+                {
+                    form["resource"] = Resource!;
+                }
+
+                return form;
+            }
+        }
 
         /// <summary>
         /// Creates a new authenticator
@@ -190,46 +311,36 @@ namespace Cognite.Extensions
             {
                 throw new ConfigurationException("Certificate configuration cannot be used with basic authenticator");
             }
-            _config = config;
+            _config = new Options(config);
             _client = client;
             _logger = logger ?? new Microsoft.Extensions.Logging.Abstractions.NullLogger<Authenticator>();
+        }
 
-            if (config.TokenUrl == null)
+        /// <summary>
+        /// Creates a new authenticator
+        /// </summary>
+        /// <param name="config">Configuration object</param>
+        /// <param name="client">Http client</param>
+        /// <param name="logger">Logger</param>
+        public Authenticator(ClientCredentialsConfig config, HttpClient client, ILogger<IAuthenticator>? logger)
+        {
+            if (config == null)
             {
-                throw new ConfigurationException("TokenUrl required for basic authenticator");
+                throw new ConfigurationException("Configuration missing");
             }
-
-            _tokenUri = new Uri(config.TokenUrl);
+            _config = new Options(config);
+            _client = client;
+            _logger = logger ?? new Microsoft.Extensions.Logging.Abstractions.NullLogger<Authenticator>();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private async Task<ResponseDTO> RequestToken(CancellationToken token = default)
         {
-            var form = new Dictionary<string, string>
-            {
-                { "client_id", _config.ClientId! },
-                { "client_secret", _config.Secret! },
-                { "grant_type", "client_credentials" }
-            };
-
-            if (_config.Scopes != null && _config.Scopes.Values.Length > 0)
-            {
-                form["scope"] = string.Join(" ", _config.Scopes);
-            }
-
-            if (!string.IsNullOrWhiteSpace(_config.Audience))
-            {
-                form["audience"] = _config.Audience!;
-            }
-
-            if (!string.IsNullOrWhiteSpace(_config.Resource))
-            {
-                form["resource"] = _config.Resource!;
-            }
+            var form = _config.GetFormdata();
 
             using (var httpContent = new FormUrlEncodedContent(form))
             {
-                var response = await _client.PostAsync(_tokenUri, httpContent, token);
+                var response = await _client.PostAsync(_config.TokenUrl, httpContent, token);
 #if NET5_0_OR_GREATER
                 var body = await response.Content.ReadAsStringAsync(token);
 #else
@@ -282,7 +393,7 @@ namespace Cognite.Extensions
             {
                 return false;
             }
-            return _requestTime + TimeSpan.FromSeconds(_response.ExpiresIn) > DateTime.UtcNow + TimeSpan.FromSeconds(_config.MinTtl);
+            return _requestTime + TimeSpan.FromSeconds(_response.ExpiresIn) > DateTime.UtcNow + _config.MinTtl;
         }
 
         /// <summary>

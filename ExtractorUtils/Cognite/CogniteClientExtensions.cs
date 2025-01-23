@@ -30,27 +30,38 @@ namespace Cognite.Extractor.Utils
         /// or the client cannot be used to access CDF resources</exception>
         public async static Task TestCogniteConfig(this Client client, CogniteConfig config, CancellationToken token)
         {
-            if (config == null) {
+            if (config == null)
+            {
                 throw new CogniteUtilsException("Cognite configuration missing");
             }
-            
-            if (config.Project?.TrimToNull() == null)
+
+            await TestCogniteConfig(client, config.Project!, token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the <paramref name="client"/> configured with <paramref name="project"/>
+        /// can access Cognite Data Fusion
+        /// </summary>
+        /// <param name="client">Cognite SDK client</param>
+        /// <param name="project">Configured project</param>
+        /// <param name="token">Cancellation token</param>
+        /// <exception cref="CogniteUtilsException">Thrown when credentials are invalid
+        /// or the client cannot be used to access CDF resources</exception>
+        public async static Task TestCogniteConfig(this Client client, string project, CancellationToken token)
+        {
+            if (project?.TrimToNull() == null)
             {
                 throw new CogniteUtilsException("CDF project is not configured");
             }
 
-            if (config.IdpAuthentication != null)
+            TokenInspect tokenInspect;
+            using (tokenSummary.WithLabels("inspect").NewTimer())
             {
-                TokenInspect tokenInspect;
-                using (tokenSummary.WithLabels("inspect").NewTimer())
-                {
-                    tokenInspect = await client.Token.InspectAsync(token).ConfigureAwait(false);
-                }
-                if (tokenInspect.Projects == null || !tokenInspect.Projects.Any(p => p.ProjectUrlName == config.Project))
-                {
-                    throw new CogniteUtilsException($"CDF credentials are not associated with project {config.Project}");
-                }
-                
+                tokenInspect = await client.Token.InspectAsync(token).ConfigureAwait(false);
+            }
+            if (tokenInspect.Projects == null || !tokenInspect.Projects.Any(p => p.ProjectUrlName == project))
+            {
+                throw new CogniteUtilsException($"CDF credentials are not associated with project {project}");
             }
         }
     }

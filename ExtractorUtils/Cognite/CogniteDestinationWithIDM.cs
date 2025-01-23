@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
+using Cognite.ExtractorUtils.Unstable.Configuration;
 using CogniteSdk;
 using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
@@ -22,7 +23,6 @@ namespace Cognite.Extractor.Utils
     {
         private readonly Client _client;
         private readonly ILogger<CogniteDestination> _logger;
-        private readonly CogniteConfig _config;
 
         /// <summary>
         /// View identifier for IDM TimeSeries
@@ -40,7 +40,25 @@ namespace Cognite.Extractor.Utils
         {
             _client = client;
             _logger = logger;
-            _config = config;
+            if (viewIdentifier != null)
+            {
+                IDMViewIdentifier = viewIdentifier;
+            }
+        }
+
+        /// <summary>
+        /// Initializes the Cognite destination with the provided parameters
+        /// </summary>
+        /// <param name="client"><see cref="Client"/> object</param>
+        /// <param name="logger">Logger</param>
+        /// <param name="config">Configuration object</param>
+        /// <param name="project">Configured project</param>
+        /// <param name="viewIdentifier">Optional view identifier</param>
+        public CogniteDestinationWithIDM(Client client, ILogger<CogniteDestination> logger, BaseCogniteConfig config, string project, ViewIdentifier? viewIdentifier = null) : base(client, logger, config, project)
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            _client = client;
+            _logger = logger;
             if (viewIdentifier != null)
             {
                 IDMViewIdentifier = viewIdentifier;
@@ -76,8 +94,8 @@ namespace Cognite.Extractor.Utils
                 .GetOrCreateTimeSeriesAsync(
                     instanceIds,
                     buildTimeSeries,
-                    _config.CdfChunking.Instances,
-                    _config.CdfThrottling.Instances,
+                    Chunking.Instances,
+                    Throttling.Instances,
                     retryMode,
                     sanitationMode,
                     token
@@ -110,8 +128,8 @@ namespace Cognite.Extractor.Utils
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetOrCreateTimeSeriesAsync(
                 instanceIds,
                 buildTimeSeries,
-                _config.CdfChunking.Instances,
-                _config.CdfThrottling.Instances,
+                Chunking.Instances,
+                Throttling.Instances,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -141,8 +159,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).EnsureTimeSeriesExistsAsync<T>(
                 timeSeries,
-                _config.CdfChunking.Instances,
-                _config.CdfThrottling.Instances,
+                Chunking.Instances,
+                Throttling.Instances,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -161,8 +179,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetTimeSeriesByIdsIgnoreErrors<T>(
                 timeSeries,
-                _config.CdfChunking.Instances,
-                _config.CdfThrottling.Instances,
+                Chunking.Instances,
+                Throttling.Instances,
                 token).ConfigureAwait(false);
         }
 
@@ -186,8 +204,8 @@ namespace Cognite.Extractor.Utils
             _logger.LogInformation("Updating {Number} timeseries in CDF", updates.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).UpsertAsync(
                 updates,
-                _config.CdfChunking.Instances,
-                _config.CdfThrottling.Instances,
+                Chunking.Instances,
+                Throttling.Instances,
                 retryMode,
                 sanitationMode,
                 token).ConfigureAwait(false);
@@ -221,15 +239,15 @@ namespace Cognite.Extractor.Utils
             return await DataPointExtensionsWithInstanceId.InsertAsync(
                 _client,
                 points,
-                _config.CdfChunking.DataPointTimeSeries,
-                _config.CdfChunking.DataPoints,
-                _config.CdfThrottling.DataPoints,
-                _config.CdfChunking.TimeSeries,
-                _config.CdfThrottling.TimeSeries,
-                _config.CdfChunking.DataPointsGzipLimit,
+                Chunking.DataPointTimeSeries,
+                Chunking.DataPoints,
+                Throttling.DataPoints,
+                Chunking.TimeSeries,
+                Throttling.TimeSeries,
+                Chunking.DataPointsGzipLimit,
                 sanitationMode,
                 retryMode,
-                _config.NanReplacement,
+                NanReplacement,
                 token).ConfigureAwait(false);
         }
 
@@ -254,15 +272,15 @@ namespace Cognite.Extractor.Utils
             return await DataPointExtensionsWithInstanceId.InsertAsyncCreateMissing(
                 _client,
                 points,
-                _config.CdfChunking.DataPointTimeSeries,
-                _config.CdfChunking.DataPoints,
-                _config.CdfThrottling.DataPoints,
-                _config.CdfChunking.Instances,
-                _config.CdfThrottling.Instances,
-                _config.CdfChunking.DataPointsGzipLimit,
+                Chunking.DataPointTimeSeries,
+                Chunking.DataPoints,
+                Throttling.DataPoints,
+                Chunking.Instances,
+                Throttling.Instances,
+                Chunking.DataPointsGzipLimit,
                 sanitationMode,
                 retryMode,
-                _config.NanReplacement,
+                NanReplacement,
                 token).ConfigureAwait(false);
         }
         #endregion
