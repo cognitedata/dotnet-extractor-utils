@@ -560,7 +560,10 @@ namespace Cognite.Extensions
             var builder = Policy
                 .HandleResult<HttpResponseMessage>(msg =>
                     msg.StatusCode == HttpStatusCode.Unauthorized
-                    || (int)msg.StatusCode == 429) //  HttpStatusCode.TooManyRequests not in .Net Framework, is in .Net Core 3.0
+                    || (int)msg.StatusCode == 429 // HttpStatusCode.TooManyRequests not in .Net Framework, is in .Net Core 3.0
+                    || !msg.IsSuccessStatusCode
+                        && msg.Headers.TryGetValues("cdf-is-auto-retryable", out var values)
+                        && values.FirstOrDefault() == "true")
                 .OrTransientHttpError()
                 .Or<TimeoutRejectedException>();
             if (numRetries < 0)
