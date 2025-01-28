@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using CogniteSdk.Alpha;
 
 namespace Cognite.ExtractorUtils.Unstable.Tasks

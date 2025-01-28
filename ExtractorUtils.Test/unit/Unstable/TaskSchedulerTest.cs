@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
-using Cognite.Extractor.Testing;
 using Cognite.ExtractorUtils.Unstable.Tasks;
 using CogniteSdk.Alpha;
 using Xunit;
@@ -43,11 +41,14 @@ namespace ExtractorUtils.Test.unit.Unstable
         public bool SetErrorFatal { set => _errorIsFatal = value; }
         public Func<bool> CanRun { get; set; } = () => true;
 
+        public override string Name { get; }
+
         private Func<BaseErrorReporter, CancellationToken, Task> _func;
 
-        public RunQuickTask(Func<BaseErrorReporter, CancellationToken, Task> func)
+        public RunQuickTask(string name, Func<BaseErrorReporter, CancellationToken, Task> func)
         {
             _func = func;
+            Name = name;
         }
 
         public override bool CanRunNow()
@@ -80,13 +81,13 @@ namespace ExtractorUtils.Test.unit.Unstable
 
             // Immediate task should finish
             using var evt = new ManualResetEvent(false);
-            var task = new RunQuickTask(async (_, tok) =>
+            var task = new RunQuickTask("Task1", async (_, tok) =>
             {
                 _output.WriteLine("Enter task");
                 await CommonUtils.WaitAsync(evt, Timeout.InfiniteTimeSpan, tok);
                 _output.WriteLine("Exit task");
             });
-            sched.AddScheduledTask("Task1", null, task, true);
+            sched.AddScheduledTask(task, true);
             var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
             evt.Set();
             await waitTask;
@@ -100,7 +101,7 @@ namespace ExtractorUtils.Test.unit.Unstable
             for (int i = 0; i < 3; i++)
             {
                 int c = i;
-                var t = new RunQuickTask(async (_, tok) =>
+                var t = new RunQuickTask($"SeqTask{c}", async (_, tok) =>
                 {
                     _output.WriteLine("Begin task " + c);
                     if (c == 0)
@@ -116,7 +117,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                     _output.WriteLine("Check can run " + c);
                     return c == 0 || finished[c - 1];
                 };
-                sched.AddScheduledTask($"SeqTask{c}", null, t, true);
+                sched.AddScheduledTask(t, true);
             }
 
             waitTask = sched.WaitForNextEndOfTask("SeqTask2", TimeSpan.FromSeconds(5));
@@ -157,7 +158,7 @@ namespace ExtractorUtils.Test.unit.Unstable
 
             // Test report some errors
             using var evt = new ManualResetEvent(false);
-            var task = new RunQuickTask(async (cbs, tok) =>
+            var task = new RunQuickTask("Task1", async (cbs, tok) =>
             {
                 await CommonUtils.WaitAsync(evt, Timeout.InfiniteTimeSpan, tok);
                 cbs.Warning("Instant warning");
@@ -165,7 +166,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 cbs.Error("Instant error");
                 cbs.BeginError("Longer error", "details").Dispose();
             });
-            sched.AddScheduledTask("Task1", null, task, true);
+            sched.AddScheduledTask(task, true);
             var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
             evt.Set();
             await waitTask;
@@ -196,14 +197,14 @@ namespace ExtractorUtils.Test.unit.Unstable
 
             using var evt = new ManualResetEvent(false);
 
-            var task = new RunQuickTask(async (cbs, tok) =>
+            var task = new RunQuickTask("Task1", async (cbs, tok) =>
             {
                 await CommonUtils.WaitAsync(evt, Timeout.InfiniteTimeSpan, tok);
                 throw new Exception("Uh oh");
             });
 
             // Should not fail, just report a fatal error.
-            sched.AddScheduledTask("Task1", null, task, true);
+            sched.AddScheduledTask(task, true);
             var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
             evt.Set();
             // WaitForNextEndOfTask throws if the task fails.

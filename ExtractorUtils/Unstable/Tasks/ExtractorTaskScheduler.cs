@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,16 +9,16 @@ using Cognite.Extractor.Common;
 namespace Cognite.ExtractorUtils.Unstable.Tasks
 {
     /// <summary>
-    /// Interface implemented by tasks schedulable by the BaseTaskScheduler.
+    /// Base class for schedulable tasks.
     /// </summary>
-    public interface ISchedulableTask
+    public abstract class BaseSchedulableTask
     {
         /// <summary>
-        /// Run the task, this may throw an exception which is treated as a fatal error.
+        /// Return whether this task failing should be considered fatal
+        /// and terminate the task scheduler completely.
         /// </summary>
-        /// <param name="task">Callbacks for reporting errors.</param>
-        /// <param name="token">Optional cancellation token.</param>
-        public Task Run(BaseErrorReporter task, CancellationToken token);
+        public abstract bool ErrorIsFatal { get; }
+
         /// <summary>
         /// Return whether the task can run now.
         /// 
@@ -30,33 +29,6 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// 
         /// Note that this may be called frequently, and should not do any expensive calculations.
         /// </summary>
-        public bool CanRunNow();
-        /// <summary>
-        /// Register a callback that should be invoked once `CanRunNow` returns `true`.
-        /// 
-        /// You may call this callback even if `CanRunNow` isn't guaranteed to return `true`.
-        /// </summary>
-        /// <param name="callback"></param>
-        public void RegisterReadyCallback(Action callback);
-
-        /// <summary>
-        /// Return whether this task failing should be considered fatal
-        /// and terminate the task scheduler completely.
-        /// </summary>
-        public bool ErrorIsFatal { get; }
-    }
-
-    /// <summary>
-    /// Base class for schedulable tasks, just implements
-    /// RegisterReadyCallback and leaves the rest of the
-    /// ISchedulableTask interface abstract.
-    /// </summary>
-    public abstract class BaseSchedulableTask : ISchedulableTask
-    {
-        /// <inheritdoc />
-        public abstract bool ErrorIsFatal { get; }
-
-        /// <inheritdoc />
         public abstract bool CanRunNow();
 
         /// <summary>
@@ -65,14 +37,34 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// </summary>
         protected Action? ReadyCallback { get; private set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Register a callback that should be invoked once `CanRunNow` returns `true`.
+        /// 
+        /// You may call this callback even if `CanRunNow` isn't guaranteed to return `true`.
+        /// </summary>
+        /// <param name="callback"></param>
         public virtual void RegisterReadyCallback(Action callback)
         {
             ReadyCallback = callback;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Run the task, this may throw an exception which is treated as a fatal error.
+        /// </summary>
+        /// <param name="task">Callbacks for reporting errors.</param>
+        /// <param name="token">Optional cancellation token.</param>
         public abstract Task Run(BaseErrorReporter task, CancellationToken token);
+
+        /// <summary>
+        /// Unique name of the task.
+        /// </summary>
+        public abstract string Name { get; }
+
+        /// <summary>
+        /// Task schedule, how often it runs automatically.
+        /// Should be null if the task only runs manually or on startup.
+        /// </summary>
+        public virtual ITimeSpanProvider? Schedule { get; }
     }
 
     internal sealed class RunningTaskInfo : IDisposable
@@ -94,9 +86,8 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
 
     internal sealed class RegisteredTask : IDisposable
     {
-        public ITimeSpanProvider? Schedule { get; }
         public DateTime? NextRun { get; set; }
-        public ISchedulableTask Operation { get; }
+        public BaseSchedulableTask Operation { get; }
 
         public RunningTaskInfo? ActiveTask { get; private set; }
 
@@ -105,18 +96,17 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         private object _lock = new object();
         private TaskReporter _reporter;
 
-        public RegisteredTask(ITimeSpanProvider? schedule, ISchedulableTask operation, TaskReporter reporter, bool runImmediately)
+        public RegisteredTask(BaseSchedulableTask operation, TaskReporter reporter, bool runImmediately)
         {
             Operation = operation;
-            Schedule = schedule;
             _reporter = reporter;
             if (runImmediately)
             {
                 NextRun = DateTime.UtcNow;
             }
-            else if (schedule != null)
+            else if (operation.Schedule != null)
             {
-                NextRun = DateTime.UtcNow + schedule.Value;
+                NextRun = DateTime.UtcNow + operation.Schedule.Value;
             }
         }
 
@@ -126,9 +116,9 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
             var source = CancellationTokenSource.CreateLinkedTokenSource(token);
             var task = Task.Run(() => Operation.Run(_reporter, source.Token), source.Token);
 
-            if (Schedule != null)
+            if (Operation.Schedule != null)
             {
-                NextRun = now + Schedule.Value;
+                NextRun = now + Operation.Schedule.Value;
             }
             else
             {
@@ -265,27 +255,23 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <summary>
         /// Add a task to the scheduler.
         /// </summary>
-        /// <param name="name">Name of task to add, this must be unique.</param>
-        /// <param name="schedule">Optional schedule to run the task on. Can be null
-        /// in which case the task will only be triggered manually.</param>
         /// <param name="operation">Type implementing the runnable task.</param>
         /// <param name="runImmediately">Whether to run the task immediately.</param>
         /// <exception cref="InvalidOperationException">If a task with the same name already exists.</exception>
-        public void AddScheduledTask(string name, ITimeSpanProvider? schedule, ISchedulableTask operation, bool runImmediately)
+        public void AddScheduledTask(BaseSchedulableTask operation, bool runImmediately)
         {
             if (operation == null) throw new ArgumentNullException(nameof(operation));
-            if (name == null) throw new ArgumentNullException(nameof(name));
 
             lock (_lock)
             {
-                if (_tasks.ContainsKey(name))
+                if (_tasks.ContainsKey(operation.Name))
                 {
-                    throw new InvalidOperationException($"Task {name} already exists");
+                    throw new InvalidOperationException($"Task {operation.Name} already exists");
                 }
 
                 operation.RegisterReadyCallback(Notify);
-                var task = new RegisteredTask(schedule, operation, new TaskReporter(name, _sink), runImmediately);
-                _tasks.Add(name, task);
+                var task = new RegisteredTask(operation, new TaskReporter(operation.Name, _sink), runImmediately);
+                _tasks.Add(operation.Name, task);
                 _evt.Set();
             }
         }
