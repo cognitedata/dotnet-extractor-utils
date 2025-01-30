@@ -245,45 +245,45 @@ namespace Cognite.Extractor.Utils
         /// Maximum number of parallel requests per time series operation
         /// </summary>
         /// <value>Maximum number of parallel operations</value>
-        public int TimeSeries { get; set; } = 20;
+        public int TimeSeries { get; set; } = 5;
 
         /// <summary>
         /// Maximum number of parallel requests per assets operation
         /// </summary>
         /// <value>Maximum number of parallel operations</value>
-        public int Assets { get; set; } = 20;
+        public int Assets { get; set; } = 5;
 
         /// <summary>
         /// Maximum number of parallel requests per data points operations
         /// </summary>
         /// <value>Maximum number of parallel operations</value>
-        public int DataPoints { get; set; } = 10;
+        public int DataPoints { get; set; } = 5;
 
         /// <summary>
         /// Maximum number of parallel requests per raw operation
         /// </summary>
         /// <value></value>
-        public int Raw { get; set; } = 10;
+        public int Raw { get; set; } = 5;
 
         /// <summary>
         /// Maximum number of parallel requests per get extracted ranges operation
         /// </summary>
-        public int Ranges { get; set; } = 20;
+        public int Ranges { get; set; } = 5;
 
         /// <summary>
         /// Maximum number of parallel requests per events operation
         /// </summary>
-        public int Events { get; set; } = 20;
+        public int Events { get; set; } = 5;
 
         /// <summary>
         /// Maximum number of parallel requests per sequence operation
         /// </summary>
-        public int Sequences { get; set; } = 10;
+        public int Sequences { get; set; } = 5;
 
         /// <summary>
         /// Maximum number of parallel requests per data modeling instances operation
         /// </summary>
-        public int Instances { get; set; } = 4;
+        public int Instances { get; set; } = 2;
 
         /// <summary>
         /// Maximum number of parallel requests per stream record ingest operation.
