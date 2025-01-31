@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using CogniteSdk.Alpha;
 
 namespace Cognite.ExtractorUtils.Unstable.Tasks
@@ -12,8 +13,8 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
 
         private IIntegrationSink _sink;
 
-        // Current state, for sanity checking.
-        private bool _isRunning;
+        // Current state, for sanity checking. Integer because .NET does not support atomic operations on bool.
+        private int _isRunning;
 
         /// <summary>
         /// Constructor.
@@ -38,8 +39,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <param name="timestamp"></param>
         public void ReportStart(DateTime? timestamp = null)
         {
-            if (_isRunning) throw new InvalidOperationException("Attempted to start task that is already running");
-            _isRunning = true;
+            if (Interlocked.CompareExchange(ref _isRunning, 1, 0) == 1) throw new InvalidOperationException("Attempted to start task that is already running");
             _sink.ReportTaskStart(TaskName, timestamp);
         }
 
@@ -49,8 +49,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <param name="timestamp"></param>
         public void ReportEnd(DateTime? timestamp = null)
         {
-            if (!_isRunning) throw new InvalidOperationException("Attempted to end task that is not running");
-            _isRunning = false;
+            if (Interlocked.CompareExchange(ref _isRunning, 0, 1) == 0) throw new InvalidOperationException("Attempted to end task that is not running");
             _sink.ReportTaskEnd(TaskName, timestamp);
         }
     }
