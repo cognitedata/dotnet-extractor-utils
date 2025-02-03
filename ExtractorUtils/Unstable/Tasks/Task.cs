@@ -1,0 +1,56 @@
+using System;
+using System.Threading;
+using CogniteSdk.Alpha;
+
+namespace Cognite.ExtractorUtils.Unstable.Tasks
+{
+    /// <summary>
+    /// Type handling reporting of events related to a single task.
+    /// </summary>
+    public class TaskReporter : BaseErrorReporter
+    {
+        private string TaskName { get; }
+
+        private IIntegrationSink _sink;
+
+        // Current state, for sanity checking. Integer because .NET does not support atomic operations on bool.
+        private int _isRunning;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="taskName">Name of the task, must be unique.</param>
+        /// <param name="sink">Sink for task events.</param>
+        public TaskReporter(string taskName, IIntegrationSink sink)
+        {
+            TaskName = taskName;
+            _sink = sink;
+        }
+
+        /// <inheritdoc />
+        public override ExtractorError NewError(ErrorLevel level, string description, string? details = null, DateTime? now = null)
+        {
+            return new ExtractorError(level, description, _sink, details, TaskName, now);
+        }
+
+        /// <summary>
+        /// Report that this task has started.
+        /// </summary>
+        /// <param name="timestamp"></param>
+        public void ReportStart(DateTime? timestamp = null)
+        {
+            if (Interlocked.CompareExchange(ref _isRunning, 1, 0) == 1) throw new InvalidOperationException("Attempted to start task that is already running");
+            _sink.ReportTaskStart(TaskName, timestamp);
+        }
+
+        /// <summary>
+        /// Report that this task has ended.
+        /// </summary>
+        /// <param name="timestamp"></param>
+        public void ReportEnd(DateTime? timestamp = null)
+        {
+            if (Interlocked.CompareExchange(ref _isRunning, 0, 1) == 0) throw new InvalidOperationException("Attempted to end task that is not running");
+            _sink.ReportTaskEnd(TaskName, timestamp);
+        }
+    }
+}
