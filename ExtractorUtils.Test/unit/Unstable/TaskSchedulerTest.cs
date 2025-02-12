@@ -22,12 +22,12 @@ namespace ExtractorUtils.Test.unit.Unstable
             Errors.Add(error);
         }
 
-        public void ReportTaskEnd(string taskName, DateTime? timestamp = null)
+        public void ReportTaskEnd(string taskName, TaskUpdatePayload update = null, DateTime? timestamp = null)
         {
             TaskEnd.Add((taskName, timestamp ?? DateTime.UtcNow));
         }
 
-        public void ReportTaskStart(string taskName, DateTime? timestamp = null)
+        public void ReportTaskStart(string taskName, TaskUpdatePayload update = null, DateTime? timestamp = null)
         {
             TaskStart.Add((taskName, timestamp ?? DateTime.UtcNow));
         }
@@ -43,9 +43,9 @@ namespace ExtractorUtils.Test.unit.Unstable
 
         public override string Name { get; }
 
-        private Func<BaseErrorReporter, CancellationToken, Task> _func;
+        private Func<BaseErrorReporter, CancellationToken, Task<TaskUpdatePayload>> _func;
 
-        public RunQuickTask(string name, Func<BaseErrorReporter, CancellationToken, Task> func)
+        public RunQuickTask(string name, Func<BaseErrorReporter, CancellationToken, Task<TaskUpdatePayload>> func)
         {
             _func = func;
             Name = name;
@@ -56,7 +56,7 @@ namespace ExtractorUtils.Test.unit.Unstable
             return CanRun();
         }
 
-        public override Task Run(BaseErrorReporter task, CancellationToken token)
+        public override Task<TaskUpdatePayload> Run(BaseErrorReporter task, CancellationToken token)
         {
             return _func(task, token);
         }
@@ -86,6 +86,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 _output.WriteLine("Enter task");
                 await CommonUtils.WaitAsync(evt, Timeout.InfiniteTimeSpan, tok);
                 _output.WriteLine("Exit task");
+                return null;
             });
             sched.AddScheduledTask(task, true);
             var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
@@ -111,6 +112,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                     _output.WriteLine("Finish task " + c);
                     seq.Add(c);
                     finished[c] = true;
+                    return null;
                 });
                 t.CanRun = () =>
                 {
@@ -165,6 +167,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 cbs.BeginWarning("Longer warning", "details").Dispose();
                 cbs.Error("Instant error");
                 cbs.BeginError("Longer error", "details").Dispose();
+                return null;
             });
             sched.AddScheduledTask(task, true);
             var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
