@@ -64,11 +64,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
         private (ServiceProvider, CheckInWorker) GetCheckInWorker()
         {
             var config = GetConfig();
-            var baseCogniteConfig = new BaseCogniteConfig();
 
             var services = new ServiceCollection();
             services.AddConfig(config, typeof(ConnectionConfig));
-            services.AddConfig(baseCogniteConfig, typeof(BaseCogniteConfig));
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockCheckInAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;

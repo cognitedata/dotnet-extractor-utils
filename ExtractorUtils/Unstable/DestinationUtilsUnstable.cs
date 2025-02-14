@@ -42,6 +42,18 @@ namespace Cognite.ExtractorUtils.Unstable
             return new CogniteDestinationWithIDM(client, logger ?? new NullLogger<CogniteDestinationWithIDM>(), config, connection.Project!);
         }
 
+        /// <summary>
+        /// Add CogniteDestination and CogniteDestinationWithIDM to <paramref name="services"/>.
+        /// </summary>
+        /// <param name="services">Service collection to add to</param>
+        public static void AddCogniteDestination(this IServiceCollection services)
+        {
+            services.AddTransient(GetCogniteDestination);
+            services.AddTransient<IRawDestination, CogniteDestination>(GetCogniteDestination);
+            services.AddTransient(GetCogniteDestinationWithIDM);
+            services.AddTransient<IRawDestination, CogniteDestinationWithIDM>(GetCogniteDestinationWithIDM);
+        }
+
 #if NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Return a http handler configured to ignore certificate errors based on passed CertificateConfig.
@@ -211,10 +223,6 @@ namespace Cognite.ExtractorUtils.Unstable
                 var client = cdfBuilder.Configure(conf!, appId, userAgent, auth, logger, metrics).Build();
                 return client;
             });
-            services.AddTransient(GetCogniteDestination);
-            services.AddTransient<IRawDestination, CogniteDestination>(GetCogniteDestination);
-            services.AddTransient(GetCogniteDestinationWithIDM);
-            services.AddTransient<IRawDestination, CogniteDestinationWithIDM>(GetCogniteDestinationWithIDM);
         }
 
 
