@@ -119,8 +119,11 @@ namespace Cognite.Extractor.Configuration
         /// in case of yaml parsing errors.</exception>
         public static T TryReadConfigFromString<T>(string yaml, params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
-            int configVersion = GetVersionFromString(yaml);
-            CheckVersion(configVersion, acceptedConfigVersions);
+            if ((acceptedConfigVersions?.Length ?? 0) > 0)
+            {
+                int configVersion = GetVersionFromString(yaml);
+                CheckVersion(configVersion, acceptedConfigVersions);
+            }
 
             var config = ReadString<T>(yaml);
             config.GenerateDefaults();
@@ -142,8 +145,11 @@ namespace Cognite.Extractor.Configuration
         /// the yaml file is not found or in case of yaml parsing error.</exception>
         public static T TryReadConfigFromFile<T>(string path, params int[]? acceptedConfigVersions) where T : VersionedConfig
         {
-            int configVersion = GetVersionFromFile(path);
-            CheckVersion(configVersion, acceptedConfigVersions);
+            if ((acceptedConfigVersions?.Length ?? 0) > 0)
+            {
+                int configVersion = GetVersionFromFile(path);
+                CheckVersion(configVersion, acceptedConfigVersions);
+            }
 
             var config = Read<T>(path);
             config.GenerateDefaults();
