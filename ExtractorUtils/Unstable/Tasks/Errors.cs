@@ -180,7 +180,6 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// Flush the sink, ensuring all errors and tasks are written.
         /// </summary>
         /// <param name="token"></param>
-        /// <returns></returns>
         Task Flush(CancellationToken token);
 
         /// <summary>
@@ -190,6 +189,13 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <param name="interval">Interval. If left out, uses an implementation-defined default.</param>
         /// <returns></returns>
         Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null);
+
+        /// <summary>
+        /// Report a startup to integrations.
+        /// </summary>
+        /// <param name="request">Startup request, external ID is added by the sink.</param>
+        /// <param name="token">Cancellation token.</param>
+        Task ReportStartup(StartupRequest request, CancellationToken token);
     }
 
     /// <summary>

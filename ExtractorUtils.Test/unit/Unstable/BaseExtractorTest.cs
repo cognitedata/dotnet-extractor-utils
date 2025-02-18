@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
 using Cognite.ExtractorUtils.Unstable;
+using Cognite.ExtractorUtils.Unstable.Configuration;
 using Cognite.ExtractorUtils.Unstable.Tasks;
+using CogniteSdk.Alpha;
 using ExtractorUtils.Test.unit.Unstable;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,7 +27,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
         public Action<ExtractorTaskScheduler> InitAction { get; set; }
 
         public DummyExtractor(
-            DummyConfig config,
+            ConfigWrapper<DummyConfig> config,
             IServiceProvider provider,
             ExtractorTaskScheduler taskScheduler,
             IIntegrationSink sink,
@@ -46,6 +51,15 @@ namespace ExtractorUtils.Test.Unit.Unstable
             InitAction?.Invoke(TaskScheduler);
             return Task.CompletedTask;
         }
+
+        protected override ExtractorId GetExtractorVersion()
+        {
+            return new ExtractorId
+            {
+                Version = "1.0.0",
+                ExternalId = "my-extractor"
+            };
+        }
     }
 
     public class BaseExtractorTest
@@ -56,11 +70,11 @@ namespace ExtractorUtils.Test.Unit.Unstable
             _output = output;
         }
 
-        private (DummyExtractor, DummySink) CreateExtractor()
+        private (DummyExtractor, DummySink) CreateExtractor(int? revision = null)
         {
             var sink = new DummySink();
             var services = new ServiceCollection();
-            services.AddSingleton(new DummyConfig());
+            services.AddSingleton(new ConfigWrapper<DummyConfig>(new DummyConfig(), revision));
             services.AddSingleton<IIntegrationSink>(sink);
             services.AddTestLogging(_output);
             services.AddTransient<ExtractorTaskScheduler>();

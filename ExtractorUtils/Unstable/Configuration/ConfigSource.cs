@@ -55,6 +55,35 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
     }
 
     /// <summary>
+    /// Wrapper around a config file with
+    /// extra information about the active revision.
+    /// </summary>
+    /// <typeparam name="TConfig"></typeparam>
+    public class ConfigWrapper<TConfig>
+    {
+        /// <summary>
+        /// Configuration object.
+        /// </summary>
+        public TConfig Config { get; }
+        /// <summary>
+        /// Revision number or null to mean
+        /// local config.
+        /// </summary>
+        public int? Revision { get; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="config">Configuration object.</param>
+        /// <param name="revision">Revision info.</param>
+        public ConfigWrapper(TConfig config, int? revision)
+        {
+            Config = config;
+            Revision = revision;
+        }
+    }
+
+    /// <summary>
     /// Configuration source that reads configuration from CDF.
     /// </summary>
     /// <typeparam name="T">Config type</typeparam>
@@ -130,6 +159,24 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
             if (mode != _state.Mode || _state.Config == null) return true;
 
             return targetRevision == null || targetRevision != _state.CurrentRevision;
+        }
+
+        private ConfigWrapper<T> GetInnerConfig()
+        {
+            int? revision;
+            if (_state.Mode == ConfigMode.Local)
+            {
+                revision = null;
+            }
+            else if (_state.CurrentRevision == null)
+            {
+                throw new InvalidOperationException("Attempt to resolve config when no revision is set.");
+            }
+            else
+            {
+                revision = _state.CurrentRevision;
+            }
+            return new ConfigWrapper<T>(_state.Config!, revision);
         }
 
         /// <summary>

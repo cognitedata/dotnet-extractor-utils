@@ -5,7 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils;
+using Cognite.ExtractorUtils.Unstable.Configuration;
 using Cognite.ExtractorUtils.Unstable.Tasks;
+using CogniteSdk;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -83,6 +85,8 @@ namespace Cognite.ExtractorUtils.Unstable
         /// Configuration object
         /// </summary>
         protected TConfig Config { get; }
+
+        private int? _configRevision;
         /// <summary>
         /// CDF destination
         /// </summary>
@@ -123,14 +127,16 @@ namespace Cognite.ExtractorUtils.Unstable
         /// <param name="sink">Sink for extractor task updates and errors.</param>
         /// <param name="destination">Cognite destination.</param>
         public BaseExtractor(
-            TConfig config,
+            ConfigWrapper<TConfig> config,
             IServiceProvider provider,
             ExtractorTaskScheduler taskScheduler,
             IIntegrationSink sink,
             CogniteDestination? destination = null
         )
         {
-            Config = config;
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            Config = config.Config;
+            _configRevision = config.Revision;
             Destination = destination;
             Provider = provider;
             _sink = sink;
@@ -269,7 +275,7 @@ namespace Cognite.ExtractorUtils.Unstable
         public async Task Start(CancellationToken token)
         {
             await Init(token).ConfigureAwait(false);
-            // TODO: Post startup message to integrations.
+            await ReportStartup().ConfigureAwait(false);
 
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
@@ -316,6 +322,31 @@ namespace Cognite.ExtractorUtils.Unstable
 
                 await Task.WhenAny(toWaitFor).ConfigureAwait(false);
             }
+        }
+
+        /// <summary>
+        /// Return the version of the active extractor.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract ExtractorId GetExtractorVersion();
+
+        private async Task ReportStartup()
+        {
+            if (Destination == null)
+            {
+                _logger.LogWarning("No destination set, not reporting startup");
+                return;
+            }
+
+            var payload = new StartupRequest()
+            {
+                ActiveConfigRevision = _configRevision.HasValue
+                    ? StringOrInt.Create(_configRevision.Value)
+                    : StringOrInt.Create("local"),
+                Tasks = TaskScheduler.GetRegisteredTasks().ToList(),
+                Extractor = GetExtractorVersion()
+            };
+            await Destination.CogniteClient.Alpha.Integrations.StartupAsync(payload, Source.Token).ConfigureAwait(false);
         }
 
         /// <summary>

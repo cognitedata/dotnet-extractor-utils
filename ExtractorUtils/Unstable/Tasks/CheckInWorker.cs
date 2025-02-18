@@ -223,5 +223,11 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                 });
             }
         }
+
+        /// <inheritdoc />
+        public async Task ReportStartup(StartupRequest request, CancellationToken token)
+        {
+            await _client.Alpha.Integrations.StartupAsync(request, token).ConfigureAwait(false);
+        }
     }
 }
