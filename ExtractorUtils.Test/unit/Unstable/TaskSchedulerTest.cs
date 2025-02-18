@@ -58,6 +58,11 @@ namespace ExtractorUtils.Test.unit.Unstable
 
         public override string Name { get; }
 
+        public override TaskMetadata Metadata { get; } = new TaskMetadata(TaskType.batch)
+        {
+            Description = "My task"
+        };
+
         private Func<BaseErrorReporter, CancellationToken, Task<TaskUpdatePayload>> _func;
 
         public RunQuickTask(string name, Func<BaseErrorReporter, CancellationToken, Task<TaskUpdatePayload>> func)

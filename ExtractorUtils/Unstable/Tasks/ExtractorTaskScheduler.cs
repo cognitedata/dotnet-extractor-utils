@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Microsoft.Extensions.Logging;
+using CogniteSdk.Alpha;
 
 namespace Cognite.ExtractorUtils.Unstable.Tasks
 {
@@ -66,6 +67,11 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// Should be null if the task only runs manually or on startup.
         /// </summary>
         public virtual ITimeSpanProvider? Schedule { get; }
+
+        /// <summary>
+        /// Provide metadata about the task, reported to integration during startup.
+        /// </summary>
+        public abstract TaskMetadata Metadata { get; }
     }
 
     internal sealed class RunningTaskInfo : IDisposable
@@ -382,6 +388,27 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                 if (exc != null)
                 {
                     ExceptionDispatchInfo.Capture(exc).Throw();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get a list of registered tasks, used for reporting startup.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IntegrationTask> GetRegisteredTasks()
+        {
+            lock (_lock)
+            {
+                foreach (var task in _tasks.Values)
+                {
+                    yield return new IntegrationTask
+                    {
+                        Name = task.Operation.Name,
+                        // Description = task.Operation.Metadata.Description,
+                        Type = task.Operation.Metadata.Type,
+                        Action = task.Operation.Metadata.Action,
+                    };
                 }
             }
         }
