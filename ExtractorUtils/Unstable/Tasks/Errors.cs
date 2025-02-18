@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using CogniteSdk.Alpha;
 
@@ -173,6 +175,21 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <param name="update">Content of the task update.</param>
         /// <param name="timestamp">When the task started, defaults to current time.</param>
         void ReportTaskStart(string taskName, TaskUpdatePayload? update = null, DateTime? timestamp = null);
+
+        /// <summary>
+        /// Flush the sink, ensuring all errors and tasks are written.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task Flush(CancellationToken token);
+
+        /// <summary>
+        /// Run the sink, automatically flushing at regular intervals.
+        /// </summary>
+        /// <param name="token">Cancellation token.</param>
+        /// <param name="interval">Interval. If left out, uses an implementation-defined default.</param>
+        /// <returns></returns>
+        Task Run(CancellationToken token, TimeSpan? interval = null);
     }
 
     /// <summary>
