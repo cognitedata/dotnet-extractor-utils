@@ -53,7 +53,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// </summary>
         /// <param name="task">Callbacks for reporting errors.</param>
         /// <param name="token">Optional cancellation token.</param>
-        public abstract Task Run(BaseErrorReporter task, CancellationToken token);
+        public abstract Task<TaskUpdatePayload?> Run(BaseErrorReporter task, CancellationToken token);
 
         /// <summary>
         /// Unique name of the task.
@@ -69,10 +69,10 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
 
     internal sealed class RunningTaskInfo : IDisposable
     {
-        public Task Task { get; }
+        public Task<TaskUpdatePayload?> Task { get; }
         public CancellationTokenSource Source { get; }
 
-        public RunningTaskInfo(Task activeTask, CancellationTokenSource tokenSource)
+        public RunningTaskInfo(Task<TaskUpdatePayload?> activeTask, CancellationTokenSource tokenSource)
         {
             Source = tokenSource;
             Task = activeTask;
@@ -126,7 +126,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
             }
 
             ActiveTask = new RunningTaskInfo(task, source);
-            _reporter.ReportStart(now);
+            _reporter.ReportStart(null, now);
         }
 
         public void Cancel()
@@ -188,7 +188,11 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                 }
 
                 // Report that the task ended.
-                _reporter.ReportEnd(now);
+                _reporter.ReportEnd(
+                    !finished.Task.IsFaulted && !finished.Task.IsCanceled
+                    ? finished.Task.Result
+                    : null,
+                    now);
 
                 // Wake up any waiters and tell them the task has finished running.
                 foreach (var cb in _waiters)
@@ -209,7 +213,15 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         {
             lock (_lock)
             {
-                ActiveTask?.Dispose();
+                if (ActiveTask != null)
+                {
+                    var now = DateTime.UtcNow;
+                    ActiveTask.Source.Cancel();
+                    ActiveTask.Dispose();
+                    ActiveTask = null;
+                    _reporter.Fatal("Task was cancelled", null, now);
+                    _reporter.ReportEnd(null, now);
+                }
                 foreach (var waiter in _waiters)
                 {
                     waiter.TrySetCanceled();

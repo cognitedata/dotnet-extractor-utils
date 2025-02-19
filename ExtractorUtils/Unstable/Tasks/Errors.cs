@@ -1,4 +1,5 @@
 using System;
+using Cognite.Extractor.Common;
 using CogniteSdk.Alpha;
 
 namespace Cognite.ExtractorUtils.Unstable.Tasks
@@ -104,6 +105,24 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         }
 
         /// <summary>
+        /// Return an ErrorWithTask for writing to the integrations API.
+        /// </summary>
+        /// <returns>ErrorWithTask object</returns>
+        public ErrorWithTask ToSdk()
+        {
+            return new ErrorWithTask
+            {
+                ExternalId = ExternalId,
+                Level = Level,
+                Description = Description,
+                Details = Details,
+                Task = TaskName,
+                StartTime = StartTime.ToUnixTimeMilliseconds(),
+                EndTime = EndTime?.ToUnixTimeMilliseconds(),
+            };
+        }
+
+        /// <summary>
         /// Dispose the error, just calls `Finish`.
         /// </summary>
         protected virtual void Dispose(bool disposing)
@@ -143,15 +162,17 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// Report that a task has ended.
         /// </summary>
         /// <param name="taskName">Name of task that ended.</param>
+        /// <param name="update">Content of the task update.</param>
         /// <param name="timestamp">When the task ended, defaults to current time.</param>
-        void ReportTaskEnd(string taskName, DateTime? timestamp = null);
+        void ReportTaskEnd(string taskName, TaskUpdatePayload? update = null, DateTime? timestamp = null);
 
         /// <summary>
         /// Report that a task has started.
         /// </summary>
         /// <param name="taskName">Name of task that started.</param>
+        /// <param name="update">Content of the task update.</param>
         /// <param name="timestamp">When the task started, defaults to current time.</param>
-        void ReportTaskStart(string taskName, DateTime? timestamp = null);
+        void ReportTaskStart(string taskName, TaskUpdatePayload? update = null, DateTime? timestamp = null);
     }
 
     /// <summary>
