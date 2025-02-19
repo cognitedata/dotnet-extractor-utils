@@ -14,6 +14,17 @@ using Cognite.ExtractorUtils.Unstable;
 using Cognite.Extensions;
 using Cognite.Extractor.Utils;
 using Cognite.ExtractorUtils.Unstable.Configuration;
+using CogniteSdk.Alpha;
+using System.Net.Http.Headers;
+using CogniteSdk;
+using Microsoft.Extensions.Logging;
+using System.IO;
+using Cognite.ExtractorUtils.Unstable.Tasks;
+using ExtractorUtils.Test.unit.Unstable;
+using YamlDotNet.Core;
+using Cognite.Extractor.Common;
+using System.Dynamic;
+using Newtonsoft.Json;
 
 namespace ExtractorUtils.Test.Unit.Unstable
 {
@@ -27,13 +38,13 @@ namespace ExtractorUtils.Test.Unit.Unstable
             _output = output;
         }
 
-        [Fact]
-        public async Task TestGetClient()
+        private ConnectionConfig GetConfig()
         {
-            var config = new ConnectionConfig
+            return new ConnectionConfig
             {
                 Project = "project",
                 BaseUrl = "https://greenfield.cognitedata.com",
+                Integration = "test-integration",
                 Authentication = new ClientCredentialsConfig
                 {
                     ClientId = "someId",
@@ -45,6 +56,13 @@ namespace ExtractorUtils.Test.Unit.Unstable
                     TokenUrl = "http://example.url/token",
                 }
             };
+        }
+
+        [Fact]
+        public async Task TestGetClient()
+        {
+            var config = GetConfig();
+            _tokenCounter = 0;
 
             var baseCogniteConfig = new BaseCogniteConfig();
 
@@ -57,6 +75,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             services.AddSingleton(mockFactory.Object);
             services.AddTestLogging(_output);
             DestinationUtilsUnstable.AddCogniteClient(services, "myApp", null, setLogger: true, setMetrics: true, setHttpClient: true);
+            services.AddCogniteDestination();
             using var provider = services.BuildServiceProvider();
 
             var auth = provider.GetRequiredService<IAuthenticator>();
@@ -86,10 +105,151 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 StatusCode = HttpStatusCode.OK,
                 Content = new StringContent(reply)
-
             };
 
             return Task.FromResult(response);
+        }
+
+        class MyFancyConfig : VersionedConfig
+        {
+            public int Foo { get; set; }
+            public string Bar { get; set; }
+
+            public override void GenerateDefaults()
+            {
+            }
+        }
+
+        [Fact]
+        public async Task TestConfigSource()
+        {
+            var config = GetConfig();
+            _tokenCounter = 0;
+
+            var services = new ServiceCollection();
+            services.AddConfig(config, typeof(ConnectionConfig));
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockGetConfig);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+            services.AddSingleton(mockFactory.Object);
+            services.AddTestLogging(_output);
+            DestinationUtilsUnstable.AddCogniteClient(services, "myApp", null, setLogger: true, setMetrics: true, setHttpClient: true);
+            using var provider = services.BuildServiceProvider();
+
+            var configPath = TestUtils.AlphaNumericPrefix("dotnet_extractor_test") + "_config";
+
+            Directory.CreateDirectory(configPath);
+
+            var configFile = configPath + "/config.yml";
+
+            var source = new ConfigSource<MyFancyConfig>(
+                provider.GetRequiredService<Client>(),
+                provider.GetRequiredService<ILogger<ConfigSource<MyFancyConfig>>>(),
+                "test-integration",
+                configFile,
+                true);
+
+            var reporter = new DummySink();
+
+            // Try to load a new config when one doesn't exist.
+            await Assert.ThrowsAnyAsync<Exception>(async () => await source.ResolveLocalConfig(reporter, CancellationToken.None));
+
+            // Write an invalid local file.
+            System.IO.File.WriteAllText(configFile, @"
+foo: 123
+baz: test
+            ");
+            await Assert.ThrowsAsync<ConfigurationException>(async () => await source.ResolveLocalConfig(reporter, CancellationToken.None));
+
+            // 2 start, 2 end.
+            Assert.Equal(4, reporter.Errors.Count);
+
+            await Assert.ThrowsAsync<ConfigurationException>(async () => await source.ResolveLocalConfig(reporter, CancellationToken.None));
+            // Nothing has changed, no new errors.
+            Assert.Equal(4, reporter.Errors.Count);
+
+            // Write a valid local file.
+            System.IO.File.WriteAllText(configFile, @"
+foo: 123
+bar: test
+            ");
+            var (conf, isNew) = await source.ResolveLocalConfig(reporter, CancellationToken.None);
+            Assert.True(isNew);
+
+            (conf, isNew) = await source.ResolveLocalConfig(reporter, CancellationToken.None);
+            Assert.False(isNew);
+            Assert.Equal(123, conf.Foo);
+            Assert.Equal("test", conf.Bar);
+
+            // Fail to fetch remote config
+            await Assert.ThrowsAnyAsync<Exception>(async () => await source.ResolveRemoteConfig(null, reporter, CancellationToken.None));
+            // Another 2 error reports.
+            Assert.Equal(6, reporter.Errors.Count);
+
+            // Fail to fetch again with the same error.
+            await Assert.ThrowsAnyAsync<Exception>(async () => await source.ResolveRemoteConfig(null, reporter, CancellationToken.None));
+            // No new reports.
+            Assert.Equal(6, reporter.Errors.Count);
+
+            _responseRevision = new ConfigRevision
+            {
+                ExternalId = "test-integration",
+                Config = @"
+foo: 321
+bar: test
+",
+                Revision = 1,
+            };
+
+            Assert.Equal(2, _getConfigCount);
+
+            (conf, isNew) = await source.ResolveRemoteConfig(null, reporter, CancellationToken.None);
+            Assert.True(isNew);
+            Assert.Equal(321, conf.Foo);
+            Assert.Equal("test", conf.Bar);
+
+            (conf, isNew) = await source.ResolveRemoteConfig(1, reporter, CancellationToken.None);
+            Assert.False(isNew);
+            // Only one new request
+            Assert.Equal(3, _getConfigCount);
+
+            Assert.True(System.IO.File.Exists(configPath + "/_temp_config.yml"));
+        }
+
+        private static ConfigRevision _responseRevision;
+        private static int _getConfigCount;
+
+        private static async Task<HttpResponseMessage> mockGetConfig(HttpRequestMessage message, CancellationToken token)
+        {
+            var uri = message.RequestUri.ToString();
+            if (uri == "http://example.url/token") return await mockAuthSendAsync(message, token);
+
+            Assert.Contains("/integrations/config", uri);
+            _getConfigCount++;
+
+            if (_responseRevision == null)
+            {
+                dynamic res = new ExpandoObject();
+                res.error = new ExpandoObject();
+                res.error.code = 400;
+                res.error.message = "Something went wrong";
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Content = new StringContent(JsonConvert.SerializeObject(res)),
+                };
+            }
+
+            var resBody = System.Text.Json.JsonSerializer.Serialize(_responseRevision, Oryx.Cognite.Common.jsonOptions);
+            var fresponse = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(resBody)
+            };
+            fresponse.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            fresponse.Headers.Add("x-request-id", "1");
+
+            return fresponse;
         }
     }
 }
