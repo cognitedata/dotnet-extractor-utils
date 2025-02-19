@@ -195,7 +195,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <inheritdoc />
         public void ReportTaskEnd(string taskName, TaskUpdatePayload? update = null, DateTime? timestamp = null)
         {
-            if (taskName == null) throw new ArgumentNullException(nameof(taskName));
+            if (string.IsNullOrEmpty(taskName)) throw new ArgumentNullException(nameof(taskName));
             lock (_lock)
             {
                 _taskUpdates.Add(new TaskUpdate
@@ -211,7 +211,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <inheritdoc />
         public void ReportTaskStart(string taskName, TaskUpdatePayload? update = null, DateTime? timestamp = null)
         {
-            if (taskName == null) throw new ArgumentNullException(nameof(taskName));
+            if (string.IsNullOrEmpty(taskName)) throw new ArgumentNullException(nameof(taskName));
             lock (_lock)
             {
                 _taskUpdates.Add(new TaskUpdate
