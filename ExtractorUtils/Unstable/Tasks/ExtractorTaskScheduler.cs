@@ -417,6 +417,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                 else
                 {
                     _runMethodClosed.TrySetException(ex);
+                    throw;
                 }
             }
 
@@ -494,12 +495,19 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
             }
         }
 
+        private bool _shutdown;
+
         /// <summary>
         /// Cancel the running task, if it exists.
         /// </summary>
         public async Task CancelInnerAndWait(int timeoutms, BaseErrorReporter outerReporter)
         {
-            if (!_started) return;
+            lock (_lock)
+            {
+                if (!_started) return;
+                if (_shutdown) return;
+                _shutdown = true;
+            }
             _source?.Cancel();
             var waitTask = Task.Delay(timeoutms);
             var completed = await Task.WhenAny(waitTask, CompletedTask).ConfigureAwait(false);

@@ -49,10 +49,28 @@ namespace Cognite.ExtractorUtils.Unstable
         /// </summary>
         public string Name { get; }
 
-        public MonitoredTask(Task<ExtractorTaskResult> task, string name)
+        private CancellationTokenSource _source;
+
+        public MonitoredTask(Func<CancellationToken, Task<ExtractorTaskResult>> task, string name, CancellationToken token)
         {
-            Task = task;
+            _source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            Task = task(_source.Token);
             Name = name;
+        }
+
+        public void Cancel()
+        {
+            _source.Cancel();
+        }
+
+        public async Task<ExtractorTaskResult> WaitForCompletion()
+        {
+            return await Task.ConfigureAwait(false);
+        }
+
+        public bool IsCanceled()
+        {
+            return _source.IsCancellationRequested;
         }
     }
 
@@ -84,7 +102,9 @@ namespace Cognite.ExtractorUtils.Unstable
         protected IServiceProvider Provider { get; private set; }
 
         /// <summary>
-        /// Cancellation token source
+        /// Cancellation token source.
+        /// 
+        /// Note that this is null until initialized in `Init`.
         /// </summary>
         protected CancellationTokenSource Source { get; set; } = null!;
 
@@ -148,14 +168,44 @@ namespace Cognite.ExtractorUtils.Unstable
         /// </summary>
         /// <param name="task">Task to monitor.</param>
         /// <param name="name">Task name, just used for logging.</param>
-        protected void AddMonitoredTask(Task<ExtractorTaskResult> task, string name)
+        protected void AddMonitoredTask(Func<CancellationToken, Task<ExtractorTaskResult>> task, string name)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             if (name == null) throw new ArgumentNullException(nameof(name));
+            if (Source == null) throw new InvalidOperationException("Attempt to add monitored task without starting the extractor first.");
             lock (_lock)
             {
-                _monitoredTaskList.Add(new MonitoredTask(task, name));
+                _monitoredTaskList.Add(new MonitoredTask(task, name, Source.Token));
                 _triggerEvent.Set();
+            }
+        }
+
+        /// <summary>
+        /// Cancel a monitored task, then wait for it to complete.
+        /// 
+        /// This is typically used for ordered shutdown.
+        /// </summary>
+        /// <param name="name">Name of task to cancel. Note that names are not
+        /// required to be unique here. If there are duplicates, this will cancel the
+        /// first matching task.
+        /// </param>
+        /// <returns></returns>
+        protected async Task CancelMonitoredTaskAndWait(string name)
+        {
+            MonitoredTask? task;
+            lock (_lock)
+            {
+                task = _monitoredTaskList.FirstOrDefault(t => t.Name == name);
+            }
+            if (task == null) return;
+            task.Cancel();
+            try
+            {
+                await task.WaitForCompletion().ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // ignore
             }
         }
 
@@ -174,17 +224,18 @@ namespace Cognite.ExtractorUtils.Unstable
         /// should be considered an error.</param>
         /// <param name="name">Task name, just used for logging.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        protected void AddMonitoredTask(Task task, ExtractorTaskResult staticResult, string name)
+        protected void AddMonitoredTask(Func<CancellationToken, Task> task, ExtractorTaskResult staticResult, string name)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             if (name == null) throw new ArgumentNullException(nameof(name));
+            if (Source == null) throw new InvalidOperationException("Attempt to add monitored task without starting the extractor first.");
             lock (_lock)
             {
-                _monitoredTaskList.Add(new MonitoredTask(Task.Run(async () =>
+                _monitoredTaskList.Add(new MonitoredTask(async (token) =>
                 {
-                    await task.ConfigureAwait(false);
+                    await task(token).ConfigureAwait(false);
                     return staticResult;
-                }), name));
+                }, name, Source.Token));
                 _triggerEvent.Set();
             }
         }
@@ -222,10 +273,10 @@ namespace Cognite.ExtractorUtils.Unstable
             // TODO: Post startup message to integrations.
 
             // Start monitoring the task scheduler and run sink.
-            AddMonitoredTask(TaskScheduler.Run(Source.Token), "TaskScheduler");
-            AddMonitoredTask(_sink.Run(token), ExtractorTaskResult.Unexpected, "Sink");
+            AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
+            AddMonitoredTask(t => _sink.Run(t), ExtractorTaskResult.Unexpected, "Sink");
 
-            while (!token.IsCancellationRequested)
+            while (!Source.IsCancellationRequested)
             {
                 var toWaitFor = new List<Task>();
                 lock (_lock)
@@ -236,10 +287,10 @@ namespace Cognite.ExtractorUtils.Unstable
                     {
                         if (!monitored.Task.IsCompleted) continue;
 
-                        if (!monitored.Task.IsFaulted && !monitored.Task.IsCanceled)
+                        if (!monitored.Task.IsFaulted && !monitored.Task.IsCanceled && !monitored.IsCanceled())
                         {
                             var result = monitored.Task.Result;
-                            if (result == ExtractorTaskResult.Unexpected && !token.IsCancellationRequested)
+                            if (result == ExtractorTaskResult.Unexpected)
                             {
                                 _logger.LogError("Internal task {Name} completed, but was not expected to stop, restarting extractor.", monitored.Name);
                                 Fatal($"Internal task {monitored.Name} completed, but was not expected to stop, restarting extractor.");
@@ -262,7 +313,7 @@ namespace Cognite.ExtractorUtils.Unstable
                     toWaitFor.AddRange(_monitoredTaskList.Select(mt => mt.Task));
                 }
 
-                toWaitFor.Add(CommonUtils.WaitAsync(_triggerEvent, Timeout.InfiniteTimeSpan, token));
+                toWaitFor.Add(CommonUtils.WaitAsync(_triggerEvent, Timeout.InfiniteTimeSpan, Source.Token));
 
                 await Task.WhenAny(toWaitFor).ConfigureAwait(false);
             }
@@ -287,16 +338,61 @@ namespace Cognite.ExtractorUtils.Unstable
         }
 
         /// <summary>
-        /// Dispose asynchronously, override this to clean up your resources
-        /// on shutdown.
+        /// Flush the sink, writing any pending task events to integrations.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        protected async Task FlushSink(CancellationToken token)
+        {
+            await _sink.Flush(token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Perform graceful shutdown.
+        /// 
+        /// By default this method cancels the task scheduler and flushes the sink,
+        /// you may wish to override this entirely to perform a different sequence of
+        /// cleanup tasks.
+        /// 
+        /// Shutdown is required to be idempotent, and should not throw exceptions.
         /// </summary>
         /// <returns></returns>
-        protected virtual async ValueTask DisposeAsyncCore()
+        protected virtual async Task ShutdownInternal()
         {
             // First, shut down the task scheduler.
             await TaskScheduler.CancelInnerAndWait(20000, this).ConfigureAwait(false);
             // Next, flush any remaining task updates.
-            await _sink.Flush(CancellationToken.None).ConfigureAwait(false);
+            await FlushSink(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Shut down the extractor.
+        /// 
+        /// This calls `ShutdownInternal` then cancels the token.
+        /// 
+        /// If you wish to change shutdown behavior, override `ShutdownInternal`.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Shutdown()
+        {
+            await ShutdownInternal().ConfigureAwait(false);
+            Source?.Cancel();
+        }
+
+        /// <summary>
+        /// Dispose asynchronously, override this to clean up your resources
+        /// on shutdown.
+        /// 
+        /// Prefer overriding `ShutdownInternal` instead or in addition to this method,
+        /// if what you are doing is performing a graceful shutdown.
+        /// 
+        /// Typically, you will want to override this to call `Dispose` on any disposable
+        /// resources, and `ShutdownInternal` to perform graceful cleanup.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            await ShutdownInternal().ConfigureAwait(false);
             // Finally, cancel the outer token source.
             Source?.Cancel();
             Source?.Dispose();
