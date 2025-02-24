@@ -31,9 +31,14 @@ namespace ExtractorUtils.Test.Unit.Unstable
         {
         }
 
-        public void AddMonitoredTaskPub(Task task, ExtractorTaskResult staticResult, string name)
+        public void AddMonitoredTaskPub(Func<CancellationToken, Task> task, ExtractorTaskResult staticResult, string name)
         {
             AddMonitoredTask(task, staticResult, name);
+        }
+
+        public async Task CancelMonitoredTaskAndWaitPub(string name)
+        {
+            await CancelMonitoredTaskAndWait(name);
         }
 
         protected override Task InitTasks()
@@ -117,13 +122,14 @@ namespace ExtractorUtils.Test.Unit.Unstable
         public async Task TestBaseExtractorMonitoredError()
         {
             var (ext, sink) = CreateExtractor();
-            ext.AddMonitoredTaskPub(Task.Run(async () =>
+            var runTask = ext.Start(CancellationToken.None);
+            ext.AddMonitoredTaskPub(async t =>
             {
-                await Task.Delay(100);
+                await Task.Delay(100, t);
                 throw new Exception("Monitored error");
-            }), ExtractorTaskResult.Unexpected, "task1");
+            }, ExtractorTaskResult.Unexpected, "task1");
             var delayTask = Task.Delay(2000);
-            Assert.NotEqual(delayTask, await Task.WhenAny(ext.Start(CancellationToken.None), delayTask));
+            Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
             Assert.Equal(2, sink.Errors.Count);
             Assert.Equal("Internal task task1 failed, restarting extractor: Monitored error", sink.Errors[0].Description);
         }
@@ -132,14 +138,36 @@ namespace ExtractorUtils.Test.Unit.Unstable
         public async Task TestBaseExtractorUnexpectedExit()
         {
             var (ext, sink) = CreateExtractor();
-            ext.AddMonitoredTaskPub(Task.Run(async () =>
+            var runTask = ext.Start(CancellationToken.None);
+            ext.AddMonitoredTaskPub(async t =>
             {
-                await Task.Delay(100);
-            }), ExtractorTaskResult.Unexpected, "task1");
+                await Task.Delay(100, t);
+            }, ExtractorTaskResult.Unexpected, "task1");
             var delayTask = Task.Delay(2000);
-            Assert.NotEqual(delayTask, await Task.WhenAny(ext.Start(CancellationToken.None), delayTask));
+            Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
             Assert.Equal(2, sink.Errors.Count);
             Assert.Equal("Internal task task1 completed, but was not expected to stop, restarting extractor.", sink.Errors[0].Description);
+        }
+
+        [Fact]
+        public async Task TestCancelMonitoredTask()
+        {
+            var (ext, sink) = CreateExtractor();
+            var runTask = ext.Start(CancellationToken.None);
+            ext.AddMonitoredTaskPub(async t =>
+            {
+                while (!t.IsCancellationRequested)
+                {
+                    await Task.Delay(100, t);
+                }
+            }, ExtractorTaskResult.Unexpected, "task1");
+            var delayTask = Task.Delay(2000);
+            Assert.NotEqual(delayTask, await Task.WhenAny(ext.CancelMonitoredTaskAndWaitPub("task1"), delayTask));
+            Assert.NotEqual(delayTask, await Task.WhenAny(ext.Shutdown(), delayTask));
+            Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
+
+            // Dispose should work, even if we're already shut-down.
+            await ext.DisposeAsync();
         }
     }
 }
