@@ -173,13 +173,13 @@ baz: test
 foo: 123
 bar: test
             ");
-            var (conf, isNew) = await source.ResolveLocalConfig(reporter, CancellationToken.None);
+            var isNew = await source.ResolveLocalConfig(reporter, CancellationToken.None);
             Assert.True(isNew);
 
-            (conf, isNew) = await source.ResolveLocalConfig(reporter, CancellationToken.None);
+            isNew = await source.ResolveLocalConfig(reporter, CancellationToken.None);
             Assert.False(isNew);
-            Assert.Equal(123, conf.Foo);
-            Assert.Equal("test", conf.Bar);
+            Assert.Equal(123, source.Config.Foo);
+            Assert.Equal("test", source.Config.Bar);
 
             // Fail to fetch remote config
             await Assert.ThrowsAnyAsync<Exception>(async () => await source.ResolveRemoteConfig(null, reporter, CancellationToken.None));
@@ -203,12 +203,12 @@ bar: test
 
             Assert.Equal(2, _getConfigCount);
 
-            (conf, isNew) = await source.ResolveRemoteConfig(null, reporter, CancellationToken.None);
+            isNew = await source.ResolveRemoteConfig(null, reporter, CancellationToken.None);
             Assert.True(isNew);
-            Assert.Equal(321, conf.Foo);
-            Assert.Equal("test", conf.Bar);
+            Assert.Equal(321, source.Config.Foo);
+            Assert.Equal("test", source.Config.Bar);
 
-            (conf, isNew) = await source.ResolveRemoteConfig(1, reporter, CancellationToken.None);
+            isNew = await source.ResolveRemoteConfig(1, reporter, CancellationToken.None);
             Assert.False(isNew);
             // Only one new request
             Assert.Equal(3, _getConfigCount);

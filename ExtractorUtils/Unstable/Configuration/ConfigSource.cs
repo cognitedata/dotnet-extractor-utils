@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.ExtractorUtils.Unstable.Configuration
 {
-    class RemoteConfigState<T> where T : VersionedConfig
+    class ConfigState<T> where T : VersionedConfig
     {
         /// <summary>
         /// Current revision in use.
@@ -21,12 +21,17 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
         /// <summary>
         /// Type of config file.
         /// </summary>
-        public ConfigMode? Mode { get; set; }
+        public ConfigMode Mode { get; set; }
 
         /// <summary>
         /// Current config object.
         /// </summary>
         public T? Config { get; set; }
+
+        public ConfigState(ConfigMode mode = ConfigMode.None)
+        {
+            Mode = mode;
+        }
     }
 
     /// <summary>
@@ -41,7 +46,11 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
         /// <summary>
         /// Read from a remote config file.
         /// </summary>
-        Remote
+        Remote,
+        /// <summary>
+        /// Not yet read.
+        /// </summary>
+        None
     }
 
     /// <summary>
@@ -52,7 +61,7 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
     {
         private readonly Client _client;
         private readonly ILogger _logger;
-        private readonly RemoteConfigState<T> _state;
+        private readonly ConfigState<T> _state;
         private readonly string? _integrationId;
         private readonly string? _bufferFilePath;
         private readonly string _configFilePath;
@@ -90,14 +99,15 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
         {
             _client = client;
             _logger = logger ?? new NullLogger<ConfigSource<T>>();
-            _state = new RemoteConfigState<T>();
+            _state = new ConfigState<T>();
             _integrationId = integrationId;
             _configFilePath = configFilePath;
             if (bufferConfigFile)
             {
-                if (Path.GetDirectoryName(configFilePath) != null)
+                var dir = Path.GetDirectoryName(configFilePath);
+                if (dir != null)
                 {
-                    _bufferFilePath = $"{Path.GetDirectoryName(configFilePath)}/_temp_{Path.GetFileName(configFilePath)}";
+                    _bufferFilePath = $"{dir}/_temp_{Path.GetFileName(configFilePath)}";
                 }
                 else
                 {
@@ -122,7 +132,7 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
         /// <param name="reporter">Error reporter.</param>
         /// <param name="token">Cancellation token.</param>
         /// <returns>The new config and true/false depending on whether a new config file was loaded.</returns>
-        public async Task<(T, bool)> ResolveLocalConfig(BaseErrorReporter reporter, CancellationToken token)
+        public async Task<bool> ResolveLocalConfig(BaseErrorReporter reporter, CancellationToken token)
         {
             if (reporter == null) throw new ArgumentNullException(nameof(reporter));
             DateTime lastTime;
@@ -136,9 +146,10 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
             }
             if (lastTime <= _lastLocalConfigModifyTime && _state.Mode == ConfigMode.Local && _state.Config != null)
             {
-                return (_state.Config!, false);
+                return false;
             }
 
+            // Avoid reporting a fatal error if the file has not changed.
             bool isNewConfig = lastTime > _lastLocalConfigModifyTime;
             _lastLocalConfigModifyTime = lastTime;
 
@@ -174,7 +185,7 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
                 }
                 throw;
             }
-            return (_state.Config, true);
+            return true;
         }
 
         /// <summary>
@@ -185,10 +196,10 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
         /// <param name="reporter"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<(T, bool)> ResolveRemoteConfig(int? targetRevision, BaseErrorReporter reporter, CancellationToken token)
+        public async Task<bool> ResolveRemoteConfig(int? targetRevision, BaseErrorReporter reporter, CancellationToken token)
         {
             if (reporter == null) throw new ArgumentNullException(nameof(reporter));
-            if (!ShouldLoadNewConfig(targetRevision, ConfigMode.Remote)) return (_state.Config!, false);
+            if (!ShouldLoadNewConfig(targetRevision, ConfigMode.Remote)) return false;
 
             string rawConfig;
             int? revision;
@@ -207,7 +218,7 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
                 throw;
             }
 
-            bool isNewConfig = _lastAttemptedRevision == revision;
+            bool isNewConfig = _lastAttemptedRevision != revision;
 
             try
             {
@@ -225,7 +236,7 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
                 }
                 throw;
             }
-            return (_state.Config, true);
+            return true;
         }
 
         private async Task<string> ReadLocalConfigFile(CancellationToken token)
