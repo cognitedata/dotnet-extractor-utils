@@ -10,12 +10,16 @@ using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.unit.Unstable
 {
-    class DummySink : IIntegrationSink
+    class DummySink : BaseErrorReporter, IIntegrationSink
     {
         public List<ExtractorError> Errors { get; } = new();
         public List<(string, DateTime)> TaskStart { get; } = new();
         public List<(string, DateTime)> TaskEnd { get; } = new();
 
+        public override ExtractorError NewError(ErrorLevel level, string description, string details = null, DateTime? now = null)
+        {
+            return new ExtractorError(level, description, this, details, null, now);
+        }
 
         public void ReportError(ExtractorError error)
         {
