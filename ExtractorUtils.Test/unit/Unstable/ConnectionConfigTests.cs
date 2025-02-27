@@ -30,7 +30,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
 {
     public class ConnectionConfigTests
     {
-        private static int _tokenCounter;
+        private int _tokenCounter;
 
         private readonly ITestOutputHelper _output;
         public ConnectionConfigTests(ITestOutputHelper output)
@@ -87,7 +87,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
         }
 
 
-        private static Task<HttpResponseMessage> mockAuthSendAsync(HttpRequestMessage message, CancellationToken token)
+        private Task<HttpResponseMessage> mockAuthSendAsync(HttpRequestMessage message, CancellationToken token)
         {
             // Verify endpoint and method
             Assert.Equal($@"http://example.url/token", message.RequestUri.ToString());
@@ -120,8 +120,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             }
         }
 
-        [Fact]
-        public async Task TestConfigSource()
+        private (ConfigSource<MyFancyConfig>, DummySink) GetConfigSource(string configPath)
         {
             var config = GetConfig();
             _tokenCounter = 0;
@@ -134,9 +133,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             services.AddSingleton(mockFactory.Object);
             services.AddTestLogging(_output);
             DestinationUtilsUnstable.AddCogniteClient(services, "myApp", null, setLogger: true, setMetrics: true, setHttpClient: true);
-            using var provider = services.BuildServiceProvider();
-
-            var configPath = TestUtils.AlphaNumericPrefix("dotnet_extractor_test") + "_config";
+            var provider = services.BuildServiceProvider();
 
             Directory.CreateDirectory(configPath);
 
@@ -150,6 +147,18 @@ namespace ExtractorUtils.Test.Unit.Unstable
                 true);
 
             var reporter = new DummySink();
+
+            return (source, reporter);
+        }
+
+        [Fact]
+        public async Task TestConfigSource()
+        {
+            var config = GetConfig();
+
+            var configPath = TestUtils.AlphaNumericPrefix("dotnet_extractor_test") + "_config";
+            var (source, reporter) = GetConfigSource(configPath);
+            var configFile = source.ConfigFilePath;
 
             // Try to load a new config when one doesn't exist.
             await Assert.ThrowsAnyAsync<Exception>(async () => await source.ResolveLocalConfig(reporter, CancellationToken.None));
@@ -214,12 +223,57 @@ bar: test
             Assert.Equal(3, _getConfigCount);
 
             Assert.True(System.IO.File.Exists(configPath + "/_temp_config.yml"));
+
+            Directory.Delete(configPath, true);
         }
 
-        private static ConfigRevision _responseRevision;
-        private static int _getConfigCount;
+        [Fact]
+        public async Task TestBufferConfigFile()
+        {
+            var config = GetConfig();
+            var configPath = TestUtils.AlphaNumericPrefix("dotnet_extractor_test") + "_config";
+            var (source, reporter) = GetConfigSource(configPath);
+            var configFile = source.ConfigFilePath;
+            var bufferFile = configPath + "/_temp_config.yml";
 
-        private static async Task<HttpResponseMessage> mockGetConfig(HttpRequestMessage message, CancellationToken token)
+            var okRevision = new ConfigRevision
+            {
+                ExternalId = "test-integration",
+                Config = @"
+foo: 321
+bar: test
+",
+                Revision = 1,
+            };
+            _responseRevision = okRevision;
+
+            var isNew = await source.ResolveRemoteConfig(null, reporter, CancellationToken.None);
+            Assert.True(isNew);
+            Assert.True(System.IO.File.Exists(bufferFile));
+
+            // We can load the config from the buffer file.
+            _responseRevision = null;
+            isNew = await source.ResolveRemoteConfig(null, reporter, CancellationToken.None);
+            Assert.True(isNew);
+
+            // Make the file write protected. Now loading remote config should fail until we delete it.
+            System.IO.File.SetAttributes(bufferFile, FileAttributes.ReadOnly);
+            _responseRevision = okRevision;
+            await Assert.ThrowsAnyAsync<Exception>(async () => await source.ResolveRemoteConfig(null, reporter, CancellationToken.None));
+
+            // Delete the buffer file, loading remote config should now fail.
+            System.IO.File.SetAttributes(bufferFile, FileAttributes.Normal);
+            System.IO.File.Delete(bufferFile);
+            _responseRevision = null;
+            await Assert.ThrowsAnyAsync<Exception>(async () => await source.ResolveRemoteConfig(null, reporter, CancellationToken.None));
+
+            Directory.Delete(configPath, true);
+        }
+
+        private ConfigRevision _responseRevision;
+        private int _getConfigCount;
+
+        private async Task<HttpResponseMessage> mockGetConfig(HttpRequestMessage message, CancellationToken token)
         {
             var uri = message.RequestUri.ToString();
             if (uri == "http://example.url/token") return await mockAuthSendAsync(message, token);

@@ -6,6 +6,7 @@ using Cognite.Extractor.Common;
 using Cognite.Extractor.Configuration;
 using Cognite.ExtractorUtils.Unstable.Tasks;
 using CogniteSdk;
+using CogniteSdk.Alpha;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -65,6 +66,11 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
         private readonly string? _integrationId;
         private readonly string? _bufferFilePath;
         private readonly string _configFilePath;
+
+        /// <summary>
+        /// Configured local config file path.
+        /// </summary>
+        public string ConfigFilePath => _configFilePath;
         private string? _lastErrorMsg;
 
 
@@ -87,7 +93,8 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
         /// <param name="logger">Logger.</param>
         /// <param name="integrationId">ID of integration to read from.</param>
         /// <param name="configFilePath">Path to config file. This folder will also be used to
-        /// store the buffered config file if that is enabled.</param>
+        /// store the buffered config file if that is enabled. This config file will only be read
+        /// when using local config, but the folder is still needed for buffering remote configs.</param>
         /// <param name="bufferConfigFile">Whether to store a local copy of config files
         /// if reading from CDF fails.</param>
         public ConfigSource(
@@ -157,7 +164,7 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
             string rawConfig;
             try
             {
-                rawConfig = await ReadLocalConfigFile(token).ConfigureAwait(false);
+                rawConfig = await ReadLocalFile(_configFilePath).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -186,6 +193,16 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
                 throw;
             }
             return true;
+        }
+
+        private Task<string> LoadLocalBufferFile(string path)
+        {
+            if (_bufferFilePath == null) throw new InvalidOperationException("Attempt to read local buffer file when no buffer file is configured");
+            using var reader = new StreamReader(_bufferFilePath);
+
+#pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods. Not in .NET standard 2.0
+            return reader.ReadToEndAsync();
+#pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
         }
 
         /// <summary>
@@ -239,37 +256,23 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
             return true;
         }
 
-        private async Task<string> ReadLocalConfigFile(CancellationToken token)
+        private async Task<string> ReadLocalFile(string path)
         {
-            if (_configFilePath == null) throw new InvalidOperationException("Attempt to read local config file when no local config file is configured");
-            using var reader = new StreamReader(_configFilePath);
+            // if (_configFilePath == null) throw new InvalidOperationException("Attempt to read local config file when no local config file is configured");
+            using var reader = new StreamReader(path);
 
-#pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods. Not in .NET standard 2.0
             return await reader.ReadToEndAsync().ConfigureAwait(false);
-#pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
         }
 
         private async Task<(string, int?)> ReadRemoteConfigInternal(int? targetRevision, CancellationToken token)
         {
             if (_integrationId == null) throw new InvalidOperationException("Attempt to fetch remote config when no integration is configured");
 
+            ConfigRevision rawConfig;
+
             try
             {
-                var rawConfig = await _client.Alpha.Integrations.GetConfigRevisionAsync(_integrationId, targetRevision, token).ConfigureAwait(false);
-
-                if (_bufferFilePath != null)
-                {
-                    try
-                    {
-                        System.IO.File.WriteAllText(_bufferFilePath, rawConfig.Config);
-                    }
-                    catch (Exception write_ex)
-                    {
-                        _logger.LogWarning("Failed to write remote config to local config file buffer, disabling local config buffer: {}", write_ex.Message);
-                    }
-                }
-
-                return (rawConfig.Config, rawConfig.Revision);
+                rawConfig = await _client.Alpha.Integrations.GetConfigRevisionAsync(_integrationId, targetRevision, token).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -277,7 +280,7 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
                 if (_bufferFilePath != null)
                 {
                     if (!System.IO.File.Exists(_bufferFilePath)) throw new ConfigurationException($"Could not retrieve remote configuration, and local buffer does not exist: {ex.Message}", ex);
-                    using var reader = new StreamReader(_configFilePath);
+                    using var reader = new StreamReader(_bufferFilePath);
 #pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods. Not in .NET standard 2.0
                     var text = await reader.ReadToEndAsync().ConfigureAwait(false);
 #pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
@@ -288,6 +291,24 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
                 }
                 throw new ConfigurationException($"Could not retrieve remote configuration: {ex.Message}", ex);
             }
+
+            if (_bufferFilePath != null)
+            {
+                try
+                {
+                    System.IO.File.WriteAllText(_bufferFilePath, rawConfig.Config);
+                }
+                catch (Exception write_ex)
+                {
+                    _logger.LogWarning("Failed to write remote config to local config file buffer, disabling local config buffer: {}", write_ex.Message);
+                    if (System.IO.File.Exists(_bufferFilePath))
+                    {
+                        throw new ConfigurationException($"Failed to write to buffer file, but it already exists: {write_ex.Message}. This is a fatal error, as it may cause configuration to be unexpectedly out of sync in the future. Either delete the local buffer file ({_bufferFilePath}), or ensure the extractor has write access to it.");
+                    }
+                }
+            }
+
+            return (rawConfig.Config, rawConfig.Revision);
         }
     }
 }
