@@ -195,16 +195,6 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
             return true;
         }
 
-        private Task<string> LoadLocalBufferFile(string path)
-        {
-            if (_bufferFilePath == null) throw new InvalidOperationException("Attempt to read local buffer file when no buffer file is configured");
-            using var reader = new StreamReader(_bufferFilePath);
-
-#pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods. Not in .NET standard 2.0
-            return reader.ReadToEndAsync();
-#pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
-        }
-
         /// <summary>
         /// Load configuration from CDF.
         /// Returns whether we have loaded a new config file.
@@ -280,14 +270,11 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
                 if (_bufferFilePath != null)
                 {
                     if (!System.IO.File.Exists(_bufferFilePath)) throw new ConfigurationException($"Could not retrieve remote configuration, and local buffer does not exist: {ex.Message}", ex);
-                    using var reader = new StreamReader(_bufferFilePath);
-#pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods. Not in .NET standard 2.0
-                    var text = await reader.ReadToEndAsync().ConfigureAwait(false);
-#pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
+                    var bufferText = await ReadLocalFile(_bufferFilePath).ConfigureAwait(false);
 
                     _logger.LogWarning("Loaded configuration from local config file buffer.");
 
-                    return (text, null);
+                    return (bufferText, null);
                 }
                 throw new ConfigurationException($"Could not retrieve remote configuration: {ex.Message}", ex);
             }
