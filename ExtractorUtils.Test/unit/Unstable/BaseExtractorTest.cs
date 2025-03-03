@@ -105,6 +105,14 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Single(sink.TaskStart);
             Assert.Single(sink.TaskEnd);
             Assert.Empty(sink.Errors);
+            Assert.Single(sink.StartupRequests);
+            var startup = sink.StartupRequests[0];
+            Assert.Equal("my-extractor", startup.Extractor.ExternalId);
+            Assert.Equal("1.0.0", startup.Extractor.Version);
+            Assert.Single(startup.Tasks);
+            Assert.Equal("task1", startup.Tasks.First().Name);
+            Assert.Equal(TaskType.batch, startup.Tasks.First().Type);
+            Assert.Equal("My task", startup.Tasks.First().Description);
         }
 
         [Fact]
@@ -130,6 +138,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Single(sink.TaskEnd);
             Assert.Equal(2, sink.Errors.Count);
             Assert.Equal("Inner error", sink.Errors[0].Description);
+            Assert.Single(sink.StartupRequests);
         }
 
         [Fact]
@@ -146,6 +155,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
             Assert.Equal(2, sink.Errors.Count);
             Assert.Equal("Internal task task1 failed, restarting extractor: Monitored error", sink.Errors[0].Description);
+            Assert.Single(sink.StartupRequests);
         }
 
         [Fact]
@@ -161,6 +171,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
             Assert.Equal(2, sink.Errors.Count);
             Assert.Equal("Internal task task1 completed, but was not expected to stop, restarting extractor.", sink.Errors[0].Description);
+            Assert.Single(sink.StartupRequests);
         }
 
         [Fact]
@@ -179,6 +190,31 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.NotEqual(delayTask, await Task.WhenAny(ext.CancelMonitoredTaskAndWaitPub("task1"), delayTask));
             Assert.NotEqual(delayTask, await Task.WhenAny(ext.Shutdown(), delayTask));
             Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
+            Assert.Single(sink.StartupRequests);
+
+            // Dispose should work, even if we're already shut-down.
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestRestartOnConfig()
+        {
+            var (ext, sink) = CreateExtractor(1);
+            var runTask = ext.Start(CancellationToken.None);
+            ext.AddMonitoredTaskPub(async t =>
+            {
+                while (!t.IsCancellationRequested)
+                {
+                    await Task.Delay(100, t);
+                }
+            }, ExtractorTaskResult.Unexpected, "task1");
+            var delayTask = Task.Delay(2000);
+            await ext.OnConfigChanged();
+
+            // Extractor should exit gracefully
+            Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
+            Assert.Single(sink.StartupRequests);
+            Assert.Empty(sink.Errors);
 
             // Dispose should work, even if we're already shut-down.
             await ext.DisposeAsync();

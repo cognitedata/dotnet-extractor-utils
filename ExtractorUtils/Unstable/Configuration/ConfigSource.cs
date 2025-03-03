@@ -161,7 +161,17 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
             return targetRevision == null || targetRevision != _state.CurrentRevision;
         }
 
-        private ConfigWrapper<T> GetInnerConfig()
+        /// <summary>
+        /// Get an instance wrapping the current config.
+        /// 
+        /// Will fail if no config has been resolved before this is called.
+        /// 
+        /// The config wrapper contains the current revision or "null" if the config
+        /// is local.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">If no config is set.</exception>
+        public ConfigWrapper<T> GetConfigWrapper()
         {
             int? revision;
             if (_state.Mode == ConfigMode.Local)

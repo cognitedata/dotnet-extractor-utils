@@ -23,6 +23,8 @@ using Cognite.ExtractorUtils.Unstable.Tasks;
 using Microsoft.Extensions.Logging;
 using CogniteSdk.Alpha;
 using CogniteSdk;
+using ExtractorUtils.Test.unit.Unstable;
+using Google.Protobuf.Reflection;
 
 
 namespace ExtractorUtils.Test.Unit.Unstable
@@ -174,6 +176,33 @@ namespace ExtractorUtils.Test.Unit.Unstable
 
             source.Cancel();
             await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
+        public async Task TestCheckInWorkerCallback()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            var sink = new DummySink();
+            checkIn.Init(1, sink);
+            using var source = new CancellationTokenSource();
+            using var p = provider;
+
+            _lastConfigRevision = 1;
+
+            int onConfigCount = 0;
+            sink.OnConfigChangedCb = () =>
+            {
+                onConfigCount++;
+            };
+
+            var runTask = checkIn.Run(source.Token, Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            Assert.Equal(0, onConfigCount);
+            _lastConfigRevision = 2;
+            await checkIn.Flush(source.Token);
+            Assert.Equal(2, _checkInCount);
+            Assert.Equal(1, onConfigCount);
         }
 
 

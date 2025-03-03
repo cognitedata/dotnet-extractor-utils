@@ -79,7 +79,7 @@ namespace Cognite.ExtractorUtils.Unstable
     /// Base class for extractors.
     /// </summary>
     /// <typeparam name="TConfig">Config type.</typeparam>
-    public abstract class BaseExtractor<TConfig> : BaseErrorReporter, IAsyncDisposable
+    public abstract class BaseExtractor<TConfig> : BaseErrorReporter, IAsyncDisposable, ISinkCallbacks
     {
         /// <summary>
         /// Configuration object
@@ -214,6 +214,14 @@ namespace Cognite.ExtractorUtils.Unstable
             }
         }
 
+        /// <inheritdoc />    
+        public virtual Task OnConfigChanged()
+        {
+            _logger.LogInformation("Config changed, restarting extractor.");
+            AddMonitoredTask(token => Shutdown(), ExtractorTaskResult.Expected, "Shutdown");
+            return Task.CompletedTask;
+        }
+
         /// <summary>
         /// Add a monitored task that should be watched by the extractor.
         /// 
@@ -332,12 +340,6 @@ namespace Cognite.ExtractorUtils.Unstable
 
         private async Task ReportStartup()
         {
-            if (Destination == null)
-            {
-                _logger.LogWarning("No destination set, not reporting startup");
-                return;
-            }
-
             var payload = new StartupRequest()
             {
                 ActiveConfigRevision = _configRevision.HasValue
@@ -346,7 +348,7 @@ namespace Cognite.ExtractorUtils.Unstable
                 Tasks = TaskScheduler.GetRegisteredTasks().ToList(),
                 Extractor = GetExtractorVersion()
             };
-            await Destination.CogniteClient.Alpha.Integrations.StartupAsync(payload, Source.Token).ConfigureAwait(false);
+            await _sink.ReportStartup(payload, Source.Token).ConfigureAwait(false);
         }
 
         /// <summary>

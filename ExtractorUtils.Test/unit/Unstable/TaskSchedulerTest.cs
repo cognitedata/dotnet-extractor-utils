@@ -11,11 +11,18 @@ using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.unit.Unstable
 {
-    class DummySink : BaseErrorReporter, IIntegrationSink
+    class DummySink : BaseErrorReporter, IIntegrationSink, ISinkCallbacks
     {
         public List<ExtractorError> Errors { get; } = new();
         public List<(string, DateTime)> TaskStart { get; } = new();
         public List<(string, DateTime)> TaskEnd { get; } = new();
+
+        public List<StartupRequest> StartupRequests { get; } = new();
+
+        public ISinkCallbacks Callbacks { get; private set; }
+        public int? CurrentRevision { get; private set; }
+
+        public Action OnConfigChangedCb { get; set; }
 
         public Task Flush(CancellationToken token)
         {
@@ -32,6 +39,12 @@ namespace ExtractorUtils.Test.unit.Unstable
             Errors.Add(error);
         }
 
+        public Task ReportStartup(StartupRequest request, CancellationToken token)
+        {
+            StartupRequests.Add(request);
+            return Task.CompletedTask;
+        }
+
         public void ReportTaskEnd(string taskName, TaskUpdatePayload update = null, DateTime? timestamp = null)
         {
             TaskEnd.Add((taskName, timestamp ?? DateTime.UtcNow));
@@ -45,6 +58,18 @@ namespace ExtractorUtils.Test.unit.Unstable
         public async Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)
         {
             while (!token.IsCancellationRequested) await Task.Delay(100000, token);
+        }
+
+        public void Init(int? currentRevision, ISinkCallbacks callbacks)
+        {
+            CurrentRevision = currentRevision;
+            Callbacks = callbacks;
+        }
+
+        public Task OnConfigChanged()
+        {
+            OnConfigChangedCb?.Invoke();
+            return Task.CompletedTask;
         }
     }
 

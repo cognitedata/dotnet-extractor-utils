@@ -405,7 +405,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                     yield return new IntegrationTask
                     {
                         Name = task.Operation.Name,
-                        // Description = task.Operation.Metadata.Description,
+                        Description = task.Operation.Metadata.Description,
                         Type = task.Operation.Metadata.Type,
                         Action = task.Operation.Metadata.Action,
                     };

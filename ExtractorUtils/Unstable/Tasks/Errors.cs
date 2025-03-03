@@ -150,6 +150,18 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
     }
 
     /// <summary>
+    /// Callbacks for triggering actions based on responses to checkin and startup requests.
+    /// </summary>
+    public interface ISinkCallbacks
+    {
+        /// <summary>
+        /// Called when a new config with revision not equal to the current revision is received.
+        /// Should only be called if the revision provided the sink on startup is non-null.
+        /// </summary>
+        Task OnConfigChanged();
+    }
+
+    /// <summary>
     /// Interface for types that can consume errors and write them to some sink (integrations API).
     /// </summary>
     public interface IIntegrationSink
@@ -196,6 +208,16 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <param name="request">Startup request, external ID is added by the sink.</param>
         /// <param name="token">Cancellation token.</param>
         Task ReportStartup(StartupRequest request, CancellationToken token);
+
+        /// <summary>
+        /// Initialize the sink once the extractor has been created.
+        /// </summary>
+        /// <param name="currentRevision">Current revision. Setting this to null
+        /// means that the extractor is running a local config and any new revisions in
+        /// integrations should be ignored.</param>
+        /// <param name="callbacks">Callbacks for actions the extractor should take based
+        /// on checkin responses.</param>
+        void Init(int? currentRevision, ISinkCallbacks callbacks);
     }
 
     /// <summary>

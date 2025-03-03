@@ -28,6 +28,9 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
 
         private bool _isRunning;
 
+        private ISinkCallbacks? _callbacks;
+        private int? _currentRevision;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -74,6 +77,8 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
             _isRunning = false;
         }
 
+        private SemaphoreSlim _flushLock = new SemaphoreSlim(1);
+
         /// <summary>
         /// Report a checkin immediately, flushing the cache.
         /// 
@@ -83,7 +88,19 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <returns></returns>
         public async Task Flush(CancellationToken token)
         {
-            // Reporting checkin is safely behind locks, so we can just call report.
+            // Ensure that only one flush is running at a time,
+            // importantly this also means that if we call flush, we will wait for
+            // any running flushes to complete, meaning that once this method returns.
+            try
+            {
+                await _flushLock.WaitAsync(token).ConfigureAwait(false);
+            }
+            catch
+            {
+                // Only really happens if we're cancelled while waiting.
+                return;
+            }
+
             try
             {
                 await ReportCheckIn(token).ConfigureAwait(false);
@@ -92,18 +109,35 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
             {
                 _logger.LogError(ex, "Error during checkin: {Message}", ex.Message);
             }
+            finally
+            {
+                _flushLock.Release();
+            }
+        }
+
+        private void RequeueCheckIn(IEnumerable<ErrorWithTask> errors, IEnumerable<TaskUpdate> tasks)
+        {
+            lock (_lock)
+            {
+                foreach (var err in errors)
+                {
+                    if (!_errors.ContainsKey(err.ExternalId)) _errors.Add(err.ExternalId, err);
+                }
+                _taskUpdates.AddRange(tasks);
+            }
         }
 
         private async Task TryWriteCheckIn(IEnumerable<ErrorWithTask> errors, IEnumerable<TaskUpdate> tasks, CancellationToken token)
         {
             try
             {
-                await _client.Alpha.Integrations.CheckInAsync(new CheckInRequest
+                var response = await _client.Alpha.Integrations.CheckInAsync(new CheckInRequest
                 {
                     ExternalId = _integrationId,
                     TaskEvents = tasks,
                     Errors = errors,
                 }, token).ConfigureAwait(false);
+                await HandleCheckInResponse(response).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -113,14 +147,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                     return;
                 }
                 // If pushing the update failed, keep the updates to try again later.
-                lock (_lock)
-                {
-                    foreach (var err in errors)
-                    {
-                        if (!_errors.ContainsKey(err.ExternalId)) _errors.Add(err.ExternalId, err);
-                    }
-                    _taskUpdates.AddRange(tasks);
-                }
+                RequeueCheckIn(errors, tasks);
                 throw;
             }
         }
@@ -145,7 +172,11 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
             {
                 if (newErrors.Count <= MAX_ERRORS_PER_CHECKIN && taskUpdates.Count <= MAX_TASK_UPDATES_PER_CHECKIN)
                 {
-                    await TryWriteCheckIn(newErrors, taskUpdates, token).ConfigureAwait(false);
+                    var errorsToWrite = newErrors;
+                    var tasksToWrite = taskUpdates;
+                    newErrors = new List<ErrorWithTask>();
+                    taskUpdates = new List<TaskUpdate>();
+                    await TryWriteCheckIn(errorsToWrite, tasksToWrite, token).ConfigureAwait(false);
                     break;
                 }
 
@@ -177,6 +208,14 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                 if (taskIdx > 0) taskUpdates = taskUpdates.Skip(taskIdx).ToList();
 
                 await TryWriteCheckIn(errorsBatch, taskBatch, token).ConfigureAwait(false);
+                if (newErrors.Count == 0 && taskUpdates.Count == 0) break;
+            }
+
+            // If the task was cancelled, re-queue any unsubmitted errors and updates.
+            // This way, we don't lose any updates, and can push them when doing the final flush.
+            if (token.IsCancellationRequested)
+            {
+                RequeueCheckIn(newErrors, taskUpdates);
             }
         }
 
@@ -227,7 +266,24 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <inheritdoc />
         public async Task ReportStartup(StartupRequest request, CancellationToken token)
         {
-            await _client.Alpha.Integrations.StartupAsync(request, token).ConfigureAwait(false);
+            var response = await _client.Alpha.Integrations.StartupAsync(request, token).ConfigureAwait(false);
+            await HandleCheckInResponse(response).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public void Init(int? currentRevision, ISinkCallbacks callbacks)
+        {
+            _callbacks = callbacks;
+            _currentRevision = currentRevision;
+        }
+
+        private async Task HandleCheckInResponse(CheckInResponse response)
+        {
+            if (_currentRevision != null && response.LastConfigRevision != _currentRevision && _callbacks != null)
+            {
+                _logger.LogInformation("Config revision changed {From} -> {To}", _currentRevision, response.LastConfigRevision);
+                await _callbacks.OnConfigChanged().ConfigureAwait(false);
+            }
         }
     }
 }
