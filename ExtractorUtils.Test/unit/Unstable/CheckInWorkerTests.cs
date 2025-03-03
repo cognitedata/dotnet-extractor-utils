@@ -22,6 +22,7 @@ using Cognite.Extractor.Utils;
 using Cognite.ExtractorUtils.Unstable.Tasks;
 using Microsoft.Extensions.Logging;
 using CogniteSdk.Alpha;
+using CogniteSdk;
 
 
 namespace ExtractorUtils.Test.Unit.Unstable
@@ -64,11 +65,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
         private (ServiceProvider, CheckInWorker) GetCheckInWorker()
         {
             var config = GetConfig();
-            var baseCogniteConfig = new BaseCogniteConfig();
 
             var services = new ServiceCollection();
             services.AddConfig(config, typeof(ConnectionConfig));
-            services.AddConfig(baseCogniteConfig, typeof(BaseCogniteConfig));
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockCheckInAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;
@@ -77,9 +76,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
             DestinationUtilsUnstable.AddCogniteClient(services, "myApp", null, setLogger: true, setMetrics: true, setHttpClient: true);
             var provider = services.BuildServiceProvider();
 
-            var dest = provider.GetRequiredService<CogniteDestination>();
+            var client = provider.GetRequiredService<Client>();
 
-            return (provider, new CheckInWorker(config.Integration, provider.GetRequiredService<ILogger<CheckInWorker>>(), dest.CogniteClient));
+            return (provider, new CheckInWorker(config.Integration, provider.GetRequiredService<ILogger<CheckInWorker>>(), client));
         }
 
         [Fact]
