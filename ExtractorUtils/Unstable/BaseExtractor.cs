@@ -34,9 +34,8 @@ namespace Cognite.ExtractorUtils.Unstable
 
     /// <summary>
     /// Class wrapping a task being monitored by the extractor.
-    /// This is simply a way to run background tasks without
-    /// running them as actual extractor tasks reported to
-    /// integrations.
+    /// This is simply a way to run background tasks that
+    /// don't get reported to integrations.
     /// </summary>
     class MonitoredTask
     {
@@ -162,7 +161,7 @@ namespace Cognite.ExtractorUtils.Unstable
         /// <summary>
         /// Add a task that should be watched by the extractor.
         /// 
-        /// Use this for tasks that should not be reported to integrations,
+        /// Use this for tasks that will not be reported to integrations,
         /// but that you still want to monitor, so that the extractor can crash
         /// if they fail or exit unexpectedly.
         /// </summary>
@@ -212,7 +211,7 @@ namespace Cognite.ExtractorUtils.Unstable
         /// <summary>
         /// Add a monitored task that should be watched by the extractor.
         /// 
-        /// Use this for tasks that should not be reported to integrations,
+        /// Use this for tasks that will not be reported to integrations,
         /// but that you still want to monitor, so that the extractor can crash
         /// if they fail or exit unexpectedly.
         /// 
