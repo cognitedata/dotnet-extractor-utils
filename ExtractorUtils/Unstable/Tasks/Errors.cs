@@ -189,7 +189,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <param name="token">Cancellation token.</param>
         /// <param name="interval">Interval. If left out, uses an implementation-defined default.</param>
         /// <returns></returns>
-        Task Run(CancellationToken token, TimeSpan? interval = null);
+        Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null);
     }
 
     /// <summary>

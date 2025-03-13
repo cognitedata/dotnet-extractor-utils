@@ -88,7 +88,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             using var p = provider;
             using var source = new CancellationTokenSource();
             // Check that this doesn't crash, and properly cancels out at the end.
-            var runTask = checkIn.Run(source.Token, Timeout.InfiniteTimeSpan);
+            var runTask = checkIn.RunPeriodicCheckin(source.Token, Timeout.InfiniteTimeSpan);
             // First, we should very quickly report a checkin on the start of the run task...
             await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
 
@@ -136,7 +136,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             using var source = new CancellationTokenSource();
 
             // Check that this doesn't crash, and properly cancels out at the end.
-            var runTask = checkIn.Run(source.Token, Timeout.InfiniteTimeSpan);
+            var runTask = checkIn.RunPeriodicCheckin(source.Token, Timeout.InfiniteTimeSpan);
             // First, we should very quickly report a checkin on the start of the run task...
             await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
 

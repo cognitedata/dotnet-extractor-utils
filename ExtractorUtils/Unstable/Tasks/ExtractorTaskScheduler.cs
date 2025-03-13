@@ -513,8 +513,8 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
             var completed = await Task.WhenAny(waitTask, CompletedTask).ConfigureAwait(false);
             if (completed == waitTask)
             {
-                _logger.LogWarning("Failed to shut down gracefully within timeout, continuing shutdown");
-                outerReporter?.Warning("Failed to shut down gracefully within timeout, continuing shutdown");
+                _logger.LogWarning("Failed to shut down gracefully within timeout");
+                outerReporter?.Warning("Failed to shut down gracefully within timeout");
             }
 
             if (completed.Exception != null)

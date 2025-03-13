@@ -42,7 +42,7 @@ namespace ExtractorUtils.Test.unit.Unstable
             TaskStart.Add((taskName, timestamp ?? DateTime.UtcNow));
         }
 
-        public async Task Run(CancellationToken token, TimeSpan? interval = null)
+        public async Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)
         {
             while (!token.IsCancellationRequested) await Task.Delay(100000, token);
         }

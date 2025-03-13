@@ -105,7 +105,7 @@ namespace Cognite.ExtractorUtils.Unstable
         /// 
         /// Note that this is null until initialized in `Init`.
         /// </summary>
-        protected CancellationTokenSource Source { get; set; } = null!;
+        protected CancellationTokenSource Source { get; private set; } = null!;
 
         private readonly ILogger<BaseExtractor<TConfig>> _logger;
 
@@ -273,7 +273,7 @@ namespace Cognite.ExtractorUtils.Unstable
 
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
-            AddMonitoredTask(t => _sink.Run(t), ExtractorTaskResult.Unexpected, "Sink");
+            AddMonitoredTask(t => _sink.RunPeriodicCheckin(t), ExtractorTaskResult.Unexpected, "CheckInWorker");
 
             while (!Source.IsCancellationRequested)
             {
@@ -281,7 +281,7 @@ namespace Cognite.ExtractorUtils.Unstable
                 lock (_lock)
                 {
                     _triggerEvent.Reset();
-                    var toRemove = new List<MonitoredTask>();
+                    var toRemove = new HashSet<MonitoredTask>();
                     foreach (var monitored in _monitoredTaskList)
                     {
                         if (!monitored.Task.IsCompleted) continue;
@@ -307,7 +307,7 @@ namespace Cognite.ExtractorUtils.Unstable
                         _logger.LogDebug("Internal task {Name} completed.", monitored.Name);
                         toRemove.Add(monitored);
                     }
-                    foreach (var rem in toRemove) _monitoredTaskList.Remove(rem);
+                    _monitoredTaskList.RemoveAll(r => toRemove.Contains(r));
 
                     toWaitFor.AddRange(_monitoredTaskList.Select(mt => mt.Task));
                 }
