@@ -39,12 +39,6 @@ namespace ExtractorUtils.Test.unit.Unstable
             Errors.Add(error);
         }
 
-        public Task ReportStartup(StartupRequest request, CancellationToken token)
-        {
-            StartupRequests.Add(request);
-            return Task.CompletedTask;
-        }
-
         public void ReportTaskEnd(string taskName, TaskUpdatePayload update = null, DateTime? timestamp = null)
         {
             TaskEnd.Add((taskName, timestamp ?? DateTime.UtcNow));
@@ -55,8 +49,9 @@ namespace ExtractorUtils.Test.unit.Unstable
             TaskStart.Add((taskName, timestamp ?? DateTime.UtcNow));
         }
 
-        public async Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)
+        public async Task RunPeriodicCheckin(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
         {
+            StartupRequests.Add(startupPayload);
             while (!token.IsCancellationRequested) await Task.Delay(100000, token);
         }
 

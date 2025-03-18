@@ -33,11 +33,13 @@ namespace ExtractorUtils.Test.Unit.Unstable
     {
         private List<dynamic> taskEvents = new();
         private List<dynamic> errors = new();
+        private List<dynamic> startupRequests = new();
 
         private int? _lastConfigRevision;
 
         private readonly ITestOutputHelper _output;
         private int _checkInCount;
+        private int _startupCount;
         public CheckInWorkerTests(ITestOutputHelper output)
         {
             _output = output;
@@ -90,7 +92,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             using var p = provider;
             using var source = new CancellationTokenSource();
             // Check that this doesn't crash, and properly cancels out at the end.
-            var runTask = checkIn.RunPeriodicCheckin(source.Token, Timeout.InfiniteTimeSpan);
+            var runTask = checkIn.RunPeriodicCheckin(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
             // First, we should very quickly report a checkin on the start of the run task...
             await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
 
@@ -138,7 +140,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             using var source = new CancellationTokenSource();
 
             // Check that this doesn't crash, and properly cancels out at the end.
-            var runTask = checkIn.RunPeriodicCheckin(source.Token, Timeout.InfiniteTimeSpan);
+            var runTask = checkIn.RunPeriodicCheckin(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
             // First, we should very quickly report a checkin on the start of the run task...
             await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
 
@@ -195,7 +197,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
                 onConfigCount++;
             };
 
-            var runTask = checkIn.Run(source.Token, Timeout.InfiniteTimeSpan);
+            var runTask = checkIn.RunPeriodicCheckin(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
             await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
 
             Assert.Equal(0, onConfigCount);
@@ -228,22 +230,35 @@ namespace ExtractorUtils.Test.Unit.Unstable
 
                 return response;
             }
-
-            Assert.Contains("/integrations/checkin", uri);
-            var content = await message.Content.ReadAsStringAsync(token);
-            _output.WriteLine(content);
-            var data = JsonConvert.DeserializeObject<dynamic>(content);
-            Assert.Equal("test-integration", (string)data.externalId);
-
-            if (data.taskEvents != null)
+            else if (uri.Contains("/checkin"))
             {
-                taskEvents.AddRange(data.taskEvents);
+                var content = await message.Content.ReadAsStringAsync(token);
+                _output.WriteLine(content);
+                var data = JsonConvert.DeserializeObject<dynamic>(content);
+                Assert.Equal("test-integration", (string)data.externalId);
+
+                if (data.taskEvents != null)
+                {
+                    taskEvents.AddRange(data.taskEvents);
+                }
+                if (data.errors != null)
+                {
+                    errors.AddRange(data.errors);
+                }
+                _checkInCount++;
             }
-            if (data.errors != null)
+            else
             {
-                errors.AddRange(data.errors);
+                Assert.Contains("/startup", uri);
+                var content = await message.Content.ReadAsStringAsync(token);
+                _output.WriteLine(content);
+                var data = JsonConvert.DeserializeObject<dynamic>(content);
+                Assert.Equal("test-integration", (string)data.externalId);
+
+                startupRequests.Add(data);
+
+                _startupCount++;
             }
-            _checkInCount++;
 
             dynamic resData = new ExpandoObject();
             resData.lastConfigRevision = _lastConfigRevision;
@@ -260,6 +275,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
             fresponse.Headers.Add("x-request-id", "1");
 
             return fresponse;
+
+
         }
     }
 }

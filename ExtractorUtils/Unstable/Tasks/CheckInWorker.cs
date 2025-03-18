@@ -27,9 +27,15 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         private const int MAX_TASK_UPDATES_PER_CHECKIN = 1000;
 
         private bool _isRunning;
+        private bool _hasReportedStartup;
 
         private ISinkCallbacks? _callbacks;
         private int? _currentRevision;
+
+        const int STARTUP_BACKOFF_SECONDS = 30;
+
+        private Random _random = new Random();
+        private readonly bool _retryStartup;
 
         /// <summary>
         /// Constructor.
@@ -37,26 +43,45 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <param name="integrationId">ID of the integration the worker should write to.</param>
         /// <param name="logger">Internal logger.</param>
         /// <param name="client">Cognite client</param>
-        public CheckInWorker(string integrationId, ILogger logger, Client client)
+        /// <param name="retryStartup">Retry startup if it fails.</param>
+        public CheckInWorker(string integrationId, ILogger logger, Client client, bool retryStartup = false)
         {
             _client = client;
             _logger = logger;
             _integrationId = integrationId;
+            _retryStartup = retryStartup;
         }
 
-        /// <summary>
-        /// Start running the checkin worker.
-        /// 
-        /// This may only be called once.
-        /// </summary>
-        /// <param name="token">Cancellation token</param>
-        /// <param name="interval">Interval, defaults to 30 seconds.</param>
-        public async Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)
+        /// <inheritdoc />
+        public async Task RunPeriodicCheckin(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
         {
             lock (_lock)
             {
                 if (_isRunning) throw new InvalidOperationException("Attempted to start a checkin worker that was already running");
                 _isRunning = true;
+            }
+
+            while (!token.IsCancellationRequested)
+            {
+                try
+                {
+                    await ReportStartup(startupPayload, token).ConfigureAwait(false);
+                    _hasReportedStartup = true;
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    if (!_retryStartup) throw;
+                    var toDelay = _random.Next(STARTUP_BACKOFF_SECONDS / 2, STARTUP_BACKOFF_SECONDS * 3 / 2);
+                    _logger.LogError("Failed to report startup, retrying after {Time} seconds: {Err}", toDelay, ex.Message);
+                    await Task.Delay(TimeSpan.FromSeconds(toDelay), token).ConfigureAwait(false);
+                    continue;
+                }
+            }
+
+            lock (_lock)
+            {
+                _hasReportedStartup = true;
             }
 
             var rinterval = interval ?? TimeSpan.FromSeconds(30);
@@ -88,6 +113,16 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// <returns></returns>
         public async Task Flush(CancellationToken token)
         {
+            lock (_lock)
+            {
+                if (!_hasReportedStartup)
+                {
+                    _logger.LogWarning("Attempted to flush checkin worker before reporting startup, since this results in unclear errors in CDF, the request is ignored. It would likely fail.");
+                    return;
+                }
+            }
+
+
             // Ensure that only one flush is running at a time,
             // importantly this also means that if we call flush, we will wait for
             // any running flushes to complete, meaning that once this method returns.
@@ -263,8 +298,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
             }
         }
 
-        /// <inheritdoc />
-        public async Task ReportStartup(StartupRequest request, CancellationToken token)
+        private async Task ReportStartup(StartupRequest request, CancellationToken token)
         {
             var response = await _client.Alpha.Integrations.StartupAsync(request, token).ConfigureAwait(false);
             await HandleCheckInResponse(response).ConfigureAwait(false);

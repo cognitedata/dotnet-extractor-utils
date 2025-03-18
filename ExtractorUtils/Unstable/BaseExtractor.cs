@@ -283,11 +283,17 @@ namespace Cognite.ExtractorUtils.Unstable
         public async Task Start(CancellationToken token)
         {
             await Init(token).ConfigureAwait(false);
-            await ReportStartup().ConfigureAwait(false);
 
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
-            AddMonitoredTask(t => _sink.RunPeriodicCheckin(t), ExtractorTaskResult.Unexpected, "CheckInWorker");
+            AddMonitoredTask(t => _sink.RunPeriodicCheckin(t, new StartupRequest()
+            {
+                ActiveConfigRevision = _configRevision.HasValue
+                    ? StringOrInt.Create(_configRevision.Value)
+                    : StringOrInt.Create("local"),
+                Tasks = TaskScheduler.GetRegisteredTasks().ToList(),
+                Extractor = GetExtractorVersion()
+            }), ExtractorTaskResult.Unexpected, "CheckInWorker");
 
             while (!Source.IsCancellationRequested)
             {
@@ -337,19 +343,6 @@ namespace Cognite.ExtractorUtils.Unstable
         /// </summary>
         /// <returns></returns>
         protected abstract ExtractorId GetExtractorVersion();
-
-        private async Task ReportStartup()
-        {
-            var payload = new StartupRequest()
-            {
-                ActiveConfigRevision = _configRevision.HasValue
-                    ? StringOrInt.Create(_configRevision.Value)
-                    : StringOrInt.Create("local"),
-                Tasks = TaskScheduler.GetRegisteredTasks().ToList(),
-                Extractor = GetExtractorVersion()
-            };
-            await _sink.ReportStartup(payload, Source.Token).ConfigureAwait(false);
-        }
 
         /// <summary>
         /// Verify that the extractor is configured correctly.
