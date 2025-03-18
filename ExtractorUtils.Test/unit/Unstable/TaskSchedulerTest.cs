@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using Cognite.ExtractorUtils.Unstable.Tasks;
 using CogniteSdk.Alpha;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,6 +16,11 @@ namespace ExtractorUtils.Test.unit.Unstable
         public List<ExtractorError> Errors { get; } = new();
         public List<(string, DateTime)> TaskStart { get; } = new();
         public List<(string, DateTime)> TaskEnd { get; } = new();
+
+        public Task Flush(CancellationToken token)
+        {
+            return Task.CompletedTask;
+        }
 
         public override ExtractorError NewError(ErrorLevel level, string description, string details = null, DateTime? now = null)
         {
@@ -34,6 +40,11 @@ namespace ExtractorUtils.Test.unit.Unstable
         public void ReportTaskStart(string taskName, TaskUpdatePayload update = null, DateTime? timestamp = null)
         {
             TaskStart.Add((taskName, timestamp ?? DateTime.UtcNow));
+        }
+
+        public async Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)
+        {
+            while (!token.IsCancellationRequested) await Task.Delay(100000, token);
         }
     }
 
@@ -78,7 +89,7 @@ namespace ExtractorUtils.Test.unit.Unstable
         public async Task TestScheduler()
         {
             var sink = new DummySink();
-            using var sched = new ExtractorTaskScheduler(sink);
+            using var sched = new ExtractorTaskScheduler(sink, new NullLogger<ExtractorTaskScheduler>());
             using var source = new CancellationTokenSource();
 
             var running = sched.Run(source.Token);
@@ -157,7 +168,7 @@ namespace ExtractorUtils.Test.unit.Unstable
         public async Task TestSchedulerErrors()
         {
             var sink = new DummySink();
-            using var sched = new ExtractorTaskScheduler(sink);
+            using var sched = new ExtractorTaskScheduler(sink, new NullLogger<ExtractorTaskScheduler>());
             using var source = new CancellationTokenSource();
 
             var running = sched.Run(source.Token);
@@ -197,7 +208,7 @@ namespace ExtractorUtils.Test.unit.Unstable
         public async Task TestSchedulerFatalError()
         {
             var sink = new DummySink();
-            using var sched = new ExtractorTaskScheduler(sink);
+            using var sched = new ExtractorTaskScheduler(sink, new NullLogger<ExtractorTaskScheduler>());
             using var source = new CancellationTokenSource();
 
             var running = sched.Run(source.Token);
