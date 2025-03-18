@@ -10,7 +10,11 @@
           "relative_path": "api/Cognite.Common.ListOrSpaceSeparated.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Common.ListOrSpaceSeparated",
+      "Summary": "<p sourcefile=\"api/Cognite.Common.ListOrSpaceSeparated.yml\" sourcestartlinenumber=\"1\">A wrapper for yaml types that are serialized either as lists or as space separated values.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -20,7 +24,11 @@
           "relative_path": "api/Cognite.Common.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Common",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -30,7 +38,11 @@
           "relative_path": "api/Cognite.Extensions.ApiUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.ApiUtils",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.ApiUtils.yml\" sourcestartlinenumber=\"1\">Utility methods for the CogniteSDK.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -40,7 +52,25 @@
           "relative_path": "api/Cognite.Extensions.AssetExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.AssetExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.AssetExtensions.yml\" sourcestartlinenumber=\"1\">Extension utility methods for CogniteSDK Client.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Authenticator.Options.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Authenticator.Options.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.Authenticator.Options",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.Authenticator.Options.yml\" sourcestartlinenumber=\"1\">Authenticator options.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -50,7 +80,11 @@
           "relative_path": "api/Cognite.Extensions.Authenticator.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.Authenticator",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.Authenticator.yml\" sourcestartlinenumber=\"1\">Authenticator that issues a POST request to an authority endpoint defined in the <xref href=\"Cognite.Extensions.AuthenticatorConfig.Authority\" data-throw-if-not-resolved=\"false\"></xref> configuration\nin order to obtain bearer access tokens.\nThe token is cached and renewed if it expired</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -60,7 +94,11 @@
           "relative_path": "api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.AuthenticatorConfig.AuthenticatorImplementation.yml\" sourcestartlinenumber=\"1\">DEPRECATED: Available authenticator implementations</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -70,7 +108,11 @@
           "relative_path": "api/Cognite.Extensions.AuthenticatorConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.AuthenticatorConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.AuthenticatorConfig.yml\" sourcestartlinenumber=\"1\">Authenticator configuration. For more information, read the\n<a href=\"https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow\">OAth 2.0 client credentials flow</a></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -80,7 +122,11 @@
           "relative_path": "api/Cognite.Extensions.CertificateConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CertificateConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CertificateConfig.yml\" sourcestartlinenumber=\"1\">Configuration for certificate authentication.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -90,7 +136,11 @@
           "relative_path": "api/Cognite.Extensions.CogniteError-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CogniteError<TError>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CogniteError-1.yml\" sourcestartlinenumber=\"1\">Represents an error that occured on a push to CDF, or\nin pre-push sanitation.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -100,7 +150,11 @@
           "relative_path": "api/Cognite.Extensions.CogniteError.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CogniteError",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CogniteError.yml\" sourcestartlinenumber=\"1\">Represents an error that occured on a push to CDF, or\nin pre-push sanitation.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -110,7 +164,11 @@
           "relative_path": "api/Cognite.Extensions.CogniteErrorException.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CogniteErrorException",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CogniteErrorException.yml\" sourcestartlinenumber=\"1\">Exception triggered by a <xref href=\"Cognite.Extensions.CogniteError\" data-throw-if-not-resolved=\"false\"></xref></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -120,7 +178,11 @@
           "relative_path": "api/Cognite.Extensions.CogniteExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CogniteExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CogniteExtensions.yml\" sourcestartlinenumber=\"1\">Extension utilities for the Cognite client</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -130,7 +192,11 @@
           "relative_path": "api/Cognite.Extensions.CogniteResult-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CogniteResult<TError>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CogniteResult-1.yml\" sourcestartlinenumber=\"1\">Represents the result of one or more pushes to CDF.\nContains a list of errors, one for each failed push, and potentially pre-push santiation.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -140,7 +206,11 @@
           "relative_path": "api/Cognite.Extensions.CogniteResult-2.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CogniteResult<TResult, TError>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CogniteResult-2.yml\" sourcestartlinenumber=\"1\">Represents the result of one or more pushes to CDF.\nContains a list of errors, one for each failed push, and potentially pre-push santiation,\nas well as a list of result objects.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -150,7 +220,11 @@
           "relative_path": "api/Cognite.Extensions.CogniteUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CogniteUtils",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CogniteUtils.yml\" sourcestartlinenumber=\"1\">Utility class for configuring a <a href=\"https://github.com/cognitedata/cognite-sdk-dotnet\">Cognite SDK</a> client</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -160,7 +234,11 @@
           "relative_path": "api/Cognite.Extensions.CogniteUtilsException.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.CogniteUtilsException",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.CogniteUtilsException.yml\" sourcestartlinenumber=\"1\">Exceptions produced by the Cognite utility classes</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -170,7 +248,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.AtomicUpdateUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.AtomicUpdateUtils",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.AtomicUpdateUtils.yml\" sourcestartlinenumber=\"1\">Utility methods for performing atomic updates against FDM.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -180,7 +262,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.yml\" sourcestartlinenumber=\"1\">CDM Asset extended for use with extractors</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -190,7 +276,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.yml\" sourcestartlinenumber=\"1\">CDM TimeSeries extended for use with extractors</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -200,7 +290,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.yml\" sourcestartlinenumber=\"1\">Extensions to datapoints</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -210,7 +304,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorAssetExtensions.yml\" sourcestartlinenumber=\"1\">Extension utility methods for <xref href=\"CogniteSdk.Client\" data-throw-if-not-resolved=\"false\"></xref></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -220,7 +318,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorTimeSeriesExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorTimeSeriesExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.ExtractorTimeSeriesExtensions.yml\" sourcestartlinenumber=\"1\">Extension utility methods for <xref href=\"CogniteSdk.Client\" data-throw-if-not-resolved=\"false\"></xref></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -230,7 +332,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -240,7 +346,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.CoreTSSanitation.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CoreTSSanitation",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CoreTSSanitation.yml\" sourcestartlinenumber=\"1\">Collection of methods for cleaning and sanitizing objects used in\nrequests to CDM TimeSeries</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -250,7 +360,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.DMSQueryResult-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.DMSQueryResult<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.DMSQueryResult-1.yml\" sourcestartlinenumber=\"1\">Result of an iteration of a DMS query</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -260,7 +374,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.DataModelExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.DataModelExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.DataModelExtensions.yml\" sourcestartlinenumber=\"1\">Extensions for Data Models.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -270,7 +388,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.DataModelSanitation.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.DataModelSanitation",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.DataModelSanitation.yml\" sourcestartlinenumber=\"1\">Collection of methods for cleaning and sanitizing objects used in\nrequests to CDM Instances</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -280,7 +402,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.DataModelUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.DataModelUtils",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.DataModelUtils.yml\" sourcestartlinenumber=\"1\">General utils for data models.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -290,7 +416,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.EdgeQueryBuilderItem.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryBuilder.EdgeQueryBuilderItem",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.QueryBuilder.EdgeQueryBuilderItem.yml\" sourcestartlinenumber=\"1\">Builder item for edge queries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -300,7 +430,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.Filter.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryBuilder.Filter",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.QueryBuilder.Filter.yml\" sourcestartlinenumber=\"1\">Fluent API for building DMS filters.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -310,7 +444,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.NodeQueryBuilderItem.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryBuilder.NodeQueryBuilderItem",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.QueryBuilder.NodeQueryBuilderItem.yml\" sourcestartlinenumber=\"1\">Builder item for node queries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -320,7 +458,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.QueryBuilder.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryBuilder.QueryBuilder",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.QueryBuilder.QueryBuilder.yml\" sourcestartlinenumber=\"1\">Utility for building DMS queries with a fluent API</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -330,7 +472,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.QueryBuilderItem.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryBuilder.QueryBuilderItem",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.QueryBuilder.QueryBuilderItem.yml\" sourcestartlinenumber=\"1\">Base class for query builder items. Subclassed to either nodes or edges.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -340,7 +486,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.QueryType.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryBuilder.QueryType",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.QueryBuilder.QueryType.yml\" sourcestartlinenumber=\"1\">Type of query.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -350,7 +500,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.Value.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryBuilder.Value",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.QueryBuilder.Value.yml\" sourcestartlinenumber=\"1\">Wrapper around values in DMS queries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -360,7 +514,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryBuilder.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryBuilder",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -370,7 +528,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.QueryCursor.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.QueryCursor",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.QueryCursor.yml\" sourcestartlinenumber=\"1\">Composite cursor used when iterating</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -380,7 +542,11 @@
           "relative_path": "api/Cognite.Extensions.DataModels.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -390,7 +556,11 @@
           "relative_path": "api/Cognite.Extensions.DataPointExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataPointExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataPointExtensions.yml\" sourcestartlinenumber=\"1\">Extensions to datapoints</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -400,7 +570,11 @@
           "relative_path": "api/Cognite.Extensions.DataPointInsertError.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataPointInsertError",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataPointInsertError.yml\" sourcestartlinenumber=\"1\">Container for error on datapoint insertion.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -410,7 +584,11 @@
           "relative_path": "api/Cognite.Extensions.DataSetConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataSetConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataSetConfig.yml\" sourcestartlinenumber=\"1\">Config for setting a dataset.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -420,7 +598,11 @@
           "relative_path": "api/Cognite.Extensions.DataSetExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataSetExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataSetExtensions.yml\" sourcestartlinenumber=\"1\">Extensions for cognite data sets.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -430,7 +612,11 @@
           "relative_path": "api/Cognite.Extensions.Datapoint.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.Datapoint",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.Datapoint.yml\" sourcestartlinenumber=\"1\">Data point abstraction. Consists of a timestamp and a double or string value</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -440,7 +626,11 @@
           "relative_path": "api/Cognite.Extensions.DeleteError.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DeleteError",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DeleteError.yml\" sourcestartlinenumber=\"1\">Class contaning errors resulting from delete operations</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -450,7 +640,11 @@
           "relative_path": "api/Cognite.Extensions.ErrorType.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.ErrorType",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.ErrorType.yml\" sourcestartlinenumber=\"1\">General type of error</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -460,7 +654,11 @@
           "relative_path": "api/Cognite.Extensions.EventExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.EventExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.EventExtensions.yml\" sourcestartlinenumber=\"1\">Extension utility methods for CogniteSdk Client.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -470,7 +668,11 @@
           "relative_path": "api/Cognite.Extensions.IAuthenticator.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.IAuthenticator",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.IAuthenticator.yml\" sourcestartlinenumber=\"1\">Interface for implementing authenticators based on bearer access tokens issued by an identity provider</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -480,7 +682,11 @@
           "relative_path": "api/Cognite.Extensions.LoggerExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.LoggerExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.LoggerExtensions.yml\" sourcestartlinenumber=\"1\">Extensions class containing methods to log the results of extension methods</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -490,7 +696,11 @@
           "relative_path": "api/Cognite.Extensions.MsalAuthenticator.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.MsalAuthenticator",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.MsalAuthenticator.yml\" sourcestartlinenumber=\"1\">Uses Microsoft Authentication Library (MSAL) to acquire tokens from the identity provider endpoint\ndefined in the <xref href=\"Cognite.Extensions.AuthenticatorConfig.Authority\" data-throw-if-not-resolved=\"false\"></xref> configuration</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -500,7 +710,11 @@
           "relative_path": "api/Cognite.Extensions.RawExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.RawExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.RawExtensions.yml\" sourcestartlinenumber=\"1\">Extension utility methods for <xref href=\"CogniteSdk.Client.Raw\" data-throw-if-not-resolved=\"false\"></xref></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -510,7 +724,11 @@
           "relative_path": "api/Cognite.Extensions.RequestType.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.RequestType",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.RequestType.yml\" sourcestartlinenumber=\"1\">Type of request that caused an error</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -520,7 +738,11 @@
           "relative_path": "api/Cognite.Extensions.ResourceType.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.ResourceType",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.ResourceType.yml\" sourcestartlinenumber=\"1\">Type of CDF attribute that caused this error</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -530,7 +752,11 @@
           "relative_path": "api/Cognite.Extensions.ResultHandlers.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.ResultHandlers",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.ResultHandlers.yml\" sourcestartlinenumber=\"1\">Class containing static methods to parse errors from the SDK and clean request objects</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -540,7 +766,11 @@
           "relative_path": "api/Cognite.Extensions.RetryMode.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.RetryMode",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.RetryMode.yml\" sourcestartlinenumber=\"1\">When to retry a request\nFor convenience, bit 0 indicates keeping duplicates,\nbit 1 indicates retrying on errors,\nbit 2 indicates retrying on fatal errors</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -550,7 +780,11 @@
           "relative_path": "api/Cognite.Extensions.Sanitation.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.Sanitation",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.Sanitation.yml\" sourcestartlinenumber=\"1\">Collection of methods for cleaning and sanitizing objects used in\nrequests to various CDF endpoints</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -560,7 +794,11 @@
           "relative_path": "api/Cognite.Extensions.SanitationMode.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.SanitationMode",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.SanitationMode.yml\" sourcestartlinenumber=\"1\">How to do sanitation of objects before creating the request</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -570,7 +808,11 @@
           "relative_path": "api/Cognite.Extensions.SequenceExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.SequenceExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.SequenceExtensions.yml\" sourcestartlinenumber=\"1\">Extensions to sequences.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -580,7 +822,11 @@
           "relative_path": "api/Cognite.Extensions.SequenceRowError.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.SequenceRowError",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.SequenceRowError.yml\" sourcestartlinenumber=\"1\">Contains information about skipped rows per sequence in a row insert request</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -590,7 +836,11 @@
           "relative_path": "api/Cognite.Extensions.StreamRecordExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.StreamRecordExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.StreamRecordExtensions.yml\" sourcestartlinenumber=\"1\">Extension utility methods for the beta streamrecords resource.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -600,7 +850,11 @@
           "relative_path": "api/Cognite.Extensions.TimeSeriesExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.TimeSeriesExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.TimeSeriesExtensions.yml\" sourcestartlinenumber=\"1\">Extension utility methods for <xref href=\"CogniteSdk.Client\" data-throw-if-not-resolved=\"false\"></xref></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -610,7 +864,67 @@
           "relative_path": "api/Cognite.Extensions.TypeExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.TypeExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.TypeExtensions.yml\" sourcestartlinenumber=\"1\">Extensions to CogniteSdk types</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Unstable.BaseAuthenticationConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Unstable.BaseAuthenticationConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.Unstable.BaseAuthenticationConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.Unstable.BaseAuthenticationConfig.yml\" sourcestartlinenumber=\"1\">Base class for authenticator alternatives.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Unstable.ClientCertificateConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Unstable.ClientCertificateConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.Unstable.ClientCertificateConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.Unstable.ClientCertificateConfig.yml\" sourcestartlinenumber=\"1\">Configuration for authenticating using a client certificate.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Unstable.ClientCredentialsConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Unstable.ClientCredentialsConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.Unstable.ClientCredentialsConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.Unstable.ClientCredentialsConfig.yml\" sourcestartlinenumber=\"1\">Configuration for basic client credentials.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.Unstable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.Unstable.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.Unstable",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -620,7 +934,11 @@
           "relative_path": "api/Cognite.Extensions.UpsertParams.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.UpsertParams",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.UpsertParams.yml\" sourcestartlinenumber=\"1\">Settings for upsert</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -630,7 +948,11 @@
           "relative_path": "api/Cognite.Extensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -640,7 +962,11 @@
           "relative_path": "api/Cognite.Extractor.Common.BasicTimeSpanProvider.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.BasicTimeSpanProvider",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.BasicTimeSpanProvider.yml\" sourcestartlinenumber=\"1\">Implementation of ITimeSpanProvider that just exposes a constant TimeSpan.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -650,7 +976,11 @@
           "relative_path": "api/Cognite.Extractor.Common.BlockingResourceCounter.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.BlockingResourceCounter",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.BlockingResourceCounter.yml\" sourcestartlinenumber=\"1\">Simple construct to count number of available instances of some shared resource.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -660,7 +990,11 @@
           "relative_path": "api/Cognite.Extractor.Common.Chunking.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.Chunking",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.Chunking.yml\" sourcestartlinenumber=\"1\">Support for splitting sequences into sequences of sequences subject to various constraints, as well as running\na sequence of tasks in parallel.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -670,7 +1004,11 @@
           "relative_path": "api/Cognite.Extractor.Common.CogniteTime.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.CogniteTime",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.CogniteTime.yml\" sourcestartlinenumber=\"1\">DateTime utility functions.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -680,7 +1018,11 @@
           "relative_path": "api/Cognite.Extractor.Common.CommonUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.CommonUtils",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.CommonUtils.yml\" sourcestartlinenumber=\"1\">Various utility functions</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -690,7 +1032,11 @@
           "relative_path": "api/Cognite.Extractor.Common.ConfigurationException.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.ConfigurationException",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.ConfigurationException.yml\" sourcestartlinenumber=\"1\">Exception produced by the configuration utils</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -700,7 +1046,11 @@
           "relative_path": "api/Cognite.Extractor.Common.CronTimeSpanWrapper.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.CronTimeSpanWrapper",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.CronTimeSpanWrapper.yml\" sourcestartlinenumber=\"1\">Utility for containing a string converted to timespan in config objects.\nAlso supports cron expresions.</p>\n<p sourcefile=\"api/Cognite.Extractor.Common.CronTimeSpanWrapper.yml\" sourcestartlinenumber=\"4\">To use:\npublic string MyIntervalValue { get; } = new CronTimeSpanWrapper(false, &quot;s&quot;, &quot;0&quot;);\npublic string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyIntervalValue.RawValue = value; }</p>\n<p sourcefile=\"api/Cognite.Extractor.Common.CronTimeSpanWrapper.yml\" sourcestartlinenumber=\"8\">Access MyIntervalValue.Value in your code, and MyInterval is the config option.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -710,7 +1060,11 @@
           "relative_path": "api/Cognite.Extractor.Common.ExtractorState.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.ExtractorState",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.ExtractorState.yml\" sourcestartlinenumber=\"1\">Class used to store the state of the extractors.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -720,7 +1074,11 @@
           "relative_path": "api/Cognite.Extractor.Common.FailureThresholdManager-2.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.FailureThresholdManager<T, T2>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.FailureThresholdManager-2.yml\" sourcestartlinenumber=\"1\">Simple threshold manager, tracks failed jobs and executes callback if budget is exhausted.\nThe callback is executed on every failure reported, as long as the failure budget is not\nexpanded, or failed items removed from the internal collection using the Success method.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -730,7 +1088,11 @@
           "relative_path": "api/Cognite.Extractor.Common.IChunk-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.IChunk<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.IChunk-1.yml\" sourcestartlinenumber=\"1\">Interface representing a chunk of items in TaskScheduler</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -740,7 +1102,11 @@
           "relative_path": "api/Cognite.Extractor.Common.IExtractorInstance.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.IExtractorInstance",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.IExtractorInstance.yml\" sourcestartlinenumber=\"1\">Interface for the instance of an extractor.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -750,7 +1116,11 @@
           "relative_path": "api/Cognite.Extractor.Common.IHighAvailabilityManager.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.IHighAvailabilityManager",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.IHighAvailabilityManager.yml\" sourcestartlinenumber=\"1\">Interface for a manager used to add high availability.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -760,7 +1130,11 @@
           "relative_path": "api/Cognite.Extractor.Common.IResourceCounter.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.IResourceCounter",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.IResourceCounter.yml\" sourcestartlinenumber=\"1\">Interface for generic common resource counter, which allows instant freeing, and asynchronous taking.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -770,7 +1144,11 @@
           "relative_path": "api/Cognite.Extractor.Common.ITimeSpanProvider.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.ITimeSpanProvider",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.ITimeSpanProvider.yml\" sourcestartlinenumber=\"1\">Interface for time span providers used in the periodic scheduler.\nAllows flexible scheduling.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -780,7 +1158,11 @@
           "relative_path": "api/Cognite.Extractor.Common.OperationScheduler-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.OperationScheduler<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.OperationScheduler-1.yml\" sourcestartlinenumber=\"1\">Abstraction for handling some kind of recursive exploration.\nOption for shared, asynchronous limits, and using a shared TaskThrottler.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -790,7 +1172,11 @@
           "relative_path": "api/Cognite.Extractor.Common.PeriodicScheduler.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.PeriodicScheduler",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.PeriodicScheduler.yml\" sourcestartlinenumber=\"1\">Utility to schedule and manage periodic tasks</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -800,7 +1186,11 @@
           "relative_path": "api/Cognite.Extractor.Common.RetryUtil.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.RetryUtil",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.RetryUtil.yml\" sourcestartlinenumber=\"1\">Utilities for retries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -810,7 +1200,11 @@
           "relative_path": "api/Cognite.Extractor.Common.RetryUtilConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.RetryUtilConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.RetryUtilConfig.yml\" sourcestartlinenumber=\"1\">Configuration for utility methods in the RetryUtil class. This can be used in config files for user-configured retries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -820,7 +1214,11 @@
           "relative_path": "api/Cognite.Extractor.Common.SharedResourceScheduler-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.SharedResourceScheduler<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.SharedResourceScheduler-1.yml\" sourcestartlinenumber=\"1\">Abstraction for handling some kind of recursive exploration.\nSimply a small extension to <xref href=\"Cognite.Extractor.Common.OperationScheduler%601\" data-throw-if-not-resolved=\"false\"></xref> that\nuses an instance of a <xref href=\"Cognite.Extractor.Common.IResourceCounter\" data-throw-if-not-resolved=\"false\"></xref> for shared capacity.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -830,7 +1228,11 @@
           "relative_path": "api/Cognite.Extractor.Common.TaskResult.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.TaskResult",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.TaskResult.yml\" sourcestartlinenumber=\"1\">Result of an executed task</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -840,7 +1242,11 @@
           "relative_path": "api/Cognite.Extractor.Common.TaskThrottler.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.TaskThrottler",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.TaskThrottler.yml\" sourcestartlinenumber=\"1\">Tool to throttle the execution of tasks based on max perallelism, and max number of tasks\nscheduled per time unit.</p>\n<p sourcefile=\"api/Cognite.Extractor.Common.TaskThrottler.yml\" sourcestartlinenumber=\"4\">Maximum parallelism simply limits the number of parallel tasks.</p>\n<p sourcefile=\"api/Cognite.Extractor.Common.TaskThrottler.yml\" sourcestartlinenumber=\"6\">Per unit sets the maximum number of tasks scheduled per time unit.</p>\n<p sourcefile=\"api/Cognite.Extractor.Common.TaskThrottler.yml\" sourcestartlinenumber=\"8\">Tasks are enqueued and scheduled for execution in order.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -850,7 +1256,11 @@
           "relative_path": "api/Cognite.Extractor.Common.TimeRange.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.TimeRange",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.TimeRange.yml\" sourcestartlinenumber=\"1\">Represents a range of time from First to Last. First and Last are both considered\nto be included in the range.\nThe legal range of values is from the unix epoch, midnight 1/1/1970, to DateTime.MaxValue.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -860,7 +1270,11 @@
           "relative_path": "api/Cognite.Extractor.Common.TimeSpanWrapper.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.TimeSpanWrapper",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.TimeSpanWrapper.yml\" sourcestartlinenumber=\"1\">Utility for containing a string converted to timespan in config objects.\nTo use:\npublic string MyIntervalValue { get; } = new TimeSpanWrapper(false, &quot;s&quot;, &quot;0&quot;);\npublic string MyInterval { get =&gt; MyIntervalValue.RawValue; set =&gt; MyIntervalValue.RawValue = value; }</p>\n<p sourcefile=\"api/Cognite.Extractor.Common.TimeSpanWrapper.yml\" sourcestartlinenumber=\"6\">Access MyIntervalValue.Value in your code, and MyInterval is the config option.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -870,7 +1284,11 @@
           "relative_path": "api/Cognite.Extractor.Common.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -880,7 +1298,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.ConsoleConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging.ConsoleConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Logging.ConsoleConfig.yml\" sourcestartlinenumber=\"1\">Configuration for console logging.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -890,7 +1312,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.FileConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging.FileConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Logging.FileConfig.yml\" sourcestartlinenumber=\"1\">Logging to file configuration object</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -900,7 +1326,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.LogConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging.LogConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Logging.LogConfig.yml\" sourcestartlinenumber=\"1\">Base class for log configuration</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -910,7 +1340,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.LoggerConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging.LoggerConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Logging.LoggerConfig.yml\" sourcestartlinenumber=\"1\">Logging configuration object</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -920,7 +1354,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.LoggerTraceListener.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging.LoggerTraceListener",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Logging.LoggerTraceListener.yml\" sourcestartlinenumber=\"1\">This class implements a <xref href=\"System.Diagnostics.TraceListener\" data-throw-if-not-resolved=\"false\"></xref> that, when configured, writes trace messages to the injected\nlogger</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -930,7 +1368,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.LoggingExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging.LoggingExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Logging.LoggingExtensions.yml\" sourcestartlinenumber=\"1\">Extension utilities for logging</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -940,7 +1382,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.LoggingUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging.LoggingUtils",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Logging.LoggingUtils.yml\" sourcestartlinenumber=\"1\">Utility class for configuring extractor loggers.\nThe logging framework used is <a href=\"https://serilog.net/\">Serilog</a>.\nLoggers are created according to a <xref href=\"Cognite.Extractor.Logging.LoggerConfig\" data-throw-if-not-resolved=\"false\"></xref> configuration object.\nLog messages contain UTC timestamps.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -950,7 +1396,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.TraceListenerConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging.TraceListenerConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Logging.TraceListenerConfig.yml\" sourcestartlinenumber=\"1\">Trace listener configuration object</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -960,7 +1410,11 @@
           "relative_path": "api/Cognite.Extractor.Logging.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Logging",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -970,7 +1424,11 @@
           "relative_path": "api/Cognite.Extractor.Metrics.CommonMetrics.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Metrics.CommonMetrics",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Metrics.CommonMetrics.yml\" sourcestartlinenumber=\"1\">Class containing common metrics</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -980,7 +1438,11 @@
           "relative_path": "api/Cognite.Extractor.Metrics.MetricsConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Metrics.MetricsConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Metrics.MetricsConfig.yml\" sourcestartlinenumber=\"1\">Metrics configuration object</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -990,7 +1452,11 @@
           "relative_path": "api/Cognite.Extractor.Metrics.MetricsExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Metrics.MetricsExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Metrics.MetricsExtensions.yml\" sourcestartlinenumber=\"1\">Extension utilities for metrics.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1000,7 +1466,11 @@
           "relative_path": "api/Cognite.Extractor.Metrics.MetricsServerConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Metrics.MetricsServerConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Metrics.MetricsServerConfig.yml\" sourcestartlinenumber=\"1\">Metrics server configuration</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1010,7 +1480,11 @@
           "relative_path": "api/Cognite.Extractor.Metrics.MetricsService.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Metrics.MetricsService",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Metrics.MetricsService.yml\" sourcestartlinenumber=\"1\">Utility class for configuring <a href=\"https://prometheus.io/\">Prometheus</a> for monitoring and metrics.\nA metrics server and multiple push gateway destinations can be configured according to <xref href=\"Cognite.Extractor.Metrics.MetricsConfig\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1020,7 +1494,11 @@
           "relative_path": "api/Cognite.Extractor.Metrics.PushGatewayConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Metrics.PushGatewayConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Metrics.PushGatewayConfig.yml\" sourcestartlinenumber=\"1\">Push gateway configuration</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1030,7 +1508,11 @@
           "relative_path": "api/Cognite.Extractor.Metrics.Version.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Metrics.Version",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Metrics.Version.yml\" sourcestartlinenumber=\"1\">Utility class for reading version information from attributes.\nIn order to use this, version information has to be added to the assembly.\nSee the online documentation for an example.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1040,7 +1522,11 @@
           "relative_path": "api/Cognite.Extractor.Metrics.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Metrics",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -1050,7 +1536,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.BaseExtractionState.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.BaseExtractionState",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.BaseExtractionState.yml\" sourcestartlinenumber=\"1\">A minimal extraction state implementation.\nRepresents a single object in a source system that maps to a single\nobject in some destination system.</p>\n<p sourcefile=\"api/Cognite.Extractor.StateStorage.BaseExtractionState.yml\" sourcestartlinenumber=\"5\">Keeps track of a <xref href=\"Cognite.Extractor.Common.TimeRange\" data-throw-if-not-resolved=\"false\"></xref> DestinationExtractedRange which represents\nthe range of timestamps that are currently present in the destination system.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1060,7 +1550,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.BaseExtractionStatePoco.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.BaseExtractionStatePoco",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.BaseExtractionStatePoco.yml\" sourcestartlinenumber=\"1\">Represents an historical object in the destination system,\nused as storable object in state-stores.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1070,7 +1564,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.BaseStorableState.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.BaseStorableState",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.BaseStorableState.yml\" sourcestartlinenumber=\"1\">Minimal state that may be stored to a state-storage system.\nOnly contains an Id. This should be extended to create custom storable objects.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1080,7 +1578,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.HistoryExtractionState.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.HistoryExtractionState",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.HistoryExtractionState.yml\" sourcestartlinenumber=\"1\">Represents an object to be extracted from the source system.\nThis object is intended to be used with a system that can both feed live data\nand read historical data.</p>\n<p sourcefile=\"api/Cognite.Extractor.StateStorage.HistoryExtractionState.yml\" sourcestartlinenumber=\"5\">This is intended to be used with more complicated setups involving multiple destination systems,\nand large amounts of historical data.</p>\n<p sourcefile=\"api/Cognite.Extractor.StateStorage.HistoryExtractionState.yml\" sourcestartlinenumber=\"8\">It works by keeping track of two <xref href=\"Cognite.Extractor.Common.TimeRange\" data-throw-if-not-resolved=\"false\"></xref>, SourceExtractedRange and DestinationExtractedRange.</p>\n<p sourcefile=\"api/Cognite.Extractor.StateStorage.HistoryExtractionState.yml\" sourcestartlinenumber=\"10\">SourceExtractedRange is the range of timestamps extracted from the source system, DestinationExtractedRange is a subset\nof SourceExtractedRange, representing the range of timestamps pushed to destination systems.</p>\n<p sourcefile=\"api/Cognite.Extractor.StateStorage.HistoryExtractionState.yml\" sourcestartlinenumber=\"13\">The intended mechanism of this state is to update the source range after each iteration of frontfill\n(reading forwards in time), and backfill (reading backwards), as well as handling &quot;streamed&quot; points,\nwhich may appear at any point in time.</p>\n<p sourcefile=\"api/Cognite.Extractor.StateStorage.HistoryExtractionState.yml\" sourcestartlinenumber=\"17\">Once these points are pushed to destinations, the DestinationExtractedRange is updated, this is the range that\ngets synchronized to state-stores.</p>\n<p sourcefile=\"api/Cognite.Extractor.StateStorage.HistoryExtractionState.yml\" sourcestartlinenumber=\"20\">On startup, the state can be initialized from one or more systems, and the most conservative number will be used.\nAfter calling InitExtractedRange from each destination system, FinalizeRangeInit must be called before reading history.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1090,7 +1592,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.IExtractionState.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.IExtractionState",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.IExtractionState.yml\" sourcestartlinenumber=\"1\">Minimum required properties for an extraction state</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1100,7 +1606,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.IExtractionStateStore.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.IExtractionStateStore",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.IExtractionStateStore.yml\" sourcestartlinenumber=\"1\">Represents a general extractor state store, for storing first/last timestamps.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1110,7 +1620,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.IRawDestination.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.IRawDestination",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.IRawDestination.yml\" sourcestartlinenumber=\"1\">A destination capable of pushing to raw</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1120,7 +1634,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.LiteDBStateStore.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.LiteDBStateStore",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.LiteDBStateStore.yml\" sourcestartlinenumber=\"1\">Local database to store state between each run of the extractor.\nUsed when the extractor needs to know the first/last points extracted from the source system\nand pushed to the destination.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1130,7 +1648,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreConfig.StorageType.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.StateStoreConfig.StorageType",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.StateStoreConfig.StorageType.yml\" sourcestartlinenumber=\"1\">Enum for storage type in litedb</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1140,7 +1662,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.StateStoreConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.StateStoreConfig.yml\" sourcestartlinenumber=\"1\">Configuration of state store to persist extraction state between runs</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1150,7 +1676,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreProperty.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.StateStoreProperty",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.StateStoreProperty.yml\" sourcestartlinenumber=\"1\">Property to assign custom name in destination store.\nDefault behavior transforms PascalCase into snake-case.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1160,7 +1690,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.StateStoreUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage.StateStoreUtils",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.StateStorage.StateStoreUtils.yml\" sourcestartlinenumber=\"1\">Utilities used in state-storage</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1170,7 +1704,11 @@
           "relative_path": "api/Cognite.Extractor.StateStorage.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.StateStorage",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -1180,7 +1718,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.BaseConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.BaseConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.BaseConfig.yml\" sourcestartlinenumber=\"1\">Base configuration object for extractors.\nThe config should have a version property, so that versioning and compatibility can be tracked by the extractor.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1190,7 +1732,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.BaseExtractor-1.OnConfigUpdateHandler.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.BaseExtractor<TConfig>.OnConfigUpdateHandler",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.BaseExtractor-1.OnConfigUpdateHandler.yml\" sourcestartlinenumber=\"1\">Delegate for OnConfigUpdate event.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1200,7 +1746,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.BaseExtractor-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.BaseExtractor<TConfig>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.BaseExtractor-1.yml\" sourcestartlinenumber=\"1\">Base class for extractors writing timeseries, events or datapoints.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1210,7 +1760,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.BaseUploadQueue-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.BaseUploadQueue<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.BaseUploadQueue-1.yml\" sourcestartlinenumber=\"1\">Generic base class for upload queues</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1220,7 +1774,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.CertificateConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CertificateConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.CertificateConfig.yml\" sourcestartlinenumber=\"1\">Configure options relating to SSL certificates.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1230,7 +1788,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.ChunkingConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.ChunkingConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.ChunkingConfig.yml\" sourcestartlinenumber=\"1\">Chunking configuration</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1240,7 +1802,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.CogniteClientExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CogniteClientExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.CogniteClientExtensions.yml\" sourcestartlinenumber=\"1\">Extension utility methods for <xref href=\"CogniteSdk.Client\" data-throw-if-not-resolved=\"false\"></xref></p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1250,7 +1816,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.CogniteConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CogniteConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.CogniteConfig.yml\" sourcestartlinenumber=\"1\">Cognite configuration object</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1260,7 +1830,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.CogniteDestination.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CogniteDestination",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.CogniteDestination.yml\" sourcestartlinenumber=\"1\">Class with utility methods supporting extraction of data into CDF.\nThese methods complement the ones offered by the <xref href=\"CogniteSdk.Client\" data-throw-if-not-resolved=\"false\"></xref> and use a\n<xref href=\"Cognite.Extractor.Utils.CogniteConfig\" data-throw-if-not-resolved=\"false\"></xref> object to determine chunking of data and throttling of\nrequests against the client</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1270,7 +1844,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CogniteDestinationWithIDM",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.CogniteDestinationWithIDM.yml\" sourcestartlinenumber=\"1\">Class with utility methods supporting extraction of data into CDF.\nThese methods complement the ones offered by the <xref href=\"CogniteSdk.Client\" data-throw-if-not-resolved=\"false\"></xref> and use a\n<xref href=\"Cognite.Extractor.Utils.CogniteConfig\" data-throw-if-not-resolved=\"false\"></xref> object to determine chunking of data and throttling of\nrequests against the client</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1280,7 +1858,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.yml\" sourcestartlinenumber=\"1\">Binder class for objects built with CommandLineOptionAttribute.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1290,7 +1872,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.yml\" sourcestartlinenumber=\"1\">Utility attribute for building flat command line interfaces using System.CommandLine</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1300,7 +1886,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.CommandLine.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CommandLine",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -1310,7 +1900,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.ConfigurationExtensions.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.ConfigurationExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.ConfigurationExtensions.yml\" sourcestartlinenumber=\"1\">Extension utilities for configuration.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1320,7 +1914,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.ConfigurationMode.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.ConfigurationMode",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.ConfigurationMode.yml\" sourcestartlinenumber=\"1\">Whether configuration is read from CDF or stored locally.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1330,7 +1928,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.DestinationUtils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.DestinationUtils",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.DestinationUtils.yml\" sourcestartlinenumber=\"1\">Utilities for the setting up a cognite destination.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1340,7 +1942,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.EventUploadQueue.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.EventUploadQueue",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.EventUploadQueue.yml\" sourcestartlinenumber=\"1\">Queue for uploading events to CDF.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1350,7 +1956,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.ExtractionRun.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.ExtractionRun",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.ExtractionRun.yml\" sourcestartlinenumber=\"1\">Container for reporting to the ExtPipes endpoint in CDF.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1360,7 +1970,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.ExtractionRunConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.ExtractionRunConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.ExtractionRunConfig.yml\" sourcestartlinenumber=\"1\">Configuration for extraction pipeline run</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1370,7 +1984,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.ExtractorRunner.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.ExtractorRunner",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.ExtractorRunner.yml\" sourcestartlinenumber=\"1\">Contains utilities for running an extractor based on BaseExtractor</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1380,7 +1998,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.ExtractorRunnerParams<TConfig, TExtractor>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.ExtractorRunnerParams-2.yml\" sourcestartlinenumber=\"1\">Parameters for launching an extractor. Can be modified\nafter config is loaded by defining a ConfigCallback.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1390,7 +2012,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.FunctionCallConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.FunctionCallConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.FunctionCallConfig.yml\" sourcestartlinenumber=\"1\">Config class for functions.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1400,7 +2026,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.FunctionCallWrapper-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.FunctionCallWrapper<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.FunctionCallWrapper-1.yml\" sourcestartlinenumber=\"1\">Wrapper class for calling an existing function in CDF.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1410,7 +2040,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.HighAvailabilityConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.HighAvailabilityConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.HighAvailabilityConfig.yml\" sourcestartlinenumber=\"1\">Config for adding high availability.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1420,7 +2054,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.HighAvailabilityManager.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.HighAvailabilityManager",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.HighAvailabilityManager.yml\" sourcestartlinenumber=\"1\">Abstract class for a high availability manager.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1430,7 +2068,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.IRawUploadQueue-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.IRawUploadQueue<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.IRawUploadQueue-1.yml\" sourcestartlinenumber=\"1\">Interface to CDF Raw upload queues. The items in the queue are\nDTOs (data type objects) of type <code class=\"typeparamref\">T</code>.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1440,7 +2082,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.IUploadQueue-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.IUploadQueue<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.IUploadQueue-1.yml\" sourcestartlinenumber=\"1\">Interface for generic upload queue</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1450,7 +2096,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.IUploadQueue.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.IUploadQueue",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.IUploadQueue.yml\" sourcestartlinenumber=\"1\">Base interface for upload queue</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1460,7 +2110,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.QueueUploadResult-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.QueueUploadResult<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.QueueUploadResult-1.yml\" sourcestartlinenumber=\"1\">Result of an attempt to upload from an upload queue.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1470,7 +2124,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.RawConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.RawConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.RawConfig.yml\" sourcestartlinenumber=\"1\">Config required for high availability using Raw.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1480,7 +2138,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.RawHighAvailabilityManager.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.RawHighAvailabilityManager",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.RawHighAvailabilityManager.yml\" sourcestartlinenumber=\"1\">Class used to manage an extractor using a Raw database.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1490,7 +2152,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.RedisConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.RedisConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.RedisConfig.yml\" sourcestartlinenumber=\"1\">Config required for high availability using Redis.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1500,7 +2166,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.RedisHighAvailabilityManager.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.RedisHighAvailabilityManager",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.RedisHighAvailabilityManager.yml\" sourcestartlinenumber=\"1\">Class used to manage an extractor using a Redis database.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1510,7 +2180,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.RemoteConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.RemoteConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.RemoteConfig.yml\" sourcestartlinenumber=\"1\">Configuration object used locally when config files are read from CDF.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1520,7 +2194,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.RemoteConfigManager-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.RemoteConfigManager<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.RemoteConfigManager-1.yml\" sourcestartlinenumber=\"1\">Class to handle fetching of remote config objects.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1530,7 +2208,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.RemoteConfigState-1.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.RemoteConfigState<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.RemoteConfigState-1.yml\" sourcestartlinenumber=\"1\">State for remote config manager, which is reused between initialization and normal operation.\nThis lets the state be created after services are initialized, giving it logger, etc.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1540,7 +2222,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.RetryConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.RetryConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.RetryConfig.yml\" sourcestartlinenumber=\"1\">Configure automatic retries on requests to CDF.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1550,7 +2236,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.SdkLoggingConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.SdkLoggingConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.SdkLoggingConfig.yml\" sourcestartlinenumber=\"1\">Cognite Sdk logging configuration</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1560,7 +2250,11 @@
           "relative_path": "api/Cognite.Extractor.Utils.ThrottlingConfig.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.ThrottlingConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.ThrottlingConfig.yml\" sourcestartlinenumber=\"1\">Throttling configuration</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -1570,7 +2264,53 @@
           "relative_path": "api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.TimeSeriesUploadQueue",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.TimeSeriesUploadQueue.yml\" sourcestartlinenumber=\"1\">Upload queue for timeseries datapoints</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.ConnectionConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.yml\" sourcestartlinenumber=\"1\">Configuration for connecting to CDF.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.SdkLoggingConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.yml\" sourcestartlinenumber=\"1\">Configuration for logging information from the SDK.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -1580,7 +2320,235 @@
           "relative_path": "api/Cognite.Extractor.Utils.html"
         }
       },
-      "version": ""
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.BaseExtractor-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.BaseExtractor-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.BaseExtractor<TConfig>",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.BaseExtractor-1.yml\" sourcestartlinenumber=\"1\">Base class for extractors.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.yml\" sourcestartlinenumber=\"1\">Base class for cognite config.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.ConfigSource-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.ConfigSource-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Configuration.ConfigSource<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Configuration.ConfigSource-1.yml\" sourcestartlinenumber=\"1\">Configuration source that reads configuration from CDF.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Configuration",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.DestinationUtilsUnstable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.DestinationUtilsUnstable.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.DestinationUtilsUnstable",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.DestinationUtilsUnstable.yml\" sourcestartlinenumber=\"1\">Unstable version of DestinationUtils, containing methods to register clients.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.ExtractorTaskResult",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.yml\" sourcestartlinenumber=\"1\">Result of a long-running extractor task.</p>\n<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.yml\" sourcestartlinenumber=\"3\">Used to indicate whether a task is expected to exit, and whether\nan exit should be considered the extractor crashing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter.yml\" sourcestartlinenumber=\"1\">Base class for classes that report errors to integrations,\nimplemented by tasks and extractors respectively.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask.yml\" sourcestartlinenumber=\"1\">Base class for schedulable tasks.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.CheckInWorker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.CheckInWorker.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.CheckInWorker",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.CheckInWorker.yml\" sourcestartlinenumber=\"1\">Worker for submitting periodic checkins to the integrations API.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"1\">Utility type for reporting errors to integrations.</p>\n<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"3\">After creation you should immediately either <code sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"3\">Dispose</code>,\ncall <code sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"4\">Finish</code>, or call <code sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"4\">Instant</code>.</p>\n<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"6\">Typically created through utility methods on <code sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"6\">IErrorReporter</code></p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.yml\" sourcestartlinenumber=\"1\">Task scheduler that runs tasks and reports their status to the integrations API.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink.yml\" sourcestartlinenumber=\"1\">Interface for types that can consume errors and write them to some sink (integrations API).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.TaskReporter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.TaskReporter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.TaskReporter",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.TaskReporter.yml\" sourcestartlinenumber=\"1\">Type handling reporting of events related to a single task.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.TaskUpdatePayload.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.TaskUpdatePayload.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.TaskUpdatePayload",
+      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.TaskUpdatePayload.yml\" sourcestartlinenumber=\"1\">Payload for task run.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable.Tasks",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.ExtractorUtils.Unstable.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.ExtractorUtils.Unstable",
+      "Summary": null
     },
     {
       "type": "Conceptual",

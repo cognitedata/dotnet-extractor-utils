@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class ExtractorError </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class ExtractorError ">
+    
+    <meta name="description" content="Utility type for reporting errors to integrations. After creation you should immediately either Dispose, call Finish, or call Instant. Typically created through utility methods on IErrorReporter">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError">
+
+
+
+  <h1 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError" class="text-break">Class ExtractorError</h1>
+  <div class="markdown level0 summary"><p>Utility type for reporting errors to integrations.</p>
+<p>After creation you should immediately either <code>Dispose</code>,
+call <code>Finish</code>, or call <code>Instant</code>.</p>
+<p>Typically created through utility methods on <code>IErrorReporter</code></p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">ExtractorError</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.ExtractorUtils.html">ExtractorUtils</a>.<a class="xref" href="Cognite.ExtractorUtils.Unstable.html">Unstable</a>.<a class="xref" href="Cognite.ExtractorUtils.Unstable.Tasks.html">Tasks</a></h6>
+  <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
+  <h5 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ExtractorError : IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError__ctor_CogniteSdk_Alpha_ErrorLevel_System_String_Cognite_ExtractorUtils_Unstable_Tasks_IIntegrationSink_System_String_System_String_System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.%23ctor(CogniteSdk.Alpha.ErrorLevel%2CSystem.String%2CCognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink%2CSystem.String%2CSystem.String%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L64">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError__ctor_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.#ctor*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError__ctor_CogniteSdk_Alpha_ErrorLevel_System_String_Cognite_ExtractorUtils_Unstable_Tasks_IIntegrationSink_System_String_System_String_System_Nullable_System_DateTime__" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.#ctor(CogniteSdk.Alpha.ErrorLevel,System.String,Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink,System.String,System.String,System.Nullable{System.DateTime})">ExtractorError(ErrorLevel, string, IIntegrationSink, string?, string?, DateTime?)</h4>
+  <div class="markdown level1 summary"><p>Create a new extractor error.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ExtractorError(ErrorLevel level, string description, IIntegrationSink sink, string? details = null, string? taskName = null, DateTime? now = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ErrorLevel</span></td>
+        <td><span class="parametername">level</span></td>
+        <td><p>Error level.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">description</span></td>
+        <td><p>Short error description.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink.html">IIntegrationSink</a></td>
+        <td><span class="parametername">sink</span></td>
+        <td><p>Error sink this is written to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">details</span></td>
+        <td><p>Long error details.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">taskName</span></td>
+        <td><p>Task that generated this error. If left out, the error is assigned to the extractor itself.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a>?</td>
+        <td><span class="parametername">now</span></td>
+        <td><p>Current time, for synchronization. Defaults to DateTime.UtcNow</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Description.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Description%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L30">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Description_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Description*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Description" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Description">Description</h4>
+  <div class="markdown level1 summary"><p>Short error description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Description { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Details.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Details%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L40">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Details_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Details*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Details" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Details">Details</h4>
+  <div class="markdown level1 summary"><p>Long error details.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? Details { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_EndTime.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.EndTime%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L49">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_EndTime_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.EndTime*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_EndTime" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.EndTime">EndTime</h4>
+  <div class="markdown level1 summary"><p>Time the error ended, if it has ended yet.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTime? EndTime { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a>?</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_ExternalId.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.ExternalId%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L26">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_ExternalId_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.ExternalId*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_ExternalId" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.ExternalId">ExternalId</h4>
+  <div class="markdown level1 summary"><p>Generated error external ID.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ExternalId { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Level.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Level%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L22">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Level_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Level*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Level" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Level">Level</h4>
+  <div class="markdown level1 summary"><p>Error level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ErrorLevel Level { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ErrorLevel</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_StartTime.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.StartTime%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L45">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_StartTime_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.StartTime*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_StartTime" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.StartTime">StartTime</h4>
+  <div class="markdown level1 summary"><p>Time the error started.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTime StartTime { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_TaskName.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.TaskName%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L36">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_TaskName_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.TaskName*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_TaskName" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.TaskName">TaskName</h4>
+  <div class="markdown level1 summary"><p>Task that generated this error.</p>
+<p>If left out, the error is assigned to the extractor itself.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string? TaskName { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Dispose.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Dispose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L145">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Dispose_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Dispose*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Dispose" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"><p>Dispose the error, just calls <code>Finish</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Dispose(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L130">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Dispose_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Dispose*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Dispose_System_Boolean_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Dispose(System.Boolean)">Dispose(bool)</h4>
+  <div class="markdown level1 summary"><p>Dispose the error, just calls <code>Finish</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">disposing</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Finish_System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Finish(System.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L100">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Finish_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Finish*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Finish_System_Nullable_System_DateTime__" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Finish(System.Nullable{System.DateTime})">Finish(DateTime?)</h4>
+  <div class="markdown level1 summary"><p>Mark this error as completed and report it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Finish(DateTime? now = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a>?</td>
+        <td><span class="parametername">now</span></td>
+        <td><p>Current time, for synchronization. Defaults to DateTime.UtcNow</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Instant.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Instant%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L86">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Instant_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Instant*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_Instant" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.Instant">Instant()</h4>
+  <div class="markdown level1 summary"><p>Immediately mark this error as completed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Instant()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_ToSdk.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.ToSdk%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L113">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_ToSdk_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.ToSdk*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError_ToSdk" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.ToSdk">ToSdk()</h4>
+  <div class="markdown level1 summary"><p>Return an ErrorWithTask for writing to the integrations API.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ErrorWithTask ToSdk()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ErrorWithTask</span></td>
+        <td><p>ErrorWithTask object</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
+  </div>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0____System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_">DataModelUtils.GetOrCreateResourcesAsync&lt;T, T2&gt;(T2, IEnumerable&lt;InstanceIdentifier&gt;, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt;, int, int, RetryMode, SanitationMode, CancellationToken)</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorError.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/Errors.cs/#L17" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

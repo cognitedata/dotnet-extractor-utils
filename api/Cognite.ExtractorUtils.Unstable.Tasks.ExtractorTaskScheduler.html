@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class ExtractorTaskScheduler </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class ExtractorTaskScheduler ">
+    
+    <meta name="description" content="Task scheduler that runs tasks and reports their status to the integrations API.">
+      <link rel="shortcut icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler">
+
+
+
+  <h1 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler" class="text-break">Class ExtractorTaskScheduler</h1>
+  <div class="markdown level0 summary"><p>Task scheduler that runs tasks and reports their status to the integrations API.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">ExtractorTaskScheduler</span></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.ExtractorUtils.html">ExtractorUtils</a>.<a class="xref" href="Cognite.ExtractorUtils.Unstable.html">Unstable</a>.<a class="xref" href="Cognite.ExtractorUtils.Unstable.Tasks.html">Tasks</a></h6>
+  <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
+  <h5 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ExtractorTaskScheduler : IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler__ctor_Cognite_ExtractorUtils_Unstable_Tasks_IIntegrationSink_Microsoft_Extensions_Logging_ILogger_Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler__.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.%23ctor(Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink%2CMicrosoft.Extensions.Logging.ILogger%7BCognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L265">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler__ctor_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.#ctor*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler__ctor_Cognite_ExtractorUtils_Unstable_Tasks_IIntegrationSink_Microsoft_Extensions_Logging_ILogger_Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler__" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.#ctor(Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink,Microsoft.Extensions.Logging.ILogger{Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler})">ExtractorTaskScheduler(IIntegrationSink, ILogger&lt;ExtractorTaskScheduler&gt;)</h4>
+  <div class="markdown level1 summary"><p>Constructor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ExtractorTaskScheduler(IIntegrationSink sink, ILogger&lt;ExtractorTaskScheduler&gt; logger)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink.html">IIntegrationSink</a></td>
+        <td><span class="parametername">sink</span></td>
+        <td><p>Sink for task updates.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.logging.ilogger-1">ILogger</a>&lt;<a class="xref" href="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.html">ExtractorTaskScheduler</a>&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>Logger object.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CompletedTask.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CompletedTask%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L256">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CompletedTask_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CompletedTask*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CompletedTask" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CompletedTask">CompletedTask</h4>
+  <div class="markdown level1 summary"><p>Task that terminates once the run method terminates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task CompletedTask { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_AddScheduledTask_Cognite_ExtractorUtils_Unstable_Tasks_BaseSchedulableTask_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.AddScheduledTask(Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L285">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_AddScheduledTask_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.AddScheduledTask*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_AddScheduledTask_Cognite_ExtractorUtils_Unstable_Tasks_BaseSchedulableTask_System_Boolean_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.AddScheduledTask(Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask,System.Boolean)">AddScheduledTask(BaseSchedulableTask, bool)</h4>
+  <div class="markdown level1 summary"><p>Add a task to the scheduler.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddScheduledTask(BaseSchedulableTask operation, bool runImmediately)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask.html">BaseSchedulableTask</a></td>
+        <td><span class="parametername">operation</span></td>
+        <td><p>Type implementing the runnable task.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">runImmediately</span></td>
+        <td><p>Whether to run the task immediately.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></td>
+        <td><p>If a task with the same name already exists.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CancelInnerAndWait_System_Int32_Cognite_ExtractorUtils_Unstable_Tasks_BaseErrorReporter_.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CancelInnerAndWait(System.Int32%2CCognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L503">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CancelInnerAndWait_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CancelInnerAndWait*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CancelInnerAndWait_System_Int32_Cognite_ExtractorUtils_Unstable_Tasks_BaseErrorReporter_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CancelInnerAndWait(System.Int32,Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter)">CancelInnerAndWait(int, BaseErrorReporter)</h4>
+  <div class="markdown level1 summary"><p>Cancel the running task, if it exists.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task CancelInnerAndWait(int timeoutms, BaseErrorReporter outerReporter)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
+        <td><span class="parametername">timeoutms</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter.html">BaseErrorReporter</a></td>
+        <td><span class="parametername">outerReporter</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CancelTask_System_String_.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L307">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CancelTask_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_CancelTask_System_String_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(System.String)">CancelTask(string)</h4>
+  <div class="markdown level1 summary"><p>Cancel a task if it is currently running.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CancelTask(string name)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of the task to cancel</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Dispose.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Dispose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L552">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Dispose_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Dispose*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Dispose" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Dispose(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L532">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Dispose_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Dispose*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Dispose_System_Boolean_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Dispose(System.Boolean)">Dispose(bool)</h4>
+  <div class="markdown level1 summary"><p>Dispose of the scheduler.</p>
+<p>Can be overridden in base classes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">disposing</span></td>
+        <td><p>Whether to dispose managed resources.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Notify.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Notify%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L274">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Notify_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Notify*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Notify" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Notify">Notify()</h4>
+  <div class="markdown level1 summary"><p>Wake up the scheduler and tell it to check its tasks again.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Notify()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Run_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Run(System.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L401">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Run_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Run*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_Run_System_Threading_CancellationToken_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.Run(System.Threading.CancellationToken)">Run(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Run the scheduler.</p>
+<p>This should only be called once on a given scheduler.</p>
+<p>To re-run it after a crash, the scheduler must be re-initialized.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;ExtractorTaskResult&gt; Run(CancellationToken token)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Global cancellation token for stopping the entire scheduler.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.html">ExtractorTaskResult</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_ScheduleTaskNow_System_String_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.ScheduleTaskNow(System.String%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L328">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_ScheduleTaskNow_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.ScheduleTaskNow*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_ScheduleTaskNow_System_String_System_Boolean_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.ScheduleTaskNow(System.String,System.Boolean)">ScheduleTaskNow(string, bool)</h4>
+  <div class="markdown level1 summary"><p>Schedule a task now. If it is already running it will</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ScheduleTaskNow(string name, bool reScheduleIfRunning = false)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name of the task to schedule</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">reScheduleIfRunning</span></td>
+        <td><p>If true, re-schedule the
+task to run again once it finishes. If false, and the task is already
+running, nothing will happen.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_WaitForNextEndOfTask_System_String_System_TimeSpan_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.WaitForNextEndOfTask(System.String%2CSystem.TimeSpan%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L360">View Source</a>
+  </span>
+  <a id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_WaitForNextEndOfTask_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.WaitForNextEndOfTask*"></a>
+  <h4 id="Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler_WaitForNextEndOfTask_System_String_System_TimeSpan_System_Threading_CancellationToken_" data-uid="Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.WaitForNextEndOfTask(System.String,System.TimeSpan,System.Threading.CancellationToken)">WaitForNextEndOfTask(string, TimeSpan, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Wait for the next time the task given by <code class="paramref">task</code> ends.</p>
+<p>If the task is not currently running, this will wait until it starts running and
+then ends.</p>
+<p>Note that if the task fails, this will re-throw the exception that caused
+the task failure, or a TaskCanceledException if it was canceled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task WaitForNextEndOfTask(string task, TimeSpan timeout, CancellationToken token = default)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">task</span></td>
+        <td><p>Task to wait for, must be added to the scheduler.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>Timeout, set to Timeout.InfiniteTimespan to wait forever.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Optional cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="exceptions">Exceptions</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></td>
+        <td><p>If the task does not exist.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timeoutexception">TimeoutException</a></td>
+        <td><p>If waiting for the task to end timed out.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
+  </div>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Cognite.Extensions.DataModels.DataModelUtils.html#Cognite_Extensions_DataModels_DataModelUtils_GetOrCreateResourcesAsync__2___1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_InstanceIdentifier__System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0____System_Func_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___Cognite_Extensions_SanitationMode_System_ValueTuple_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0______System_Int32_System_Int32_Cognite_Extensions_RetryMode_Cognite_Extensions_SanitationMode_System_Threading_CancellationToken_">DataModelUtils.GetOrCreateResourcesAsync&lt;T, T2&gt;(T2, IEnumerable&lt;InstanceIdentifier&gt;, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;, Func&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, SanitationMode, (IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;)&gt;, int, int, RetryMode, SanitationMode, CancellationToken)</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Tasks_ExtractorTaskScheduler.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/ExtractorTaskScheduler.cs/#L238" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
