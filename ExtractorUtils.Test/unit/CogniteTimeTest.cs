@@ -3,6 +3,7 @@ using Xunit;
 using Cognite.Extractor.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Configuration;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -189,6 +190,7 @@ namespace ExtractorUtils.Test.Unit
         [InlineData("1234s-agoooo", true)]
         [InlineData("1234k-ago", true)]
         [InlineData("1209600000ms-ago", false)]
+        [InlineData("4y-ago", true)]
         public static void TestParseTime(string input, bool resultNull)
         {
             var time = DateTime.UtcNow;
@@ -217,6 +219,7 @@ namespace ExtractorUtils.Test.Unit
         [InlineData("1234s-", true)]
         [InlineData("1234k", true)]
         [InlineData("1209600000ms", false)]
+        [InlineData("4y", true)]
         public static void TestParseTimeFuture(string input, bool resultNull)
         {
             var time = DateTime.UtcNow;
@@ -242,6 +245,52 @@ namespace ExtractorUtils.Test.Unit
 
             Assert.Equal(raw, CogniteTime.ParseTimestampString(raw.ToString(), time)?.ToUnixTimeMilliseconds());
         }
+
+        [Theory]
+        [InlineData("2020-01-01T01:00:00+01:00", false)]
+        [InlineData("2020-01-01T00:00:00Z", false)]
+        [InlineData("2020-01-01T00:00:00+00:00", false)]
+        [InlineData("2020-01-01T01:00+01:00", false)]
+        [InlineData("2020-01-01T01+01:00", false)]
+        [InlineData("2020-01-01+00:00", false)]
+        [InlineData("2020-01-01Z", false)]
+        [InlineData("2020-01-01+10000", true)]
+        [InlineData("2020-01-+1000", true)]
+        [InlineData("2020-01-40:00:00:00+1000", true)]
+        [InlineData("2020-15-01:00:00:00+1000", true)]
+        [InlineData("2020-15-01:30:00:00+1000", true)]
+        [InlineData("2020-15-01:00:70:00+1000", true)]
+        public static void TestParseTimeValue(string input, bool resultNull)
+        {
+            var time = new DateTime(2020, 1, 1, 0, 0, 0);
+            var converted = CogniteTime.ParseTimestampString(input, time);
+
+            if (resultNull)
+            {
+                Assert.Null(converted);
+            }
+            else
+            {
+                Assert.NotNull(converted);
+                Assert.Equal(time, converted);
+            }
+        }
+
+        [Theory]
+        [InlineData("2020-01-01T12:34:56Z", 2020, 1, 1, 12, 34, 56)]
+        [InlineData("2020-01-01T12:34:56+01:00", 2020, 1, 1, 11, 34, 56)]
+        [InlineData("2020-01-01T12:34:56-01:00", 2020, 1, 1, 13, 34, 56)]
+        [InlineData("1965-01-01T00:00:00Z", 1965, 1, 1, 0, 0, 0)]
+        [InlineData("1965-01-01T00:00:00+01:00", 1964, 12, 31, 23, 0, 0)]
+        [InlineData("2040-01-01T00:00:00Z", 2040, 1, 1, 0, 0, 0)]
+        public static void TestParseTimeValue2(string input, int year, int month, int day, int hour, int minute, int second)
+        {
+            var time = new DateTime(year, month, day, hour, minute, second);
+            var converted = CogniteTime.ParseTimestampString(input, time);
+
+            Assert.Equal(time, converted);
+        }
+
         [Theory]
         [InlineData("2w", false)]
         [InlineData("2", false, "w")]
@@ -327,6 +376,25 @@ namespace ExtractorUtils.Test.Unit
             wrapper.RawValue = "0 * * * * *";
 
             Assert.True(wrapper.Value <= TimeSpan.FromMinutes(1));
+        }
+
+        [Fact]
+        public static void TestTimestampWrapper()
+        {
+            var config = @"
+foo: 2020-01-01T00:00:00Z
+";
+            var loaded = ConfigurationUtils.ReadString<TestConf>(config, false);
+            Assert.Equal(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc), loaded.Foo.Get());
+            config = @"
+foo: some-bs
+";
+            Assert.Throws<ConfigurationException>(() => ConfigurationUtils.ReadString<TestConf>(config, false));
+        }
+
+        class TestConf
+        {
+            public TimestampWrapper Foo { get; set; }
         }
 
     }

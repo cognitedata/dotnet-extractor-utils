@@ -14,7 +14,7 @@ namespace Cognite.Extractor.Common
         /// DateTime object representing the Unix Epoch, midnight 1/1/1970, in UTC.
         /// </summary>
         public static DateTime DateTimeEpoch => new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        
+
         private static readonly long epochTicks = DateTimeEpoch.Ticks;
         private static readonly long maxTsValue = DateTime.MaxValue.ToUnixTimeMilliseconds();
         private static readonly long minTsValue = DateTime.MinValue.ToUnixTimeMilliseconds();
@@ -160,12 +160,29 @@ namespace Cognite.Extractor.Common
         private static readonly Regex timestampStringRegex = new Regex("^([0-9]+)(ms?|w|d|h|s)-ago$");
         private static readonly Regex timespanStringRegex = new Regex("^([0-9]+)(ms?|w|d|h|s)$");
 
+        static readonly string[] formats = {
+            "yyyy-MM-ddTHH:mm:sszzz",
+            "yyyy-MM-ddTHH:mm:sszz",
+            "yyyy-MM-ddTHH:mm:ssZ",
+            "yyyy-MM-ddTHH:mmzzz",
+            "yyyy-MM-ddTHH:mmzz",
+            "yyyy-MM-ddTHH:mmZ",
+            "yyyy-MM-ddTHHzzz",
+            "yyyy-MM-ddTHHzz",
+            "yyyy-MM-ddTHHZ",
+            "yyyy-MM-ddzzz",
+            "yyyy-MM-ddzz",
+            "yyyy-MM-ddZ",
+        };
+
         /// <summary>
         /// Parse Cognite timestamp string.
         /// The format is N[timeunit]-ago where timeunit is w,d,h,m,s. Example: '2d-ago'
         /// returns a timestamp two days ago.
         /// If the format is N[timeunit], without -ago, it is set to the future, or after <paramref name="relative"/>
         /// Without timeunit, it is converted to a datetime in milliseconds since epoch.
+        /// 
+        /// This also supports RFC3339-like timestamps, on the form 'yyyy-MM-dd[THH:mm:ss]Z'.
         /// </summary>
         /// <param name="t">Timestamp string</param>
         /// <param name="relative">Set time relative to this if -ago syntax is used</param>
@@ -189,6 +206,13 @@ namespace Cognite.Extractor.Common
                 var span = ParseTimeSpanString(t);
                 if (span != null) return now.Add(span.Value);
             }
+
+            try
+            {
+                return DateTime.ParseExact(t, formats, CultureInfo.InvariantCulture, DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite)
+                    .ToUniversalTime();
+            }
+            catch { }
 
             try
             {
@@ -217,7 +241,7 @@ namespace Cognite.Extractor.Common
             {
                 var rawUnit = match.Groups[2].Value;
                 var rawValue = match.Groups[1].Value;
-                
+
                 long value = Convert.ToInt64(rawValue, CultureInfo.InvariantCulture);
 
                 return GetSpan(rawUnit, value);

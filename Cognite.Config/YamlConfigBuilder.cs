@@ -74,6 +74,7 @@ namespace Cognite.Extractor.Configuration
         private List<IYamlTypeConverter> _typeConverters = new List<IYamlTypeConverter> {
             new ListOrStringConverter(),
             new YamlEnumConverter(),
+            new TimestampWrapperConverter(),
         };
 
         private Dictionary<string, Type> _tagMappings = new Dictionary<string, Type>
