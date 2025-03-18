@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using CogniteSdk.Alpha;
 
-namespace Cognite.ExtractorUtils.Unstable.Tasks
+namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
     /// <summary>
     /// Utility type for reporting errors to integrations.

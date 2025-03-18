@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
-using Cognite.ExtractorUtils.Unstable.Tasks;
+using Cognite.Extractor.Utils.Unstable.Tasks;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;

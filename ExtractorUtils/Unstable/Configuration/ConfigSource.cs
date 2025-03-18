@@ -4,13 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Configuration;
-using Cognite.ExtractorUtils.Unstable.Tasks;
+using Cognite.Extractor.Utils.Unstable.Tasks;
 using CogniteSdk;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Cognite.ExtractorUtils.Unstable.Configuration
+namespace Cognite.Extractor.Utils.Unstable.Configuration
 {
     class ConfigState<T> where T : VersionedConfig
     {
@@ -32,6 +32,35 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
         public ConfigState(ConfigMode mode = ConfigMode.None)
         {
             Mode = mode;
+        }
+    }
+
+    /// <summary>
+    /// Wrapper around a config file with
+    /// extra information about the active revision.
+    /// </summary>
+    /// <typeparam name="TConfig"></typeparam>
+    public class ConfigWrapper<TConfig>
+    {
+        /// <summary>
+        /// Configuration object.
+        /// </summary>
+        public TConfig Config { get; }
+        /// <summary>
+        /// Revision number or null to mean
+        /// local config.
+        /// </summary>
+        public int? Revision { get; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="config">Configuration object.</param>
+        /// <param name="revision">Revision info.</param>
+        public ConfigWrapper(TConfig config, int? revision)
+        {
+            Config = config;
+            Revision = revision;
         }
     }
 
@@ -130,6 +159,34 @@ namespace Cognite.ExtractorUtils.Unstable.Configuration
             if (mode != _state.Mode || _state.Config == null) return true;
 
             return targetRevision == null || targetRevision != _state.CurrentRevision;
+        }
+
+        /// <summary>
+        /// Get an instance wrapping the current config.
+        /// 
+        /// Will fail if no config has been resolved before this is called.
+        /// 
+        /// The config wrapper contains the current revision or "null" if the config
+        /// is local.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">If no config is set.</exception>
+        public ConfigWrapper<T> GetConfigWrapper()
+        {
+            int? revision;
+            if (_state.Mode == ConfigMode.Local)
+            {
+                revision = null;
+            }
+            else if (_state.CurrentRevision == null)
+            {
+                throw new InvalidOperationException("Attempt to resolve config when no revision is set.");
+            }
+            else
+            {
+                revision = _state.CurrentRevision;
+            }
+            return new ConfigWrapper<T>(_state.Config!, revision);
         }
 
         /// <summary>
