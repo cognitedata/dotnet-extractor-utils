@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions;
 using Cognite.Extractor.Common;
+using Microsoft.Extensions.Logging;
 
 namespace Cognite.ExtractorUtils.Unstable.Tasks
 {
@@ -245,15 +246,26 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         private object _lock = new object();
         private ManualResetEvent _evt = new ManualResetEvent(false);
 
+        private TaskCompletionSource<bool> _runMethodClosed = new TaskCompletionSource<bool>();
+
         private bool disposedValue;
+
+        /// <summary>
+        /// Task that terminates once the run method terminates.
+        /// </summary>
+        public Task CompletedTask => _runMethodClosed.Task;
+
+        private ILogger _logger;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="sink">Sink for task updates.</param>
-        public ExtractorTaskScheduler(IIntegrationSink sink)
+        /// <param name="logger">Logger object.</param>
+        public ExtractorTaskScheduler(IIntegrationSink sink, ILogger<ExtractorTaskScheduler> logger)
         {
             _sink = sink;
+            _logger = logger;
         }
 
         /// <summary>
@@ -376,6 +388,8 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
 
         private bool _started;
 
+
+
         /// <summary>
         /// Run the scheduler.
         /// 
@@ -384,12 +398,42 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// To re-run it after a crash, the scheduler must be re-initialized.
         /// </summary>
         /// <param name="token">Global cancellation token for stopping the entire scheduler.</param>
-        public async Task Run(CancellationToken token)
+        public async Task<ExtractorTaskResult> Run(CancellationToken token)
         {
             if (_started) throw new InvalidOperationException("Attempt to run scheduler multiple times");
             _started = true;
+
+            try
+            {
+                await RunInner(token).ConfigureAwait(false);
+                _runMethodClosed.TrySetResult(true);
+            }
+            catch (Exception ex)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    _runMethodClosed.TrySetResult(true);
+                }
+                else
+                {
+                    _runMethodClosed.TrySetException(ex);
+                    throw;
+                }
+            }
+
+            bool isCancelled = _source?.Token.IsCancellationRequested ?? false;
+
+            return isCancelled ? ExtractorTaskResult.Expected : ExtractorTaskResult.Unexpected;
+        }
+
+
+        private async Task RunInner(CancellationToken token)
+        {
             _source = CancellationTokenSource.CreateLinkedTokenSource(token);
-            while (!_source.IsCancellationRequested)
+            // Waits for the outer token, not the internal source.
+            // This way we can cancel the task scheduler first, without
+            // canceling everything else.
+            while (!_source.Token.IsCancellationRequested)
             {
                 _evt.Reset();
                 var tickTime = DateTime.UtcNow;
@@ -405,6 +449,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                         // If the task has finished, take steps to mark it as completed.
                         if (task.ActiveTask != null && task.ActiveTask.Task.IsCompleted)
                         {
+                            _logger.LogDebug("Finish run of task {Name}", task.Operation.Name);
                             task.FinishTask(tickTime);
                         }
 
@@ -415,6 +460,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
                         {
                             if (task.NextRun.Value <= tickTime)
                             {
+                                _logger.LogDebug("Start new run of task {Name}", task.Operation.Name);
                                 task.Run(tickTime, token);
                             }
                             else if (minNextRun == null || minNextRun > task.NextRun.Value)
@@ -445,8 +491,35 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
 
                 // Always wait for the event to trigger.
                 toAwait.Add(CommonUtils.WaitAsync(_evt, Timeout.InfiniteTimeSpan, _source.Token));
-
                 await Task.WhenAny(toAwait).ConfigureAwait(false);
+            }
+        }
+
+        private bool _shutdown;
+
+        /// <summary>
+        /// Cancel the running task, if it exists.
+        /// </summary>
+        public async Task CancelInnerAndWait(int timeoutms, BaseErrorReporter outerReporter)
+        {
+            lock (_lock)
+            {
+                if (!_started) return;
+                if (_shutdown) return;
+                _shutdown = true;
+            }
+            _source?.Cancel();
+            var waitTask = Task.Delay(timeoutms);
+            var completed = await Task.WhenAny(waitTask, CompletedTask).ConfigureAwait(false);
+            if (completed == waitTask)
+            {
+                _logger.LogWarning("Failed to shut down gracefully within timeout");
+                outerReporter?.Warning("Failed to shut down gracefully within timeout");
+            }
+
+            if (completed.Exception != null)
+            {
+                outerReporter?.Fatal($"Failed to shut down gracefully: {completed.Exception.Message}", completed.Exception.StackTrace?.ToString());
             }
         }
 

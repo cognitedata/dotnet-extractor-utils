@@ -48,7 +48,7 @@ namespace Cognite.ExtractorUtils.Unstable.Tasks
         /// </summary>
         /// <param name="token">Cancellation token</param>
         /// <param name="interval">Interval, defaults to 30 seconds.</param>
-        public async Task Run(CancellationToken token, TimeSpan? interval = null)
+        public async Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)
         {
             lock (_lock)
             {
