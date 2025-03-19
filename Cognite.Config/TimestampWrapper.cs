@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Cognite.Extractor.Common;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
@@ -23,6 +24,15 @@ namespace Cognite.Extractor.Configuration
                 throw new ConfigurationException($"Invalid timestamp {value}, must be on the form 'yyyy-MM-dd[THH:mm:ss]Z', or N[ms|s|m|h|d](-ago)");
             }
             RawValue = value;
+        }
+
+        /// <summary>
+        /// Create a timestamp wrapper from a datetime. Will be set to a constant value.
+        /// </summary>
+        /// <param name="value"></param>
+        public TimestampWrapper(DateTime value)
+        {
+            RawValue = value.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
         }
 
         /// <summary>
