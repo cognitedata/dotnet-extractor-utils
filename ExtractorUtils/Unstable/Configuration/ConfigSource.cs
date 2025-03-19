@@ -180,7 +180,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             }
             else if (_state.CurrentRevision == null)
             {
-                throw new InvalidOperationException("Attempt to resolve config when no revision is set.");
+                throw new InvalidOperationException("Attempt to resolve remote config without revision.");
             }
             else
             {
