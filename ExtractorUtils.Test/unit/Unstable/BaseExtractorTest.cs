@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
-using Cognite.ExtractorUtils.Unstable;
-using Cognite.ExtractorUtils.Unstable.Tasks;
+using Cognite.Extractor.Utils.Unstable;
+using Cognite.Extractor.Utils.Unstable.Configuration;
+using Cognite.Extractor.Utils.Unstable.Tasks;
 using ExtractorUtils.Test.unit.Unstable;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -17,12 +18,12 @@ namespace ExtractorUtils.Test.Unit.Unstable
 {
     class DummyConfig { }
 
-    class DummyExtractor : Cognite.ExtractorUtils.Unstable.BaseExtractor<DummyConfig>
+    class DummyExtractor : Cognite.Extractor.Utils.Unstable.BaseExtractor<DummyConfig>
     {
         public Action<ExtractorTaskScheduler> InitAction { get; set; }
 
         public DummyExtractor(
-            DummyConfig config,
+            ConfigWrapper<DummyConfig> config,
             IServiceProvider provider,
             ExtractorTaskScheduler taskScheduler,
             IIntegrationSink sink,
@@ -56,11 +57,11 @@ namespace ExtractorUtils.Test.Unit.Unstable
             _output = output;
         }
 
-        private (DummyExtractor, DummySink) CreateExtractor()
+        private (DummyExtractor, DummySink) CreateExtractor(int? revision = null)
         {
             var sink = new DummySink();
             var services = new ServiceCollection();
-            services.AddSingleton(new DummyConfig());
+            services.AddSingleton(new ConfigWrapper<DummyConfig>(new DummyConfig(), revision));
             services.AddSingleton<IIntegrationSink>(sink);
             services.AddTestLogging(_output);
             services.AddTransient<ExtractorTaskScheduler>();

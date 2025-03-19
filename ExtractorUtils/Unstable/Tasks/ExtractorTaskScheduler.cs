@@ -7,7 +7,7 @@ using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Microsoft.Extensions.Logging;
 
-namespace Cognite.ExtractorUtils.Unstable.Tasks
+namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
     /// <summary>
     /// Base class for schedulable tasks.

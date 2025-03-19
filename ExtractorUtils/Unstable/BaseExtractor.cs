@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
-using Cognite.Extractor.Utils;
-using Cognite.ExtractorUtils.Unstable.Tasks;
+using Cognite.Extractor.Utils.Unstable.Configuration;
+using Cognite.Extractor.Utils.Unstable.Tasks;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Cognite.ExtractorUtils.Unstable
+namespace Cognite.Extractor.Utils.Unstable
 {
 
     /// <summary>
@@ -113,6 +113,11 @@ namespace Cognite.ExtractorUtils.Unstable
 
         private ManualResetEvent _triggerEvent = new ManualResetEvent(false);
 
+        /// <summary>
+        /// Currently active config revision.
+        /// </summary>
+        protected int? ConfigRevision { get; }
+
 
         /// <summary>
         /// Constructor, usable with dependency injection.
@@ -123,14 +128,16 @@ namespace Cognite.ExtractorUtils.Unstable
         /// <param name="sink">Sink for extractor task updates and errors.</param>
         /// <param name="destination">Cognite destination.</param>
         public BaseExtractor(
-            TConfig config,
+            ConfigWrapper<TConfig> config,
             IServiceProvider provider,
             ExtractorTaskScheduler taskScheduler,
             IIntegrationSink sink,
             CogniteDestination? destination = null
         )
         {
-            Config = config;
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            Config = config.Config;
+            ConfigRevision = config.Revision;
             Destination = destination;
             Provider = provider;
             _sink = sink;

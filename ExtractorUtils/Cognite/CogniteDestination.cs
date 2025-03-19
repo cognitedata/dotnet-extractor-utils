@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -9,8 +8,7 @@ using Cognite.Extensions;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.StateStorage;
-using Cognite.Extractor.Utils.Unstable;
-using Cognite.ExtractorUtils.Unstable.Configuration;
+using Cognite.Extractor.Utils.Unstable.Configuration;
 using CogniteSdk;
 using CogniteSdk.Beta;
 using Microsoft.Extensions.Logging;
