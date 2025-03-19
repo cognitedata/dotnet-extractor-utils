@@ -323,6 +323,17 @@ namespace ExtractorUtils.Test.Unit
             }
         }
 
+        [Theory]
+        [InlineData("2020-01-01T12:34:56Z", 2020, 1, 1, 12, 34, 56)]
+        [InlineData("1965-01-01T00:00:00Z", 1965, 1, 1, 0, 0, 0)]
+        [InlineData("2040-01-01T00:00:00Z", 2040, 1, 1, 0, 0, 0)]
+        public static void TestTimestampWrapperDirect(string value, int year, int month, int day, int hour, int minute, int second)
+        {
+            Assert.Equal(value, new TimestampWrapper(
+                new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc)
+            ).RawValue);
+        }
+
         [Fact]
         public static void TestTimeSpanWrapper()
         {
