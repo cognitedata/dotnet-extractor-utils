@@ -5,11 +5,11 @@
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Class BaseCogniteConfig </title>
+      <title>Class ConfigWrapper&lt;TConfig&gt; </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Class BaseCogniteConfig ">
+      <meta name="title" content="Class ConfigWrapper&lt;TConfig&gt; ">
     
-    <meta name="description" content="Base class for cognite config.">
+    <meta name="description" content="Wrapper around a config file with extra information about the active revision.">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -66,18 +66,19 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper`1">
 
 
 
-  <h1 id="Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig" data-uid="Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig" class="text-break">Class BaseCogniteConfig</h1>
-  <div class="markdown level0 summary"><p>Base class for cognite config.</p>
+  <h1 id="Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper`1" class="text-break">Class ConfigWrapper&lt;TConfig&gt;</h1>
+  <div class="markdown level0 summary"><p>Wrapper around a config file with
+extra information about the active revision.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">BaseCogniteConfig</span></div>
+    <div class="level1"><span class="xref">ConfigWrapper&lt;TConfig&gt;</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -103,29 +104,86 @@
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.ExtractorUtils.html">ExtractorUtils</a>.<a class="xref" href="Cognite.ExtractorUtils.Unstable.html">Unstable</a>.<a class="xref" href="Cognite.ExtractorUtils.Unstable.Configuration.html">Configuration</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.Extractor.html">Extractor</a>.<a class="xref" href="Cognite.Extractor.Utils.html">Utils</a>.<a class="xref" href="Cognite.Extractor.Utils.Unstable.html">Unstable</a>.<a class="xref" href="Cognite.Extractor.Utils.Unstable.Configuration.html">Configuration</a></h6>
   <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
-  <h5 id="Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_syntax">Syntax</h5>
+  <h5 id="Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class BaseCogniteConfig</code></pre>
+    <pre><code class="lang-csharp hljs">public class ConfigWrapper&lt;TConfig&gt;</code></pre>
   </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TConfig</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1__ctor__0_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper%601.%23ctor(%600%2CSystem.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/ConfigSource.cs/#L37">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1__ctor_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper`1.#ctor*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1__ctor__0_System_Nullable_System_Int32__" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper`1.#ctor(`0,System.Nullable{System.Int32})">ConfigWrapper(TConfig, int?)</h4>
+  <div class="markdown level1 summary"><p>Constructor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConfigWrapper(TConfig config, int? revision)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TConfig</span></td>
+        <td><span class="parametername">config</span></td>
+        <td><p>Configuration object.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">revision</span></td>
+        <td><p>Revision info.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_CdfChunking.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.CdfChunking%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1_Config.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper%601.Config%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Cognite.cs/#L17">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/ConfigSource.cs/#L25">View Source</a>
   </span>
-  <a id="Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_CdfChunking_" data-uid="Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.CdfChunking*"></a>
-  <h4 id="Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_CdfChunking" data-uid="Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.CdfChunking">CdfChunking</h4>
-  <div class="markdown level1 summary"><p>Chunking sizes towards CDF</p>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1_Config_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper`1.Config*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1_Config" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper`1.Config">Config</h4>
+  <div class="markdown level1 summary"><p>Configuration object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ChunkingConfig CdfChunking { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public TConfig Config { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-condensed">
@@ -137,26 +195,27 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Cognite.Extractor.Utils.ChunkingConfig.html">ChunkingConfig</a></td>
+        <td><span class="xref">TConfig</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_CdfThrottling.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.CdfThrottling%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1_Revision.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper%601.Revision%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Cognite.cs/#L23">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/ConfigSource.cs/#L30">View Source</a>
   </span>
-  <a id="Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_CdfThrottling_" data-uid="Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.CdfThrottling*"></a>
-  <h4 id="Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_CdfThrottling" data-uid="Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.CdfThrottling">CdfThrottling</h4>
-  <div class="markdown level1 summary"><p>Throttling of requests to CDF</p>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1_Revision_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper`1.Revision*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1_Revision" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper`1.Revision">Revision</h4>
+  <div class="markdown level1 summary"><p>Revision number or null to mean
+local config.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ThrottlingConfig CdfThrottling { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public int? Revision { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-condensed">
@@ -168,38 +227,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Cognite.Extractor.Utils.ThrottlingConfig.html">ThrottlingConfig</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_NanReplacement.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.NanReplacement%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Cognite.cs/#L28">View Source</a>
-  </span>
-  <a id="Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_NanReplacement_" data-uid="Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.NanReplacement*"></a>
-  <h4 id="Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig_NanReplacement" data-uid="Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.NanReplacement">NanReplacement</h4>
-  <div class="markdown level1 summary"><p>Optional replacement for non-finite double values in datapoints</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double? NanReplacement { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>?</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
         <td></td>
       </tr>
     </tbody>
@@ -217,10 +245,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_ExtractorUtils_Unstable_Configuration_BaseCogniteConfig.md&amp;value=---%0Auid%3A%20Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConfigWrapper_1.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Cognite.cs/#L12" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/ConfigSource.cs/#L20" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

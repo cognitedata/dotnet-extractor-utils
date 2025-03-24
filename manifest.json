@@ -2272,6 +2272,104 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.yml\" sourcestartlinenumber=\"1\">Base class for extractors.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.BaseCogniteConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.BaseCogniteConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.BaseCogniteConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.BaseCogniteConfig.yml\" sourcestartlinenumber=\"1\">Base class for cognite config.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.ConfigSource-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.ConfigSource-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.ConfigSource<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.ConfigSource-1.yml\" sourcestartlinenumber=\"1\">Abstract configuration source.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper<TConfig>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper-1.yml\" sourcestartlinenumber=\"1\">Wrapper around a config file with\nextra information about the active revision.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource-1.yml\" sourcestartlinenumber=\"1\">Configuration source for local files.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.RemoteConfigSource-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.RemoteConfigSource-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.RemoteConfigSource<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.RemoteConfigSource-1.yml\" sourcestartlinenumber=\"1\">Configuration source for remote config files.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.yml",
       "output": {
         ".html": {
@@ -2286,6 +2384,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.yml\" sourcestartlinenumber=\"1\">Unstable version of DestinationUtils, containing methods to register clients.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.ExtractorTaskResult",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.yml\" sourcestartlinenumber=\"1\">Result of a long-running extractor task.</p>\n<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.yml\" sourcestartlinenumber=\"3\">Used to indicate whether a task is expected to exit, and whether\nan exit should be considered the extractor crashing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.yml",
       "output": {
         ".html": {
@@ -2297,6 +2423,132 @@
       "IsMRef": true,
       "Title": "Cognite.Extractor.Utils.Unstable.SdkLoggingConfig",
       "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.yml\" sourcestartlinenumber=\"1\">Configuration for logging information from the SDK.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.yml\" sourcestartlinenumber=\"1\">Base class for classes that report errors to integrations,\nimplemented by tasks and extractors respectively.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.yml\" sourcestartlinenumber=\"1\">Base class for schedulable tasks.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.yml\" sourcestartlinenumber=\"1\">Worker for submitting periodic checkins to the integrations API.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"1\">Utility type for reporting errors to integrations.</p>\n<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"3\">After creation you should immediately either <code sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"3\">Dispose</code>,\ncall <code sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"4\">Finish</code>, or call <code sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"4\">Instant</code>.</p>\n<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"6\">Typically created through utility methods on <code sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"6\">IErrorReporter</code></p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.yml\" sourcestartlinenumber=\"1\">Task scheduler that runs tasks and reports their status to the integrations API.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.yml\" sourcestartlinenumber=\"1\">Interface for types that can consume errors and write them to some sink (integrations API).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.yml\" sourcestartlinenumber=\"1\">Type handling reporting of events related to a single task.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload.yml\" sourcestartlinenumber=\"1\">Payload for task run.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -2324,230 +2576,6 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Cognite.Extractor.Utils",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.BaseExtractor-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.BaseExtractor-1.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.BaseExtractor<TConfig>",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.BaseExtractor-1.yml\" sourcestartlinenumber=\"1\">Base class for extractors.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Configuration.BaseCogniteConfig.yml\" sourcestartlinenumber=\"1\">Base class for cognite config.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.ConfigSource-1.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.ConfigSource-1.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Configuration.ConfigSource<T>",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Configuration.ConfigSource-1.yml\" sourcestartlinenumber=\"1\">Configuration source that reads configuration from CDF.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Configuration.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Configuration",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.DestinationUtilsUnstable.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.DestinationUtilsUnstable.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.DestinationUtilsUnstable",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.DestinationUtilsUnstable.yml\" sourcestartlinenumber=\"1\">Unstable version of DestinationUtils, containing methods to register clients.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.ExtractorTaskResult",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.yml\" sourcestartlinenumber=\"1\">Result of a long-running extractor task.</p>\n<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.ExtractorTaskResult.yml\" sourcestartlinenumber=\"3\">Used to indicate whether a task is expected to exit, and whether\nan exit should be considered the extractor crashing.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.BaseErrorReporter.yml\" sourcestartlinenumber=\"1\">Base class for classes that report errors to integrations,\nimplemented by tasks and extractors respectively.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.BaseSchedulableTask.yml\" sourcestartlinenumber=\"1\">Base class for schedulable tasks.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.CheckInWorker.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.CheckInWorker.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.CheckInWorker",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.CheckInWorker.yml\" sourcestartlinenumber=\"1\">Worker for submitting periodic checkins to the integrations API.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"1\">Utility type for reporting errors to integrations.</p>\n<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"3\">After creation you should immediately either <code sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"3\">Dispose</code>,\ncall <code sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"4\">Finish</code>, or call <code sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"4\">Instant</code>.</p>\n<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"6\">Typically created through utility methods on <code sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorError.yml\" sourcestartlinenumber=\"6\">IErrorReporter</code></p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.ExtractorTaskScheduler.yml\" sourcestartlinenumber=\"1\">Task scheduler that runs tasks and reports their status to the integrations API.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.IIntegrationSink.yml\" sourcestartlinenumber=\"1\">Interface for types that can consume errors and write them to some sink (integrations API).</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.TaskReporter.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.TaskReporter.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.TaskReporter",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.TaskReporter.yml\" sourcestartlinenumber=\"1\">Type handling reporting of events related to a single task.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.TaskUpdatePayload.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.TaskUpdatePayload.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks.TaskUpdatePayload",
-      "Summary": "<p sourcefile=\"api/Cognite.ExtractorUtils.Unstable.Tasks.TaskUpdatePayload.yml\" sourcestartlinenumber=\"1\">Payload for task run.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.Tasks.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable.Tasks",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.ExtractorUtils.Unstable.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.ExtractorUtils.Unstable.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.ExtractorUtils.Unstable",
       "Summary": null
     },
     {
