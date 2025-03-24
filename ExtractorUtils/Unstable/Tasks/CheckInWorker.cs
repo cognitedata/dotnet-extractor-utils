@@ -28,17 +28,32 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         private bool _isRunning;
 
+        private int? _activeRevision;
+        private readonly Action<int> _onRevisionChanged;
+
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="integrationId">ID of the integration the worker should write to.</param>
         /// <param name="logger">Internal logger.</param>
         /// <param name="client">Cognite client</param>
-        public CheckInWorker(string integrationId, ILogger logger, Client client)
+        /// <param name="onRevisionChanged">Callback to call when the remote configuration revision is updated.</param>
+        /// <param name="activeRevision">Currently active config revision. Used to know whether the extractor has received a new
+        /// config revision since the last checkin. Null indiciates that the extractor is running local config,
+        /// and should not restart based on changes to remote config.</param>
+        public CheckInWorker(
+            string integrationId,
+            ILogger logger,
+            Client client,
+            Action<int> onRevisionChanged,
+            int? activeRevision
+        )
         {
             _client = client;
             _logger = logger;
             _integrationId = integrationId;
+            _onRevisionChanged = onRevisionChanged;
+            _activeRevision = activeRevision;
         }
 
         /// <summary>
@@ -94,16 +109,29 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
         }
 
+        private void RequeueCheckIn(IEnumerable<ErrorWithTask> errors, IEnumerable<TaskUpdate> tasks)
+        {
+            lock (_lock)
+            {
+                foreach (var err in errors)
+                {
+                    if (!_errors.ContainsKey(err.ExternalId)) _errors.Add(err.ExternalId, err);
+                }
+                _taskUpdates.AddRange(tasks);
+            }
+        }
+
         private async Task TryWriteCheckIn(IEnumerable<ErrorWithTask> errors, IEnumerable<TaskUpdate> tasks, CancellationToken token)
         {
             try
             {
-                await _client.Alpha.Integrations.CheckInAsync(new CheckInRequest
+                var response = await _client.Alpha.Integrations.CheckInAsync(new CheckInRequest
                 {
                     ExternalId = _integrationId,
                     TaskEvents = tasks,
                     Errors = errors,
                 }, token).ConfigureAwait(false);
+                HandleCheckInResponse(response);
             }
             catch (Exception ex)
             {
@@ -113,14 +141,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     return;
                 }
                 // If pushing the update failed, keep the updates to try again later.
-                lock (_lock)
-                {
-                    foreach (var err in errors)
-                    {
-                        if (!_errors.ContainsKey(err.ExternalId)) _errors.Add(err.ExternalId, err);
-                    }
-                    _taskUpdates.AddRange(tasks);
-                }
+                RequeueCheckIn(errors, tasks);
                 throw;
             }
         }
@@ -145,7 +166,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             {
                 if (newErrors.Count <= MAX_ERRORS_PER_CHECKIN && taskUpdates.Count <= MAX_TASK_UPDATES_PER_CHECKIN)
                 {
-                    await TryWriteCheckIn(newErrors, taskUpdates, token).ConfigureAwait(false);
+                    var errorsToWrite = newErrors;
+                    var tasksToWrite = taskUpdates;
+                    newErrors = new List<ErrorWithTask>();
+                    taskUpdates = new List<TaskUpdate>();
+                    await TryWriteCheckIn(errorsToWrite, tasksToWrite, token).ConfigureAwait(false);
                     break;
                 }
 
@@ -177,9 +202,16 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 if (taskIdx > 0) taskUpdates = taskUpdates.Skip(taskIdx).ToList();
 
                 await TryWriteCheckIn(errorsBatch, taskBatch, token).ConfigureAwait(false);
+                if (newErrors.Count == 0 && taskUpdates.Count == 0) break;
+            }
+
+            // If the task was cancelled, re-queue any unsubmitted errors and updates.
+            // This way, we don't lose any updates, and can push them when doing the final flush.
+            if (token.IsCancellationRequested)
+            {
+                RequeueCheckIn(newErrors, taskUpdates);
             }
         }
-
 
         /// <inheritdoc />
         public void ReportError(ExtractorError error)
@@ -221,6 +253,28 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     Timestamp = (timestamp ?? DateTime.UtcNow).ToUnixTimeMilliseconds(),
                     Message = update?.Message,
                 });
+            }
+        }
+
+        private void HandleCheckInResponse(CheckInResponse response)
+        {
+            if (_activeRevision != null
+                && response.LastConfigRevision != _activeRevision
+                && response.LastConfigRevision != null)
+            {
+                if (_onRevisionChanged != null)
+                {
+                    _logger.LogInformation("Remote config revision changed {From} -> {To}", _activeRevision, response.LastConfigRevision);
+                    _onRevisionChanged(response.LastConfigRevision.Value);
+                }
+                else
+                {
+                    _logger.LogInformation(
+                        "Remote config revision changed {From} -> {To}. The extractor is currently using local configuration and will not restart.",
+                        _activeRevision, response.LastConfigRevision);
+
+                }
+                _activeRevision = response.LastConfigRevision.Value;
             }
         }
     }
