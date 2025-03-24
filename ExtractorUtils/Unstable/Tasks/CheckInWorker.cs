@@ -8,7 +8,7 @@ using CogniteSdk;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.Logging;
 
-namespace Cognite.ExtractorUtils.Unstable.Tasks
+namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
     /// <summary>
     /// Worker for submitting periodic checkins to the integrations API.

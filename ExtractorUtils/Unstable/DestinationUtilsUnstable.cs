@@ -7,15 +7,13 @@ using System.Threading;
 using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.StateStorage;
-using Cognite.Extractor.Utils;
-using Cognite.Extractor.Utils.Unstable;
-using Cognite.ExtractorUtils.Unstable.Configuration;
+using Cognite.Extractor.Utils.Unstable.Configuration;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Cognite.ExtractorUtils.Unstable
+namespace Cognite.Extractor.Utils.Unstable
 {
     /// <summary>
     /// Unstable version of DestinationUtils, containing methods to register clients.

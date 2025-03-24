@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
-using Cognite.ExtractorUtils.Unstable.Configuration;
+using Cognite.Extractor.Utils.Unstable.Configuration;
 using CogniteSdk;
 using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
