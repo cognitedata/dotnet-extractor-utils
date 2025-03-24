@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cognite.Extractor.Utils;
 
-namespace Cognite.ExtractorUtils.Unstable.Configuration
+namespace Cognite.Extractor.Utils.Unstable.Configuration
 {
     /// <summary>
     /// Base class for cognite config.

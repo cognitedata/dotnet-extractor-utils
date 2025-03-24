@@ -7,7 +7,7 @@
     <Company>Cognite AS</Company>
     <Copyright>Cognite AS</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <RootNamespace>Cognite.ExtractorUtils</RootNamespace>
+    <RootNamespace>Cognite.Extractor.Utils</RootNamespace>
     <Description>
       A library containing utilities for building extractors in .Net
     </Description>
