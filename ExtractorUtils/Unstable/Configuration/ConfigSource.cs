@@ -12,29 +12,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extractor.Utils.Unstable.Configuration
 {
-    class ConfigState<T> where T : VersionedConfig
-    {
-        /// <summary>
-        /// Current revision in use.
-        /// </summary>
-        public int? CurrentRevision { get; set; }
-
-        /// <summary>
-        /// Type of config file.
-        /// </summary>
-        public ConfigMode Mode { get; set; }
-
-        /// <summary>
-        /// Current config object.
-        /// </summary>
-        public T? Config { get; set; }
-
-        public ConfigState(ConfigMode mode = ConfigMode.None)
-        {
-            Mode = mode;
-        }
-    }
-
     /// <summary>
     /// Wrapper around a config file with
     /// extra information about the active revision.
@@ -65,138 +42,87 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
     }
 
     /// <summary>
-    /// Where to read configuration from.
+    /// Abstract configuration source.
     /// </summary>
-    enum ConfigMode
+    /// <typeparam name="T">Type of config object to load.</typeparam>
+    public abstract class ConfigSource<T> where T : VersionedConfig
     {
-        /// <summary>
-        /// Read from a local config file.
-        /// </summary>
-        Local,
-        /// <summary>
-        /// Read from a remote config file.
-        /// </summary>
-        Remote,
-        /// <summary>
-        /// Not yet read.
-        /// </summary>
-        None
-    }
-
-    /// <summary>
-    /// Configuration source that reads configuration from CDF.
-    /// </summary>
-    /// <typeparam name="T">Config type</typeparam>
-    public class ConfigSource<T> where T : VersionedConfig
-    {
-        private readonly Client _client;
-        private readonly ILogger _logger;
-        private readonly ConfigState<T> _state;
-        private readonly string? _integrationId;
-        private readonly string? _bufferFilePath;
-        private readonly string _configFilePath;
-
-        /// <summary>
-        /// Configured local config file path.
-        /// </summary>
-        public string ConfigFilePath => _configFilePath;
-        private string? _lastErrorMsg;
-
-
-        private int? _lastAttemptedRevision;
-
         /// <summary>
         /// Current configuration object, if fetched.
         /// </summary>
-        public T? Config => _state.Config;
+        public T? Config { get; protected set; }
 
         /// <summary>
         /// Current revision, null if a local revision is active.
         /// </summary>
-        public int? Revision => _state.CurrentRevision;
+        public int? Revision { get; protected set; }
+
+        /// <summary>
+        /// Read a file from the local filesystem to a string.
+        /// </summary>
+        /// <param name="path">Path to the local file</param>
+        /// <returns>File as a string</returns>
+        protected async Task<string> ReadLocalFile(string path)
+        {
+            using var reader = new StreamReader(path);
+
+            return await reader.ReadToEndAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get a wrapper around configuration with information about the remote revision
+        /// if applicable.
+        /// This will fail if a config has not been loaded.
+        /// </summary>
+        /// <returns></returns>
+        public abstract ConfigWrapper<T> GetConfigWrapper();
+
+        /// <summary>
+        /// Load configuration, either from a local file or from CDF.
+        /// </summary>
+        /// <param name="targetRevision">Revision to load. Ignored for local config. Null means load the latest.</param>
+        /// <param name="reporter">Error reporter for writing configuration errors to CDF.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>True if a new configuration file was loaded, false otherwise.</returns>
+        public abstract Task<bool> ResolveConfig(int? targetRevision, BaseErrorReporter reporter, CancellationToken token);
+    }
+
+    /// <summary>
+    /// Configuration source for local files.
+    /// </summary>
+    /// <typeparam name="T">Type of config object to load.</typeparam>
+    public class LocalConfigSource<T> : ConfigSource<T> where T : VersionedConfig
+    {
+        private readonly string _configFilePath;
+        private readonly ILogger _logger;
+        private DateTime _lastLocalConfigModifyTime = DateTime.MinValue;
+        private string? _lastErrorMsg;
+
+        /// <summary>
+        /// The path to the config file this source will read from.
+        /// </summary>
+        public string ConfigFilePath => _configFilePath;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="client">Cognite client used to read config from integrations API.</param>
-        /// <param name="logger">Logger.</param>
-        /// <param name="integrationId">ID of integration to read from.</param>
-        /// <param name="configFilePath">Path to config file. This folder will also be used to
-        /// store the buffered config file if that is enabled. This config file will only be read
-        /// when using local config, but the folder is still needed for buffering remote configs.</param>
-        /// <param name="bufferConfigFile">Whether to store a local copy of config files
-        /// if reading from CDF fails.</param>
-        public ConfigSource(
-            Client client,
-            ILogger? logger,
-            string? integrationId,
-            string configFilePath,
-            bool bufferConfigFile)
+        /// <param name="logger">Logger</param>
+        /// <param name="configFilePath">Path to local config file.</param>
+        public LocalConfigSource(ILogger? logger, string configFilePath)
         {
-            _client = client;
-            _logger = logger ?? new NullLogger<ConfigSource<T>>();
-            _state = new ConfigState<T>();
-            _integrationId = integrationId;
+            _logger = logger ?? new NullLogger<LocalConfigSource<T>>();
             _configFilePath = configFilePath;
-            if (bufferConfigFile)
-            {
-                var dir = Path.GetDirectoryName(configFilePath);
-                if (dir != null)
-                {
-                    _bufferFilePath = $"{dir}/_temp_{Path.GetFileName(configFilePath)}";
-                }
-                else
-                {
-                    _bufferFilePath = $"_temp_{Path.GetFileName(configFilePath)}";
-                }
-            }
         }
 
-        private DateTime _lastLocalConfigModifyTime = DateTime.MinValue;
-
-        private bool ShouldLoadNewConfig(int? targetRevision, ConfigMode mode)
+        /// <inheritdoc />
+        public override ConfigWrapper<T> GetConfigWrapper()
         {
-            if (mode != _state.Mode || _state.Config == null) return true;
-
-            return targetRevision == null || targetRevision != _state.CurrentRevision;
+            if (Config == null) throw new InvalidOperationException("Attempt to get config wrapper before config has been resolved");
+            return new ConfigWrapper<T>(Config, null);
         }
 
-        /// <summary>
-        /// Get an instance wrapping the current config.
-        /// 
-        /// Will fail if no config has been resolved before this is called.
-        /// 
-        /// The config wrapper contains the current revision or "null" if the config
-        /// is local.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException">If no config is set.</exception>
-        public ConfigWrapper<T> GetConfigWrapper()
-        {
-            int? revision;
-            if (_state.Mode == ConfigMode.Local)
-            {
-                revision = null;
-            }
-            else if (_state.CurrentRevision == null)
-            {
-                throw new InvalidOperationException("Attempt to resolve remote config without revision.");
-            }
-            else
-            {
-                revision = _state.CurrentRevision;
-            }
-            return new ConfigWrapper<T>(_state.Config!, revision);
-        }
-
-        /// <summary>
-        /// Load configuration from a local file.
-        /// Returns whether we have loaded a new config.
-        /// </summary>
-        /// <param name="reporter">Error reporter.</param>
-        /// <param name="token">Cancellation token.</param>
-        /// <returns>The new config and true/false depending on whether a new config file was loaded.</returns>
-        public async Task<bool> ResolveLocalConfig(BaseErrorReporter reporter, CancellationToken token)
+        /// <inheritdoc />
+        public override async Task<bool> ResolveConfig(int? targetRevision, BaseErrorReporter reporter, CancellationToken token)
         {
             if (reporter == null) throw new ArgumentNullException(nameof(reporter));
             DateTime lastTime;
@@ -208,7 +134,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 lastTime = DateTime.MinValue;
             }
-            if (lastTime <= _lastLocalConfigModifyTime && _state.Mode == ConfigMode.Local && _state.Config != null)
+            if (lastTime <= _lastLocalConfigModifyTime && Config != null)
             {
                 return false;
             }
@@ -221,6 +147,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             string rawConfig;
             try
             {
+                _logger.LogInformation("Reading local config file from {Path}", _configFilePath);
                 rawConfig = await ReadLocalFile(_configFilePath).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -237,9 +164,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             try
             {
                 var config = ConfigurationUtils.TryReadConfigFromString<T>(rawConfig);
-                _state.CurrentRevision = null;
-                _state.Config = config;
-                _state.Mode = ConfigMode.Local;
+                Config = config;
             }
             catch (Exception ex)
             {
@@ -250,20 +175,75 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 throw;
             }
             return true;
+
         }
+    }
+
+    /// <summary>
+    /// Configuration source for remote config files.
+    /// </summary>
+    /// <typeparam name="T">Type of configuration object.</typeparam>
+    public class RemoteConfigSource<T> : ConfigSource<T> where T : VersionedConfig
+    {
+        private readonly Client _client;
+        private readonly ILogger _logger;
+        private readonly string _integrationId;
+        private readonly string? _bufferFilePath;
+        private string? _lastErrorMsg;
+        private int? _lastAttemptedRevision;
 
         /// <summary>
-        /// Load configuration from CDF.
-        /// Returns whether we have loaded a new config file.
+        /// Constructor.
         /// </summary>
-        /// <param name="targetRevision"></param>
-        /// <param name="reporter"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public async Task<bool> ResolveRemoteConfig(int? targetRevision, BaseErrorReporter reporter, CancellationToken token)
+        /// <param name="client">CDF Client</param>
+        /// <param name="logger">Logger</param>
+        /// <param name="integrationId">ID of the integration to write to.</param>
+        /// <param name="configFilePath">Path to local configuration file. The folder is used to create local copies
+        /// of remote config files if <paramref name="bufferConfigFile"/> is set.</param>
+        /// <param name="bufferConfigFile">Whether to store a local copy of the configuration file.</param>
+        public RemoteConfigSource(
+            Client client,
+            ILogger? logger,
+            string integrationId,
+            string configFilePath,
+            bool bufferConfigFile)
+        {
+            _client = client;
+            _logger = logger ?? new NullLogger<ConfigSource<T>>();
+            _integrationId = integrationId;
+            if (bufferConfigFile)
+            {
+                var dir = Path.GetDirectoryName(configFilePath);
+                if (dir != null)
+                {
+                    _bufferFilePath = $"{dir}/_temp_{Path.GetFileName(configFilePath)}";
+                }
+                else
+                {
+                    _bufferFilePath = $"_temp_{Path.GetFileName(configFilePath)}";
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public override ConfigWrapper<T> GetConfigWrapper()
+        {
+            if (Config == null || Revision == null) throw new InvalidOperationException("Attempt to get config wrapper before config has been resolved");
+            return new ConfigWrapper<T>(Config, Revision);
+        }
+
+        private bool ShouldLoadNewConfig(int? targetRevision)
+        {
+            if (Config == null) return true;
+
+            return targetRevision == null || targetRevision != Revision;
+        }
+
+        /// <inheritdoc />
+        public override async Task<bool> ResolveConfig(int? targetRevision, BaseErrorReporter reporter, CancellationToken token)
         {
             if (reporter == null) throw new ArgumentNullException(nameof(reporter));
-            if (!ShouldLoadNewConfig(targetRevision, ConfigMode.Remote)) return false;
+            if (!ShouldLoadNewConfig(targetRevision)) return false;
 
             string rawConfig;
             int? revision;
@@ -288,9 +268,8 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 _lastAttemptedRevision = revision;
                 var config = ConfigurationUtils.TryReadConfigFromString<T>(rawConfig);
-                _state.CurrentRevision = revision;
-                _state.Config = config;
-                _state.Mode = ConfigMode.Remote;
+                Config = config;
+                Revision = revision;
             }
             catch (Exception ex)
             {
@@ -301,14 +280,6 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 throw;
             }
             return true;
-        }
-
-        private async Task<string> ReadLocalFile(string path)
-        {
-            // if (_configFilePath == null) throw new InvalidOperationException("Attempt to read local config file when no local config file is configured");
-            using var reader = new StreamReader(path);
-
-            return await reader.ReadToEndAsync().ConfigureAwait(false);
         }
 
         private async Task<(string, int?)> ReadRemoteConfigInternal(int? targetRevision, CancellationToken token)
