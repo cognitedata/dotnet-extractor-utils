@@ -258,21 +258,18 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         private void HandleCheckInResponse(CheckInResponse response)
         {
-            if (_activeRevision != null
-                && response.LastConfigRevision != _activeRevision
-                && response.LastConfigRevision != null)
+            if (response.LastConfigRevision != _activeRevision && response.LastConfigRevision != null)
             {
-                if (_onRevisionChanged != null)
+                if (_activeRevision != null && _onRevisionChanged != null)
                 {
                     _logger.LogInformation("Remote config revision changed {From} -> {To}", _activeRevision, response.LastConfigRevision);
                     _onRevisionChanged(response.LastConfigRevision.Value);
                 }
-                else
+                else if (_activeRevision != null)
                 {
                     _logger.LogInformation(
-                        "Remote config revision changed {From} -> {To}. The extractor is currently using local configuration and will not restart.",
+                        "Remote config revision changed {From} -> {To}. The extractor is currently using local configuration and will need to be manually restarted and configured to use remote config for the new config to take effect.",
                         _activeRevision, response.LastConfigRevision);
-
                 }
                 _activeRevision = response.LastConfigRevision.Value;
             }
