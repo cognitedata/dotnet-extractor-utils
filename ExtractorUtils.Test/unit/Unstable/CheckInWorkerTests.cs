@@ -218,6 +218,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             await checkIn.Flush(source.Token);
             Assert.Equal(2, _checkInCallbacks.Count);
             Assert.Equal(2, _checkInCallbacks[1]);
+            Assert.Equal(1, _checkInCallbacks[0]);
         }
 
 
