@@ -90,27 +90,49 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             // Make sure the external ID in the startup payload matches the external ID of the target integration.
             startupPayload.ExternalId = _integrationId;
 
-            while (!token.IsCancellationRequested)
+            // Hold the flush lock while reporting startup, to ensure that we don't start reporting checkins
+            // before the startup request has been sent.
+            // With this, calls to flush will wait until the startup request has been sent,
+            // or startup fails.
+            // This prevents unfortunate behavior if we recover connection to CDF, then immediately shut down.
+            // In this case, we would like to potentially report a startup and anything that has happened
+            // while the connection to CDF was down.
+            try
             {
-                try
-                {
-                    await ReportStartup(startupPayload, token).ConfigureAwait(false);
-                    _hasReportedStartup = true;
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    if (!_retryStartup) throw;
-                    var toDelay = _random.Next(STARTUP_BACKOFF_SECONDS / 2, STARTUP_BACKOFF_SECONDS * 3 / 2);
-                    _logger.LogError("Failed to report startup, retrying after {Time} seconds: {Err}", toDelay, ex.Message);
-                    await Task.Delay(TimeSpan.FromSeconds(toDelay), token).ConfigureAwait(false);
-                    continue;
-                }
+                await _flushLock.WaitAsync(token).ConfigureAwait(false);
+            }
+            catch
+            {
+                // Should only happen if we are cancelled while waiting.
+                if (token.IsCancellationRequested) return;
+                throw;
             }
 
-            lock (_lock)
+            try
             {
-                _hasReportedStartup = true;
+                while (!token.IsCancellationRequested)
+                {
+                    try
+                    {
+                        await ReportStartup(startupPayload, token).ConfigureAwait(false);
+                        _hasReportedStartup = true;
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!_retryStartup) throw;
+                        // Retry about every 30 seconds, but with some jitter so we don't
+                        // end up with too bursty retries.
+                        var toDelay = _random.Next(STARTUP_BACKOFF_SECONDS / 2, STARTUP_BACKOFF_SECONDS * 3 / 2);
+                        _logger.LogError("Failed to report startup, retrying after {Time} seconds: {Err}", toDelay, ex.Message);
+                        await Task.Delay(TimeSpan.FromSeconds(toDelay), token).ConfigureAwait(false);
+                        continue;
+                    }
+                }
+            }
+            finally
+            {
+                _flushLock.Release();
             }
 
             var rinterval = interval ?? TimeSpan.FromSeconds(30);
@@ -140,15 +162,6 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <returns></returns>
         public async Task Flush(CancellationToken token)
         {
-            lock (_lock)
-            {
-                if (!_hasReportedStartup)
-                {
-                    _logger.LogWarning("Attempted to flush checkin worker before reporting startup, since this results in unclear errors in CDF, the request is ignored. It would likely fail.");
-                    return;
-                }
-            }
-
             // Ensure that only one flush is running at a time,
             // importantly this also means that if we call flush, we will wait for
             // any running flushes to complete, meaning that once this method returns,
@@ -161,6 +174,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             catch
             {
                 // Only really happens if we're cancelled while waiting.
+                return;
+            }
+
+            if (!_hasReportedStartup)
+            {
+                _logger.LogWarning("Attempted to flush checkin worker before reporting startup, since this results in unclear errors in CDF, the request is ignored. It would likely fail.");
                 return;
             }
 
