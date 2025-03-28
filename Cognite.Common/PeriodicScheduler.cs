@@ -276,7 +276,7 @@ namespace Cognite.Extractor.Common
                 if (aex.Flatten().InnerExceptions.First() is TaskCanceledException) return;
                 throw aex.Flatten();
             }
-            
+
         }
 
         /// <summary>

@@ -96,7 +96,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Getting or creating time series. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
-                    (chunk, idx) => async () => {
+                    (chunk, idx) => async () =>
+                    {
                         var result = await GetOrCreateTimeSeriesChunk(timeSeries, chunk,
                             buildTimeSeries, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
@@ -105,7 +106,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(GetOrCreateTimeSeriesAsync), ++taskNum, chunks.Count);
@@ -160,7 +162,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Ensuring time series. Number of time series: {Number}. Number of chunks: {Chunks}", timeSeriesToEnsure.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<TimeSeriesCreate>, Func<Task>>(
-                (chunk, idx) => async () => {
+                (chunk, idx) => async () =>
+                {
                     var result = await CreateTimeSeriesHandleErrors(timeseries, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -168,7 +171,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(EnsureTimeSeriesExistsAsync), ++taskNum, chunks.Count);
@@ -204,7 +208,8 @@ namespace Cognite.Extensions
 
             var generators = chunks
                 .Select<IEnumerable<Identity>, Func<Task>>(
-                chunk => async () => {
+                chunk => async () =>
+                {
                     IEnumerable<TimeSeries> found;
                     using (CdfMetrics.TimeSeries.WithLabels("retrieve").NewTimer())
                     {
@@ -388,7 +393,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Updating time series. Number of time series: {Number}. Number of chunks: {Chunks}", items.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<TimeSeriesUpdateItem>, Func<Task>>(
-                (chunk, idx) => async () => {
+                (chunk, idx) => async () =>
+                {
                     var result = await UpdateTimeSeriesHandleErrors(resource, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -396,7 +402,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(UpdateAsync), ++taskNum, chunks.Count);

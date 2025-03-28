@@ -54,8 +54,8 @@ namespace Cognite.Extractor.StateStorage
         {
             try
             {
-                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from raw table {table}", 
-                    extractionStates.Count, 
+                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from raw table {table}",
+                    extractionStates.Count,
                     tableName);
                 int count = 0;
                 var raw = await _destination.GetRowsAsync(_dbName, tableName, Options, token).ConfigureAwait(false);

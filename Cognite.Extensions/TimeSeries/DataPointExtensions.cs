@@ -620,7 +620,7 @@ namespace Cognite.Extensions
                                 id = new Identity(dp.Id);
                             }
                         }
-                        else if(dp.InstanceId != null)
+                        else if (dp.InstanceId != null)
                         {
                             id = new Identity(new InstanceIdentifier(dp.InstanceId.Space, dp.InstanceId.ExternalId));
                         }

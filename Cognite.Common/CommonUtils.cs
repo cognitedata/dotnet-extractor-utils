@@ -29,7 +29,7 @@ namespace Cognite.Extractor.Common
         /// <param name="key">Key to search</param>
         /// <param name="defaultValue">Default value to return</param>
         /// <returns>Value or default</returns>
-        public static TValue GetValue<TKey,TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
+        public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
         {
             return dict.TryGetValue(key, out TValue value) ? value : defaultValue;
         }

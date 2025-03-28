@@ -205,7 +205,8 @@ namespace Cognite.Extractor.Utils
             // Use a separate token source to allow cancelling the uploader separate from the upload loop.
             _internalSource = new CancellationTokenSource();
 
-            var tokenCancellationTask = Task.Run(async () => {
+            var tokenCancellationTask = Task.Run(async () =>
+            {
                 try
                 {
                     await Task.Delay(Timeout.Infinite, token).ConfigureAwait(false);
@@ -236,11 +237,12 @@ namespace Cognite.Extractor.Utils
             await _uploadLoopTask.ConfigureAwait(false);
         }
 
-        
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
         private Task TriggerUploadAndCallback(CancellationToken token)
         {
-            return Task.Run(async () => {
+            return Task.Run(async () =>
+            {
                 var result = await Trigger(token);
                 if (Callback != null) await Callback(result);
             }, CancellationToken.None);
@@ -262,7 +264,7 @@ namespace Cognite.Extractor.Utils
             try
             {
                 _timer?.Stop();
-                
+
                 if (_tokenSource != null && !_tokenSource.IsCancellationRequested)
                 {
                     _tokenSource.Cancel();

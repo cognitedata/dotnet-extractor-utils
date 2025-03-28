@@ -92,7 +92,7 @@ namespace Cognite.Extensions.DataModels
                         Nodes[from] = parent = new QueryNode(from, null);
                     }
                 }
-                
+
                 // The node may already be added if its child came earlier in the iteration
                 if (Nodes.TryGetValue(kvp.Key, out var node))
                 {

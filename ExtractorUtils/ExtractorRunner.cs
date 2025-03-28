@@ -271,7 +271,7 @@ namespace Cognite.Extractor.Utils
                         options.UserAgent,
                         options.AddStateStore,
                         options.AddLogger,
-                        options.AddMetrics, 
+                        options.AddMetrics,
                         options.RequireDestination,
                         options.Config,
                         options.BuildLogger,
@@ -398,7 +398,7 @@ namespace Cognite.Extractor.Utils
                         break;
                     }
 
-                    
+
 
                     if (!extractorStoppedGracefully)
                     {
@@ -423,7 +423,7 @@ namespace Cognite.Extractor.Utils
                             break;
                         }
                     }
-                    
+
                 }
 
 

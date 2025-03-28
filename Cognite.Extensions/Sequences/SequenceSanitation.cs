@@ -332,7 +332,7 @@ namespace Cognite.Extensions
                             badRows.Add((failedField.Value, row));
                             addRow = false;
                         }
-                        
+
                         if (!rowNums.Add(row.RowNumber))
                         {
                             duplicateRows.Add(row);

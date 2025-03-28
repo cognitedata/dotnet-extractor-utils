@@ -139,7 +139,7 @@ namespace Cognite.Extensions
                 bool added = false;
                 var idt = seq.Id.HasValue ? Identity.Create(seq.Id.Value) : Identity.Create(seq.ExternalId);
                 switch (error.Resource)
-                {                        
+                {
                     case ResourceType.Id:
                         if (!items.Contains(idt)) added = true;
                         break;
@@ -174,7 +174,7 @@ namespace Cognite.Extensions
                     return Array.Empty<SequenceDataCreate>();
                 }
             }
-            
+
             return ret;
 
         }
@@ -214,7 +214,7 @@ namespace Cognite.Extensions
                     createMap.Select(kvp => new SequenceRowError(kvp.Value.Rows, kvp.Key)));
                 return new[] { err };
             }
-            
+
 
             var sequenceMap = sequences.ToDictionary(seq =>
             {

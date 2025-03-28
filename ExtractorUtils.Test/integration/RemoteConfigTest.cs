@@ -97,7 +97,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(tester.Config.Cognite.Project, config.Cognite.Project);
 
                 // Pass the remote config in as local, but no path, which should fail
-                
+
                 services = new ServiceCollection();
                 await Assert.ThrowsAsync<ConfigurationException>(async () => await services.AddRemoteConfig<BaseConfig>(null, null, null, "utils-test-app", null, true, false, new RemoteConfig
                 {

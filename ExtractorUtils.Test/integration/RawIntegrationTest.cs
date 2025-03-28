@@ -36,7 +36,7 @@ namespace ExtractorUtils.Test.Integration
 
             string dbName = $"{tester.Prefix}-Db";
             string tableName = $"{tester.Prefix}-Table";
-            
+
             var columns = new Dictionary<string, TestDto>{
                 { "A", new TestDto{ Name = "A", Number = 0} },
                 { "B", new TestDto{ Name = "B", Number = 1} },
@@ -49,10 +49,11 @@ namespace ExtractorUtils.Test.Integration
             try
             {
                 await tester.Destination.InsertRawRowsAsync(dbName, tableName, columns, tester.Source.Token);
-                
+
                 var rows = await tester.Destination.CogniteClient.Raw.ListRowsAsync<Dictionary<string, JsonElement>>(dbName, tableName, null, tester.Source.Token);
                 Assert.Equal(columns.Count, rows.Items.Count());
-                Assert.All(rows.Items, (i) =>{
+                Assert.All(rows.Items, (i) =>
+                {
                     Assert.True(columns.ContainsKey(i.Key));
                     var name = i.Columns["name"].ToString();
                     Assert.True(i.Columns["number"].TryGetInt32(out var number));
@@ -70,7 +71,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.Destination.CogniteClient.Raw.DeleteDatabasesAsync(new List<string>(){ dbName }, true, tester.Source.Token);
+                await tester.Destination.CogniteClient.Raw.DeleteDatabasesAsync(new List<string>() { dbName }, true, tester.Source.Token);
             }
         }
 
@@ -85,18 +86,21 @@ namespace ExtractorUtils.Test.Integration
             string tableName = $"{tester.Prefix}-Table";
 
             var totalUploaded = 0;
-            try {
-                await using (var queue = tester.Destination.CreateRawUploadQueue<TestDto>(dbName, tableName, TimeSpan.FromSeconds(1), 0, res => {
+            try
+            {
+                await using (var queue = tester.Destination.CreateRawUploadQueue<TestDto>(dbName, tableName, TimeSpan.FromSeconds(1), 0, res =>
+                {
                     var numUploaded = res.Uploaded?.Count() ?? 0;
                     totalUploaded += numUploaded;
                     tester.Logger.LogInformation("Sent {Num} raw rows to CDF", numUploaded);
                     return Task.CompletedTask;
                 }))
                 {
-                   var enqueueTask = Task.Run(async () => {
+                    var enqueueTask = Task.Run(async () =>
+                    {
                         for (int i = 0; i < 20; ++i)
                         {
-                            queue.EnqueueRow($"r{i}", new TestDto {Name = $"Test {i}", Number = i});
+                            queue.EnqueueRow($"r{i}", new TestDto { Name = $"Test {i}", Number = i });
                             await Task.Delay(100, tester.Source.Token);
                         }
                     });
@@ -113,7 +117,8 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(20, rows.Items.Count());
 
                 var indexes = Enumerable.Range(0, 20).Select(i => $"r{i}").ToList();
-                Assert.All(rows.Items, (i) =>{
+                Assert.All(rows.Items, (i) =>
+                {
 
                     var name = i.Columns["name"].ToString();
                     Assert.True(i.Columns["number"].TryGetInt32(out var number));
@@ -122,9 +127,9 @@ namespace ExtractorUtils.Test.Integration
                 });
 
             }
-            finally 
+            finally
             {
-                await tester.Destination.CogniteClient.Raw.DeleteDatabasesAsync(new List<string>(){ dbName }, true, tester.Source.Token);
+                await tester.Destination.CogniteClient.Raw.DeleteDatabasesAsync(new List<string>() { dbName }, true, tester.Source.Token);
             }
         }
     }

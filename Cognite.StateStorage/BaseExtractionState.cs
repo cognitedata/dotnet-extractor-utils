@@ -19,7 +19,8 @@ namespace Cognite.Extractor.StateStorage
         /// <summary>
         /// Mutex used for safely modifying ranges
         /// </summary>
-        protected  object Mutex { 
+        protected object Mutex
+        {
             get { return _mutex; }
         }
 

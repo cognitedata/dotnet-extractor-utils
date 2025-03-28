@@ -5,7 +5,8 @@ using System;
 
 namespace ExtractorUtils.Test.Unit
 {
-    public static class CommonUtilsTest {
+    public static class CommonUtilsTest
+    {
 
         [Theory]
         [InlineData("", null)]

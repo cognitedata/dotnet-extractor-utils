@@ -9,7 +9,8 @@ using Cognite.Extractor.Utils;
 
 namespace ExtractorUtils.Test.Unit
 {
-    class TestLoggingConfig : BaseConfig {
+    class TestLoggingConfig : BaseConfig
+    {
         public string Foo { get; set; } = "";
     }
 
@@ -17,14 +18,15 @@ namespace ExtractorUtils.Test.Unit
     {
 
         [Fact]
-        public static void TestLogging() {
+        public static void TestLogging()
+        {
             // To log messages before a logger configured, the default console logger can be used.
             var l1 = LoggingUtils.GetDefault();
             Assert.NotNull(l1);
             l1.LogInformation("Testing logger injection");
 
             string path = "test-logging-config.yml";
-            string[] lines = {  "version: 2", 
+            string[] lines = {  "version: 2",
                                 "logger:",
                                 "  console:",
                                 "    level: verbose",
@@ -35,13 +37,14 @@ namespace ExtractorUtils.Test.Unit
                                 "  trace-listener:",
                                 "    level: warning" };
             File.WriteAllLines(path, lines);
-            
+
             l1.LogInformation("Adding Configuration and Logging services...");
             var services = new ServiceCollection();
             services.AddConfig<TestLoggingConfig>(path, 2);
             services.AddLogger();
 
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 l1.LogInformation("Getting configuration singleton object");
                 var config = provider.GetRequiredService<TestLoggingConfig>();
                 Assert.Equal(2, config.Version);

@@ -16,7 +16,7 @@ namespace Cognite.Extractor.Logging
     /// Loggers are created according to a <see cref="LoggerConfig"/> configuration object.
     /// Log messages contain UTC timestamps.
     /// </summary>
-    public static class LoggingUtils 
+    public static class LoggingUtils
     {
         /// <summary>
         /// Default logging template without context.
@@ -100,7 +100,8 @@ namespace Cognite.Extractor.Logging
         /// Create a default console logger and returns it.
         /// </summary>
         /// <returns>A <see cref="Microsoft.Extensions.Logging.ILogger"/> logger with default properties</returns>
-        public static Microsoft.Extensions.Logging.ILogger GetDefault() {
+        public static Microsoft.Extensions.Logging.ILogger GetDefault()
+        {
             using (var loggerFactory = new LoggerFactory())
             {
                 loggerFactory.AddSerilog(GetSerilogDefault(), true);
@@ -112,7 +113,8 @@ namespace Cognite.Extractor.Logging
         /// Create a default Serilog console logger and returns it.
         /// </summary>
         /// <returns>A <see cref="Serilog.ILogger"/> logger with default properties</returns>
-        public static Serilog.ILogger GetSerilogDefault() {
+        public static Serilog.ILogger GetSerilogDefault()
+        {
             return new LoggerConfiguration()
                 .Enrich.With<UtcTimestampEnricher>()
                 .WriteTo.Console(LogEventLevel.Information, LogTemplate)
@@ -123,21 +125,23 @@ namespace Cognite.Extractor.Logging
 
     // Enricher that creates a property with UTC timestamp.
     // See: https://github.com/serilog/serilog/issues/1024#issuecomment-338518695
-    class UtcTimestampEnricher : ILogEventEnricher {
-        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory lepf) {
+    class UtcTimestampEnricher : ILogEventEnricher
+    {
+        public void Enrich(LogEvent logEvent, ILogEventPropertyFactory lepf)
+        {
             logEvent.AddPropertyIfAbsent(
                 lepf.CreateProperty("UtcTimestamp", logEvent.Timestamp.UtcDateTime));
         }
     }
 
-   /// <summary>
-   /// This class implements a <see cref="TraceListener"/> that, when configured, writes trace messages to the injected 
-   /// logger
-   /// </summary>
-   public class LoggerTraceListener : TraceListener
+    /// <summary>
+    /// This class implements a <see cref="TraceListener"/> that, when configured, writes trace messages to the injected 
+    /// logger
+    /// </summary>
+    public class LoggerTraceListener : TraceListener
     {
         private readonly ILogger<LoggerTraceListener> _logger;
-        private readonly LogEventLevel? _level; 
+        private readonly LogEventLevel? _level;
 
         /// <summary>
         /// Creates a new listener using the logger and configuration passed as parameters
@@ -177,7 +181,8 @@ namespace Cognite.Extractor.Logging
         public override void WriteLine(string? message)
         {
             if (_level is null) return;
-            switch(_level){
+            switch (_level)
+            {
                 case LogEventLevel.Verbose:
                     _logger.LogTrace(message);
                     break;
@@ -204,7 +209,7 @@ namespace Cognite.Extractor.Logging
         /// <summary>
         /// Enable this Trace listener, so that trace messages are outputted by the logger
         /// </summary>
-        public void Enable() 
+        public void Enable()
         {
             if (_level != null)
             {
@@ -213,11 +218,12 @@ namespace Cognite.Extractor.Logging
             }
         }
     }
-    
+
     /// <summary>
     /// Extension utilities for logging
     /// </summary>
-    public static class LoggingExtensions {
+    public static class LoggingExtensions
+    {
 
         /// <summary>
         /// Adds a configured Serilog logger as singletons of the <see cref="Microsoft.Extensions.Logging.ILogger"/> and
@@ -231,12 +237,15 @@ namespace Cognite.Extractor.Logging
         /// This defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/>,
         /// which creates logging configuration for file and console using
         /// <see cref="LoggingUtils.GetConfiguration(LoggerConfig)"/></param>
-        public static void AddLogger(this IServiceCollection services, Func<LoggerConfig, Serilog.ILogger>? buildLogger = null, bool alternativeLogger = false) {
+        public static void AddLogger(this IServiceCollection services, Func<LoggerConfig, Serilog.ILogger>? buildLogger = null, bool alternativeLogger = false)
+        {
             buildLogger ??= LoggingUtils.GetConfiguredLogger;
             services.AddSingleton<LoggerTraceListener>();
-            services.AddSingleton<Serilog.ILogger>(p => {
+            services.AddSingleton<Serilog.ILogger>(p =>
+            {
                 var config = p.GetService<LoggerConfig>();
-                if (config == null || !alternativeLogger && (config.Console == null && config.File == null)) {
+                if (config == null || !alternativeLogger && (config.Console == null && config.File == null))
+                {
                     // No logging configuration
                     var defLog = LoggingUtils.GetSerilogDefault();
                     defLog.Warning("No Logging configuration found. Using default logger");
@@ -244,8 +253,9 @@ namespace Cognite.Extractor.Logging
                 }
                 return buildLogger(config);
             });
-            services.AddLogging(loggingBuilder => {
-                loggingBuilder.Services.AddSingleton<ILoggerProvider, SerilogLoggerProvider>(s => 
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.Services.AddSingleton<ILoggerProvider, SerilogLoggerProvider>(s =>
                 {
                     var logger = s.GetRequiredService<Serilog.ILogger>();
                     return new SerilogLoggerProvider(logger, true);
