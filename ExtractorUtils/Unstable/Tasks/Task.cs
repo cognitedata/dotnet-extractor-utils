@@ -25,6 +25,34 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
     }
 
     /// <summary>
+    /// Task metadata object.
+    /// </summary>
+    public class TaskMetadata
+    {
+        /// <summary>
+        /// Type of task.
+        /// </summary>
+        public TaskType Type { get; set; }
+        /// <summary>
+        /// Whether the task can be triggered by an action or not.
+        /// </summary>
+        public bool Action { get; set; }
+        /// <summary>
+        /// Task description.
+        /// </summary>
+        public string? Description { get; set; }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="type">Task type.</param>
+        public TaskMetadata(TaskType type)
+        {
+            Type = type;
+        }
+    }
+
+    /// <summary>
     /// Type handling reporting of events related to a single task.
     /// </summary>
     public class TaskReporter : BaseErrorReporter
