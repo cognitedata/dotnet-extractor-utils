@@ -61,6 +61,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
             };
         }
 
+        private List<int> _checkInCallbacks = new();
+
         private (ServiceProvider, CheckInWorker) GetCheckInWorker()
         {
             var config = GetConfig();
@@ -77,7 +79,13 @@ namespace ExtractorUtils.Test.Unit.Unstable
 
             var client = provider.GetRequiredService<Client>();
 
-            return (provider, new CheckInWorker(config.Integration, provider.GetRequiredService<ILogger<CheckInWorker>>(), client));
+            return (provider, new CheckInWorker(
+                config.Integration,
+                provider.GetRequiredService<ILogger<CheckInWorker>>(),
+                client,
+                _checkInCallbacks.Add,
+                0
+            ));
         }
 
         [Fact]
@@ -115,6 +123,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
             await checkIn.Flush(source.Token);
             Assert.Equal(4, _checkInCount);
             Assert.Equal(2, errors.Count);
+            Assert.Single(_checkInCallbacks);
+            Assert.Equal(1, _checkInCallbacks[0]);
 
             // Report some task ends
             checkIn.ReportTaskEnd("task1", null, start.AddSeconds(2));
@@ -122,6 +132,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             await checkIn.Flush(source.Token);
             Assert.Equal(5, _checkInCount);
             Assert.Equal(4, taskEvents.Count);
+            Assert.Single(_checkInCallbacks);
 
             source.Cancel();
             await TestUtils.RunWithTimeout(runTask, 5);
@@ -173,6 +184,41 @@ namespace ExtractorUtils.Test.Unit.Unstable
 
             source.Cancel();
             await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
+        public async Task TestCheckInWorkerCallback()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            // Check that this doesn't crash, and properly cancels out at the end.
+            var runTask = checkIn.RunPeriodicCheckin(source.Token, Timeout.InfiniteTimeSpan);
+            // First, we should very quickly report a checkin on the start of the run task...
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            // Flush, without getting a new config revision.
+            await checkIn.Flush(source.Token);
+            Assert.Empty(_checkInCallbacks);
+
+            // Set a new revision and flush again.
+            _lastConfigRevision = 1;
+            await checkIn.Flush(source.Token);
+            Assert.Single(_checkInCallbacks);
+            Assert.Equal(1, _checkInCallbacks[0]);
+
+            // Flush without changes
+            await checkIn.Flush(source.Token);
+            Assert.Single(_checkInCallbacks);
+            Assert.Equal(1, _checkInCallbacks[0]);
+
+            // Flush with a new revision
+            _lastConfigRevision = 2;
+            await checkIn.Flush(source.Token);
+            Assert.Equal(2, _checkInCallbacks.Count);
+            Assert.Equal(2, _checkInCallbacks[1]);
+            Assert.Equal(1, _checkInCallbacks[0]);
         }
 
 
