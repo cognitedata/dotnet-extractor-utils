@@ -260,7 +260,7 @@ namespace Cognite.Extractor.Common
                     // Allow 2 in each "chunk" of time, as flex. This helps distribute tasks a bit more over time.
                     if (totalInLastChunk > 1 || scheduledInLastTimePeriod >= _maxPerUnit) return false;
                 }
-                
+
             }
             return true;
         }
@@ -331,7 +331,7 @@ namespace Cognite.Extractor.Common
                         catch (TaskCanceledException)
                         {
                         }
-                        
+
                     }
                     _taskCompletionEvent.Reset();
                 }
@@ -351,7 +351,7 @@ namespace Cognite.Extractor.Common
                             (result.Exception == null || !_quitOnFailure)
                             && (_timeUnit == TimeSpan.Zero || _maxPerUnit <= 0 || result.StartTime <= now - _timeUnit));
                     }
-                    
+
                     _runningTasks.RemoveAll(result =>
                         result.Task == null
                         || result.Task.IsCompleted

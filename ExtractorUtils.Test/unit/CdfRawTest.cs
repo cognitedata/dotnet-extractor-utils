@@ -59,7 +59,8 @@ namespace ExtractorUtils.Test.Unit
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
             services.AddCogniteClient("testApp");
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 var columns = new Dictionary<string, TestDto>{
@@ -84,7 +85,7 @@ namespace ExtractorUtils.Test.Unit
             // Verify that the endpoint was called 2 times (2 chunks of max 4 rows)
             mockHttpMessageHandler.Protected()
                 .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync", 
+                    "SendAsync",
                     Times.Exactly(2),
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>());
@@ -117,7 +118,8 @@ namespace ExtractorUtils.Test.Unit
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
             using (var source = new CancellationTokenSource())
-            using (var provider = services.BuildServiceProvider()) {
+            using (var provider = services.BuildServiceProvider())
+            {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<CdfRawTest>>();
                 // queue with 1 sec upload interval
@@ -144,7 +146,7 @@ namespace ExtractorUtils.Test.Unit
                 // Verify that the endpoint was called at most 3 times (once per upload interval and once disposing)
                 mockHttpMessageHandler.Protected()
                     .Verify<Task<HttpResponseMessage>>(
-                        "SendAsync", 
+                        "SendAsync",
                         Times.AtMost(5),
                         ItExpr.IsAny<HttpRequestMessage>(),
                         ItExpr.IsAny<CancellationToken>());
@@ -152,10 +154,11 @@ namespace ExtractorUtils.Test.Unit
                 // queue with maximum size
                 await using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromMinutes(10), 5))
                 {
-                    var enqueueTask = Task.Run(async () => {
+                    var enqueueTask = Task.Run(async () =>
+                    {
                         while (index < 23)
                         {
-                            queue.EnqueueRow($"r{index}", new TestDto {Name = "Test", Number = index});
+                            queue.EnqueueRow($"r{index}", new TestDto { Name = "Test", Number = index });
                             await Task.Delay(100, source.Token);
                             index++;
                         }
@@ -174,7 +177,7 @@ namespace ExtractorUtils.Test.Unit
                 // Verify that the endpoint was called at most 3 more times (once per max size and once disposing)
                 mockHttpMessageHandler.Protected()
                     .Verify<Task<HttpResponseMessage>>(
-                        "SendAsync", 
+                        "SendAsync",
                         Times.AtMost(8),
                         ItExpr.IsAny<HttpRequestMessage>(),
                         ItExpr.IsAny<CancellationToken>());
@@ -200,16 +203,17 @@ namespace ExtractorUtils.Test.Unit
         private class RawItem
         {
             public string key { get; set; }
-            public TestDto columns { get; set; } 
+            public TestDto columns { get; set; }
         }
 
         private class RawItems
         {
-            public List<RawItem> items {get; set; }
+            public List<RawItem> items { get; set; }
         }
 
         private static Dictionary<string, TestDto> rows = new Dictionary<string, TestDto>();
-        private static async Task<HttpResponseMessage> mockInsertRowsAsync(HttpRequestMessage message , CancellationToken token) {
+        private static async Task<HttpResponseMessage> mockInsertRowsAsync(HttpRequestMessage message, CancellationToken token)
+        {
             var uri = message.RequestUri.ToString();
 
             Assert.Contains($"{_host}/api/v1/projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows", uri);
@@ -229,13 +233,13 @@ namespace ExtractorUtils.Test.Unit
             var response = new HttpResponseMessage
             {
                 StatusCode = statusCode,
-                Content = new StringContent(responseBody)               
+                Content = new StringContent(responseBody)
             };
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             response.Headers.Add("x-request-id", "1");
-            
+
             return response;
-       }
- 
+        }
+
     }
 }

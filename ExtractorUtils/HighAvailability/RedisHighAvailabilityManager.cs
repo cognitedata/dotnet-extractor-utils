@@ -29,17 +29,17 @@ namespace Cognite.Extractor.Utils
         /// <param name="interval">Optional update state interval.</param>
         /// <param name="inactivityThreshold">Optional threshold for extractor being inactive.</param>
         public RedisHighAvailabilityManager(
-            HighAvailabilityConfig config, 
+            HighAvailabilityConfig config,
             ILogger<HighAvailabilityManager> logger,
             PeriodicScheduler scheduler,
             CancellationTokenSource source,
             TimeSpan? interval = null,
-            TimeSpan? inactivityThreshold = null) 
+            TimeSpan? inactivityThreshold = null)
             : base(config, logger, scheduler, source, interval, inactivityThreshold)
         {
             if (_config.Redis?.ConnectionString != null)
-            {  
-                _redis = ConnectionMultiplexer.Connect(_config.Redis.ConnectionString);   
+            {
+                _redis = ConnectionMultiplexer.Connect(_config.Redis.ConnectionString);
 
                 if (!_redis.IsConnected) throw new RedisConnectionException(ConnectionFailureType.UnableToConnect, "Cannot reach remote data store.");
             }
@@ -58,7 +58,8 @@ namespace Cognite.Extractor.Utils
             try
             {
                 var db = _redis.GetDatabase();
-                var log = new RedisExtractorInstance() {
+                var log = new RedisExtractorInstance()
+                {
                     Index = _config.Index,
                     TimeStamp = DateTime.UtcNow,
                     Active = _state.UpdatedStatus

@@ -248,7 +248,7 @@ namespace Cognite.Extractor.Utils
         {
             _queueSize.Dec(dps.Count());
 
-            if(!dps.Any())
+            if (!dps.Any())
             {
                 if (_bufferAny)
                 {

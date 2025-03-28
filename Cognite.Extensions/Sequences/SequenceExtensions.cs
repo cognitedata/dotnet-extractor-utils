@@ -97,7 +97,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Getting or creating sequences. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
-                    (chunk, idx) => async () => {
+                    (chunk, idx) => async () =>
+                    {
                         var result = await GetOrCreateSequencesChunk(sequences, chunk,
                             buildSequences, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
@@ -106,7 +107,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
@@ -161,7 +163,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Ensuring sequences. Number of sequences: {Number}. Number of chunks: {Chunks}", sequencesToEnsure.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<SequenceCreate>, Func<Task>>(
-                (chunk, idx) => async () => {
+                (chunk, idx) => async () =>
+                {
                     var result = await CreateSequencesHandleErrors(sequences, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -169,7 +172,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(EnsureExistsAsync), ++taskNum, chunks.Count);
@@ -205,7 +209,8 @@ namespace Cognite.Extensions
 
             var generators = chunks
                 .Select<IEnumerable<Identity>, Func<Task>>(
-                chunk => async () => {
+                chunk => async () =>
+                {
                     IEnumerable<Sequence> found;
                     using (CdfMetrics.Sequences.WithLabels("retrieve").NewTimer())
                     {
@@ -398,7 +403,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Inserting sequences rows. Number of sequences: {Number}. Number of chunks: {Chunks}", toCreate.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<SequenceDataCreate>, Func<Task>>(
-                (chunk, idx) => async () => {
+                (chunk, idx) => async () =>
+                {
                     var result = await InsertSequenceRowsHandleErrors(sequences, chunk, sequencesChunk, throttleSize, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -406,7 +412,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(InsertAsync), ++taskNum, chunks.Count);

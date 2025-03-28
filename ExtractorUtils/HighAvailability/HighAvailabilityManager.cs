@@ -71,7 +71,7 @@ namespace Cognite.Extractor.Utils
         }
 
         internal bool ShouldBecomeActive()
-        {            
+        {
             var now = DateTime.UtcNow;
 
             // Checking if there is currently an active extractor.
@@ -84,7 +84,7 @@ namespace Cognite.Extractor.Utils
                 var responsiveStandbyExtractors = _state.CurrentState
                     .Where(kvp => !kvp.Value.Active && IsResponsive(kvp.Value.TimeStamp, now))
                     .Select(kvp => kvp.Value.Index);
-                        
+
                 // If there are no active extractors, start the standby extractor with highest priority.
                 if (responsiveStandbyExtractors.Any() && responsiveStandbyExtractors.Min() == _config.Index)
                 {
@@ -99,7 +99,8 @@ namespace Cognite.Extractor.Utils
 
         internal void UpdateStateAtInterval()
         {
-            _scheduler.SchedulePeriodicTask("Updating state", _cronWrapper, async (token) => {
+            _scheduler.SchedulePeriodicTask("Updating state", _cronWrapper, async (token) =>
+            {
                 await UpdateState().ConfigureAwait(false);
                 CheckForMultipleActiveExtractors();
             });

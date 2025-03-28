@@ -197,7 +197,7 @@ namespace ExtractorUtils.Test.Integration
                 var errs = result.Errors.ToList();
                 foreach (var err in errs)
                 {
-                  _output.WriteLine(err.Message + ", " + err.Type + ", " + err.Resource);
+                    _output.WriteLine(err.Message + ", " + err.Type + ", " + err.Resource);
                 }
 
                 Assert.Equal(3, errs.Count);
@@ -579,7 +579,7 @@ namespace ExtractorUtils.Test.Integration
                     }
                 };
             }
-            
+
 
             try
             {

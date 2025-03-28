@@ -13,7 +13,8 @@
         /// <summary>
         /// Enum for storage type in litedb
         /// </summary>
-        public enum StorageType {
+        public enum StorageType
+        {
             /// <summary>
             /// Use no storage
             /// </summary>

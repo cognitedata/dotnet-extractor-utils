@@ -93,7 +93,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Getting or creating assets. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
-                    (chunk, idx) => async () => {
+                    (chunk, idx) => async () =>
+                    {
                         var result = await GetOrCreateAssetsChunk(assets, chunk, buildAssets, chunkSize, throttleSize,
                             0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
@@ -102,13 +103,14 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
                 },
                 token).ConfigureAwait(false);
-                 
+
             return CogniteResult<Asset, AssetCreate>.Merge(results);
         }
         /// <summary>
@@ -155,7 +157,8 @@ namespace Cognite.Extensions
 
             var generators = chunks
                 .Select<IEnumerable<AssetCreate>, Func<Task>>(
-                (chunk, idx) => async () => {
+                (chunk, idx) => async () =>
+                {
                     var result = await CreateAssetsHandleErrors(assets, chunk, chunkSize, throttleSize, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -163,7 +166,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(EnsureExistsAsync), ++taskNum, chunks.Count);
@@ -280,7 +284,8 @@ namespace Cognite.Extensions
 
             var generators = chunks
                 .Select<IEnumerable<Identity>, Func<Task>>(
-                chunk => async () => {
+                chunk => async () =>
+                {
                     IEnumerable<Asset> found;
                     using (CdfMetrics.Assets.WithLabels("retrieve").NewTimer())
                     {
@@ -389,7 +394,8 @@ namespace Cognite.Extensions
 
             var generators = chunks
                 .Select<IEnumerable<AssetUpdateItem>, Func<Task>>(
-                (chunk, idx) => async () => {
+                (chunk, idx) => async () =>
+                {
                     var result = await
                         UpdateAssetsHandleErrors(assets, chunk, chunkSize, throttleSize, retryMode, token)
                         .ConfigureAwait(false);
@@ -399,7 +405,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(UpdateAsync), ++taskNum, chunks.Count);
