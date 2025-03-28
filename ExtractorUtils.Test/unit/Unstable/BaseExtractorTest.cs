@@ -9,6 +9,7 @@ using Cognite.Extractor.Utils;
 using Cognite.Extractor.Utils.Unstable;
 using Cognite.Extractor.Utils.Unstable.Configuration;
 using Cognite.Extractor.Utils.Unstable.Tasks;
+using CogniteSdk.Alpha;
 using ExtractorUtils.Test.unit.Unstable;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -46,6 +47,15 @@ namespace ExtractorUtils.Test.Unit.Unstable
         {
             InitAction?.Invoke(TaskScheduler);
             return Task.CompletedTask;
+        }
+
+        protected override ExtractorId GetExtractorVersion()
+        {
+            return new ExtractorId
+            {
+                Version = "1.0.0",
+                ExternalId = "my-extractor"
+            };
         }
     }
 
@@ -92,6 +102,15 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Single(sink.TaskStart);
             Assert.Single(sink.TaskEnd);
             Assert.Empty(sink.Errors);
+            Assert.Single(sink.StartupRequests);
+
+            var req = sink.StartupRequests[0];
+            Assert.Single(req.Tasks);
+            Assert.Equal("task1", req.Tasks.ElementAt(0).Name);
+            Assert.Equal("My task", req.Tasks.ElementAt(0).Description);
+            Assert.Equal(TaskType.batch, req.Tasks.ElementAt(0).Type);
+            Assert.Equal("my-extractor", req.Extractor.ExternalId);
+            Assert.Equal("1.0.0", req.Extractor.Version);
         }
 
         [Fact]
