@@ -34,7 +34,7 @@ namespace Cognite.Extractor.StateStorage
         /// This uses the custom DateTime mapper.
         /// </summary>
         public LiteDatabase Database { get; }
-        
+
         private string ConnectionString { get => $"filename={_config.Location};upgrade=true"; }
 
         /// <summary>
@@ -143,8 +143,8 @@ namespace Cognite.Extractor.StateStorage
             }
             try
             {
-                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from litedb store {store}", 
-                    extractionStates.Count, 
+                _logger.LogDebug("Attempting to restore {TotalNum} extraction states from litedb store {store}",
+                    extractionStates.Count,
                     tableName);
                 var col = Database.GetCollection<T>(tableName);
                 var pocos = await Task.Run(() => col.FindAll(), token).ConfigureAwait(false);

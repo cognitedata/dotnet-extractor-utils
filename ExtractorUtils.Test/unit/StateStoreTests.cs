@@ -23,7 +23,7 @@ namespace ExtractorUtils.Test.Unit
 {
     [CollectionDefinition("state-store", DisableParallelization = true)]
     public class StateStoreTestCollection
-    {}
+    { }
     [Collection("state-store")]
     public class StateStoreTests
     {
@@ -251,7 +251,8 @@ namespace ExtractorUtils.Test.Unit
 
             var states = new[] { state1, state2, state3, state4 };
 
-            foreach (var state in states) {
+            foreach (var state in states)
+            {
                 state.InitExtractedRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
                 state.UpdateDestinationRange(new DateTime(2005, 01, 01), new DateTime(2020, 01, 01));
                 Assert.Equal(new DateTime(2000, 01, 01), state.DestinationExtractedRange.First);
@@ -361,7 +362,8 @@ namespace ExtractorUtils.Test.Unit
 
             await stateStore.RestoreExtractionState<BaseExtractionStatePoco, BaseExtractionState>(
                 new Dictionary<string, BaseExtractionState> { { "test", state } }, _tableName,
-                (state, poco) => {
+                (state, poco) =>
+                {
                     count++;
                     state.InitExtractedRange(poco.FirstTimestamp, poco.LastTimestamp);
                 },
@@ -429,7 +431,7 @@ namespace ExtractorUtils.Test.Unit
                     {
                         NestedProperty = "test"
                     },
-                    ArrayProp = new [] { "test", "test2" }
+                    ArrayProp = new[] { "test", "test2" }
                 }, CancellationToken.None);
 
             var col = stateStore.Database.GetCollection("customstates");

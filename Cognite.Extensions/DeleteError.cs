@@ -12,7 +12,7 @@ namespace Cognite.Extensions
         /// Ids/External ids not found in CDF
         /// </summary>
         public IEnumerable<Identity> IdsNotFound { get; }
-        
+
         /// <summary>
         /// Ids of time series with unconfirmed data point deletions.
         /// DEPRECATED, timeseries is now immediately consistent, and we no longer verify deletion.

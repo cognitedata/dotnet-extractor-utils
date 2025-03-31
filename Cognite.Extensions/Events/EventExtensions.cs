@@ -94,7 +94,8 @@ namespace Cognite.Extensions
             _logger.LogDebug("Getting or creating events. Number of external ids: {Number}. Number of chunks: {Chunks}", externalIds.Count(), chunks.Count);
             var generators = chunks
                 .Select<IEnumerable<string>, Func<Task>>(
-                    (chunk, idx) => async () => {
+                    (chunk, idx) => async () =>
+                    {
                         var result = await GetOrCreateEventsChunk(resource, chunk, buildEvents, 0, retryMode, sanitationMode, token).ConfigureAwait(false);
                         results[idx] = result;
                     });
@@ -102,7 +103,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(GetOrCreateAsync), ++taskNum, chunks.Count);
@@ -158,7 +160,8 @@ namespace Cognite.Extensions
 
             var generators = chunks
                 .Select<IEnumerable<EventCreate>, Func<Task>>(
-                (chunk, idx) => async () => {
+                (chunk, idx) => async () =>
+                {
                     var result = await CreateEventsHandleErrors(resource, chunk, retryMode, token).ConfigureAwait(false);
                     results[idx] = result;
                 });
@@ -166,7 +169,8 @@ namespace Cognite.Extensions
             int taskNum = 0;
             await generators.RunThrottled(
                 throttleSize,
-                (_) => {
+                (_) =>
+                {
                     if (chunks.Count > 1)
                         _logger.LogDebug("{MethodName} completed {NumDone}/{TotalNum} tasks",
                             nameof(EnsureExistsAsync), ++taskNum, chunks.Count);

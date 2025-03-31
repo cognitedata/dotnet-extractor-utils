@@ -1,5 +1,5 @@
 
-namespace Cognite.Extractor.Logging 
+namespace Cognite.Extractor.Logging
 {
 
     /// <summary>
@@ -12,7 +12,7 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <value>A <see cref="LogConfig"/> config object</value>
         public ConsoleConfig? Console { get; set; }
-        
+
         /// <summary>
         /// Logging to file (optional)
         /// </summary>
@@ -24,7 +24,7 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <value></value>
         public TraceListenerConfig? TraceListener { get; set; }
-        
+
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ namespace Cognite.Extractor.Logging
         /// </summary>
         /// <value>Path to file</value>
         public string? Path { get; set; }
-        
+
         /// <summary>
         /// The maximum number of log files that will be retained in the log folder.
         /// </summary>

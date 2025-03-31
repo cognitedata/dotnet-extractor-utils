@@ -40,5 +40,5 @@ namespace Cognite.Extractor.Utils
                     break;
             }
         }
-    }    
+    }
 }

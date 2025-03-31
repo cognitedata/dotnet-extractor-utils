@@ -236,8 +236,8 @@ namespace ExtractorUtils.Test.Unit
                     dpList.WriteTo(stream);
                     responseBody = new ByteArrayContent(stream.ToArray());
                 }
-                
-                var response =  new HttpResponseMessage
+
+                var response = new HttpResponseMessage
                 {
                     StatusCode = System.Net.HttpStatusCode.OK,
                     Content = responseBody

@@ -151,7 +151,7 @@ namespace Cognite.Extensions
             Func<TInput, TValue> valueSelector,
             IEqualityComparer<TKey>? comparer = null) where TKey : notnull
         {
-            if (input == null) 
+            if (input == null)
             {
                 throw new ArgumentNullException(nameof(input));
             }
