@@ -46,7 +46,7 @@ namespace Cognite.Extensions
                     Set = newLabels ?? Enumerable.Empty<CogniteExternalId>()
                 };
             }
-            
+
             return new UpdateLabels<IEnumerable<CogniteExternalId>>(newLabels ?? Enumerable.Empty<CogniteExternalId>());
         }
 

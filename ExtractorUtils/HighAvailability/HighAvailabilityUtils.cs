@@ -17,7 +17,7 @@ namespace Cognite.Extractor.Utils
             TimeSpan? inactivityThreshold = null)
         {
             IHighAvailabilityManager? highAvailabilityManager = null;
-            
+
             if (config?.Raw != null)
             {
                 highAvailabilityManager = new RawHighAvailabilityManager(

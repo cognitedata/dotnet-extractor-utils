@@ -73,7 +73,8 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 Func<IEnumerable<string>, IEnumerable<SequenceCreate>> createFunction =
-                    (idxs) => {
+                    (idxs) =>
+                    {
                         var toCreate = new List<SequenceCreate>();
                         foreach (var id in idxs)
                         {

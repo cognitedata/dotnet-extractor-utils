@@ -41,21 +41,22 @@ namespace Cognite.Extensions
         /// <typeparam name="T">DTO type</typeparam>
         public static async Task InsertRowsAsync<T>(
             this RawResource raw,
-            string database, 
-            string table, 
-            IDictionary<string, T> rows, 
-            int chunkSize, 
+            string database,
+            string table,
+            IDictionary<string, T> rows,
+            int chunkSize,
             int throttleSize,
             CancellationToken token,
             JsonSerializerOptions? options = null)
         {
             var chunks = rows
-                .Select(kvp =>  new RawRowCreate<T>() { Key = kvp.Key, Columns = kvp.Value })
+                .Select(kvp => new RawRowCreate<T>() { Key = kvp.Key, Columns = kvp.Value })
                 .ChunkBy(chunkSize);
 
             var generators = chunks.
                 Select<IEnumerable<RawRowCreate<T>>, Func<Task>>(
-                    chunk => async () => {
+                    chunk => async () =>
+                    {
                         using (CdfMetrics.Raw.WithLabels("create_rows"))
                         {
                             await raw.CreateRowsAsync<T>(database, table, chunk, true, options, token).ConfigureAwait(false);
@@ -66,7 +67,7 @@ namespace Cognite.Extensions
             await generators
                 .RunThrottled(throttleSize, (_) =>
                     _logger.LogDebug("{MethodName} completed {Num}/{Total} tasks", nameof(InsertRowsAsync), ++numTasks,
-                        Math.Ceiling((double)rows.Count / chunkSize)),  token)
+                        Math.Ceiling((double)rows.Count / chunkSize)), token)
                 .ConfigureAwait(false);
         }
 

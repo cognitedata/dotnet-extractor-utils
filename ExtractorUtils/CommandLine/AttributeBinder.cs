@@ -48,7 +48,7 @@ namespace Cognite.Extractor.Utils.CommandLine
             var type = typeof(T);
 
             var props = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-            
+
             foreach (var prop in props)
             {
                 if (!(prop.GetCustomAttributes(typeof(CommandLineOptionAttribute), true).FirstOrDefault() is CommandLineOptionAttribute attr)) continue;

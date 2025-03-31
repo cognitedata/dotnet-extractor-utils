@@ -125,7 +125,8 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Raw string value of option.
         /// </summary>
-        public override string RawValue {
+        public override string RawValue
+        {
             get => IntRawValue;
             set
             {

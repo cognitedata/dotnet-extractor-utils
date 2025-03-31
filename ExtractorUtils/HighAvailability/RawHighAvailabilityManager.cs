@@ -27,15 +27,15 @@ namespace Cognite.Extractor.Utils
         /// <param name="interval">Optional update state interval.</param>
         /// <param name="inactivityThreshold">Optional threshold for extractor being inactive.</param>
         public RawHighAvailabilityManager(
-            HighAvailabilityConfig config, 
+            HighAvailabilityConfig config,
             CogniteDestination destination,
             ILogger<HighAvailabilityManager> logger,
             PeriodicScheduler scheduler,
             CancellationTokenSource source,
             TimeSpan? interval = null,
-            TimeSpan? inactivityThreshold = null) 
+            TimeSpan? inactivityThreshold = null)
             : base(config, logger, scheduler, source, interval, inactivityThreshold)
-        {   
+        {
             _destination = destination;
         }
 
