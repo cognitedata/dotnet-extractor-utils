@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
     /// <summary>
-    /// Worker for submitting periodic checkins to the integrations API.
+    /// Worker for submitting periodic check-ins to the integrations API.
     /// </summary>
     public class CheckInWorker : IIntegrationSink
     {
@@ -75,7 +75,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// </summary>
         /// <param name="token">Cancellation token</param>
         /// <param name="startupPayload">Payload to send to the startup endpoint before beginning to
-        /// report periodic checkins..</param>
+        /// report periodic check-ins..</param>
         /// <param name="interval">Interval, defaults to 30 seconds.</param>
         public async Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
         {
@@ -90,7 +90,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             // Make sure the external ID in the startup payload matches the external ID of the target integration.
             startupPayload.ExternalId = _integrationId;
 
-            // Hold the flush lock while reporting startup, to ensure that we don't start reporting checkins
+            // Hold the flush lock while reporting startup, to ensure that we don't start reporting check-ins
             // before the startup request has been sent.
             // With this, calls to flush will wait until the startup request has been sent,
             // or startup fails.
