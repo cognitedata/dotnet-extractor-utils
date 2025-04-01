@@ -46,7 +46,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="client">Cognite client</param>
         /// <param name="onRevisionChanged">Callback to call when the remote configuration revision is updated.</param>
         /// <param name="activeRevision">Currently active config revision. Used to know whether the extractor has received a new
-        /// config revision since the last checkin. Null indiciates that the extractor is running local config,
+        /// config revision since the last check-in. Null indiciates that the extractor is running local config,
         /// and should not restart based on changes to remote config.</param>
         /// <param name="retryStartup">Whether to retry the startup request if it fails,
         /// beyond normal retries. If this is `true`, the check-in worker will retry startup requests indefinitely,
@@ -69,7 +69,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         }
 
         /// <summary>
-        /// Start running the checkin worker.
+        /// Start running the check-in worker.
         /// 
         /// This may only be called once.
         /// </summary>
@@ -77,13 +77,13 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="startupPayload">Payload to send to the startup endpoint before beginning to
         /// report periodic checkins..</param>
         /// <param name="interval">Interval, defaults to 30 seconds.</param>
-        public async Task RunPeriodicCheckin(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
+        public async Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
         {
             if (startupPayload is null) throw new ArgumentNullException(nameof(startupPayload));
 
             lock (_lock)
             {
-                if (_isRunning) throw new InvalidOperationException("Attempted to start a checkin worker that was already running");
+                if (_isRunning) throw new InvalidOperationException("Attempted to start a check-in worker that was already running");
                 _isRunning = true;
             }
 
@@ -154,9 +154,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         }
 
         /// <summary>
-        /// Report a checkin immediately, flushing the cache.
+        /// Report a check-in immediately, flushing the cache.
         /// 
-        /// This should be called after terminating everything else, to report a final checkin.
+        /// This should be called after terminating everything else, to report a final check-in.
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
@@ -177,20 +177,20 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 return;
             }
 
-            if (!_hasReportedStartup)
-            {
-                _logger.LogWarning("Attempted to flush checkin worker before reporting startup, since this results in unclear errors in CDF, the request is ignored. It would likely fail.");
-                return;
-            }
-
-            // Reporting checkin is safely behind locks, so we can just call report.
+            // Reporting check-in is safely behind locks, so we can just call report.
             try
             {
+                if (!_hasReportedStartup)
+                {
+                    _logger.LogWarning("Attempted to flush check-in worker before reporting startup, since this results in unclear errors in CDF, the request is ignored. It would likely fail.");
+                    return;
+                }
+
                 await ReportCheckIn(token).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during checkin: {Message}", ex.Message);
+                _logger.LogError(ex, "Error during check-in: {Message}", ex.Message);
             }
             finally
             {
@@ -226,7 +226,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             {
                 if (ex is ResponseException rex && (rex.Code == 400 || rex.Code == 404))
                 {
-                    _logger.LogError(rex, "CheckIn failed with a 400 status code, this is a bug! Dropping current checkin batch and continuing.");
+                    _logger.LogError(rex, "CheckIn failed with a 400 status code, this is a bug! Dropping current check-in batch and continuing.");
                     return;
                 }
                 // If pushing the update failed, keep the updates to try again later.

@@ -97,16 +97,16 @@ namespace ExtractorUtils.Test.Unit.Unstable
             using var p = provider;
             using var source = new CancellationTokenSource();
             // Check that this doesn't crash, and properly cancels out at the end.
-            var runTask = checkIn.RunPeriodicCheckin(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
-            // First, we should very quickly report a checkin on the start of the run task...
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            // First, we should very quickly report a check-in on the start of the run task...
             await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
 
-            // Report an empty checkin.
+            // Report an empty check-in.
             await checkIn.Flush(source.Token);
             Assert.Equal(2, _checkInCount);
 
             var start = DateTime.UtcNow;
-            // Report a checkin with some task starts
+            // Report a check-in with some task starts
             checkIn.ReportTaskStart("task1", null, start);
             checkIn.ReportTaskStart("task2", null, start);
             await checkIn.Flush(source.Token);
@@ -152,8 +152,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
             using var source = new CancellationTokenSource();
 
             // Check that this doesn't crash, and properly cancels out at the end.
-            var runTask = checkIn.RunPeriodicCheckin(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
-            // First, we should very quickly report a checkin on the start of the run task...
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            // First, we should very quickly report a check-in on the start of the run task...
             await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
 
             // Lots of task updates.
@@ -200,8 +200,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
             using var source = new CancellationTokenSource();
 
             // Check that this doesn't crash, and properly cancels out at the end.
-            var runTask = checkIn.RunPeriodicCheckin(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
-            // First, we should very quickly report a checkin on the start of the run task...
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            // First, we should very quickly report a check-in on the start of the run task...
             await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
 
             // Flush, without getting a new config revision.

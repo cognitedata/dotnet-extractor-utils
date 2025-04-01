@@ -299,7 +299,7 @@ namespace Cognite.Extractor.Utils.Unstable
 
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
-            AddMonitoredTask(t => _sink.RunPeriodicCheckin(t, GetStartupRequest()), ExtractorTaskResult.Unexpected, "CheckInWorker");
+            AddMonitoredTask(t => _sink.RunPeriodicCheckIn(t, GetStartupRequest()), ExtractorTaskResult.Unexpected, "CheckInWorker");
 
             while (!Source.IsCancellationRequested)
             {

@@ -44,7 +44,7 @@ namespace ExtractorUtils.Test.unit.Unstable
             TaskStart.Add((taskName, timestamp ?? DateTime.UtcNow));
         }
 
-        public async Task RunPeriodicCheckin(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
+        public async Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
         {
             StartupRequests.Add(startupPayload);
             while (!token.IsCancellationRequested) await Task.Delay(100000, token);

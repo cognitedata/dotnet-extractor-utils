@@ -191,7 +191,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// report periodic checkins.</param>
         /// <param name="interval">Interval. If left out, uses an implementation-defined default.</param>
         /// <returns></returns>
-        Task RunPeriodicCheckin(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null);
+        Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null);
     }
 
     /// <summary>
