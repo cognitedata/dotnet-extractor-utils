@@ -49,8 +49,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// config revision since the last checkin. Null indiciates that the extractor is running local config,
         /// and should not restart based on changes to remote config.</param>
         /// <param name="retryStartup">Whether to retry the startup request if it fails,
-        /// beyond normal retries. If this is `true`, the checkin worker will retry startup requests forever,
-        /// or until they succeed.</param>
+        /// beyond normal retries. If this is `true`, the check-in worker will retry startup requests indefinitely,
+        /// instead of raising an exception.</param>
         public CheckInWorker(
             string integrationId,
             ILogger logger,
@@ -94,7 +94,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             // before the startup request has been sent.
             // With this, calls to flush will wait until the startup request has been sent,
             // or startup fails.
-            // This prevents unfortunate behavior if we recover connection to CDF, then immediately shut down.
+            // This keeps us from reporting events before the startup, in case the extractor is started offline.
             // In this case, we would like to potentially report a startup and anything that has happened
             // while the connection to CDF was down.
             try

@@ -188,7 +188,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// </summary>
         /// <param name="token">Cancellation token.</param>
         /// <param name="startupPayload">Payload to send to the startup endpoint before beginning to
-        /// report periodic checkins..</param>
+        /// report periodic checkins.</param>
         /// <param name="interval">Interval. If left out, uses an implementation-defined default.</param>
         /// <returns></returns>
         Task RunPeriodicCheckin(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null);

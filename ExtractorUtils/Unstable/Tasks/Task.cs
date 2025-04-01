@@ -32,7 +32,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <summary>
         /// Type of task.
         /// </summary>
-        public TaskType Type { get; set; }
+        public TaskType Type { get; private set; }
         /// <summary>
         /// Whether the task can be triggered by an action or not.
         /// </summary>
