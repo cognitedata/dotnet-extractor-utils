@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
     /// <summary>
-    /// Worker for submitting periodic checkins to the integrations API.
+    /// Worker for submitting periodic check-ins to the integrations API.
     /// </summary>
     public class CheckInWorker : IIntegrationSink
     {
@@ -31,6 +31,13 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         private int? _activeRevision;
         private readonly Action<int> _onRevisionChanged;
 
+        private SemaphoreSlim _flushLock = new SemaphoreSlim(1);
+        private bool _retryStartup;
+        private bool _hasReportedStartup;
+        private Random _random = new Random();
+
+        const int STARTUP_BACKOFF_SECONDS = 30;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -39,14 +46,18 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="client">Cognite client</param>
         /// <param name="onRevisionChanged">Callback to call when the remote configuration revision is updated.</param>
         /// <param name="activeRevision">Currently active config revision. Used to know whether the extractor has received a new
-        /// config revision since the last checkin. Null indiciates that the extractor is running local config,
+        /// config revision since the last check-in. Null indiciates that the extractor is running local config,
         /// and should not restart based on changes to remote config.</param>
+        /// <param name="retryStartup">Whether to retry the startup request if it fails,
+        /// beyond normal retries. If this is `true`, the check-in worker will retry startup requests indefinitely,
+        /// instead of raising an exception.</param>
         public CheckInWorker(
             string integrationId,
             ILogger logger,
             Client client,
             Action<int> onRevisionChanged,
-            int? activeRevision
+            int? activeRevision,
+            bool retryStartup = false
         )
         {
             _client = client;
@@ -54,21 +65,74 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             _integrationId = integrationId;
             _onRevisionChanged = onRevisionChanged;
             _activeRevision = activeRevision;
+            _retryStartup = retryStartup;
         }
 
         /// <summary>
-        /// Start running the checkin worker.
+        /// Start running the check-in worker.
         /// 
         /// This may only be called once.
         /// </summary>
         /// <param name="token">Cancellation token</param>
+        /// <param name="startupPayload">Payload to send to the startup endpoint before beginning to
+        /// report periodic check-ins..</param>
         /// <param name="interval">Interval, defaults to 30 seconds.</param>
-        public async Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)
+        public async Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
         {
+            if (startupPayload is null) throw new ArgumentNullException(nameof(startupPayload));
+
             lock (_lock)
             {
-                if (_isRunning) throw new InvalidOperationException("Attempted to start a checkin worker that was already running");
+                if (_isRunning) throw new InvalidOperationException("Attempted to start a check-in worker that was already running");
                 _isRunning = true;
+            }
+
+            // Make sure the external ID in the startup payload matches the external ID of the target integration.
+            startupPayload.ExternalId = _integrationId;
+
+            // Hold the flush lock while reporting startup, to ensure that we don't start reporting check-ins
+            // before the startup request has been sent.
+            // With this, calls to flush will wait until the startup request has been sent,
+            // or startup fails.
+            // This keeps us from reporting events before the startup, in case the extractor is started offline.
+            // In this case, we would like to potentially report a startup and anything that has happened
+            // while the connection to CDF was down.
+            try
+            {
+                await _flushLock.WaitAsync(token).ConfigureAwait(false);
+            }
+            catch
+            {
+                // Should only happen if we are cancelled while waiting.
+                if (token.IsCancellationRequested) return;
+                throw;
+            }
+
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    try
+                    {
+                        await ReportStartup(startupPayload, token).ConfigureAwait(false);
+                        _hasReportedStartup = true;
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!_retryStartup) throw;
+                        // Retry about every 30 seconds, but with some jitter so we don't
+                        // end up with too bursty retries.
+                        var toDelay = _random.Next(STARTUP_BACKOFF_SECONDS / 2, STARTUP_BACKOFF_SECONDS * 3 / 2);
+                        _logger.LogError("Failed to report startup, retrying after {Time} seconds: {Err}", toDelay, ex.Message);
+                        await Task.Delay(TimeSpan.FromSeconds(toDelay), token).ConfigureAwait(false);
+                        continue;
+                    }
+                }
+            }
+            finally
+            {
+                _flushLock.Release();
             }
 
             var rinterval = interval ?? TimeSpan.FromSeconds(30);
@@ -90,22 +154,47 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         }
 
         /// <summary>
-        /// Report a checkin immediately, flushing the cache.
+        /// Report a check-in immediately, flushing the cache.
         /// 
-        /// This should be called after terminating everything else, to report a final checkin.
+        /// This should be called after terminating everything else, to report a final check-in.
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
         public async Task Flush(CancellationToken token)
         {
-            // Reporting checkin is safely behind locks, so we can just call report.
+            // Ensure that only one flush is running at a time,
+            // importantly this also means that if we call flush, we will wait for
+            // any running flushes to complete, meaning that once this method returns,
+            // we are guaranteed to have flushed all updates that were not yet sent
+            // when the method was called.
             try
             {
+                await _flushLock.WaitAsync(token).ConfigureAwait(false);
+            }
+            catch
+            {
+                // Only really happens if we're cancelled while waiting.
+                return;
+            }
+
+            // Reporting check-in is safely behind locks, so we can just call report.
+            try
+            {
+                if (!_hasReportedStartup)
+                {
+                    _logger.LogWarning("Attempted to flush check-in worker before reporting startup, since this results in unclear errors in CDF, the request is ignored. It would likely fail.");
+                    return;
+                }
+
                 await ReportCheckIn(token).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during checkin: {Message}", ex.Message);
+                _logger.LogError(ex, "Error during check-in: {Message}", ex.Message);
+            }
+            finally
+            {
+                _flushLock.Release();
             }
         }
 
@@ -137,7 +226,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             {
                 if (ex is ResponseException rex && (rex.Code == 400 || rex.Code == 404))
                 {
-                    _logger.LogError(rex, "CheckIn failed with a 400 status code, this is a bug! Dropping current checkin batch and continuing.");
+                    _logger.LogError(rex, "CheckIn failed with a 400 status code, this is a bug! Dropping current check-in batch and continuing.");
                     return;
                 }
                 // If pushing the update failed, keep the updates to try again later.
@@ -211,6 +300,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             {
                 RequeueCheckIn(newErrors, taskUpdates);
             }
+        }
+
+        private async Task ReportStartup(StartupRequest request, CancellationToken token)
+        {
+            var response = await _client.Alpha.Integrations.StartupAsync(request, token).ConfigureAwait(false);
+            HandleCheckInResponse(response);
         }
 
         /// <inheritdoc />

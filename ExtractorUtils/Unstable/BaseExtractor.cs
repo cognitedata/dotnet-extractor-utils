@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils.Unstable.Configuration;
 using Cognite.Extractor.Utils.Unstable.Tasks;
+using CogniteSdk;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -159,6 +160,12 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <returns></returns>
         protected abstract Task InitTasks();
 
+        /// <summary>
+        /// Return the version of the active extractor.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract ExtractorId GetExtractorVersion();
+
         private void InitBase(CancellationToken token)
         {
             if (Source != null) throw new InvalidOperationException("Extractor already started");
@@ -268,6 +275,18 @@ namespace Cognite.Extractor.Utils.Unstable
             await InitTasks().ConfigureAwait(false);
         }
 
+        private StartupRequest GetStartupRequest()
+        {
+            return new StartupRequest()
+            {
+                ActiveConfigRevision = ConfigRevision.HasValue
+                    ? StringOrInt.Create(ConfigRevision.Value)
+                    : StringOrInt.Create("local"),
+                Tasks = TaskScheduler.GetRegisteredTasks().ToList(),
+                Extractor = GetExtractorVersion(),
+            };
+        }
+
         /// <summary>
         /// Start the extractor and wait for it to finish.
         /// </summary>
@@ -280,7 +299,7 @@ namespace Cognite.Extractor.Utils.Unstable
 
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
-            AddMonitoredTask(t => _sink.RunPeriodicCheckin(t), ExtractorTaskResult.Unexpected, "CheckInWorker");
+            AddMonitoredTask(t => _sink.RunPeriodicCheckIn(t, GetStartupRequest()), ExtractorTaskResult.Unexpected, "CheckInWorker");
 
             while (!Source.IsCancellationRequested)
             {

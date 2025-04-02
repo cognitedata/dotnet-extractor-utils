@@ -17,6 +17,8 @@ namespace ExtractorUtils.Test.unit.Unstable
         public List<(string, DateTime)> TaskStart { get; } = new();
         public List<(string, DateTime)> TaskEnd { get; } = new();
 
+        public List<StartupRequest> StartupRequests { get; } = new();
+
         public Task Flush(CancellationToken token)
         {
             return Task.CompletedTask;
@@ -42,8 +44,9 @@ namespace ExtractorUtils.Test.unit.Unstable
             TaskStart.Add((taskName, timestamp ?? DateTime.UtcNow));
         }
 
-        public async Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)
+        public async Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)
         {
+            StartupRequests.Add(startupPayload);
             while (!token.IsCancellationRequested) await Task.Delay(100000, token);
         }
     }
@@ -59,6 +62,11 @@ namespace ExtractorUtils.Test.unit.Unstable
         public override string Name { get; }
 
         private Func<BaseErrorReporter, CancellationToken, Task<TaskUpdatePayload>> _func;
+
+        public override TaskMetadata Metadata { get; } = new TaskMetadata(TaskType.batch)
+        {
+            Description = "My task"
+        };
 
         public RunQuickTask(string name, Func<BaseErrorReporter, CancellationToken, Task<TaskUpdatePayload>> func)
         {

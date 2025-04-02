@@ -187,9 +187,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// Run the sink, automatically flushing at regular intervals.
         /// </summary>
         /// <param name="token">Cancellation token.</param>
+        /// <param name="startupPayload">Payload to send to the startup endpoint before beginning to
+        /// report periodic check-ins.</param>
         /// <param name="interval">Interval. If left out, uses an implementation-defined default.</param>
         /// <returns></returns>
-        Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null);
+        Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null);
     }
 
     /// <summary>
