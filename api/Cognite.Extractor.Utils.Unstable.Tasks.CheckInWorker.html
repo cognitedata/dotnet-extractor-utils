@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width">
       <meta name="title" content="Class CheckInWorker ">
     
-    <meta name="description" content="Worker for submitting periodic checkins to the integrations API.">
+    <meta name="description" content="Worker for submitting periodic check-ins to the integrations API.">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -71,7 +71,7 @@
 
 
   <h1 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker" class="text-break">Class CheckInWorker</h1>
-  <div class="markdown level0 summary"><p>Worker for submitting periodic checkins to the integrations API.</p>
+  <div class="markdown level0 summary"><p>Worker for submitting periodic check-ins to the integrations API.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -117,19 +117,19 @@
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker__ctor_System_String_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.%23ctor(System.String%2CMicrosoft.Extensions.Logging.ILogger%2CCogniteSdk.Client)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker__ctor_System_String_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client_System_Action_System_Int32__System_Nullable_System_Int32__System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.%23ctor(System.String%2CMicrosoft.Extensions.Logging.ILogger%2CCogniteSdk.Client%2CSystem.Action%7BSystem.Int32%7D%2CSystem.Nullable%7BSystem.Int32%7D%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L37">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L54">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker__ctor_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.#ctor*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker__ctor_System_String_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.#ctor(System.String,Microsoft.Extensions.Logging.ILogger,CogniteSdk.Client)">CheckInWorker(string, ILogger, Client)</h4>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker__ctor_System_String_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client_System_Action_System_Int32__System_Nullable_System_Int32__System_Boolean_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.#ctor(System.String,Microsoft.Extensions.Logging.ILogger,CogniteSdk.Client,System.Action{System.Int32},System.Nullable{System.Int32},System.Boolean)">CheckInWorker(string, ILogger, Client, Action&lt;int&gt;, int?, bool)</h4>
   <div class="markdown level1 summary"><p>Constructor.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public CheckInWorker(string integrationId, ILogger logger, Client client)</code></pre>
+    <pre><code class="lang-csharp hljs">public CheckInWorker(string integrationId, ILogger logger, Client client, Action&lt;int&gt; onRevisionChanged, int? activeRevision, bool retryStartup = false)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -159,6 +159,28 @@
         <td><p>Cognite client</p>
 </td>
       </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</td>
+        <td><span class="parametername">onRevisionChanged</span></td>
+        <td><p>Callback to call when the remote configuration revision is updated.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</td>
+        <td><span class="parametername">activeRevision</span></td>
+        <td><p>Currently active config revision. Used to know whether the extractor has received a new
+config revision since the last check-in. Null indiciates that the extractor is running local config,
+and should not restart based on changes to remote config.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">retryStartup</span></td>
+        <td><p>Whether to retry the startup request if it fails,
+beyond normal retries. If this is <code>true</code>, the check-in worker will retry startup requests indefinitely,
+instead of raising an exception.</p>
+</td>
+      </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
@@ -168,12 +190,12 @@
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_Flush_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.Flush(System.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L84">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L163">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_Flush_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.Flush*"></a>
   <h4 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_Flush_System_Threading_CancellationToken_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.Flush(System.Threading.CancellationToken)">Flush(CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Report a checkin immediately, flushing the cache.</p>
-<p>This should be called after terminating everything else, to report a final checkin.</p>
+  <div class="markdown level1 summary"><p>Report a check-in immediately, flushing the cache.</p>
+<p>This should be called after terminating everything else, to report a final check-in.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -217,7 +239,7 @@
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportError_Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportError(Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L185">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L312">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportError_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportError*"></a>
   <h4 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportError_Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportError(Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError)">ReportError(ExtractorError)</h4>
@@ -250,7 +272,7 @@
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportTaskEnd_System_String_Cognite_Extractor_Utils_Unstable_Tasks_TaskUpdatePayload_System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportTaskEnd(System.String%2CCognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L196">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L323">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportTaskEnd_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportTaskEnd*"></a>
   <h4 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportTaskEnd_System_String_Cognite_Extractor_Utils_Unstable_Tasks_TaskUpdatePayload_System_Nullable_System_DateTime__" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportTaskEnd(System.String,Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload,System.Nullable{System.DateTime})">ReportTaskEnd(string, TaskUpdatePayload?, DateTime?)</h4>
@@ -296,7 +318,7 @@
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportTaskStart_System_String_Cognite_Extractor_Utils_Unstable_Tasks_TaskUpdatePayload_System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportTaskStart(System.String%2CCognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L212">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L339">View Source</a>
   </span>
   <a id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportTaskStart_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportTaskStart*"></a>
   <h4 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_ReportTaskStart_System_String_Cognite_Extractor_Utils_Unstable_Tasks_TaskUpdatePayload_System_Nullable_System_DateTime__" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportTaskStart(System.String,Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload,System.Nullable{System.DateTime})">ReportTaskStart(string, TaskUpdatePayload?, DateTime?)</h4>
@@ -339,20 +361,20 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckin_System_Threading_CancellationToken_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin(System.Threading.CancellationToken%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckIn_System_Threading_CancellationToken_CogniteSdk_Alpha_StartupRequest_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn(System.Threading.CancellationToken%2CCogniteSdk.Alpha.StartupRequest%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L51">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Tasks/CheckInWorker.cs/#L80">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckin_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckin_System_Threading_CancellationToken_System_Nullable_System_TimeSpan__" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin(System.Threading.CancellationToken,System.Nullable{System.TimeSpan})">RunPeriodicCheckin(CancellationToken, TimeSpan?)</h4>
-  <div class="markdown level1 summary"><p>Start running the checkin worker.</p>
+  <a id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckIn_" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckIn_System_Threading_CancellationToken_CogniteSdk_Alpha_StartupRequest_System_Nullable_System_TimeSpan__" data-uid="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn(System.Threading.CancellationToken,CogniteSdk.Alpha.StartupRequest,System.Nullable{System.TimeSpan})">RunPeriodicCheckIn(CancellationToken, StartupRequest, TimeSpan?)</h4>
+  <div class="markdown level1 summary"><p>Start running the check-in worker.</p>
 <p>This may only be called once.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task RunPeriodicCheckin(CancellationToken token, TimeSpan? interval = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -368,6 +390,13 @@
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
         <td><span class="parametername">token</span></td>
         <td><p>Cancellation token</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">StartupRequest</span></td>
+        <td><span class="parametername">startupPayload</span></td>
+        <td><p>Payload to send to the startup endpoint before beginning to
+report periodic check-ins..</p>
 </td>
       </tr>
       <tr>

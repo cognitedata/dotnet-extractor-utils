@@ -13144,6 +13144,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).FlushSink
   nameWithType: BaseExtractor<TConfig>.FlushSink
   nameWithType.vb: BaseExtractor(Of TConfig).FlushSink
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.GetExtractorVersion
+  name: GetExtractorVersion()
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_GetExtractorVersion
+  commentId: M:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.GetExtractorVersion
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.GetExtractorVersion()
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).GetExtractorVersion()
+  nameWithType: BaseExtractor<TConfig>.GetExtractorVersion()
+  nameWithType.vb: BaseExtractor(Of TConfig).GetExtractorVersion()
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.GetExtractorVersion*
+  name: GetExtractorVersion
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_GetExtractorVersion_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.GetExtractorVersion
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.GetExtractorVersion
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).GetExtractorVersion
+  nameWithType: BaseExtractor<TConfig>.GetExtractorVersion
+  nameWithType.vb: BaseExtractor(Of TConfig).GetExtractorVersion
 - uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.Init(System.Threading.CancellationToken)
   name: Init(CancellationToken)
   href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_Init_System_Threading_CancellationToken_
@@ -14060,6 +14077,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.ErrorIsFatal
   nameWithType: BaseSchedulableTask.ErrorIsFatal
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.Metadata
+  name: Metadata
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseSchedulableTask_Metadata
+  commentId: P:Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.Metadata
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.Metadata
+  nameWithType: BaseSchedulableTask.Metadata
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.Metadata*
+  name: Metadata
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseSchedulableTask_Metadata_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.Metadata
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.Metadata
+  nameWithType: BaseSchedulableTask.Metadata
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.Name
   name: Name
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseSchedulableTask.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseSchedulableTask_Name
@@ -14131,15 +14161,15 @@ references:
   commentId: T:Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker
   nameWithType: CheckInWorker
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.#ctor(System.String,Microsoft.Extensions.Logging.ILogger,CogniteSdk.Client)
-  name: CheckInWorker(string, ILogger, Client)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html#Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker__ctor_System_String_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client_
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.#ctor(System.String,Microsoft.Extensions.Logging.ILogger,CogniteSdk.Client)
-  name.vb: New(String, ILogger, Client)
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.CheckInWorker(string, Microsoft.Extensions.Logging.ILogger, CogniteSdk.Client)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.New(String, Microsoft.Extensions.Logging.ILogger, CogniteSdk.Client)
-  nameWithType: CheckInWorker.CheckInWorker(string, ILogger, Client)
-  nameWithType.vb: CheckInWorker.New(String, ILogger, Client)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.#ctor(System.String,Microsoft.Extensions.Logging.ILogger,CogniteSdk.Client,System.Action{System.Int32},System.Nullable{System.Int32},System.Boolean)
+  name: CheckInWorker(string, ILogger, Client, Action<int>, int?, bool)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html#Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker__ctor_System_String_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client_System_Action_System_Int32__System_Nullable_System_Int32__System_Boolean_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.#ctor(System.String,Microsoft.Extensions.Logging.ILogger,CogniteSdk.Client,System.Action{System.Int32},System.Nullable{System.Int32},System.Boolean)
+  name.vb: New(String, ILogger, Client, Action(Of Integer), Integer?, Boolean)
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.CheckInWorker(string, Microsoft.Extensions.Logging.ILogger, CogniteSdk.Client, System.Action<int>, int?, bool)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.New(String, Microsoft.Extensions.Logging.ILogger, CogniteSdk.Client, System.Action(Of Integer), Integer?, Boolean)
+  nameWithType: CheckInWorker.CheckInWorker(string, ILogger, Client, Action<int>, int?, bool)
+  nameWithType.vb: CheckInWorker.New(String, ILogger, Client, Action(Of Integer), Integer?, Boolean)
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.#ctor*
   name: CheckInWorker
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html#Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker__ctor_
@@ -14208,19 +14238,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.ReportTaskStart
   nameWithType: CheckInWorker.ReportTaskStart
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin(System.Threading.CancellationToken,System.Nullable{System.TimeSpan})
-  name: RunPeriodicCheckin(CancellationToken, TimeSpan?)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html#Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckin_System_Threading_CancellationToken_System_Nullable_System_TimeSpan__
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin(System.Threading.CancellationToken,System.Nullable{System.TimeSpan})
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin(System.Threading.CancellationToken, System.TimeSpan?)
-  nameWithType: CheckInWorker.RunPeriodicCheckin(CancellationToken, TimeSpan?)
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin*
-  name: RunPeriodicCheckin
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html#Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckin_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn(System.Threading.CancellationToken,CogniteSdk.Alpha.StartupRequest,System.Nullable{System.TimeSpan})
+  name: RunPeriodicCheckIn(CancellationToken, StartupRequest, TimeSpan?)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html#Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckIn_System_Threading_CancellationToken_CogniteSdk_Alpha_StartupRequest_System_Nullable_System_TimeSpan__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn(System.Threading.CancellationToken,CogniteSdk.Alpha.StartupRequest,System.Nullable{System.TimeSpan})
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn(System.Threading.CancellationToken, CogniteSdk.Alpha.StartupRequest, System.TimeSpan?)
+  nameWithType: CheckInWorker.RunPeriodicCheckIn(CancellationToken, StartupRequest, TimeSpan?)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn*
+  name: RunPeriodicCheckIn
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html#Cognite_Extractor_Utils_Unstable_Tasks_CheckInWorker_RunPeriodicCheckIn_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckin
-  nameWithType: CheckInWorker.RunPeriodicCheckin
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.RunPeriodicCheckIn
+  nameWithType: CheckInWorker.RunPeriodicCheckIn
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError
   name: ExtractorError
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html
@@ -14509,6 +14539,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.Dispose
   nameWithType: ExtractorTaskScheduler.Dispose
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.GetRegisteredTasks
+  name: GetRegisteredTasks()
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorTaskScheduler_GetRegisteredTasks
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.GetRegisteredTasks
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.GetRegisteredTasks()
+  nameWithType: ExtractorTaskScheduler.GetRegisteredTasks()
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.GetRegisteredTasks*
+  name: GetRegisteredTasks
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorTaskScheduler_GetRegisteredTasks_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.GetRegisteredTasks
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.GetRegisteredTasks
+  nameWithType: ExtractorTaskScheduler.GetRegisteredTasks
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.Notify
   name: Notify()
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorTaskScheduler_Notify
@@ -14631,19 +14674,83 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.ReportTaskStart
   nameWithType: IIntegrationSink.ReportTaskStart
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckin(System.Threading.CancellationToken,System.Nullable{System.TimeSpan})
-  name: RunPeriodicCheckin(CancellationToken, TimeSpan?)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Tasks_IIntegrationSink_RunPeriodicCheckin_System_Threading_CancellationToken_System_Nullable_System_TimeSpan__
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckin(System.Threading.CancellationToken,System.Nullable{System.TimeSpan})
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckin(System.Threading.CancellationToken, System.TimeSpan?)
-  nameWithType: IIntegrationSink.RunPeriodicCheckin(CancellationToken, TimeSpan?)
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckin*
-  name: RunPeriodicCheckin
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Tasks_IIntegrationSink_RunPeriodicCheckin_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckin
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckIn(System.Threading.CancellationToken,CogniteSdk.Alpha.StartupRequest,System.Nullable{System.TimeSpan})
+  name: RunPeriodicCheckIn(CancellationToken, StartupRequest, TimeSpan?)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Tasks_IIntegrationSink_RunPeriodicCheckIn_System_Threading_CancellationToken_CogniteSdk_Alpha_StartupRequest_System_Nullable_System_TimeSpan__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckIn(System.Threading.CancellationToken,CogniteSdk.Alpha.StartupRequest,System.Nullable{System.TimeSpan})
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckIn(System.Threading.CancellationToken, CogniteSdk.Alpha.StartupRequest, System.TimeSpan?)
+  nameWithType: IIntegrationSink.RunPeriodicCheckIn(CancellationToken, StartupRequest, TimeSpan?)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckIn*
+  name: RunPeriodicCheckIn
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Tasks_IIntegrationSink_RunPeriodicCheckIn_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckIn
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckin
-  nameWithType: IIntegrationSink.RunPeriodicCheckin
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink.RunPeriodicCheckIn
+  nameWithType: IIntegrationSink.RunPeriodicCheckIn
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata
+  name: TaskMetadata
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata
+  nameWithType: TaskMetadata
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.#ctor(CogniteSdk.Alpha.TaskType)
+  name: TaskMetadata(TaskType)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskMetadata__ctor_CogniteSdk_Alpha_TaskType_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.#ctor(CogniteSdk.Alpha.TaskType)
+  name.vb: New(TaskType)
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.TaskMetadata(CogniteSdk.Alpha.TaskType)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.New(CogniteSdk.Alpha.TaskType)
+  nameWithType: TaskMetadata.TaskMetadata(TaskType)
+  nameWithType.vb: TaskMetadata.New(TaskType)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.#ctor*
+  name: TaskMetadata
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskMetadata__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.TaskMetadata
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.New
+  nameWithType: TaskMetadata.TaskMetadata
+  nameWithType.vb: TaskMetadata.New
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Action
+  name: Action
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskMetadata_Action
+  commentId: P:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Action
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Action
+  nameWithType: TaskMetadata.Action
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Action*
+  name: Action
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskMetadata_Action_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Action
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Action
+  nameWithType: TaskMetadata.Action
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Description
+  name: Description
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskMetadata_Description
+  commentId: P:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Description
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Description
+  nameWithType: TaskMetadata.Description
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Description*
+  name: Description
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskMetadata_Description_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Description
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Description
+  nameWithType: TaskMetadata.Description
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Type
+  name: Type
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskMetadata_Type
+  commentId: P:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Type
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Type
+  nameWithType: TaskMetadata.Type
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Type*
+  name: Type
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskMetadata_Type_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Type
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskMetadata.Type
+  nameWithType: TaskMetadata.Type
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter
   name: TaskReporter
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.html
