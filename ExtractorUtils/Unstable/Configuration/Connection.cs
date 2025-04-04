@@ -9,7 +9,7 @@ namespace Cognite.Extractor.Utils.Unstable
     /// <summary>
     /// Configuration for connecting to CDF.
     /// </summary>
-    public class ConnectionConfig
+    public class ConnectionConfig : VersionedConfig
     {
         /// <summary>
         /// The project name
@@ -53,11 +53,16 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <summary>
         /// Register any necessary yaml converters.
         /// </summary>
-        public void RegisterConverters(YamlConfigBuilder builder)
+        public static void RegisterConverters(YamlConfigBuilder builder)
         {
             if (builder is null) throw new ArgumentNullException(nameof(builder));
 
             builder.AddDiscriminatedType<BaseAuthenticationConfig>("type", BaseAuthenticationConfig.Variants());
+        }
+
+        /// <inheritdoc />
+        public override void GenerateDefaults()
+        {
         }
     }
 

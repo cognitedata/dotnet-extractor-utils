@@ -326,4 +326,46 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             return (rawConfig.Config, rawConfig.Revision);
         }
     }
+
+    /// <summary>
+    /// Configuration source for a config that was provided externally,
+    /// for example through the command line.
+    /// </summary>
+    /// <typeparam name="T">Type of configuration object.</typeparam>
+    public class StaticConfigSource<T> : ConfigSource<T> where T : VersionedConfig
+    {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="config">Constant config file to use.</param>
+        public StaticConfigSource(T config)
+        {
+            Config = config;
+            Revision = null;
+        }
+
+        /// <inheritdoc />
+        public override ConfigWrapper<T> GetConfigWrapper()
+        {
+            return new ConfigWrapper<T>(Config!, null);
+        }
+
+        private bool _hasResolved;
+        private object _lock = new object();
+
+        /// <inheritdoc />
+        public override Task<bool> ResolveConfig(int? targetRevision, BaseErrorReporter reporter, CancellationToken token)
+        {
+            lock (_lock)
+            {
+                if (_hasResolved)
+                {
+                    return Task.FromResult(false);
+                }
+                _hasResolved = true;
+            }
+
+            return Task.FromResult(true);
+        }
+    }
 }

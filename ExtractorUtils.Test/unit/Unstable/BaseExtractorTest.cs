@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
+using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
 using Cognite.Extractor.Utils.Unstable;
@@ -17,7 +18,12 @@ using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit.Unstable
 {
-    class DummyConfig { }
+    class DummyConfig : VersionedConfig
+    {
+        public override void GenerateDefaults()
+        {
+        }
+    }
 
     class DummyExtractor : Cognite.Extractor.Utils.Unstable.BaseExtractor<DummyConfig>
     {

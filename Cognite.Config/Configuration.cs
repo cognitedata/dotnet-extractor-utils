@@ -36,6 +36,7 @@ namespace Cognite.Extractor.Configuration
             {
                 lock (_builder)
                 {
+                    RegisterConverterForType<T>();
                     _builder.IgnoreUnmatchedProperties = ignoreUnmatched;
                     return _builder.Deserializer.Deserialize<T>(yaml);
                 }
@@ -43,6 +44,16 @@ namespace Cognite.Extractor.Configuration
             catch (YamlException ye)
             {
                 throw new ConfigurationException($"Failed to load config string at {ye.Start}: {ye.InnerException?.Message ?? ye.Message}", ye);
+            }
+        }
+
+        private static void RegisterConverterForType<T>()
+        {
+            var registerConverters = typeof(T).GetMethod("RegisterConverters");
+            if (registerConverters != null)
+            {
+                var parameters = new object[] { _builder };
+                registerConverters.Invoke(null, parameters);
             }
         }
 
@@ -64,6 +75,7 @@ namespace Cognite.Extractor.Configuration
                 {
                     lock (_builder)
                     {
+                        RegisterConverterForType<T>();
                         _builder.IgnoreUnmatchedProperties = ignoreUnmatched ?? false;
                         return _builder.Deserializer.Deserialize<T>(reader);
                     }
