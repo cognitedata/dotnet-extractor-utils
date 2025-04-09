@@ -79,11 +79,11 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         public bool SetupHttpClient { get; set; } = true;
 
         /// <summary>
-        /// Full path to a configuration file, overrides ConfigFolder.
+        /// Full path to a configuration file, takes precedence over the <see cref="ConfigFolder"/> setting.
         /// </summary>
         public string? OverrideConfigFile { get; set; }
         /// <summary>
-        /// Full path to a connection file, overrides ConfigFolder.
+        /// Full path to a connection file, takes precedence over the <see cref="ConfigFolder"/> setting.
         /// </summary>
         public string? OverrideConnectionConfig { get; set; }
 
