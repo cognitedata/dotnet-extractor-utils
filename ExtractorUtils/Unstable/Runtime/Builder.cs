@@ -13,11 +13,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Cognite.Extractor.Utils.Unstable
+namespace Cognite.Extractor.Utils.Unstable.Runtime
 {
     /// <summary>
-    /// Configured source of the config file. Typically set from
-    /// the command line, or to a constant.
+    /// Configured source of the config file.
     /// </summary>
     public enum ConfigSourceType
     {
@@ -77,7 +76,7 @@ namespace Cognite.Extractor.Utils.Unstable
         /// for testing, where the caller might want to provide a mock
         /// HTTP client.
         /// </summary>
-        public bool SetHttpClient { get; set; } = true;
+        public bool SetupHttpClient { get; set; } = true;
 
         /// <summary>
         /// Full path to a configuration file, overrides ConfigFolder.
@@ -100,7 +99,7 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <summary>
         /// Predefined list of services, added to the list of services defined by the runtime.
         /// </summary>
-        public ServiceCollection? ExternalServices { get; set; }
+        public IServiceCollection? ExternalServices { get; set; }
         /// <summary>
         /// Logger to use before config has been loaded.
         /// </summary>
@@ -149,16 +148,17 @@ namespace Cognite.Extractor.Utils.Unstable
 
         /// <summary>
         /// Configured source of the config file. Defaults to <see cref="ConfigSourceType.Remote"/>.
+        /// Typically set from the command line, or to a constant.
         /// </summary>
         public ConfigSourceType ConfigSource { get; set; } = ConfigSourceType.Remote;
 
 
         /// <summary>
-        /// Computed path to connection config file.
+        /// Resolved path to connection config file.
         /// </summary>
         public string ConnectionConfigPath => OverrideConnectionConfig ?? Path.Combine(ConfigFolder, "connection.yml");
         /// <summary>
-        /// Computed path to config file.
+        /// Resolved path to config file.
         /// </summary>
         public string ConfigPath => OverrideConfigFile ?? Path.Combine(ConfigFolder, "config.yml");
 
@@ -186,11 +186,7 @@ namespace Cognite.Extractor.Utils.Unstable
             }
 
             // Create a local service collection containing any predefined services, just for this stage.
-            var services = new ServiceCollection();
-            if (ExternalServices != null)
-            {
-                services.Add(ExternalServices);
-            }
+
 
             if (ConfigSource == ConfigSourceType.Local)
             {
@@ -198,6 +194,11 @@ namespace Cognite.Extractor.Utils.Unstable
             }
             else
             {
+                var services = new ServiceCollection();
+                if (ExternalServices != null)
+                {
+                    services.Add(ExternalServices);
+                }
                 if (connectionConfig == null)
                 {
                     throw new ConfigurationException("Cannot use remote config without a connection config.");
@@ -209,7 +210,7 @@ namespace Cognite.Extractor.Utils.Unstable
                 }
 
                 services.AddConfig(connectionConfig, typeof(ConnectionConfig));
-                services.AddCogniteClient(AppId, UserAgent, AddLogger, AddMetrics, SetHttpClient);
+                services.AddCogniteClient(AppId, UserAgent, AddLogger, AddMetrics, SetupHttpClient);
 
                 var provider = services.BuildServiceProvider();
 
@@ -224,9 +225,11 @@ namespace Cognite.Extractor.Utils.Unstable
             // Attempt to load the config source in a loop. This can fail,
             // in which case we will retry until the token is cancelled.
             // The reason why we do this and not just cancel the extractor is to
-            // simplify setup in very constrained environments.
+            // simplify setup when restarting the extractor manually is a difficult
+            // process, but replacing the config file is easy.
             while (true)
             {
+                token.ThrowIfCancellationRequested();
                 // Create a new service collection for each iteration,
                 // to avoid running into conflicts between iterations.
                 var services = new ServiceCollection();

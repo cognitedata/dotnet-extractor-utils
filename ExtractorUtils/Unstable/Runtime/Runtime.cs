@@ -3,7 +3,7 @@ using System.Threading;
 using Cognite.Extractor.Configuration;
 using Cognite.Extractor.Utils.Unstable.Configuration;
 
-namespace Cognite.Extractor.Utils.Unstable
+namespace Cognite.Extractor.Utils.Unstable.Runtime
 {
     /// <summary>
     /// Runtime for extractors. See <see cref="ExtractorRuntimeBuilder{TConfig, TExtractor}"/>

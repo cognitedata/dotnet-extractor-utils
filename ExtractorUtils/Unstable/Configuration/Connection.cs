@@ -4,7 +4,7 @@ using Cognite.Extensions.Unstable;
 using Cognite.Extractor.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Cognite.Extractor.Utils.Unstable
+namespace Cognite.Extractor.Utils.Unstable.Configuration
 {
     /// <summary>
     /// Configuration for connecting to CDF.

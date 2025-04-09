@@ -2,7 +2,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Testing;
-using Cognite.Extractor.Utils.Unstable;
+using Cognite.Extractor.Utils.Unstable.Runtime;
 using Cognite.Extractor.Utils.Unstable.Configuration;
 using ExtractorUtils.Test.Unit.Unstable;
 using Microsoft.Extensions.DependencyInjection;
