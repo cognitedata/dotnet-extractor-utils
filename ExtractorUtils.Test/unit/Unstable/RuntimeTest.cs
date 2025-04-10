@@ -9,6 +9,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
+using Cognite.Extractor.Common;
+using System;
+using System.Net.Http;
+using System.Net;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Net.Http.Headers;
+using CogniteSdk.Alpha;
 
 namespace ExtractorUtils.Test.unit.Unstable
 {
@@ -96,6 +105,222 @@ authentication:
 
             var configSource = runtime.GetType().GetField("_configSource", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             Assert.IsType<StaticConfigSource<DummyConfig>>(configSource.GetValue(runtime));
+        }
+
+        [Fact(Timeout = 5000)]
+        public async Task TestRuntime()
+        {
+            var builder = new ExtractorRuntimeBuilder<DummyConfig, DummyExtractor>("dotnetutilstest", "utilstest/1");
+            builder.NoConnection = true;
+            // Use an external config so we don't need a real config source.
+            builder.ExternalConfig = new DummyConfig();
+            var services = new ServiceCollection();
+            services.AddTestLogging(_output);
+            builder.StartupLogger = services.BuildServiceProvider().GetRequiredService<ILogger<RuntimeTest>>();
+            builder.AddLogger = false;
+            builder.ExternalServices = services;
+
+            using var evt = new ManualResetEventSlim(false);
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    evt.Set();
+                    extractor = ext;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+            var runTask = runtime.Run();
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+
+            Assert.NotNull(extractor);
+
+            source.Cancel();
+
+            await runTask;
+        }
+
+        [Fact(Timeout = 5000)]
+        public async Task TestRuntimeRestartNewConfig()
+        {
+            var builder = new ExtractorRuntimeBuilder<DummyConfig, DummyExtractor>("dotnetutilstest", "utilstest/1");
+            // builder.SetupHttpClient = false;
+            _responseRevision = new ConfigRevision
+            {
+                Revision = 1,
+                Config = "foo: bar"
+            };
+            var configPath = TestUtils.AlphaNumericPrefix("dotnet_extractor_test") + "_config";
+            builder.ConfigFolder = configPath;
+            Directory.CreateDirectory(configPath);
+            File.WriteAllText(configPath + "/connection.yml", GetConnectionConfig());
+
+            var services = new ServiceCollection();
+            services.AddTestLogging(_output);
+            builder.StartupLogger = services.BuildServiceProvider().GetRequiredService<ILogger<RuntimeTest>>();
+
+            services.AddTransient(p =>
+            {
+                var mocks = TestUtilities.GetMockedHttpClientFactory(mockRequestsAsync);
+                return mocks.factory.Object;
+            });
+
+            builder.ExternalServices = services;
+            builder.AddLogger = false;
+
+            using var evt = new ManualResetEventSlim(false);
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    evt.Set();
+                    extractor = ext;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+            var runTask = runtime.Run();
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.NotNull(extractor);
+
+            // Wait for a startup to be reported.
+            await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
+
+            // Update the config revision and the extractor should be restarted.
+            var oldExtractor = extractor;
+            extractor = null;
+            evt.Reset();
+            _responseRevision = new ConfigRevision
+            {
+                Revision = 2,
+                Config = "foo: baz"
+            };
+
+            // Flush the sink to speed things along
+            await oldExtractor.Sink.Flush(source.Token);
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.NotNull(extractor);
+
+            // Wait for another startup to be reported.
+            await TestUtils.WaitForCondition(() => _startupCount == 2, 5);
+
+            // Finally, shut down the extractor.
+            source.Cancel();
+
+            await runTask;
+        }
+
+
+        private List<dynamic> taskEvents = new();
+        private List<dynamic> errors = new();
+        private List<dynamic> startupRequests = new();
+        private int _checkInCount;
+        private int _startupCount;
+        private ConfigRevision _responseRevision;
+        private int _getConfigCount;
+        private async Task<HttpResponseMessage> mockRequestsAsync(
+            HttpRequestMessage message,
+            CancellationToken token
+        )
+        {
+            var uri = message.RequestUri.ToString();
+            if (uri == "http://example.url/token")
+            {
+                var reply = "{" + Environment.NewLine +
+                       $"  \"token_type\": \"Bearer\",{Environment.NewLine}" +
+                       $"  \"expires_in\": 2,{Environment.NewLine}" +
+                       $"  \"access_token\": \"token\"{Environment.NewLine}" +
+                        "}";
+                // Return 200
+                var response = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(reply)
+                };
+
+                return response;
+            }
+            else if (uri.Contains("/checkin"))
+            {
+                var content = await message.Content.ReadAsStringAsync(token);
+                _output.WriteLine(content);
+                var data = JsonConvert.DeserializeObject<dynamic>(content);
+                Assert.Equal("test-integration", (string)data.externalId);
+
+                if (data.taskEvents != null)
+                {
+                    taskEvents.AddRange(data.taskEvents);
+                }
+                if (data.errors != null)
+                {
+                    errors.AddRange(data.errors);
+                }
+                _checkInCount++;
+            }
+            else if (uri.Contains("/integrations/config"))
+            {
+                if (_responseRevision == null)
+                {
+                    dynamic res = new ExpandoObject();
+                    res.error = new ExpandoObject();
+                    res.error.code = 400;
+                    res.error.message = "Something went wrong";
+                    return new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.BadRequest,
+                        Content = new StringContent(JsonConvert.SerializeObject(res)),
+                    };
+                }
+
+                var cresBody = System.Text.Json.JsonSerializer.Serialize(_responseRevision, Oryx.Cognite.Common.jsonOptions);
+                var cresponse = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(cresBody)
+                };
+                cresponse.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                cresponse.Headers.Add("x-request-id", "1");
+
+                return cresponse;
+            }
+            else
+            {
+                Assert.Contains("/startup", uri);
+                var content = await message.Content.ReadAsStringAsync(token);
+                _output.WriteLine(content);
+                var data = JsonConvert.DeserializeObject<dynamic>(content);
+                Assert.Equal("test-integration", (string)data.externalId);
+
+                startupRequests.Add(data);
+
+                _startupCount++;
+            }
+
+            dynamic resData = new ExpandoObject();
+            resData.lastConfigRevision = _responseRevision?.Revision;
+            resData.externalId = "test-integration";
+            var resBody = JsonConvert.SerializeObject(resData);
+            var fresponse = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(resBody)
+            };
+            fresponse.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            fresponse.Headers.Add("x-request-id", "1");
+
+            return fresponse;
         }
     }
 }

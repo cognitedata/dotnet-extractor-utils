@@ -30,6 +30,25 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         Remote
     }
 
+    /// <summary>
+    /// Policy for when to restart the extractor.
+    /// </summary>
+    public enum ExtractorRestartPolicy
+    {
+        /// <summary>
+        /// Never restart.
+        /// </summary>
+        Never,
+        /// <summary>
+        /// Restart if the extractor fails.
+        /// </summary>
+        OnError,
+        /// <summary>
+        /// Always restart the extractor when it completes.
+        /// </summary>
+        Always,
+    }
+
 
     /// <summary>
     /// Builder for the extractor runtime.
@@ -64,7 +83,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// <summary>
         /// True to add logging
         /// </summary>
-        public bool AddLogger { get; set; }
+        public bool AddLogger { get; set; } = true;
         /// <summary>
         /// True to add metrics
         /// </summary>
@@ -95,7 +114,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// Called after config has been read. Can be used to modify the runner params and config object based on
         /// external parameters. New services can also be registered here based on the configuration object.
         /// </summary>
-        public Action<TConfig, ExtractorRuntimeBuilder<TConfig, TExtractor>>? OnConfigure { get; set; }
+        public Action<TConfig, ExtractorRuntimeBuilder<TConfig, TExtractor>, ServiceCollection>? OnConfigure { get; set; }
         /// <summary>
         /// Predefined list of services, added to the list of services defined by the runtime.
         /// </summary>
@@ -103,7 +122,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// <summary>
         /// Logger to use before config has been loaded.
         /// </summary>
-        public ILogger StartupLogger { get; set; } = new NullLogger<ExtractorRuntimeBuilder<TConfig, TExtractor>>();
+        public ILogger StartupLogger { get; set; } = LoggingUtils.GetDefault();
         /// <summary>
         /// Method to log exceptions. Default is just a simple log message with the exception.
         /// </summary>
@@ -112,6 +131,10 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// Method to build logger from config. Defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/>
         /// </summary>
         public Func<LoggerConfig, Serilog.ILogger>? BuildLogger { get; set; }
+        /// <summary>
+        /// Policy describing when the extractor should be restarted.
+        /// </summary>
+        public ExtractorRestartPolicy RestartPolicy { get; set; } = ExtractorRestartPolicy.Always;
 
         /// <summary>
         /// Whether to retry sending the startup request. Only applicable if connection config is used.
@@ -122,7 +145,9 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// </summary>
         public IEnumerable<Type>? ConfigTypes { get; set; }
         /// <summary>
-        /// Let this method return true if the exception is fatal and the extractor should terminate.
+        /// Let this method return true if the exception is fatal. Fatal exceptions are assumed to be
+        /// unrecoverable without new config, so the extractor will wait until a new configuration is provided
+        /// before attempting to run again.
         /// </summary>
         public Func<Exception, bool>? IsFatalException { get; set; }
         /// <summary>
