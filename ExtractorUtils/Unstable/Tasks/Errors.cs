@@ -83,14 +83,15 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <summary>
         /// Immediately mark this error as completed.
         /// </summary>
-        public void Instant()
+        public ExtractorError Instant()
         {
-            if (EndTime != null) return;
+            if (EndTime != null) return this;
 
             EndTime = StartTime;
 
             // The error might have been reported already, so try re-adding it.
             _sink.ReportError(this);
+            return this;
         }
 
         /// <summary>
