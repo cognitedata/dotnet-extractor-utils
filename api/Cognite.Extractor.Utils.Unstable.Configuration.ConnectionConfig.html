@@ -66,21 +66,28 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig">
 
 
 
-  <h1 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig" class="text-break">Class ConnectionConfig</h1>
+  <h1 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig" class="text-break">Class ConnectionConfig</h1>
   <div class="markdown level0 summary"><p>Configuration for connecting to CDF.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">ConnectionConfig</span></div>
+    <div class="level1"><span class="xref">VersionedConfig</span></div>
+    <div class="level2"><span class="xref">ConnectionConfig</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">VersionedConfig.Version</span>
+    </div>
+    <div>
+      <span class="xref">VersionedConfig.KeyVault</span>
+    </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
     </div>
@@ -103,23 +110,23 @@
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.Extractor.html">Extractor</a>.<a class="xref" href="Cognite.Extractor.Utils.html">Utils</a>.<a class="xref" href="Cognite.Extractor.Utils.Unstable.html">Unstable</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.Extractor.html">Extractor</a>.<a class="xref" href="Cognite.Extractor.Utils.html">Utils</a>.<a class="xref" href="Cognite.Extractor.Utils.Unstable.html">Unstable</a>.<a class="xref" href="Cognite.Extractor.Utils.Unstable.Configuration.html">Configuration</a></h6>
   <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
-  <h5 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_syntax">Syntax</h5>
+  <h5 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ConnectionConfig</code></pre>
+    <pre><code class="lang-csharp hljs">public class ConnectionConfig : VersionedConfig</code></pre>
   </div>
   <h3 id="properties">Properties
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig_Authentication.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Authentication.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L29">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_Authentication_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_Authentication" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication">Authentication</h4>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Authentication_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Authentication" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication">Authentication</h4>
   <div class="markdown level1 summary"><p>Authentication config.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -144,13 +151,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig_BaseUrl.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_BaseUrl.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L24">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_BaseUrl_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_BaseUrl" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl">BaseUrl</h4>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_BaseUrl_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_BaseUrl" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl">BaseUrl</h4>
   <div class="markdown level1 summary"><p>API base URL</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -176,13 +183,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig_CdfRetries.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfRetries.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L39">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_CdfRetries_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_CdfRetries" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries">CdfRetries</h4>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfRetries_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfRetries" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries">CdfRetries</h4>
   <div class="markdown level1 summary"><p>Configuration for retries of failed requests to CDF.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -207,13 +214,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig_Certificates.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Certificates.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L51">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_Certificates_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_Certificates" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates">Certificates</h4>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Certificates_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Certificates" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates">Certificates</h4>
   <div class="markdown level1 summary"><p>Configuration for handling SSL certificates.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -238,13 +245,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig_Integration.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Integration.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L34">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_Integration_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_Integration" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration">Integration</h4>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Integration_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Integration" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration">Integration</h4>
   <div class="markdown level1 summary"><p>ID of integration in CDF, required.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -269,13 +276,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig_Project.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Project.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L18">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_Project_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_Project" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project">Project</h4>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Project_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Project" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project">Project</h4>
   <div class="markdown level1 summary"><p>The project name</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -301,13 +308,13 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig_SdkLogging.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_SdkLogging.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L45">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_SdkLogging_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_SdkLogging" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging">SdkLogging</h4>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_SdkLogging_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_SdkLogging" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging">SdkLogging</h4>
   <div class="markdown level1 summary"><p>Enables logging of Cognite Sdk operations. Enabled by default.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -325,7 +332,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html">SdkLoggingConfig</a></td>
+        <td><a class="xref" href="Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html">SdkLoggingConfig</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -334,19 +341,38 @@
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig_RegisterConverters_Cognite_Extractor_Configuration_YamlConfigBuilder_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_GenerateDefaults.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L64">View Source</a>
+  </span>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_GenerateDefaults_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_GenerateDefaults" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults">GenerateDefaults()</h4>
+  <div class="markdown level1 summary"><p>Should be implemented in Base classes to initialize properties with default
+values, in case the values were not present in the parsed yaml config</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void GenerateDefaults()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">Cognite.Extractor.Configuration.VersionedConfig.GenerateDefaults()</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_RegisterConverters_Cognite_Extractor_Configuration_YamlConfigBuilder_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L56">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_RegisterConverters_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_ConnectionConfig_RegisterConverters_Cognite_Extractor_Configuration_YamlConfigBuilder_" data-uid="Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)">RegisterConverters(YamlConfigBuilder)</h4>
+  <a id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_RegisterConverters_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters*"></a>
+  <h4 id="Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_RegisterConverters_Cognite_Extractor_Configuration_YamlConfigBuilder_" data-uid="Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)">RegisterConverters(YamlConfigBuilder)</h4>
   <div class="markdown level1 summary"><p>Register any necessary yaml converters.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RegisterConverters(YamlConfigBuilder builder)</code></pre>
+    <pre><code class="lang-csharp hljs">public static void RegisterConverters(YamlConfigBuilder builder)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -378,7 +404,7 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_ConnectionConfig.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.ConnectionConfig%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
                     <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Configuration/Connection.cs/#L12" class="contribution-link">View Source</a>

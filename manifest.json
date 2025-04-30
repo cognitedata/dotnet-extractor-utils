@@ -2328,6 +2328,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.yml\" sourcestartlinenumber=\"1\">Configuration for connecting to CDF.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource-1.yml",
       "output": {
         ".html": {
@@ -2356,6 +2370,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.yml\" sourcestartlinenumber=\"1\">Configuration for logging information from the SDK.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource<T>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.yml\" sourcestartlinenumber=\"1\">Configuration source for a config that was provided externally,\nfor example through the command line.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.yml",
       "output": {
         ".html": {
@@ -2367,20 +2409,6 @@
       "IsMRef": true,
       "Title": "Cognite.Extractor.Utils.Unstable.Configuration",
       "Summary": null
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.Extractor.Utils.Unstable.ConnectionConfig",
-      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.yml\" sourcestartlinenumber=\"1\">Configuration for connecting to CDF.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2412,17 +2440,59 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.yml",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html"
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "Cognite.Extractor.Utils.Unstable.SdkLoggingConfig",
-      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.yml\" sourcestartlinenumber=\"1\">Configuration for logging information from the SDK.</p>\n"
+      "Title": "Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.yml\" sourcestartlinenumber=\"1\">Configured source of the config file.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime<TConfig, TExtractor>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.yml\" sourcestartlinenumber=\"1\">Runtime for extractors. See <xref href=\"Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder%602\" data-throw-if-not-resolved=\"false\"></xref>\nfor how to create a runtime instance.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.yml\" sourcestartlinenumber=\"1\">Builder for the extractor runtime.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Runtime.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Runtime.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Runtime",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -2606,11 +2676,11 @@
       "type": "Toc",
       "source_relative_path": "api/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "api/toc.json"
-        },
         ".html": {
           "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
         }
       },
       "version": ""
@@ -2629,11 +2699,11 @@
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "toc.json"
-        },
         ".html": {
           "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
         }
       },
       "version": ""
@@ -2752,11 +2822,11 @@
       "type": "Toc",
       "source_relative_path": "tutorials/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "tutorials/toc.json"
-        },
         ".html": {
           "relative_path": "tutorials/toc.html"
+        },
+        ".json": {
+          "relative_path": "tutorials/toc.json"
         }
       },
       "version": ""

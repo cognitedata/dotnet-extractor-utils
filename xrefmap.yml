@@ -6723,12 +6723,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.PeriodicScheduler.Dispose
   nameWithType: PeriodicScheduler.Dispose
-- uid: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait
-  name: ExitAllAndWait()
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait
-  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait()
-  nameWithType: PeriodicScheduler.ExitAllAndWait()
+- uid: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(System.Int32)
+  name: ExitAllAndWait(int)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait_System_Int32_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(System.Int32)
+  name.vb: ExitAllAndWait(Integer)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(int)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(Integer)
+  nameWithType: PeriodicScheduler.ExitAllAndWait(int)
+  nameWithType.vb: PeriodicScheduler.ExitAllAndWait(Integer)
 - uid: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait*
   name: ExitAllAndWait
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait_
@@ -10250,15 +10253,15 @@ references:
   commentId: M:Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client,Cognite.Extractor.Utils.CogniteConfig,System.Threading.CancellationToken)
   fullName: Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client, Cognite.Extractor.Utils.CogniteConfig, System.Threading.CancellationToken)
   nameWithType: CogniteClientExtensions.TestCogniteConfig(Client, CogniteConfig, CancellationToken)
-- uid: Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client,System.String,System.Threading.CancellationToken)
-  name: TestCogniteConfig(Client, string, CancellationToken)
-  href: api/Cognite.Extractor.Utils.CogniteClientExtensions.html#Cognite_Extractor_Utils_CogniteClientExtensions_TestCogniteConfig_CogniteSdk_Client_System_String_System_Threading_CancellationToken_
-  commentId: M:Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client,System.String,System.Threading.CancellationToken)
-  name.vb: TestCogniteConfig(Client, String, CancellationToken)
-  fullName: Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client, string, System.Threading.CancellationToken)
-  fullName.vb: Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client, String, System.Threading.CancellationToken)
-  nameWithType: CogniteClientExtensions.TestCogniteConfig(Client, string, CancellationToken)
-  nameWithType.vb: CogniteClientExtensions.TestCogniteConfig(Client, String, CancellationToken)
+- uid: Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client,System.String,System.Threading.CancellationToken,System.Boolean)
+  name: TestCogniteConfig(Client, string, CancellationToken, bool)
+  href: api/Cognite.Extractor.Utils.CogniteClientExtensions.html#Cognite_Extractor_Utils_CogniteClientExtensions_TestCogniteConfig_CogniteSdk_Client_System_String_System_Threading_CancellationToken_System_Boolean_
+  commentId: M:Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client,System.String,System.Threading.CancellationToken,System.Boolean)
+  name.vb: TestCogniteConfig(Client, String, CancellationToken, Boolean)
+  fullName: Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client, string, System.Threading.CancellationToken, bool)
+  fullName.vb: Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig(CogniteSdk.Client, String, System.Threading.CancellationToken, Boolean)
+  nameWithType: CogniteClientExtensions.TestCogniteConfig(Client, string, CancellationToken, bool)
+  nameWithType.vb: CogniteClientExtensions.TestCogniteConfig(Client, String, CancellationToken, Boolean)
 - uid: Cognite.Extractor.Utils.CogniteClientExtensions.TestCogniteConfig*
   name: TestCogniteConfig
   href: api/Cognite.Extractor.Utils.CogniteClientExtensions.html#Cognite_Extractor_Utils_CogniteClientExtensions_TestCogniteConfig_
@@ -13541,6 +13544,129 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.ConfigWrapper(Of TConfig).Revision
   nameWithType: ConfigWrapper<TConfig>.Revision
   nameWithType.vb: ConfigWrapper(Of TConfig).Revision
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig
+  name: ConnectionConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig
+  nameWithType: ConnectionConfig
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication
+  name: Authentication
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Authentication
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication
+  nameWithType: ConnectionConfig.Authentication
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication*
+  name: Authentication
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Authentication_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Authentication
+  nameWithType: ConnectionConfig.Authentication
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl
+  name: BaseUrl
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_BaseUrl
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl
+  nameWithType: ConnectionConfig.BaseUrl
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl*
+  name: BaseUrl
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_BaseUrl_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl
+  nameWithType: ConnectionConfig.BaseUrl
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
+  name: CdfRetries
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfRetries
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
+  nameWithType: ConnectionConfig.CdfRetries
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries*
+  name: CdfRetries
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfRetries_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
+  nameWithType: ConnectionConfig.CdfRetries
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
+  name: Certificates
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Certificates
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
+  nameWithType: ConnectionConfig.Certificates
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates*
+  name: Certificates
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Certificates_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
+  nameWithType: ConnectionConfig.Certificates
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults
+  name: GenerateDefaults()
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_GenerateDefaults
+  commentId: M:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults()
+  nameWithType: ConnectionConfig.GenerateDefaults()
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults*
+  name: GenerateDefaults
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_GenerateDefaults_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults
+  nameWithType: ConnectionConfig.GenerateDefaults
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration
+  name: Integration
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Integration
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration
+  nameWithType: ConnectionConfig.Integration
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration*
+  name: Integration
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Integration_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Integration
+  nameWithType: ConnectionConfig.Integration
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project
+  name: Project
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Project
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project
+  nameWithType: ConnectionConfig.Project
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project*
+  name: Project
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Project_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Project
+  nameWithType: ConnectionConfig.Project
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)
+  name: RegisterConverters(YamlConfigBuilder)
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_RegisterConverters_Cognite_Extractor_Configuration_YamlConfigBuilder_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)
+  nameWithType: ConnectionConfig.RegisterConverters(YamlConfigBuilder)
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters*
+  name: RegisterConverters
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_RegisterConverters_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters
+  nameWithType: ConnectionConfig.RegisterConverters
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
+  name: SdkLogging
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_SdkLogging
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
+  nameWithType: ConnectionConfig.SdkLogging
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging*
+  name: SdkLogging
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_SdkLogging_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
+  nameWithType: ConnectionConfig.SdkLogging
 - uid: Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource`1
   name: LocalConfigSource<T>
   href: api/Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource-1.html
@@ -13684,116 +13810,114 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.RemoteConfigSource(Of T).ResolveConfig
   nameWithType: RemoteConfigSource<T>.ResolveConfig
   nameWithType.vb: RemoteConfigSource(Of T).ResolveConfig
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig
-  name: ConnectionConfig
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html
-  commentId: T:Cognite.Extractor.Utils.Unstable.ConnectionConfig
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig
-  nameWithType: ConnectionConfig
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication
-  name: Authentication
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_Authentication
-  commentId: P:Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication
-  nameWithType: ConnectionConfig.Authentication
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication*
-  name: Authentication
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_Authentication_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig
+  name: SdkLoggingConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig
+  nameWithType: SdkLoggingConfig
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Enabled
+  name: Enabled
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_SdkLoggingConfig_Enabled
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Enabled
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Enabled
+  nameWithType: SdkLoggingConfig.Enabled
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Enabled*
+  name: Enabled
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_SdkLoggingConfig_Enabled_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Enabled
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Authentication
-  nameWithType: ConnectionConfig.Authentication
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl
-  name: BaseUrl
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_BaseUrl
-  commentId: P:Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl
-  nameWithType: ConnectionConfig.BaseUrl
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl*
-  name: BaseUrl
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_BaseUrl_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Enabled
+  nameWithType: SdkLoggingConfig.Enabled
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Format
+  name: Format
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_SdkLoggingConfig_Format
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Format
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Format
+  nameWithType: SdkLoggingConfig.Format
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Format*
+  name: Format
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_SdkLoggingConfig_Format_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Format
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.BaseUrl
-  nameWithType: ConnectionConfig.BaseUrl
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries
-  name: CdfRetries
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_CdfRetries
-  commentId: P:Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries
-  nameWithType: ConnectionConfig.CdfRetries
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries*
-  name: CdfRetries
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_CdfRetries_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Format
+  nameWithType: SdkLoggingConfig.Format
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Level
+  name: Level
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_SdkLoggingConfig_Level
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Level
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Level
+  nameWithType: SdkLoggingConfig.Level
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Level*
+  name: Level
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_SdkLoggingConfig_Level_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Level
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.CdfRetries
-  nameWithType: ConnectionConfig.CdfRetries
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates
-  name: Certificates
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_Certificates
-  commentId: P:Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates
-  nameWithType: ConnectionConfig.Certificates
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates*
-  name: Certificates
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_Certificates_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.Level
+  nameWithType: SdkLoggingConfig.Level
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1
+  name: StaticConfigSource<T>
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1
+  name.vb: StaticConfigSource(Of T)
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource<T>
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource(Of T)
+  nameWithType: StaticConfigSource<T>
+  nameWithType.vb: StaticConfigSource(Of T)
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.#ctor(`0)
+  name: StaticConfigSource(T)
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.html#Cognite_Extractor_Utils_Unstable_Configuration_StaticConfigSource_1__ctor__0_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.#ctor(`0)
+  name.vb: New(T)
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource<T>.StaticConfigSource(T)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource(Of T).New(T)
+  nameWithType: StaticConfigSource<T>.StaticConfigSource(T)
+  nameWithType.vb: StaticConfigSource(Of T).New(T)
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.#ctor*
+  name: StaticConfigSource
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.html#Cognite_Extractor_Utils_Unstable_Configuration_StaticConfigSource_1__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.#ctor
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Certificates
-  nameWithType: ConnectionConfig.Certificates
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration
-  name: Integration
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_Integration
-  commentId: P:Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration
-  nameWithType: ConnectionConfig.Integration
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration*
-  name: Integration
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_Integration_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration
+  name.vb: New
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource<T>.StaticConfigSource
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource(Of T).New
+  nameWithType: StaticConfigSource<T>.StaticConfigSource
+  nameWithType.vb: StaticConfigSource(Of T).New
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.GetConfigWrapper
+  name: GetConfigWrapper()
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.html#Cognite_Extractor_Utils_Unstable_Configuration_StaticConfigSource_1_GetConfigWrapper
+  commentId: M:Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.GetConfigWrapper
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource<T>.GetConfigWrapper()
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource(Of T).GetConfigWrapper()
+  nameWithType: StaticConfigSource<T>.GetConfigWrapper()
+  nameWithType.vb: StaticConfigSource(Of T).GetConfigWrapper()
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.GetConfigWrapper*
+  name: GetConfigWrapper
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.html#Cognite_Extractor_Utils_Unstable_Configuration_StaticConfigSource_1_GetConfigWrapper_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.GetConfigWrapper
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Integration
-  nameWithType: ConnectionConfig.Integration
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project
-  name: Project
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_Project
-  commentId: P:Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project
-  nameWithType: ConnectionConfig.Project
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project*
-  name: Project
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_Project_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource<T>.GetConfigWrapper
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource(Of T).GetConfigWrapper
+  nameWithType: StaticConfigSource<T>.GetConfigWrapper
+  nameWithType.vb: StaticConfigSource(Of T).GetConfigWrapper
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.ResolveConfig(System.Nullable{System.Int32},Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter,System.Threading.CancellationToken)
+  name: ResolveConfig(int?, BaseErrorReporter, CancellationToken)
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.html#Cognite_Extractor_Utils_Unstable_Configuration_StaticConfigSource_1_ResolveConfig_System_Nullable_System_Int32__Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.ResolveConfig(System.Nullable{System.Int32},Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter,System.Threading.CancellationToken)
+  name.vb: ResolveConfig(Integer?, BaseErrorReporter, CancellationToken)
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource<T>.ResolveConfig(int?, Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource(Of T).ResolveConfig(Integer?, Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter, System.Threading.CancellationToken)
+  nameWithType: StaticConfigSource<T>.ResolveConfig(int?, BaseErrorReporter, CancellationToken)
+  nameWithType.vb: StaticConfigSource(Of T).ResolveConfig(Integer?, BaseErrorReporter, CancellationToken)
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.ResolveConfig*
+  name: ResolveConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource-1.html#Cognite_Extractor_Utils_Unstable_Configuration_StaticConfigSource_1_ResolveConfig_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource`1.ResolveConfig
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.Project
-  nameWithType: ConnectionConfig.Project
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)
-  name: RegisterConverters(YamlConfigBuilder)
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_RegisterConverters_Cognite_Extractor_Configuration_YamlConfigBuilder_
-  commentId: M:Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters(Cognite.Extractor.Configuration.YamlConfigBuilder)
-  nameWithType: ConnectionConfig.RegisterConverters(YamlConfigBuilder)
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters*
-  name: RegisterConverters
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_RegisterConverters_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.RegisterConverters
-  nameWithType: ConnectionConfig.RegisterConverters
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging
-  name: SdkLogging
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_SdkLogging
-  commentId: P:Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging
-  nameWithType: ConnectionConfig.SdkLogging
-- uid: Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging*
-  name: SdkLogging
-  href: api/Cognite.Extractor.Utils.Unstable.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_ConnectionConfig_SdkLogging_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.ConnectionConfig.SdkLogging
-  nameWithType: ConnectionConfig.SdkLogging
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource<T>.ResolveConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.StaticConfigSource(Of T).ResolveConfig
+  nameWithType: StaticConfigSource<T>.ResolveConfig
+  nameWithType.vb: StaticConfigSource(Of T).ResolveConfig
 - uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable
   name: DestinationUtilsUnstable
   href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html
@@ -13829,13 +13953,13 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.AddCogniteDestination
   nameWithType: DestinationUtilsUnstable.AddCogniteDestination
-- uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder,Cognite.Extractor.Utils.Unstable.ConnectionConfig,System.String,System.String,Cognite.Extensions.IAuthenticator,Microsoft.Extensions.Logging.ILogger{CogniteSdk.Client},CogniteSdk.IMetrics)
+- uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder,Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig,System.String,System.String,Cognite.Extensions.IAuthenticator,Microsoft.Extensions.Logging.ILogger{CogniteSdk.Client},CogniteSdk.IMetrics)
   name: Configure(Builder, ConnectionConfig, string?, string?, IAuthenticator?, ILogger<Client>?, IMetrics?)
-  href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_Configure_CogniteSdk_Client_Builder_Cognite_Extractor_Utils_Unstable_ConnectionConfig_System_String_System_String_Cognite_Extensions_IAuthenticator_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client__CogniteSdk_IMetrics_
-  commentId: M:Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder,Cognite.Extractor.Utils.Unstable.ConnectionConfig,System.String,System.String,Cognite.Extensions.IAuthenticator,Microsoft.Extensions.Logging.ILogger{CogniteSdk.Client},CogniteSdk.IMetrics)
+  href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_Configure_CogniteSdk_Client_Builder_Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_System_String_System_String_Cognite_Extensions_IAuthenticator_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client__CogniteSdk_IMetrics_
+  commentId: M:Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder,Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig,System.String,System.String,Cognite.Extensions.IAuthenticator,Microsoft.Extensions.Logging.ILogger{CogniteSdk.Client},CogniteSdk.IMetrics)
   name.vb: Configure(Builder, ConnectionConfig, String, String, IAuthenticator, ILogger(Of Client), IMetrics)
-  fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder, Cognite.Extractor.Utils.Unstable.ConnectionConfig, string?, string?, Cognite.Extensions.IAuthenticator?, Microsoft.Extensions.Logging.ILogger<CogniteSdk.Client>?, CogniteSdk.IMetrics?)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder, Cognite.Extractor.Utils.Unstable.ConnectionConfig, String, String, Cognite.Extensions.IAuthenticator, Microsoft.Extensions.Logging.ILogger(Of CogniteSdk.Client), CogniteSdk.IMetrics)
+  fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder, Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig, string?, string?, Cognite.Extensions.IAuthenticator?, Microsoft.Extensions.Logging.ILogger<CogniteSdk.Client>?, CogniteSdk.IMetrics?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder, Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig, String, String, Cognite.Extensions.IAuthenticator, Microsoft.Extensions.Logging.ILogger(Of CogniteSdk.Client), CogniteSdk.IMetrics)
   nameWithType: DestinationUtilsUnstable.Configure(Client.Builder, ConnectionConfig, string?, string?, IAuthenticator?, ILogger<Client>?, IMetrics?)
   nameWithType.vb: DestinationUtilsUnstable.Configure(Client.Builder, ConnectionConfig, String, String, IAuthenticator, ILogger(Of Client), IMetrics)
 - uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure*
@@ -13876,51 +14000,552 @@ references:
   commentId: F:Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.Unexpected
   fullName: Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.Unexpected
   nameWithType: ExtractorTaskResult.Unexpected
-- uid: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig
-  name: SdkLoggingConfig
-  href: api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html
-  commentId: T:Cognite.Extractor.Utils.Unstable.SdkLoggingConfig
-  fullName: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig
-  nameWithType: SdkLoggingConfig
-- uid: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Enabled
-  name: Enabled
-  href: api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_SdkLoggingConfig_Enabled
-  commentId: P:Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Enabled
-  fullName: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Enabled
-  nameWithType: SdkLoggingConfig.Enabled
-- uid: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Enabled*
-  name: Enabled
-  href: api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_SdkLoggingConfig_Enabled_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Enabled
+- uid: Cognite.Extractor.Utils.Unstable.Runtime
+  name: Cognite.Extractor.Utils.Unstable.Runtime
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.html
+  commentId: N:Cognite.Extractor.Utils.Unstable.Runtime
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime
+  nameWithType: Cognite.Extractor.Utils.Unstable.Runtime
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType
+  name: ConfigSourceType
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType
+  nameWithType: ConfigSourceType
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.Local
+  name: Local
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.html#Cognite_Extractor_Utils_Unstable_Runtime_ConfigSourceType_Local
+  commentId: F:Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.Local
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.Local
+  nameWithType: ConfigSourceType.Local
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.Remote
+  name: Remote
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.html#Cognite_Extractor_Utils_Unstable_Runtime_ConfigSourceType_Remote
+  commentId: F:Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.Remote
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.Remote
+  nameWithType: ConfigSourceType.Remote
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2
+  name: ExtractorRuntimeBuilder<TConfig, TExtractor>
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2
+  name.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor)
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.#ctor(System.String,System.String)
+  name: ExtractorRuntimeBuilder(string, string)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2__ctor_System_String_System_String_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.#ctor(System.String,System.String)
+  name.vb: New(String, String)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ExtractorRuntimeBuilder(string, string)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).New(String, String)
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExtractorRuntimeBuilder(string, string)
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).New(String, String)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.#ctor*
+  name: ExtractorRuntimeBuilder
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.#ctor
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Enabled
-  nameWithType: SdkLoggingConfig.Enabled
-- uid: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Format
-  name: Format
-  href: api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_SdkLoggingConfig_Format
-  commentId: P:Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Format
-  fullName: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Format
-  nameWithType: SdkLoggingConfig.Format
-- uid: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Format*
-  name: Format
-  href: api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_SdkLoggingConfig_Format_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Format
+  name.vb: New
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ExtractorRuntimeBuilder
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).New
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExtractorRuntimeBuilder
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).New
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AcceptedConfigVersions
+  name: AcceptedConfigVersions
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AcceptedConfigVersions
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AcceptedConfigVersions
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AcceptedConfigVersions
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AcceptedConfigVersions
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AcceptedConfigVersions
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AcceptedConfigVersions
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AcceptedConfigVersions*
+  name: AcceptedConfigVersions
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AcceptedConfigVersions_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AcceptedConfigVersions
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Format
-  nameWithType: SdkLoggingConfig.Format
-- uid: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Level
-  name: Level
-  href: api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_SdkLoggingConfig_Level
-  commentId: P:Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Level
-  fullName: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Level
-  nameWithType: SdkLoggingConfig.Level
-- uid: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Level*
-  name: Level
-  href: api/Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.html#Cognite_Extractor_Utils_Unstable_SdkLoggingConfig_Level_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Level
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AcceptedConfigVersions
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AcceptedConfigVersions
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AcceptedConfigVersions
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AcceptedConfigVersions
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddLogger
+  name: AddLogger
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AddLogger
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddLogger
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AddLogger
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddLogger
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AddLogger
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddLogger
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddLogger*
+  name: AddLogger
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AddLogger_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddLogger
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.SdkLoggingConfig.Level
-  nameWithType: SdkLoggingConfig.Level
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AddLogger
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddLogger
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AddLogger
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddLogger
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddMetrics
+  name: AddMetrics
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AddMetrics
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddMetrics
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AddMetrics
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddMetrics
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AddMetrics
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddMetrics
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddMetrics*
+  name: AddMetrics
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AddMetrics_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddMetrics
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AddMetrics
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddMetrics
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AddMetrics
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddMetrics
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddStateStore
+  name: AddStateStore
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AddStateStore
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddStateStore
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AddStateStore
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddStateStore
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AddStateStore
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddStateStore
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddStateStore*
+  name: AddStateStore
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AddStateStore_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AddStateStore
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AddStateStore
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddStateStore
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AddStateStore
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AddStateStore
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AppId
+  name: AppId
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AppId
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AppId
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AppId
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AppId
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AppId
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AppId
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AppId*
+  name: AppId
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_AppId_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.AppId
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.AppId
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AppId
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AppId
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AppId
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BufferRemoteConfig
+  name: BufferRemoteConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BufferRemoteConfig
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BufferRemoteConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.BufferRemoteConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BufferRemoteConfig
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BufferRemoteConfig
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BufferRemoteConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BufferRemoteConfig*
+  name: BufferRemoteConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BufferRemoteConfig_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BufferRemoteConfig
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.BufferRemoteConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BufferRemoteConfig
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BufferRemoteConfig
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BufferRemoteConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BuildLogger
+  name: BuildLogger
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BuildLogger
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BuildLogger
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.BuildLogger
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BuildLogger
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BuildLogger
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BuildLogger
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BuildLogger*
+  name: BuildLogger
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BuildLogger_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BuildLogger
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.BuildLogger
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BuildLogger
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BuildLogger
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BuildLogger
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigFolder
+  name: ConfigFolder
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConfigFolder
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigFolder
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigFolder
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigFolder
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigFolder
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigFolder
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigFolder*
+  name: ConfigFolder
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConfigFolder_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigFolder
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigFolder
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigFolder
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigFolder
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigFolder
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigPath
+  name: ConfigPath
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConfigPath
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigPath
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigPath
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigPath
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigPath
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigPath
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigPath*
+  name: ConfigPath
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConfigPath_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigPath
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigPath
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigPath
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigPath
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigPath
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigSource
+  name: ConfigSource
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConfigSource
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigSource
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigSource
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigSource
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigSource
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigSource
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigSource*
+  name: ConfigSource
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConfigSource_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigSource
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigSource
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigSource
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigSource
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigSource
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigTypes
+  name: ConfigTypes
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConfigTypes
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigTypes
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigTypes
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigTypes
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigTypes
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigTypes
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigTypes*
+  name: ConfigTypes
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConfigTypes_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConfigTypes
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigTypes
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigTypes
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConfigTypes
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConfigTypes
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConnectionConfigPath
+  name: ConnectionConfigPath
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConnectionConfigPath
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConnectionConfigPath
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConnectionConfigPath
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConnectionConfigPath
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConnectionConfigPath
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConnectionConfigPath
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConnectionConfigPath*
+  name: ConnectionConfigPath
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ConnectionConfigPath_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ConnectionConfigPath
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ConnectionConfigPath
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConnectionConfigPath
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ConnectionConfigPath
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ConnectionConfigPath
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalConfig
+  name: ExternalConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ExternalConfig
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalConfig
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalConfig
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalConfig*
+  name: ExternalConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ExternalConfig_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalConfig
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalConfig
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalConfig
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalConnectionConfig
+  name: ExternalConnectionConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ExternalConnectionConfig
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalConnectionConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalConnectionConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalConnectionConfig
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalConnectionConfig
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalConnectionConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalConnectionConfig*
+  name: ExternalConnectionConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ExternalConnectionConfig_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalConnectionConfig
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalConnectionConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalConnectionConfig
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalConnectionConfig
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalConnectionConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalServices
+  name: ExternalServices
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ExternalServices
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalServices
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalServices
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalServices
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalServices
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalServices
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalServices*
+  name: ExternalServices
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_ExternalServices_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.ExternalServices
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalServices
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalServices
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalServices
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalServices
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.IsFatalException
+  name: IsFatalException
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_IsFatalException
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.IsFatalException
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.IsFatalException
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).IsFatalException
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.IsFatalException
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).IsFatalException
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.IsFatalException*
+  name: IsFatalException
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_IsFatalException_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.IsFatalException
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.IsFatalException
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).IsFatalException
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.IsFatalException
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).IsFatalException
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.LogException
+  name: LogException
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_LogException
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.LogException
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.LogException
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).LogException
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.LogException
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).LogException
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.LogException*
+  name: LogException
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_LogException_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.LogException
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.LogException
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).LogException
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.LogException
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).LogException
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.MakeRuntime(System.Threading.CancellationToken)
+  name: MakeRuntime(CancellationToken)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_MakeRuntime_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.MakeRuntime(System.Threading.CancellationToken)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.MakeRuntime(System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).MakeRuntime(System.Threading.CancellationToken)
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.MakeRuntime(CancellationToken)
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).MakeRuntime(CancellationToken)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.MakeRuntime*
+  name: MakeRuntime
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_MakeRuntime_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.MakeRuntime
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.MakeRuntime
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).MakeRuntime
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.MakeRuntime
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).MakeRuntime
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.NoConnection
+  name: NoConnection
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_NoConnection
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.NoConnection
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.NoConnection
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).NoConnection
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.NoConnection
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).NoConnection
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.NoConnection*
+  name: NoConnection
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_NoConnection_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.NoConnection
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.NoConnection
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).NoConnection
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.NoConnection
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).NoConnection
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OnConfigure
+  name: OnConfigure
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_OnConfigure
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OnConfigure
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.OnConfigure
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OnConfigure
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OnConfigure
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OnConfigure
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OnConfigure*
+  name: OnConfigure
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_OnConfigure_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OnConfigure
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.OnConfigure
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OnConfigure
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OnConfigure
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OnConfigure
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OnCreateExtractor
+  name: OnCreateExtractor
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_OnCreateExtractor
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OnCreateExtractor
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.OnCreateExtractor
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OnCreateExtractor
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OnCreateExtractor
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OnCreateExtractor
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OnCreateExtractor*
+  name: OnCreateExtractor
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_OnCreateExtractor_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OnCreateExtractor
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.OnCreateExtractor
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OnCreateExtractor
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OnCreateExtractor
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OnCreateExtractor
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OverrideConfigFile
+  name: OverrideConfigFile
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_OverrideConfigFile
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OverrideConfigFile
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConfigFile
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConfigFile
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConfigFile
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConfigFile
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OverrideConfigFile*
+  name: OverrideConfigFile
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_OverrideConfigFile_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OverrideConfigFile
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConfigFile
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConfigFile
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConfigFile
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConfigFile
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OverrideConnectionConfig
+  name: OverrideConnectionConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_OverrideConnectionConfig
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OverrideConnectionConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConnectionConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConnectionConfig
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConnectionConfig
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConnectionConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OverrideConnectionConfig*
+  name: OverrideConnectionConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_OverrideConnectionConfig_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.OverrideConnectionConfig
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConnectionConfig
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConnectionConfig
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConnectionConfig
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConnectionConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RetryStartupRequest
+  name: RetryStartupRequest
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_RetryStartupRequest
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RetryStartupRequest
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.RetryStartupRequest
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).RetryStartupRequest
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.RetryStartupRequest
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).RetryStartupRequest
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RetryStartupRequest*
+  name: RetryStartupRequest
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_RetryStartupRequest_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RetryStartupRequest
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.RetryStartupRequest
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).RetryStartupRequest
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.RetryStartupRequest
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).RetryStartupRequest
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.SetupHttpClient
+  name: SetupHttpClient
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_SetupHttpClient
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.SetupHttpClient
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.SetupHttpClient
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).SetupHttpClient
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.SetupHttpClient
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).SetupHttpClient
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.SetupHttpClient*
+  name: SetupHttpClient
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_SetupHttpClient_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.SetupHttpClient
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.SetupHttpClient
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).SetupHttpClient
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.SetupHttpClient
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).SetupHttpClient
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.StartupLogger
+  name: StartupLogger
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_StartupLogger
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.StartupLogger
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.StartupLogger
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).StartupLogger
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.StartupLogger
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).StartupLogger
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.StartupLogger*
+  name: StartupLogger
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_StartupLogger_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.StartupLogger
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.StartupLogger
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).StartupLogger
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.StartupLogger
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).StartupLogger
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.UserAgent
+  name: UserAgent
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_UserAgent
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.UserAgent
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.UserAgent
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).UserAgent
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.UserAgent
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).UserAgent
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.UserAgent*
+  name: UserAgent
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_UserAgent_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.UserAgent
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.UserAgent
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).UserAgent
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.UserAgent
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).UserAgent
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2
+  name: ExtractorRuntime<TConfig, TExtractor>
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2
+  name.vb: ExtractorRuntime(Of TConfig, TExtractor)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime<TConfig, TExtractor>
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime(Of TConfig, TExtractor)
+  nameWithType: ExtractorRuntime<TConfig, TExtractor>
+  nameWithType.vb: ExtractorRuntime(Of TConfig, TExtractor)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose
+  name: Dispose()
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime<TConfig, TExtractor>.Dispose()
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime(Of TConfig, TExtractor).Dispose()
+  nameWithType: ExtractorRuntime<TConfig, TExtractor>.Dispose()
+  nameWithType.vb: ExtractorRuntime(Of TConfig, TExtractor).Dispose()
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose(System.Boolean)
+  name: Dispose(bool)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose_System_Boolean_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose(System.Boolean)
+  name.vb: Dispose(Boolean)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime<TConfig, TExtractor>.Dispose(bool)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime(Of TConfig, TExtractor).Dispose(Boolean)
+  nameWithType: ExtractorRuntime<TConfig, TExtractor>.Dispose(bool)
+  nameWithType.vb: ExtractorRuntime(Of TConfig, TExtractor).Dispose(Boolean)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose*
+  name: Dispose
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime<TConfig, TExtractor>.Dispose
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime(Of TConfig, TExtractor).Dispose
+  nameWithType: ExtractorRuntime<TConfig, TExtractor>.Dispose
+  nameWithType.vb: ExtractorRuntime(Of TConfig, TExtractor).Dispose
 - uid: Cognite.Extractor.Utils.Unstable.Tasks
   name: Cognite.Extractor.Utils.Unstable.Tasks
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.html
