@@ -254,7 +254,7 @@ namespace Cognite.Extractor.Common
         /// Same as calling ExitAndWaitForTermination on all tasks.
         /// </summary>
         /// <returns>Task which completes once all tasks are done</returns>
-        public async Task ExitAllAndWait()
+        public async Task ExitAllAndWait(int timeoutMs = 0)
         {
             var tasks = new List<PeriodicTask>(_tasks.Count);
             lock (_taskListMutex)
@@ -268,7 +268,19 @@ namespace Cognite.Extractor.Common
             }
             try
             {
-                await Task.WhenAll(tasks.Select(tsk => tsk.Task)).ConfigureAwait(false);
+                var timeout = timeoutMs > 0 ? TimeSpan.FromMilliseconds(timeoutMs) : Timeout.InfiniteTimeSpan;
+                var tasksToWaitFor = tasks.Select(tsk => tsk.Task).ToList();
+                // Do not pass the cancellation token, since we are likely cancelled, and this method bypasses that.
+                var waitTask = CommonUtils.WaitAsync(_newTaskEvent, timeout, CancellationToken.None);
+                var res = await Task.WhenAny(Task.WhenAll(tasksToWaitFor), waitTask).ConfigureAwait(false);
+                if (res == waitTask)
+                {
+                    var notFinishedTasks = tasks.Where(t => !t.Task.IsCompleted).Select(t => t.Name).ToList();
+
+                    throw new TimeoutException(
+                        $"Timed out waiting for task scheduler to finish. The following tasks failed to finish within {timeout}: {string.Join(", ", notFinishedTasks)}"
+                    );
+                }
             }
             catch (TaskCanceledException) { }
             catch (AggregateException aex)
