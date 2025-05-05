@@ -9685,6 +9685,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).Scheduler
   nameWithType: BaseExtractor<TConfig>.Scheduler
   nameWithType.vb: BaseExtractor(Of TConfig).Scheduler
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.SchedulerExitTimeoutMs
+  name: SchedulerExitTimeoutMs
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_SchedulerExitTimeoutMs
+  commentId: P:Cognite.Extractor.Utils.BaseExtractor`1.SchedulerExitTimeoutMs
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.SchedulerExitTimeoutMs
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).SchedulerExitTimeoutMs
+  nameWithType: BaseExtractor<TConfig>.SchedulerExitTimeoutMs
+  nameWithType.vb: BaseExtractor(Of TConfig).SchedulerExitTimeoutMs
+- uid: Cognite.Extractor.Utils.BaseExtractor`1.SchedulerExitTimeoutMs*
+  name: SchedulerExitTimeoutMs
+  href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_SchedulerExitTimeoutMs_
+  commentId: Overload:Cognite.Extractor.Utils.BaseExtractor`1.SchedulerExitTimeoutMs
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.BaseExtractor<TConfig>.SchedulerExitTimeoutMs
+  fullName.vb: Cognite.Extractor.Utils.BaseExtractor(Of TConfig).SchedulerExitTimeoutMs
+  nameWithType: BaseExtractor<TConfig>.SchedulerExitTimeoutMs
+  nameWithType.vb: BaseExtractor(Of TConfig).SchedulerExitTimeoutMs
 - uid: Cognite.Extractor.Utils.BaseExtractor`1.Source
   name: Source
   href: api/Cognite.Extractor.Utils.BaseExtractor-1.html#Cognite_Extractor_Utils_BaseExtractor_1_Source
