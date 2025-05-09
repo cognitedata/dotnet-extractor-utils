@@ -536,7 +536,7 @@ namespace ExtractorUtils.Test.Unit
             // build expected response
             var reply = "{" + Environment.NewLine +
                        $"  \"token_type\": \"Bearer\",{Environment.NewLine}" +
-                       $"  \"expires_in\": 2,{Environment.NewLine}" +
+                       $"  \"expires_in\": 1,{Environment.NewLine}" +
                        $"  \"access_token\": \"token{_tokenCounter}\"{Environment.NewLine}" +
                         "}";
             _tokenCounter++;

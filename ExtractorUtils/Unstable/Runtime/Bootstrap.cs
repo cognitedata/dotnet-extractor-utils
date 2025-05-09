@@ -40,9 +40,16 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// <inheritdoc />
         public async Task Flush(CancellationToken token)
         {
-            if (_pendingErrors.Count == 0)
+
+            List<ErrorWithTask> errorsToFlush;
+            lock (_lock)
             {
-                return;
+                if (_pendingErrors.Count == 0)
+                {
+                    return;
+                }
+                errorsToFlush = _pendingErrors.Values.ToList();
+                _pendingErrors.Clear();
             }
 
             try
@@ -53,19 +60,27 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                         .CheckInAsync(new CheckInRequest
                         {
                             ExternalId = _integrationId,
-                            Errors = _pendingErrors.Values.ToList()
+                            Errors = errorsToFlush
                         }, token).ConfigureAwait(false);
                 }
                 else
                 {
                     _logger.LogWarning("No integration provided for error reporting. Errors will not be sent to CDF.");
                 }
-
-                _pendingErrors.Clear();
             }
             catch (Exception ex)
             {
                 _logger.LogError("Failed to report errors to CDF: {Message}", ex.Message);
+                // If flushing failed these will probably never be pushed. For consistency we re-queue them like
+                // the normal check-in worker.
+                lock (_lock)
+                {
+                    foreach (var error in errorsToFlush)
+                    {
+                        if (!_pendingErrors.ContainsKey(error.ExternalId)) _pendingErrors.Add(error.ExternalId, error);
+                    }
+                }
+
             }
         }
 
