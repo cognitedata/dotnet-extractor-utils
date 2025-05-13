@@ -23,8 +23,9 @@ namespace Cognite.Extensions.Unstable
         /// Create an authenticator using this configuration object.
         /// </summary>
         /// <param name="provider">Service provider, must contain an HTTP client.</param>
+        /// <param name="authClientName">Name of the HTTP client to use.</param>
         /// <returns>Authenticator.</returns>
-        public abstract IAuthenticator GetAuthenticator(IServiceProvider provider);
+        public abstract IAuthenticator GetAuthenticator(IServiceProvider provider, string authClientName);
 
         /// <summary>
         /// Get a map from discriminator value to type for this union.
@@ -97,9 +98,10 @@ namespace Cognite.Extensions.Unstable
         }
 
         /// <inheritdoc />
-        public override IAuthenticator GetAuthenticator(IServiceProvider provider)
+        public override IAuthenticator GetAuthenticator(IServiceProvider provider, string authClientName)
         {
-            return new Authenticator(this, provider.GetRequiredService<HttpClient>(), provider.GetService<ILogger<IAuthenticator>>());
+            var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+            return new Authenticator(this, httpClientFactory.CreateClient(authClientName), provider.GetService<ILogger<IAuthenticator>>());
         }
     }
 
@@ -136,13 +138,13 @@ namespace Cognite.Extensions.Unstable
         public ListOrSpaceSeparated? Scopes { get; set; }
 
         /// <inheritdoc />
-        public override IAuthenticator GetAuthenticator(IServiceProvider provider)
+        public override IAuthenticator GetAuthenticator(IServiceProvider provider, string authClientName)
         {
             return new MsalAuthenticator(
                 this,
                 provider.GetService<ILogger<IAuthenticator>>() ?? new NullLogger<IAuthenticator>(),
                 provider.GetRequiredService<IHttpClientFactory>(),
-                "AuthenticatorClient"
+                authClientName
             );
         }
     }
