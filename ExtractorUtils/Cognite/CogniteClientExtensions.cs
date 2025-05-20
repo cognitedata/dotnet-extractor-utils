@@ -45,9 +45,11 @@ namespace Cognite.Extractor.Utils
         /// <param name="client">Cognite SDK client</param>
         /// <param name="project">Configured project</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="checkProjectOwnership">If true, check if the token has access to the project. Note
+        /// that this check requires projects:list and groups:list.</param>
         /// <exception cref="CogniteUtilsException">Thrown when credentials are invalid
         /// or the client cannot be used to access CDF resources</exception>
-        public async static Task TestCogniteConfig(this Client client, string project, CancellationToken token)
+        public async static Task TestCogniteConfig(this Client client, string project, CancellationToken token, bool checkProjectOwnership = true)
         {
             if (project?.TrimToNull() == null)
             {
@@ -59,9 +61,9 @@ namespace Cognite.Extractor.Utils
             {
                 tokenInspect = await client.Token.InspectAsync(token).ConfigureAwait(false);
             }
-            if (tokenInspect.Projects == null || !tokenInspect.Projects.Any(p => p.ProjectUrlName == project))
+            if (checkProjectOwnership && (tokenInspect.Projects == null || !tokenInspect.Projects.Any(p => p.ProjectUrlName == project)))
             {
-                throw new CogniteUtilsException($"CDF credentials are not associated with project {project}");
+                throw new CogniteUtilsException($"CDF credentials are not associated with project {project}, or the token lacks projects:list and groups:list permissions");
             }
         }
     }

@@ -205,5 +205,14 @@ namespace ExtractorUtils.Test.Unit
 
             Assert.Equal(1, await task2);
         }
+
+        [Fact]
+        public async Task TestSchedulerTimeout()
+        {
+            using var source = new CancellationTokenSource();
+            using var scheduler = new PeriodicScheduler(source.Token);
+            scheduler.ScheduleTask("forever", (_t) => Task.Delay(Timeout.Infinite, source.Token));
+            await Assert.ThrowsAsync<TimeoutException>(() => scheduler.ExitAllAndWait(200));
+        }
     }
 }

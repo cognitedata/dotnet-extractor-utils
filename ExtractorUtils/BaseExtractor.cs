@@ -77,6 +77,12 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         protected RemoteConfigManager<TConfig>? ConfigManager { get; }
 
+        /// <summary>
+        /// Timeout in milliseconds for the scheduler to shut down when closing.
+        /// Defaults to 0, which waits forever.
+        /// </summary>
+        protected int SchedulerExitTimeoutMs { get; set; }
+
         private readonly ILogger<BaseExtractor<TConfig>> _logger;
 
         /// <summary>
@@ -383,7 +389,7 @@ namespace Cognite.Extractor.Utils
                     try
                     {
                         // Cannot be allowed to fail here
-                        Scheduler.ExitAllAndWait().Wait();
+                        Scheduler.ExitAllAndWait(SchedulerExitTimeoutMs).Wait();
                     }
                     catch { }
                     Scheduler.Dispose();
@@ -417,7 +423,7 @@ namespace Cognite.Extractor.Utils
             {
                 try
                 {
-                    await Scheduler.ExitAllAndWait().ConfigureAwait(false);
+                    await Scheduler.ExitAllAndWait(SchedulerExitTimeoutMs).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
