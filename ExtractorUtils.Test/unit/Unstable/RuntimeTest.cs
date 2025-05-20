@@ -132,7 +132,7 @@ authentication:
         }
 
         [Fact(Timeout = 5000)]
-        public async Task TestBootstrapSinks()
+        public async Task TestLogSink()
         {
             // Sink that doesn't do anything with the errors except log them
             var services = new ServiceCollection();
@@ -143,6 +143,13 @@ authentication:
             e.Instant();
             sink.ReportTaskStart("task");
             sink.ReportTaskEnd("task");
+        }
+
+        [Fact(Timeout = 5000)]
+        public async Task TestBootstrapSink()
+        {
+            var services = new ServiceCollection();
+            services.AddTestLogging(_output);
 
             // Sink that only allows reporting errors, for bootstrap during startup.
             services.AddSingleton(TestUtilities.GetMockedHttpClientFactory(mockRequestsAsync).factory.Object);
@@ -155,7 +162,7 @@ authentication:
                 provider.GetRequiredService<ILogger<RuntimeTest>>()
             );
             using var e2 = new ExtractorError(ErrorLevel.error, "test", sink2, "details", null, DateTime.UtcNow);
-            e.Instant();
+            e2.Instant();
 
             await sink2.Flush(CancellationToken.None);
             Assert.Single(errors);
