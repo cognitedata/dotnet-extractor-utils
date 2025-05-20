@@ -156,23 +156,23 @@ authentication:
             services.AddCogniteClient("myApp");
             services.AddConfig(GetConfig(), typeof(ConnectionConfig));
             var provider = services.BuildServiceProvider();
-            var sink2 = new BootstrapErrorReporter(
+            var sink = new BootstrapErrorReporter(
                 provider.GetRequiredService<Client>(),
                 "test-integration",
                 provider.GetRequiredService<ILogger<RuntimeTest>>()
             );
-            using var e2 = new ExtractorError(ErrorLevel.error, "test", sink2, "details", null, DateTime.UtcNow);
-            e2.Instant();
+            using var e = new ExtractorError(ErrorLevel.error, "test", sink, "details", null, DateTime.UtcNow);
+            e.Instant();
 
-            await sink2.Flush(CancellationToken.None);
+            await sink.Flush(CancellationToken.None);
             Assert.Single(errors);
 
             Assert.Equal("test", (string)errors[0].description);
             Assert.Equal("details", (string)errors[0].details);
 
-            Assert.Throws<InvalidOperationException>(() => sink2.ReportTaskStart("task"));
-            Assert.Throws<InvalidOperationException>(() => sink2.ReportTaskEnd("task"));
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await sink2.RunPeriodicCheckIn(CancellationToken.None, new StartupRequest()));
+            Assert.Throws<InvalidOperationException>(() => sink.ReportTaskStart("task"));
+            Assert.Throws<InvalidOperationException>(() => sink.ReportTaskEnd("task"));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await sink.RunPeriodicCheckIn(CancellationToken.None, new StartupRequest()));
         }
 
         private List<dynamic> taskEvents = new();
