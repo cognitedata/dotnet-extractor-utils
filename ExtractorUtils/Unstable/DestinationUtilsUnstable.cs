@@ -99,6 +99,61 @@ namespace Cognite.Extractor.Utils.Unstable
             };
         }
 
+        /// <summary>
+        /// Add a few HTTP client handlers for retries, timeouts, and certificate policy to an HTTP client builder.
+        /// </summary>
+        /// <param name="builder">The client builder to modify.</param>
+        /// <returns>The given client builder.</returns>
+        public static IHttpClientBuilder ConfigureCogniteHttpClientHandlers(this IHttpClientBuilder builder)
+        {
+            return builder.AddPolicyHandler((provider, message) =>
+            {
+                try
+                {
+                    var retryConfig = provider.GetService<ConnectionConfig>()?.CdfRetries;
+                    return CogniteExtensions.GetRetryPolicy(provider.GetService<ILogger<Client>>(),
+                        retryConfig?.MaxRetries, retryConfig?.MaxDelay);
+                }
+                catch (ObjectDisposedException)
+                {
+                    return CogniteExtensions.GetRetryPolicy(new NullLogger<Client>(), null, null);
+                }
+            })
+            .AddPolicyHandler((provider, message) =>
+            {
+                try
+                {
+                    var retryConfig = provider.GetService<ConnectionConfig>()?.CdfRetries;
+                    return CogniteExtensions.GetTimeoutPolicy(retryConfig?.Timeout);
+                }
+                catch (ObjectDisposedException)
+                {
+                    return CogniteExtensions.GetTimeoutPolicy(null);
+                }
+            })
+#if NETSTANDARD2_1_OR_GREATER
+            .ConfigurePrimaryHttpMessageHandler(provider =>
+            {
+                try
+                {
+                    var certConfig = provider.GetService<ConnectionConfig>()?.Certificates;
+                    return GetClientHandler(certConfig);
+                }
+                catch (ObjectDisposedException)
+                {
+                    return GetClientHandler(null);
+                }
+            });
+#else
+            ;
+#endif
+        }
+
+        /// <summary>
+        /// The name of the authenticator client, use this if you
+        /// wish to add your own HTTP client for authentication.
+        /// </summary>
+        public const string AUTH_CLIENT_NAME = "AuthenticatorClient";
 
         /// <summary>
         /// Adds a configured Cognite client to the <paramref name="services"/> collection as a transient service
@@ -124,76 +179,32 @@ namespace Cognite.Extractor.Utils.Unstable
             if (setHttpClient)
             {
                 services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
-                    .AddPolicyHandler((provider, message) =>
+                    .AddHttpMessageHandler(provider =>
                     {
                         try
                         {
-                            var retryConfig = provider.GetService<ConnectionConfig>()?.CdfRetries;
-                            return CogniteExtensions.GetRetryPolicy(provider.GetService<ILogger<Client>>(),
-                                retryConfig?.MaxRetries, retryConfig?.MaxDelay);
+                            return new AuthenticatorDelegatingHandler(provider.GetService<IAuthenticator>());
                         }
                         catch (ObjectDisposedException)
                         {
-                            return CogniteExtensions.GetRetryPolicy(new NullLogger<Client>(), null, null);
+                            return new AuthenticatorDelegatingHandler(null);
                         }
                     })
-                    .AddPolicyHandler((provider, message) =>
+                    .ConfigureCogniteHttpClientHandlers();
+
+                // Configure token based authentication
+                services.AddHttpClient(
+                    AUTH_CLIENT_NAME,
+                    c =>
                     {
-                        try
+                        if (userAgent != null)
                         {
-                            var retryConfig = provider.GetService<ConnectionConfig>()?.CdfRetries;
-                            return CogniteExtensions.GetTimeoutPolicy(retryConfig?.Timeout);
-                        }
-                        catch (ObjectDisposedException)
-                        {
-                            return CogniteExtensions.GetTimeoutPolicy(null);
+                            c.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
                         }
                     })
-#if NETSTANDARD2_1_OR_GREATER
-                    .ConfigurePrimaryHttpMessageHandler(provider =>
-                    {
-                        try
-                        {
-                            var certConfig = provider.GetService<ConnectionConfig>()?.Certificates;
-                            return GetClientHandler(certConfig);
-                        }
-                        catch (ObjectDisposedException)
-                        {
-                            return GetClientHandler(null);
-                        }
-                    });
-#else
-                    ;
-#endif
+                    .ConfigureCogniteHttpClientHandlers();
             }
 
-            // Configure token based authentication
-            var authClientName = "AuthenticatorClient";
-            services.AddHttpClient(
-                authClientName,
-                c =>
-                {
-                    if (userAgent != null)
-                    {
-                        c.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
-                    }
-                })
-#if NETSTANDARD2_1_OR_GREATER
-                .ConfigurePrimaryHttpMessageHandler(provider =>
-                {
-                    try
-                    {
-                        var certConfig = provider.GetService<ConnectionConfig>()?.Certificates;
-                        return GetClientHandler(certConfig);
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        return GetClientHandler(null);
-                    }
-                });
-#else
-                ;
-#endif
             services.AddTransient(provider =>
             {
                 var conf = provider.GetService<ConnectionConfig>();
@@ -203,7 +214,7 @@ namespace Cognite.Extractor.Utils.Unstable
                     return null!;
                 }
 
-                return conf.Authentication?.GetAuthenticator(provider)!;
+                return conf.Authentication?.GetAuthenticator(provider, AUTH_CLIENT_NAME)!;
             });
 
             services.AddSingleton<IMetrics, CdfMetricCollector>();
@@ -211,14 +222,13 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 var conf = provider.GetService<ConnectionConfig>();
                 if ((conf == null || conf.Project?.TrimToNull() == null) && !required) return null!;
-                var auth = provider.GetService<IAuthenticator>();
                 var cdfBuilder = provider.GetRequiredService<Client.Builder>();
                 var logger = setLogger ?
                     provider.GetRequiredService<ILogger<Client>>() : null;
                 CogniteExtensions.AddExtensionLoggers(provider);
                 var metrics = setMetrics ?
                     provider.GetRequiredService<IMetrics>() : null;
-                var client = cdfBuilder.Configure(conf!, appId, userAgent, auth, logger, metrics).Build();
+                var client = cdfBuilder.Configure(conf!, appId, userAgent, logger, metrics).Build();
                 return client;
             });
         }
@@ -231,7 +241,6 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <param name="config">A <see cref="ConnectionConfig"/> configuration object</param>
         /// <param name="appId">Identifier of the application using the Cognite API</param>
         /// <param name="userAgent">User-agent header</param>
-        /// <param name="auth">A <see cref="IAuthenticator"/> authenticator used to obtain bearer access token</param>
         /// <param name="logger">A <see cref="ILogger"/> logger that the client can use to log calls to the 
         /// Cognite API (enabled in debug mode)</param>
         /// <param name="metrics">A <see cref="IMetrics"/> metrics collector, that the client can use
@@ -244,7 +253,6 @@ namespace Cognite.Extractor.Utils.Unstable
             ConnectionConfig config,
             string? appId,
             string? userAgent = null,
-            IAuthenticator? auth = null,
             ILogger<Client>? logger = null,
             IMetrics? metrics = null)
         {
@@ -268,11 +276,6 @@ namespace Cognite.Extractor.Utils.Unstable
 
             if (config.BaseUrl?.TrimToNull() != null)
                 builder = builder.SetBaseUrl(new Uri(config.BaseUrl));
-
-            if (auth != null)
-            {
-                builder = builder.SetTokenProvider(token => auth.GetToken(token));
-            }
 
             if (config.SdkLogging != null && config.SdkLogging.Enabled && logger != null)
             {
