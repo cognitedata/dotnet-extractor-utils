@@ -114,7 +114,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// Called after config has been read. Can be used to modify the runner params and config object based on
         /// external parameters. New services can also be registered here based on the configuration object.
         /// </summary>
-        public Action<TConfig, ExtractorRuntimeBuilder<TConfig, TExtractor>>? OnConfigure { get; set; }
+        public Action<TConfig, ExtractorRuntimeBuilder<TConfig, TExtractor>, ServiceCollection>? OnConfigure { get; set; }
         /// <summary>
         /// Predefined list of services, added to the list of services defined by the runtime.
         /// </summary>
