@@ -20,6 +20,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
 {
     class DummyConfig : VersionedConfig
     {
+        public string Foo { get; set; }
         public override void GenerateDefaults()
         {
         }
@@ -28,6 +29,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
     class DummyExtractor : Cognite.Extractor.Utils.Unstable.BaseExtractor<DummyConfig>
     {
         public Action<ExtractorTaskScheduler> InitAction { get; set; }
+        public IIntegrationSink Sink { get; }
 
         public DummyExtractor(
             ConfigWrapper<DummyConfig> config,
@@ -37,6 +39,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             CogniteDestination destination = null) : base(config, provider,
             taskScheduler, sink, destination)
         {
+            Sink = sink;
         }
 
         public void AddMonitoredTaskPub(Func<CancellationToken, Task> task, ExtractorTaskResult staticResult, string name)

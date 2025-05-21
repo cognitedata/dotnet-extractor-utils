@@ -10,18 +10,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
-using System.Net.Http;
+using Cognite.Extractor.Common;
 using System;
+using System.Net.Http;
 using System.Net;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using CogniteSdk.Alpha;
 using System.Dynamic;
 using System.Net.Http.Headers;
+using CogniteSdk.Alpha;
 using Cognite.Extractor.Utils.Unstable.Tasks;
 using CogniteSdk;
 using Cognite.Extractor.Utils.Unstable;
 using Cognite.Extensions.Unstable;
+
 
 namespace ExtractorUtils.Test.unit.Unstable
 {
@@ -109,6 +111,121 @@ authentication:
 
             var configSource = runtime.GetType().GetField("_configSource", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             Assert.IsType<StaticConfigSource<DummyConfig>>(configSource.GetValue(runtime));
+        }
+
+        [Fact(Timeout = 5000)]
+        public async Task TestRuntime()
+        {
+            var builder = new ExtractorRuntimeBuilder<DummyConfig, DummyExtractor>("dotnetutilstest", "utilstest/1");
+            builder.NoConnection = true;
+            // Use an external config so we don't need a real config source.
+            builder.ExternalConfig = new DummyConfig();
+            var services = new ServiceCollection();
+            services.AddTestLogging(_output);
+            builder.StartupLogger = services.BuildServiceProvider().GetRequiredService<ILogger<RuntimeTest>>();
+            builder.AddLogger = false;
+            builder.ExternalServices = services;
+
+            using var evt = new ManualResetEventSlim(false);
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    evt.Set();
+                    extractor = ext;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+            var runTask = runtime.Run();
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+
+            Assert.NotNull(extractor);
+
+            source.Cancel();
+
+            await runTask;
+        }
+
+        [Fact(Timeout = 5000)]
+        public async Task TestRuntimeRestartNewConfig()
+        {
+            var builder = new ExtractorRuntimeBuilder<DummyConfig, DummyExtractor>("dotnetutilstest", "utilstest/1");
+            // builder.SetupHttpClient = false;
+            _responseRevision = new ConfigRevision
+            {
+                Revision = 1,
+                Config = "foo: bar"
+            };
+            var configPath = TestUtils.AlphaNumericPrefix("dotnet_extractor_test") + "_config";
+            builder.ConfigFolder = configPath;
+            Directory.CreateDirectory(configPath);
+            System.IO.File.WriteAllText(configPath + "/connection.yml", GetConnectionConfig());
+
+            var services = new ServiceCollection();
+            services.AddTestLogging(_output);
+            builder.StartupLogger = services.BuildServiceProvider().GetRequiredService<ILogger<RuntimeTest>>();
+
+            services.AddTransient(p =>
+            {
+                var mocks = TestUtilities.GetMockedHttpClientFactory(mockRequestsAsync);
+                return mocks.factory.Object;
+            });
+
+            builder.ExternalServices = services;
+            builder.AddLogger = false;
+
+            using var evt = new ManualResetEventSlim(false);
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    evt.Set();
+                    extractor = ext;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+            var runTask = runtime.Run();
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.NotNull(extractor);
+
+            // Wait for a startup to be reported.
+            await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
+
+            // Update the config revision and the extractor should be restarted.
+            var oldExtractor = extractor;
+            extractor = null;
+            evt.Reset();
+            _responseRevision = new ConfigRevision
+            {
+                Revision = 2,
+                Config = "foo: baz"
+            };
+
+            // Flush the sink to speed things along
+            await oldExtractor.Sink.Flush(source.Token);
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.NotNull(extractor);
+
+            // Wait for another startup to be reported.
+            await TestUtils.WaitForCondition(() => _startupCount == 2, 5);
+
+            // Finally, shut down the extractor.
+            source.Cancel();
+
+            await runTask;
         }
 
         private ConnectionConfig GetConfig()
