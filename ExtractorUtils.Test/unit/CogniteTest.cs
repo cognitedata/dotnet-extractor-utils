@@ -202,6 +202,15 @@ namespace ExtractorUtils.Test.Unit
             // This means we hit the auth endpoint 6 times in total.
             Assert.Equal(5, _tokenCounter);
             Assert.Equal(3, _sendRetries);
+
+            _tokenCounter = 0;
+            _sendRetries = 0;
+            config.Cognite.CdfRetries.MaxRetries = 1; // Set max retries to 1.
+            // Try again, this time it should fail.
+            await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery()));
+            // We should have hit the auth endpoint 2 times, and the assets endpoint 0 times.
+            Assert.Equal(2, _tokenCounter);
+            Assert.Equal(0, _sendRetries);
         }
 
         [Theory]
