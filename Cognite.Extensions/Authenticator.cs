@@ -429,4 +429,43 @@ namespace Cognite.Extensions
             }
         }
     }
+
+    /// <summary>
+    /// Delegating handler for adding authentication tokens to requests.
+    /// </summary>
+    public class AuthenticatorDelegatingHandler : DelegatingHandler
+    {
+        private IAuthenticator? _authenticator;
+        /// <summary>
+        /// Delegating handler for adding authentication tokens to requests.
+        /// Used instead of auth in the SDK to add tokens _inside_ retries.
+        /// </summary>
+        /// <param name="authenticator">The inner authenticator.
+        /// Can be null, in which case this handler is a no-op.</param>
+        public AuthenticatorDelegatingHandler(IAuthenticator? authenticator)
+        {
+            _authenticator = authenticator;
+        }
+
+        /// <inheritdoc />
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (_authenticator == null)
+            {
+                return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            }
+            var token = await _authenticator.GetToken(cancellationToken).ConfigureAwait(false);
+            if (token != null)
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                request.Headers.Remove("Authorization");
+            }
+
+            return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        }
+    }
 }

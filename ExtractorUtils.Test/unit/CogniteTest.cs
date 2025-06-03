@@ -150,6 +150,69 @@ namespace ExtractorUtils.Test.Unit
 
         }
 
+        [Fact]
+        public async Task TestClientAuthRetry()
+        {
+            string path = "test-cognite-retry-auth-config.yml";
+            string[] lines = {  "version: 2",
+                                "logger:",
+                                "  console:",
+                                "    level: verbose",
+                                "cognite:",
+                               $"  project: {_project}",
+                               $"  host: {_host}",
+                                "  cdf-retries:",
+                                "    max-retries: 3",
+                                "    timeout: 10000",
+                                "  idp-authentication:",
+                                "    implementation: Basic",
+                                "    client-id: someId",
+                                "    token-url: http://example.url/token",
+                                "    secret: thisIsASecret",
+                                "    scopes: ",
+                                "      - thisIsAScope"
+                             };
+            System.IO.File.WriteAllLines(path, lines);
+
+            var mocks = TestUtilities.GetMockedHttpClientFactory(mockAuthRetryAsync);
+            var mockHttpMessageHandler = mocks.handler;
+            var mockFactory = mocks.factory;
+            _sendRetries = 0;
+            _tokenCounter = 0;
+            // Setup services
+            var services = new ServiceCollection();
+            var config = services.AddConfig<BaseConfig>(path, 2);
+            services.AddSingleton(config.Cognite.IdpAuthentication);
+            services.AddTestLogging(_output);
+            services.AddHttpClient<Client.Builder>()
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpMessageHandlerStub(mockAuthRetryAsync))
+                .ConfigureCogniteHttpClientHandlers()
+                .AddHttpMessageHandler(provider => new AuthenticatorDelegatingHandler(provider.GetRequiredService<IAuthenticator>()));
+            services.AddHttpClient("AuthenticatorClient")
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpMessageHandlerStub(mockAuthRetryAsync))
+                .ConfigureCogniteHttpClientHandlers();
+
+            services.AddCogniteClient("testApp", setLogger: true, setMetrics: true, setHttpClient: false);
+            using var provider = services.BuildServiceProvider();
+            var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+            await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery());
+
+            // First we hit the auth endpoint 3 times, to get an initial valid token.
+            // Next, we hit the assets endpoint once, it fails, and when retrying we need to fetch a new token.
+            // This means we hit the auth endpoint 6 times in total.
+            Assert.Equal(5, _tokenCounter);
+            Assert.Equal(3, _sendRetries);
+
+            _tokenCounter = 0;
+            _sendRetries = 0;
+            config.Cognite.CdfRetries.MaxRetries = 1; // Set max retries to 1.
+            // Try again, this time it should fail.
+            await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery()));
+            // We should have hit the auth endpoint 2 times, and the assets endpoint 0 times.
+            Assert.Equal(2, _tokenCounter);
+            Assert.Equal(0, _sendRetries);
+        }
+
         [Theory]
         [InlineData("id1", "id2")]
         [InlineData("id3", "id4", "id5", "id6", "id7")]
@@ -551,9 +614,7 @@ namespace ExtractorUtils.Test.Unit
             return Task.FromResult(response);
         }
 
-#pragma warning disable CA1805 // Do not initialize unnecessarily
-        private static int _sendRetries = 0;
-#pragma warning restore CA1805 // Do not initialize unnecessarily
+        private static int _sendRetries;
 
         private static Task<HttpResponseMessage> mockCogniteAssetsRetryAsync(HttpRequestMessage message, CancellationToken token)
         {
@@ -583,6 +644,73 @@ namespace ExtractorUtils.Test.Unit
             });
 
         }
+
+        private static Task<HttpResponseMessage> mockAuthRetryAsync(HttpRequestMessage message, CancellationToken token)
+        {
+            var uri = message.RequestUri.ToString();
+            if (uri.Contains("/token"))
+            {
+                // First two token requests fail.
+                if (_tokenCounter < 2)
+                {
+                    _tokenCounter++;
+                    var errorReply = "{" + Environment.NewLine +
+                                $"  \"error\": \"something_wrong\"{Environment.NewLine}" +
+                                 "}";
+                    var errorResponse = new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.InternalServerError,
+                        Content = new StringContent(errorReply)
+                    };
+                    return Task.FromResult(errorResponse);
+                }
+                // build expected response
+                var reply = "{" + Environment.NewLine +
+                           $"  \"token_type\": \"Bearer\",{Environment.NewLine}" +
+                           $"  \"expires_in\": 0,{Environment.NewLine}" +
+                           $"  \"access_token\": \"token{_tokenCounter}\"{Environment.NewLine}" +
+                            "}";
+                _tokenCounter++;
+                // Return 200
+                var response = new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(reply)
+                };
+
+                return Task.FromResult(response);
+            }
+            else
+            {
+                // First two requests fail.
+                if (_sendRetries < 2)
+                {
+                    _sendRetries++;
+                    var errReply = "{" + Environment.NewLine +
+                    "  \"error\": {" + Environment.NewLine +
+                    "    \"code\": 500," + Environment.NewLine +
+                    "    \"message\": \"Internal server error\"" + Environment.NewLine +
+                    "  }" + Environment.NewLine +
+                    "}";
+                    var response = new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.InternalServerError,
+                        Content = new StringContent(errReply)
+                    };
+                    return Task.FromResult(response);
+                }
+
+                _sendRetries++;
+                var reply = @"{""items"":[]}";
+
+                return Task.FromResult(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(reply)
+                });
+            }
+        }
+
         public class HttpMessageHandlerStub : HttpMessageHandler
         {
             private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _sendAsync;
