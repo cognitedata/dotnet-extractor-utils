@@ -156,6 +156,25 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// </summary>
         public bool BufferRemoteConfig { get; set; } = true;
 
+        /// <summary>
+        /// Base backoff in milliseconds for restarting the extractor
+        /// after it failed to start. On a normal restart, for example
+        /// due to a config change, the backoff is not used unless
+        /// two restarts come in very quick succession.
+        /// 
+        /// The true backoff is calculated as
+        /// 
+        /// Min(MaxBackoff, BackoffBase * 2^n) where n is the number of
+        /// times the extractor has been restarted in a row.
+        /// </summary>
+        public int BackoffBase { get; set; } = 5000;
+
+        /// <summary>
+        /// Maximum backoff in milliseconds for restarting the extractor.
+        /// See `BackoffBase` for how the backoff is calculated.
+        /// </summary>
+        public int MaxBackoff { get; set; } = 60000;
+
 
         /// <summary>
         /// Static config file instead of reading from file as part of startup.

@@ -273,8 +273,10 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             }
             catch (Exception ex)
             {
+                _logger.LogCritical($"Failed to parse config: {isNewConfig}");
                 if (isNewConfig)
                 {
+                    _logger.LogCritical("Writing to reporter");
                     reporter.Fatal($"Failed to parse configuration file from CDF: {ex.Message}");
                 }
                 throw;

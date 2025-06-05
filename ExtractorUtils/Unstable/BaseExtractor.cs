@@ -294,9 +294,16 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <returns></returns>
         public async Task Start(CancellationToken token)
         {
-            await Init(token).ConfigureAwait(false);
-            // TODO: Post startup message to integrations.
-
+            try
+            {
+                await Init(token).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to initialize extractor: {Message}", ex.Message);
+                Fatal($"Failed to initialize extractor: {ex.Message}", ex.StackTrace?.ToString());
+                throw;
+            }
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
             AddMonitoredTask(t => _sink.RunPeriodicCheckIn(t, GetStartupRequest()), ExtractorTaskResult.Unexpected, "CheckInWorker");
