@@ -205,7 +205,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 services.Add(_params.ExternalServices);
             }
 
-            var bootstrap = new BootstrapErrorReporter(_setupServiceProvider.GetService<Client>(), _connectionConfig?.Integration, _activeLogger);
+            var bootstrapErrorReporter = new BootstrapErrorReporter(_setupServiceProvider.GetService<Client>(), _connectionConfig?.Integration, _activeLogger);
 
             try
             {
@@ -213,10 +213,10 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 // restarting unnecessarily.
                 _revisionChangedEvent.Reset();
 
-                var newConfig = await _configSource.ResolveConfig(null, bootstrap, _source.Token).ConfigureAwait(false);
+                var newConfig = await _configSource.ResolveConfig(null, bootstrapErrorReporter, _source.Token).ConfigureAwait(false);
                 if (_isFatal && !newConfig)
                 {
-                    _activeLogger.LogDebug("No new after fatal error, retrying");
+                    _activeLogger.LogDebug("No new config after fatal error, retrying");
                     return ExtractorRunResult.EarlyError;
                 }
             }
@@ -224,15 +224,15 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
             {
                 ex = ProcessConfigException(ex);
                 _activeLogger.LogError(ex, "Failed to resolve config");
-                await bootstrap.Flush(_source.Token).ConfigureAwait(false);
+                await bootstrapErrorReporter.Flush(_source.Token).ConfigureAwait(false);
                 return ExtractorRunResult.EarlyError;
             }
 
             var config = _configSource.GetConfigWrapper();
             // Register well-known config types. Since config objects are typically a composite of
-            // other config objects, we have mechanisms to automatically register all config types
-            // by recursively traversing the config object graph.
-            // `ConfigTypes` contains all the config types that we want to add, in addition to
+            // other config objects, `AddConfig` will automatically register all config types
+            // in the `configTypes` list by recursively traversing the config object graph.
+            // `configTypes` contains all the config types that we want to add, in addition to
             // a few built-in ones.
             var configTypes = (_params.ConfigTypes ?? Enumerable.Empty<Type>())
                 .Append(typeof(TConfig))
@@ -313,6 +313,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                         // but since the startup logger is often quite useless, this is better than nothing.
                         // In the future we may want to add an option to _also_ log to the startup logger.
                         // This might be handy for logging extractor events to e.g. windows event log.
+                        // TODO: Revisit the startup logger.
                         _activeLogger = provider.GetRequiredService<ILogger<TExtractor>>();
                     }
                     extractor = provider.GetRequiredService<TExtractor>();
