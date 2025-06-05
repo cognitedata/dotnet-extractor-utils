@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
@@ -353,6 +354,12 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                         _activeLogger.LogInformation("Revision changed, reloading config");
                         internalTokenSource.Cancel();
                         await extractorTask.ConfigureAwait(false);
+                    }
+
+                    // Rethrow the exception here, we handle it below.
+                    if (extractorTask.Exception != null)
+                    {
+                        ExceptionDispatchInfo.Capture(extractorTask.Exception).Throw();
                     }
                 }
                 catch (OperationCanceledException) when (internalTokenSource.IsCancellationRequested)

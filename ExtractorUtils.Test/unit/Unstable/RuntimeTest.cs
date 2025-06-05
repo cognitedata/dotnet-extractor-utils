@@ -240,6 +240,9 @@ authentication:
         {
             var builder = CreateMockRuntimeBuilder();
 
+            builder.MaxBackoff = 100;
+            builder.BackoffBase = 10;
+
             using var evt = new ManualResetEventSlim(false);
 
             DummyExtractor extractor = null;
