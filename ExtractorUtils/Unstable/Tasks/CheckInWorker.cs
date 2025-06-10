@@ -242,10 +242,10 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     // No point checking in pre-startup if there are no errors.
                     if (newErrors.Count == 0)
                     {
-                        _logger.LogInformation("Check-in worker has not reported startup yet, skipping check-in");
+                        _logger.LogInformation("Check-in worker has not reported startup yet, skipping check-in.");
                         return;
                     }
-                    _logger.LogWarning("Check-in worker has not reported startup yet, only reporting global errors");
+                    _logger.LogWarning("Check-in worker has not reported startup yet, only reporting errors not associated with a task.");
                     foreach (var err in newErrors)
                     {
                         _errors.Remove(err.ExternalId);

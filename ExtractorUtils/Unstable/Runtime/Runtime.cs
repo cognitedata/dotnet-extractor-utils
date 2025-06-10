@@ -150,7 +150,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
 
                 // Exponential backoff, with a fairly high minimum. 5 * 2^4 = 80 seconds, which should
                 // be enough time to not be unnecessarily harsh on the source system.
-                var backoffTime = TimeSpan.FromMilliseconds(Math.Min(_params.MaxBackoff * Math.Pow(2, backoff - 1), _params.MaxBackoff));
+                var backoffTime = TimeSpan.FromMilliseconds(Math.Min(_params.BackoffBase * Math.Pow(2, backoff - 1), _params.MaxBackoff));
                 _activeLogger.LogInformation("Restarting extractor after {Time}", backoffTime);
                 backoff += 1;
                 await Task.Delay(backoffTime, _source.Token).ConfigureAwait(false);
