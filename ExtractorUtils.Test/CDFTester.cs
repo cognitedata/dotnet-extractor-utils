@@ -32,7 +32,9 @@ namespace ExtractorUtils.Test
         public string Prefix { get; private set; }
         public BaseConfig Config { get; }
         private readonly string _configPath;
-        public string SpaceId { get; private set; }
+
+        private string _spaceId;
+        private bool _spaceUpserted;
 
         public CDFTester(string[] config, ITestOutputHelper output)
         {
@@ -50,11 +52,22 @@ namespace ExtractorUtils.Test
             DestinationWithIDM = Provider.GetRequiredService<CogniteDestinationWithIDM>();
             Prefix = TestUtils.AlphaNumericPrefix("net-utils-test-");
             Source = new CancellationTokenSource();
-            SpaceId = $"dotnet-extractor-utils-test-space{i}";
+            _spaceId = $"dotnet-extractor-utils-test-space{i}";
         }
         public CDFTester(CogniteHost host, ITestOutputHelper output) : this(GetConfig(host), output)
         {
-            DestinationWithIDM.CogniteClient.DataModels.UpsertSpaces(new List<SpaceCreate>() { new() { Space = SpaceId } }).GetAwaiter().GetResult();
+        }
+
+        public async Task<string> GetSpaceId()
+        {
+            if (_spaceUpserted)
+            {
+                return _spaceId;
+            }
+
+            await DestinationWithIDM.CogniteClient.DataModels.UpsertSpaces(new List<SpaceCreate>() { new() { Space = _spaceId } });
+
+            return _spaceId;
         }
 
         public async Task<long> GetDataSetId()
@@ -144,7 +157,10 @@ namespace ExtractorUtils.Test
                 if (disposing)
                 {
                     System.IO.File.Delete(_configPath);
-                    DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { SpaceId });
+                    if (_spaceUpserted)
+                    {
+                        DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }).Wait();
+                    }
                     Provider.Dispose();
                     Source.Dispose();
                 }
