@@ -27,11 +27,11 @@ namespace ExtractorUtils.Test.Integration
             _output = output;
         }
 
-        private static SourcedNodeWrite<CogniteExtractorTimeSeries> GetWritableTS(CDFTester tester, string externalId, TimeSeriesType? tsType = TimeSeriesType.Numeric, Func<SourcedNodeWrite<CogniteExtractorTimeSeries>, SourcedNodeWrite<CogniteExtractorTimeSeries>> extraPopulateMethod = null)
+        private static SourcedNodeWrite<CogniteExtractorTimeSeries> GetWritableTS(CDFTester tester, string externalId, string spaceId, TimeSeriesType? tsType = TimeSeriesType.Numeric, Func<SourcedNodeWrite<CogniteExtractorTimeSeries>, SourcedNodeWrite<CogniteExtractorTimeSeries>> extraPopulateMethod = null)
         {
             var ret = new SourcedNodeWrite<CogniteExtractorTimeSeries>
             {
-                Space = tester.SpaceId,
+                Space = spaceId,
                 ExternalId = externalId,
                 Properties = new CogniteExtractorTimeSeries() { Type = tsType }
             };
@@ -44,11 +44,12 @@ namespace ExtractorUtils.Test.Integration
 
         private static async Task<InstanceIdentifier[]> CreateTestTimeSeries(CDFTester tester)
         {
+            var spaceId = await tester.GetSpaceId();
             var timeseries = new[]
             {
-                GetWritableTS(tester, "utils-test-ts-1", extraPopulateMethod: x => {x.Properties.Name = "utils-test-ts-1"; return x;}),
-                GetWritableTS(tester, "utils-test-ts-2", TimeSeriesType.String, x => {x.Properties.Name = "utils-test-ts-2"; return x;}),
-                GetWritableTS(tester, "utils-test-ts-3", extraPopulateMethod: x => {x.Properties.Name = "utils-test-ts-3"; return x;}),
+                GetWritableTS(tester, "utils-test-ts-1", spaceId, extraPopulateMethod: x => {x.Properties.Name = "utils-test-ts-1"; return x;}),
+                GetWritableTS(tester, "utils-test-ts-2", spaceId, TimeSeriesType.String, x => {x.Properties.Name = "utils-test-ts-2"; return x;}),
+                GetWritableTS(tester, "utils-test-ts-3", spaceId, extraPopulateMethod: x => {x.Properties.Name = "utils-test-ts-3"; return x;}),
             };
 
             var result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.None, SanitationMode.None, tester.Source.Token);
@@ -61,15 +62,16 @@ namespace ExtractorUtils.Test.Integration
         public async Task TestCreateTimeSeries(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
             var ids = new[] {
                 $"{tester.Prefix} ts-1",
                 $"{tester.Prefix} ts-2",
                 $"{tester.Prefix} ts-3",
                 $"{tester.Prefix} ts-4",
                 $"{tester.Prefix} ts-5",
-            }.Select(x => new InstanceIdentifier(tester.SpaceId, x));
+            }.Select(x => new InstanceIdentifier(spaceId, x));
 
-            var timeseries1 = new[] { $"{tester.Prefix} ts-1", $"{tester.Prefix} ts-2", $"{tester.Prefix} ts-3" }.Select(x => GetWritableTS(tester, x));
+            var timeseries1 = new[] { $"{tester.Prefix} ts-1", $"{tester.Prefix} ts-2", $"{tester.Prefix} ts-3" }.Select(x => GetWritableTS(tester, x, spaceId));
 
             try
             {
@@ -77,7 +79,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.True(result.IsAllGood);
                 Assert.Equal(3, result.Results.Count());
 
-                var timeseries2 = new[] { GetWritableTS(tester, $"{tester.Prefix} ts-1"), GetWritableTS(tester, $"{tester.Prefix} ts-4") };
+                var timeseries2 = new[] { GetWritableTS(tester, $"{tester.Prefix} ts-1", spaceId), GetWritableTS(tester, $"{tester.Prefix} ts-4", spaceId) };
 
                 result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries2, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
 
@@ -88,7 +90,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     Assert.Single(toCreate);
                     Assert.Equal($"{tester.Prefix} ts-5", toCreate.First().ExternalId);
-                    return new[] { GetWritableTS(tester, $"{tester.Prefix} ts-5") };
+                    return new[] { GetWritableTS(tester, $"{tester.Prefix} ts-5", spaceId) };
                 }, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
 
                 Assert.Equal(5, result.Results.Count());
@@ -106,17 +108,18 @@ namespace ExtractorUtils.Test.Integration
         public async Task TestSanitation(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
 
             var timeseries = new[] {
-                GetWritableTS(tester, tester.Prefix + new string('æ', 300), extraPopulateMethod: x => {
+                GetWritableTS(tester, tester.Prefix + new string('æ', 300), spaceId, extraPopulateMethod: x => {
                    x.Properties.Name = new string('ø', 1000);
                    x.Properties.Description = new string('æ', 1000);
                    x.Properties.SourceUnit = new string('æ', 1000);
                    x.Properties.extractedData = Enumerable.Range(0, 100).ToDictionary(i => $"key{i:000}{new string('æ', 100)}", i => new string('æ', 200));
                    return x;
                 }),
-                GetWritableTS(tester, $"{tester.Prefix} test-duplicate-externalId", extraPopulateMethod: x => { x.Properties.Name = "test-duplicate-externalId"; return x; }),
-                GetWritableTS(tester, $"{tester.Prefix} test-duplicate-externalId", extraPopulateMethod: x => { x.Properties.Name = "test-duplicate-externalId"; return x; }),
+                GetWritableTS(tester, $"{tester.Prefix} test-duplicate-externalId", spaceId, extraPopulateMethod: x => { x.Properties.Name = "test-duplicate-externalId"; return x; }),
+                GetWritableTS(tester, $"{tester.Prefix} test-duplicate-externalId", spaceId, extraPopulateMethod: x => { x.Properties.Name = "test-duplicate-externalId"; return x; }),
             };
 
             IEnumerable<SourcedNode<CogniteExtractorTimeSeries>> created = null;
@@ -138,7 +141,7 @@ namespace ExtractorUtils.Test.Integration
             {
                 if (created != null)
                 {
-                    var ids = created.Select(x => new InstanceIdentifier(tester.SpaceId, x.ExternalId));
+                    var ids = created.Select(x => new InstanceIdentifier(spaceId, x.ExternalId));
                     await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(ids.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
                 }
             }
@@ -150,10 +153,11 @@ namespace ExtractorUtils.Test.Integration
         public async Task TestUpdateTimeSeries(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
 
             var tss = await CreateTestTimeSeries(tester);
 
-            var updates = tss.Select(x => GetWritableTS(tester, x.ExternalId, null, x => { x.Properties.Description = "new description"; return x; }));
+            var updates = tss.Select(x => GetWritableTS(tester, x.ExternalId, spaceId, null, x => { x.Properties.Description = "new description"; return x; }));
 
             try
             {
@@ -179,6 +183,7 @@ namespace ExtractorUtils.Test.Integration
         {
             using var tester = new CDFTester(host, _output);
 
+            var spaceId = await tester.GetSpaceId();
             var tss = await CreateTestTimeSeries(tester);
 
             var meta = Enumerable.Range(0, 100)
@@ -186,15 +191,15 @@ namespace ExtractorUtils.Test.Integration
 
             var updates = new[]
             {
-                GetWritableTS(tester, tss[0].ExternalId, null, x => {
+                GetWritableTS(tester, tss[0].ExternalId, spaceId, null, x => {
                     x.Properties.Description = new string('æ', 2000);
                     x.Properties.extractedData = meta;
                     x.Properties.Name = new string('æ', 300);
                     x.Properties.SourceUnit = new string('æ', 200);
                     return x;
                 }),
-                GetWritableTS(tester, tss[1].ExternalId, null, x => {x.Properties.Name = "name"; return x;}),
-                GetWritableTS(tester, tss[1].ExternalId, null, x => {x.Properties.Name = "name"; return x;})
+                GetWritableTS(tester, tss[1].ExternalId, spaceId, null, x => {x.Properties.Name = "name"; return x;}),
+                GetWritableTS(tester, tss[1].ExternalId, spaceId, null, x => {x.Properties.Name = "name"; return x;})
             };
 
             try
@@ -410,6 +415,7 @@ namespace ExtractorUtils.Test.Integration
         {
             using var tester = new CDFTester(host, _output);
 
+            var spaceId = await tester.GetSpaceId();
             var tss = await CreateTestTimeSeries(tester);
 
             var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
@@ -432,7 +438,7 @@ namespace ExtractorUtils.Test.Integration
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
                     new Datapoint(DateTime.UtcNow.AddSeconds(2), "test2")
                 } },
-                { Identity.Create(new InstanceIdentifier(tester.SpaceId, "missing-ts-1")), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
+                { Identity.Create(new InstanceIdentifier(spaceId, "missing-ts-1")), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
             };
 
             try
@@ -470,6 +476,7 @@ namespace ExtractorUtils.Test.Integration
         {
             using var tester = new CDFTester(host, _output);
 
+            var spaceId = await tester.GetSpaceId();
             var tss = await CreateTestTimeSeries(tester);
 
             var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
@@ -480,8 +487,8 @@ namespace ExtractorUtils.Test.Integration
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), 2.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(2), 3.0)
                 } },
-                { Identity.Create(new InstanceIdentifier(tester.SpaceId, $"{tester.Prefix} utils-test-ts-missing-1")), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
-                { Identity.Create(new InstanceIdentifier(tester.SpaceId, $"{tester.Prefix} utils-test-ts-missing-2")), new[] { new Datapoint(DateTime.UtcNow, "test") } },
+                { Identity.Create(new InstanceIdentifier(spaceId, $"{tester.Prefix} utils-test-ts-missing-1")), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
+                { Identity.Create(new InstanceIdentifier(spaceId, $"{tester.Prefix} utils-test-ts-missing-2")), new[] { new Datapoint(DateTime.UtcNow, "test") } },
             };
 
             try
@@ -503,7 +510,7 @@ namespace ExtractorUtils.Test.Integration
                 var toDel = tss
                     .Select(ts => ts.ExternalId)
                     .Concat(new[] { $"{tester.Prefix} utils-test-ts-missing-1", $"{tester.Prefix} utils-test-ts-missing-2" })
-                    .Select(x => new InstanceIdentifier(tester.SpaceId, x));
+                    .Select(x => new InstanceIdentifier(spaceId, x));
                 await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(toDel.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
             }
         }
