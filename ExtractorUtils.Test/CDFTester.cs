@@ -66,6 +66,7 @@ namespace ExtractorUtils.Test
             }
 
             await DestinationWithIDM.CogniteClient.DataModels.UpsertSpaces(new List<SpaceCreate>() { new() { Space = _spaceId } });
+            _spaceUpserted = true;
 
             return _spaceId;
         }
