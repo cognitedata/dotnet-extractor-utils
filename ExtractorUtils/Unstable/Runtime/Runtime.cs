@@ -29,6 +29,10 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// </summary>
         EarlyError,
         /// <summary>
+        /// The extractor failed to load configuration, or the configuration was invalid.
+        /// </summary>
+        ConfigError,
+        /// <summary>
         /// The extractor crashed.
         /// </summary>
         Error,
@@ -53,7 +57,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
 
         private AutoResetEvent _revisionChangedEvent = new AutoResetEvent(false);
 
-        private bool _isFatal;
+        private ExtractorRunResult? _lastRunResult;
 
         private ILogger _activeLogger;
         private ILogger _startupLogger => _params.StartupLogger;
@@ -106,12 +110,17 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 var result = await RunExtractorIteration().ConfigureAwait(false);
                 // If restart policy is never, or we are cancelled, the runtime exits here.
                 if (_params.RestartPolicy == ExtractorRestartPolicy.Never || _source.IsCancellationRequested) break;
-                if (result == ExtractorRunResult.EarlyError)
+                _lastRunResult = result;
+                if (result == ExtractorRunResult.ConfigError)
+                {
+                    // If the extractor failed to load configuration, we need to back off before retrying.
+                    // This typically means the config is invalid, and replacing it will take some time.
+                    backoff += 1;
+                }
+                else if (result == ExtractorRunResult.EarlyError)
                 {
                     // If the extractor failed to start, we need to back off before retrying,
-                    // to avoid retrying too quickly. Typically an early error is a config error,
-                    // so we need to wait for a new config to be provided, which will take time.
-                    _isFatal = true;
+                    // to avoid retrying too quickly.
                     backoff += 1;
                 }
                 else if (result == ExtractorRunResult.Error)
@@ -119,7 +128,6 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                     // This is the result of a normal error in the extractor. We only want to back off
                     // if the error happened very quickly after starting the extractor.
                     // In this case, rapid restarts can really hammer the source system.
-                    _isFatal = false;
                     backoff += 1;
                     var elapsed = DateTime.UtcNow - startTime;
                     // If the extractor shut down quickly, avoid immediately restarting
@@ -132,13 +140,12 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 else if (result == ExtractorRunResult.CleanShutdown)
                 {
                     // Shut down, if the extractor is configured to only restart on error.
-                    if (_params.RestartPolicy == ExtractorRestartPolicy.OnError)
+                    if (_params.RestartPolicy != ExtractorRestartPolicy.Always)
                     {
                         _activeLogger.LogInformation("Extractor closed cleanly, shutting down");
                         break;
                     }
                     // Otherwise, immediately restart.
-                    _isFatal = false;
                     backoff = 0;
                 }
 
@@ -152,7 +159,6 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 // be enough time to not be unnecessarily harsh on the source system.
                 var backoffTime = TimeSpan.FromMilliseconds(Math.Min(_params.BackoffBase * Math.Pow(2, backoff - 1), _params.MaxBackoff));
                 _activeLogger.LogInformation("Restarting extractor after {Time}", backoffTime);
-                backoff += 1;
                 await Task.Delay(backoffTime, _source.Token).ConfigureAwait(false);
             }
         }
@@ -214,10 +220,10 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 _revisionChangedEvent.Reset();
 
                 var newConfig = await _configSource.ResolveConfig(null, bootstrapErrorReporter, _source.Token).ConfigureAwait(false);
-                if (_isFatal && !newConfig)
+                if (_lastRunResult == ExtractorRunResult.ConfigError && !newConfig)
                 {
-                    _activeLogger.LogDebug("No new config after fatal error, retrying");
-                    return ExtractorRunResult.EarlyError;
+                    _activeLogger.LogDebug("No new config after config error, retrying");
+                    return ExtractorRunResult.ConfigError;
                 }
             }
             catch (Exception ex)
@@ -225,7 +231,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 ex = ProcessConfigException(ex);
                 _activeLogger.LogError(ex, "Failed to resolve config");
                 await bootstrapErrorReporter.Flush(_source.Token).ConfigureAwait(false);
-                return ExtractorRunResult.EarlyError;
+                return ExtractorRunResult.ConfigError;
             }
 
             var config = _configSource.GetConfigWrapper();
@@ -326,6 +332,10 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 catch (Exception ex)
                 {
                     _activeLogger.LogError(ex, "Failed to build extractor: {msg}", ex.Message);
+                    if (ex is ConfigurationException)
+                    {
+                        return ExtractorRunResult.ConfigError;
+                    }
                     // Possibly a config error, but this would be a bug in the extractor.
                     // Extractors should strive to report all possible config errors before
                     // constructing the extractor itself.
@@ -380,11 +390,6 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                         _params.LogException(_activeLogger, ex, "Extractor crashed unexpectedly");
                     }
 
-                    if (_params.IsFatalException?.Invoke(ex) ?? false)
-                    {
-                        _activeLogger.LogInformation("Fatal exception encountered, waiting until new config is provided");
-                        _isFatal = true;
-                    }
                     return ExtractorRunResult.Error;
                 }
 

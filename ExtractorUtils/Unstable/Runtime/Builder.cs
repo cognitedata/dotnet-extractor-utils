@@ -145,12 +145,6 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// </summary>
         public IEnumerable<Type>? ConfigTypes { get; set; }
         /// <summary>
-        /// Let this method return true if the exception is fatal. Fatal exceptions are assumed to be
-        /// unrecoverable without new config, so the extractor will wait until a new configuration is provided
-        /// before attempting to run again.
-        /// </summary>
-        public Func<Exception, bool>? IsFatalException { get; set; }
-        /// <summary>
         /// True to buffer config if it is fetched from remote. Requires a config path to be set.
         /// Defaults to true.
         /// </summary>
