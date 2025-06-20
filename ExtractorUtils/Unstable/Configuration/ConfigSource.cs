@@ -294,7 +294,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to retrieve configuration from integration {Int} file: {Message}", _integrationId, ex.Message);
+                _logger.LogError("Failed to retrieve configuration from integration {Int}: {Message}", _integrationId, ex.Message);
                 if (_bufferFilePath != null)
                 {
                     if (!System.IO.File.Exists(_bufferFilePath)) throw new ConfigurationException($"Could not retrieve remote configuration, and local buffer does not exist: {ex.Message}", ex);
