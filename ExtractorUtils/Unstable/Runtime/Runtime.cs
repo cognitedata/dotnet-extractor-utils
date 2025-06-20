@@ -60,7 +60,6 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         private ExtractorRunResult? _lastRunResult;
 
         private ILogger _activeLogger;
-        private ILogger _startupLogger => _params.StartupLogger;
 
 
         internal ExtractorRuntime(
@@ -234,6 +233,25 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 return ExtractorRunResult.ConfigError;
             }
 
+            var provider = BuildServiceProvider(services);
+            // Note: The `await using` here effectively handles graceful shutdown of the extractor.
+            // When a service provider is disposed, all registered services are also disposed,
+            // and extractor cleanup is handled as part of async disposal.
+            await using (provider.ConfigureAwait(false))
+            {
+                return await BuildAndRunExtractor(provider).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Construct a service provider for the extractor.
+        /// This method is called once per extractor run, and is responsible for
+        /// registering all services needed by the extractor.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        private ServiceProvider BuildServiceProvider(ServiceCollection services)
+        {
             var config = _configSource.GetConfigWrapper();
             // Register well-known config types. Since config objects are typically a composite of
             // other config objects, `AddConfig` will automatically register all config types
@@ -297,104 +315,108 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 _params.OnConfigure(config.Config, _params, services);
             }
 
-            var provider = services.BuildServiceProvider();
-            // Note: The `await using` here effectively handles graceful shutdown of the extractor.
-            // When a service provider is disposed, all registered services are also disposed,
-            // and extractor cleanup is handled as part of async disposal.
-            await using (provider.ConfigureAwait(false))
+            return services.BuildServiceProvider();
+        }
+
+        /// <summary>
+        /// Construct the extractor, then run it until it crashes or stops on its own.
+        /// </summary>
+        /// <param name="provider">Service provider. The caller is responsible for disposing of the
+        /// service provider.</param>
+        /// <returns>The result type of running the extractor.</returns>
+        private async Task<ExtractorRunResult> BuildAndRunExtractor(ServiceProvider provider)
+        {
+            using var internalTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
+            TExtractor extractor;
+            try
             {
-                using var internalTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
-                TExtractor extractor;
-                try
+                if (_params.AddMetrics)
                 {
-                    if (_params.AddMetrics)
-                    {
-                        var metrics = provider.GetRequiredService<MetricsService>();
-                        metrics.Start();
-                    }
-                    if (_params.AddLogger)
-                    {
-                        // Set the persistent active logger. This is somewhat of a hack, since it effectively
-                        // means we will only use the startup logger until we actually have a valid config,
-                        // but since the startup logger is often quite useless, this is better than nothing.
-                        // In the future we may want to add an option to _also_ log to the startup logger.
-                        // This might be handy for logging extractor events to e.g. windows event log.
-                        // TODO: Revisit the startup logger.
-                        _activeLogger = provider.GetRequiredService<ILogger<TExtractor>>();
-                    }
-                    extractor = provider.GetRequiredService<TExtractor>();
-                    if (_params.OnCreateExtractor != null)
-                    {
-                        var destination = provider.GetService<CogniteDestination>();
-                        _params.OnCreateExtractor(destination, extractor);
-                    }
+                    var metrics = provider.GetRequiredService<MetricsService>();
+                    metrics.Start();
                 }
-                catch (Exception ex)
+                if (_params.AddLogger)
                 {
-                    _activeLogger.LogError(ex, "Failed to build extractor: {msg}", ex.Message);
-                    if (ex is ConfigurationException)
-                    {
-                        return ExtractorRunResult.ConfigError;
-                    }
-                    // Possibly a config error, but this would be a bug in the extractor.
-                    // Extractors should strive to report all possible config errors before
-                    // constructing the extractor itself.
-                    return ExtractorRunResult.EarlyError;
+                    // Set the persistent active logger. This is somewhat of a hack, since it effectively
+                    // means we will only use the startup logger until we actually have a valid config,
+                    // but since the startup logger is often quite useless, this is better than nothing.
+                    // In the future we may want to add an option to _also_ log to the startup logger.
+                    // This might be handy for logging extractor events to e.g. windows event log.
+                    // TODO: Revisit the startup logger.
+                    _activeLogger = provider.GetRequiredService<ILogger<TExtractor>>();
                 }
-
-                try
+                extractor = provider.GetRequiredService<TExtractor>();
+                if (_params.OnCreateExtractor != null)
                 {
-                    // Do not wait for the cancellation token here, since we want to give the extractor the opportunity
-                    // to shut down cleanly.
-                    var waitTask = CommonUtils.WaitAsync(_revisionChangedEvent, Timeout.InfiniteTimeSpan, CancellationToken.None);
-                    var extractorTask = extractor.Start(internalTokenSource.Token);
-
-                    var completed = await Task.WhenAny(waitTask, extractorTask).ConfigureAwait(false);
-                    // If the external source was cancelled here, the reason for termination doesn't really matter.
-                    // We just want to close the program completely.
-                    if (_source.IsCancellationRequested)
-                    {
-                        _activeLogger.LogInformation("Extractor stopped manually");
-                        return ExtractorRunResult.CleanShutdown;
-                    }
-                    // If the wait task completed, we cancel the internal source to stop the extractor, then
-                    // wait for it to finish.
-                    if (completed == waitTask)
-                    {
-                        _activeLogger.LogInformation("Revision changed, reloading config");
-                        internalTokenSource.Cancel();
-                        await extractorTask.ConfigureAwait(false);
-                    }
-
-                    // Rethrow the exception here, we handle it below.
-                    if (extractorTask.Exception != null)
-                    {
-                        ExceptionDispatchInfo.Capture(extractorTask.Exception).Throw();
-                    }
+                    var destination = provider.GetService<CogniteDestination>();
+                    _params.OnCreateExtractor(destination, extractor);
                 }
-                catch (OperationCanceledException) when (internalTokenSource.IsCancellationRequested)
+            }
+            catch (Exception ex)
+            {
+                _activeLogger.LogError(ex, "Failed to build extractor: {msg}", ex.Message);
+                if (ex is ConfigurationException)
+                {
+                    return ExtractorRunResult.ConfigError;
+                }
+                // Possibly a config error, but this would be a bug in the extractor.
+                // Extractors should strive to report all possible config errors before
+                // constructing the extractor itself.
+                return ExtractorRunResult.EarlyError;
+            }
+
+            try
+            {
+                // Do not wait for the cancellation token here, since we want to give the extractor the opportunity
+                // to shut down cleanly.
+                var waitTask = CommonUtils.WaitAsync(_revisionChangedEvent, Timeout.InfiniteTimeSpan, CancellationToken.None);
+                var extractorTask = extractor.Start(internalTokenSource.Token);
+
+                var completed = await Task.WhenAny(waitTask, extractorTask).ConfigureAwait(false);
+                // If the external source was cancelled here, the reason for termination doesn't really matter.
+                // We just want to close the program completely.
+                if (_source.IsCancellationRequested)
                 {
                     _activeLogger.LogInformation("Extractor stopped manually");
+                    return ExtractorRunResult.CleanShutdown;
                 }
-                catch (Exception ex)
+                // If the wait task completed, we cancel the internal source to stop the extractor, then
+                // wait for it to finish.
+                if (completed == waitTask)
                 {
-                    if (ex is AggregateException aex) ex = aex.Flatten().InnerExceptions.First();
-
-                    if (_source.IsCancellationRequested)
-                    {
-                        _activeLogger.LogWarning("Extractor stopped manually");
-                        return ExtractorRunResult.CleanShutdown;
-                    }
-                    else
-                    {
-                        _params.LogException(_activeLogger, ex, "Extractor crashed unexpectedly");
-                    }
-
-                    return ExtractorRunResult.Error;
+                    _activeLogger.LogInformation("Revision changed, reloading config");
+                    internalTokenSource.Cancel();
+                    await extractorTask.ConfigureAwait(false);
                 }
 
-                return ExtractorRunResult.CleanShutdown;
+                // Rethrow the exception here, we handle it below.
+                if (extractorTask.Exception != null)
+                {
+                    ExceptionDispatchInfo.Capture(extractorTask.Exception).Throw();
+                }
             }
+            catch (OperationCanceledException) when (internalTokenSource.IsCancellationRequested)
+            {
+                _activeLogger.LogInformation("Extractor stopped manually");
+            }
+            catch (Exception ex)
+            {
+                if (ex is AggregateException aex) ex = aex.Flatten().InnerExceptions.First();
+
+                if (_source.IsCancellationRequested)
+                {
+                    _activeLogger.LogWarning("Extractor stopped manually");
+                    return ExtractorRunResult.CleanShutdown;
+                }
+                else
+                {
+                    _params.LogException(_activeLogger, ex, "Extractor crashed unexpectedly");
+                }
+
+                return ExtractorRunResult.Error;
+            }
+
+            return ExtractorRunResult.CleanShutdown;
         }
 
         /// <summary>
