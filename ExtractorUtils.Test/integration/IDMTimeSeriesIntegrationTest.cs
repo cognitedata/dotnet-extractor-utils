@@ -86,7 +86,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Empty(result.Errors);
                 Assert.Equal(2, result.Results.Count());
 
-                result = await tester.DestinationWithIDM.GetOrCreateTimeSeriesAsync(ids, toCreate =>
+                result = await tester.DestinationWithIDM.GetOrCreateTimeSeriesAsync<CogniteExtractorTimeSeries, string>(ids, toCreate =>
                 {
                     Assert.Single(toCreate);
                     Assert.Equal($"{tester.Prefix} ts-5", toCreate.First().ExternalId);

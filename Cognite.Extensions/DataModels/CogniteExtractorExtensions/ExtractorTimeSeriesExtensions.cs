@@ -31,7 +31,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found timeseries</returns>
-        public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
+        public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T, TValue>(
             this CoreTimeSeriesResource<T> timeSeries,
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildTimeSeries,
@@ -39,13 +39,13 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             int throttleSize,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteExtractorTimeSeries
+            CancellationToken token) where T : CogniteExtractorTimeSeriesBase<TValue>
         {
             Task<IEnumerable<SourcedNodeWrite<T>>> asyncBuildTimeSeries(IEnumerable<InstanceIdentifier> ids)
             {
                 return Task.FromResult(buildTimeSeries(ids));
             }
-            return timeSeries.GetOrCreateTimeSeriesAsync<T>(instanceIds, asyncBuildTimeSeries,
+            return timeSeries.GetOrCreateTimeSeriesAsync<T, TValue>(instanceIds, asyncBuildTimeSeries,
                 chunkSize, throttleSize, retryMode, sanitationMode, token);
         }
 
@@ -66,7 +66,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found timeseries</returns>
-        public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
+        public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T, TValue>(
             this CoreTimeSeriesResource<T> timeSeries,
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildTimeSeries,
@@ -74,7 +74,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             int throttleSize,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteExtractorTimeSeries
+            CancellationToken token) where T : CogniteExtractorTimeSeriesBase<TValue>
         {
             return await DataModelUtils.GetOrCreateResourcesAsync(timeSeries, instanceIds, buildTimeSeries, CoreTSSanitation.CleanTimeSeriesRequest, chunkSize, throttleSize, retryMode, sanitationMode, token).ConfigureAwait(false);
         }
