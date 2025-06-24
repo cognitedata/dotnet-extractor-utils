@@ -180,12 +180,6 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             // Reporting check-in is safely behind locks, so we can just call report.
             try
             {
-                if (!_hasReportedStartup)
-                {
-                    _logger.LogWarning("Attempted to flush check-in worker before reporting startup, since this results in unclear errors in CDF, the request is ignored. It would likely fail.");
-                    return;
-                }
-
                 await ReportCheckIn(token).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -242,10 +236,29 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
             lock (_lock)
             {
-                newErrors = _errors.Values.ToList();
-                _errors.Clear();
-                taskUpdates = _taskUpdates;
-                _taskUpdates = new List<TaskUpdate>();
+                if (!_hasReportedStartup)
+                {
+                    newErrors = _errors.Values.Where(e => e.Task == null).ToList();
+                    // No point checking in pre-startup if there are no errors.
+                    if (newErrors.Count == 0)
+                    {
+                        _logger.LogInformation("Check-in worker has not reported startup yet, skipping check-in.");
+                        return;
+                    }
+                    _logger.LogWarning("Check-in worker has not reported startup yet, only reporting errors not associated with a task.");
+                    foreach (var err in newErrors)
+                    {
+                        _errors.Remove(err.ExternalId);
+                    }
+                    taskUpdates = new List<TaskUpdate>();
+                }
+                else
+                {
+                    newErrors = _errors.Values.ToList();
+                    _errors.Clear();
+                    taskUpdates = _taskUpdates;
+                    _taskUpdates = new List<TaskUpdate>();
+                }
             }
 
             newErrors.Sort((a, b) => (a.EndTime ?? a.StartTime).CompareTo(b.EndTime ?? b.StartTime));
