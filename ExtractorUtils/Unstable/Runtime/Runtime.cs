@@ -210,7 +210,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 services.Add(_params.ExternalServices);
             }
 
-            var bootstrapErrorReporter = new BootstrapErrorReporter(_setupServiceProvider.GetService<Client>(), _connectionConfig?.Integration, _activeLogger);
+            var bootstrapErrorReporter = new BootstrapErrorReporter(_setupServiceProvider.GetService<Client>(), _connectionConfig?.Integration?.ExternalId, _activeLogger);
 
             try
             {
@@ -283,11 +283,11 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
             }
 
             // Register a live integration sink that the extractor will use for check-ins.
-            if (_connectionConfig?.Integration != null)
+            if (_connectionConfig?.Integration?.ExternalId != null)
             {
                 services.AddSingleton<IIntegrationSink>(provider =>
                     new CheckInWorker(
-                        _connectionConfig.Integration,
+                        _connectionConfig.Integration.ExternalId,
                         provider.GetRequiredService<ILogger<CheckInWorker>>(),
                         provider.GetRequiredService<Client>(),
                         (rev) => _revisionChangedEvent.Set(),
