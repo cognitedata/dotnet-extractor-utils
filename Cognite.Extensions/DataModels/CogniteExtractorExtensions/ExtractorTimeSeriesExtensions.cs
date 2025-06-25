@@ -39,7 +39,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             int throttleSize,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteExtractorTimeSeriesBase<TValue>
+            CancellationToken token) where T : CogniteTimeSeriesBase
         {
             Task<IEnumerable<SourcedNodeWrite<T>>> asyncBuildTimeSeries(IEnumerable<InstanceIdentifier> ids)
             {
@@ -74,7 +74,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             int throttleSize,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteExtractorTimeSeriesBase<TValue>
+            CancellationToken token) where T : CogniteTimeSeriesBase
         {
             return await DataModelUtils.GetOrCreateResourcesAsync(timeSeries, instanceIds, buildTimeSeries, CoreTSSanitation.CleanTimeSeriesRequest, chunkSize, throttleSize, retryMode, sanitationMode, token).ConfigureAwait(false);
         }

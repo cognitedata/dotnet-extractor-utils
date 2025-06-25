@@ -87,7 +87,7 @@ namespace Cognite.Extractor.Utils
             Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildTimeSeries,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteExtractorTimeSeriesBase<TValue>
+            CancellationToken token) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier)
@@ -122,7 +122,7 @@ namespace Cognite.Extractor.Utils
             Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildTimeSeries,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteExtractorTimeSeriesBase<TValue>
+            CancellationToken token) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetOrCreateTimeSeriesAsync<T, TValue>(
