@@ -114,7 +114,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// Called after config has been read. Can be used to modify the runner params and config object based on
         /// external parameters. New services can also be registered here based on the configuration object.
         /// </summary>
-        public Action<TConfig, ExtractorRuntimeBuilder<TConfig, TExtractor>>? OnConfigure { get; set; }
+        public Action<TConfig, ExtractorRuntimeBuilder<TConfig, TExtractor>, ServiceCollection>? OnConfigure { get; set; }
         /// <summary>
         /// Predefined list of services, added to the list of services defined by the runtime.
         /// </summary>
@@ -145,16 +145,29 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// </summary>
         public IEnumerable<Type>? ConfigTypes { get; set; }
         /// <summary>
-        /// Let this method return true if the exception is fatal. Fatal exceptions are assumed to be
-        /// unrecoverable without new config, so the extractor will wait until a new configuration is provided
-        /// before attempting to run again.
-        /// </summary>
-        public Func<Exception, bool>? IsFatalException { get; set; }
-        /// <summary>
         /// True to buffer config if it is fetched from remote. Requires a config path to be set.
         /// Defaults to true.
         /// </summary>
         public bool BufferRemoteConfig { get; set; } = true;
+
+        /// <summary>
+        /// Base backoff in milliseconds for restarting the extractor
+        /// after it failed to start. On a normal restart, for example
+        /// due to a config change, the backoff is not used unless
+        /// two restarts come in very quick succession.
+        /// 
+        /// The true backoff is calculated as
+        /// 
+        /// Min(MaxBackoff, BackoffBase * 2^n) where n is the number of
+        /// times the extractor has been restarted in a row.
+        /// </summary>
+        public int BackoffBase { get; set; } = 5000;
+
+        /// <summary>
+        /// Maximum backoff in milliseconds for restarting the extractor.
+        /// See `BackoffBase` for how the backoff is calculated.
+        /// </summary>
+        public int MaxBackoff { get; set; } = 60000;
 
 
         /// <summary>
