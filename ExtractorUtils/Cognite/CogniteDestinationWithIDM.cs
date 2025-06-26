@@ -82,7 +82,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="sanitationMode">The type of sanitation to apply to TimeSeries before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occurred and a list of the created and found TimeSeries</returns>
-        public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T, TValue>(
+        public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildTimeSeries,
             RetryMode retryMode,
@@ -91,7 +91,7 @@ namespace Cognite.Extractor.Utils
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
             return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier)
-                .GetOrCreateTimeSeriesAsync<T, TValue>(
+                .GetOrCreateTimeSeriesAsync(
                     instanceIds,
                     buildTimeSeries,
                     Chunking.Instances,
@@ -117,7 +117,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="sanitationMode">The type of sanitation to apply to TimeSeries before creating</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found TimeSeries</returns>
-        public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T, TValue>(
+        public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildTimeSeries,
             RetryMode retryMode,
@@ -125,7 +125,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetOrCreateTimeSeriesAsync<T, TValue>(
+            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetOrCreateTimeSeriesAsync(
                 instanceIds,
                 buildTimeSeries,
                 Chunking.Instances,
