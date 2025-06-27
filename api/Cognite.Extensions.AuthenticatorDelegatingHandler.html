@@ -5,11 +5,11 @@
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Class ExtractorRuntime&lt;TConfig, TExtractor&gt; </title>
+      <title>Class AuthenticatorDelegatingHandler </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Class ExtractorRuntime&lt;TConfig, TExtractor&gt; ">
+      <meta name="title" content="Class AuthenticatorDelegatingHandler ">
     
-    <meta name="description" content="Runtime for extractors. See  for how to create a runtime instance.">
+    <meta name="description" content="Delegating handler for adding authentication tokens to requests.">
       <link rel="shortcut icon" href="../favicon.ico">
       <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
       <link rel="stylesheet" href="../styles/docfx.css">
@@ -66,19 +66,20 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2">
+            <article class="content wrap" id="_content" data-uid="Cognite.Extensions.AuthenticatorDelegatingHandler">
 
 
 
-  <h1 id="Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2" data-uid="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2" class="text-break">Class ExtractorRuntime&lt;TConfig, TExtractor&gt;</h1>
-  <div class="markdown level0 summary"><p>Runtime for extractors. See <a class="xref" href="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html">ExtractorRuntimeBuilder&lt;TConfig, TExtractor&gt;</a>
-for how to create a runtime instance.</p>
+  <h1 id="Cognite_Extensions_AuthenticatorDelegatingHandler" data-uid="Cognite.Extensions.AuthenticatorDelegatingHandler" class="text-break">Class AuthenticatorDelegatingHandler</h1>
+  <div class="markdown level0 summary"><p>Delegating handler for adding authentication tokens to requests.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><span class="xref">ExtractorRuntime&lt;TConfig, TExtractor&gt;</span></div>
+    <div class="level1"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpmessagehandler">HttpMessageHandler</a></div>
+    <div class="level2"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.delegatinghandler">DelegatingHandler</a></div>
+    <div class="level3"><span class="xref">AuthenticatorDelegatingHandler</span></div>
   </div>
   <div class="implements">
     <h5>Implements</h5>
@@ -86,6 +87,15 @@ for how to create a runtime instance.</p>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.delegatinghandler.dispose">DelegatingHandler.Dispose(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.delegatinghandler.innerhandler">DelegatingHandler.InnerHandler</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpmessagehandler.dispose#system-net-http-httpmessagehandler-dispose">HttpMessageHandler.Dispose()</a>
+    </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
     </div>
@@ -108,65 +118,30 @@ for how to create a runtime instance.</p>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.Extractor.html">Extractor</a>.<a class="xref" href="Cognite.Extractor.Utils.html">Utils</a>.<a class="xref" href="Cognite.Extractor.Utils.Unstable.html">Unstable</a>.<a class="xref" href="Cognite.Extractor.Utils.Unstable.Runtime.html">Runtime</a></h6>
-  <h6><strong>Assembly</strong>: ExtractorUtils.dll</h6>
-  <h5 id="Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_syntax">Syntax</h5>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Cognite.html">Cognite</a>.<a class="xref" href="Cognite.Extensions.html">Extensions</a></h6>
+  <h6><strong>Assembly</strong>: Cognite.Extensions.dll</h6>
+  <h5 id="Cognite_Extensions_AuthenticatorDelegatingHandler_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ExtractorRuntime&lt;TConfig, TExtractor&gt; : IDisposable where TConfig : VersionedConfig where TExtractor : BaseExtractor&lt;TConfig&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public class AuthenticatorDelegatingHandler : DelegatingHandler, IDisposable</code></pre>
   </div>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TConfig</span></td>
-        <td><p>Configuration type.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="parametername">TExtractor</span></td>
-        <td><p>Extractor type.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
+  <h3 id="constructors">Constructors
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime%602.Dispose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_AuthenticatorDelegatingHandler__ctor_Cognite_Extensions_IAuthenticator_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.AuthenticatorDelegatingHandler.%23ctor(Cognite.Extensions.IAuthenticator)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Runtime/Runtime.cs/#L441">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/Authenticator.cs/#L445">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose_" data-uid="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose" data-uid="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose">Dispose()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime%602.Dispose(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Runtime/Runtime.cs/#L426">View Source</a>
-  </span>
-  <a id="Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose_" data-uid="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Dispose_System_Boolean_" data-uid="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Dispose(System.Boolean)">Dispose(bool)</h4>
-  <div class="markdown level1 summary"><p>Dispose managed resources.</p>
+  <a id="Cognite_Extensions_AuthenticatorDelegatingHandler__ctor_" data-uid="Cognite.Extensions.AuthenticatorDelegatingHandler.#ctor*"></a>
+  <h4 id="Cognite_Extensions_AuthenticatorDelegatingHandler__ctor_Cognite_Extensions_IAuthenticator_" data-uid="Cognite.Extensions.AuthenticatorDelegatingHandler.#ctor(Cognite.Extensions.IAuthenticator)">AuthenticatorDelegatingHandler(IAuthenticator?)</h4>
+  <div class="markdown level1 summary"><p>Delegating handler for adding authentication tokens to requests.
+Used instead of auth in the SDK to add tokens <em>inside</em> retries.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
+    <pre><code class="lang-csharp hljs">public AuthenticatorDelegatingHandler(IAuthenticator? authenticator)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -179,29 +154,53 @@ for how to create a runtime instance.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">disposing</span></td>
-        <td><p>Whether to actually dispose resources.</p>
+        <td><a class="xref" href="Cognite.Extensions.IAuthenticator.html">IAuthenticator</a></td>
+        <td><span class="parametername">authenticator</span></td>
+        <td><p>The inner authenticator.
+Can be null, in which case this handler is a no-op.</p>
 </td>
       </tr>
     </tbody>
   </table>
+  <h3 id="methods">Methods
+</h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Run.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime%602.Run%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_AuthenticatorDelegatingHandler_SendAsync_System_Net_Http_HttpRequestMessage_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync(System.Net.Http.HttpRequestMessage%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Runtime/Runtime.cs/#L98">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/Authenticator.cs/#L451">View Source</a>
   </span>
-  <a id="Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Run_" data-uid="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Run*"></a>
-  <h4 id="Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Run" data-uid="Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Run">Run()</h4>
-  <div class="markdown level1 summary"><p>Start the runtime. This method may only be called once.</p>
-</div>
+  <a id="Cognite_Extensions_AuthenticatorDelegatingHandler_SendAsync_" data-uid="Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync*"></a>
+  <h4 id="Cognite_Extensions_AuthenticatorDelegatingHandler_SendAsync_System_Net_Http_HttpRequestMessage_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">SendAsync(HttpRequestMessage, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task Run()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task&lt;HttpResponseMessage&gt; SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httprequestmessage">HttpRequestMessage</a></td>
+        <td><span class="parametername">request</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-condensed">
     <thead>
@@ -212,12 +211,13 @@ for how to create a runtime instance.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task">Task</a></td>
-        <td><p>Does not return until the extractor is stopped or cancelled.</p>
-</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.httpresponsemessage">HttpResponseMessage</a>&gt;</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.net.http.delegatinghandler.sendasync">DelegatingHandler.SendAsync(HttpRequestMessage, CancellationToken)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
@@ -235,10 +235,10 @@ for how to create a runtime instance.</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2.md&amp;value=---%0Auid%3A%20Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime%602%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_AuthenticatorDelegatingHandler.md&amp;value=---%0Auid%3A%20Cognite.Extensions.AuthenticatorDelegatingHandler%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/ExtractorUtils/Unstable/Runtime/Runtime.cs/#L47" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/Authenticator.cs/#L436" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

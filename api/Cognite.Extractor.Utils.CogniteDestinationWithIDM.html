@@ -395,7 +395,7 @@ Timeseries will be returned in the same order as given in <code class="paramref"
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; EnsureTimeSeriesExistsAsync&lt;T&gt;(IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; timeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T : CogniteExtractorTimeSeries</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; EnsureTimeSeriesExistsAsync&lt;T&gt;(IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; timeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T : CogniteTimeSeriesBase</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -486,7 +486,7 @@ legacy name, or missing dataSetId, they can be removed before retrying by settin
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; GetOrCreateTimeSeriesAsync&lt;T&gt;(IEnumerable&lt;InstanceIdentifier&gt; instanceIds, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt; buildTimeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T : CogniteExtractorTimeSeries</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; GetOrCreateTimeSeriesAsync&lt;T&gt;(IEnumerable&lt;InstanceIdentifier&gt; instanceIds, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt; buildTimeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T : CogniteTimeSeriesBase</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -582,7 +582,7 @@ legacy name, or missing dataSetId, they can be removed before retrying by settin
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; GetOrCreateTimeSeriesAsync&lt;T&gt;(IEnumerable&lt;InstanceIdentifier&gt; instanceIds, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, Task&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;&gt; buildTimeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T : CogniteExtractorTimeSeries</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SourcedNode&lt;T&gt;, SourcedNodeWrite&lt;T&gt;&gt;&gt; GetOrCreateTimeSeriesAsync&lt;T&gt;(IEnumerable&lt;InstanceIdentifier&gt; instanceIds, Func&lt;IEnumerable&lt;InstanceIdentifier&gt;, Task&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt;&gt; buildTimeSeries, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T : CogniteTimeSeriesBase</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -671,7 +671,7 @@ legacy name, or missing dataSetId, they can be removed before retrying by settin
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;SourcedNode&lt;T&gt;&gt;&gt; GetTimeSeriesByIdsIgnoreErrors&lt;T&gt;(IEnumerable&lt;Identity&gt; timeSeries, CancellationToken token) where T : CogniteExtractorTimeSeries</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;SourcedNode&lt;T&gt;&gt;&gt; GetTimeSeriesByIdsIgnoreErrors&lt;T&gt;(IEnumerable&lt;Identity&gt; timeSeries, CancellationToken token) where T : CogniteTimeSeriesBase</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -884,7 +884,7 @@ TimeSeries will be returned in the same order as given.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SlimInstance, SourcedNodeWrite&lt;T&gt;&gt;&gt; UpsertTimeSeriesAsync&lt;T&gt;(IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; updates, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T : CogniteExtractorTimeSeries</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;CogniteResult&lt;SlimInstance, SourcedNodeWrite&lt;T&gt;&gt;&gt; UpsertTimeSeriesAsync&lt;T&gt;(IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; updates, RetryMode retryMode, SanitationMode sanitationMode, CancellationToken token) where T : CogniteTimeSeriesBase</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">

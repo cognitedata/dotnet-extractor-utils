@@ -567,6 +567,44 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.AuthenticatorConfig.TokenUrl
   nameWithType: AuthenticatorConfig.TokenUrl
+- uid: Cognite.Extensions.AuthenticatorDelegatingHandler
+  name: AuthenticatorDelegatingHandler
+  href: api/Cognite.Extensions.AuthenticatorDelegatingHandler.html
+  commentId: T:Cognite.Extensions.AuthenticatorDelegatingHandler
+  fullName: Cognite.Extensions.AuthenticatorDelegatingHandler
+  nameWithType: AuthenticatorDelegatingHandler
+- uid: Cognite.Extensions.AuthenticatorDelegatingHandler.#ctor(Cognite.Extensions.IAuthenticator)
+  name: AuthenticatorDelegatingHandler(IAuthenticator?)
+  href: api/Cognite.Extensions.AuthenticatorDelegatingHandler.html#Cognite_Extensions_AuthenticatorDelegatingHandler__ctor_Cognite_Extensions_IAuthenticator_
+  commentId: M:Cognite.Extensions.AuthenticatorDelegatingHandler.#ctor(Cognite.Extensions.IAuthenticator)
+  name.vb: New(IAuthenticator)
+  fullName: Cognite.Extensions.AuthenticatorDelegatingHandler.AuthenticatorDelegatingHandler(Cognite.Extensions.IAuthenticator?)
+  fullName.vb: Cognite.Extensions.AuthenticatorDelegatingHandler.New(Cognite.Extensions.IAuthenticator)
+  nameWithType: AuthenticatorDelegatingHandler.AuthenticatorDelegatingHandler(IAuthenticator?)
+  nameWithType.vb: AuthenticatorDelegatingHandler.New(IAuthenticator)
+- uid: Cognite.Extensions.AuthenticatorDelegatingHandler.#ctor*
+  name: AuthenticatorDelegatingHandler
+  href: api/Cognite.Extensions.AuthenticatorDelegatingHandler.html#Cognite_Extensions_AuthenticatorDelegatingHandler__ctor_
+  commentId: Overload:Cognite.Extensions.AuthenticatorDelegatingHandler.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Cognite.Extensions.AuthenticatorDelegatingHandler.AuthenticatorDelegatingHandler
+  fullName.vb: Cognite.Extensions.AuthenticatorDelegatingHandler.New
+  nameWithType: AuthenticatorDelegatingHandler.AuthenticatorDelegatingHandler
+  nameWithType.vb: AuthenticatorDelegatingHandler.New
+- uid: Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)
+  name: SendAsync(HttpRequestMessage, CancellationToken)
+  href: api/Cognite.Extensions.AuthenticatorDelegatingHandler.html#Cognite_Extensions_AuthenticatorDelegatingHandler_SendAsync_System_Net_Http_HttpRequestMessage_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)
+  fullName: Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync(System.Net.Http.HttpRequestMessage, System.Threading.CancellationToken)
+  nameWithType: AuthenticatorDelegatingHandler.SendAsync(HttpRequestMessage, CancellationToken)
+- uid: Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync*
+  name: SendAsync
+  href: api/Cognite.Extensions.AuthenticatorDelegatingHandler.html#Cognite_Extensions_AuthenticatorDelegatingHandler_SendAsync_
+  commentId: Overload:Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync
+  isSpec: "True"
+  fullName: Cognite.Extensions.AuthenticatorDelegatingHandler.SendAsync
+  nameWithType: AuthenticatorDelegatingHandler.SendAsync
 - uid: Cognite.Extensions.CertificateConfig
   name: CertificateConfig
   href: api/Cognite.Extensions.CertificateConfig.html
@@ -1534,19 +1572,51 @@ references:
   fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.New
   nameWithType: CogniteExtractorTimeSeries.CogniteExtractorTimeSeries
   nameWithType.vb: CogniteExtractorTimeSeries.New
-- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.extractedData
-  name: extractedData
-  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorTimeSeries_extractedData
-  commentId: P:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.extractedData
-  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.extractedData
-  nameWithType: CogniteExtractorTimeSeries.extractedData
-- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.extractedData*
-  name: extractedData
-  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorTimeSeries_extractedData_
-  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.extractedData
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1
+  name: CogniteExtractorTimeSeriesBase<T>
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase-1.html
+  commentId: T:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1
+  name.vb: CogniteExtractorTimeSeriesBase(Of T)
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase<T>
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase(Of T)
+  nameWithType: CogniteExtractorTimeSeriesBase<T>
+  nameWithType.vb: CogniteExtractorTimeSeriesBase(Of T)
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1.#ctor
+  name: CogniteExtractorTimeSeriesBase()
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase-1.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorTimeSeriesBase_1__ctor
+  commentId: M:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1.#ctor
+  name.vb: New()
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase<T>.CogniteExtractorTimeSeriesBase()
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase(Of T).New()
+  nameWithType: CogniteExtractorTimeSeriesBase<T>.CogniteExtractorTimeSeriesBase()
+  nameWithType.vb: CogniteExtractorTimeSeriesBase(Of T).New()
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1.#ctor*
+  name: CogniteExtractorTimeSeriesBase
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase-1.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorTimeSeriesBase_1__ctor_
+  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1.#ctor
   isSpec: "True"
-  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeries.extractedData
-  nameWithType: CogniteExtractorTimeSeries.extractedData
+  name.vb: New
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase<T>.CogniteExtractorTimeSeriesBase
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase(Of T).New
+  nameWithType: CogniteExtractorTimeSeriesBase<T>.CogniteExtractorTimeSeriesBase
+  nameWithType.vb: CogniteExtractorTimeSeriesBase(Of T).New
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1.extractedData
+  name: extractedData
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase-1.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorTimeSeriesBase_1_extractedData
+  commentId: P:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1.extractedData
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase<T>.extractedData
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase(Of T).extractedData
+  nameWithType: CogniteExtractorTimeSeriesBase<T>.extractedData
+  nameWithType.vb: CogniteExtractorTimeSeriesBase(Of T).extractedData
+- uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1.extractedData*
+  name: extractedData
+  href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase-1.html#Cognite_Extensions_DataModels_CogniteExtractorExtensions_CogniteExtractorTimeSeriesBase_1_extractedData_
+  commentId: Overload:Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase`1.extractedData
+  isSpec: "True"
+  fullName: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase<T>.extractedData
+  fullName.vb: Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorTimeSeriesBase(Of T).extractedData
+  nameWithType: CogniteExtractorTimeSeriesBase<T>.extractedData
+  nameWithType.vb: CogniteExtractorTimeSeriesBase(Of T).extractedData
 - uid: Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId
   name: DataPointExtensionsWithInstanceId
   href: api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.DataPointExtensionsWithInstanceId.html
@@ -5057,12 +5127,15 @@ references:
   commentId: T:Cognite.Extensions.Unstable.BaseAuthenticationConfig
   fullName: Cognite.Extensions.Unstable.BaseAuthenticationConfig
   nameWithType: BaseAuthenticationConfig
-- uid: Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider)
-  name: GetAuthenticator(IServiceProvider)
-  href: api/Cognite.Extensions.Unstable.BaseAuthenticationConfig.html#Cognite_Extensions_Unstable_BaseAuthenticationConfig_GetAuthenticator_System_IServiceProvider_
-  commentId: M:Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider)
-  fullName: Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider)
-  nameWithType: BaseAuthenticationConfig.GetAuthenticator(IServiceProvider)
+- uid: Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider,System.String)
+  name: GetAuthenticator(IServiceProvider, string)
+  href: api/Cognite.Extensions.Unstable.BaseAuthenticationConfig.html#Cognite_Extensions_Unstable_BaseAuthenticationConfig_GetAuthenticator_System_IServiceProvider_System_String_
+  commentId: M:Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider,System.String)
+  name.vb: GetAuthenticator(IServiceProvider, String)
+  fullName: Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider, string)
+  fullName.vb: Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider, String)
+  nameWithType: BaseAuthenticationConfig.GetAuthenticator(IServiceProvider, string)
+  nameWithType.vb: BaseAuthenticationConfig.GetAuthenticator(IServiceProvider, String)
 - uid: Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator*
   name: GetAuthenticator
   href: api/Cognite.Extensions.Unstable.BaseAuthenticationConfig.html#Cognite_Extensions_Unstable_BaseAuthenticationConfig_GetAuthenticator_
@@ -5128,12 +5201,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Unstable.ClientCertificateConfig.ClientId
   nameWithType: ClientCertificateConfig.ClientId
-- uid: Cognite.Extensions.Unstable.ClientCertificateConfig.GetAuthenticator(System.IServiceProvider)
-  name: GetAuthenticator(IServiceProvider)
-  href: api/Cognite.Extensions.Unstable.ClientCertificateConfig.html#Cognite_Extensions_Unstable_ClientCertificateConfig_GetAuthenticator_System_IServiceProvider_
-  commentId: M:Cognite.Extensions.Unstable.ClientCertificateConfig.GetAuthenticator(System.IServiceProvider)
-  fullName: Cognite.Extensions.Unstable.ClientCertificateConfig.GetAuthenticator(System.IServiceProvider)
-  nameWithType: ClientCertificateConfig.GetAuthenticator(IServiceProvider)
+- uid: Cognite.Extensions.Unstable.ClientCertificateConfig.GetAuthenticator(System.IServiceProvider,System.String)
+  name: GetAuthenticator(IServiceProvider, string)
+  href: api/Cognite.Extensions.Unstable.ClientCertificateConfig.html#Cognite_Extensions_Unstable_ClientCertificateConfig_GetAuthenticator_System_IServiceProvider_System_String_
+  commentId: M:Cognite.Extensions.Unstable.ClientCertificateConfig.GetAuthenticator(System.IServiceProvider,System.String)
+  name.vb: GetAuthenticator(IServiceProvider, String)
+  fullName: Cognite.Extensions.Unstable.ClientCertificateConfig.GetAuthenticator(System.IServiceProvider, string)
+  fullName.vb: Cognite.Extensions.Unstable.ClientCertificateConfig.GetAuthenticator(System.IServiceProvider, String)
+  nameWithType: ClientCertificateConfig.GetAuthenticator(IServiceProvider, string)
+  nameWithType.vb: ClientCertificateConfig.GetAuthenticator(IServiceProvider, String)
 - uid: Cognite.Extensions.Unstable.ClientCertificateConfig.GetAuthenticator*
   name: GetAuthenticator
   href: api/Cognite.Extensions.Unstable.ClientCertificateConfig.html#Cognite_Extensions_Unstable_ClientCertificateConfig_GetAuthenticator_
@@ -5238,12 +5314,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Unstable.ClientCredentialsConfig.ClientSecret
   nameWithType: ClientCredentialsConfig.ClientSecret
-- uid: Cognite.Extensions.Unstable.ClientCredentialsConfig.GetAuthenticator(System.IServiceProvider)
-  name: GetAuthenticator(IServiceProvider)
-  href: api/Cognite.Extensions.Unstable.ClientCredentialsConfig.html#Cognite_Extensions_Unstable_ClientCredentialsConfig_GetAuthenticator_System_IServiceProvider_
-  commentId: M:Cognite.Extensions.Unstable.ClientCredentialsConfig.GetAuthenticator(System.IServiceProvider)
-  fullName: Cognite.Extensions.Unstable.ClientCredentialsConfig.GetAuthenticator(System.IServiceProvider)
-  nameWithType: ClientCredentialsConfig.GetAuthenticator(IServiceProvider)
+- uid: Cognite.Extensions.Unstable.ClientCredentialsConfig.GetAuthenticator(System.IServiceProvider,System.String)
+  name: GetAuthenticator(IServiceProvider, string)
+  href: api/Cognite.Extensions.Unstable.ClientCredentialsConfig.html#Cognite_Extensions_Unstable_ClientCredentialsConfig_GetAuthenticator_System_IServiceProvider_System_String_
+  commentId: M:Cognite.Extensions.Unstable.ClientCredentialsConfig.GetAuthenticator(System.IServiceProvider,System.String)
+  name.vb: GetAuthenticator(IServiceProvider, String)
+  fullName: Cognite.Extensions.Unstable.ClientCredentialsConfig.GetAuthenticator(System.IServiceProvider, string)
+  fullName.vb: Cognite.Extensions.Unstable.ClientCredentialsConfig.GetAuthenticator(System.IServiceProvider, String)
+  nameWithType: ClientCredentialsConfig.GetAuthenticator(IServiceProvider, string)
+  nameWithType.vb: ClientCredentialsConfig.GetAuthenticator(IServiceProvider, String)
 - uid: Cognite.Extensions.Unstable.ClientCredentialsConfig.GetAuthenticator*
   name: GetAuthenticator
   href: api/Cognite.Extensions.Unstable.ClientCredentialsConfig.html#Cognite_Extensions_Unstable_ClientCredentialsConfig_GetAuthenticator_
@@ -11385,6 +11464,12 @@ references:
   commentId: T:Cognite.Extractor.Utils.DestinationUtils
   fullName: Cognite.Extractor.Utils.DestinationUtils
   nameWithType: DestinationUtils
+- uid: Cognite.Extractor.Utils.DestinationUtils.AUTH_CLIENT_NAME
+  name: AUTH_CLIENT_NAME
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_AUTH_CLIENT_NAME
+  commentId: F:Cognite.Extractor.Utils.DestinationUtils.AUTH_CLIENT_NAME
+  fullName: Cognite.Extractor.Utils.DestinationUtils.AUTH_CLIENT_NAME
+  nameWithType: DestinationUtils.AUTH_CLIENT_NAME
 - uid: Cognite.Extractor.Utils.DestinationUtils.AddCogniteClient(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean)
   name: AddCogniteClient(IServiceCollection, string?, string?, bool, bool, bool, bool)
   href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_AddCogniteClient_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_
@@ -11417,6 +11502,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.DestinationUtils.Configure
   nameWithType: DestinationUtils.Configure
+- uid: Cognite.Extractor.Utils.DestinationUtils.ConfigureCogniteHttpClientHandlers(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)
+  name: ConfigureCogniteHttpClientHandlers(IHttpClientBuilder)
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_ConfigureCogniteHttpClientHandlers_Microsoft_Extensions_DependencyInjection_IHttpClientBuilder_
+  commentId: M:Cognite.Extractor.Utils.DestinationUtils.ConfigureCogniteHttpClientHandlers(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)
+  fullName: Cognite.Extractor.Utils.DestinationUtils.ConfigureCogniteHttpClientHandlers(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)
+  nameWithType: DestinationUtils.ConfigureCogniteHttpClientHandlers(IHttpClientBuilder)
+- uid: Cognite.Extractor.Utils.DestinationUtils.ConfigureCogniteHttpClientHandlers*
+  name: ConfigureCogniteHttpClientHandlers
+  href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_ConfigureCogniteHttpClientHandlers_
+  commentId: Overload:Cognite.Extractor.Utils.DestinationUtils.ConfigureCogniteHttpClientHandlers
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.DestinationUtils.ConfigureCogniteHttpClientHandlers
+  nameWithType: DestinationUtils.ConfigureCogniteHttpClientHandlers
 - uid: Cognite.Extractor.Utils.DestinationUtils.ConfigureSslPolicy(Cognite.Extractor.Utils.CertificateConfig)
   name: ConfigureSslPolicy(CertificateConfig)
   href: api/Cognite.Extractor.Utils.DestinationUtils.html#Cognite_Extractor_Utils_DestinationUtils_ConfigureSslPolicy_Cognite_Extractor_Utils_CertificateConfig_
@@ -13941,6 +14039,12 @@ references:
   commentId: T:Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable
   fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable
   nameWithType: DestinationUtilsUnstable
+- uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.AUTH_CLIENT_NAME
+  name: AUTH_CLIENT_NAME
+  href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_AUTH_CLIENT_NAME
+  commentId: F:Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.AUTH_CLIENT_NAME
+  fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.AUTH_CLIENT_NAME
+  nameWithType: DestinationUtilsUnstable.AUTH_CLIENT_NAME
 - uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.AddCogniteClient(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean)
   name: AddCogniteClient(IServiceCollection, string?, string?, bool, bool, bool, bool)
   href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_AddCogniteClient_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean_
@@ -13970,15 +14074,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.AddCogniteDestination
   nameWithType: DestinationUtilsUnstable.AddCogniteDestination
-- uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder,Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig,System.String,System.String,Cognite.Extensions.IAuthenticator,Microsoft.Extensions.Logging.ILogger{CogniteSdk.Client},CogniteSdk.IMetrics)
-  name: Configure(Builder, ConnectionConfig, string?, string?, IAuthenticator?, ILogger<Client>?, IMetrics?)
-  href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_Configure_CogniteSdk_Client_Builder_Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_System_String_System_String_Cognite_Extensions_IAuthenticator_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client__CogniteSdk_IMetrics_
-  commentId: M:Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder,Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig,System.String,System.String,Cognite.Extensions.IAuthenticator,Microsoft.Extensions.Logging.ILogger{CogniteSdk.Client},CogniteSdk.IMetrics)
-  name.vb: Configure(Builder, ConnectionConfig, String, String, IAuthenticator, ILogger(Of Client), IMetrics)
-  fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder, Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig, string?, string?, Cognite.Extensions.IAuthenticator?, Microsoft.Extensions.Logging.ILogger<CogniteSdk.Client>?, CogniteSdk.IMetrics?)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder, Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig, String, String, Cognite.Extensions.IAuthenticator, Microsoft.Extensions.Logging.ILogger(Of CogniteSdk.Client), CogniteSdk.IMetrics)
-  nameWithType: DestinationUtilsUnstable.Configure(Client.Builder, ConnectionConfig, string?, string?, IAuthenticator?, ILogger<Client>?, IMetrics?)
-  nameWithType.vb: DestinationUtilsUnstable.Configure(Client.Builder, ConnectionConfig, String, String, IAuthenticator, ILogger(Of Client), IMetrics)
+- uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder,Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig,System.String,System.String,Microsoft.Extensions.Logging.ILogger{CogniteSdk.Client},CogniteSdk.IMetrics)
+  name: Configure(Builder, ConnectionConfig, string?, string?, ILogger<Client>?, IMetrics?)
+  href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_Configure_CogniteSdk_Client_Builder_Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_System_String_System_String_Microsoft_Extensions_Logging_ILogger_CogniteSdk_Client__CogniteSdk_IMetrics_
+  commentId: M:Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder,Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig,System.String,System.String,Microsoft.Extensions.Logging.ILogger{CogniteSdk.Client},CogniteSdk.IMetrics)
+  name.vb: Configure(Builder, ConnectionConfig, String, String, ILogger(Of Client), IMetrics)
+  fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder, Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig, string?, string?, Microsoft.Extensions.Logging.ILogger<CogniteSdk.Client>?, CogniteSdk.IMetrics?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure(CogniteSdk.Client.Builder, Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig, String, String, Microsoft.Extensions.Logging.ILogger(Of CogniteSdk.Client), CogniteSdk.IMetrics)
+  nameWithType: DestinationUtilsUnstable.Configure(Client.Builder, ConnectionConfig, string?, string?, ILogger<Client>?, IMetrics?)
+  nameWithType.vb: DestinationUtilsUnstable.Configure(Client.Builder, ConnectionConfig, String, String, ILogger(Of Client), IMetrics)
 - uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure*
   name: Configure
   href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_Configure_
@@ -13986,6 +14090,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.Configure
   nameWithType: DestinationUtilsUnstable.Configure
+- uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.ConfigureCogniteHttpClientHandlers(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)
+  name: ConfigureCogniteHttpClientHandlers(IHttpClientBuilder)
+  href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_ConfigureCogniteHttpClientHandlers_Microsoft_Extensions_DependencyInjection_IHttpClientBuilder_
+  commentId: M:Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.ConfigureCogniteHttpClientHandlers(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)
+  fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.ConfigureCogniteHttpClientHandlers(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder)
+  nameWithType: DestinationUtilsUnstable.ConfigureCogniteHttpClientHandlers(IHttpClientBuilder)
+- uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.ConfigureCogniteHttpClientHandlers*
+  name: ConfigureCogniteHttpClientHandlers
+  href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_ConfigureCogniteHttpClientHandlers_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.ConfigureCogniteHttpClientHandlers
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.ConfigureCogniteHttpClientHandlers
+  nameWithType: DestinationUtilsUnstable.ConfigureCogniteHttpClientHandlers
 - uid: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.ConfigureSslPolicy(Cognite.Extractor.Utils.CertificateConfig)
   name: ConfigureSslPolicy(CertificateConfig)
   href: api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.html#Cognite_Extractor_Utils_Unstable_DestinationUtilsUnstable_ConfigureSslPolicy_Cognite_Extractor_Utils_CertificateConfig_
@@ -14041,6 +14158,30 @@ references:
   commentId: F:Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.Remote
   fullName: Cognite.Extractor.Utils.Unstable.Runtime.ConfigSourceType.Remote
   nameWithType: ConfigSourceType.Remote
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy
+  name: ExtractorRestartPolicy
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy
+  nameWithType: ExtractorRestartPolicy
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.Always
+  name: Always
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRestartPolicy_Always
+  commentId: F:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.Always
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.Always
+  nameWithType: ExtractorRestartPolicy.Always
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.Never
+  name: Never
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRestartPolicy_Never
+  commentId: F:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.Never
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.Never
+  nameWithType: ExtractorRestartPolicy.Never
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.OnError
+  name: OnError
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRestartPolicy_OnError
+  commentId: F:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.OnError
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRestartPolicy.OnError
+  nameWithType: ExtractorRestartPolicy.OnError
 - uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2
   name: ExtractorRuntimeBuilder<TConfig, TExtractor>
   href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html
@@ -14154,6 +14295,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).AppId
   nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.AppId
   nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).AppId
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BackoffBase
+  name: BackoffBase
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BackoffBase
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BackoffBase
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.BackoffBase
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BackoffBase
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BackoffBase
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BackoffBase
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BackoffBase*
+  name: BackoffBase
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BackoffBase_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BackoffBase
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.BackoffBase
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BackoffBase
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BackoffBase
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BackoffBase
 - uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BufferRemoteConfig
   name: BufferRemoteConfig
   href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BufferRemoteConfig
@@ -14324,23 +14482,6 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalServices
   nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.ExternalServices
   nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).ExternalServices
-- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.IsFatalException
-  name: IsFatalException
-  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_IsFatalException
-  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.IsFatalException
-  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.IsFatalException
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).IsFatalException
-  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.IsFatalException
-  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).IsFatalException
-- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.IsFatalException*
-  name: IsFatalException
-  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_IsFatalException_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.IsFatalException
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.IsFatalException
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).IsFatalException
-  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.IsFatalException
-  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).IsFatalException
 - uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.LogException
   name: LogException
   href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_LogException
@@ -14375,6 +14516,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).MakeRuntime
   nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.MakeRuntime
   nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).MakeRuntime
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.MaxBackoff
+  name: MaxBackoff
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_MaxBackoff
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.MaxBackoff
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.MaxBackoff
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).MaxBackoff
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.MaxBackoff
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).MaxBackoff
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.MaxBackoff*
+  name: MaxBackoff
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_MaxBackoff_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.MaxBackoff
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.MaxBackoff
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).MaxBackoff
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.MaxBackoff
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).MaxBackoff
 - uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.NoConnection
   name: NoConnection
   href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_NoConnection
@@ -14460,6 +14618,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConnectionConfig
   nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.OverrideConnectionConfig
   nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).OverrideConnectionConfig
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RestartPolicy
+  name: RestartPolicy
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_RestartPolicy
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RestartPolicy
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.RestartPolicy
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).RestartPolicy
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.RestartPolicy
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).RestartPolicy
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RestartPolicy*
+  name: RestartPolicy
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_RestartPolicy_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RestartPolicy
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.RestartPolicy
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).RestartPolicy
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.RestartPolicy
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).RestartPolicy
 - uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.RetryStartupRequest
   name: RetryStartupRequest
   href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_RetryStartupRequest
@@ -14563,6 +14738,119 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime(Of TConfig, TExtractor).Dispose
   nameWithType: ExtractorRuntime<TConfig, TExtractor>.Dispose
   nameWithType.vb: ExtractorRuntime(Of TConfig, TExtractor).Dispose
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Run
+  name: Run()
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Run
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Run
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime<TConfig, TExtractor>.Run()
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime(Of TConfig, TExtractor).Run()
+  nameWithType: ExtractorRuntime<TConfig, TExtractor>.Run()
+  nameWithType.vb: ExtractorRuntime(Of TConfig, TExtractor).Run()
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Run*
+  name: Run
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntime_2_Run_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime`2.Run
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime<TConfig, TExtractor>.Run
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntime(Of TConfig, TExtractor).Run
+  nameWithType: ExtractorRuntime<TConfig, TExtractor>.Run
+  nameWithType.vb: ExtractorRuntime(Of TConfig, TExtractor).Run
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink
+  name: LogIntegrationSink
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink
+  nameWithType: LogIntegrationSink
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.#ctor(Microsoft.Extensions.Logging.ILogger)
+  name: LogIntegrationSink(ILogger)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink__ctor_Microsoft_Extensions_Logging_ILogger_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.#ctor(Microsoft.Extensions.Logging.ILogger)
+  name.vb: New(ILogger)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.LogIntegrationSink(Microsoft.Extensions.Logging.ILogger)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.New(Microsoft.Extensions.Logging.ILogger)
+  nameWithType: LogIntegrationSink.LogIntegrationSink(ILogger)
+  nameWithType.vb: LogIntegrationSink.New(ILogger)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.#ctor*
+  name: LogIntegrationSink
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink__ctor_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.LogIntegrationSink
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.New
+  nameWithType: LogIntegrationSink.LogIntegrationSink
+  nameWithType.vb: LogIntegrationSink.New
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.Flush(System.Threading.CancellationToken)
+  name: Flush(CancellationToken)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_Flush_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.Flush(System.Threading.CancellationToken)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.Flush(System.Threading.CancellationToken)
+  nameWithType: LogIntegrationSink.Flush(CancellationToken)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.Flush*
+  name: Flush
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_Flush_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.Flush
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.Flush
+  nameWithType: LogIntegrationSink.Flush
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportError(Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError)
+  name: ReportError(ExtractorError)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_ReportError_Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportError(Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportError(Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError)
+  nameWithType: LogIntegrationSink.ReportError(ExtractorError)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportError*
+  name: ReportError
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_ReportError_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportError
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportError
+  nameWithType: LogIntegrationSink.ReportError
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskEnd(System.String,Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload,System.Nullable{System.DateTime})
+  name: ReportTaskEnd(string, TaskUpdatePayload?, DateTime?)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_ReportTaskEnd_System_String_Cognite_Extractor_Utils_Unstable_Tasks_TaskUpdatePayload_System_Nullable_System_DateTime__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskEnd(System.String,Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload,System.Nullable{System.DateTime})
+  name.vb: ReportTaskEnd(String, TaskUpdatePayload, Date?)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskEnd(string, Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload?, System.DateTime?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskEnd(String, Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload, Date?)
+  nameWithType: LogIntegrationSink.ReportTaskEnd(string, TaskUpdatePayload?, DateTime?)
+  nameWithType.vb: LogIntegrationSink.ReportTaskEnd(String, TaskUpdatePayload, Date?)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskEnd*
+  name: ReportTaskEnd
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_ReportTaskEnd_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskEnd
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskEnd
+  nameWithType: LogIntegrationSink.ReportTaskEnd
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskStart(System.String,Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload,System.Nullable{System.DateTime})
+  name: ReportTaskStart(string, TaskUpdatePayload?, DateTime?)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_ReportTaskStart_System_String_Cognite_Extractor_Utils_Unstable_Tasks_TaskUpdatePayload_System_Nullable_System_DateTime__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskStart(System.String,Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload,System.Nullable{System.DateTime})
+  name.vb: ReportTaskStart(String, TaskUpdatePayload, Date?)
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskStart(string, Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload?, System.DateTime?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskStart(String, Cognite.Extractor.Utils.Unstable.Tasks.TaskUpdatePayload, Date?)
+  nameWithType: LogIntegrationSink.ReportTaskStart(string, TaskUpdatePayload?, DateTime?)
+  nameWithType.vb: LogIntegrationSink.ReportTaskStart(String, TaskUpdatePayload, Date?)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskStart*
+  name: ReportTaskStart
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_ReportTaskStart_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskStart
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.ReportTaskStart
+  nameWithType: LogIntegrationSink.ReportTaskStart
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.RunPeriodicCheckIn(System.Threading.CancellationToken,CogniteSdk.Alpha.StartupRequest,System.Nullable{System.TimeSpan})
+  name: RunPeriodicCheckIn(CancellationToken, StartupRequest, TimeSpan?)
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_RunPeriodicCheckIn_System_Threading_CancellationToken_CogniteSdk_Alpha_StartupRequest_System_Nullable_System_TimeSpan__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.RunPeriodicCheckIn(System.Threading.CancellationToken,CogniteSdk.Alpha.StartupRequest,System.Nullable{System.TimeSpan})
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.RunPeriodicCheckIn(System.Threading.CancellationToken, CogniteSdk.Alpha.StartupRequest, System.TimeSpan?)
+  nameWithType: LogIntegrationSink.RunPeriodicCheckIn(CancellationToken, StartupRequest, TimeSpan?)
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.RunPeriodicCheckIn*
+  name: RunPeriodicCheckIn
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.html#Cognite_Extractor_Utils_Unstable_Runtime_LogIntegrationSink_RunPeriodicCheckIn_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.RunPeriodicCheckIn
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.LogIntegrationSink.RunPeriodicCheckIn
+  nameWithType: LogIntegrationSink.RunPeriodicCheckIn
 - uid: Cognite.Extractor.Utils.Unstable.Tasks
   name: Cognite.Extractor.Utils.Unstable.Tasks
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.html

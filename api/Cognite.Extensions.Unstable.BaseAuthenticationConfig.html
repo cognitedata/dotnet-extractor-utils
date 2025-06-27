@@ -148,19 +148,19 @@
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Unstable_BaseAuthenticationConfig_GetAuthenticator_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Unstable_BaseAuthenticationConfig_GetAuthenticator_System_IServiceProvider_System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/Unstable/AuthenticatorConfig.cs/#L27">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/Unstable/AuthenticatorConfig.cs/#L28">View Source</a>
   </span>
   <a id="Cognite_Extensions_Unstable_BaseAuthenticationConfig_GetAuthenticator_" data-uid="Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator*"></a>
-  <h4 id="Cognite_Extensions_Unstable_BaseAuthenticationConfig_GetAuthenticator_System_IServiceProvider_" data-uid="Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider)">GetAuthenticator(IServiceProvider)</h4>
+  <h4 id="Cognite_Extensions_Unstable_BaseAuthenticationConfig_GetAuthenticator_System_IServiceProvider_System_String_" data-uid="Cognite.Extensions.Unstable.BaseAuthenticationConfig.GetAuthenticator(System.IServiceProvider,System.String)">GetAuthenticator(IServiceProvider, string)</h4>
   <div class="markdown level1 summary"><p>Create an authenticator using this configuration object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract IAuthenticator GetAuthenticator(IServiceProvider provider)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract IAuthenticator GetAuthenticator(IServiceProvider provider, string authClientName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -176,6 +176,12 @@
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iserviceprovider">IServiceProvider</a></td>
         <td><span class="parametername">provider</span></td>
         <td><p>Service provider, must contain an HTTP client.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">authClientName</span></td>
+        <td><p>Name of the HTTP client to use.</p>
 </td>
       </tr>
     </tbody>
@@ -201,7 +207,7 @@
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Unstable_BaseAuthenticationConfig_Variants.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Unstable.BaseAuthenticationConfig.Variants%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/Unstable/AuthenticatorConfig.cs/#L32">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/Unstable/AuthenticatorConfig.cs/#L33">View Source</a>
   </span>
   <a id="Cognite_Extensions_Unstable_BaseAuthenticationConfig_Variants_" data-uid="Cognite.Extensions.Unstable.BaseAuthenticationConfig.Variants*"></a>
   <h4 id="Cognite_Extensions_Unstable_BaseAuthenticationConfig_Variants" data-uid="Cognite.Extensions.Unstable.BaseAuthenticationConfig.Variants">Variants()</h4>
