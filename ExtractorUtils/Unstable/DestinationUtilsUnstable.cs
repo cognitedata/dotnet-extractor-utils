@@ -57,7 +57,7 @@ namespace Cognite.Extractor.Utils.Unstable
         /// Return a http handler configured to ignore certificate errors based on passed CertificateConfig.
         /// </summary>
         /// <param name="config">Certificate config to use</param>
-        public static HttpClientHandler GetClientHandler(Extractor.Utils.CertificateConfig? config)
+        public static HttpClientHandler GetClientHandler(Configuration.CertificateConfig? config)
         {
             var handler = new HttpClientHandler();
             if (config == null) return handler;
@@ -66,7 +66,7 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 if (sslPolicyErrors == SslPolicyErrors.None) return true;
 
-                if (config.AcceptAll) return true;
+                if (!config.Verify) return true;
 
                 if (config.AllowList?.Any(acc => acc.ToLower() == cert.GetCertHashString().ToLower()) ?? false) return true;
 
@@ -110,9 +110,9 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 try
                 {
-                    var retryConfig = provider.GetService<ConnectionConfig>()?.CdfRetries;
+                    var retryConfig = provider.GetService<ConnectionConfig>()?.CdfConnection.Retries ?? new Configuration.RetryConfig();
                     return CogniteExtensions.GetRetryPolicy(provider.GetService<ILogger<Client>>(),
-                        retryConfig?.MaxRetries, retryConfig?.MaxDelay);
+                        retryConfig.MaxRetries, retryConfig.MaxBackoffValue.Value);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -123,8 +123,8 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 try
                 {
-                    var retryConfig = provider.GetService<ConnectionConfig>()?.CdfRetries;
-                    return CogniteExtensions.GetTimeoutPolicy(retryConfig?.Timeout);
+                    var retryConfig = provider.GetService<ConnectionConfig>()?.CdfConnection.Retries ?? new Configuration.RetryConfig();
+                    return CogniteExtensions.GetTimeoutPolicy(retryConfig.TimeoutValue.Value);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -136,7 +136,7 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 try
                 {
-                    var certConfig = provider.GetService<ConnectionConfig>()?.Certificates;
+                    var certConfig = provider.GetService<ConnectionConfig>()?.CdfConnection?.SslCertificates;
                     return GetClientHandler(certConfig);
                 }
                 catch (ObjectDisposedException)
@@ -277,13 +277,14 @@ namespace Cognite.Extractor.Utils.Unstable
             if (config.BaseUrl?.TrimToNull() != null)
                 builder = builder.SetBaseUrl(new Uri(config.BaseUrl));
 
-            if (config.SdkLogging != null && config.SdkLogging.Enabled && logger != null)
+            if (logger != null)
             {
                 builder = builder
-                    .SetLogLevel(config.SdkLogging.Level)
-                    .SetLogFormat(config.SdkLogging.Format)
+                    .SetLogLevel(LogLevel.Debug)
+                    .SetLogFormat("CDF ({Message}): {HttpMethod} {Url} {ResponseHeader[X-Request-ID]} - {Elapsed} ms")
                     .SetLogger(logger);
             }
+
 
             if (metrics != null)
             {

@@ -49,7 +49,10 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 Project = "project",
                 BaseUrl = "https://greenfield.cognitedata.com",
-                Integration = "test-integration",
+                Integration = new IntegrationConfig
+                {
+                    ExternalId = "test-integration"
+                },
                 Authentication = new ClientCredentialsConfig
                 {
                     ClientId = "someId",
@@ -82,7 +85,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             var client = provider.GetRequiredService<Client>();
 
             return (provider, new CheckInWorker(
-                config.Integration,
+                config.Integration.ExternalId,
                 provider.GetRequiredService<ILogger<CheckInWorker>>(),
                 client,
                 _checkInCallbacks.Add,

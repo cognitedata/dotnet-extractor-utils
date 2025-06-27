@@ -541,6 +541,14 @@ namespace Cognite.Extensions
                 }
             };
         }
+
+        private static TimeSpan ComputeBackoff(int baseDelay, int maxDelay, Random random, int retry)
+        {
+            var retryDelay = Math.Min(baseDelay * Math.Pow(2, retry - 1), maxDelay);
+            retryDelay = retryDelay / 4 * 3 + random.Next((int)(retryDelay / 2));
+            return TimeSpan.FromMilliseconds(retryDelay);
+        }
+
         /// <summary>
         /// Create a polly retry policy configured for use with CDF.
         /// </summary>
@@ -549,14 +557,12 @@ namespace Cognite.Extensions
         /// <param name="maxDelay">Maximum delay between each retry in milliseconds, negative for no upper limit</param>
         /// <returns></returns>
         public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger? logger,
-            int? maxRetries,
-            int? maxDelay)
+            int maxRetries,
+            int maxDelay)
         {
             var random = new Random();
             logger = logger ?? new NullLogger<Client>();
-            int numRetries = maxRetries ?? 5;
-            int delay = maxDelay ?? 5 * 60 * 1000;
-            if (maxDelay < 0) maxDelay = int.MaxValue;
+            var baseDelay = 125;
             var builder = Policy
                 .HandleResult<HttpResponseMessage>(msg =>
                     msg.StatusCode == HttpStatusCode.Unauthorized
@@ -566,29 +572,65 @@ namespace Cognite.Extensions
                         && values.FirstOrDefault() == "true")
                 .OrTransientHttpError()
                 .Or<TimeoutRejectedException>();
-            if (numRetries < 0)
+            if (maxRetries < 0)
             {
                 return builder.WaitAndRetryForeverAsync(
-                    retry => TimeSpan.FromMilliseconds(Math.Min(125 * Math.Pow(2, retry - 1), delay)),
+                    retry => ComputeBackoff(baseDelay, maxDelay, random, retry),
                     GetRetryHandler(logger));
             }
             else
             {
                 return builder.WaitAndRetryAsync(
                     // retry interval 0.125, 0.25, 0.5, 1, 2, ..., i.e. max 0.125 * 2^numRetries
-                    numRetries,
-                    retry =>
-                    {
-                        var retryDelay = Math.Min(125 * Math.Pow(2, retry - 1), delay);
-                        // Jitter so we land between initial * 2 ** attempt * 3/4 and initial * 2 ** attempt * 5/4
-                        retryDelay = retryDelay / 4 * 3 + random.Next((int)(retryDelay / 2));
-
-                        return TimeSpan.FromMilliseconds(retryDelay);
-                    },
+                    maxRetries,
+                    retry => ComputeBackoff(baseDelay, maxDelay, random, retry),
                     GetRetryHandler(logger));
             }
-
         }
+
+        /// <summary>
+        /// Create a polly retry policy configured for use with CDF.
+        /// </summary>
+        /// <param name="logger">Logger to use on retry</param>
+        /// <param name="maxRetries">Maximum number of retries</param>
+        /// <param name="maxDelay">Maximum delay between each retry in milliseconds, negative for no upper limit</param>
+        /// <returns></returns>
+        public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger? logger, int? maxRetries, int? maxDelay)
+        {
+            int delay = maxDelay ?? 5 * 60 * 1000;
+            if (delay < 0)
+            {
+                delay = int.MaxValue;
+            }
+            return GetRetryPolicy(logger, maxRetries ?? 5, delay);
+        }
+
+        /// <summary>
+        /// Create a polly retry policy configured for use with CDF.
+        /// </summary>
+        /// <param name="logger">Logger to use on retry</param>
+        /// <param name="maxRetries">Maximum number of retries</param>
+        /// <param name="maxDelay">Maximum delay between each retry, negative for no upper limit</param>
+        /// <returns></returns>
+        public static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(ILogger? logger, int? maxRetries, TimeSpan maxDelay)
+        {
+            int delay = (int)maxDelay.TotalMilliseconds;
+            if (delay < 0)
+            {
+                delay = int.MaxValue;
+            }
+            return GetRetryPolicy(logger, maxRetries ?? 5, delay);
+        }
+        /// <summary>
+        /// Get a polly timeout policy with a timeout set to <paramref name="timeout"/>
+        /// </summary>
+        /// <param name="timeout">Timeout on each request</param>
+        /// <returns></returns>
+        public static IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy(TimeSpan timeout)
+        {
+            return Policy.TimeoutAsync<HttpResponseMessage>(timeout); // timeout for each individual try
+        }
+
         /// <summary>
         /// Get a polly timeout policy with a timeout set to <paramref name="timeout"/> milliseconds
         /// </summary>
@@ -600,7 +642,7 @@ namespace Cognite.Extensions
             if (timeout == null) timeoutSpan = TimeSpan.FromMilliseconds(80_000);
             else if (timeout <= 0) timeoutSpan = Timeout.InfiniteTimeSpan;
             else timeoutSpan = TimeSpan.FromMilliseconds(timeout.Value);
-            return Policy.TimeoutAsync<HttpResponseMessage>(timeoutSpan); // timeout for each individual try
+            return GetTimeoutPolicy(timeoutSpan); // timeout for each individual try
         }
 
         /// <summary>

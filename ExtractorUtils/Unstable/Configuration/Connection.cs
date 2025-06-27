@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cognite.Extensions.Unstable;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -31,24 +32,14 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         /// <summary>
         /// ID of integration in CDF, required.
         /// </summary>
-        public string? Integration { get; set; }
+        public IntegrationConfig? Integration { get; set; }
 
         /// <summary>
-        /// Configuration for retries of failed requests to CDF.
+        /// Configuration for the connection to CDF.
         /// </summary>
-        public RetryConfig CdfRetries { get => _cdfRetries; set { _cdfRetries = value ?? _cdfRetries; } }
-        private RetryConfig _cdfRetries = new RetryConfig();
+        public CdfConnectionConfig CdfConnection { get => _cdfConnection; set { _cdfConnection = value ?? _cdfConnection; } }
 
-        /// <summary>
-        /// Enables logging of Cognite Sdk operations. Enabled by default.
-        /// </summary>
-        public SdkLoggingConfig SdkLogging { get => _sdkLogging; set { _sdkLogging = value ?? _sdkLogging; } }
-        private SdkLoggingConfig _sdkLogging = new SdkLoggingConfig();
-
-        /// <summary>
-        /// Configuration for handling SSL certificates.
-        /// </summary>
-        public CertificateConfig? Certificates { get; set; }
+        private CdfConnectionConfig _cdfConnection = new CdfConnectionConfig();
 
         /// <summary>
         /// Register any necessary yaml converters.
@@ -64,6 +55,80 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         public override void GenerateDefaults()
         {
         }
+    }
+
+    /// <summary>
+    /// Configure automatic retries on requests to CDF.
+    /// </summary>
+    public class RetryConfig
+    {
+        /// <summary>
+        /// Timeout in milliseconds for each individual try. Less than or equal to zero for no timeout.
+        /// </summary>
+        public string Timeout { get => TimeoutValue.RawValue; set => TimeoutValue.RawValue = value; }
+        /// <summary>
+        /// Value of the timeout parameter.
+        /// </summary>
+        public TimeSpanWrapper TimeoutValue { get; } = new TimeSpanWrapper(false, "ms", "80s");
+        /// <summary>
+        /// Maximum number of retries. Less than 0 retries forever.
+        /// </summary>
+        public int MaxRetries { get; set; } = 5;
+
+        /// <summary>
+        /// Max backoff in ms between each retry. Base delay is calculated according to 125*2^retry ms.
+        /// If less than 0, there is no maximum.
+        /// </summary>
+        public string MaxBackoff { get => MaxBackoffValue.RawValue; set => MaxBackoffValue.RawValue = value; }
+        /// <summary>
+        /// Value of the max-backoff parameter.
+        /// </summary>
+        public TimeSpanWrapper MaxBackoffValue { get; } = new TimeSpanWrapper(true, "ms", "80s");
+    }
+
+    /// <summary>
+    /// Shared configuration for configuring the connection to CDF.
+    /// </summary>
+    public class CdfConnectionConfig
+    {
+        /// <summary>
+        /// Configuration for retries of failed requests to CDF.
+        /// </summary>
+        public RetryConfig Retries { get => _retries; set { _retries = value ?? _retries; } }
+        private RetryConfig _retries = new RetryConfig();
+
+        /// <summary>
+        /// Configuration for details around verification of SSL certificates.
+        /// </summary>
+        public CertificateConfig SslCertificates { get => _sslCertificates; set { _sslCertificates = value ?? _sslCertificates; } }
+        private CertificateConfig _sslCertificates = new CertificateConfig();
+    }
+
+    /// <summary>
+    /// Configure options relating to SSL certificates.
+    /// </summary>
+    public class CertificateConfig
+    {
+        /// <summary>
+        /// False to disable SSL verification. This must be considered a security risk in most circumstances.
+        /// The default value is true.
+        /// </summary>
+        public bool Verify { get; set; } = true;
+        /// <summary>
+        /// List of certificate thumbprints to manually allow. This is much safer.
+        /// </summary>
+        public IEnumerable<string>? AllowList { get; set; }
+    }
+
+    /// <summary>
+    /// Configuration for setting the integration in CDF.
+    /// </summary>
+    public class IntegrationConfig
+    {
+        /// <summary>
+        /// External ID of the integration.
+        /// </summary>
+        public string? ExternalId { get; set; }
     }
 
     /// <summary>

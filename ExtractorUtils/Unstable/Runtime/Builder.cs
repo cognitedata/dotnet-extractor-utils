@@ -242,7 +242,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                     throw new ConfigurationException("Cannot use remote config without a connection config.");
                 }
 
-                if (connectionConfig.Integration == null)
+                if (connectionConfig.Integration?.ExternalId == null)
                 {
                     throw new ConfigurationException("Cannot use remote config without an integration.");
                 }
@@ -253,7 +253,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 var provider = services.BuildServiceProvider();
 
 
-                var configSource = new RemoteConfigSource<TConfig>(provider.GetRequiredService<Client>(), StartupLogger, connectionConfig.Integration, ConfigPath, BufferRemoteConfig);
+                var configSource = new RemoteConfigSource<TConfig>(provider.GetRequiredService<Client>(), StartupLogger, connectionConfig.Integration.ExternalId, ConfigPath, BufferRemoteConfig);
                 return configSource;
             }
         }
