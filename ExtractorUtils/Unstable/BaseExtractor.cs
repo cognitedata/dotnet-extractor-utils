@@ -115,6 +115,11 @@ namespace Cognite.Extractor.Utils.Unstable
         private ManualResetEvent _triggerEvent = new ManualResetEvent(false);
 
         /// <summary>
+        /// Extractor start time. Set after `Init` has completed.
+        /// </summary>
+        protected DateTime? StartTime { get; private set; }
+
+        /// <summary>
         /// Currently active config revision.
         /// </summary>
         protected int? ConfigRevision { get; }
@@ -284,6 +289,8 @@ namespace Cognite.Extractor.Utils.Unstable
                     : StringOrInt.Create("local"),
                 Tasks = TaskScheduler.GetRegisteredTasks().ToList(),
                 Extractor = GetExtractorVersion(),
+                // StartTime is not null here, as this is called after Init.
+                Timestamp = CogniteTime.ToUnixTimeMilliseconds(StartTime!.Value),
             };
         }
 
@@ -304,6 +311,7 @@ namespace Cognite.Extractor.Utils.Unstable
                 Fatal($"Failed to initialize extractor: {ex.Message}", ex.StackTrace?.ToString());
                 throw;
             }
+            StartTime = DateTime.UtcNow;
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
             AddMonitoredTask(t => _sink.RunPeriodicCheckIn(t, GetStartupRequest()), ExtractorTaskResult.Unexpected, "CheckInWorker");
