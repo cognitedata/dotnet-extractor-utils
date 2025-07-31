@@ -41,7 +41,10 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 Project = "project",
                 BaseUrl = "https://greenfield.cognitedata.com",
-                Integration = "test-integration",
+                Integration = new IntegrationConfig
+                {
+                    ExternalId = "test-integration"
+                },
                 Authentication = new ClientCredentialsConfig
                 {
                     ClientId = "someId",
