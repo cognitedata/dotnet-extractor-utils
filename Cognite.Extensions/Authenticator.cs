@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Cognite.Extractor.Common;
 using Cognite.Common;
 using Cognite.Extensions.Unstable;
+using System.Net.Http.Headers;
+using System.Linq;
 
 namespace Cognite.Extensions
 {
@@ -338,51 +340,72 @@ namespace Cognite.Extensions
         {
             var form = _config.GetFormdata();
 
-            using (var httpContent = new FormUrlEncodedContent(form))
-            {
-                var response = await _client.PostAsync(_config.TokenUrl, httpContent, token);
+            using var httpContent = new FormUrlEncodedContent(form);
+            using var request = new HttpRequestMessage(HttpMethod.Post, _config.TokenUrl);
+            request.Content = httpContent;
+            request.Headers.Add("Accept", "application/json");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"{_config.ClientId}:{_config.ClientSecret}");
+
+            var response = await _client.SendAsync(request, token).ConfigureAwait(false);
 #if NET5_0_OR_GREATER
-                var body = await response.Content.ReadAsStringAsync(token);
+            var body = await response.Content.ReadAsStringAsync(token);
 #else
-                var body = await response.Content.ReadAsStringAsync();
+            var body = await response.Content.ReadAsStringAsync();
 #endif
-                if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
+            {
+                var tokenResponse = JsonSerializer.Deserialize<ResponseDTO>(body);
+                if (tokenResponse == null)
                 {
-                    var tokenResponse = JsonSerializer.Deserialize<ResponseDTO>(body);
-                    if (tokenResponse == null)
-                    {
-                        throw new CogniteUtilsException("Could not obtain OIDC token: Empty response");
-                    }
-
-                    if (tokenResponse.AccessToken == null)
-                    {
-                        throw new CogniteUtilsException("Successfully requested OIDC token, but the access-token was null");
-                    }
-
-                    _logger.LogDebug(
-                        "New OIDC token. Expires on {ttl}",
-                        (DateTime.UtcNow + TimeSpan.FromSeconds(tokenResponse.ExpiresIn)).ToISOString());
-                    return tokenResponse;
+                    throw new CogniteUtilsException("Could not obtain OIDC token: Empty response");
                 }
-                else
+
+                if (tokenResponse.AccessToken == null)
                 {
-                    try
+                    throw new CogniteUtilsException("Successfully requested OIDC token, but the access-token was null");
+                }
+
+                _logger.LogDebug(
+                    "New OIDC token. Expires on {ttl}",
+                    (DateTime.UtcNow + TimeSpan.FromSeconds(tokenResponse.ExpiresIn)).ToISOString());
+                return tokenResponse;
+            }
+            else
+            {
+                var requestId = request.Headers.TryGetValues("X-Request-ID", out var reqId) ? reqId.FirstOrDefault() : null;
+                try
+                {
+                    var error = JsonSerializer.Deserialize<ErrorDTO>(body);
+                    if (error == null)
                     {
-                        var error = JsonSerializer.Deserialize<ErrorDTO>(body);
-                        if (error == null)
-                        {
-                            throw new CogniteUtilsException("Could not obtain OIDC token: Empty error");
-                        }
+                        throw new CogniteUtilsException("Could not obtain OIDC token: Empty error");
+                    }
+                    if (requestId != null)
+                    {
+                        _logger.LogError("Unable to obtain OIDC token: {Message} (Request ID: {RequestId})",
+                            response.ReasonPhrase, requestId);
+                    }
+                    else
+                    {
                         _logger.LogError("Unable to obtain OIDC token: {Message}", error.ErrorDescription);
-                        throw new CogniteUtilsException($"Could not obtain OIDC token: {error.Error} {error.ErrorDescription}");
                     }
-                    catch (JsonException ex)
+                    throw new CogniteUtilsException($"Could not obtain OIDC token: {error.Error} {error.ErrorDescription}");
+                }
+                catch (JsonException ex)
+                {
+                    if (requestId != null)
                     {
-                        _logger.LogError("Unable to obtain OIDC token: R{Code} - {Message}", (int)response.StatusCode, response.ReasonPhrase);
-                        throw new CogniteUtilsException(
-                            $"Could not obtain OIDC token: {(int)response.StatusCode} - {response.ReasonPhrase}",
-                            ex);
+                        _logger.LogError("Unable to obtain OIDC token: R{Code} - {Message} (Request ID: {RequestId}). Raw error payload: {Payload}",
+                            (int)response.StatusCode, response.ReasonPhrase, requestId, body);
                     }
+                    else
+                    {
+                        _logger.LogError("Unable to obtain OIDC token: R{Code} - {Message}. Raw error payload: {Payload}",
+                            (int)response.StatusCode, response.ReasonPhrase, body);
+                    }
+                    throw new CogniteUtilsException(
+                        $"Could not obtain OIDC token: {(int)response.StatusCode} - {response.ReasonPhrase}",
+                        ex);
                 }
             }
         }
