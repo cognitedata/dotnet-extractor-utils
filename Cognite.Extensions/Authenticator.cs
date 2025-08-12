@@ -344,9 +344,9 @@ namespace Cognite.Extensions
             using var request = new HttpRequestMessage(HttpMethod.Post, _config.TokenUrl);
             request.Content = httpContent;
             request.Headers.Add("Accept", "application/json");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", $"{_config.ClientId}:{_config.ClientSecret}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{_config.ClientId}:{_config.ClientSecret}")));
 
-            var response = await _client.SendAsync(request, token).ConfigureAwait(false);
+            using var response = await _client.SendAsync(request, token).ConfigureAwait(false);
 #if NET5_0_OR_GREATER
             var body = await response.Content.ReadAsStringAsync(token);
 #else
@@ -372,7 +372,7 @@ namespace Cognite.Extensions
             }
             else
             {
-                var requestId = request.Headers.TryGetValues("X-Request-ID", out var reqId) ? reqId.FirstOrDefault() : null;
+                var requestId = response.Headers.TryGetValues("X-Request-ID", out var reqId) ? reqId.FirstOrDefault() : null;
                 try
                 {
                     var error = JsonSerializer.Deserialize<ErrorDTO>(body);
