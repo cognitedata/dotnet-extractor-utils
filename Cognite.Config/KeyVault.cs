@@ -107,7 +107,7 @@ namespace Cognite.Extractor.KeyVault
         {
             _client = config.GetClient();
         }
-        public bool Deserialize(IParser reader, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
+        public bool Deserialize(IParser reader, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value, ObjectDeserializer deserializer)
         {
             if (reader.Accept<Scalar>(out var scalar)
                 && scalar != null
