@@ -2328,6 +2328,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.yml\" sourcestartlinenumber=\"1\">Shared configuration for configuring the connection to CDF.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.yml\" sourcestartlinenumber=\"1\">Configure options relating to SSL certificates.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.ConfigSource-1.yml",
       "output": {
         ".html": {
@@ -2370,6 +2398,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.yml\" sourcestartlinenumber=\"1\">Configuration for setting the integration in CDF.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource-1.yml",
       "output": {
         ".html": {
@@ -2395,6 +2437,20 @@
       "IsMRef": true,
       "Title": "Cognite.Extractor.Utils.Unstable.Configuration.RemoteConfigSource<T>",
       "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.RemoteConfigSource-1.yml\" sourcestartlinenumber=\"1\">Configuration source for remote config files.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.yml\" sourcestartlinenumber=\"1\">Configure automatic retries on requests to CDF.</p>\n"
     },
     {
       "type": "ManagedReference",

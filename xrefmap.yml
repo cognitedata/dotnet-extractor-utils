@@ -880,6 +880,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.CogniteExtensions.AddExtensionLoggers
   nameWithType: CogniteExtensions.AddExtensionLoggers
+- uid: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger,System.Int32,System.Int32)
+  name: GetRetryPolicy(ILogger?, int, int)
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetRetryPolicy_Microsoft_Extensions_Logging_ILogger_System_Int32_System_Int32_
+  commentId: M:Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger,System.Int32,System.Int32)
+  name.vb: GetRetryPolicy(ILogger, Integer, Integer)
+  fullName: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger?, int, int)
+  fullName.vb: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger, Integer, Integer)
+  nameWithType: CogniteExtensions.GetRetryPolicy(ILogger?, int, int)
+  nameWithType.vb: CogniteExtensions.GetRetryPolicy(ILogger, Integer, Integer)
 - uid: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger,System.Nullable{System.Int32},System.Nullable{System.Int32})
   name: GetRetryPolicy(ILogger?, int?, int?)
   href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetRetryPolicy_Microsoft_Extensions_Logging_ILogger_System_Nullable_System_Int32__System_Nullable_System_Int32__
@@ -889,6 +898,15 @@ references:
   fullName.vb: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger, Integer?, Integer?)
   nameWithType: CogniteExtensions.GetRetryPolicy(ILogger?, int?, int?)
   nameWithType.vb: CogniteExtensions.GetRetryPolicy(ILogger, Integer?, Integer?)
+- uid: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger,System.Nullable{System.Int32},System.TimeSpan)
+  name: GetRetryPolicy(ILogger?, int?, TimeSpan)
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetRetryPolicy_Microsoft_Extensions_Logging_ILogger_System_Nullable_System_Int32__System_TimeSpan_
+  commentId: M:Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger,System.Nullable{System.Int32},System.TimeSpan)
+  name.vb: GetRetryPolicy(ILogger, Integer?, TimeSpan)
+  fullName: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger?, int?, System.TimeSpan)
+  fullName.vb: Cognite.Extensions.CogniteExtensions.GetRetryPolicy(Microsoft.Extensions.Logging.ILogger, Integer?, System.TimeSpan)
+  nameWithType: CogniteExtensions.GetRetryPolicy(ILogger?, int?, TimeSpan)
+  nameWithType.vb: CogniteExtensions.GetRetryPolicy(ILogger, Integer?, TimeSpan)
 - uid: Cognite.Extensions.CogniteExtensions.GetRetryPolicy*
   name: GetRetryPolicy
   href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetRetryPolicy_
@@ -905,6 +923,12 @@ references:
   fullName.vb: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy(Integer?)
   nameWithType: CogniteExtensions.GetTimeoutPolicy(int?)
   nameWithType.vb: CogniteExtensions.GetTimeoutPolicy(Integer?)
+- uid: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy(System.TimeSpan)
+  name: GetTimeoutPolicy(TimeSpan)
+  href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetTimeoutPolicy_System_TimeSpan_
+  commentId: M:Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy(System.TimeSpan)
+  fullName: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy(System.TimeSpan)
+  nameWithType: CogniteExtensions.GetTimeoutPolicy(TimeSpan)
 - uid: Cognite.Extensions.CogniteExtensions.GetTimeoutPolicy*
   name: GetTimeoutPolicy
   href: api/Cognite.Extensions.CogniteExtensions.html#Cognite_Extensions_CogniteExtensions_GetTimeoutPolicy_
@@ -13416,6 +13440,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).Start
   nameWithType: BaseExtractor<TConfig>.Start
   nameWithType.vb: BaseExtractor(Of TConfig).Start
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.StartTime
+  name: StartTime
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_StartTime
+  commentId: P:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.StartTime
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.StartTime
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).StartTime
+  nameWithType: BaseExtractor<TConfig>.StartTime
+  nameWithType.vb: BaseExtractor(Of TConfig).StartTime
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.StartTime*
+  name: StartTime
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_StartTime_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.StartTime
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.StartTime
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).StartTime
+  nameWithType: BaseExtractor<TConfig>.StartTime
+  nameWithType.vb: BaseExtractor(Of TConfig).StartTime
 - uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.TaskScheduler
   name: TaskScheduler
   href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_TaskScheduler
@@ -13501,6 +13542,70 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Configuration.BaseCogniteConfig.NanReplacement
   nameWithType: BaseCogniteConfig.NanReplacement
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig
+  name: CdfConnectionConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig
+  nameWithType: CdfConnectionConfig
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.Retries
+  name: Retries
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_CdfConnectionConfig_Retries
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.Retries
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.Retries
+  nameWithType: CdfConnectionConfig.Retries
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.Retries*
+  name: Retries
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_CdfConnectionConfig_Retries_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.Retries
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.Retries
+  nameWithType: CdfConnectionConfig.Retries
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.SslCertificates
+  name: SslCertificates
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_CdfConnectionConfig_SslCertificates
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.SslCertificates
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.SslCertificates
+  nameWithType: CdfConnectionConfig.SslCertificates
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.SslCertificates*
+  name: SslCertificates
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_CdfConnectionConfig_SslCertificates_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.SslCertificates
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CdfConnectionConfig.SslCertificates
+  nameWithType: CdfConnectionConfig.SslCertificates
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig
+  name: CertificateConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig
+  nameWithType: CertificateConfig
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.AllowList
+  name: AllowList
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_CertificateConfig_AllowList
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.AllowList
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.AllowList
+  nameWithType: CertificateConfig.AllowList
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.AllowList*
+  name: AllowList
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_CertificateConfig_AllowList_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.AllowList
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.AllowList
+  nameWithType: CertificateConfig.AllowList
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.Verify
+  name: Verify
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_CertificateConfig_Verify
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.Verify
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.Verify
+  nameWithType: CertificateConfig.Verify
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.Verify*
+  name: Verify
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_CertificateConfig_Verify_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.Verify
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.CertificateConfig.Verify
+  nameWithType: CertificateConfig.Verify
 - uid: Cognite.Extractor.Utils.Unstable.Configuration.ConfigSource`1
   name: ConfigSource<T>
   href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConfigSource-1.html
@@ -13691,32 +13796,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.BaseUrl
   nameWithType: ConnectionConfig.BaseUrl
-- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
-  name: CdfRetries
-  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfRetries
-  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
-  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
-  nameWithType: ConnectionConfig.CdfRetries
-- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries*
-  name: CdfRetries
-  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfRetries_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfConnection
+  name: CdfConnection
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfConnection
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfConnection
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfConnection
+  nameWithType: ConnectionConfig.CdfConnection
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfConnection*
+  name: CdfConnection
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_CdfConnection_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfConnection
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfRetries
-  nameWithType: ConnectionConfig.CdfRetries
-- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
-  name: Certificates
-  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Certificates
-  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
-  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
-  nameWithType: ConnectionConfig.Certificates
-- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates*
-  name: Certificates
-  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_Certificates_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
-  isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.Certificates
-  nameWithType: ConnectionConfig.Certificates
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.CdfConnection
+  nameWithType: ConnectionConfig.CdfConnection
 - uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.GenerateDefaults
   name: GenerateDefaults()
   href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_GenerateDefaults
@@ -13769,19 +13861,25 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.RegisterConverters
   nameWithType: ConnectionConfig.RegisterConverters
-- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
-  name: SdkLogging
-  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_SdkLogging
-  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
-  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
-  nameWithType: ConnectionConfig.SdkLogging
-- uid: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging*
-  name: SdkLogging
-  href: api/Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_ConnectionConfig_SdkLogging_
-  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig
+  name: IntegrationConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig
+  nameWithType: IntegrationConfig
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.ExternalId
+  name: ExternalId
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_IntegrationConfig_ExternalId
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.ExternalId
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.ExternalId
+  nameWithType: IntegrationConfig.ExternalId
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.ExternalId*
+  name: ExternalId
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_IntegrationConfig_ExternalId_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.ExternalId
   isSpec: "True"
-  fullName: Cognite.Extractor.Utils.Unstable.Configuration.ConnectionConfig.SdkLogging
-  nameWithType: ConnectionConfig.SdkLogging
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.IntegrationConfig.ExternalId
+  nameWithType: IntegrationConfig.ExternalId
 - uid: Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource`1
   name: LocalConfigSource<T>
   href: api/Cognite.Extractor.Utils.Unstable.Configuration.LocalConfigSource-1.html
@@ -13925,6 +14023,77 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Configuration.RemoteConfigSource(Of T).ResolveConfig
   nameWithType: RemoteConfigSource<T>.ResolveConfig
   nameWithType.vb: RemoteConfigSource(Of T).ResolveConfig
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig
+  name: RetryConfig
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html
+  commentId: T:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig
+  nameWithType: RetryConfig
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoff
+  name: MaxBackoff
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_MaxBackoff
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoff
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoff
+  nameWithType: RetryConfig.MaxBackoff
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoff*
+  name: MaxBackoff
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_MaxBackoff_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoff
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoff
+  nameWithType: RetryConfig.MaxBackoff
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoffValue
+  name: MaxBackoffValue
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_MaxBackoffValue
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoffValue
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoffValue
+  nameWithType: RetryConfig.MaxBackoffValue
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoffValue*
+  name: MaxBackoffValue
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_MaxBackoffValue_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoffValue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxBackoffValue
+  nameWithType: RetryConfig.MaxBackoffValue
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxRetries
+  name: MaxRetries
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_MaxRetries
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxRetries
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxRetries
+  nameWithType: RetryConfig.MaxRetries
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxRetries*
+  name: MaxRetries
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_MaxRetries_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxRetries
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.MaxRetries
+  nameWithType: RetryConfig.MaxRetries
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.Timeout
+  name: Timeout
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_Timeout
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.Timeout
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.Timeout
+  nameWithType: RetryConfig.Timeout
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.Timeout*
+  name: Timeout
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_Timeout_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.Timeout
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.Timeout
+  nameWithType: RetryConfig.Timeout
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.TimeoutValue
+  name: TimeoutValue
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_TimeoutValue
+  commentId: P:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.TimeoutValue
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.TimeoutValue
+  nameWithType: RetryConfig.TimeoutValue
+- uid: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.TimeoutValue*
+  name: TimeoutValue
+  href: api/Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.html#Cognite_Extractor_Utils_Unstable_Configuration_RetryConfig_TimeoutValue_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.TimeoutValue
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Configuration.RetryConfig.TimeoutValue
+  nameWithType: RetryConfig.TimeoutValue
 - uid: Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig
   name: SdkLoggingConfig
   href: api/Cognite.Extractor.Utils.Unstable.Configuration.SdkLoggingConfig.html
