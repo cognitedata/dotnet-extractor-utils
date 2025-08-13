@@ -47,6 +47,16 @@ namespace Cognite.Extractor.Configuration
             _customConverters = customConverters;
         }
 
+        public override string GetEnumName(Type enumType, string name)
+        {
+            return _innerTypeDescriptor.GetEnumName(enumType, name);
+        }
+
+        public override string GetEnumValue(object enumValue)
+        {
+            return _innerTypeDescriptor.GetEnumValue(enumValue);
+        }
+
         /// <inheritdoc />
         public override IEnumerable<IPropertyDescriptor> GetProperties(Type type, object? container)
         {

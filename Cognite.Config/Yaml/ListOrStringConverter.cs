@@ -17,7 +17,7 @@ namespace Cognite.Extractor.Configuration
             return type == typeof(ListOrSpaceSeparated);
         }
 
-        public object? ReadYaml(IParser parser, Type type)
+        public object? ReadYaml(IParser parser, Type type, ObjectDeserializer deserializer)
         {
             if (parser.TryConsume<Scalar>(out var scalar))
             {
@@ -41,7 +41,7 @@ namespace Cognite.Extractor.Configuration
             throw new InvalidOperationException("Expected list or value");
         }
 
-        public void WriteYaml(IEmitter emitter, object? value, Type type)
+        public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
         {
             emitter.Emit(new SequenceStart(AnchorName.Empty, TagName.Empty, true,
                 SequenceStyle.Block, Mark.Empty, Mark.Empty));

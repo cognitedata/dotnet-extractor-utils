@@ -20,7 +20,7 @@ namespace Cognite.Extractor.Configuration
 
         private static readonly Regex _envRegex = new Regex(@"\$\{([A-Za-z0-9_]+)\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        bool INodeDeserializer.Deserialize(IParser parser, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value)
+        bool INodeDeserializer.Deserialize(IParser parser, Type expectedType, Func<IParser, Type, object?> nestedObjectDeserializer, out object? value, ObjectDeserializer deserializer)
         {
             if (expectedType != typeof(string) && !IsNumericType(expectedType))
             {

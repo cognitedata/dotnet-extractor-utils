@@ -15,7 +15,7 @@ namespace Cognite.Extractor.Configuration
             return type.IsEnum || (Nullable.GetUnderlyingType(type)?.IsEnum ?? false);
         }
 
-        public object? ReadYaml(IParser parser, Type type)
+        public object? ReadYaml(IParser parser, Type type, ObjectDeserializer deserializer)
         {
             var scalar = parser.Consume<Scalar>();
 
@@ -42,7 +42,7 @@ namespace Cognite.Extractor.Configuration
             return Enum.Parse(type, scalar.Value, true);
         }
 
-        public void WriteYaml(IEmitter emitter, object? value, Type type)
+        public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
         {
             if (value == null) return;
             var member = type.GetMember(value.ToString() ?? "").FirstOrDefault();
