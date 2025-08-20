@@ -188,9 +188,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
                 // Report a fatal error to integrations if the task exited non-cleanly.
                 // This typically means a crash or manual cancellation.
-                if (finished.Task.IsCanceled)
+                if (finished.Task.IsCanceled || finished.Source.IsCancellationRequested)
                 {
-                    _reporter.Fatal("Task was cancelled", null, now);
+                    _reporter.Warning("Task was cancelled", null, now);
                     exc = new TaskCanceledException();
                 }
                 else if (exc != null)
@@ -467,10 +467,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         private async Task RunInner(CancellationToken token)
         {
             _source = CancellationTokenSource.CreateLinkedTokenSource(token);
-            // Waits for the outer token, not the internal source.
-            // This way we can cancel the task scheduler first, without
-            // canceling everything else.
-            while (!_source.Token.IsCancellationRequested)
+            // Cancellation is handled internally. We want to cleanly shut down and allow all
+            // tasks to complete before terminating the scheduler.
+            while (true)
             {
                 _evt.Reset();
                 var tickTime = DateTime.UtcNow;
@@ -493,12 +492,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                         // Start the task again if it is now not running but it is scheduled to run.
                         if (task.NextRun.HasValue
                             && task.ActiveTask == null
-                            && task.Operation.CanRunNow())
+                            && task.Operation.CanRunNow()
+                            // Only spawn new tasks when we are not cancelled.
+                            && !_source.IsCancellationRequested)
                         {
                             if (task.NextRun.Value <= tickTime)
                             {
                                 _logger.LogDebug("Start new run of task {Name}", task.Operation.Name);
-                                task.Run(tickTime, token);
+                                task.Run(tickTime, _source.Token);
                             }
                             else if (minNextRun == null || minNextRun > task.NextRun.Value)
                             {
@@ -523,6 +524,10 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     if (tasksToWaitFor.Count > 0)
                     {
                         toAwait.Add(Task.WhenAny(tasksToWaitFor));
+                    }
+                    else if (_source.IsCancellationRequested)
+                    {
+                        break;
                     }
                 }
 
