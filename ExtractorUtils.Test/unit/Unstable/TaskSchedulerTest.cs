@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
+using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils.Unstable.Tasks;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -253,6 +255,39 @@ namespace ExtractorUtils.Test.unit.Unstable
             Assert.Equal(ErrorLevel.fatal, sink.Errors[3].Level);
             Assert.Equal(2, sink.TaskStart.Count);
             Assert.Equal(2, sink.TaskEnd.Count);
+        }
+
+        [Fact]
+        public async Task TestSchedulerCancel()
+        {
+            var sink = new DummySink();
+
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            using var startEvt = new ManualResetEvent(false);
+            using var evt = new ManualResetEvent(false);
+            var task = new RunQuickTask("Task1", async (cbs, tok) =>
+            {
+                startEvt.Set();
+                await CommonUtils.WaitAsync(evt, Timeout.InfiniteTimeSpan, tok);
+                return null;
+            });
+
+            sched.AddScheduledTask(task, true);
+            startEvt.WaitOne();
+
+            await sched.CancelInnerAndWait(1000, sink);
+
+            Assert.Single(sink.TaskStart);
+            Assert.Single(sink.TaskEnd);
+            Assert.Single(sink.Errors.DistinctBy(e => e.ExternalId));
+            var err = sink.Errors[0];
+            Assert.Equal(ErrorLevel.warning, err.Level);
+            Assert.Equal("Task1", err.TaskName);
+            Assert.Equal("Task was cancelled", err.Description);
         }
     }
 }
