@@ -125,7 +125,17 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
             if (Operation.Schedule != null)
             {
-                NextRun = now + Operation.Schedule.Value;
+                var value = Operation.Schedule.Value;
+                if (value == Timeout.InfiniteTimeSpan)
+                {
+                    // If the schedule is infinite, we should not set a next run time...
+                    // It's unfortunate that .NET has standardized on this weird InfiniteTimeSpan value, which is just -1 ms.
+                    NextRun = null;
+                }
+                else
+                {
+                    NextRun = now + value;
+                }
             }
             else
             {
