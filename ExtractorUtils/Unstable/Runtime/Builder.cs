@@ -317,7 +317,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
             }
 
             Console.CancelKeyPress += CancelKeyPressHandler;
-            var (configSource, connectionConfig) = await InitConfigSource(token).ConfigureAwait(false);
+            var (configSource, connectionConfig) = await InitConfigSource(source.Token).ConfigureAwait(false);
 
             return new ExtractorRuntime<TConfig, TExtractor>(this, configSource, connectionConfig, source);
         }
