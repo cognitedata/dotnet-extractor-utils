@@ -13,24 +13,7 @@ namespace Cognite.Extensions
     {
         private static void ParseAssetUpdateException(ResponseException ex, CogniteError err)
         {
-            if (ex.Missing?.Any() ?? false)
-            {
-                err.Type = ErrorType.ItemMissing;
-                err.Values = ex.Missing.Select(dict =>
-                        (dict["externalId"] as MultiValue.String)?.Value)
-                        .Where(id => id != null)
-                        .Select(Identity.Create);
-                if (ex.Message.StartsWith("Label ids not found", StringComparison.InvariantCulture))
-                {
-                    err.Resource = ResourceType.Labels;
-                }
-                else
-                {
-                    // Can also be ParentExternalId, actually, same error message so no way to check.
-                    err.Resource = ResourceType.ExternalId;
-                }
-            }
-            else if (ex.Duplicated?.Any() ?? false)
+            if (ex.Duplicated?.Any() ?? false)
             {
                 err.Type = ErrorType.ItemExists;
                 err.Resource = ResourceType.ExternalId;
@@ -41,17 +24,46 @@ namespace Cognite.Extensions
             }
             else if (ex.Code == 400)
             {
-                if (ex.Message.StartsWith("Changing from/to being root", StringComparison.InvariantCulture)
+                if (ex.Message.StartsWith("Reference to unknown parent with externalId", StringComparison.InvariantCulture))
+                {
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.ParentExternalId;
+                    if (ex.Missing?.Any() ?? false)
+                    {
+                        err.Values = ex.Missing.Select(dict =>
+                            (dict["externalId"] as MultiValue.String)?.Value)
+                            .Where(id => id != null)
+                            .Select(Identity.Create);
+                    }
+                    else
+                    {
+                        var missingId = ex.Message.Replace("Reference to unknown parent with externalId ", "");
+                        err.Values = new[] { Identity.Create(missingId) };
+                        err.Complete = false;
+                    }
+                }
+                else if (ex.Message.StartsWith("The given parent ids do not exist", StringComparison.InvariantCulture))
+                {
+                    var idString = ex.Message.Replace("The given parent ids do not exist: ", "");
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.ParentId;
+                    if (ex.Missing?.Any() ?? false)
+                    {
+                        err.Values = ex.Missing.Select(dict =>
+                            (dict["id"] as MultiValue.Long)?.Value)
+                            .Where(id => id != null)
+                            .Select(id => Identity.Create(id!.Value));
+                    }
+                    else
+                    {
+                        err.Values = ParseIdString(idString);
+                    }
+                }
+                else if (ex.Message.StartsWith("Changing from/to being root", StringComparison.InvariantCulture)
                     || ex.Message.StartsWith("Asset must stay within same asset hierarchy", StringComparison.InvariantCulture))
                 {
                     err.Complete = false;
                     err.Type = ErrorType.IllegalItem;
-                    err.Resource = ResourceType.ParentId;
-                }
-                else if (ex.Message.StartsWith("Bad parent", StringComparison.InvariantCulture))
-                {
-                    err.Complete = false;
-                    err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.ParentId;
                 }
                 else if (ex.Message.StartsWith("Invalid dataSetIds", StringComparison.InvariantCulture))
@@ -67,6 +79,24 @@ namespace Cognite.Extensions
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.Id;
                     err.Values = ParseIdString(idString);
+                }
+                else if (ex.Message.StartsWith("Label ids not found", StringComparison.InvariantCulture))
+                {
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.Labels;
+                    err.Values = ex.Missing.Select(dict =>
+                        (dict["externalId"] as MultiValue.String)?.Value)
+                        .Where(id => id != null)
+                        .Select(Identity.Create);
+                }
+                else if (ex.Message.StartsWith("External ids not found", StringComparison.InvariantCulture))
+                {
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.ExternalId;
+                    err.Values = ex.Missing.Select(dict =>
+                        (dict["externalId"] as MultiValue.String)?.Value)
+                        .Where(id => id != null)
+                        .Select(Identity.Create);
                 }
             }
         }
