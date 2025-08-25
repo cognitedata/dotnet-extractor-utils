@@ -84,7 +84,7 @@ namespace Cognite.Extensions
                 {
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.Labels;
-                    err.Values = ex.Missing.Select(dict =>
+                    err.Values = ex.Missing?.Select(dict =>
                         (dict["externalId"] as MultiValue.String)?.Value)
                         .Where(id => id != null)
                         .Select(Identity.Create);
@@ -93,7 +93,7 @@ namespace Cognite.Extensions
                 {
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.ExternalId;
-                    err.Values = ex.Missing.Select(dict =>
+                    err.Values = ex.Missing?.Select(dict =>
                         (dict["externalId"] as MultiValue.String)?.Value)
                         .Where(id => id != null)
                         .Select(Identity.Create);
