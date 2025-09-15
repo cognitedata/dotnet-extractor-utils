@@ -13,16 +13,7 @@ namespace Cognite.Extensions
     {
         private static void ParseAssetException(ResponseException ex, CogniteError err)
         {
-            if (ex.Missing?.Any() ?? false)
-            {
-                err.Type = ErrorType.ItemMissing;
-                err.Resource = ResourceType.Labels;
-                err.Values = ex.Missing.Select(dict =>
-                    (dict["externalId"] as MultiValue.String)?.Value)
-                    .Where(id => id != null)
-                    .Select(Identity.Create);
-            }
-            else if (ex.Duplicated?.Any() ?? false)
+            if (ex.Duplicated?.Any() ?? false)
             {
                 // Only externalIds may be duplicated when creating assets
                 err.Type = ErrorType.ItemExists;
@@ -36,19 +27,38 @@ namespace Cognite.Extensions
             {
                 if (ex.Message.StartsWith("Reference to unknown parent with externalId", StringComparison.InvariantCulture))
                 {
-                    // Missing parentExternalId only returns one value for some reason.
-                    var missingId = ex.Message.Replace("Reference to unknown parent with externalId ", "");
-                    err.Complete = false;
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.ParentExternalId;
-                    err.Values = new[] { Identity.Create(missingId) };
+                    if (ex.Missing?.Any() ?? false)
+                    {
+                        err.Values = ex.Missing.Select(dict =>
+                            (dict["externalId"] as MultiValue.String)?.Value)
+                            .Where(id => id != null)
+                            .Select(Identity.Create);
+                    }
+                    else
+                    {
+                        var missingId = ex.Message.Replace("Reference to unknown parent with externalId ", "");
+                        err.Values = new[] { Identity.Create(missingId) };
+                        err.Complete = false;
+                    }
                 }
                 else if (ex.Message.StartsWith("The given parent ids do not exist", StringComparison.InvariantCulture))
                 {
                     var idString = ex.Message.Replace("The given parent ids do not exist: ", "");
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.ParentId;
-                    err.Values = ParseIdString(idString);
+                    if (ex.Missing?.Any() ?? false)
+                    {
+                        err.Values = ex.Missing.Select(dict =>
+                            (dict["id"] as MultiValue.Long)?.Value)
+                            .Where(id => id != null)
+                            .Select(id => Identity.Create(id!.Value));
+                    }
+                    else
+                    {
+                        err.Values = ParseIdString(idString);
+                    }
                 }
                 else if (ex.Message.StartsWith("Invalid dataSetIds", StringComparison.InvariantCulture))
                 {
@@ -56,6 +66,15 @@ namespace Cognite.Extensions
                     err.Type = ErrorType.ItemMissing;
                     err.Resource = ResourceType.DataSetId;
                     err.Values = ParseIdString(idString);
+                }
+                else if (ex.Message.StartsWith("Label ids not found", StringComparison.InvariantCulture))
+                {
+                    err.Type = ErrorType.ItemMissing;
+                    err.Resource = ResourceType.Labels;
+                    err.Values = ex.Missing?.Select(dict =>
+                        (dict["externalId"] as MultiValue.String)?.Value)
+                        .Where(id => id != null)
+                        .Select(Identity.Create);
                 }
             }
         }
