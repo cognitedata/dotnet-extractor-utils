@@ -58,13 +58,13 @@ namespace Cognite.Extractor.Configuration
             return type == typeof(TimestampWrapper);
         }
 
-        public object? ReadYaml(IParser parser, Type type)
+        public object? ReadYaml(IParser parser, Type type, ObjectDeserializer deserializer)
         {
             var scalar = parser.Consume<Scalar>();
             return new TimestampWrapper(scalar.Value);
         }
 
-        public void WriteYaml(IEmitter emitter, object? value, Type type)
+        public void WriteYaml(IEmitter emitter, object? value, Type type, ObjectSerializer serializer)
         {
             var it = value as TimestampWrapper;
             emitter.Emit(new Scalar(AnchorName.Empty, TagName.Empty, it?.RawValue ?? "", ScalarStyle.DoubleQuoted, false, true));

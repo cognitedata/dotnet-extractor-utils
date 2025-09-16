@@ -16,12 +16,12 @@ jobs:
       version: ${{ steps.get-version.outputs.version }}
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 9
 
@@ -82,11 +82,11 @@ jobs:
      - build
     steps:
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 7
     - name: Download nuget packages
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: nuget-packages
         path: nuget-packages/
