@@ -502,7 +502,7 @@ namespace ExtractorUtils.Test.Unit
 
             if (uri.Contains("/timeseries/byids"))
             {
-                return await CogniteTest.MockEnsureTimeSeriesSendAsync(message, token);
+                return await CogniteTest.MockEnsureTimeSeriesSendAsync(new Cognite.Extractor.Testing.Mock.RequestContext(message), token);
             }
             Assert.Contains($"{_project}/timeseries/data", uri);
 

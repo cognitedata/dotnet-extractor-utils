@@ -1,4 +1,6 @@
+using System;
 using System.Dynamic;
+using System.Net.Http;
 
 namespace Cognite.Extractor.Testing.Mock
 {
@@ -21,7 +23,7 @@ namespace Cognite.Extractor.Testing.Mock
                 tokenResponse.token_type = "Bearer";
                 tokenResponse.expires_in = 3600;
                 tokenResponse.access_token = "test-access-token";
-                return ctx.CreateJsonResponse(tokenResponse);
+                return (HttpResponseMessage)ctx.CreateJsonResponse(tokenResponse);
             }, minRequests, maxRequests));
         }
     }

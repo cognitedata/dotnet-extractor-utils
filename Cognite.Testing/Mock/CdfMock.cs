@@ -34,7 +34,10 @@ namespace Cognite.Extractor.Testing.Mock
         /// </summary>
         public RequestMatcher Matcher { get; set; } = null!;
 
-        internal RequestContext(HttpRequestMessage rawRequest)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public RequestContext(HttpRequestMessage rawRequest)
         {
             RawRequest = rawRequest;
         }
@@ -63,6 +66,19 @@ namespace Cognite.Extractor.Testing.Mock
         }
 
         /// <summary>
+        /// Creates a JSON response with the specified value and status code.
+        /// </summary>
+        public HttpResponseMessage CreateJsonResponse(object value, Type type, HttpStatusCode statusCode = HttpStatusCode.OK)
+        {
+            var response = new HttpResponseMessage(statusCode)
+            {
+                Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(value, type, Oryx.Cognite.Common.jsonOptions)!)
+            };
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            return response;
+        }
+
+        /// <summary>
         /// Creates a JSON error response with the specified error details and status code.
         /// </summary>
         public HttpResponseMessage CreateError(CogniteError error, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
@@ -70,6 +86,7 @@ namespace Cognite.Extractor.Testing.Mock
             if (error == null) throw new ArgumentNullException(nameof(error));
             return CreateJsonResponse(new CogniteErrorWrapper(error), statusCode);
         }
+
 
         /// <summary>
         /// Creates a JSON error response with the specified status code and optional message.
@@ -101,13 +118,15 @@ namespace Cognite.Extractor.Testing.Mock
         public int TotalRequestCount { get; private set; }
 
         private ILogger _logger;
+        private bool _assertCount;
 
         /// <summary>
         /// Creates a new instance of the CdfMock class.
         /// </summary>
-        public CdfMock(ILogger logger)
+        public CdfMock(ILogger logger, bool assertCount = true)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _assertCount = assertCount;
         }
 
         /// <summary>
@@ -182,17 +201,47 @@ namespace Cognite.Extractor.Testing.Mock
         }
 
         /// <summary>
+        /// Assert that all expected requests were made, and clear all matchers.
+        /// </summary>
+        public void AssertAndClear()
+        {
+            foreach (var matcher in _pathMatchers)
+            {
+                matcher.AssertAndReset();
+            }
+            TotalRequestCount = 0;
+            RejectAllMessages = false;
+            _pathMatchers.Clear();
+        }
+
+        private bool IsInExceptionUnwind()
+        {
+            // Hack to avoid throwing if we're currently unwinding due to another exception.
+            // There's no great way to do this in .NET.
+#if NET8_0_OR_GREATER
+            return Marshal.GetExceptionPointers() != IntPtr.Zero;
+#else
+#pragma warning disable CS0618
+            return Marshal.GetExceptionCode() != 0;
+#pragma warning restore CS0618
+#endif
+        }
+
+        /// <summary>
         /// Dispose the CdfMock instance and verify that all expected requests were made.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (!disposing) return;
             _semaphore.Dispose();
-            foreach (var matcher in _pathMatchers)
+            if (_assertCount && !IsInExceptionUnwind())
             {
-                Assert.True(matcher.RequestCount >= matcher.ExpectedRequestCount.min && matcher.RequestCount <= matcher.ExpectedRequestCount.max,
-                    $"Expected request count for path '{matcher.Name}' to be between {matcher.ExpectedRequestCount.min} and {matcher.ExpectedRequestCount.max}, but was {matcher.RequestCount}.");
+                foreach (var matcher in _pathMatchers)
+                {
+                    matcher.AssertMatches();
+                }
             }
+
         }
 
         /// <inheritdoc />
@@ -206,11 +255,12 @@ namespace Cognite.Extractor.Testing.Mock
         /// Add a new request matcher to the mock server.
         /// </summary>
         /// <param name="matcher">Matcher to add</param>
-        public void AddMatcher(RequestMatcher matcher)
+        public T AddMatcher<T>(T matcher) where T : RequestMatcher
         {
             if (matcher == null) throw new ArgumentNullException(nameof(matcher));
             _pathMatchers.Add(matcher);
             _logger.LogDebug("Added matcher: {Name}", matcher.Name);
+            return matcher;
         }
 
         /// <summary>

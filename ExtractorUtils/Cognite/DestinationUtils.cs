@@ -165,6 +165,7 @@ namespace Cognite.Extractor.Utils
             if (setHttpClient)
             {
                 services.AddHttpClient<Client.Builder>(c => c.Timeout = Timeout.InfiniteTimeSpan)
+                    .ConfigureCogniteHttpClientHandlers()
                     .AddHttpMessageHandler(provider =>
                     {
                         try
@@ -175,8 +176,7 @@ namespace Cognite.Extractor.Utils
                         {
                             return new AuthenticatorDelegatingHandler(null);
                         }
-                    })
-                    .ConfigureCogniteHttpClientHandlers();
+                    });
 
                 // Configure token based authentication
                 services.AddHttpClient(
