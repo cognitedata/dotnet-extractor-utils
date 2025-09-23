@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
+using Moq;
 using Oryx;
 using Xunit;
 
@@ -39,7 +40,7 @@ namespace Cognite.Extractor.Testing.Mock
         /// <summary>
         /// Expected request count range for the matcher.
         /// </summary>
-        public (int min, int max) ExpectedRequestCount { get; set; }
+        public Times ExpectedRequestCount { get; set; }
         /// <summary>
         /// Current request count for the matcher.
         /// </summary>
@@ -55,8 +56,7 @@ namespace Cognite.Extractor.Testing.Mock
         /// </summary>
         public void AssertMatches()
         {
-            Assert.True(RequestCount >= ExpectedRequestCount.min && RequestCount <= ExpectedRequestCount.max,
-                $"Expected request count for path '{Name}' to be between {ExpectedRequestCount.min} and {ExpectedRequestCount.max}, but was {RequestCount}.");
+            Assert.True(ExpectedRequestCount.Validate(RequestCount), $"Wrong number of requests for path '{Name}': got {RequestCount}, expected {ExpectedRequestCount}");
         }
 
         /// <summary>
@@ -89,18 +89,16 @@ namespace Cognite.Extractor.Testing.Mock
         /// <param name="handler">Message handler</param>
         /// <param name="method">HTTP method to match, e.g. "GET", "POST"</param>
         /// <param name="pathRegex">Regular expression to match the request path</param>
-        /// <param name="minRequests">Minimum number of requests expected</param>
-        /// <param name="maxRequests">Maximum number of requests expected</param>
+        /// <param name="expectedRequestCount">Expected request count</param>
         public SimpleMatcher(
             string method,
             string pathRegex,
             Func<RequestContext, CancellationToken, HttpResponseMessage> handler,
-            int minRequests = 0,
-            int maxRequests = int.MaxValue)
+            Times expectedRequestCount)
         {
             Name = $"{method} {pathRegex}";
             _handler = (ctx, token) => Task.FromResult(handler(ctx, token));
-            ExpectedRequestCount = (minRequests, maxRequests);
+            ExpectedRequestCount = expectedRequestCount;
             _pathRegex = new Regex(pathRegex, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             _method = method?.ToLower() ?? throw new ArgumentNullException(nameof(method));
         }
@@ -111,18 +109,16 @@ namespace Cognite.Extractor.Testing.Mock
         /// <param name="handler">Message handler</param>
         /// <param name="method">HTTP method to match, e.g. "GET", "POST"</param>
         /// <param name="pathRegex">Regular expression to match the request path</param>
-        /// <param name="minRequests">Minimum number of requests expected</param>
-        /// <param name="maxRequests">Maximum number of requests expected</param>
+        /// <param name="expectedRequestCount">Expected request count</param>
         public SimpleMatcher(
             string method,
             string pathRegex,
             Func<RequestContext, CancellationToken, Task<HttpResponseMessage>> handler,
-            int minRequests = 0,
-            int maxRequests = int.MaxValue)
+            Times expectedRequestCount)
         {
             Name = $"{method} {pathRegex}";
             _handler = handler;
-            ExpectedRequestCount = (minRequests, maxRequests);
+            ExpectedRequestCount = expectedRequestCount;
             _pathRegex = new Regex(pathRegex, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             _method = method?.ToLower() ?? throw new ArgumentNullException(nameof(method));
         }
@@ -182,7 +178,7 @@ namespace Cognite.Extractor.Testing.Mock
             if (_failIfTrue(this))
             {
                 return Task.FromResult(
-                    context.CreateJsonResponse(_error ?? new CogniteErrorWrapper(new CogniteError((int)_statusCode, "Something went wrong")),
+                    context.CreateJsonResponse(_error ?? new CogniteErrorWrapper(new CogniteError((int)_statusCode, "Mocked request failed deliberately")),
                     _error?.GetType() ?? typeof(CogniteErrorWrapper),
                     _statusCode)
                 );
@@ -209,10 +205,8 @@ namespace Cognite.Extractor.Testing.Mock
             : base(inner, (matcher) => matcher.RequestCount <= count, statusCode, error)
         {
             if (count < 1) throw new ArgumentOutOfRangeException(nameof(count), "Count must be at least 1");
-            ExpectedRequestCount = (
-                inner.ExpectedRequestCount.min + count,
-                inner.ExpectedRequestCount.max + count
-            );
+            inner.ExpectedRequestCount.Deconstruct(out var min, out var max);
+            ExpectedRequestCount = Times.Between(min + count, max == int.MaxValue ? int.MaxValue : max + count, Moq.Range.Inclusive);
         }
     }
 }

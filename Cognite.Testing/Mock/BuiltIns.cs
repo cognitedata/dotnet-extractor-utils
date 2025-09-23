@@ -1,6 +1,7 @@
 using System;
 using System.Dynamic;
 using System.Net.Http;
+using Moq;
 
 namespace Cognite.Extractor.Testing.Mock
 {
@@ -13,9 +14,8 @@ namespace Cognite.Extractor.Testing.Mock
         /// Add a basic token endpoint that matches /test/token and returns a static token response.
         /// </summary>
         /// <param name="mock">CdfMock object</param>
-        /// <param name="minRequests">Expected requests minimum</param>
-        /// <param name="maxRequests">Expected requests maximum</param>
-        public static void AddTokenEndpoint(this CdfMock mock, int minRequests = 0, int maxRequests = int.MaxValue)
+        /// <param name="expectedRequestCount">Expected request count for the matcher.</param>
+        public static void AddTokenEndpoint(this CdfMock mock, Times expectedRequestCount)
         {
             mock.AddMatcher(new SimpleMatcher("post", "/test/token", (ctx, token) =>
             {
@@ -24,7 +24,7 @@ namespace Cognite.Extractor.Testing.Mock
                 tokenResponse.expires_in = 3600;
                 tokenResponse.access_token = "test-access-token";
                 return (HttpResponseMessage)ctx.CreateJsonResponse(tokenResponse);
-            }, minRequests, maxRequests));
+            }, expectedRequestCount));
         }
     }
 }

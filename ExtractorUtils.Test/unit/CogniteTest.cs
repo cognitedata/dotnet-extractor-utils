@@ -15,6 +15,7 @@ using Cognite.Extensions;
 using Xunit.Abstractions;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Testing.Mock;
+using Moq;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -24,9 +25,9 @@ namespace ExtractorUtils.Test.Unit
         private int _tokenCounter;
 
         private readonly int _expiresIn;
-        public TokenMatcher(int min, int max, int expiresIn)
+        public TokenMatcher(Times times, int expiresIn)
         {
-            ExpectedRequestCount = (min, max);
+            ExpectedRequestCount = times;
             _expiresIn = expiresIn;
         }
 
@@ -58,7 +59,7 @@ namespace ExtractorUtils.Test.Unit
             _output = output;
         }
 
-        private RequestMatcher MockAssetsList(int min, int max)
+        private RequestMatcher MockAssetsList(Times times)
         {
             return new SimpleMatcher("POST",
                 $"/api/v1/projects/{_project}/assets/list",
@@ -72,8 +73,7 @@ namespace ExtractorUtils.Test.Unit
                         },
                     });
                 },
-                minRequests: min,
-                maxRequests: max
+                times
             );
         }
 
@@ -113,7 +113,7 @@ namespace ExtractorUtils.Test.Unit
                 errorRes.error = "invalid_scope";
                 var mock = provider.GetRequiredService<CdfMock>();
                 mock.AddMatcher(new FailIfMatcher(
-                    new TokenMatcher(3, 3, 1),
+                    new TokenMatcher(Times.Exactly(3), 1),
                     (Func<RequestMatcher, bool>)(matcher => matcher.RequestCount >= 3),
                     HttpStatusCode.InternalServerError,
                     errorRes
@@ -159,7 +159,7 @@ namespace ExtractorUtils.Test.Unit
             using (var provider = services.BuildServiceProvider())
             {
                 var mock = provider.GetRequiredService<CdfMock>();
-                mock.AddMatcher(new FailNTimesMatcher(2, MockAssetsList(1, 1), HttpStatusCode.InternalServerError));
+                mock.AddMatcher(new FailNTimesMatcher(2, MockAssetsList(Times.Once()), HttpStatusCode.InternalServerError));
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 var listed = await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery());
@@ -209,13 +209,13 @@ namespace ExtractorUtils.Test.Unit
             // This means we hit the auth endpoint 5 times in total.
             var tokenMatcher = mock.AddMatcher(new FailNTimesMatcher(
                 2,
-                new TokenMatcher(3, 3, 0),
+                new TokenMatcher(Times.Exactly(3), 0),
                 HttpStatusCode.InternalServerError,
                 errorRes
             ));
             var assetsMatcher = mock.AddMatcher(new FailNTimesMatcher(
                 2,
-                MockAssetsList(1, 1),
+                MockAssetsList(Times.Once()),
                 HttpStatusCode.InternalServerError,
                 errorRes
             ));
@@ -226,8 +226,8 @@ namespace ExtractorUtils.Test.Unit
             tokenMatcher.AssertAndReset();
             assetsMatcher.AssertAndReset();
             // Hit the token endpoint twice more.
-            tokenMatcher.ExpectedRequestCount = (2, 2);
-            assetsMatcher.ExpectedRequestCount = (0, 0);
+            tokenMatcher.ExpectedRequestCount = Times.Exactly(2);
+            assetsMatcher.ExpectedRequestCount = Times.Never();
 
             config.Cognite.CdfRetries.MaxRetries = 1; // Set max retries to 1.
             // Try again, this time it should fail.
@@ -281,8 +281,7 @@ namespace ExtractorUtils.Test.Unit
                 mock.AddMatcher(new SimpleMatcher("POST",
                     $"/api/v1/projects/{_project}/timeseries.*",
                     MockEnsureTimeSeriesSendAsync,
-                    1,
-                    100)
+                    Times.AtLeastOnce())
                 );
 
                 Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> createFunction =
@@ -371,8 +370,7 @@ namespace ExtractorUtils.Test.Unit
                 mock.AddMatcher(new SimpleMatcher("POST",
                     $"/api/v1/projects/{_project}/assets.*",
                     mockEnsureAssetsSendAsync,
-                    1,
-                    100)
+                    Times.AtLeastOnce())
                 );
 
                 Func<IEnumerable<string>, IEnumerable<AssetCreate>> createFunction =
