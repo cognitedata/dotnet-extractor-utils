@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils.Unstable.Configuration;
 using Cognite.Extractor.Utils.Unstable.Tasks;
@@ -282,13 +283,15 @@ namespace Cognite.Extractor.Utils.Unstable
 
         private StartupRequest GetStartupRequest()
         {
+            var version = GetExtractorVersion();
+            version.Version = version.Version?.Truncate(32);
             return new StartupRequest()
             {
                 ActiveConfigRevision = ConfigRevision.HasValue
                     ? StringOrInt.Create(ConfigRevision.Value)
                     : StringOrInt.Create("local"),
                 Tasks = TaskScheduler.GetRegisteredTasks().ToList(),
-                Extractor = GetExtractorVersion(),
+                Extractor = version,
                 // StartTime is not null here, as this is called after Init.
                 Timestamp = CogniteTime.ToUnixTimeMilliseconds(StartTime!.Value),
             };
