@@ -11,6 +11,7 @@ using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -83,8 +84,8 @@ namespace ExtractorUtils.Test
                         new Asset { Id = 2, Name = "Asset2" }
                     }
                 });
-            }, 1, 1));
-            mock.AddTokenEndpoint(1, 1);
+            }, Times.Once()));
+            mock.AddTokenEndpoint(Times.Once());
 
             var client = provider.GetRequiredService<Client>();
             var assets = await client.Assets.ListAsync(new AssetQuery());
@@ -102,7 +103,7 @@ namespace ExtractorUtils.Test
                 using var provider = GetCdfMockProvider();
 
                 var mock = provider.GetRequiredService<CdfMock>();
-                mock.AddTokenEndpoint(2, 2);
+                mock.AddTokenEndpoint(Times.Exactly(2));
             });
         }
 
@@ -111,7 +112,7 @@ namespace ExtractorUtils.Test
         {
             using var provider = GetCdfMockProvider();
             var mock = provider.GetRequiredService<CdfMock>();
-            mock.AddTokenEndpoint(1, 1);
+            mock.AddTokenEndpoint(Times.Once());
             mock.AddMatcher(new SimpleMatcher("post", "^/api/v1/projects/[a-zA-Z0-9\\-]+/assets/list$", (ctx, token) =>
             {
                 return ctx.CreateJsonResponse(new ItemsWithoutCursor<Asset>
@@ -122,7 +123,7 @@ namespace ExtractorUtils.Test
                         new Asset { Id = 2, Name = "Asset2" }
                     }
                 });
-            }, 1, 1));
+            }, Times.Once()));
             mock.GetMatcher(HttpMethod.Post, "/api/v1/projects/project/assets/list").ForceErrorStatus = 500;
             var client = provider.GetRequiredService<Client>();
             var exc = await Assert.ThrowsAsync<ResponseException>(async () => await client.Assets.ListAsync(new AssetQuery()));
