@@ -4,38 +4,77 @@ using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using Moq.Protected;
-using Newtonsoft.Json;
 using Xunit;
 using Cognite.Extractor.Utils;
-using Microsoft.Extensions.Logging;
-using Polly;
 using System.Collections.Concurrent;
 using Cognite.Extensions;
 using Xunit.Abstractions;
 using Cognite.Extractor.Testing;
+using Cognite.Extractor.Testing.Mock;
+using Moq;
 
 namespace ExtractorUtils.Test.Unit
 {
+    class TokenMatcher : RequestMatcher
+    {
+        public override string Name => "TokenMatcher";
+        private int _tokenCounter;
+
+        private readonly int _expiresIn;
+        public TokenMatcher(Times times, int expiresIn)
+        {
+            ExpectedRequestCount = times;
+            _expiresIn = expiresIn;
+        }
+
+        public override Task<HttpResponseMessage> Handle(RequestContext context, CancellationToken token)
+        {
+            dynamic res = new ExpandoObject();
+            res.token_type = "Bearer";
+            res.expires_in = _expiresIn;
+            res.access_token = $"token{_tokenCounter}";
+            _tokenCounter++;
+            return Task.FromResult(context.CreateJsonResponse(res));
+        }
+
+        public override bool Matches(HttpMethod method, string path)
+        {
+            return method == HttpMethod.Post && path.EndsWith("/token");
+        }
+    }
+
     public class CogniteTest
     {
         private const string _authTenant = "someTenant";
         private const string _project = "someProject";
         private const string _host = "https://test.cognitedata.com";
-#pragma warning disable CA1805 // Do not initialize unnecessarily
-        private static int _tokenCounter = 0;
-#pragma warning restore CA1805 // Do not initialize unnecessarily
 
         private readonly ITestOutputHelper _output;
         public CogniteTest(ITestOutputHelper output)
         {
             _output = output;
+        }
+
+        private RequestMatcher MockAssetsList(Times times)
+        {
+            return new SimpleMatcher("POST",
+                $"/api/v1/projects/{_project}/assets/list",
+                (ctx, token) =>
+                {
+                    return ctx.CreateJsonResponse(new ItemsWithCursor<Asset>
+                    {
+                        Items = new List<Asset>
+                        {
+                            new Asset { Id = 1, Name = "Asset1" },
+                        },
+                    });
+                },
+                times
+            );
         }
 
         [Fact]
@@ -48,6 +87,8 @@ namespace ExtractorUtils.Test.Unit
                                 "  console:",
                                 "    level: verbose",
                                 "cognite:",
+                                "  cdf-retries:",
+                                "    max-retries: 1",
                                 "  idp-authentication:",
                                 "    implementation: Basic",
                                $"    client-id: {clientId}",
@@ -58,26 +99,26 @@ namespace ExtractorUtils.Test.Unit
                                 "    min-ttl: 0" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockAuthSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             // Setup services
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             var config = services.AddConfig<BaseConfig>(path, 2);
-            services.AddSingleton<AuthenticatorConfig>(config.Cognite.IdpAuthentication);
             services.AddTestLogging(_output);
-            services.AddTransient<IAuthenticator>(provider =>
-            {
-                var conf = provider.GetRequiredService<CogniteConfig>();
-                var logger = provider.GetRequiredService<ILogger<IAuthenticator>>();
-                var clientFactory = provider.GetRequiredService<IHttpClientFactory>();
+            CdfMock.RegisterHttpClient(services);
+            services.AddCogniteClient("myApp");
 
-                return new Authenticator(conf.IdpAuthentication, clientFactory.CreateClient("AuthenticatorClient"), logger);
-            });
+
             using (var provider = services.BuildServiceProvider())
             {
+                dynamic errorRes = new ExpandoObject();
+                errorRes.error = "invalid_scope";
+                var mock = provider.GetRequiredService<CdfMock>();
+                mock.AddMatcher(new FailIfMatcher(
+                    new TokenMatcher(Times.Exactly(3), 1),
+                    (Func<RequestMatcher, bool>)(matcher => matcher.RequestCount >= 3),
+                    HttpStatusCode.InternalServerError,
+                    errorRes
+                ));
+
                 var auth = provider.GetRequiredService<IAuthenticator>();
                 var token = await auth.GetToken();
                 Assert.Equal("token0", token);
@@ -89,14 +130,6 @@ namespace ExtractorUtils.Test.Unit
                 await Task.Delay(2100); // token expired
                 await Assert.ThrowsAsync<CogniteUtilsException>(() => auth.GetToken()); // failed, returns null
             }
-
-            // Verify that the authentication endpoint was called 3 times
-            mockHttpMessageHandler.Protected()
-                .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    Times.Exactly(3),
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>());
 
             System.IO.File.Delete(path);
         }
@@ -117,37 +150,22 @@ namespace ExtractorUtils.Test.Unit
                                 "    timeout: 10000" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockCogniteAssetsRetryAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-            _sendRetries = 0;
             // Setup services
             var services = new ServiceCollection();
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
-            IAsyncPolicy<HttpResponseMessage> retryPolicy;
-            IAsyncPolicy<HttpResponseMessage> timeoutPolicy;
+            CdfMock.RegisterHttpClient(services);
+            services.AddCogniteClient("testApp", setLogger: true);
             using (var provider = services.BuildServiceProvider())
             {
-                var logger = provider.GetRequiredService<ILogger<CogniteDestination>>();
-                var config = provider.GetRequiredService<BaseConfig>().Cognite.CdfRetries;
-                retryPolicy = CogniteExtensions.GetRetryPolicy(logger, config.MaxRetries, config.MaxDelay);
-                timeoutPolicy = CogniteExtensions.GetTimeoutPolicy(config.Timeout);
-            }
-
-            services.AddHttpClient<Client.Builder>()
-                .ConfigurePrimaryHttpMessageHandler(() => new HttpMessageHandlerStub(mockCogniteAssetsRetryAsync))
-                .AddPolicyHandler(retryPolicy)
-                .AddPolicyHandler(timeoutPolicy);
-
-            services.AddCogniteClient("testApp", setLogger: true, setMetrics: true, setHttpClient: false);
-            using (var provider = services.BuildServiceProvider())
-            {
+                var mock = provider.GetRequiredService<CdfMock>();
+                mock.AddMatcher(new FailNTimesMatcher(2, MockAssetsList(Times.Once()), HttpStatusCode.InternalServerError));
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
-                await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery());
+                var listed = await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery());
+                Assert.Single(listed.Items);
+                Assert.Equal(1, listed.Items.First().Id);
             }
-
         }
 
         [Fact]
@@ -174,43 +192,46 @@ namespace ExtractorUtils.Test.Unit
                              };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockAuthRetryAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-            _sendRetries = 0;
-            _tokenCounter = 0;
             // Setup services
             var services = new ServiceCollection();
             var config = services.AddConfig<BaseConfig>(path, 2);
             services.AddSingleton(config.Cognite.IdpAuthentication);
             services.AddTestLogging(_output);
-            services.AddHttpClient<Client.Builder>()
-                .ConfigurePrimaryHttpMessageHandler(() => new HttpMessageHandlerStub(mockAuthRetryAsync))
-                .ConfigureCogniteHttpClientHandlers()
-                .AddHttpMessageHandler(provider => new AuthenticatorDelegatingHandler(provider.GetRequiredService<IAuthenticator>()));
-            services.AddHttpClient("AuthenticatorClient")
-                .ConfigurePrimaryHttpMessageHandler(() => new HttpMessageHandlerStub(mockAuthRetryAsync))
-                .ConfigureCogniteHttpClientHandlers();
-
-            services.AddCogniteClient("testApp", setLogger: true, setMetrics: true, setHttpClient: false);
+            CdfMock.RegisterHttpClient(services);
+            services.AddCogniteClient("testApp", setLogger: true);
             using var provider = services.BuildServiceProvider();
+
+            dynamic errorRes = new ExpandoObject();
+            errorRes.error = "invalid_scope";
+            var mock = provider.GetRequiredService<CdfMock>();
+            // First we hit the auth endpoint 3 times, to get an initial valid token.
+            // Next, we hit the assets endpoint once, it fails, and when retrying we need to fetch a new token.
+            // This means we hit the auth endpoint 5 times in total.
+            var tokenMatcher = mock.AddMatcher(new FailNTimesMatcher(
+                2,
+                new TokenMatcher(Times.Exactly(3), 0),
+                HttpStatusCode.InternalServerError,
+                errorRes
+            ));
+            var assetsMatcher = mock.AddMatcher(new FailNTimesMatcher(
+                2,
+                MockAssetsList(Times.Once()),
+                HttpStatusCode.InternalServerError,
+                errorRes
+            ));
+
             var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
             await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery());
 
-            // First we hit the auth endpoint 3 times, to get an initial valid token.
-            // Next, we hit the assets endpoint once, it fails, and when retrying we need to fetch a new token.
-            // This means we hit the auth endpoint 6 times in total.
-            Assert.Equal(5, _tokenCounter);
-            Assert.Equal(3, _sendRetries);
+            tokenMatcher.AssertAndReset();
+            assetsMatcher.AssertAndReset();
+            // Hit the token endpoint twice more.
+            tokenMatcher.ExpectedRequestCount = Times.Exactly(2);
+            assetsMatcher.ExpectedRequestCount = Times.Never();
 
-            _tokenCounter = 0;
-            _sendRetries = 0;
             config.Cognite.CdfRetries.MaxRetries = 1; // Set max retries to 1.
             // Try again, this time it should fail.
             await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery()));
-            // We should have hit the auth endpoint 2 times, and the assets endpoint 0 times.
-            Assert.Equal(2, _tokenCounter);
-            Assert.Equal(0, _sendRetries);
         }
 
         [Theory]
@@ -247,19 +268,21 @@ namespace ExtractorUtils.Test.Unit
                                 "    time-series: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(MockEnsureTimeSeriesSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             // Setup services
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider())
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var mock = provider.GetRequiredService<CdfMock>();
+                mock.AddMatcher(new SimpleMatcher("POST",
+                    $"/api/v1/projects/{_project}/timeseries.*",
+                    MockEnsureTimeSeriesSendAsync,
+                    Times.AtLeastOnce())
+                );
 
                 Func<IEnumerable<string>, IEnumerable<TimeSeriesCreate>> createFunction =
                     (idxs) =>
@@ -334,20 +357,21 @@ namespace ExtractorUtils.Test.Unit
                                 "  cdf-throttling:",
                                 "    assets: 2" };
             System.IO.File.WriteAllLines(path, lines);
-
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureAssetsSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             // Setup services
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider())
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var mock = provider.GetRequiredService<CdfMock>();
+                mock.AddMatcher(new SimpleMatcher("POST",
+                    $"/api/v1/projects/{_project}/assets.*",
+                    mockEnsureAssetsSendAsync,
+                    Times.AtLeastOnce())
+                );
 
                 Func<IEnumerable<string>, IEnumerable<AssetCreate>> createFunction =
                     (idx) =>
@@ -370,6 +394,7 @@ namespace ExtractorUtils.Test.Unit
                     SanitationMode.Remove,
                     CancellationToken.None
                 );
+                ts.ThrowOnFatal();
                 Assert.Equal(ids?.Length, ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
                 foreach (var t in ts.Results)
                 {
@@ -393,27 +418,22 @@ namespace ExtractorUtils.Test.Unit
         private static ConcurrentDictionary<string, int> _ensuredTimeSeries = new ConcurrentDictionary<string, int>();
 
         internal static async Task<HttpResponseMessage> MockEnsureTimeSeriesSendAsync(
-            HttpRequestMessage message,
+            RequestContext context,
             CancellationToken token)
         {
-            var uri = message.RequestUri.ToString();
-            var responseBody = "";
-            var statusCode = HttpStatusCode.OK;
-
-            var content = await message.Content.ReadAsStringAsync(token);
-            var ids = JsonConvert.DeserializeObject<dynamic>(content);
-            IEnumerable<dynamic> items = ids.items;
+            var uri = context.RawRequest.RequestUri.ToString();
 
             if (uri.Contains("/timeseries/byids"))
             {
-                Assert.True((bool)ids.ignoreUnknownIds);
+                var ids = await context.ReadJsonBody<ItemsWithIgnoreUnknownIds<CogniteExternalId>>();
+                Assert.True(ids.IgnoreUnknownIds);
 
                 dynamic result = new ExpandoObject();
                 result.items = new List<ExpandoObject>();
 
-                foreach (var item in items)
+                foreach (var item in ids.Items)
                 {
-                    string id = item.externalId;
+                    string id = item.ExternalId;
                     var ensured = _ensuredTimeSeries.TryGetValue(id, out int countdown) && countdown <= 0;
                     if (ensured || id.StartsWith("id"))
                     {
@@ -423,13 +443,14 @@ namespace ExtractorUtils.Test.Unit
                         result.items.Add(tsData);
                         _ensuredTimeSeries.TryAdd(id, 0);
                     }
-
                 }
 
-                responseBody = JsonConvert.SerializeObject(result);
+                return context.CreateJsonResponse(result);
             }
             else
             {
+                var items = await context.ReadJsonBody<ItemsWithIgnoreUnknownIds<TimeSeriesCreate>>();
+
                 dynamic duplicateData = new ExpandoObject();
                 duplicateData.error = new ExpandoObject();
                 duplicateData.error.code = 409;
@@ -439,9 +460,9 @@ namespace ExtractorUtils.Test.Unit
                 dynamic result = new ExpandoObject();
                 result.items = new List<ExpandoObject>();
 
-                foreach (var item in items)
+                foreach (var item in items.Items)
                 {
-                    string id = item.externalId;
+                    string id = item.ExternalId;
                     var hasValue = _ensuredTimeSeries.TryGetValue(id, out int countdown);
                     if ((!hasValue || countdown > 0) && id.StartsWith("duplicated"))
                     {
@@ -459,56 +480,37 @@ namespace ExtractorUtils.Test.Unit
                         result.items.Add(tsData);
                         _ensuredTimeSeries.TryAdd(id, 0);
                     }
-
                 }
                 if (duplicateData.error.duplicated.Count > 0)
                 {
-                    responseBody = JsonConvert.SerializeObject(duplicateData);
-                    statusCode = HttpStatusCode.Conflict;
+                    return context.CreateJsonResponse(duplicateData, HttpStatusCode.Conflict);
                 }
                 else
                 {
-                    responseBody = JsonConvert.SerializeObject(result);
+                    return context.CreateJsonResponse(result);
                 }
-
             }
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(responseBody)
-            };
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            response.Headers.Add("x-request-id", "1");
-
-            return response;
         }
 
         private static ConcurrentDictionary<string, int> _ensuredAssets = new ConcurrentDictionary<string, int>();
 
         private static async Task<HttpResponseMessage> mockEnsureAssetsSendAsync(
-            HttpRequestMessage message,
+            RequestContext context,
             CancellationToken token)
         {
-            var uri = message.RequestUri.ToString();
-            var responseBody = "";
-            var statusCode = HttpStatusCode.OK;
-
-            var content = await message.Content.ReadAsStringAsync(token);
-            var ids = JsonConvert.DeserializeObject<dynamic>(content);
-            IEnumerable<dynamic> items = ids.items;
-
+            var uri = context.RawRequest.RequestUri.ToString();
 
             if (uri.Contains("/assets/byids"))
             {
-                Assert.True((bool)ids.ignoreUnknownIds);
+                var ids = await context.ReadJsonBody<ItemsWithIgnoreUnknownIds<CogniteExternalId>>();
+                Assert.True(ids.IgnoreUnknownIds);
 
                 dynamic result = new ExpandoObject();
                 result.items = new List<ExpandoObject>();
 
-                foreach (var item in items)
+                foreach (var item in ids.Items)
                 {
-                    string id = item.externalId;
+                    string id = item.ExternalId;
                     var ensured = _ensuredAssets.TryGetValue(id, out int countdown) && countdown <= 0;
                     if (ensured || id.StartsWith("id"))
                     {
@@ -518,10 +520,11 @@ namespace ExtractorUtils.Test.Unit
                         _ensuredAssets.TryAdd(id, 0);
                     }
                 }
-                responseBody = JsonConvert.SerializeObject(result);
+                return context.CreateJsonResponse(result);
             }
             else
             {
+                var items = await context.ReadJsonBody<ItemsWithIgnoreUnknownIds<TimeSeriesCreate>>();
                 dynamic duplicateData = new ExpandoObject();
                 duplicateData.error = new ExpandoObject();
                 duplicateData.error.code = 409;
@@ -531,9 +534,9 @@ namespace ExtractorUtils.Test.Unit
                 dynamic result = new ExpandoObject();
                 result.items = new List<ExpandoObject>();
 
-                foreach (var item in items)
+                foreach (var item in items.Items)
                 {
-                    string id = item.externalId;
+                    string id = item.ExternalId;
                     var hasValue = _ensuredAssets.TryGetValue(id, out int countdown);
                     if ((!hasValue || countdown > 0) && id.StartsWith("duplicated"))
                     {
@@ -551,178 +554,15 @@ namespace ExtractorUtils.Test.Unit
                         result.items.Add(assetData);
                         _ensuredAssets.TryAdd(id, 0);
                     }
-
                 }
                 if (duplicateData.error.duplicated.Count > 0)
                 {
-                    responseBody = JsonConvert.SerializeObject(duplicateData);
-                    statusCode = HttpStatusCode.Conflict;
+                    return context.CreateJsonResponse(duplicateData, HttpStatusCode.Conflict);
                 }
                 else
                 {
-                    responseBody = JsonConvert.SerializeObject(result);
+                    return context.CreateJsonResponse(result);
                 }
-
-            }
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(responseBody)
-            };
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            response.Headers.Add("x-request-id", "1");
-
-            return response;
-        }
-
-        private static Task<HttpResponseMessage> mockAuthSendAsync(HttpRequestMessage message, CancellationToken token)
-        {
-            // Verify endpoint and method
-            Assert.Equal($@"http://example.url/token", message.RequestUri.ToString());
-            Assert.Equal(HttpMethod.Post, message.Method);
-
-            if (_tokenCounter == 2) //third call fails
-            {
-                var errorReply = "{" + Environment.NewLine +
-                                $"  \"error\": \"invalid_scope\"{Environment.NewLine}" +
-                                 "}";
-                var errorResponse = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    Content = new StringContent(errorReply)
-
-                };
-                return Task.FromResult(errorResponse);
-            }
-
-            // build expected response
-            var reply = "{" + Environment.NewLine +
-                       $"  \"token_type\": \"Bearer\",{Environment.NewLine}" +
-                       $"  \"expires_in\": 1,{Environment.NewLine}" +
-                       $"  \"access_token\": \"token{_tokenCounter}\"{Environment.NewLine}" +
-                        "}";
-            _tokenCounter++;
-            // Return 200
-            var response = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(reply)
-
-            };
-
-            return Task.FromResult(response);
-        }
-
-        private static int _sendRetries;
-
-        private static Task<HttpResponseMessage> mockCogniteAssetsRetryAsync(HttpRequestMessage message, CancellationToken token)
-        {
-            Assert.Equal($"{_host}/api/v1/projects/{_project}/assets/list", message.RequestUri.ToString());
-            Assert.Equal(HttpMethod.Post, message.Method);
-            if (_sendRetries++ < 2)
-            {
-                var errReply = "{" + Environment.NewLine +
-                    "  \"error\": {" + Environment.NewLine +
-                    "    \"code\": 500," + Environment.NewLine +
-                    "    \"message\": \"Internal server error\"" + Environment.NewLine +
-                    "  }" + Environment.NewLine +
-                    "}";
-                var response = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    Content = new StringContent(errReply)
-                };
-                return Task.FromResult(response);
-            }
-            var reply = @"{""items"":[]}";
-
-            return Task.FromResult(new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(reply)
-            });
-
-        }
-
-        private static Task<HttpResponseMessage> mockAuthRetryAsync(HttpRequestMessage message, CancellationToken token)
-        {
-            var uri = message.RequestUri.ToString();
-            if (uri.Contains("/token"))
-            {
-                // First two token requests fail.
-                if (_tokenCounter < 2)
-                {
-                    _tokenCounter++;
-                    var errorReply = "{" + Environment.NewLine +
-                                $"  \"error\": \"something_wrong\"{Environment.NewLine}" +
-                                 "}";
-                    var errorResponse = new HttpResponseMessage
-                    {
-                        StatusCode = HttpStatusCode.InternalServerError,
-                        Content = new StringContent(errorReply)
-                    };
-                    return Task.FromResult(errorResponse);
-                }
-                // build expected response
-                var reply = "{" + Environment.NewLine +
-                           $"  \"token_type\": \"Bearer\",{Environment.NewLine}" +
-                           $"  \"expires_in\": 0,{Environment.NewLine}" +
-                           $"  \"access_token\": \"token{_tokenCounter}\"{Environment.NewLine}" +
-                            "}";
-                _tokenCounter++;
-                // Return 200
-                var response = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(reply)
-                };
-
-                return Task.FromResult(response);
-            }
-            else
-            {
-                // First two requests fail.
-                if (_sendRetries < 2)
-                {
-                    _sendRetries++;
-                    var errReply = "{" + Environment.NewLine +
-                    "  \"error\": {" + Environment.NewLine +
-                    "    \"code\": 500," + Environment.NewLine +
-                    "    \"message\": \"Internal server error\"" + Environment.NewLine +
-                    "  }" + Environment.NewLine +
-                    "}";
-                    var response = new HttpResponseMessage
-                    {
-                        StatusCode = HttpStatusCode.InternalServerError,
-                        Content = new StringContent(errReply)
-                    };
-                    return Task.FromResult(response);
-                }
-
-                _sendRetries++;
-                var reply = @"{""items"":[]}";
-
-                return Task.FromResult(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(reply)
-                });
-            }
-        }
-
-        public class HttpMessageHandlerStub : HttpMessageHandler
-        {
-            private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _sendAsync;
-
-            public HttpMessageHandlerStub(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> sendAsync)
-            {
-                _sendAsync = sendAsync;
-            }
-
-            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-            {
-                return await _sendAsync(request, cancellationToken);
             }
         }
 

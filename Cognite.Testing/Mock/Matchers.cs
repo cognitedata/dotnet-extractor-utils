@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
+using Moq;
+using Oryx;
+using Xunit;
 
 namespace Cognite.Extractor.Testing.Mock
 {
@@ -36,7 +40,7 @@ namespace Cognite.Extractor.Testing.Mock
         /// <summary>
         /// Expected request count range for the matcher.
         /// </summary>
-        public (int min, int max) ExpectedRequestCount { get; protected set; }
+        public Times ExpectedRequestCount { get; set; }
         /// <summary>
         /// Current request count for the matcher.
         /// </summary>
@@ -46,6 +50,24 @@ namespace Cognite.Extractor.Testing.Mock
         /// Force the matcher to return an error status code.
         /// </summary>
         public int? ForceErrorStatus { get; set; }
+
+        /// <summary>
+        /// Assert that this has been called the correct number of times.
+        /// </summary>
+        public void AssertMatches()
+        {
+            Assert.True(ExpectedRequestCount.Validate(RequestCount), $"Wrong number of requests for path '{Name}': got {RequestCount}, expected {ExpectedRequestCount}");
+        }
+
+        /// <summary>
+        /// Assert that this has been called the correct number of times,
+        /// then reset the request count.
+        /// </summary>
+        public void AssertAndReset()
+        {
+            AssertMatches();
+            RequestCount = 0;
+        }
     }
 
     /// <summary>
@@ -67,21 +89,40 @@ namespace Cognite.Extractor.Testing.Mock
         /// <param name="handler">Message handler</param>
         /// <param name="method">HTTP method to match, e.g. "GET", "POST"</param>
         /// <param name="pathRegex">Regular expression to match the request path</param>
-        /// <param name="minRequests">Minimum number of requests expected</param>
-        /// <param name="maxRequests">Maximum number of requests expected</param>
+        /// <param name="expectedRequestCount">Expected request count</param>
         public SimpleMatcher(
             string method,
             string pathRegex,
             Func<RequestContext, CancellationToken, HttpResponseMessage> handler,
-            int minRequests = 0,
-            int maxRequests = int.MaxValue)
+            Times expectedRequestCount)
         {
             Name = $"{method} {pathRegex}";
             _handler = (ctx, token) => Task.FromResult(handler(ctx, token));
-            ExpectedRequestCount = (minRequests, maxRequests);
+            ExpectedRequestCount = expectedRequestCount;
             _pathRegex = new Regex(pathRegex, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             _method = method?.ToLower() ?? throw new ArgumentNullException(nameof(method));
         }
+
+        /// <summary>
+        /// Constructor for a simple matcher that handles requests with a specified handler.
+        /// </summary>
+        /// <param name="handler">Message handler</param>
+        /// <param name="method">HTTP method to match, e.g. "GET", "POST"</param>
+        /// <param name="pathRegex">Regular expression to match the request path</param>
+        /// <param name="expectedRequestCount">Expected request count</param>
+        public SimpleMatcher(
+            string method,
+            string pathRegex,
+            Func<RequestContext, CancellationToken, Task<HttpResponseMessage>> handler,
+            Times expectedRequestCount)
+        {
+            Name = $"{method} {pathRegex}";
+            _handler = handler;
+            ExpectedRequestCount = expectedRequestCount;
+            _pathRegex = new Regex(pathRegex, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            _method = method?.ToLower() ?? throw new ArgumentNullException(nameof(method));
+        }
+
 
         /// <inheritdoc />
         public override bool Matches(HttpMethod method, string path)
@@ -96,6 +137,76 @@ namespace Cognite.Extractor.Testing.Mock
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
             return _handler(context, token);
+        }
+    }
+
+    /// <summary>
+    /// Wrapper around a different matcher that makes it fail if a predicate is met.
+    /// </summary>
+    public class FailIfMatcher : RequestMatcher
+    {
+        private readonly RequestMatcher _inner;
+        private readonly object? _error;
+        private readonly HttpStatusCode _statusCode;
+
+        /// <summary>
+        /// Get the inner request matcher.
+        /// </summary>
+        public RequestMatcher Inner => _inner;
+
+        private readonly Func<RequestMatcher, bool> _failIfTrue;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public FailIfMatcher(RequestMatcher inner, Func<RequestMatcher, bool> failIfTrue, HttpStatusCode statusCode, object? error = null)
+        {
+            _inner = inner ?? throw new ArgumentNullException(nameof(inner));
+            _failIfTrue = failIfTrue ?? throw new ArgumentNullException(nameof(failIfTrue));
+            _error = error;
+            _statusCode = statusCode;
+            ExpectedRequestCount = inner.ExpectedRequestCount;
+        }
+
+        /// <inheritdoc />
+        public override string Name => _inner.Name;
+
+        /// <inheritdoc />
+        public override Task<HttpResponseMessage> Handle(RequestContext context, CancellationToken token)
+        {
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (_failIfTrue(this))
+            {
+                return Task.FromResult(
+                    context.CreateJsonResponse(_error ?? new CogniteErrorWrapper(new CogniteError((int)_statusCode, "Mocked request failed deliberately")),
+                    _error?.GetType() ?? typeof(CogniteErrorWrapper),
+                    _statusCode)
+                );
+            }
+            return _inner.Handle(context, token);
+        }
+
+        /// <inheritdoc />
+        public override bool Matches(HttpMethod method, string path)
+        {
+            return _inner.Matches(method, path);
+        }
+    }
+
+    /// <summary>
+    /// Matcher for failing N times before succeeding.
+    /// </summary>
+    public class FailNTimesMatcher : FailIfMatcher
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public FailNTimesMatcher(int count, RequestMatcher inner, HttpStatusCode statusCode, object? error = null)
+            : base(inner, (matcher) => matcher.RequestCount <= count, statusCode, error)
+        {
+            if (count < 1) throw new ArgumentOutOfRangeException(nameof(count), "Count must be at least 1");
+            inner.ExpectedRequestCount.Deconstruct(out var min, out var max);
+            ExpectedRequestCount = Times.Between(min + count, max == int.MaxValue ? int.MaxValue : max + count, Moq.Range.Inclusive);
         }
     }
 }
