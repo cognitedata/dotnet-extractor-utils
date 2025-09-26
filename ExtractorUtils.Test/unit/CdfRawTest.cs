@@ -72,9 +72,9 @@ namespace ExtractorUtils.Test.Unit
                 var table = raw.Databases[(_dbName, _tableName)];
                 foreach (var kvp in rows)
                 {
-                    Assert.True(table.TryGetValue(kvp.Key, out var dto));
-                    Assert.Equal(kvp.Value.Name, dto.Columns["name"].GetValue<string>());
-                    Assert.Equal(kvp.Value.Number, dto.Columns["number"].GetValue<int>());
+                    var row = table.GetRow<TestDto>(kvp.Key);
+                    Assert.Equal(kvp.Value.Name, row.Columns.Name);
+                    Assert.Equal(kvp.Value.Number, row.Columns.Number);
                 }
             }
 
@@ -168,9 +168,8 @@ namespace ExtractorUtils.Test.Unit
             var table = raw.Databases[(_dbName, _tableName)];
             for (int i = 0; i < index; ++i)
             {
-                Assert.True(table.TryGetValue($"r{i}", out var dto));
-                _output.WriteLine($"Row r{i}: {dto.Columns.ToJsonString()}");
-                Assert.Equal(i, dto.Columns["number"].GetValue<int>());
+                var row = table.GetRow<TestDto>($"r{i}");
+                Assert.Equal(i, row.Columns.Number);
             }
 
             System.IO.File.Delete(path);

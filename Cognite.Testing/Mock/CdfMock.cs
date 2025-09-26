@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
@@ -95,6 +96,20 @@ namespace Cognite.Extractor.Testing.Mock
         {
             var error = new CogniteError((int)statusCode, message);
             return CreateJsonResponse(new CogniteErrorWrapper(error), statusCode);
+        }
+
+        /// <summary>
+        /// Parses the query string of the request URI into a dictionary.
+        /// </summary>
+        public Dictionary<string, string> ParseQuery()
+        {
+            var query = HttpUtility.ParseQueryString(RawRequest.RequestUri.Query);
+            var result = new Dictionary<string, string>();
+            foreach (var key in query.AllKeys)
+            {
+                result[key] = query[key];
+            }
+            return result;
         }
     }
 
