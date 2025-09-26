@@ -1,26 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Moq.Protected;
 using Xunit;
-using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
 using Xunit.Abstractions;
 using Cognite.Extractor.Testing;
+using Cognite.Extractor.Testing.Mock;
 
 namespace ExtractorUtils.Test.Unit
 {
     public class CdfRawTest
     {
-        private const string _authTenant = "someTenant";
         private const string _project = "someProject";
         private const string _host = "https://test.cognitedata.com";
         private const string _dbName = "testDb";
@@ -49,21 +43,21 @@ namespace ExtractorUtils.Test.Unit
                                 "    raw: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertRowsAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             // Setup services
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider())
             {
+                var mock = provider.GetRequiredService<CdfMock>();
+                var raw = new RawMock();
+                // Expect that the endpoint is called 2 times (2 chunks of max 4 rows)
+                mock.AddMatcher(raw.CreateRawRowsMatcher(Times.Exactly(2)));
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
-                var columns = new Dictionary<string, TestDto>{
+                var rows = new Dictionary<string, TestDto>{
                     { "A", new TestDto{ Name = "A", Number = 0} },
                     { "B", new TestDto{ Name = "B", Number = 1} },
                     { "C", new TestDto{ Name = "C", Number = 2} },
@@ -72,24 +66,17 @@ namespace ExtractorUtils.Test.Unit
                     { "F", new TestDto{ Name = "F", Number = 5} }
                 };
 
-                await cogniteDestination.InsertRawRowsAsync(_dbName, _tableName, columns, CancellationToken.None);
+                await cogniteDestination.InsertRawRowsAsync(_dbName, _tableName, rows, CancellationToken.None);
 
-                foreach (var kvp in columns)
+                Assert.Single(raw.Databases);
+                var table = raw.Databases[(_dbName, _tableName)];
+                foreach (var kvp in rows)
                 {
-                    Assert.True(rows.TryGetValue(kvp.Key, out TestDto dto));
-                    Assert.Equal(kvp.Value.Name, dto.Name);
-                    Assert.Equal(kvp.Value.Number, dto.Number);
+                    Assert.True(table.TryGetValue(kvp.Key, out var dto));
+                    Assert.Equal(kvp.Value.Name, dto.Columns["name"].GetValue<string>());
+                    Assert.Equal(kvp.Value.Number, dto.Columns["number"].GetValue<int>());
                 }
             }
-
-            // Verify that the endpoint was called 2 times (2 chunks of max 4 rows)
-            mockHttpMessageHandler.Protected()
-                .Verify<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    Times.Exactly(2),
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>());
-
 
             System.IO.File.Delete(path);
         }
@@ -107,19 +94,22 @@ namespace ExtractorUtils.Test.Unit
                                $"  host: {_host}" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertRowsAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
-            services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
+            CdfMock.RegisterHttpClient(services);
+            services.AddCogniteClient("testApp");
+
+            var raw = new RawMock();
+
             var index = 0;
             using (var source = new CancellationTokenSource())
             using (var provider = services.BuildServiceProvider())
             {
+                var mock = provider.GetRequiredService<CdfMock>();
+                var rawRowsEndpoint = raw.CreateRawRowsMatcher(Times.AtMost(8));
+                mock.AddMatcher(rawRowsEndpoint); // expect at most 8 calls to the raw rows endpoint
+
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<CdfRawTest>>();
                 // queue with 1 sec upload interval
@@ -143,13 +133,8 @@ namespace ExtractorUtils.Test.Unit
                 } // disposing the queue will upload any rows left and stop the upload loop
                 logger.LogInformation("Upload queue disposed");
 
-                // Verify that the endpoint was called at most 3 times (once per upload interval and once disposing)
-                mockHttpMessageHandler.Protected()
-                    .Verify<Task<HttpResponseMessage>>(
-                        "SendAsync",
-                        Times.AtMost(5),
-                        ItExpr.IsAny<HttpRequestMessage>(),
-                        ItExpr.IsAny<CancellationToken>());
+                // Verify that the endpoint was called at most 5 times (once per upload interval and once disposing)
+                rawRowsEndpoint.AssertMatches(Times.AtMost(5));
 
                 // queue with maximum size
                 await using (var queue = cogniteDestination.CreateRawUploadQueue<TestDto>(_dbName, _tableName, TimeSpan.FromMinutes(10), 5))
@@ -175,20 +160,17 @@ namespace ExtractorUtils.Test.Unit
                 }
                 logger.LogInformation("Upload queue disposed");
                 // Verify that the endpoint was called at most 3 more times (once per max size and once disposing)
-                mockHttpMessageHandler.Protected()
-                    .Verify<Task<HttpResponseMessage>>(
-                        "SendAsync",
-                        Times.AtMost(8),
-                        ItExpr.IsAny<HttpRequestMessage>(),
-                        ItExpr.IsAny<CancellationToken>());
-
+                rawRowsEndpoint.AssertMatches(Times.AtMost(8));
             }
 
             // verify all rows were sent to CDF
+            Assert.Single(raw.Databases);
+            var table = raw.Databases[(_dbName, _tableName)];
             for (int i = 0; i < index; ++i)
             {
-                Assert.True(rows.TryGetValue($"r{i}", out TestDto dto));
-                Assert.Equal(i, dto.Number);
+                Assert.True(table.TryGetValue($"r{i}", out var dto));
+                _output.WriteLine($"Row r{i}: {dto.Columns.ToJsonString()}");
+                Assert.Equal(i, dto.Columns["number"].GetValue<int>());
             }
 
             System.IO.File.Delete(path);
@@ -199,47 +181,5 @@ namespace ExtractorUtils.Test.Unit
             public string Name { get; set; }
             public int Number { get; set; }
         }
-
-        private class RawItem
-        {
-            public string key { get; set; }
-            public TestDto columns { get; set; }
-        }
-
-        private class RawItems
-        {
-            public List<RawItem> items { get; set; }
-        }
-
-        private static Dictionary<string, TestDto> rows = new Dictionary<string, TestDto>();
-        private static async Task<HttpResponseMessage> mockInsertRowsAsync(HttpRequestMessage message, CancellationToken token)
-        {
-            var uri = message.RequestUri.ToString();
-
-            Assert.Contains($"{_host}/api/v1/projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows", uri);
-            Assert.Contains("ensureParent=true", message.RequestUri.Query);
-
-            var responseBody = "{ }";
-            var statusCode = HttpStatusCode.OK;
-            var content = await message.Content.ReadAsStringAsync(token);
-            var items = JsonSerializer.Deserialize<RawItems>(content,
-                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
-            foreach (var item in items.items)
-            {
-                rows.Add(item.key, item.columns);
-            }
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(responseBody)
-            };
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            response.Headers.Add("x-request-id", "1");
-
-            return response;
-        }
-
     }
 }
