@@ -45,20 +45,56 @@ namespace Cognite.Extractor.Common
         }
     }
 
+    /// <summary>
+    /// Result of a long-running scheduler task.
+    ///
+    /// Used to indicate whether a task is expected to exit, and whether
+    /// an exit should be considered the scheduler crashing.
+    /// </summary>
+    public enum SchedulerTaskResult
+    {
+        /// <summary>
+        /// Task was expected to shut down.
+        /// </summary>
+        Expected,
+        /// <summary>
+        /// Task should not have shut down.
+        /// </summary>
+        Unexpected,
+    }
+
+    /// <summary>
+    /// Exception thrown by the PeriodicScheduler.
+    /// </summary>
+    public class SchedulerException : Exception
+    {
+        /// <inheritdoc />
+        public SchedulerException(string message) : base(message)
+        {
+        }
+        /// <inheritdoc />
+        public SchedulerException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+    }
+
+
     internal sealed class PeriodicTask : IDisposable
     {
-        public Task Task { get; set; } = null!;
+        public Task<SchedulerTaskResult> Task { get; set; } = null!;
         public Func<CancellationToken, Task> Operation { get; }
+        public CancellationTokenSource Source { get; }
         public ManualResetEvent Event { get; } = new ManualResetEvent(false);
         public ITimeSpanProvider Interval { get; }
         public bool Paused { get; set; }
         public bool ShouldRun { get; set; } = true;
         public string Name { get; }
-        public PeriodicTask(Func<CancellationToken, Task> operation, ITimeSpanProvider interval, string name)
+        public PeriodicTask(Func<CancellationToken, Task> operation, ITimeSpanProvider interval, string name, CancellationToken token)
         {
             Operation = operation;
             Interval = interval;
             Name = name;
+            Source = CancellationTokenSource.CreateLinkedTokenSource(token);
         }
         public void Dispose()
         {
@@ -105,18 +141,20 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
+        /// <returns>The name of the scheduled task</returns>
+        public string SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
             Func<CancellationToken, Task> operation, bool runImmediately = true)
         {
             lock (_taskListMutex)
             {
                 if (name == null) name = $"anonymous-periodic{_anonymousCounter++}";
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
-                var task = new PeriodicTask(operation, interval, name);
+                var task = new PeriodicTask(operation, interval, name, _source.Token);
                 _tasks[name] = task;
                 task.Task = RunPeriodicTaskAsync(task, runImmediately);
                 _newTaskEvent.Set();
             }
+            return name;
         }
 
         /// <summary>
@@ -129,10 +167,11 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        public void SchedulePeriodicTask(string? name, TimeSpan interval,
+        /// <returns>The name of the scheduled task</returns>
+        public string SchedulePeriodicTask(string? name, TimeSpan interval,
             Func<CancellationToken, Task> operation, bool runImmediately = true)
         {
-            SchedulePeriodicTask(name, new BasicTimeSpanProvider(interval), operation, runImmediately);
+            return SchedulePeriodicTask(name, new BasicTimeSpanProvider(interval), operation, runImmediately);
         }
 
 
@@ -159,10 +198,11 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        public void SchedulePeriodicTask(string? name, TimeSpan interval,
+        /// <returns>The name of the scheduled task</returns>
+        public string SchedulePeriodicTask(string? name, TimeSpan interval,
             Action<CancellationToken> operation, bool runImmediately = true)
         {
-            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
+            return SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
         }
 
         /// <summary>
@@ -175,10 +215,11 @@ namespace Cognite.Extractor.Common
         /// <param name="operation">Function to call on each iteration</param>
         /// <param name="runImmediately">True to execute the periodic task immediately, false to first
         /// wait until triggered by interval or manually</param>
-        public void SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
+        /// <returns>The name of the scheduled task</returns>
+        public string SchedulePeriodicTask(string? name, ITimeSpanProvider interval,
             Action<CancellationToken> operation, bool runImmediately = true)
         {
-            SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
+            return SchedulePeriodicTask(name, interval, token => Task.Run(() => operation(token), CancellationToken.None), runImmediately);
         }
 
         /// <summary>
@@ -189,18 +230,43 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="name"></param>
         /// <param name="operation"></param>
-        public void ScheduleTask(string? name, Func<CancellationToken, Task> operation)
+        /// <returns>The name of the scheduled task</returns>
+        public string ScheduleTask(string? name, Func<CancellationToken, Task<SchedulerTaskResult>> operation)
         {
             if (operation == null) throw new ArgumentNullException(nameof(operation));
             lock (_taskListMutex)
             {
                 if (name == null) name = $"anonymous{_anonymousCounter++}";
                 if (_tasks.ContainsKey(name)) throw new InvalidOperationException($"A task with name {name} already exists");
-                var task = new PeriodicTask(operation, new BasicTimeSpanProvider(TimeSpan.Zero), name);
+                var task = new PeriodicTask(operation, new BasicTimeSpanProvider(TimeSpan.Zero), name, _source.Token);
                 _tasks[name] = task;
-                task.Task = operation(_source.Token);
+
+                task.Task = operation(task.Source.Token);
                 _newTaskEvent.Set();
             }
+            return name;
+        }
+
+        /// <summary>
+        /// Schedule a new task to run with on the scheduler.
+        /// Exceptions are not caught, so <paramref name="operation"/> should catch its own errors, or the
+        /// task from WaitForAll should be watched. Note that this method waits on <paramref name="operation"/> to yield,
+        /// so make sure that it does not contain too much synchronous code.
+        /// </summary>
+        /// <param name="name">Name of the task, used to refer to it later</param>
+        /// <param name="operation">Interval to schedule on</param>
+        /// <param name="staticExpected">Whether the task is expected to complete or not.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>The name of the scheduled task</returns>
+        public string ScheduleTask(string? name, Func<CancellationToken, Task> operation, SchedulerTaskResult staticExpected = SchedulerTaskResult.Expected)
+        {
+            if (operation == null) throw new ArgumentNullException(nameof(operation));
+            async Task<SchedulerTaskResult> Wrapper(CancellationToken token)
+            {
+                await operation(token).ConfigureAwait(false);
+                return staticExpected;
+            }
+            return ScheduleTask(name, Wrapper);
         }
 
         /// <summary>
@@ -211,9 +277,10 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="name"></param>
         /// <param name="operation"></param>
-        public void ScheduleTask(string? name, Action<CancellationToken> operation)
+        /// <returns>The name of the scheduled task</returns>
+        public string ScheduleTask(string? name, Action<CancellationToken> operation)
         {
-            ScheduleTask(name, token => Task.Run(() => operation(token), CancellationToken.None));
+            return ScheduleTask(name, token => Task.Run(() => operation(token), CancellationToken.None));
         }
 
         /// <summary>
@@ -223,16 +290,43 @@ namespace Cognite.Extractor.Common
         /// </summary>
         /// <param name="name">Name of task to cancel</param>
         /// <returns>Task which completes once the task has terminated</returns>
-        public Task ExitAndWaitForTermination(string name)
+        public async Task ExitAndWaitForTermination(string name)
         {
             PeriodicTask? task;
             lock (_taskListMutex)
             {
-                if (!_tasks.TryGetValue(name, out task)) return Task.CompletedTask;
+                if (!_tasks.TryGetValue(name, out task)) return;
                 task.ShouldRun = false;
                 task.Event.Set();
             }
-            return task.Task;
+            await task.Task.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Signal a task should terminate then wait. This will cancel the operation if it is running,
+        /// then wait for it to terminate.
+        /// Will throw an exception if the task has failed, except if it failed with
+        /// OperationCancelledException.
+        /// </summary>
+        /// <param name="name">Name of task to cancel</param>
+        /// <returns>Task which completes once the task has terminated</returns>
+        public async Task CancelAndWaitForTermination(string name)
+        {
+            PeriodicTask? task;
+            lock (_taskListMutex)
+            {
+                if (!_tasks.TryGetValue(name, out task)) return;
+                task.ShouldRun = false;
+                task.Source.Cancel();
+                task.Event.Set();
+            }
+            try
+            {
+                await task.Task.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         /// <summary>
@@ -254,7 +348,7 @@ namespace Cognite.Extractor.Common
         /// Same as calling ExitAndWaitForTermination on all tasks.
         /// </summary>
         /// <returns>Task which completes once all tasks are done</returns>
-        public async Task ExitAllAndWait(int timeoutMs = 0)
+        public async Task ExitAllAndWait(int timeoutMs = 0, bool cancel = false)
         {
             var tasks = new List<PeriodicTask>(_tasks.Count);
             lock (_taskListMutex)
@@ -262,6 +356,7 @@ namespace Cognite.Extractor.Common
                 foreach (var task in _tasks.Values)
                 {
                     task.ShouldRun = false;
+                    if (cancel) task.Source.Cancel();
                     task.Event.Set();
                     tasks.Add(task);
                 }
@@ -328,6 +423,10 @@ namespace Cognite.Extractor.Common
                     foreach (var task in toRemove)
                     {
                         _tasks.Remove(task.Name);
+                        if (task.Task.Result == SchedulerTaskResult.Unexpected && task.ShouldRun && !task.Source.IsCancellationRequested)
+                        {
+                            throw new SchedulerException($"Task {task.Name} completed, but was not expected to stop.");
+                        }
                     }
                     tasks.Clear();
                     foreach (var task in _tasks.Values)
@@ -343,7 +442,11 @@ namespace Cognite.Extractor.Common
                 }
             }
             if (_source.IsCancellationRequested) return;
-            if (failedTask != null && failedTask.Task.Exception != null) ExceptionDispatchInfo.Capture(failedTask.Task.Exception).Throw();
+            if (failedTask != null && failedTask.Task.Exception != null)
+            {
+                var simplified = CommonUtils.SimplifyException(failedTask.Task.Exception);
+                throw new SchedulerException($"Task {failedTask.Name} failed: {simplified.Message}", simplified);
+            }
         }
 
         /// <summary>
@@ -384,20 +487,21 @@ namespace Cognite.Extractor.Common
             }
         }
 
-        private async Task RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately)
+        private async Task<SchedulerTaskResult> RunPeriodicTaskAsync(PeriodicTask task, bool runImmediately)
         {
             bool shouldRunNow = runImmediately;
             if (task.Interval.IsDynamic) shouldRunNow = false;
-            while (!_source.IsCancellationRequested && task.ShouldRun)
+            while (task.ShouldRun && !task.Source.IsCancellationRequested)
             {
                 var interval = task.Interval.Value;
                 var timeout = task.Paused ? Timeout.InfiniteTimeSpan : interval;
-                var waitTask = CommonUtils.WaitAsync(task.Event, interval, _source.Token).ConfigureAwait(false);
-                if (!task.Paused && shouldRunNow) await task.Operation(_source.Token).ConfigureAwait(false);
+                var waitTask = CommonUtils.WaitAsync(task.Event, interval, task.Source.Token).ConfigureAwait(false);
+                if (!task.Paused && shouldRunNow && !task.Source.IsCancellationRequested) await task.Operation(task.Source.Token).ConfigureAwait(false);
                 shouldRunNow = true;
                 await waitTask;
                 task.Event.Reset();
             }
+            return SchedulerTaskResult.Unexpected;
         }
 
         /// <summary>

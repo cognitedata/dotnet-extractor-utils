@@ -435,7 +435,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// To re-run it after a crash, the scheduler must be re-initialized.
         /// </summary>
         /// <param name="token">Global cancellation token for stopping the entire scheduler.</param>
-        public async Task<ExtractorTaskResult> Run(CancellationToken token)
+        public async Task<SchedulerTaskResult> Run(CancellationToken token)
         {
             if (_started) throw new InvalidOperationException("Attempt to run scheduler multiple times");
             _started = true;
@@ -460,7 +460,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
             bool isCancelled = _source?.Token.IsCancellationRequested ?? false;
 
-            return isCancelled ? ExtractorTaskResult.Expected : ExtractorTaskResult.Unexpected;
+            return isCancelled ? SchedulerTaskResult.Expected : SchedulerTaskResult.Unexpected;
         }
 
 

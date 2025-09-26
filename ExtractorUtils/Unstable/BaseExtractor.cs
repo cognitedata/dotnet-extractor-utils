@@ -15,66 +15,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extractor.Utils.Unstable
 {
-
-    /// <summary>
-    /// Result of a long-running extractor task.
-    /// 
-    /// Used to indicate whether a task is expected to exit, and whether
-    /// an exit should be considered the extractor crashing.
-    /// </summary>
-    public enum ExtractorTaskResult
-    {
-        /// <summary>
-        /// Task was expected to shut down.
-        /// </summary>
-        Expected,
-        /// <summary>
-        /// Task should not have shut down.
-        /// </summary>
-        Unexpected,
-    }
-
-    /// <summary>
-    /// Class wrapping a task being monitored by the extractor.
-    /// This is simply a way to run background tasks that
-    /// don't get reported to integrations.
-    /// </summary>
-    class MonitoredTask
-    {
-        /// <summary>
-        /// Task to monitor.
-        /// </summary>
-        public Task<ExtractorTaskResult> Task { get; }
-        /// <summary>
-        /// Task name, does not have to be unique.
-        /// </summary>
-        public string Name { get; }
-
-        private CancellationTokenSource _source;
-
-        public MonitoredTask(Func<CancellationToken, Task<ExtractorTaskResult>> task, string name, CancellationToken token)
-        {
-            _source = CancellationTokenSource.CreateLinkedTokenSource(token);
-            Task = task(_source.Token);
-            Name = name;
-        }
-
-        public void Cancel()
-        {
-            _source.Cancel();
-        }
-
-        public async Task<ExtractorTaskResult> WaitForCompletion()
-        {
-            return await Task.ConfigureAwait(false);
-        }
-
-        public bool IsCanceled()
-        {
-            return _source.IsCancellationRequested;
-        }
-    }
-
     /// <summary>
     /// Base class for extractors.
     /// </summary>
@@ -89,13 +29,22 @@ namespace Cognite.Extractor.Utils.Unstable
         /// CDF destination
         /// </summary>
         protected CogniteDestination? Destination { get; }
-        private readonly List<MonitoredTask> _monitoredTaskList = new List<MonitoredTask>();
         private readonly IIntegrationSink _sink;
 
         /// <summary>
         /// Task scheduler containing all public extractor tasks.
         /// </summary>
         protected ExtractorTaskScheduler TaskScheduler { get; }
+
+        /// <summary>
+        /// Scheduler for internal extractor tasks.
+        ///
+        /// Use this for tasks that are not exposed to integrations,
+        /// like state store, metrics, or other background processes.
+        ///
+        /// Note that this is null until initialized in `Init`.
+        /// </summary>
+        protected PeriodicScheduler Scheduler { get; private set; } = null!;
 
         /// <summary>
         /// Access to the service provider this extractor was built from
@@ -176,6 +125,7 @@ namespace Cognite.Extractor.Utils.Unstable
         {
             if (Source != null) throw new InvalidOperationException("Extractor already started");
             Source = CancellationTokenSource.CreateLinkedTokenSource(token);
+            Scheduler = new PeriodicScheduler(Source.Token);
         }
 
         /// <summary>
@@ -187,16 +137,12 @@ namespace Cognite.Extractor.Utils.Unstable
         /// </summary>
         /// <param name="task">Task to monitor.</param>
         /// <param name="name">Task name, just used for logging.</param>
-        protected void AddMonitoredTask(Func<CancellationToken, Task<ExtractorTaskResult>> task, string name)
+        protected void AddMonitoredTask(Func<CancellationToken, Task<SchedulerTaskResult>> task, string name)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             if (name == null) throw new ArgumentNullException(nameof(name));
-            if (Source == null) throw new InvalidOperationException("Attempt to add monitored task without starting the extractor first.");
-            lock (_lock)
-            {
-                _monitoredTaskList.Add(new MonitoredTask(task, name, Source.Token));
-                _triggerEvent.Set();
-            }
+            if (Scheduler == null) throw new InvalidOperationException("Attempt to add monitored task without starting the extractor first.");
+            Scheduler.ScheduleTask(name, task);
         }
 
         /// <summary>
@@ -204,28 +150,12 @@ namespace Cognite.Extractor.Utils.Unstable
         /// 
         /// This is typically used for ordered shutdown.
         /// </summary>
-        /// <param name="name">Name of task to cancel. Note that names are not
-        /// required to be unique here. If there are duplicates, this will cancel the
-        /// first matching task.
+        /// <param name="name">Name of task to cancel.
         /// </param>
         /// <returns></returns>
         protected async Task CancelMonitoredTaskAndWait(string name)
         {
-            MonitoredTask? task;
-            lock (_lock)
-            {
-                task = _monitoredTaskList.FirstOrDefault(t => t.Name == name);
-            }
-            if (task == null) return;
-            task.Cancel();
-            try
-            {
-                await task.WaitForCompletion().ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                // ignore
-            }
+            await Scheduler.CancelAndWaitForTermination(name).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -235,7 +165,7 @@ namespace Cognite.Extractor.Utils.Unstable
         /// but that you still want to monitor, so that the extractor can crash
         /// if they fail or exit unexpectedly.
         /// 
-        /// This variant takes a static ExtractorTaskResult, to indicate whether the
+        /// This variant takes a static SchedulerTaskResult, to indicate whether the
         /// task is expected to terminate on its own or not.
         /// </summary>
         /// <param name="task">Task to monitor.</param>
@@ -243,20 +173,12 @@ namespace Cognite.Extractor.Utils.Unstable
         /// should be considered an error.</param>
         /// <param name="name">Task name, just used for logging.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        protected void AddMonitoredTask(Func<CancellationToken, Task> task, ExtractorTaskResult staticResult, string name)
+        protected void AddMonitoredTask(Func<CancellationToken, Task> task, SchedulerTaskResult staticResult, string name)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (Source == null) throw new InvalidOperationException("Attempt to add monitored task without starting the extractor first.");
-            lock (_lock)
-            {
-                _monitoredTaskList.Add(new MonitoredTask(async (token) =>
-                {
-                    await task(token).ConfigureAwait(false);
-                    return staticResult;
-                }, name, Source.Token));
-                _triggerEvent.Set();
-            }
+            Scheduler.ScheduleTask(name, task, staticResult);
         }
 
 
@@ -317,48 +239,18 @@ namespace Cognite.Extractor.Utils.Unstable
             StartTime = DateTime.UtcNow;
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
-            AddMonitoredTask(t => _sink.RunPeriodicCheckIn(t, GetStartupRequest()), ExtractorTaskResult.Unexpected, "CheckInWorker");
+            AddMonitoredTask(t => _sink.RunPeriodicCheckIn(t, GetStartupRequest()), SchedulerTaskResult.Unexpected, "CheckInWorker");
 
-            while (!Source.IsCancellationRequested)
+            try
             {
-                var toWaitFor = new List<Task>();
-                lock (_lock)
-                {
-                    _triggerEvent.Reset();
-                    var toRemove = new HashSet<MonitoredTask>();
-                    foreach (var monitored in _monitoredTaskList)
-                    {
-                        if (!monitored.Task.IsCompleted) continue;
-
-                        if (!monitored.Task.IsFaulted && !monitored.Task.IsCanceled && !monitored.IsCanceled())
-                        {
-                            var result = monitored.Task.Result;
-                            if (result == ExtractorTaskResult.Unexpected)
-                            {
-                                _logger.LogError("Internal task {Name} completed, but was not expected to stop, restarting extractor.", monitored.Name);
-                                Fatal($"Internal task {monitored.Name} completed, but was not expected to stop, restarting extractor.");
-                                return;
-                            }
-                        }
-                        else if (monitored.Task.IsFaulted)
-                        {
-                            var exc = monitored.Task.Exception;
-                            var flattenedExc = exc?.InnerException ?? exc;
-                            _logger.LogError(flattenedExc, "Internal task {Name} failed, restarting extractor: {Message}", monitored.Name, flattenedExc?.Message);
-                            Fatal($"Internal task {monitored.Name} failed, restarting extractor: {flattenedExc?.Message}", flattenedExc?.StackTrace?.ToString());
-                            return;
-                        }
-                        _logger.LogDebug("Internal task {Name} completed.", monitored.Name);
-                        toRemove.Add(monitored);
-                    }
-                    _monitoredTaskList.RemoveAll(r => toRemove.Contains(r));
-
-                    toWaitFor.AddRange(_monitoredTaskList.Select(mt => mt.Task));
-                }
-
-                toWaitFor.Add(CommonUtils.WaitAsync(_triggerEvent, Timeout.InfiniteTimeSpan, Source.Token));
-
-                await Task.WhenAny(toWaitFor).ConfigureAwait(false);
+                await Scheduler.WaitForAll().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                var flattened = CommonUtils.SimplifyException(ex);
+                _logger.LogError(flattened, "Extractor failed: {Message}", flattened.Message);
+                Fatal(flattened.Message, flattened.StackTrace?.ToString());
+                return;
             }
         }
 

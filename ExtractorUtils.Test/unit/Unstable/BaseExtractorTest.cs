@@ -42,7 +42,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Sink = sink;
         }
 
-        public void AddMonitoredTaskPub(Func<CancellationToken, Task> task, ExtractorTaskResult staticResult, string name)
+        public void AddMonitoredTaskPub(Func<CancellationToken, Task> task, SchedulerTaskResult staticResult, string name)
         {
             AddMonitoredTask(task, staticResult, name);
         }
@@ -156,11 +156,11 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 await Task.Delay(100, t);
                 throw new Exception("Monitored error");
-            }, ExtractorTaskResult.Unexpected, "task1");
+            }, SchedulerTaskResult.Unexpected, "task1");
             var delayTask = Task.Delay(2000);
             Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
             Assert.Equal(2, sink.Errors.Count);
-            Assert.Equal("Internal task task1 failed, restarting extractor: Monitored error", sink.Errors[0].Description);
+            Assert.Equal("Task task1 failed: Monitored error", sink.Errors[0].Description);
         }
 
         [Fact]
@@ -171,11 +171,11 @@ namespace ExtractorUtils.Test.Unit.Unstable
             ext.AddMonitoredTaskPub(async t =>
             {
                 await Task.Delay(100, t);
-            }, ExtractorTaskResult.Unexpected, "task1");
+            }, SchedulerTaskResult.Unexpected, "task1");
             var delayTask = Task.Delay(2000);
             Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
             Assert.Equal(2, sink.Errors.Count);
-            Assert.Equal("Internal task task1 completed, but was not expected to stop, restarting extractor.", sink.Errors[0].Description);
+            Assert.Equal("Task task1 completed, but was not expected to stop.", sink.Errors[0].Description);
         }
 
         [Fact]
@@ -189,7 +189,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
                 {
                     await Task.Delay(100, t);
                 }
-            }, ExtractorTaskResult.Unexpected, "task1");
+            }, SchedulerTaskResult.Unexpected, "task1");
             var delayTask = Task.Delay(2000);
             Assert.NotEqual(delayTask, await Task.WhenAny(ext.CancelMonitoredTaskAndWaitPub("task1"), delayTask));
             Assert.NotEqual(delayTask, await Task.WhenAny(ext.Shutdown(), delayTask));

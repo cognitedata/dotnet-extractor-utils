@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
 using Xunit;
 using Xunit.Sdk;
 
@@ -132,6 +133,8 @@ namespace Cognite.Extractor.Testing
         /// <summary>
         /// Wait for task to complete or <paramref name="seconds"/>.
         /// Throws an exception if the task did not complete in time.
+        ///
+        /// Will re-throw any exception from the task, after simplifying it if it is an AggregateException.
         /// </summary>
         /// <param name="task">Task to wait for.</param>
         /// <param name="seconds"></param>
@@ -141,6 +144,12 @@ namespace Cognite.Extractor.Testing
             if (task == null) throw new ArgumentNullException(nameof(task));
             await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(seconds))).ConfigureAwait(false);
             Assert.True(task.IsCompleted, "Task did not complete in time");
+            if (task.IsFaulted)
+            {
+                // Rethrow exception preserving stack trace
+                var exc = CommonUtils.SimplifyException(task.Exception!);
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(exc).Throw();
+            }
         }
 
         /// <summary>

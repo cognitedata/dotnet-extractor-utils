@@ -1,4 +1,5 @@
 ﻿using Cognite.Extractor.Common;
+using Cognite.Extractor.Testing;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -213,6 +214,19 @@ namespace ExtractorUtils.Test.Unit
             using var scheduler = new PeriodicScheduler(source.Token);
             scheduler.ScheduleTask("forever", (_t) => Task.Delay(Timeout.Infinite, source.Token));
             await Assert.ThrowsAsync<TimeoutException>(() => scheduler.ExitAllAndWait(200));
+        }
+
+        [Fact]
+        public async Task TestSchedulerUnexpectedExit()
+        {
+            using var source = new CancellationTokenSource();
+            using var scheduler = new PeriodicScheduler(source.Token);
+            scheduler.ScheduleTask("forever", async (_t) =>
+            {
+                await Task.Delay(100, _t);
+            }, SchedulerTaskResult.Unexpected);
+            var exc = await Assert.ThrowsAsync<SchedulerException>(() => TestUtils.RunWithTimeout(scheduler.WaitForAll(), 1));
+            Assert.Equal("Task forever completed, but was not expected to stop.", exc.Message);
         }
     }
 }
