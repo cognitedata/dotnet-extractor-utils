@@ -103,11 +103,12 @@ namespace Cognite.Extractor.Testing.Mock
         /// </summary>
         public Dictionary<string, string> ParseQuery()
         {
-            var query = HttpUtility.ParseQueryString(RawRequest.RequestUri.Query);
+            var query = HttpUtility.ParseQueryString(RawRequest.RequestUri?.Query ?? "");
             var result = new Dictionary<string, string>();
             foreach (var key in query.AllKeys)
             {
-                result[key] = query[key];
+                if (key == null) continue;
+                result[key] = query[key] ?? "";
             }
             return result;
         }

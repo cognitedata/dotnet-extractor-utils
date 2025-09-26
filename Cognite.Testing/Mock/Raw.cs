@@ -152,11 +152,11 @@ namespace Cognite.Extractor.Testing.Mock
             return new SimpleMatcher("GET", _rawRowsRegexRaw, MockGetRawRows, times);
         }
 
-        private static string _rawRowsRegexRaw = @"/raw/dbs/([^/]+)/tables/([^/]+)/rows";
+        private static string _rawRowsRegexRaw = @"/raw/dbs/([^/]+)/tables/([^/]+)/rows$";
         private Regex _rawRowsRegex = new Regex(_rawRowsRegexRaw, RegexOptions.Compiled);
         private async Task<HttpResponseMessage> MockRawRows(RequestContext context, CancellationToken token)
         {
-            var match = _rawRowsRegex.Match(context.RawRequest.RequestUri.AbsolutePath);
+            var match = _rawRowsRegex.Match(context.RawRequest.RequestUri!.AbsolutePath!);
             var dbName = match.Groups[1].Value;
             var tableName = match.Groups[2].Value;
             if (!Databases.ContainsKey((dbName, tableName)))
@@ -190,7 +190,7 @@ namespace Cognite.Extractor.Testing.Mock
 
         private HttpResponseMessage MockGetRawRows(RequestContext context, CancellationToken token)
         {
-            var match = _rawRowsRegex.Match(context.RawRequest.RequestUri.AbsolutePath);
+            var match = _rawRowsRegex.Match(context.RawRequest.RequestUri!.AbsolutePath!);
             var dbName = match.Groups[1].Value;
             var tableName = match.Groups[2].Value;
             if (!Databases.TryGetValue((dbName, tableName), out var table))
@@ -199,8 +199,8 @@ namespace Cognite.Extractor.Testing.Mock
             }
 
             var query = context.ParseQuery();
-            var limit = int.Parse(query.ValueOrDefaultCompat("limit", "25"));
-            var cursor = int.Parse(query.ValueOrDefaultCompat("cursor", "0"));
+            var limit = int.Parse(query.ValueOrDefaultCompat("limit", "25")!);
+            var cursor = int.Parse(query.ValueOrDefaultCompat("cursor", "0")!);
 
             var result = table.Rows.Values.Skip(cursor).Take(limit).ToList();
             if (limit + cursor < table.Rows.Count)
