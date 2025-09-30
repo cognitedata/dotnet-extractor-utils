@@ -347,6 +347,8 @@ namespace Cognite.Extractor.Common
         /// <summary>
         /// Same as calling ExitAndWaitForTermination on all tasks.
         /// </summary>
+        /// <param name="timeoutMs">Timeout in milliseconds</param>
+        /// <param name="cancel">True to cancel running tasks, false to just signal them to exit once they are done</param>
         /// <returns>Task which completes once all tasks are done</returns>
         public async Task ExitAllAndWait(int timeoutMs = 0, bool cancel = false)
         {
