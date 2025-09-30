@@ -366,7 +366,7 @@ namespace ExtractorUtils.Test.Unit
                 throw new CogniteUtilsException();
             });
 
-            var ex = await Assert.ThrowsAsync<AggregateException>(async () => await loopTask);
+            var ex = await Assert.ThrowsAsync<SchedulerException>(async () => await loopTask);
             Assert.IsType<CogniteUtilsException>(ex.InnerException);
 
             source.Cancel();

@@ -145,5 +145,23 @@ namespace Cognite.Extractor.Common
             }, TaskScheduler.Current);
             return task;
         }
+
+        /// <summary>
+        /// Simplify an aggregate exception, flattening it and returning the inner exception
+        /// if it only contains one.
+        /// </summary>
+        /// <param name="ex">Exception to simplify.</param>
+        /// <returns>Simplified exception, or the original exception if it couldn't be simplified.</returns>
+        public static Exception SimplifyException(Exception ex)
+        {
+            if (ex is AggregateException aex)
+            {
+                var flat = aex.Flatten();
+                if (flat.InnerExceptions.Count == 1) return SimplifyException(flat.InnerExceptions[0]);
+                return flat;
+            }
+            return ex;
+        }
+
     }
 }
