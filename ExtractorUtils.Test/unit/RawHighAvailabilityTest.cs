@@ -15,6 +15,8 @@ using Cognite.Extractor.Testing;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using System.Linq;
+using Cognite.Extractor.Testing.Mock;
+using Moq;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -32,10 +34,6 @@ namespace ExtractorUtils.Test.Unit
 
         private readonly ITestOutputHelper _output;
 
-        private static bool _failInsert;
-
-        private static bool _failUpdateState;
-
         public RawHighAvailabilityTest(ITestOutputHelper output)
         {
             _output = output;
@@ -48,51 +46,55 @@ namespace ExtractorUtils.Test.Unit
             string path = "test-upload-log-to-state-config";
             SetupConfig(index, path);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertRowsAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object);
             services.AddConfig<MyTestConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp");
 
             using (var provider = services.BuildServiceProvider())
             {
+                var mock = provider.GetRequiredService<CdfMock>();
+                var raw = new RawMock();
+                var insertMatcher = raw.CreateRawRowsMatcher(Times.Exactly(3));
+                mock.AddMatcher(insertMatcher);
+
                 var logger = provider.GetRequiredService<ILogger<RawHighAvailabilityTest>>();
-                rows.Clear();
 
                 var extractorManager = CreateRawExtractorManager(provider);
 
                 await extractorManager.UploadLogToState();
 
                 // Checking that the initial log has been inserted into db.
-                Assert.True(rows.Count == 1);
-                Assert.True(rows[index.ToString()].Active == false);
-                Assert.True(rows[index.ToString()].TimeStamp < DateTime.UtcNow);
+                var table = raw.GetTable(_dbName, _tableName);
+                Assert.Single(table.Rows);
+                var row = table.GetRow<RawLogData>(index.ToString());
+                Assert.False(row.Columns.Active);
+                Assert.True(row.Columns.TimeStamp < DateTime.UtcNow);
 
                 // Updating the status.
-                DateTime prevTimeStamp = rows[index.ToString()].TimeStamp;
+                DateTime prevTimeStamp = row.Columns.TimeStamp;
                 extractorManager._state.UpdatedStatus = true;
 
                 await extractorManager.UploadLogToState();
 
                 // Testing that the status has been changed.
-                Assert.True(rows.Count == 1);
-                Assert.True(rows[index.ToString()].Active == true);
-                Assert.True(rows[index.ToString()].TimeStamp > prevTimeStamp);
+                Assert.Single(table.Rows);
+                row = table.GetRow<RawLogData>(index.ToString());
+                Assert.True(row.Columns.Active);
+                Assert.True(row.Columns.TimeStamp > prevTimeStamp);
 
                 // Testing making the endpoint return an error.
-                _failInsert = true;
-                prevTimeStamp = rows[index.ToString()].TimeStamp;
+                insertMatcher.ForceErrorStatus = 400;
+                prevTimeStamp = row.Columns.TimeStamp;
                 extractorManager._state.UpdatedStatus = false;
 
                 await extractorManager.UploadLogToState();
 
                 // Checking that the db remains unchanged after the error.
-                Assert.True(rows[index.ToString()].Active == true);
-                Assert.True(rows[index.ToString()].TimeStamp == prevTimeStamp);
+                row = table.GetRow<RawLogData>(index.ToString());
+                Assert.True(row.Columns.Active);
+                Assert.True(row.Columns.TimeStamp == prevTimeStamp);
             }
 
             System.IO.File.Delete(path);
@@ -105,27 +107,31 @@ namespace ExtractorUtils.Test.Unit
             string path = "test-update-extractor-state-config";
             SetupConfig(index, path);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockGetRowsAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object);
             services.AddConfig<MyTestConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp");
 
             using (var provider = services.BuildServiceProvider())
             {
+                var mock = provider.GetRequiredService<CdfMock>();
+                var raw = new RawMock();
+                var getMatcher = raw.GetRawRowsMatcher(Times.AtLeastOnce());
+                mock.AddMatcher(getMatcher);
+                var insertMatcher = raw.CreateRawRowsMatcher(Times.AtLeastOnce());
+                mock.AddMatcher(insertMatcher);
+
                 var logger = provider.GetRequiredService<ILogger<RawHighAvailabilityTest>>();
 
                 var extractorManager = CreateRawExtractorManager(provider);
 
-                rows.Clear();
-                rows.Add("0", new RawLogData(DateTime.UtcNow, true));
-                rows.Add("1", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 10)), false));
-                rows.Add("2", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
-                rows.Add("3", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 50)), false));
+                var table = raw.GetOrCreateTable(_dbName, _tableName);
+
+                table.Add("0", new RawLogData(DateTime.UtcNow, true));
+                table.Add("1", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 10)), false));
+                table.Add("2", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 30)), false));
+                table.Add("3", new RawLogData(DateTime.UtcNow.Subtract(new TimeSpan(0, 0, 50)), false));
 
                 Assert.True(extractorManager._state.CurrentState.Count == 0);
 
@@ -139,27 +145,29 @@ namespace ExtractorUtils.Test.Unit
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
                     string key = instance.Index.ToString();
-                    if (rows.ContainsKey(key) && key != "0")
+                    if (table.Rows.ContainsKey(key) && key != "0")
                     {
-                        Assert.True(rows[key].Active == instance.Active);
-                        Assert.True(rows[key].TimeStamp == instance.TimeStamp);
+                        var row = table.GetRow<RawLogData>(key);
+                        Assert.True(row.Columns.Active == instance.Active);
+                        Assert.True(row.Columns.TimeStamp == instance.TimeStamp);
                     }
                 }
 
                 // Testing updating the active status and timestamp for a given extractor.
                 string testKey = "1";
-                rows[testKey] = new RawLogData(DateTime.UtcNow, true);
+                table.Add(testKey, new RawLogData(DateTime.UtcNow, true));
 
                 await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
-                    if (instance.Index == Int16.Parse(testKey))
+                    if (instance.Index == short.Parse(testKey))
                     {
+                        var row = table.GetRow<RawLogData>(testKey);
                         // Checking that the valus has been changed for the given extractor.
-                        Assert.True(rows[testKey].Active == instance.Active);
-                        Assert.True(rows[testKey].TimeStamp == instance.TimeStamp);
+                        Assert.True(row.Columns.Active == instance.Active);
+                        Assert.True(row.Columns.TimeStamp == instance.TimeStamp);
                     }
                 }
 
@@ -167,8 +175,8 @@ namespace ExtractorUtils.Test.Unit
                 // If an extractor has been initialized but then returns an empty
                 // row in the state it will use the last seen log.
                 testKey = "2";
-                RawLogData logCopy = rows[testKey];
-                rows.Remove(testKey);
+                RawLogData logCopy = table.GetRow<RawLogData>(testKey).Columns;
+                table.Rows.Remove(testKey);
 
                 await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
@@ -178,47 +186,48 @@ namespace ExtractorUtils.Test.Unit
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
-                    if (instance.Index == Int16.Parse(testKey))
+                    if (instance.Index == short.Parse(testKey))
                     {
                         // Checking that the previous value from the state is reused.
                         Assert.True(logCopy.Active == instance.Active);
                         Assert.True(logCopy.TimeStamp == instance.TimeStamp);
-
                     }
                 }
 
                 // Inserting the removed extractor back and checking that the new value is used again.
-                rows[testKey] = new RawLogData(DateTime.UtcNow, false);
+                table.Add(testKey, new RawLogData(DateTime.UtcNow, false));
 
                 await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
-                    if (instance.Index == Int16.Parse(testKey))
+                    if (instance.Index == short.Parse(testKey))
                     {
+                        var row = table.GetRow<RawLogData>(testKey);
                         // Checking that the removed value has been replaced.
-                        Assert.True(rows[testKey].Active == instance.Active);
-                        Assert.True(rows[testKey].TimeStamp == instance.TimeStamp);
+                        Assert.True(row.Columns.Active == instance.Active);
+                        Assert.True(row.Columns.TimeStamp == instance.TimeStamp);
 
                     }
                 }
 
                 // Testing making the endpoint return an error.
-                _failUpdateState = true;
+                getMatcher.ForceErrorStatus = 400;
                 testKey = "3";
-                rows[testKey] = new RawLogData(DateTime.UtcNow, !rows[testKey].Active);
+                table.Add(testKey, new RawLogData(DateTime.UtcNow, !table.GetRow<RawLogData>(testKey).Columns.Active));
 
                 await extractorManager.UploadLogToState();
                 await extractorManager.UpdateExtractorState();
 
                 foreach (RawExtractorInstance instance in extractorManager._state.CurrentState.Values)
                 {
-                    if (instance.Index == Int16.Parse(testKey))
+                    if (instance.Index == short.Parse(testKey))
                     {
+                        var row = table.GetRow<RawLogData>(testKey);
                         // Checking that if the endpoint fails the current state will remain unchanged.
-                        Assert.False(rows[testKey].Active == instance.Active);
-                        Assert.False(rows[testKey].TimeStamp == instance.TimeStamp);
+                        Assert.False(row.Columns.Active == instance.Active);
+                        Assert.False(row.Columns.TimeStamp == instance.TimeStamp);
                     }
                 }
             }
@@ -396,97 +405,6 @@ namespace ExtractorUtils.Test.Unit
             RawHighAvailabilityManager extractorManager = new RawHighAvailabilityManager(managerConfig, destination, logger, scheduler, source, inactivityThreshold: inactivityThreshold);
 
             return extractorManager;
-        }
-
-        private class RawItem
-        {
-            public string key { get; set; }
-            public RawLogData columns { get; set; }
-        }
-
-        private class RawItems
-        {
-            public List<RawItem> items { get; set; }
-        }
-
-        private static Dictionary<string, RawLogData> rows = new Dictionary<string, RawLogData>();
-
-        private static async Task<HttpResponseMessage> mockInsertRowsAsync(HttpRequestMessage message, CancellationToken token)
-        {
-            var uri = message.RequestUri.ToString();
-            int index = 0;
-
-            Assert.Contains($"{_host}/api/v1/projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows", uri);
-            Assert.Contains("ensureParent=true", message.RequestUri.Query);
-
-            var responseBody = "{ }";
-            var statusCode = HttpStatusCode.OK;
-
-            if (_failInsert)
-            {
-                statusCode = HttpStatusCode.InternalServerError;
-            }
-            else
-            {
-                var content = await message.Content.ReadAsStringAsync(token);
-                var items = JsonSerializer.Deserialize<RawItems>(content,
-                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
-                foreach (var item in items.items) rows[index.ToString()] = item.columns;
-            }
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(responseBody)
-            };
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            response.Headers.Add("x-request-id", "1");
-
-            return response;
-        }
-
-        private static async Task<HttpResponseMessage> mockGetRowsAsync(HttpRequestMessage message, CancellationToken token)
-        {
-            var uri = message.RequestUri.ToString();
-            Assert.Contains($"{_host}/api/v1/projects/{_project}/raw/dbs/{_dbName}/tables/{_tableName}/rows", uri);
-
-            var responseBody = "{ }";
-            var statusCode = HttpStatusCode.OK;
-
-            if (_failUpdateState)
-            {
-                statusCode = HttpStatusCode.InternalServerError;
-            }
-            else
-            {
-                RawRow<RawLogData> responseRows = new RawRow<RawLogData>();
-                var rowList = new List<RawRow<RawLogData>>();
-
-                foreach (KeyValuePair<string, RawLogData> entry in rows)
-                {
-                    rowList.Add(new RawRow<RawLogData>() { Key = entry.Key, Columns = entry.Value });
-                }
-
-                var finalContent = new ItemsWithCursor<RawRow<RawLogData>>
-                {
-                    Items = rowList
-                };
-                responseBody = JsonSerializer.Serialize(finalContent,
-                new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-            }
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(responseBody)
-            };
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            response.Headers.Add("x-request-id", "1");
-
-            await Task.Delay(200, token);
-
-            return response;
         }
     }
 
