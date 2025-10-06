@@ -56,7 +56,15 @@ namespace Cognite.Extractor.Testing.Mock
         /// </summary>
         public void AssertMatches()
         {
-            Assert.True(ExpectedRequestCount.Validate(RequestCount), $"Wrong number of requests for path '{Name}': got {RequestCount}, expected {ExpectedRequestCount}");
+            AssertMatches(ExpectedRequestCount);
+        }
+
+        /// <summary>
+        /// Assert that this has been called the number of times given.
+        /// </summary>
+        public void AssertMatches(Times times)
+        {
+            Assert.True(times.Validate(RequestCount), $"Wrong number of requests for path '{Name}': got {RequestCount}, expected {times}");
         }
 
         /// <summary>
