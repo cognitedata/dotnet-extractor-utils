@@ -331,6 +331,7 @@ namespace Cognite.Extractor.Utils.Unstable
             // Finally, cancel the outer token source.
             Source?.Cancel();
             Source?.Dispose();
+            Source = null!;
         }
 
         /// <summary>

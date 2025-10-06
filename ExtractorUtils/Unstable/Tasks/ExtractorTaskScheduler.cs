@@ -98,9 +98,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         public RunningTaskInfo? ActiveTask { get; private set; }
 
-        private List<TaskCompletionSource<Exception?>> _waiters = new List<TaskCompletionSource<Exception?>>();
+        private readonly List<TaskCompletionSource<Exception?>> _waiters = new List<TaskCompletionSource<Exception?>>();
+        private readonly object _lock = new object();
 
-        private object _lock = new object();
         private TaskReporter _reporter;
 
         public RegisteredTask(BaseSchedulableTask operation, TaskReporter reporter, bool runImmediately)
@@ -155,7 +155,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     ActiveTask.Source.Cancel();
                     foreach (var waiter in _waiters)
                     {
-                        waiter.TrySetCanceled();
+                        Task.Run(() => waiter.TrySetCanceled());
                     }
                     _waiters.Clear();
                 }
@@ -214,7 +214,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 // Wake up any waiters and tell them the task has finished running.
                 foreach (var cb in _waiters)
                 {
-                    cb.TrySetResult(exc);
+                    Task.Run(() => cb.TrySetResult(exc));
                 }
                 _waiters.Clear();
 
