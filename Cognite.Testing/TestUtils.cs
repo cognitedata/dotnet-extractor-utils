@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
 using Xunit;
 using Xunit.Sdk;
 
@@ -132,6 +134,8 @@ namespace Cognite.Extractor.Testing
         /// <summary>
         /// Wait for task to complete or <paramref name="seconds"/>.
         /// Throws an exception if the task did not complete in time.
+        ///
+        /// Will re-throw any exception from the task, after simplifying it if it is an AggregateException.
         /// </summary>
         /// <param name="task">Task to wait for.</param>
         /// <param name="seconds"></param>
@@ -141,6 +145,12 @@ namespace Cognite.Extractor.Testing
             if (task == null) throw new ArgumentNullException(nameof(task));
             await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(seconds))).ConfigureAwait(false);
             Assert.True(task.IsCompleted, "Task did not complete in time");
+            if (task.IsFaulted)
+            {
+                // Rethrow exception preserving stack trace
+                var exc = CommonUtils.SimplifyException(task.Exception!);
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(exc).Throw();
+            }
         }
 
         /// <summary>
@@ -170,6 +180,29 @@ namespace Cognite.Extractor.Testing
             Random random = new Random();
             return prefix + new string(Enumerable.Repeat(chars, numChars)
               .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        /// <summary>
+        /// Get value from dictionary or default (null).
+        /// 
+        /// This isn't available in .NET Standard 2.0, so we
+        /// provide a compatibility implementation here.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dict"></param>
+        /// <param name="key"></param>
+        /// <param name="defaultValue">Default value to use</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static T? ValueOrDefaultCompat<T>(this Dictionary<string, T> dict, string key, T? defaultValue = default) where T : class
+        {
+            if (dict == null) throw new ArgumentNullException(nameof(dict));
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (dict.TryGetValue(key, out var value))
+            {
+                return value;
+            }
+            return defaultValue;
         }
     }
 }
