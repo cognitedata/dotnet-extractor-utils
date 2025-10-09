@@ -1,6 +1,7 @@
 using System;
 using System.Dynamic;
 using System.Net.Http;
+using CogniteSdk.Token;
 using Moq;
 
 namespace Cognite.Extractor.Testing.Mock
@@ -24,6 +25,27 @@ namespace Cognite.Extractor.Testing.Mock
                 tokenResponse.expires_in = 3600;
                 tokenResponse.access_token = "test-access-token";
                 return (HttpResponseMessage)ctx.CreateJsonResponse(tokenResponse);
+            }, expectedRequestCount));
+        }
+
+        /// <summary>
+        /// Add the /token/inspect endpoint that returns a static token inspection response,
+        /// with the given project in the list of projects.
+        /// </summary>
+        /// <param name="mock">CdfMock object</param>
+        /// <param name="expectedRequestCount">Expected request count for the matcher.</param>
+        /// <param name="project">Project name to include in the token inspection response.</param>
+        public static void AddTokenInspectEndpoint(this CdfMock mock, Times expectedRequestCount, string project)
+        {
+            mock.AddMatcher(new SimpleMatcher("get", "/api/v1/token/inspect", (ctx, token) =>
+            {
+                return ctx.CreateJsonResponse(new TokenInspect
+                {
+                    Subject = "subject",
+                    Projects = new[] { new TokenProject {
+                        ProjectUrlName = project,
+                    }}
+                });
             }, expectedRequestCount));
         }
     }
