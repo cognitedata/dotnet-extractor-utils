@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
+using Google.Protobuf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -44,13 +45,31 @@ namespace Cognite.Extractor.Testing.Mock
         }
 
         /// <summary>
-        /// Reads the JSON body of the request and deserializes it into the specified type.
+        /// Reads the JSON body of the request and deserialize it into the specified type.
         /// </summary>
         public async Task<T?> ReadJsonBody<T>() where T : class
         {
             if (RawRequest.Content == null) return null;
             var content = await RawRequest.Content.ReadAsStringAsync().ConfigureAwait(false);
             return System.Text.Json.JsonSerializer.Deserialize<T>(content, Oryx.Cognite.Common.jsonOptions);
+        }
+
+        /// <summary>
+        /// Read the protobuf body of the request and parses it into the specified type.
+        /// </summary>
+        /// <typeparam name="T">Protobuf message type.</typeparam>
+        /// <param name="parser">Protobuf message parser.</param>
+        /// <param name="token">Cancellation token.</param>
+        public async Task<T> ReadProtobufBody<T>(MessageParser<T> parser, CancellationToken token) where T : IMessage<T>
+        {
+            if (parser == null) throw new ArgumentNullException(nameof(parser));
+            if (RawRequest.Content == null) throw new InvalidOperationException("Request content is null.");
+#if NET8_0_OR_GREATER
+            var bytes = await RawRequest.Content.ReadAsByteArrayAsync(token).ConfigureAwait(false);
+#else
+            var bytes = await RawRequest.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+#endif
+            return parser.ParseFrom(bytes);
         }
 
         /// <summary>
