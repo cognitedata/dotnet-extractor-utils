@@ -67,7 +67,7 @@ namespace Cognite.Extractor.Logging
 
             var logConfig = new LoggerConfiguration();
 
-            var minLogLevel = LogEventLevel.Fatal;
+            var minLogLevel = baseMinLevel;
             if (logToConsole && consoleLevel < minLogLevel) minLogLevel = consoleLevel;
             if (logToFile && fileLevel < minLogLevel) minLogLevel = fileLevel;
             if (logToStderr && stderrLevel < minLogLevel) minLogLevel = stderrLevel;
