@@ -302,7 +302,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
 
             // Register core services, if needed.
             if (_params.AddStateStore) services.AddStateStore();
-            if (_params.AddLogger) services.AddLogger(_params.BuildLogger);
+            if (_params.AddLogger) services.AddLogger(_params.BuildLogger, false, _params.BaseMinLogLevel);
             if (_params.AddMetrics) services.AddCogniteMetrics();
 
             // The extractor is built using service injection, and registered as a singleton, since each
