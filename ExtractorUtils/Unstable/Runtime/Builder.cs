@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Serilog.Events;
 
 namespace Cognite.Extractor.Utils.Unstable.Runtime
 {
@@ -131,6 +132,11 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// Method to build logger from config. Defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/>
         /// </summary>
         public Func<LoggerConfig, Serilog.ILogger>? BuildLogger { get; set; }
+        /// <summary>
+        /// Base minimum log level. Set this if you need to register external loggers
+        /// with a lower level than the ones in config. Defaults to <see cref="LogEventLevel.Fatal"/>.
+        /// </summary>
+        public LogEventLevel BaseMinLogLevel { get; set; } = LogEventLevel.Fatal;
         /// <summary>
         /// Policy describing when the extractor should be restarted.
         /// </summary>

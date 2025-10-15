@@ -45,6 +45,18 @@ namespace Cognite.Extractor.Logging
         /// <returns>A configured logger</returns>
         public static LoggerConfiguration GetConfiguration(LoggerConfig config)
         {
+            return GetConfiguration(config, LogEventLevel.Fatal);
+        }
+
+        /// <summary>
+        /// Creates <see cref="LoggerConfiguration" /> according to the configuration in <paramref name="config"/>
+        /// </summary>
+        /// <param name="config">Configuration object of <see cref="LoggerConfig"/> type</param>
+        /// <param name="baseMinLevel">Base minimum log level. This is overridden by the minimum level in the configuration. You can set this
+        /// if you want to register external loggers with a lower level than the ones in config.</param>
+        /// <returns>A configured logger</returns>
+        public static LoggerConfiguration GetConfiguration(LoggerConfig config, LogEventLevel baseMinLevel)
+        {
             if (config == null)
             {
                 throw new ArgumentNullException(nameof(config));
@@ -54,9 +66,15 @@ namespace Cognite.Extractor.Logging
             var logToStderr = Enum.TryParse(config.Console?.StderrLevel, true, out LogEventLevel stderrLevel);
 
             var logConfig = new LoggerConfiguration();
+
+            var minLogLevel = LogEventLevel.Fatal;
+            if (logToConsole && consoleLevel < minLogLevel) minLogLevel = consoleLevel;
+            if (logToFile && fileLevel < minLogLevel) minLogLevel = fileLevel;
+            if (logToStderr && stderrLevel < minLogLevel) minLogLevel = stderrLevel;
+
             logConfig
                 .Enrich.With<UtcTimestampEnricher>()
-                .MinimumLevel.Verbose()
+                .MinimumLevel.Is(minLogLevel)
                 .MinimumLevel.Override("System", LogEventLevel.Error)
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Error);
 
@@ -92,7 +110,20 @@ namespace Cognite.Extractor.Logging
         /// <returns>A configured logger</returns>
         public static Serilog.ILogger GetConfiguredLogger(LoggerConfig config)
         {
-            var logConfig = GetConfiguration(config);
+            var logConfig = GetConfiguration(config, LogEventLevel.Fatal);
+            return logConfig.CreateLogger();
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Serilog.ILogger"/> logger according to the configuration in <paramref name="config"/>
+        /// </summary>
+        /// <param name="config">Configuration object of <see cref="LoggerConfig"/> type</param>
+        /// <param name="baseMinLevel">Base minimum log level. This is overridden by the minimum level in the configuration. You can set this
+        /// if you want to register external loggers with a lower level than the ones in config.</param>
+        /// <returns>A configured logger</returns>
+        public static Serilog.ILogger GetConfiguredLogger(LoggerConfig config, LogEventLevel baseMinLevel)
+        {
+            var logConfig = GetConfiguration(config, baseMinLevel);
             return logConfig.CreateLogger();
         }
 
@@ -234,24 +265,29 @@ namespace Cognite.Extractor.Logging
         /// <param name="services">The service collection</param>
         /// <param name="buildLogger">Method to build the logger.
         /// <param name="alternativeLogger">True to allow alternative loggers, i.e. allow config.Console and config.File to be null</param>
-        /// This defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/>,
+        /// This defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig, LogEventLevel)"/>,
         /// which creates logging configuration for file and console using
-        /// <see cref="LoggingUtils.GetConfiguration(LoggerConfig)"/></param>
-        public static void AddLogger(this IServiceCollection services, Func<LoggerConfig, Serilog.ILogger>? buildLogger = null, bool alternativeLogger = false)
+        /// <see cref="LoggingUtils.GetConfiguration(LoggerConfig, LogEventLevel)"/></param>
+        /// <param name="baseMinLevel">Base minimum log level. This is overridden by the minimum level in the configuration. You can set this
+        /// if you want to register external loggers with a lower level than the ones in config.</param>
+        public static void AddLogger(this IServiceCollection services, Func<LoggerConfig, Serilog.ILogger>? buildLogger = null, bool alternativeLogger = false, LogEventLevel baseMinLevel = LogEventLevel.Fatal)
         {
-            buildLogger ??= LoggingUtils.GetConfiguredLogger;
             services.AddSingleton<LoggerTraceListener>();
             services.AddSingleton<Serilog.ILogger>(p =>
             {
                 var config = p.GetService<LoggerConfig>();
-                if (config == null || !alternativeLogger && (config.Console == null && config.File == null))
+                if (config == null || !alternativeLogger && config.Console == null && config.File == null)
                 {
                     // No logging configuration
                     var defLog = LoggingUtils.GetSerilogDefault();
                     defLog.Warning("No Logging configuration found. Using default logger");
                     return defLog;
                 }
-                return buildLogger(config);
+                if (buildLogger != null)
+                {
+                    return buildLogger(config);
+                }
+                return LoggingUtils.GetConfiguredLogger(config, baseMinLevel);
             });
             services.AddLogging(loggingBuilder =>
             {
