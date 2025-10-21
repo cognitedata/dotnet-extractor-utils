@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Xunit;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
+using Serilog;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -88,6 +89,45 @@ namespace ExtractorUtils.Test.Unit
             }
             Directory.Delete("logs", true);
             File.Delete(path);
+        }
+
+        class LogSideEffect
+        {
+            public int logCount;
+            public override string ToString()
+            {
+                logCount++;
+                return "Thingy";
+            }
+        }
+
+        [Fact]
+        public static void TestLogLevel()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton(new LoggerConfig
+            {
+                Console = new ConsoleConfig
+                {
+                    Level = "information"
+                }
+            });
+            services.AddLogger();
+            using var provider = services.BuildServiceProvider();
+            var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
+            var sideEffect = new LogSideEffect();
+            logger.LogDebug("This is a debug message with {SideEffect}", sideEffect);
+            Assert.Equal(0, sideEffect.logCount); // should not be evaluated
+            logger.LogInformation("This is an info message with {SideEffect}", sideEffect);
+            Assert.Equal(1, sideEffect.logCount); // should be evaluated
+            logger.LogWarning("This is a warning message with {SideEffect}", sideEffect);
+            Assert.Equal(2, sideEffect.logCount); // should be evaluated
+            logger.LogError("This is an error message with {SideEffect}", sideEffect);
+            Assert.Equal(3, sideEffect.logCount); // should be evaluated
+            logger.LogCritical("This is a critical message with {SideEffect}", sideEffect);
+            Assert.Equal(4, sideEffect.logCount); // should be evaluated
+            logger.LogTrace("This is a trace message with {SideEffect}", sideEffect);
+            Assert.Equal(4, sideEffect.logCount); // should not be evaluated
         }
     }
 }

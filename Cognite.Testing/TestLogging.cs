@@ -100,7 +100,7 @@ namespace Cognite.Extractor.Testing
                 return LoggingUtils.GetConfiguration(cfg)
                     .WriteTo.TestOutputHelper(output)
                     .CreateLogger();
-            }, true);
+            }, true, LogEventLevel.Verbose);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Cognite.Extractor.Testing
                 return LoggingUtils.GetConfiguration(cfg).WriteTo
                     .Sink(sink, restrictedToMinimumLevel, levelSwitch)
                     .CreateLogger();
-            });
+            }, true, LogEventLevel.Verbose);
 
             return sink;
         }
