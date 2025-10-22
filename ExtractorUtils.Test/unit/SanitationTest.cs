@@ -588,7 +588,7 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(new string('æ', 255), seq.ExternalId);
             foreach (var row in rows)
             {
-                Assert.Equal(new string('æ', 255), (row.Values.ElementAt(0) as MultiValue.String).Value);
+                Assert.Equal(new string('æ', CogniteUtils.SequenceStringLengthMax), (row.Values.ElementAt(0) as MultiValue.String).Value);
                 Assert.Equal(123, (row.Values.ElementAt(1) as MultiValue.Long).Value);
                 Assert.Null(row.Values.ElementAt(2));
                 Assert.Null(row.Values.ElementAt(3));
@@ -675,7 +675,7 @@ namespace ExtractorUtils.Test.Unit
 
             Assert.Equal(123.123, cleanDps[0].NumericValue.Value);
             Assert.Equal("test", cleanDps[1].StringValue);
-            Assert.Equal(new string('æ', 255), cleanDps[2].StringValue);
+            Assert.Equal(new string('æ', 500).TruncateBytes(CogniteUtils.StringBytesMax), cleanDps[2].StringValue);
             Assert.Equal("", cleanDps[3].StringValue);
             Assert.Equal(1E100, cleanDps[4].NumericValue.Value);
             Assert.Equal(-1E100, cleanDps[5].NumericValue.Value);
@@ -706,7 +706,7 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Bad")),
                 new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Uncertain")),
                 new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Good")),
-                new Datapoint(DateTime.UtcNow, new string('æ', 500)),
+                new Datapoint(DateTime.UtcNow, new string('æ', CogniteUtils.StringBytesMax + 1)),
                 new Datapoint(DateTime.UtcNow, null),
                 new Datapoint(DateTime.UtcNow, double.PositiveInfinity),
                 new Datapoint(DateTime.UtcNow, double.NegativeInfinity),

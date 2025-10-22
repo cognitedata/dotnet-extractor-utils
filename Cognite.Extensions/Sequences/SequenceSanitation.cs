@@ -104,7 +104,7 @@ namespace Cognite.Extensions
                 if (val == null) yield return null;
                 if (val is MultiValue.String strVal)
                 {
-                    yield return new MultiValue.String(strVal.Value.Truncate(CogniteUtils.StringLengthMax));
+                    yield return new MultiValue.String(strVal.Value.Truncate(CogniteUtils.SequenceStringLengthMax));
                 }
                 else if (val is MultiValue.Double doubleVal)
                 {
@@ -210,7 +210,7 @@ namespace Cognite.Extensions
                 }
                 else if (val is MultiValue.String stringVal)
                 {
-                    if (!stringVal.Value.CheckLength(CogniteUtils.StringLengthMax)) return ResourceType.SequenceRowValues;
+                    if (!stringVal.Value.CheckLength(CogniteUtils.SequenceStringLengthMax)) return ResourceType.SequenceRowValues;
                 }
             }
             return null;
