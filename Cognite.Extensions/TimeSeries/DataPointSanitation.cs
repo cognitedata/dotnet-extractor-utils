@@ -22,9 +22,9 @@ namespace Cognite.Extensions
                 {
                     return new Datapoint(point.Timestamp, "", point.Status);
                 }
-                else if ((point.StringValue?.Length ?? 0) > CogniteUtils.StringLengthMax)
+                else if (SafeByteCount(point.StringValue) > CogniteUtils.TimeSeriesStringBytesMax)
                 {
-                    return new Datapoint(point.Timestamp, point.StringValue.Truncate(CogniteUtils.StringLengthMax) ?? "", point.Status);
+                    return new Datapoint(point.Timestamp, point.StringValue.TruncateBytes(CogniteUtils.TimeSeriesStringBytesMax) ?? "", point.Status);
                 }
                 return point;
             }
@@ -59,7 +59,7 @@ namespace Cognite.Extensions
             if (point.IsString)
             {
                 if (point.StringValue == null && !point.Status.IsBad
-                    || (point.StringValue?.Length ?? 0) > CogniteUtils.StringLengthMax)
+                    || SafeByteCount(point.StringValue) > CogniteUtils.TimeSeriesStringBytesMax)
                 {
                     return ResourceType.DataPointValue;
                 }
