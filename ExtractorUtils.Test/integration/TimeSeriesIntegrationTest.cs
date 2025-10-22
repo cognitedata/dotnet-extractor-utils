@@ -687,7 +687,7 @@ namespace ExtractorUtils.Test.Integration
                     } },
                     { Identity.Create(tss[1].extId), new []
                     {
-                        new Datapoint(DateTime.UtcNow, new string('æ', CogniteUtils.StringBytesMax + 1)),
+                        new Datapoint(DateTime.UtcNow, new string('æ', CogniteUtils.TimeSeriesStringBytesMax + 1)),
                         new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
                         new Datapoint(DateTime.UtcNow, null)
                     } },

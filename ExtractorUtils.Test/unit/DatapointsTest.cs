@@ -72,7 +72,7 @@ namespace ExtractorUtils.Test.Unit
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
                 double[] doublePoints = { 0.0, 1.1, 2.2, double.NaN, 3.3, 4.4, double.NaN, 5.5, double.NegativeInfinity };
-                string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringBytesMax), new string('2', CogniteUtils.StringBytesMax + 1), "3" };
+                string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.TimeSeriesStringBytesMax), new string('2', CogniteUtils.TimeSeriesStringBytesMax + 1), "3" };
 
                 var datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
                     { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1"), new Datapoint(DateTime.UtcNow, "2") }},
@@ -93,7 +93,7 @@ namespace ExtractorUtils.Test.Unit
                 Assert.Equal(2, _createdDataPoints["A"].Count);
                 Assert.DoesNotContain(_createdDataPoints[1 + ""], dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity);
                 Assert.Equal(6, _createdDataPoints[2 + ""].Count);
-                Assert.DoesNotContain(_createdDataPoints[2 + ""], dp => dp.StringValue == null || Encoding.UTF8.GetByteCount(dp.StringValue) > CogniteUtils.StringBytesMax);
+                Assert.DoesNotContain(_createdDataPoints[2 + ""], dp => dp.StringValue == null || Encoding.UTF8.GetByteCount(dp.StringValue) > CogniteUtils.TimeSeriesStringBytesMax);
 
                 _createdDataPoints.Clear();
                 datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {

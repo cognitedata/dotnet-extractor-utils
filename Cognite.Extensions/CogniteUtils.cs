@@ -35,9 +35,9 @@ namespace Cognite.Extensions
         public const double NumericValueMax = 1e+100;
 
         /// <summary>
-        /// Cognite max string bytes
+        /// Cognite string time series maximum bytes
         /// </summary>
-        public const int StringBytesMax = 1023;
+        public const int TimeSeriesStringBytesMax = 1023;
 
         /// <summary>
         /// Cognite max sequence string value length
