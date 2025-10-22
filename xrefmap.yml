@@ -1342,6 +1342,12 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.CogniteUtils.ReadEventsAsync
   nameWithType: CogniteUtils.ReadEventsAsync
+- uid: Cognite.Extensions.CogniteUtils.SequenceStringLengthMax
+  name: SequenceStringLengthMax
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_SequenceStringLengthMax
+  commentId: F:Cognite.Extensions.CogniteUtils.SequenceStringLengthMax
+  fullName: Cognite.Extensions.CogniteUtils.SequenceStringLengthMax
+  nameWithType: CogniteUtils.SequenceStringLengthMax
 - uid: Cognite.Extensions.CogniteUtils.StringFromStream(System.IO.Stream,System.Nullable{System.UInt16})
   name: StringFromStream(Stream, ushort?)
   href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringFromStream_System_IO_Stream_System_Nullable_System_UInt16__
@@ -1358,12 +1364,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.CogniteUtils.StringFromStream
   nameWithType: CogniteUtils.StringFromStream
-- uid: Cognite.Extensions.CogniteUtils.StringLengthMax
-  name: StringLengthMax
-  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringLengthMax
-  commentId: F:Cognite.Extensions.CogniteUtils.StringLengthMax
-  fullName: Cognite.Extensions.CogniteUtils.StringLengthMax
-  nameWithType: CogniteUtils.StringLengthMax
 - uid: Cognite.Extensions.CogniteUtils.StringToStorable(System.String)
   name: StringToStorable(string?)
   href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringToStorable_System_String_
@@ -1380,6 +1380,12 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.CogniteUtils.StringToStorable
   nameWithType: CogniteUtils.StringToStorable
+- uid: Cognite.Extensions.CogniteUtils.TimeSeriesStringBytesMax
+  name: TimeSeriesStringBytesMax
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_TimeSeriesStringBytesMax
+  commentId: F:Cognite.Extensions.CogniteUtils.TimeSeriesStringBytesMax
+  fullName: Cognite.Extensions.CogniteUtils.TimeSeriesStringBytesMax
+  nameWithType: CogniteUtils.TimeSeriesStringBytesMax
 - uid: Cognite.Extensions.CogniteUtils.TimestampMax
   name: TimestampMax
   href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_TimestampMax
@@ -5979,6 +5985,19 @@ references:
   fullName.vb: Cognite.Extractor.Common.CommonUtils.MinMax(Of T, R)(System.Collections.Generic.IEnumerable(Of T), System.Func(Of T, R))
   nameWithType: CommonUtils.MinMax<T, R>(IEnumerable<T>, Func<T, R>)
   nameWithType.vb: CommonUtils.MinMax(Of T, R)(IEnumerable(Of T), Func(Of T, R))
+- uid: Cognite.Extractor.Common.CommonUtils.SimplifyException(System.Exception)
+  name: SimplifyException(Exception)
+  href: api/Cognite.Extractor.Common.CommonUtils.html#Cognite_Extractor_Common_CommonUtils_SimplifyException_System_Exception_
+  commentId: M:Cognite.Extractor.Common.CommonUtils.SimplifyException(System.Exception)
+  fullName: Cognite.Extractor.Common.CommonUtils.SimplifyException(System.Exception)
+  nameWithType: CommonUtils.SimplifyException(Exception)
+- uid: Cognite.Extractor.Common.CommonUtils.SimplifyException*
+  name: SimplifyException
+  href: api/Cognite.Extractor.Common.CommonUtils.html#Cognite_Extractor_Common_CommonUtils_SimplifyException_
+  commentId: Overload:Cognite.Extractor.Common.CommonUtils.SimplifyException
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.CommonUtils.SimplifyException
+  nameWithType: CommonUtils.SimplifyException
 - uid: Cognite.Extractor.Common.CommonUtils.TrimToNull(System.String)
   name: TrimToNull(string?)
   href: api/Cognite.Extractor.Common.CommonUtils.html#Cognite_Extractor_Common_CommonUtils_TrimToNull_System_String_
@@ -6775,6 +6794,22 @@ references:
   fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.New
   nameWithType: PeriodicScheduler.PeriodicScheduler
   nameWithType.vb: PeriodicScheduler.New
+- uid: Cognite.Extractor.Common.PeriodicScheduler.CancelAndWaitForTermination(System.String)
+  name: CancelAndWaitForTermination(string)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_CancelAndWaitForTermination_System_String_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.CancelAndWaitForTermination(System.String)
+  name.vb: CancelAndWaitForTermination(String)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.CancelAndWaitForTermination(string)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.CancelAndWaitForTermination(String)
+  nameWithType: PeriodicScheduler.CancelAndWaitForTermination(string)
+  nameWithType.vb: PeriodicScheduler.CancelAndWaitForTermination(String)
+- uid: Cognite.Extractor.Common.PeriodicScheduler.CancelAndWaitForTermination*
+  name: CancelAndWaitForTermination
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_CancelAndWaitForTermination_
+  commentId: Overload:Cognite.Extractor.Common.PeriodicScheduler.CancelAndWaitForTermination
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.CancelAndWaitForTermination
+  nameWithType: PeriodicScheduler.CancelAndWaitForTermination
 - uid: Cognite.Extractor.Common.PeriodicScheduler.ContainsTask(System.String)
   name: ContainsTask(string)
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ContainsTask_System_String_
@@ -6826,15 +6861,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.PeriodicScheduler.Dispose
   nameWithType: PeriodicScheduler.Dispose
-- uid: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(System.Int32)
-  name: ExitAllAndWait(int)
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait_System_Int32_
-  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(System.Int32)
-  name.vb: ExitAllAndWait(Integer)
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(int)
-  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(Integer)
-  nameWithType: PeriodicScheduler.ExitAllAndWait(int)
-  nameWithType.vb: PeriodicScheduler.ExitAllAndWait(Integer)
+- uid: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(System.Int32,System.Boolean)
+  name: ExitAllAndWait(int, bool)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait_System_Int32_System_Boolean_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(System.Int32,System.Boolean)
+  name.vb: ExitAllAndWait(Integer, Boolean)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(int, bool)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait(Integer, Boolean)
+  nameWithType: PeriodicScheduler.ExitAllAndWait(int, bool)
+  nameWithType.vb: PeriodicScheduler.ExitAllAndWait(Integer, Boolean)
 - uid: Cognite.Extractor.Common.PeriodicScheduler.ExitAllAndWait*
   name: ExitAllAndWait
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ExitAllAndWait_
@@ -6910,15 +6945,24 @@ references:
   fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(String, System.Action(Of System.Threading.CancellationToken))
   nameWithType: PeriodicScheduler.ScheduleTask(string?, Action<CancellationToken>)
   nameWithType.vb: PeriodicScheduler.ScheduleTask(String, Action(Of CancellationToken))
-- uid: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task})
-  name: ScheduleTask(string?, Func<CancellationToken, Task>)
-  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_System_String_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__
-  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task})
-  name.vb: ScheduleTask(String, Func(Of CancellationToken, Task))
-  fullName: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(string?, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>)
-  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(String, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task))
-  nameWithType: PeriodicScheduler.ScheduleTask(string?, Func<CancellationToken, Task>)
-  nameWithType.vb: PeriodicScheduler.ScheduleTask(String, Func(Of CancellationToken, Task))
+- uid: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Cognite.Extractor.Common.SchedulerTaskResult}})
+  name: ScheduleTask(string?, Func<CancellationToken, Task<SchedulerTaskResult>>)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_System_String_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Cognite_Extractor_Common_SchedulerTaskResult___
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Cognite.Extractor.Common.SchedulerTaskResult}})
+  name.vb: ScheduleTask(String, Func(Of CancellationToken, Task(Of SchedulerTaskResult)))
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(string?, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Cognite.Extractor.Common.SchedulerTaskResult>>)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(String, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task(Of Cognite.Extractor.Common.SchedulerTaskResult)))
+  nameWithType: PeriodicScheduler.ScheduleTask(string?, Func<CancellationToken, Task<SchedulerTaskResult>>)
+  nameWithType.vb: PeriodicScheduler.ScheduleTask(String, Func(Of CancellationToken, Task(Of SchedulerTaskResult)))
+- uid: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Cognite.Extractor.Common.SchedulerTaskResult)
+  name: ScheduleTask(string?, Func<CancellationToken, Task>, SchedulerTaskResult)
+  href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_System_String_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__Cognite_Extractor_Common_SchedulerTaskResult_
+  commentId: M:Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(System.String,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Cognite.Extractor.Common.SchedulerTaskResult)
+  name.vb: ScheduleTask(String, Func(Of CancellationToken, Task), SchedulerTaskResult)
+  fullName: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(string?, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>, Cognite.Extractor.Common.SchedulerTaskResult)
+  fullName.vb: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask(String, System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task), Cognite.Extractor.Common.SchedulerTaskResult)
+  nameWithType: PeriodicScheduler.ScheduleTask(string?, Func<CancellationToken, Task>, SchedulerTaskResult)
+  nameWithType.vb: PeriodicScheduler.ScheduleTask(String, Func(Of CancellationToken, Task), SchedulerTaskResult)
 - uid: Cognite.Extractor.Common.PeriodicScheduler.ScheduleTask*
   name: ScheduleTask
   href: api/Cognite.Extractor.Common.PeriodicScheduler.html#Cognite_Extractor_Common_PeriodicScheduler_ScheduleTask_
@@ -7176,6 +7220,58 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Common.RetryUtilConfig.TimeoutValue
   nameWithType: RetryUtilConfig.TimeoutValue
+- uid: Cognite.Extractor.Common.SchedulerException
+  name: SchedulerException
+  href: api/Cognite.Extractor.Common.SchedulerException.html
+  commentId: T:Cognite.Extractor.Common.SchedulerException
+  fullName: Cognite.Extractor.Common.SchedulerException
+  nameWithType: SchedulerException
+- uid: Cognite.Extractor.Common.SchedulerException.#ctor(System.String)
+  name: SchedulerException(string)
+  href: api/Cognite.Extractor.Common.SchedulerException.html#Cognite_Extractor_Common_SchedulerException__ctor_System_String_
+  commentId: M:Cognite.Extractor.Common.SchedulerException.#ctor(System.String)
+  name.vb: New(String)
+  fullName: Cognite.Extractor.Common.SchedulerException.SchedulerException(string)
+  fullName.vb: Cognite.Extractor.Common.SchedulerException.New(String)
+  nameWithType: SchedulerException.SchedulerException(string)
+  nameWithType.vb: SchedulerException.New(String)
+- uid: Cognite.Extractor.Common.SchedulerException.#ctor(System.String,System.Exception)
+  name: SchedulerException(string, Exception)
+  href: api/Cognite.Extractor.Common.SchedulerException.html#Cognite_Extractor_Common_SchedulerException__ctor_System_String_System_Exception_
+  commentId: M:Cognite.Extractor.Common.SchedulerException.#ctor(System.String,System.Exception)
+  name.vb: New(String, Exception)
+  fullName: Cognite.Extractor.Common.SchedulerException.SchedulerException(string, System.Exception)
+  fullName.vb: Cognite.Extractor.Common.SchedulerException.New(String, System.Exception)
+  nameWithType: SchedulerException.SchedulerException(string, Exception)
+  nameWithType.vb: SchedulerException.New(String, Exception)
+- uid: Cognite.Extractor.Common.SchedulerException.#ctor*
+  name: SchedulerException
+  href: api/Cognite.Extractor.Common.SchedulerException.html#Cognite_Extractor_Common_SchedulerException__ctor_
+  commentId: Overload:Cognite.Extractor.Common.SchedulerException.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Cognite.Extractor.Common.SchedulerException.SchedulerException
+  fullName.vb: Cognite.Extractor.Common.SchedulerException.New
+  nameWithType: SchedulerException.SchedulerException
+  nameWithType.vb: SchedulerException.New
+- uid: Cognite.Extractor.Common.SchedulerTaskResult
+  name: SchedulerTaskResult
+  href: api/Cognite.Extractor.Common.SchedulerTaskResult.html
+  commentId: T:Cognite.Extractor.Common.SchedulerTaskResult
+  fullName: Cognite.Extractor.Common.SchedulerTaskResult
+  nameWithType: SchedulerTaskResult
+- uid: Cognite.Extractor.Common.SchedulerTaskResult.Expected
+  name: Expected
+  href: api/Cognite.Extractor.Common.SchedulerTaskResult.html#Cognite_Extractor_Common_SchedulerTaskResult_Expected
+  commentId: F:Cognite.Extractor.Common.SchedulerTaskResult.Expected
+  fullName: Cognite.Extractor.Common.SchedulerTaskResult.Expected
+  nameWithType: SchedulerTaskResult.Expected
+- uid: Cognite.Extractor.Common.SchedulerTaskResult.Unexpected
+  name: Unexpected
+  href: api/Cognite.Extractor.Common.SchedulerTaskResult.html#Cognite_Extractor_Common_SchedulerTaskResult_Unexpected
+  commentId: F:Cognite.Extractor.Common.SchedulerTaskResult.Unexpected
+  fullName: Cognite.Extractor.Common.SchedulerTaskResult.Unexpected
+  nameWithType: SchedulerTaskResult.Unexpected
 - uid: Cognite.Extractor.Common.SharedResourceScheduler`1
   name: SharedResourceScheduler<T>
   href: api/Cognite.Extractor.Common.SharedResourceScheduler-1.html
@@ -7968,15 +8064,15 @@ references:
   commentId: T:Cognite.Extractor.Logging.LoggingExtensions
   fullName: Cognite.Extractor.Logging.LoggingExtensions
   nameWithType: LoggingExtensions
-- uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger},System.Boolean)
-  name: AddLogger(IServiceCollection, Func<LoggerConfig, ILogger>?, bool)
-  href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_Cognite_Extractor_Logging_LoggerConfig_Serilog_ILogger__System_Boolean_
-  commentId: M:Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger},System.Boolean)
-  name.vb: AddLogger(IServiceCollection, Func(Of LoggerConfig, ILogger), Boolean)
-  fullName: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func<Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger>?, bool)
-  fullName.vb: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func(Of Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger), Boolean)
-  nameWithType: LoggingExtensions.AddLogger(IServiceCollection, Func<LoggerConfig, ILogger>?, bool)
-  nameWithType.vb: LoggingExtensions.AddLogger(IServiceCollection, Func(Of LoggerConfig, ILogger), Boolean)
+- uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger},System.Boolean,Serilog.Events.LogEventLevel)
+  name: AddLogger(IServiceCollection, Func<LoggerConfig, ILogger>?, bool, LogEventLevel)
+  href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Func_Cognite_Extractor_Logging_LoggerConfig_Serilog_ILogger__System_Boolean_Serilog_Events_LogEventLevel_
+  commentId: M:Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger},System.Boolean,Serilog.Events.LogEventLevel)
+  name.vb: AddLogger(IServiceCollection, Func(Of LoggerConfig, ILogger), Boolean, LogEventLevel)
+  fullName: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func<Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger>?, bool, Serilog.Events.LogEventLevel)
+  fullName.vb: Cognite.Extractor.Logging.LoggingExtensions.AddLogger(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Func(Of Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger), Boolean, Serilog.Events.LogEventLevel)
+  nameWithType: LoggingExtensions.AddLogger(IServiceCollection, Func<LoggerConfig, ILogger>?, bool, LogEventLevel)
+  nameWithType.vb: LoggingExtensions.AddLogger(IServiceCollection, Func(Of LoggerConfig, ILogger), Boolean, LogEventLevel)
 - uid: Cognite.Extractor.Logging.LoggingExtensions.AddLogger*
   name: AddLogger
   href: api/Cognite.Extractor.Logging.LoggingExtensions.html#Cognite_Extractor_Logging_LoggingExtensions_AddLogger_
@@ -8009,6 +8105,12 @@ references:
   commentId: M:Cognite.Extractor.Logging.LoggingUtils.GetConfiguration(Cognite.Extractor.Logging.LoggerConfig)
   fullName: Cognite.Extractor.Logging.LoggingUtils.GetConfiguration(Cognite.Extractor.Logging.LoggerConfig)
   nameWithType: LoggingUtils.GetConfiguration(LoggerConfig)
+- uid: Cognite.Extractor.Logging.LoggingUtils.GetConfiguration(Cognite.Extractor.Logging.LoggerConfig,Serilog.Events.LogEventLevel)
+  name: GetConfiguration(LoggerConfig, LogEventLevel)
+  href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_GetConfiguration_Cognite_Extractor_Logging_LoggerConfig_Serilog_Events_LogEventLevel_
+  commentId: M:Cognite.Extractor.Logging.LoggingUtils.GetConfiguration(Cognite.Extractor.Logging.LoggerConfig,Serilog.Events.LogEventLevel)
+  fullName: Cognite.Extractor.Logging.LoggingUtils.GetConfiguration(Cognite.Extractor.Logging.LoggerConfig, Serilog.Events.LogEventLevel)
+  nameWithType: LoggingUtils.GetConfiguration(LoggerConfig, LogEventLevel)
 - uid: Cognite.Extractor.Logging.LoggingUtils.GetConfiguration*
   name: GetConfiguration
   href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_GetConfiguration_
@@ -8022,6 +8124,12 @@ references:
   commentId: M:Cognite.Extractor.Logging.LoggingUtils.GetConfiguredLogger(Cognite.Extractor.Logging.LoggerConfig)
   fullName: Cognite.Extractor.Logging.LoggingUtils.GetConfiguredLogger(Cognite.Extractor.Logging.LoggerConfig)
   nameWithType: LoggingUtils.GetConfiguredLogger(LoggerConfig)
+- uid: Cognite.Extractor.Logging.LoggingUtils.GetConfiguredLogger(Cognite.Extractor.Logging.LoggerConfig,Serilog.Events.LogEventLevel)
+  name: GetConfiguredLogger(LoggerConfig, LogEventLevel)
+  href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_GetConfiguredLogger_Cognite_Extractor_Logging_LoggerConfig_Serilog_Events_LogEventLevel_
+  commentId: M:Cognite.Extractor.Logging.LoggingUtils.GetConfiguredLogger(Cognite.Extractor.Logging.LoggerConfig,Serilog.Events.LogEventLevel)
+  fullName: Cognite.Extractor.Logging.LoggingUtils.GetConfiguredLogger(Cognite.Extractor.Logging.LoggerConfig, Serilog.Events.LogEventLevel)
+  nameWithType: LoggingUtils.GetConfiguredLogger(LoggerConfig, LogEventLevel)
 - uid: Cognite.Extractor.Logging.LoggingUtils.GetConfiguredLogger*
   name: GetConfiguredLogger
   href: api/Cognite.Extractor.Logging.LoggingUtils.html#Cognite_Extractor_Logging_LoggingUtils_GetConfiguredLogger_
@@ -11439,15 +11547,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies
   nameWithType: ConfigurationExtensions.AddExtractorDependencies
-- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger},System.Collections.Generic.IEnumerable{System.Type},System.Boolean)
-  name: AddExtractorDependencies<T>(IServiceCollection, string?, int[]?, string?, string?, bool, bool, bool, bool, T?, Func<LoggerConfig, ILogger>?, IEnumerable<Type>?, bool)
-  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractorDependencies__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean___0_System_Func_Cognite_Extractor_Logging_LoggerConfig_Serilog_ILogger__System_Collections_Generic_IEnumerable_System_Type__System_Boolean_
-  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger},System.Collections.Generic.IEnumerable{System.Type},System.Boolean)
-  name.vb: AddExtractorDependencies(Of T)(IServiceCollection, String, Integer(), String, String, Boolean, Boolean, Boolean, Boolean, T, Func(Of LoggerConfig, ILogger), IEnumerable(Of Type), Boolean)
-  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies<T>(Microsoft.Extensions.DependencyInjection.IServiceCollection, string?, int[]?, string?, string?, bool, bool, bool, bool, T?, System.Func<Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger>?, System.Collections.Generic.IEnumerable<System.Type>?, bool)
-  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies(Of T)(Microsoft.Extensions.DependencyInjection.IServiceCollection, String, Integer(), String, String, Boolean, Boolean, Boolean, Boolean, T, System.Func(Of Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger), System.Collections.Generic.IEnumerable(Of System.Type), Boolean)
-  nameWithType: ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, string?, int[]?, string?, string?, bool, bool, bool, bool, T?, Func<LoggerConfig, ILogger>?, IEnumerable<Type>?, bool)
-  nameWithType.vb: ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, String, Integer(), String, String, Boolean, Boolean, Boolean, Boolean, T, Func(Of LoggerConfig, ILogger), IEnumerable(Of Type), Boolean)
+- uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger},System.Collections.Generic.IEnumerable{System.Type},System.Boolean,Serilog.Events.LogEventLevel)
+  name: AddExtractorDependencies<T>(IServiceCollection, string?, int[]?, string?, string?, bool, bool, bool, bool, T?, Func<LoggerConfig, ILogger>?, IEnumerable<Type>?, bool, LogEventLevel)
+  href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddExtractorDependencies__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_System_Int32___System_String_System_String_System_Boolean_System_Boolean_System_Boolean_System_Boolean___0_System_Func_Cognite_Extractor_Logging_LoggerConfig_Serilog_ILogger__System_Collections_Generic_IEnumerable_System_Type__System_Boolean_Serilog_Events_LogEventLevel_
+  commentId: M:Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Int32[],System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,``0,System.Func{Cognite.Extractor.Logging.LoggerConfig,Serilog.ILogger},System.Collections.Generic.IEnumerable{System.Type},System.Boolean,Serilog.Events.LogEventLevel)
+  name.vb: AddExtractorDependencies(Of T)(IServiceCollection, String, Integer(), String, String, Boolean, Boolean, Boolean, Boolean, T, Func(Of LoggerConfig, ILogger), IEnumerable(Of Type), Boolean, LogEventLevel)
+  fullName: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies<T>(Microsoft.Extensions.DependencyInjection.IServiceCollection, string?, int[]?, string?, string?, bool, bool, bool, bool, T?, System.Func<Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger>?, System.Collections.Generic.IEnumerable<System.Type>?, bool, Serilog.Events.LogEventLevel)
+  fullName.vb: Cognite.Extractor.Utils.ConfigurationExtensions.AddExtractorDependencies(Of T)(Microsoft.Extensions.DependencyInjection.IServiceCollection, String, Integer(), String, String, Boolean, Boolean, Boolean, Boolean, T, System.Func(Of Cognite.Extractor.Logging.LoggerConfig, Serilog.ILogger), System.Collections.Generic.IEnumerable(Of System.Type), Boolean, Serilog.Events.LogEventLevel)
+  nameWithType: ConfigurationExtensions.AddExtractorDependencies<T>(IServiceCollection, string?, int[]?, string?, string?, bool, bool, bool, bool, T?, Func<LoggerConfig, ILogger>?, IEnumerable<Type>?, bool, LogEventLevel)
+  nameWithType.vb: ConfigurationExtensions.AddExtractorDependencies(Of T)(IServiceCollection, String, Integer(), String, String, Boolean, Boolean, Boolean, Boolean, T, Func(Of LoggerConfig, ILogger), IEnumerable(Of Type), Boolean, LogEventLevel)
 - uid: Cognite.Extractor.Utils.ConfigurationExtensions.AddRemoteConfig*
   name: AddRemoteConfig
   href: api/Cognite.Extractor.Utils.ConfigurationExtensions.html#Cognite_Extractor_Utils_ConfigurationExtensions_AddRemoteConfig_
@@ -13139,24 +13247,24 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).New
   nameWithType: BaseExtractor<TConfig>.BaseExtractor
   nameWithType.vb: BaseExtractor(Of TConfig).New
-- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Cognite.Extractor.Utils.Unstable.ExtractorTaskResult}},System.String)
-  name: AddMonitoredTask(Func<CancellationToken, Task<ExtractorTaskResult>>, string)
-  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_AddMonitoredTask_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Cognite_Extractor_Utils_Unstable_ExtractorTaskResult___System_String_
-  commentId: M:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Cognite.Extractor.Utils.Unstable.ExtractorTaskResult}},System.String)
-  name.vb: AddMonitoredTask(Func(Of CancellationToken, Task(Of ExtractorTaskResult)), String)
-  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.AddMonitoredTask(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Cognite.Extractor.Utils.Unstable.ExtractorTaskResult>>, string)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).AddMonitoredTask(System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task(Of Cognite.Extractor.Utils.Unstable.ExtractorTaskResult)), String)
-  nameWithType: BaseExtractor<TConfig>.AddMonitoredTask(Func<CancellationToken, Task<ExtractorTaskResult>>, string)
-  nameWithType.vb: BaseExtractor(Of TConfig).AddMonitoredTask(Func(Of CancellationToken, Task(Of ExtractorTaskResult)), String)
-- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Cognite.Extractor.Utils.Unstable.ExtractorTaskResult,System.String)
-  name: AddMonitoredTask(Func<CancellationToken, Task>, ExtractorTaskResult, string)
-  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_AddMonitoredTask_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__Cognite_Extractor_Utils_Unstable_ExtractorTaskResult_System_String_
-  commentId: M:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Cognite.Extractor.Utils.Unstable.ExtractorTaskResult,System.String)
-  name.vb: AddMonitoredTask(Func(Of CancellationToken, Task), ExtractorTaskResult, String)
-  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.AddMonitoredTask(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>, Cognite.Extractor.Utils.Unstable.ExtractorTaskResult, string)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).AddMonitoredTask(System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task), Cognite.Extractor.Utils.Unstable.ExtractorTaskResult, String)
-  nameWithType: BaseExtractor<TConfig>.AddMonitoredTask(Func<CancellationToken, Task>, ExtractorTaskResult, string)
-  nameWithType.vb: BaseExtractor(Of TConfig).AddMonitoredTask(Func(Of CancellationToken, Task), ExtractorTaskResult, String)
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Cognite.Extractor.Common.SchedulerTaskResult}},System.String)
+  name: AddMonitoredTask(Func<CancellationToken, Task<SchedulerTaskResult>>, string)
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_AddMonitoredTask_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task_Cognite_Extractor_Common_SchedulerTaskResult___System_String_
+  commentId: M:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Cognite.Extractor.Common.SchedulerTaskResult}},System.String)
+  name.vb: AddMonitoredTask(Func(Of CancellationToken, Task(Of SchedulerTaskResult)), String)
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.AddMonitoredTask(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<Cognite.Extractor.Common.SchedulerTaskResult>>, string)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).AddMonitoredTask(System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task(Of Cognite.Extractor.Common.SchedulerTaskResult)), String)
+  nameWithType: BaseExtractor<TConfig>.AddMonitoredTask(Func<CancellationToken, Task<SchedulerTaskResult>>, string)
+  nameWithType.vb: BaseExtractor(Of TConfig).AddMonitoredTask(Func(Of CancellationToken, Task(Of SchedulerTaskResult)), String)
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Cognite.Extractor.Common.SchedulerTaskResult,System.String)
+  name: AddMonitoredTask(Func<CancellationToken, Task>, SchedulerTaskResult, string)
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_AddMonitoredTask_System_Func_System_Threading_CancellationToken_System_Threading_Tasks_Task__Cognite_Extractor_Common_SchedulerTaskResult_System_String_
+  commentId: M:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Cognite.Extractor.Common.SchedulerTaskResult,System.String)
+  name.vb: AddMonitoredTask(Func(Of CancellationToken, Task), SchedulerTaskResult, String)
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.AddMonitoredTask(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task>, Cognite.Extractor.Common.SchedulerTaskResult, string)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).AddMonitoredTask(System.Func(Of System.Threading.CancellationToken, System.Threading.Tasks.Task), Cognite.Extractor.Common.SchedulerTaskResult, String)
+  nameWithType: BaseExtractor<TConfig>.AddMonitoredTask(Func<CancellationToken, Task>, SchedulerTaskResult, string)
+  nameWithType.vb: BaseExtractor(Of TConfig).AddMonitoredTask(Func(Of CancellationToken, Task), SchedulerTaskResult, String)
 - uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.AddMonitoredTask*
   name: AddMonitoredTask
   href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_AddMonitoredTask_
@@ -13372,6 +13480,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).Provider
   nameWithType: BaseExtractor<TConfig>.Provider
   nameWithType.vb: BaseExtractor(Of TConfig).Provider
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.Scheduler
+  name: Scheduler
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_Scheduler
+  commentId: P:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.Scheduler
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.Scheduler
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).Scheduler
+  nameWithType: BaseExtractor<TConfig>.Scheduler
+  nameWithType.vb: BaseExtractor(Of TConfig).Scheduler
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.Scheduler*
+  name: Scheduler
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_Scheduler_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.Scheduler
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.Scheduler
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).Scheduler
+  nameWithType: BaseExtractor<TConfig>.Scheduler
+  nameWithType.vb: BaseExtractor(Of TConfig).Scheduler
 - uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.Shutdown
   name: Shutdown()
   href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_Shutdown
@@ -14285,24 +14410,6 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.ConfigureSslPolicy
   nameWithType: DestinationUtilsUnstable.ConfigureSslPolicy
-- uid: Cognite.Extractor.Utils.Unstable.ExtractorTaskResult
-  name: ExtractorTaskResult
-  href: api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.html
-  commentId: T:Cognite.Extractor.Utils.Unstable.ExtractorTaskResult
-  fullName: Cognite.Extractor.Utils.Unstable.ExtractorTaskResult
-  nameWithType: ExtractorTaskResult
-- uid: Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.Expected
-  name: Expected
-  href: api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.html#Cognite_Extractor_Utils_Unstable_ExtractorTaskResult_Expected
-  commentId: F:Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.Expected
-  fullName: Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.Expected
-  nameWithType: ExtractorTaskResult.Expected
-- uid: Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.Unexpected
-  name: Unexpected
-  href: api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.html#Cognite_Extractor_Utils_Unstable_ExtractorTaskResult_Unexpected
-  commentId: F:Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.Unexpected
-  fullName: Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.Unexpected
-  nameWithType: ExtractorTaskResult.Unexpected
 - uid: Cognite.Extractor.Utils.Unstable.Runtime
   name: Cognite.Extractor.Utils.Unstable.Runtime
   href: api/Cognite.Extractor.Utils.Unstable.Runtime.html
@@ -14481,6 +14588,23 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BackoffBase
   nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BackoffBase
   nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BackoffBase
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BaseMinLogLevel
+  name: BaseMinLogLevel
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BaseMinLogLevel
+  commentId: P:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BaseMinLogLevel
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.BaseMinLogLevel
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BaseMinLogLevel
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BaseMinLogLevel
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BaseMinLogLevel
+- uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BaseMinLogLevel*
+  name: BaseMinLogLevel
+  href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BaseMinLogLevel_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BaseMinLogLevel
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder<TConfig, TExtractor>.BaseMinLogLevel
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder(Of TConfig, TExtractor).BaseMinLogLevel
+  nameWithType: ExtractorRuntimeBuilder<TConfig, TExtractor>.BaseMinLogLevel
+  nameWithType.vb: ExtractorRuntimeBuilder(Of TConfig, TExtractor).BaseMinLogLevel
 - uid: Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder`2.BufferRemoteConfig
   name: BufferRemoteConfig
   href: api/Cognite.Extractor.Utils.Unstable.Runtime.ExtractorRuntimeBuilder-2.html#Cognite_Extractor_Utils_Unstable_Runtime_ExtractorRuntimeBuilder_2_BufferRemoteConfig

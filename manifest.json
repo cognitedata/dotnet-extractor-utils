@@ -1236,6 +1236,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Common.SchedulerException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Common.SchedulerException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.SchedulerException",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.SchedulerException.yml\" sourcestartlinenumber=\"1\">Exception thrown by the PeriodicScheduler.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Common.SchedulerTaskResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Common.SchedulerTaskResult.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Common.SchedulerTaskResult",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Common.SchedulerTaskResult.yml\" sourcestartlinenumber=\"1\">Result of a long-running scheduler task.</p>\n<p sourcefile=\"api/Cognite.Extractor.Common.SchedulerTaskResult.yml\" sourcestartlinenumber=\"3\">Used to indicate whether a task is expected to exit, and whether\nan exit should be considered the scheduler crashing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Common.SharedResourceScheduler-1.yml",
       "output": {
         ".html": {
@@ -2507,20 +2535,6 @@
       "IsMRef": true,
       "Title": "Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable",
       "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.DestinationUtilsUnstable.yml\" sourcestartlinenumber=\"1\">Unstable version of DestinationUtils, containing methods to register clients.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "Cognite.Extractor.Utils.Unstable.ExtractorTaskResult",
-      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.yml\" sourcestartlinenumber=\"1\">Result of a long-running extractor task.</p>\n<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.ExtractorTaskResult.yml\" sourcestartlinenumber=\"3\">Used to indicate whether a task is expected to exit, and whether\nan exit should be considered the extractor crashing.</p>\n"
     },
     {
       "type": "ManagedReference",

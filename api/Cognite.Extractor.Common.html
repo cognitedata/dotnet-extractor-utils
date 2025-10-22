@@ -123,6 +123,9 @@ Option for shared, asynchronous limits, and using a shared TaskThrottler.</p>
       <h4><a class="xref" href="Cognite.Extractor.Common.RetryUtilConfig.html">RetryUtilConfig</a></h4>
       <section><p>Configuration for utility methods in the RetryUtil class. This can be used in config files for user-configured retries.</p>
 </section>
+      <h4><a class="xref" href="Cognite.Extractor.Common.SchedulerException.html">SchedulerException</a></h4>
+      <section><p>Exception thrown by the PeriodicScheduler.</p>
+</section>
       <h4><a class="xref" href="Cognite.Extractor.Common.SharedResourceScheduler-1.html">SharedResourceScheduler&lt;T&gt;</a></h4>
       <section><p>Abstraction for handling some kind of recursive exploration.
 Simply a small extension to <a class="xref" href="Cognite.Extractor.Common.OperationScheduler-1.html">OperationScheduler&lt;T&gt;</a> that
@@ -168,6 +171,14 @@ Interfaces
       <h4><a class="xref" href="Cognite.Extractor.Common.ITimeSpanProvider.html">ITimeSpanProvider</a></h4>
       <section><p>Interface for time span providers used in the periodic scheduler.
 Allows flexible scheduling.</p>
+</section>
+    <h3 id="enums">
+Enums
+</h3>
+      <h4><a class="xref" href="Cognite.Extractor.Common.SchedulerTaskResult.html">SchedulerTaskResult</a></h4>
+      <section><p>Result of a long-running scheduler task.</p>
+<p>Used to indicate whether a task is expected to exit, and whether
+an exit should be considered the scheduler crashing.</p>
 </section>
 
 
