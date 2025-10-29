@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using Serilog.Events;
 
 namespace Cognite.Extractor.Utils
 {
@@ -224,6 +225,8 @@ namespace Cognite.Extractor.Utils
         /// <param name="types">Types to look for as properties on <typeparamref name="T"/></param>
         /// <param name="doNotAddConfig">Skip adding config to the service collection, for example if it has already been added by AddRemoteConfig.</param>
         /// Defaults to <see cref="LoggingUtils.GetConfiguredLogger(LoggerConfig)"/> </param>
+        /// <param name="baseMinLevel">Base minimum log level. This is overridden by the minimum level in the configuration. You can set this
+        /// if you want to register external loggers with a lower level than the ones in config.</param>
         /// <exception cref="ConfigurationException">Thrown when the version is not valid, 
         /// the yaml file is not found or in case of yaml parsing error</exception>
         /// <returns>Configuration object</returns>
@@ -240,7 +243,8 @@ namespace Cognite.Extractor.Utils
             T? config = null,
             Func<LoggerConfig, Serilog.ILogger>? buildLogger = null,
             IEnumerable<Type>? types = null,
-            bool doNotAddConfig = false) where T : VersionedConfig
+            bool doNotAddConfig = false,
+            LogEventLevel baseMinLevel = LogEventLevel.Fatal) where T : VersionedConfig
         {
             var configTypes = new[]
                 {
@@ -272,7 +276,7 @@ namespace Cognite.Extractor.Utils
             }
             services.AddCogniteClient(appId, userAgent, addLogger, addMetrics, true, requireDestination);
             if (addStateStore) services.AddStateStore();
-            if (addLogger) services.AddLogger(buildLogger);
+            if (addLogger) services.AddLogger(buildLogger, false, baseMinLevel);
             if (addMetrics) services.AddCogniteMetrics();
             services.AddExtractionRun(addLogger);
             return config;

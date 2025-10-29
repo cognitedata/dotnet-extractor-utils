@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions;
@@ -71,7 +72,7 @@ namespace ExtractorUtils.Test.Unit
                 mock.AddMatcher(timeseries.CreateDatapointsMatcher(Times.Exactly(4)));
 
                 double[] doublePoints = { 0.0, 1.1, 2.2, double.NaN, 3.3, 4.4, double.NaN, 5.5, double.NegativeInfinity };
-                string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.StringLengthMax), new string('2', CogniteUtils.StringLengthMax + 1), "3" };
+                string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.TimeSeriesStringBytesMax), new string('2', CogniteUtils.TimeSeriesStringBytesMax + 1), "3" };
 
                 var datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
                     { new Identity("A"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1"), new Datapoint(DateTime.UtcNow, "2") }},
@@ -96,7 +97,7 @@ namespace ExtractorUtils.Test.Unit
                     dp => dp.NullValue || dp.Value == double.NaN || dp.Value == double.NegativeInfinity);
                 Assert.Equal(6, timeseries.GetTimeSeries(new Identity(2)).StringDatapoints.Count);
                 Assert.DoesNotContain(timeseries.GetTimeSeries(new Identity(2)).StringDatapoints,
-                    dp => dp.NullValue || dp.Value.Length > CogniteUtils.StringLengthMax);
+                    dp => dp.NullValue || Encoding.UTF8.GetByteCount(dp.Value) > CogniteUtils.TimeSeriesStringBytesMax);
 
                 mock.AssertAndClear();
                 timeseries.Clear();

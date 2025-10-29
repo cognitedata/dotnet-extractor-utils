@@ -91,7 +91,7 @@ namespace Cognite.Extractor.Testing.Mock
         /// </summary>
         /// <param name="id">Timeseries ID.</param>
         /// <param name="isString">Indicates if the timeseries is of string type.</param>
-        public void MockTimeSeries(Identity id, bool isString)
+        public TimeSeriesWrapper MockTimeSeries(Identity id, bool isString)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             var ts = new TimeSeries
@@ -107,11 +107,14 @@ namespace Cognite.Extractor.Testing.Mock
                 CreatedTime = DateTime.UtcNow.ToUnixTimeMilliseconds(),
                 LastUpdatedTime = DateTime.UtcNow.ToUnixTimeMilliseconds(),
             };
-            _timeSeries[id] = new TimeSeriesWrapper(ts);
+            var mock = new TimeSeriesWrapper(ts);
+            _timeSeries[id] = mock;
+            return mock;
         }
 
         /// <summary>
         /// Mock a timeseries with the given identity and metadata.
+        /// Timeseries IDs are ignored, so if you pass an identity 
         /// </summary>
         /// <param name="id">Timeseries ID.</param>
         /// <param name="timeSeries">Timeseries metadata.</param>
@@ -119,10 +122,7 @@ namespace Cognite.Extractor.Testing.Mock
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (timeSeries == null) throw new ArgumentNullException(nameof(timeSeries));
-            if (timeSeries.Id == 0)
-            {
-                timeSeries.Id = Interlocked.Increment(ref _nextId);
-            }
+            timeSeries.Id = Interlocked.Increment(ref _nextId);
             _timeSeries[id] = new TimeSeriesWrapper(timeSeries);
         }
 
