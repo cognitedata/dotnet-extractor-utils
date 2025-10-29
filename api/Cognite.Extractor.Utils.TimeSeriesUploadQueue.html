@@ -417,7 +417,8 @@ are inserted by external id.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task&lt;QueueUploadResult&lt;(Identity id, Datapoint dp)&gt;&gt; UploadEntries(IEnumerable&lt;(Identity id, Datapoint dp)&gt; dps, CancellationToken token)</code></pre>
+    <pre><code class="lang-csharp hljs">[SuppressMessage(&quot;Reliability&quot;, &quot;CA2007: Do not directly await a Task&quot;, Justification = &quot;Awaiter configured by the caller&quot;)]
+protected override Task&lt;QueueUploadResult&lt;(Identity id, Datapoint dp)&gt;&gt; UploadEntries(IEnumerable&lt;(Identity id, Datapoint dp)&gt; dps, CancellationToken token)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">

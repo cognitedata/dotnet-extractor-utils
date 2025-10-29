@@ -226,7 +226,8 @@ A metrics server and multiple push gateway destinations can be configured accord
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Start()</code></pre>
+    <pre><code class="lang-csharp hljs">[SuppressMessage(&quot;Reliability&quot;, &quot;CA2000: Dispose objects before losing scope&quot;, Justification = &quot;StopAsync() will dispose of the pusher&quot;)]
+public void Start()</code></pre>
   </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
