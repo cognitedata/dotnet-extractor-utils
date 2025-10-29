@@ -127,6 +127,7 @@ namespace ExtractorUtils.Test.Integration
             try
             {
                 var result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
                 created = result.Results;
 
                 Assert.Single(result.Errors);
@@ -162,6 +163,7 @@ namespace ExtractorUtils.Test.Integration
             try
             {
                 var result = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(updates, RetryMode.None, SanitationMode.None, tester.Source.Token);
+                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
                 result.Throw();
 
                 Assert.Equal(3, result.Results.Count());
@@ -205,6 +207,7 @@ namespace ExtractorUtils.Test.Integration
             try
             {
                 var result = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(updates, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
                 result.ThrowOnFatal();
 
                 Assert.Equal(2, result.Results.Count());
@@ -291,6 +294,7 @@ namespace ExtractorUtils.Test.Integration
             try
             {
                 var result = await tester.DestinationWithIDM.InsertDataPointsIDMAsync(dps, SanitationMode.None, RetryMode.None, tester.Source.Token);
+                tester.Logger.LogResult(result, RequestType.CreateDatapoints, false);
                 Assert.Empty(result.Errors);
 
                 int[] counts = new int[3];
@@ -360,6 +364,7 @@ namespace ExtractorUtils.Test.Integration
             try
             {
                 var result = await tester.DestinationWithIDM.InsertDataPointsIDMAsync(GetCreates(), SanitationMode.Remove, RetryMode.None, tester.Source.Token);
+                tester.Logger.LogResult(result, RequestType.CreateDatapoints, false);
 
                 var errs = result.Errors.ToArray();
                 Assert.Equal(2, errs.Length);
@@ -444,6 +449,7 @@ namespace ExtractorUtils.Test.Integration
             try
             {
                 var result = await tester.DestinationWithIDM.InsertDataPointsIDMAsync(dps, SanitationMode.None, RetryMode.OnError, tester.Source.Token);
+                tester.Logger.LogResult(result, RequestType.CreateDatapoints, false);
 
                 var errs = result.Errors.ToArray();
                 // Greenfield reports missing twice, once for each id type.
@@ -495,6 +501,8 @@ namespace ExtractorUtils.Test.Integration
             {
                 var (dpResult, tsResult) = await tester.DestinationWithIDM
                     .InsertDataPointsCreateMissingAsync(dps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
+                tester.Logger.LogResult(dpResult, RequestType.CreateDatapoints, false);
+                tester.Logger.LogResult(tsResult, RequestType.CreateTimeSeries, false);
 
                 Assert.Single(dpResult.Errors);
                 var err = dpResult.Errors.First();
