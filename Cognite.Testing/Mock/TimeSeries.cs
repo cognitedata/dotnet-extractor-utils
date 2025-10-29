@@ -114,7 +114,8 @@ namespace Cognite.Extractor.Testing.Mock
 
         /// <summary>
         /// Mock a timeseries with the given identity and metadata.
-        /// Timeseries IDs are ignored, so if you pass an identity 
+        /// Timeseries IDs are ignored, so if you pass an identity using internal ID,
+        /// it won't match the ID of the timeseries metadata.
         /// </summary>
         /// <param name="id">Timeseries ID.</param>
         /// <param name="timeSeries">Timeseries metadata.</param>
@@ -157,19 +158,15 @@ namespace Cognite.Extractor.Testing.Mock
         }
 
         /// <summary>
-        /// Automatically mock timeseries with the given external IDs.
-        /// If the name contains "String", the timeseries will be of string type.
-        /// If the name contains "Missing", the timeseries will not be created.
-        /// This is useful for testing error handling.
+        /// Mock a list of timeseries with the given external ID and isString.
         /// </summary>
-        /// <param name="names">List of timeseries to mock.</param>
-        public void AutoMockTimeSeries(params string[] names)
+        /// <param name="timeseries">List of timeseries to mock.</param>
+        public void MockTimeSeries(params (bool, string)[] timeseries)
         {
-            if (names == null) throw new ArgumentNullException(nameof(names));
-            foreach (var name in names)
+            if (timeseries == null) throw new ArgumentNullException(nameof(timeseries));
+            foreach (var (isString, name) in timeseries)
             {
                 if (name.Contains("Missing")) continue;
-                var isString = name.Contains("String");
                 MockTimeSeries(new Identity(name), isString);
             }
         }
@@ -186,18 +183,18 @@ namespace Cognite.Extractor.Testing.Mock
         /// Get a matcher for the /timeseries/byids endpoint.
         /// </summary>
         /// <param name="times">Expected number of executions.</param>
-        public RequestMatcher GetByIdsMatcher(Times times)
+        public RequestMatcher MakeGetByIdsMatcher(Times times)
         {
-            return new SimpleMatcher("POST", "/timeseries/byids", MockTimeSeriesByIds, times);
+            return new SimpleMatcher("POST", "/timeseries/byids", TimeSeriesByIdsImpl, times);
         }
 
         /// <summary>
         /// Get a matcher for the /timeseries/data endpoint.
         /// </summary>
         /// <param name="times">Expected number of executions.</param>
-        public RequestMatcher CreateDatapointsMatcher(Times times)
+        public RequestMatcher MakeCreateDatapointsMatcher(Times times)
         {
-            return new SimpleMatcher("POST", "/timeseries/data", MockCreateDatapoints, times);
+            return new SimpleMatcher("POST", "/timeseries/data", CreateDatapointsImpl, times);
         }
 
         private static Dictionary<string, MultiValue> ToMultiValueDict(Identity id)
@@ -218,7 +215,7 @@ namespace Cognite.Extractor.Testing.Mock
             return dict;
         }
 
-        private async Task<HttpResponseMessage> MockTimeSeriesByIds(RequestContext context, CancellationToken token)
+        private async Task<HttpResponseMessage> TimeSeriesByIdsImpl(RequestContext context, CancellationToken token)
         {
             var ids = await context.ReadJsonBody<ItemsWithIgnoreUnknownIds<RawIdentity>>().ConfigureAwait(false);
             Assert.NotNull(ids);
@@ -271,7 +268,7 @@ namespace Cognite.Extractor.Testing.Mock
             return new Identity(0);
         }
 
-        private async Task<HttpResponseMessage> MockCreateDatapoints(RequestContext context, CancellationToken token)
+        private async Task<HttpResponseMessage> CreateDatapointsImpl(RequestContext context, CancellationToken token)
         {
             var data = await context.ReadProtobufBody(DataPointInsertionRequest.Parser, token).ConfigureAwait(false);
 

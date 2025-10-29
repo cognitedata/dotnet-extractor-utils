@@ -69,7 +69,7 @@ namespace ExtractorUtils.Test.Unit
                 var mock = provider.GetRequiredService<CdfMock>();
 
                 var timeseries = new TimeSeriesMock();
-                mock.AddMatcher(timeseries.CreateDatapointsMatcher(Times.Exactly(4)));
+                mock.AddMatcher(timeseries.MakeCreateDatapointsMatcher(Times.Exactly(4)));
 
                 double[] doublePoints = { 0.0, 1.1, 2.2, double.NaN, 3.3, 4.4, double.NaN, 5.5, double.NegativeInfinity };
                 string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.TimeSeriesStringBytesMax), new string('2', CogniteUtils.TimeSeriesStringBytesMax + 1), "3" };
@@ -101,10 +101,10 @@ namespace ExtractorUtils.Test.Unit
 
                 mock.AssertAndClear();
                 timeseries.Clear();
-                mock.AddMatcher(timeseries.GetByIdsMatcher(Times.Exactly(2)));
-                mock.AddMatcher(timeseries.CreateDatapointsMatcher(Times.Exactly(7)));
+                mock.AddMatcher(timeseries.MakeGetByIdsMatcher(Times.Exactly(2)));
+                mock.AddMatcher(timeseries.MakeCreateDatapointsMatcher(Times.Exactly(7)));
 
-                timeseries.AutoMockTimeSeries("idNumeric1", "idNumeric2", "idString1", "idMismatchedString1", "idMismatched2");
+                timeseries.MockTimeSeries((false, "idNumeric1"), (false, "idNumeric2"), (true, "idString1"), (true, "idMismatchedString1"), (false, "idMismatched2"));
 
                 datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
                     { new Identity("idMissing1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
@@ -267,9 +267,9 @@ namespace ExtractorUtils.Test.Unit
                 var mock = provider.GetRequiredService<CdfMock>();
 
                 var timeseries = new TimeSeriesMock();
-                timeseries.AutoMockTimeSeries("idNumeric1", "idNumeric2", "idString1", "idMismatchedString1");
-                mock.AddMatcher(timeseries.CreateDatapointsMatcher(Times.AtLeast(10)));
-                mock.AddMatcher(timeseries.GetByIdsMatcher(Times.AtLeast(1)));
+                timeseries.MockTimeSeries((false, "idNumeric1"), (false, "idNumeric2"), (true, "idString1"), (true, "idMismatchedString1"));
+                mock.AddMatcher(timeseries.MakeCreateDatapointsMatcher(Times.AtLeast(10)));
+                mock.AddMatcher(timeseries.MakeGetByIdsMatcher(Times.AtLeast(1)));
                 // queue with 1 sec upload interval
                 await using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
@@ -385,13 +385,13 @@ namespace ExtractorUtils.Test.Unit
                 var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
                 var mock = provider.GetRequiredService<CdfMock>();
                 var timeseries = new TimeSeriesMock();
-                timeseries.AutoMockTimeSeries(
-                    "idNumeric1", "idNumeric2", "idString1", "idMismatchedString1"
+                timeseries.MockTimeSeries(
+                    (false, "idNumeric1"), (false, "idNumeric2"), (true, "idString1"), (true, "idMismatchedString1")
                 );
                 // Since we have a chunk size of 4, with 2 timeseries per request, and we write
                 // 50 datapoints, we expect 13 requests, but we get two repeats due to the mismatched timeseries.
-                mock.AddMatcher(timeseries.CreateDatapointsMatcher(Times.Exactly(15)));
-                mock.AddMatcher(timeseries.GetByIdsMatcher(Times.Exactly(3)));
+                mock.AddMatcher(timeseries.MakeCreateDatapointsMatcher(Times.Exactly(15)));
+                mock.AddMatcher(timeseries.MakeGetByIdsMatcher(Times.Exactly(3)));
                 mock.AddTokenInspectEndpoint(Times.AtLeastOnce(), _project);
 
                 // queue that will not upload automatically.
