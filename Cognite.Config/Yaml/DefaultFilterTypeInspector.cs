@@ -47,6 +47,14 @@ namespace Cognite.Extractor.Configuration
             _customConverters = customConverters;
         }
 
+        private bool ShouldIgnoreForSecurity(string name)
+        {
+            var lowerName = name.ToLowerInvariant();
+            return lowerName.Contains("password")
+                || lowerName.Contains("secret")
+                || lowerName.Contains("connectionstring");
+        }
+
         public override string GetEnumName(Type enumType, string name)
         {
             return _innerTypeDescriptor.GetEnumName(enumType, name);
@@ -82,6 +90,13 @@ namespace Cognite.Extractor.Configuration
                 if (_toIgnore.Contains(name)) return false;
                 // Some should be kept to encourage users to set them
                 if (_toAlwaysKeep.Contains(name)) return true;
+                // Security-sensitive properties should be ignored
+                // We put this after toAlwaysKeep, so that users can force keeping something
+                // that looks like a secret but isn't sensitive. In that case it would clearly
+                // be deliberate.
+                // These should ideally be listed in toIgnore instead,
+                // but this serves as a safety net.
+                if (ShouldIgnoreForSecurity(name)) return false;
 
                 var prop = type.GetProperty(name);
                 object? df = null;
