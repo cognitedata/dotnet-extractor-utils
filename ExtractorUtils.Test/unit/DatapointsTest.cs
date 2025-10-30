@@ -13,6 +13,7 @@ using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.StateStorage;
 using Cognite.Extractor.Testing;
+using Cognite.Extractor.Testing.Mock;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
@@ -31,7 +32,6 @@ namespace ExtractorUtils.Test.Unit
     public class DatapointsTest
     {
         private const string _project = "someProject";
-        private bool _failInsert;
 
         private readonly ITestOutputHelper _output;
         public DatapointsTest(ITestOutputHelper output)
@@ -57,19 +57,19 @@ namespace ExtractorUtils.Test.Unit
                                 "    data-points: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertDataPointsAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             // Setup services
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider())
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var mock = provider.GetRequiredService<CdfMock>();
+
+                var timeseries = new TimeSeriesMock();
+                mock.AddMatcher(timeseries.MakeCreateDatapointsMatcher(Times.Exactly(4)));
 
                 double[] doublePoints = { 0.0, 1.1, 2.2, double.NaN, 3.3, 4.4, double.NaN, 5.5, double.NegativeInfinity };
                 string[] stringPoints = { "0", null, "1", new string('!', CogniteUtils.TimeSeriesStringBytesMax), new string('2', CogniteUtils.TimeSeriesStringBytesMax + 1), "3" };
@@ -81,21 +81,31 @@ namespace ExtractorUtils.Test.Unit
                     { new Identity(3), Array.Empty<Datapoint>() },
                     { new Identity(4), new Datapoint[] { new Datapoint(DateTime.MinValue, 1), new Datapoint(DateTime.MaxValue, 1)}}
                 };
-                _createdDataPoints.Clear();
+                timeseries.MockTimeSeries(new Identity("A"), true);
+                timeseries.MockTimeSeries(new Identity(1), false);
+                timeseries.MockTimeSeries(new Identity(2), true);
+
                 var result = await cogniteDestination.InsertDataPointsAsync(
                     datapoints,
                     SanitationMode.Clean,
                     RetryMode.OnError,
                     CancellationToken.None);
-                Assert.False(_createdDataPoints.ContainsKey(3 + "")); // No data points
-                Assert.False(_createdDataPoints.ContainsKey(4 + "")); // Invalid timestamps
-                Assert.Equal(7, _createdDataPoints[1 + ""].Count);
-                Assert.Equal(2, _createdDataPoints["A"].Count);
-                Assert.DoesNotContain(_createdDataPoints[1 + ""], dp => dp.NumericValue == null || dp.NumericValue == double.NaN || dp.NumericValue == double.NegativeInfinity);
-                Assert.Equal(6, _createdDataPoints[2 + ""].Count);
-                Assert.DoesNotContain(_createdDataPoints[2 + ""], dp => dp.StringValue == null || Encoding.UTF8.GetByteCount(dp.StringValue) > CogniteUtils.TimeSeriesStringBytesMax);
 
-                _createdDataPoints.Clear();
+                Assert.Equal(7, timeseries.GetTimeSeries(new Identity(1)).NumericDatapoints.Count);
+                Assert.Equal(2, timeseries.GetTimeSeries(new Identity("A")).StringDatapoints.Count);
+                Assert.DoesNotContain(timeseries.GetTimeSeries(new Identity(1)).NumericDatapoints,
+                    dp => dp.NullValue || dp.Value == double.NaN || dp.Value == double.NegativeInfinity);
+                Assert.Equal(6, timeseries.GetTimeSeries(new Identity(2)).StringDatapoints.Count);
+                Assert.DoesNotContain(timeseries.GetTimeSeries(new Identity(2)).StringDatapoints,
+                    dp => dp.NullValue || Encoding.UTF8.GetByteCount(dp.Value) > CogniteUtils.TimeSeriesStringBytesMax);
+
+                mock.AssertAndClear();
+                timeseries.Clear();
+                mock.AddMatcher(timeseries.MakeGetByIdsMatcher(Times.Exactly(2)));
+                mock.AddMatcher(timeseries.MakeCreateDatapointsMatcher(Times.Exactly(7)));
+
+                timeseries.MockTimeSeries((false, "idNumeric1"), (false, "idNumeric2"), (true, "idString1"), (true, "idMismatchedString1"), (false, "idMismatched2"));
+
                 datapoints = new Dictionary<Identity, IEnumerable<Datapoint>>() {
                     { new Identity("idMissing1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, "1")}},
                     { new Identity("idNumeric1"), new Datapoint[] { new Datapoint(DateTime.UtcNow, 1)}},
@@ -115,14 +125,19 @@ namespace ExtractorUtils.Test.Unit
                 var notFoundErr = errs.Where(err => err.Resource == ResourceType.Id).SelectMany(err => err.Values);
                 var mismatched = errs.Where(err => err.Type == ErrorType.MismatchedType).SelectMany(err => err.Skipped);
 
+                var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
+                foreach (var err in errs)
+                {
+                    logger.LogCogniteError(err, RequestType.CreateDatapoints, false);
+                }
                 Assert.Contains(new Identity("idMissing1"), notFoundErr);
                 Assert.Contains(new Identity(-1), notFoundErr);
                 Assert.Contains(mismatched.OfType<DataPointInsertError>(), err => err.Id.ExternalId == "idMismatchedString1");
                 Assert.Contains(mismatched.OfType<DataPointInsertError>(), err => err.Id.ExternalId == "idMismatched2");
 
-                Assert.Single(_createdDataPoints["idNumeric1"]);
-                Assert.Single(_createdDataPoints["idNumeric2"]);
-                Assert.Single(_createdDataPoints["idString1"]);
+                Assert.Single(timeseries.GetTimeSeries("idNumeric1").NumericDatapoints);
+                Assert.Single(timeseries.GetTimeSeries("idNumeric2").NumericDatapoints);
+                Assert.Single(timeseries.GetTimeSeries("idString1").StringDatapoints);
             }
 
             System.IO.File.Delete(path);
@@ -215,14 +230,10 @@ namespace ExtractorUtils.Test.Unit
                                 "    data-points: 2"};
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertDataPointsAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
 
@@ -253,6 +264,12 @@ namespace ExtractorUtils.Test.Unit
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
+                var mock = provider.GetRequiredService<CdfMock>();
+
+                var timeseries = new TimeSeriesMock();
+                timeseries.MockTimeSeries((false, "idNumeric1"), (false, "idNumeric2"), (true, "idString1"), (true, "idMismatchedString1"));
+                mock.AddMatcher(timeseries.MakeCreateDatapointsMatcher(Times.AtLeast(10)));
+                mock.AddMatcher(timeseries.MakeGetByIdsMatcher(Times.AtLeast(1)));
                 // queue with 1 sec upload interval
                 await using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
@@ -340,17 +357,15 @@ namespace ExtractorUtils.Test.Unit
                                 "    data-points: 4",
                                 "    data-point-time-series: 2",
                                 "  cdf-throttling:",
-                                "    data-points: 2"};
+                                "    data-points: 2",
+                                "  cdf-retries:",
+                                "    max-retries: 0"};
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockInsertDataPointsAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
 
             Func<int, Dictionary<Identity, Datapoint>> uploadGenerator = (int i) => new Dictionary<Identity, Datapoint>() {
@@ -368,6 +383,17 @@ namespace ExtractorUtils.Test.Unit
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<DatapointsTest>>();
+                var mock = provider.GetRequiredService<CdfMock>();
+                var timeseries = new TimeSeriesMock();
+                timeseries.MockTimeSeries(
+                    (false, "idNumeric1"), (false, "idNumeric2"), (true, "idString1"), (true, "idMismatchedString1")
+                );
+                // Since we have a chunk size of 4, with 2 timeseries per request, and we write
+                // 50 datapoints, we expect 13 requests, but we get two repeats due to the mismatched timeseries.
+                mock.AddMatcher(timeseries.MakeCreateDatapointsMatcher(Times.Exactly(15)));
+                mock.AddMatcher(timeseries.MakeGetByIdsMatcher(Times.Exactly(3)));
+                mock.AddTokenInspectEndpoint(Times.AtLeastOnce(), _project);
+
                 // queue that will not upload automatically.
                 await using (var queue = cogniteDestination.CreateTimeSeriesUploadQueue(TimeSpan.Zero, 0, null, "dp-buffer.bin"))
                 {
@@ -377,19 +403,18 @@ namespace ExtractorUtils.Test.Unit
                         var dps = uploadGenerator(i);
                         foreach (var kvp in dps) queue.Enqueue(kvp.Key, kvp.Value);
                     }
-                    _failInsert = true;
+                    mock.RejectAllMessages = true;
                     Assert.Equal(0, new FileInfo("dp-buffer.bin").Length);
                     await queue.Trigger(CancellationToken.None);
                     Assert.True(new FileInfo("dp-buffer.bin").Length > 0);
-                    Assert.Empty(_createdDataPoints);
+                    Assert.Equal(0, timeseries.All.Sum(ts => ts.NumericDatapoints.Count + ts.StringDatapoints.Count));
                     await queue.Trigger(CancellationToken.None);
                     Assert.True(new FileInfo("dp-buffer.bin").Length > 0);
-                    Assert.Empty(_createdDataPoints);
-                    _failInsert = false;
+                    Assert.Equal(0, timeseries.All.Sum(ts => ts.NumericDatapoints.Count + ts.StringDatapoints.Count));
+                    mock.RejectAllMessages = false;
                     await queue.Trigger(CancellationToken.None);
                     Assert.Equal(0, new FileInfo("dp-buffer.bin").Length);
-                    Assert.Equal(3, _createdDataPoints.Count);
-                    Assert.Equal(10, _createdDataPoints["idNumeric1"].Count);
+                    Assert.Equal(10, timeseries.GetTimeSeries("idNumeric1").NumericDatapoints.Count);
                     logger.LogInformation("Disposing of the upload queue");
                 }
                 logger.LogInformation("Upload queue disposed");
@@ -455,150 +480,6 @@ namespace ExtractorUtils.Test.Unit
         }
 
         #region mock
-        private Dictionary<string, List<Datapoint>> _createdDataPoints = new Dictionary<string, List<Datapoint>>();
-
-        private async Task<HttpResponseMessage> mockInsertDataPointsAsync(HttpRequestMessage message, CancellationToken token)
-        {
-            var uri = message.RequestUri.ToString();
-
-            var responseBody = "{ }";
-
-            if (_failInsert)
-            {
-                dynamic failResponse = new ExpandoObject();
-                failResponse.error = new ExpandoObject();
-                failResponse.error.code = 500;
-                failResponse.error.message = "Something went wrong";
-
-                responseBody = JsonConvert.SerializeObject(failResponse);
-                var fail = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    Content = new StringContent(responseBody)
-                };
-                fail.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                fail.Headers.Add("x-request-id", "1");
-                return fail;
-            }
-
-            if (uri.Contains("/token/inspect"))
-            {
-                dynamic inspectResponse = new ExpandoObject();
-                inspectResponse.projects = new List<ExpandoObject>();
-                dynamic project = new ExpandoObject();
-                project.projectUrlName = _project;
-                inspectResponse.projects.Add(project);
-
-                responseBody = JsonConvert.SerializeObject(inspectResponse);
-                var msg = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(responseBody)
-                };
-
-                msg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                msg.Headers.Add("x-request-id", "1");
-                return msg;
-            }
-
-            if (uri.Contains("/timeseries/byids"))
-            {
-                return await CogniteTest.MockEnsureTimeSeriesSendAsync(new Cognite.Extractor.Testing.Mock.RequestContext(message), token);
-            }
-            Assert.Contains($"{_project}/timeseries/data", uri);
-
-            var statusCode = HttpStatusCode.OK;
-            var bytes = await message.Content.ReadAsByteArrayAsync(token);
-            var data = DataPointInsertionRequest.Parser.ParseFrom(bytes);
-            Assert.True(data.Items.Count <= 2); // data-points-time-series chunk size
-            Assert.True(data.Items
-                .Select(i => i.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.NumericDatapoints ?
-                        i.NumericDatapoints.Datapoints.Count : i.StringDatapoints.Datapoints.Count)
-                .Sum() <= 4); // data-points chunk size
-
-
-
-
-            dynamic missingResponse = new ExpandoObject();
-            missingResponse.error = new ExpandoObject();
-            missingResponse.error.missing = new List<ExpandoObject>();
-            missingResponse.error.code = 400;
-            missingResponse.error.message = "Time series ids not found";
-
-            dynamic mismatchedResponse = new ExpandoObject();
-            mismatchedResponse.error = new ExpandoObject();
-            mismatchedResponse.error.code = 400;
-            mismatchedResponse.error.message = "";
-
-            foreach (var item in data.Items)
-            {
-                if (item.Id < 0 || item.ExternalId.StartsWith("idMissing"))
-                {
-                    dynamic id = new ExpandoObject();
-                    if (!string.IsNullOrEmpty(item.ExternalId)) id.externalId = item.ExternalId;
-                    else id.id = item.Id;
-                    missingResponse.error.missing.Add(id);
-                }
-                else if (item.ExternalId.StartsWith("idMismatched"))
-                {
-                    if (item.NumericDatapoints != null)
-                    {
-                        mismatchedResponse.error.message = "Expected string value for datapoint";
-                    }
-                    else
-                    {
-                        mismatchedResponse.error.message = "Expected numeric value for datapoint";
-                    }
-                    break;
-                }
-            }
-            if (!string.IsNullOrEmpty(mismatchedResponse.error.message))
-            {
-                statusCode = HttpStatusCode.BadRequest;
-                responseBody = JsonConvert.SerializeObject(mismatchedResponse);
-            }
-            else if (missingResponse.error.missing.Count > 0)
-            {
-                statusCode = HttpStatusCode.BadRequest;
-                responseBody = JsonConvert.SerializeObject(missingResponse);
-            }
-            else
-            {
-                foreach (var item in data.Items)
-                {
-                    var sId = string.IsNullOrEmpty(item.ExternalId) ? item.Id + "" : item.ExternalId;
-                    if (!_createdDataPoints.TryGetValue(sId, out List<Datapoint> dps))
-                    {
-                        dps = new List<Datapoint>();
-                        _createdDataPoints.TryAdd(sId, dps);
-                    }
-                    if (item.NumericDatapoints != null)
-                    {
-                        foreach (var dp in item.NumericDatapoints.Datapoints)
-                        {
-                            dps.Add(new Datapoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
-                        }
-                    }
-                    else if (item.StringDatapoints != null)
-                    {
-                        foreach (var dp in item.StringDatapoints?.Datapoints)
-                        {
-                            dps.Add(new Datapoint(CogniteTime.FromUnixTimeMilliseconds(dp.Timestamp), dp.Value));
-                        }
-                    }
-                }
-            }
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(responseBody)
-            };
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            response.Headers.Add("x-request-id", "1");
-            return response;
-        }
-
         private static async Task<HttpResponseMessage> mockDeleteDataPointsAsync(HttpRequestMessage message, CancellationToken token)
         {
             var uri = message.RequestUri.ToString();
