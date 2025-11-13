@@ -63,7 +63,7 @@ namespace ExtractorUtils.Test.Unit
         {
             var items = new List<string>() { "a", null, "b", null, "c" };
 
-            var result = items.SelectNonNull(item => item == null ? null : item.ToUpperInvariant());
+            var result = items.SelectNonNull(item => item?.ToUpperInvariant());
             Assert.Equal(new List<string> { "A", "B", "C" }, result.ToList());
         }
     }
