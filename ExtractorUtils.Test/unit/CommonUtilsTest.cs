@@ -2,6 +2,7 @@ using Xunit;
 using Cognite.Extractor.Common;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -55,6 +56,15 @@ namespace ExtractorUtils.Test.Unit
             var (min, max) = items.MinMax(item => item);
             Assert.Equal(now, min);
             Assert.Equal(now.AddMilliseconds(9999), max);
+        }
+
+        [Fact]
+        public static void SelectNonNullTest()
+        {
+            var items = new List<string>() { "a", null, "b", null, "c" };
+
+            var result = items.SelectNonNull(item => item?.ToUpperInvariant());
+            Assert.Equal(new List<string> { "A", "B", "C" }, result.ToList());
         }
     }
 }
