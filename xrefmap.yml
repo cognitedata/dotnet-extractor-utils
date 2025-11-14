@@ -5985,6 +5985,22 @@ references:
   fullName.vb: Cognite.Extractor.Common.CommonUtils.MinMax(Of T, R)(System.Collections.Generic.IEnumerable(Of T), System.Func(Of T, R))
   nameWithType: CommonUtils.MinMax<T, R>(IEnumerable<T>, Func<T, R>)
   nameWithType.vb: CommonUtils.MinMax(Of T, R)(IEnumerable(Of T), Func(Of T, R))
+- uid: Cognite.Extractor.Common.CommonUtils.SelectNonNull*
+  name: SelectNonNull
+  href: api/Cognite.Extractor.Common.CommonUtils.html#Cognite_Extractor_Common_CommonUtils_SelectNonNull_
+  commentId: Overload:Cognite.Extractor.Common.CommonUtils.SelectNonNull
+  isSpec: "True"
+  fullName: Cognite.Extractor.Common.CommonUtils.SelectNonNull
+  nameWithType: CommonUtils.SelectNonNull
+- uid: Cognite.Extractor.Common.CommonUtils.SelectNonNull``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})
+  name: SelectNonNull<TIn, TOut>(IEnumerable<TIn>, Func<TIn, TOut?>)
+  href: api/Cognite.Extractor.Common.CommonUtils.html#Cognite_Extractor_Common_CommonUtils_SelectNonNull__2_System_Collections_Generic_IEnumerable___0__System_Func___0___1__
+  commentId: M:Cognite.Extractor.Common.CommonUtils.SelectNonNull``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})
+  name.vb: SelectNonNull(Of TIn, TOut)(IEnumerable(Of TIn), Func(Of TIn, TOut))
+  fullName: Cognite.Extractor.Common.CommonUtils.SelectNonNull<TIn, TOut>(System.Collections.Generic.IEnumerable<TIn>, System.Func<TIn, TOut?>)
+  fullName.vb: Cognite.Extractor.Common.CommonUtils.SelectNonNull(Of TIn, TOut)(System.Collections.Generic.IEnumerable(Of TIn), System.Func(Of TIn, TOut))
+  nameWithType: CommonUtils.SelectNonNull<TIn, TOut>(IEnumerable<TIn>, Func<TIn, TOut?>)
+  nameWithType.vb: CommonUtils.SelectNonNull(Of TIn, TOut)(IEnumerable(Of TIn), Func(Of TIn, TOut))
 - uid: Cognite.Extractor.Common.CommonUtils.SimplifyException(System.Exception)
   name: SimplifyException(Exception)
   href: api/Cognite.Extractor.Common.CommonUtils.html#Cognite_Extractor_Common_CommonUtils_SimplifyException_System_Exception_
