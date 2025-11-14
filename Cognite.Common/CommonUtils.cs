@@ -163,5 +163,26 @@ namespace Cognite.Extractor.Common
             return ex;
         }
 
+        /// <summary>
+        /// Select elements from <typeparamref name="TIn"/> to <typeparamref name="TOut"/>,
+        /// returning only when the result is not null. Unlike LINQ's Where + Select,
+        /// this is nullable-aware.
+        /// </summary>
+        /// <typeparam name="TIn">Source type</typeparam>
+        /// <typeparam name="TOut">Target type</typeparam>
+        /// <param name="source">Source enumerable</param>
+        /// <param name="map">Mapping function</param>
+        /// <returns>Enumerable with non-null elements</returns>
+        public static IEnumerable<TOut> SelectNonNull<TIn, TOut>(this IEnumerable<TIn> source, Func<TIn, TOut?> map) where TOut : class
+        {
+            if (map == null) throw new ArgumentNullException(nameof(map));
+            foreach (var item in source)
+            {
+                var result = map(item);
+                if (result == null) continue;
+                yield return result;
+            }
+        }
+
     }
 }
