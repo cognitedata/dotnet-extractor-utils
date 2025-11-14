@@ -75,7 +75,7 @@ jobs:
 
   publish:
     name: Create Release
-    runs-on: windows-latest
+    runs-on: windows-2022
     environment: CD
     if: ${{ needs.build.outputs.branch == 'master' && needs.build.outputs.should-release == 0 }}
     needs:
