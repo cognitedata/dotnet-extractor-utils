@@ -27,7 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Identity.Client" Version="4.79.2" />
-    <PackageReference Include="CogniteSdk" Version="5.4.0" />
+    <PackageReference Include="CogniteSdk" Version="5.5.0" />
     <PackageReference Include="System.Text.Json" Version="10.0.0" />
     <PackageReference Include="prometheus-net" Version="8.2.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
