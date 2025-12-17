@@ -43,7 +43,7 @@ namespace Cognite.Extensions
             {
                 using (CdfMetrics.StreamRecords.WithLabels("retrieve_stream"))
                 {
-                    var res = await streams.RetrieveStreamAsync(stream.ExternalId, token).ConfigureAwait(false);
+                    var res = await streams.RetrieveStreamAsync(stream.ExternalId, token: token).ConfigureAwait(false);
                     return res;
                 }
             }
