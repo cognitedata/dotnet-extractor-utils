@@ -50,11 +50,11 @@ namespace Cognite.Extractor.Testing
                 // It's just cleanup of tests, so we can just retry.
                 try
                 {
-                    _output.WriteLine(_textWriter.ToString());
+                    _output.WriteLine(_textWriter.ToString() ?? string.Empty);
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    _output.WriteLine(_textWriter.ToString());
+                    _output.WriteLine(_textWriter.ToString() ?? string.Empty);
                 }
                 _textWriter.Dispose();
                 disposed = true;
