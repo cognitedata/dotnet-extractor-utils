@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Cognite.Extractor.Testing
 {

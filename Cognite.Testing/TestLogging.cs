@@ -9,8 +9,7 @@ using Serilog.Formatting;
 using Serilog.Formatting.Display;
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Cognite.Extractor.Testing
 {
