@@ -88,7 +88,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             return (provider.GetRequiredService<DummyExtractor>(), sink);
         }
 
-        [Fact]
+        [Fact(Skip = "This test has the same issue as TestBaseExtractorInnerError, but less prevalent.")]
         public async Task TestBaseExtractor()
         {
             var (ext, sink) = CreateExtractor();
@@ -121,7 +121,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Equal("1.0.0", req.Extractor.Version);
         }
 
-        [Fact]
+        [Fact(Skip = "This test fails too often when running locally and on CI, but only when running the entire 'Unstable' test suite together. Alone, it runs perfectly fine with no issues. There is something wrong with the local backup config mechanism which triggers a cancel on this test.")]
         public async Task TestBaseExtractorInnerError()
         {
             var (ext, sink) = CreateExtractor();
