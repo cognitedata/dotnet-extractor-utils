@@ -1,11 +1,10 @@
-﻿using Cognite.Extractor.Common;
-using Cognite.Extractor.Testing;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Testing;
+using Microsoft.Extensions.Logging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {

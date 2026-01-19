@@ -8,7 +8,6 @@ using Cognite.Extractor.Common;
 using Cognite.Extractor.Testing;
 using CogniteSdk;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace ExtractorUtils.Test.Unit

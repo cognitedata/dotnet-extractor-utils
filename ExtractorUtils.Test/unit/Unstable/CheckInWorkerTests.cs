@@ -7,21 +7,20 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions;
 using Cognite.Extensions.Unstable;
+using Cognite.Extractor.Configuration;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Utils;
 using Cognite.Extractor.Utils.Unstable;
 using Cognite.Extractor.Utils.Unstable.Configuration;
+using Cognite.Extractor.Utils.Unstable.Tasks;
+using CogniteSdk;
+using CogniteSdk.Alpha;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Xunit;
-using Xunit.Abstractions;
-using Cognite.Extensions;
-using Cognite.Extractor.Testing;
-using Cognite.Extractor.Configuration;
-using Cognite.Extractor.Utils;
-using Cognite.Extractor.Utils.Unstable.Tasks;
-using Microsoft.Extensions.Logging;
-using CogniteSdk.Alpha;
-using CogniteSdk;
 
 
 namespace ExtractorUtils.Test.Unit.Unstable

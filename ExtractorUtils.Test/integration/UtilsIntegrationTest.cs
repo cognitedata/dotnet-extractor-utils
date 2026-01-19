@@ -1,8 +1,7 @@
-﻿using Cognite.Extensions;
+﻿using System.Threading.Tasks;
+using Cognite.Extensions;
 using CogniteSdk;
-using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {

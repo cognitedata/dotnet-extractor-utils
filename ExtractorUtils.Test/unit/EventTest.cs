@@ -1,12 +1,4 @@
-﻿using Cognite.Extensions;
-using Cognite.Extractor.Common;
-using Cognite.Extractor.Utils;
-using Cognite.Extractor.Testing;
-using CogniteSdk;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -17,8 +9,15 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Utils;
+using CogniteSdk;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {

@@ -1,8 +1,7 @@
-﻿using Cognite.Extractor.Testing;
+﻿using System.CommandLine;
+using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils.CommandLine;
-using System.CommandLine;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {

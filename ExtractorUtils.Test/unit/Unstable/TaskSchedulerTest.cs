@@ -9,7 +9,6 @@ using Cognite.Extractor.Utils.Unstable.Tasks;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.unit.Unstable
 {

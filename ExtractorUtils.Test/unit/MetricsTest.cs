@@ -2,19 +2,18 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Logging;
+using Cognite.Extractor.Metrics;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using Prometheus;
 using Xunit;
-using Cognite.Extractor.Logging;
-using Cognite.Extractor.Metrics;
-using Cognite.Extractor.Utils;
-using System.Reflection;
-using Xunit.Abstractions;
-using Cognite.Extractor.Testing;
 
 namespace ExtractorUtils.Test.Unit
 {

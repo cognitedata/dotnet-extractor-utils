@@ -15,7 +15,6 @@ using CogniteSdk.DataModels.Core;
 using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {

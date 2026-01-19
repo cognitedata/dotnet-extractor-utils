@@ -1,16 +1,15 @@
-﻿using Cognite.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Cognite.Extensions;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Testing;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {

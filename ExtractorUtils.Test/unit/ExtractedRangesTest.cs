@@ -1,25 +1,24 @@
-﻿using Cognite.Extractor.Utils;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
-using TimeRange = Cognite.Extractor.Common.TimeRange;
-using System.Text.Json.Serialization;
-using System.Net.Http.Headers;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Logging;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Utils;
+using CogniteSdk;
 using Com.Cognite.V1.Timeseries.Proto;
-using System.IO;
 using Google.Protobuf;
 using Microsoft.Extensions.DependencyInjection;
-using Cognite.Extractor.Logging;
-using System.Linq;
-using CogniteSdk;
-using Cognite.Extractor.Common;
-using Xunit.Abstractions;
-using Cognite.Extractor.Testing;
+using Xunit;
+using TimeRange = Cognite.Extractor.Common.TimeRange;
 
 namespace ExtractorUtils.Test.Unit
 {

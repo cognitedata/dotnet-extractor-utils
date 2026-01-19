@@ -218,7 +218,7 @@ namespace ExtractorUtils.Test.Unit
             Assert.NotNull(conf.Logger);
             Assert.NotNull(conf.Metrics);
             Assert.Equal("", conf.Foo);
-            AssemblyTraitAttribute.Equals("default", conf.Bar);
+            TraitAttribute.Equals("default", conf.Bar);
         }
 
         [Fact]

@@ -1,22 +1,21 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Testing.Mock;
+using Cognite.Extractor.Utils;
+using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Xunit;
-using Xunit.Abstractions;
-using Cognite.Extractor.Utils;
-using Cognite.Extractor.Testing;
-using Cognite.Extractor.Common;
-using CogniteSdk;
-using System.Linq;
-using Cognite.Extractor.Testing.Mock;
 using Moq;
+using Xunit;
 
 namespace ExtractorUtils.Test.Unit
 {

@@ -1,17 +1,16 @@
-﻿using Cognite.Extensions;
-using Cognite.Extractor.Common;
-using Cognite.Extractor.Utils;
-using CogniteSdk;
-using Com.Cognite.V1.Timeseries.Proto;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Cognite.Extensions;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Utils;
+using CogniteSdk;
+using Com.Cognite.V1.Timeseries.Proto;
+using Microsoft.Extensions.Logging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {

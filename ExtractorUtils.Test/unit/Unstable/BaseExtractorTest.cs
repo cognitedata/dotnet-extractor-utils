@@ -14,7 +14,6 @@ using CogniteSdk.Alpha;
 using ExtractorUtils.Test.unit.Unstable;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit.Unstable
 {

@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Testing.Mock;
+using Cognite.Extractor.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
-using Cognite.Extractor.Utils;
-using Xunit.Abstractions;
-using Cognite.Extractor.Testing;
-using Cognite.Extractor.Testing.Mock;
 
 namespace ExtractorUtils.Test.Unit
 {

@@ -1,14 +1,13 @@
-﻿using Cognite.Extensions.DataModels;
-using Cognite.Extensions.DataModels.QueryBuilder;
-using Cognite.Extractor.Testing;
-using CogniteSdk.DataModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using Cognite.Extensions.DataModels;
+using Cognite.Extensions.DataModels.QueryBuilder;
+using Cognite.Extractor.Testing;
+using CogniteSdk.DataModels;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {

@@ -66,12 +66,12 @@ namespace ExtractorUtils.Test
         }
 
 
-        public async Task DisposeAsync()
+        async ValueTask IAsyncDisposable.DisposeAsync()
         {
             await DeleteSpace(Space);
         }
 
-        public async Task InitializeAsync()
+        async ValueTask IAsyncLifetime.InitializeAsync()
         {
             await EnsureDataModel();
 

@@ -24,7 +24,6 @@ using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using Xunit;
-using Xunit.Abstractions;
 using TimeRange = Cognite.Extractor.Common.TimeRange;
 
 namespace ExtractorUtils.Test.Unit

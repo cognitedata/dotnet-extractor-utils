@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -6,16 +7,14 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using CogniteSdk;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using Cognite.Extractor.Utils;
-using System.Collections.Concurrent;
 using Cognite.Extensions;
-using Xunit.Abstractions;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Testing.Mock;
+using Cognite.Extractor.Utils;
+using CogniteSdk;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Xunit;
 
 namespace ExtractorUtils.Test.Unit
 {

@@ -1,12 +1,11 @@
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cognite.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Integration
 {

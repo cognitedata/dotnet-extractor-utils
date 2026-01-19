@@ -2,10 +2,9 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
-using Xunit.Abstractions;
 using Cognite.Extractor.Utils;
 using StackExchange.Redis;
+using Xunit;
 
 namespace ExtractorUtils.Test.Integration
 {

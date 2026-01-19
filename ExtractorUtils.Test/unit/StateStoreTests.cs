@@ -1,11 +1,4 @@
-﻿using Cognite.Extractor.Common;
-using Cognite.Extractor.Logging;
-using Cognite.Extractor.StateStorage;
-using Cognite.Extractor.Utils;
-using Cognite.Extractor.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,8 +9,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
+using Cognite.Extractor.Logging;
+using Cognite.Extractor.StateStorage;
+using Cognite.Extractor.Testing;
+using Cognite.Extractor.Utils;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace ExtractorUtils.Test.Unit
 {
