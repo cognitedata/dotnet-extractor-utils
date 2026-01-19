@@ -163,11 +163,11 @@ namespace ExtractorUtils.Test.Unit
 
             var task = resource.Take(3, true);
 
-            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100)));
+            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100, TestContext.Current.CancellationToken)));
 
             resource.Free(2);
 
-            Assert.Equal(task, await Task.WhenAny(task, Task.Delay(1000)));
+            Assert.Equal(task, await Task.WhenAny(task, Task.Delay(1000, TestContext.Current.CancellationToken)));
             var res = await task;
             Assert.Equal(2, res);
 
@@ -184,11 +184,11 @@ namespace ExtractorUtils.Test.Unit
 
             var task = resource.Take(3, true);
 
-            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100)));
+            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100, TestContext.Current.CancellationToken)));
 
             resource.SetCapacity(3);
 
-            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100)));
+            Assert.NotEqual(task, await Task.WhenAny(task, Task.Delay(100, TestContext.Current.CancellationToken)));
             Assert.Equal(-2, resource.Count);
 
             resource.SetCapacity(10);
@@ -200,7 +200,7 @@ namespace ExtractorUtils.Test.Unit
 
             var task2 = resource.Take(3, true);
 
-            Assert.NotEqual(task2, await Task.WhenAny(task2, Task.Delay(100)));
+            Assert.NotEqual(task2, await Task.WhenAny(task2, Task.Delay(100, TestContext.Current.CancellationToken)));
 
             resource.SetCapacity(9);
 

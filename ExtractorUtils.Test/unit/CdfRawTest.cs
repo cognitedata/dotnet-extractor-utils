@@ -122,7 +122,7 @@ namespace ExtractorUtils.Test.Unit
                             await Task.Delay(100, source.Token);
                             index++;
                         }
-                    });
+                    }, TestContext.Current.CancellationToken);
                     var uploadTask = queue.Start(source.Token);
 
                     // wait for either the enqueue task to finish or the upload task to fail
@@ -146,7 +146,7 @@ namespace ExtractorUtils.Test.Unit
                             await Task.Delay(100, source.Token);
                             index++;
                         }
-                    });
+                    }, TestContext.Current.CancellationToken);
                     var uploadTask = queue.Start(source.Token);
 
                     await enqueueTask;

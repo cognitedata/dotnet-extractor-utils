@@ -102,7 +102,7 @@ namespace ExtractorUtils.Test.Integration
                             queue.EnqueueRow($"r{i}", new TestDto { Name = $"Test {i}", Number = i });
                             await Task.Delay(100, tester.Source.Token);
                         }
-                    });
+                    }, TestContext.Current.CancellationToken);
                     var uploadTask = queue.Start(tester.Source.Token);
 
                     var t = Task.WhenAny(uploadTask, enqueueTask);

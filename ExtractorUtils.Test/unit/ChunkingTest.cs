@@ -63,7 +63,7 @@ namespace ExtractorUtils.Test.Unit
                 async () =>
                 {
                     await generators.RunThrottled(2, token);
-                    await Task.Delay(2000);
+                    await Task.Delay(2000, TestContext.Current.CancellationToken);
                 }
             );
             Assert.Contains(1, completed);
@@ -316,7 +316,7 @@ namespace ExtractorUtils.Test.Unit
             });
             Assert.Throws<InvalidOperationException>(() => scheduler.ScheduleTask("intLoop", token => Task.CompletedTask));
 
-            await Task.Delay(500);
+            await Task.Delay(500, TestContext.Current.CancellationToken);
             // Wait for single to terminate
             await RunWithTimeout(scheduler.WaitForTermination("single"), 5000);
             Assert.Equal(1, singleRuns);
@@ -328,11 +328,11 @@ namespace ExtractorUtils.Test.Unit
 
 
             // pause periodic
-            await Task.Delay(500);
+            await Task.Delay(500, TestContext.Current.CancellationToken);
             Assert.True(periodicRuns > 1);
             scheduler.TryPauseTask("periodic", true);
             int numRuns = periodicRuns;
-            await Task.Delay(500);
+            await Task.Delay(500, TestContext.Current.CancellationToken);
             // It might run once more, if it was already scheduled to run
             Assert.True(periodicRuns <= numRuns + 1);
 
@@ -343,10 +343,10 @@ namespace ExtractorUtils.Test.Unit
                 infRuns++;
             }, false);
 
-            await Task.Delay(400);
+            await Task.Delay(400, TestContext.Current.CancellationToken);
             Assert.Equal(0, infRuns);
             scheduler.TryTriggerTask("infinitePeriodic");
-            await Task.Delay(400);
+            await Task.Delay(400, TestContext.Current.CancellationToken);
             Assert.Equal(1, infRuns);
 
             Assert.True(scheduler.ContainsTask("periodic"));

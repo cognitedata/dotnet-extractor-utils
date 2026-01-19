@@ -66,7 +66,7 @@ namespace ExtractorUtils.Test.Integration
                 AutoCreateStartNodes = true,
                 Items = edges,
                 Replace = true
-            });
+            }, TestContext.Current.CancellationToken);
 
             var query = new QueryBuilder()
                 .WithQuery("startNodes", new NodeQueryBuilderItem()

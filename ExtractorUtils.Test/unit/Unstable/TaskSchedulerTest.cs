@@ -113,7 +113,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 return null;
             });
             sched.AddScheduledTask(task, true);
-            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
+            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
             evt.Set();
             await waitTask;
 
@@ -146,7 +146,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 sched.AddScheduledTask(t, true);
             }
 
-            waitTask = sched.WaitForNextEndOfTask("SeqTask2", TimeSpan.FromSeconds(5));
+            waitTask = sched.WaitForNextEndOfTask("SeqTask2", TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
             evt.Set();
             await waitTask;
 
@@ -194,7 +194,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 return null;
             });
             sched.AddScheduledTask(task, true);
-            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
+            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
             evt.Set();
             await waitTask;
 
@@ -232,7 +232,7 @@ namespace ExtractorUtils.Test.unit.Unstable
 
             // Should not fail, just report a fatal error.
             sched.AddScheduledTask(task, true);
-            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
+            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
             evt.Set();
             // WaitForNextEndOfTask throws if the task fails.
             await Assert.ThrowsAsync<Exception>(async () => await waitTask);

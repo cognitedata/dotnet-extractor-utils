@@ -156,7 +156,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
                 await Task.Delay(100, t);
                 throw new Exception("Monitored error");
             }, SchedulerTaskResult.Unexpected, "task1");
-            var delayTask = Task.Delay(2000);
+            var delayTask = Task.Delay(2000, TestContext.Current.CancellationToken);
             Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
             Assert.Equal(2, sink.Errors.Count);
             Assert.Equal("Task task1 failed: Monitored error", sink.Errors[0].Description);
@@ -171,7 +171,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 await Task.Delay(100, t);
             }, SchedulerTaskResult.Unexpected, "task1");
-            var delayTask = Task.Delay(2000);
+            var delayTask = Task.Delay(2000, TestContext.Current.CancellationToken);
             Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
             Assert.Equal(2, sink.Errors.Count);
             Assert.Equal("Task task1 completed, but was not expected to stop.", sink.Errors[0].Description);
@@ -189,7 +189,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
                     await Task.Delay(100, t);
                 }
             }, SchedulerTaskResult.Unexpected, "task1");
-            var delayTask = Task.Delay(2000);
+            var delayTask = Task.Delay(2000, TestContext.Current.CancellationToken);
             Assert.NotEqual(delayTask, await Task.WhenAny(ext.CancelMonitoredTaskAndWaitPub("task1"), delayTask));
             Assert.NotEqual(delayTask, await Task.WhenAny(ext.Shutdown(), delayTask));
             Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));

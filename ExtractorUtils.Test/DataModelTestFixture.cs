@@ -69,6 +69,7 @@ namespace ExtractorUtils.Test
         async ValueTask IAsyncDisposable.DisposeAsync()
         {
             await DeleteSpace(Space);
+            GC.SuppressFinalize(this);
         }
 
         async ValueTask IAsyncLifetime.InitializeAsync()

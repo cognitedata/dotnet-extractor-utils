@@ -204,7 +204,7 @@ namespace ExtractorUtils.Test.Integration
                     {
                         var evts = new List<string>();
                         for (int j = 0; j < 10; j++) evts.Add(extractor.CreatedEvents[j]);
-                        var events = await destination.CogniteClient.Events.RetrieveAsync(evts, true);
+                        var events = await destination.CogniteClient.Events.RetrieveAsync(evts, true, TestContext.Current.CancellationToken);
                         if (events.Count() != 10) eventsOk = false;
 
                         var dps = await destination.CogniteClient.DataPoints.ListAsync(new DataPointsQuery
@@ -216,11 +216,11 @@ namespace ExtractorUtils.Test.Integration
                                 ExternalId = extractor.TSId
                             }
                         }
-                        });
+                        }, TestContext.Current.CancellationToken);
 
                         if ((dps.Items.First().NumericDatapoints?.Datapoints?.Count ?? 0) < 10) timeseriesOk = false;
 
-                        var rows = await destination.CogniteClient.Raw.ListRowsAsync<JsonElement>(extractor.DBName, extractor.TableName);
+                        var rows = await destination.CogniteClient.Raw.ListRowsAsync<JsonElement>(extractor.DBName, extractor.TableName, token: TestContext.Current.CancellationToken);
                         if (rows.Items.Count() < 10) rawOk = false;
                     }
                     else
@@ -229,7 +229,7 @@ namespace ExtractorUtils.Test.Integration
                     }
                     if (eventsOk && timeseriesOk && rawOk) break;
 
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
 
                 Assert.True(eventsOk && timeseriesOk && rawOk, $"{eventsOk}, {rawOk}, {timeseriesOk}");
@@ -239,7 +239,7 @@ namespace ExtractorUtils.Test.Integration
             finally
             {
                 source.Cancel();
-                await Task.WhenAny(task, Task.Delay(10000));
+                await Task.WhenAny(task, Task.Delay(10000, TestContext.Current.CancellationToken));
 
                 System.IO.File.Delete(configPath);
                 Assert.True(task.IsCompleted);
@@ -257,7 +257,7 @@ namespace ExtractorUtils.Test.Integration
             var datasets = await tester.Destination.CogniteClient.DataSets.ListAsync(new DataSetQuery
             {
                 Limit = 1
-            });
+            }, TestContext.Current.CancellationToken);
             var dataset = datasets.Items.First();
 
             var id = $"{tester.Prefix} ext-pipe";
@@ -270,7 +270,7 @@ namespace ExtractorUtils.Test.Integration
                     ExternalId = id,
                     Name = "utils-test-pipeline"
                 }
-            });
+            }, TestContext.Current.CancellationToken);
 
             try
             {
@@ -281,7 +281,7 @@ namespace ExtractorUtils.Test.Integration
                 }, tester.Destination, tester.Provider.GetService<ILogger<ExtractionRun>>());
                 newRun.Continuous = true;
                 newRun.Start();
-                await Task.Delay(1000);
+                await Task.Delay(1000, TestContext.Current.CancellationToken);
 
                 ItemsWithCursor<ExtPipeRun> runs = null;
                 for (int i = 0; i < 10; i++)
@@ -292,14 +292,14 @@ namespace ExtractorUtils.Test.Integration
                         {
                             ExternalId = id
                         }
-                    });
+                    }, TestContext.Current.CancellationToken);
                     if (runs.Items.Count() > 1 && runs.Items.Any(item => item.Status == ExtPipeRunStatus.success)) break;
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
 
                 Assert.True(runs.Items.Count() > 1 && runs.Items.Any(item => item.Status == ExtPipeRunStatus.success));
 
-                await newRun.Report(ExtPipeRunStatus.failure, false, "Some failure");
+                await newRun.Report(ExtPipeRunStatus.failure, false, "Some failure", TestContext.Current.CancellationToken);
                 await newRun.DisposeAsync();
 
                 runs = null;
@@ -311,10 +311,10 @@ namespace ExtractorUtils.Test.Integration
                         {
                             ExternalId = id
                         }
-                    });
+                    }, TestContext.Current.CancellationToken);
                     if (runs.Items.Count() > 3 && runs.Items.Any(run => run.Status == ExtPipeRunStatus.failure)
                         && runs.Items.Count(run => run.Status == ExtPipeRunStatus.success) > 1) break;
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
 
                 Assert.True(runs.Items.Count() > 3 && runs.Items.Any(run => run.Status == ExtPipeRunStatus.failure)
@@ -325,7 +325,7 @@ namespace ExtractorUtils.Test.Integration
                 await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new ExtPipeDelete
                 {
                     Items = new[] { Identity.Create(id) }
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
 
@@ -362,7 +362,7 @@ namespace ExtractorUtils.Test.Integration
                 false
                 );
 
-            await Task.Delay(500);
+            await Task.Delay(500, TestContext.Current.CancellationToken);
 
             if (task.IsFaulted)
             {

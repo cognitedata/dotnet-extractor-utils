@@ -345,7 +345,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = ids.Select(Identity.Create)
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
 
@@ -780,7 +780,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = ids
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
 
@@ -828,7 +828,7 @@ namespace ExtractorUtils.Test.Integration
 
                     Assert.NotEqual(9, i);
 
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
             }
             finally
@@ -862,7 +862,7 @@ namespace ExtractorUtils.Test.Integration
 
                     Assert.NotEqual(9, i);
 
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
             }
             finally

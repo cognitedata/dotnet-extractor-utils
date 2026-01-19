@@ -449,7 +449,7 @@ namespace ExtractorUtils.Test.Integration
                         Assert.Null(retrieved.NextCursor);
                     }
                     if (found) break;
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
                 Assert.True(found, string.Join(",", counts));
             }

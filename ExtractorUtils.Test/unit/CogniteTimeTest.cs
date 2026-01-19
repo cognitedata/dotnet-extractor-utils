@@ -378,7 +378,7 @@ namespace ExtractorUtils.Test.Unit
 
             // This test can in theory fail if it runs at exactly 0:00 january 1. but I think it is unlikely.
             var val = wrapper.Value;
-            await Task.Delay(100);
+            await Task.Delay(100, TestContext.Current.CancellationToken);
             Assert.True(wrapper.Value < val, $"Expected {wrapper.Value} < {val}");
 
             Assert.Throws<NCrontab.CrontabException>(() => wrapper.RawValue = "ab abc");

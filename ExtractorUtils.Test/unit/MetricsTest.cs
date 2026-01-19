@@ -84,7 +84,7 @@ namespace ExtractorUtils.Test.Unit
                 var metrics = provider.GetRequiredService<MetricsService>();
                 metrics.Start();
                 testCount.Inc();
-                await Task.Delay(1000);
+                await Task.Delay(1000, TestContext.Current.CancellationToken);
                 await metrics.Stop();
             }
 
@@ -222,7 +222,7 @@ namespace ExtractorUtils.Test.Unit
                 var metrics = provider.GetRequiredService<MetricsService>();
                 metrics.Start();
                 testCount.Inc();
-                await Task.Delay(1000);
+                await Task.Delay(1000, TestContext.Current.CancellationToken);
                 await metrics.Stop();
             }
 

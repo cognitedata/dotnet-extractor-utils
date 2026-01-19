@@ -87,7 +87,7 @@ namespace ExtractorUtils.Test
             mock.AddTokenEndpoint(Times.Once());
 
             var client = provider.GetRequiredService<Client>();
-            var assets = await client.Assets.ListAsync(new AssetQuery());
+            var assets = await client.Assets.ListAsync(new AssetQuery(), TestContext.Current.CancellationToken);
             Assert.NotNull(assets);
             Assert.Equal(2, assets.Items.Count());
             Assert.Equal("Asset1", assets.Items.ElementAt(0).Name);
@@ -125,11 +125,11 @@ namespace ExtractorUtils.Test
             }, Times.Once()));
             mock.GetMatcher(HttpMethod.Post, "/api/v1/projects/project/assets/list").ForceErrorStatus = 500;
             var client = provider.GetRequiredService<Client>();
-            var exc = await Assert.ThrowsAsync<ResponseException>(async () => await client.Assets.ListAsync(new AssetQuery()));
+            var exc = await Assert.ThrowsAsync<ResponseException>(async () => await client.Assets.ListAsync(new AssetQuery(), TestContext.Current.CancellationToken));
             Assert.Equal(500, exc.Code);
 
             mock.RejectAllMessages = true;
-            exc = await Assert.ThrowsAsync<ResponseException>(async () => await client.Assets.ListAsync(new AssetQuery()));
+            exc = await Assert.ThrowsAsync<ResponseException>(async () => await client.Assets.ListAsync(new AssetQuery(), TestContext.Current.CancellationToken));
             Assert.Equal(503, exc.Code);
         }
     }

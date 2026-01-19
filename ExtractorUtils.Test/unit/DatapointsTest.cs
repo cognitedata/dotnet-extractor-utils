@@ -287,7 +287,7 @@ namespace ExtractorUtils.Test.Unit
                             await Task.Delay(100, source.Token);
                             index++;
                         }
-                    });
+                    }, TestContext.Current.CancellationToken);
                     var uploadTask = queue.Start(source.Token);
 
                     var t = Task.WhenAny(uploadTask, enqueueTask);
@@ -318,7 +318,7 @@ namespace ExtractorUtils.Test.Unit
                             await Task.Delay(100, source.Token);
                             index++;
                         }
-                    });
+                    }, TestContext.Current.CancellationToken);
                     var uploadTask = queue.Start(source.Token);
 
                     await enqueueTask;

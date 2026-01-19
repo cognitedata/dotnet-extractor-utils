@@ -306,7 +306,7 @@ namespace ExtractorUtils.Test.Integration
                             InstanceId = ts,
                             End = DateTime.UtcNow.AddDays(1).ToUnixTimeMilliseconds().ToString()
                         }).ToArray()
-                    });
+                    }, TestContext.Current.CancellationToken);
                     if (foundDps.Items.Count == 3)
                     {
                         counts[0] = foundDps.Items[0]?.NumericDatapoints?.Datapoints?.Count ?? 0;
@@ -314,7 +314,7 @@ namespace ExtractorUtils.Test.Integration
                         counts[2] = foundDps.Items[2]?.NumericDatapoints?.Datapoints?.Count ?? 0;
                         if (counts.All(cnt => cnt == 10)) break;
                     }
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
                 Assert.All(counts, cnt => Assert.Equal(10, cnt));
             }

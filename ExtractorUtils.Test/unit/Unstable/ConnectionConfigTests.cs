@@ -78,7 +78,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             using var provider = services.BuildServiceProvider();
 
             var auth = provider.GetRequiredService<IAuthenticator>();
-            var token = await auth.GetToken();
+            var token = await auth.GetToken(TestContext.Current.CancellationToken);
             Assert.Equal("token0", token);
 
             provider.GetRequiredService<CogniteDestination>();

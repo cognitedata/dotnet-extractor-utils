@@ -68,7 +68,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     Config = "{\"version\": 2, \"logger\": { \"console\": {\"level\": \"verbose\"}}}",
                     ExternalId = pipeline.ExternalId
-                });
+                }, TestContext.Current.CancellationToken);
                 services = new ServiceCollection();
                 config = await services.AddRemoteConfig<BaseConfig>(null, remoteConfigPath, null, "utils-test-app", null, true, false, null, tester.Source.Token, 2);
                 Assert.Equal("verbose", config.Logger.Console.Level);
@@ -118,7 +118,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new[] { pipeline.Id });
+                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new[] { pipeline.Id }, TestContext.Current.CancellationToken);
                 System.IO.File.Delete(localConfigPath);
                 System.IO.File.Delete(remoteConfigPath);
             }
@@ -159,7 +159,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     Config = "{\"version\": 2, \"logger\": { \"console\": {\"level\": \"verbose\"}}}",
                     ExternalId = pipeline.ExternalId
-                });
+                }, TestContext.Current.CancellationToken);
                 var config = await manager.FetchLatest(tester.Source.Token);
                 Assert.Equal("verbose", config.Logger.Console.Level);
                 Assert.Equal(tester.Config.Cognite.Project, config.Cognite.Project);
@@ -188,7 +188,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new[] { pipeline.Id });
+                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new[] { pipeline.Id }, TestContext.Current.CancellationToken);
                 System.IO.File.Delete($"_temp_{remoteConfigPath}");
             }
         }
@@ -223,13 +223,13 @@ namespace ExtractorUtils.Test.Integration
                 {
                     Config = "{\"version\": 2, \"logger\": { \"console\": {\"level\": \"verbose\"}}}",
                     ExternalId = pipeline.ExternalId
-                });
+                }, TestContext.Current.CancellationToken);
                 var config = await services.AddRemoteConfig<SubTypeConfig>(null, remoteConfigPath, null, "utils-test-app", null, true, false, null, tester.Source.Token, 2);
                 Assert.NotNull(config.Cognite);
             }
             finally
             {
-                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new[] { pipeline.Id });
+                await tester.Destination.CogniteClient.ExtPipes.DeleteAsync(new[] { pipeline.Id }, TestContext.Current.CancellationToken);
                 System.IO.File.Delete($"_temp_{remoteConfigPath}");
             }
         }

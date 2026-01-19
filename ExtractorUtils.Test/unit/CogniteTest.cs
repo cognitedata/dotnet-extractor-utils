@@ -119,15 +119,15 @@ namespace ExtractorUtils.Test.Unit
                 ));
 
                 var auth = provider.GetRequiredService<IAuthenticator>();
-                var token = await auth.GetToken();
+                var token = await auth.GetToken(TestContext.Current.CancellationToken);
                 Assert.Equal("token0", token);
-                token = await auth.GetToken(); // same token
+                token = await auth.GetToken(TestContext.Current.CancellationToken); // same token
                 Assert.Equal("token0", token);
-                await Task.Delay(2000); // token expired
-                token = await auth.GetToken(); // new token
+                await Task.Delay(2000, TestContext.Current.CancellationToken); // token expired
+                token = await auth.GetToken(TestContext.Current.CancellationToken); // new token
                 Assert.Equal("token1", token);
-                await Task.Delay(2100); // token expired
-                await Assert.ThrowsAsync<CogniteUtilsException>(() => auth.GetToken()); // failed, returns null
+                await Task.Delay(2100, TestContext.Current.CancellationToken); // token expired
+                await Assert.ThrowsAsync<CogniteUtilsException>(() => auth.GetToken(TestContext.Current.CancellationToken)); // failed, returns null
             }
 
             System.IO.File.Delete(path);
@@ -161,7 +161,7 @@ namespace ExtractorUtils.Test.Unit
                 mock.AddMatcher(new FailNTimesMatcher(2, MockAssetsList(Times.Once()), HttpStatusCode.InternalServerError));
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
-                var listed = await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery());
+                var listed = await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery(), TestContext.Current.CancellationToken);
                 Assert.Single(listed.Items);
                 Assert.Equal(1, listed.Items.First().Id);
             }
@@ -220,7 +220,7 @@ namespace ExtractorUtils.Test.Unit
             ));
 
             var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
-            await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery());
+            await cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery(), TestContext.Current.CancellationToken);
 
             tokenMatcher.AssertAndReset();
             assetsMatcher.AssertAndReset();
@@ -230,7 +230,7 @@ namespace ExtractorUtils.Test.Unit
 
             config.Cognite.CdfRetries.MaxRetries = 1; // Set max retries to 1.
             // Try again, this time it should fail.
-            await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery()));
+            await Assert.ThrowsAsync<CogniteUtilsException>(() => cogniteDestination.CogniteClient.Assets.ListAsync(new AssetQuery(), TestContext.Current.CancellationToken));
         }
 
         [Theory]

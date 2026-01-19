@@ -261,7 +261,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = ids.Select(Identity.Create)
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
 
@@ -302,7 +302,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = tss.Select(pair => Identity.Create(pair.id))
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
         [Theory]
@@ -362,7 +362,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = tss.Select(pair => Identity.Create(pair.id))
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
         [Theory]
@@ -467,7 +467,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = tss.Select(pair => Identity.Create(pair.id))
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
 
@@ -517,7 +517,7 @@ namespace ExtractorUtils.Test.Integration
                             queue.Enqueue(timeseries[2].ExternalId, new Datapoint(DateTime.UtcNow, i));
                             await Task.Delay(100, tester.Source.Token);
                         }
-                    });
+                    }, TestContext.Current.CancellationToken);
                     var uploadTask = queue.Start(tester.Source.Token);
 
                     var t = Task.WhenAny(uploadTask, enqueueTask);
@@ -548,7 +548,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     dpsFromCDF = await tester.Destination.CogniteClient.DataPoints.ListAsync(dataPointsQuery, tester.Source.Token);
                     if (dpsFromCDF.Items.All(item => (item.NumericDatapoints?.Datapoints?.Count ?? 0) == 20)) break;
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
 
                 Assert.Equal(3, dpsFromCDF.Items.Count);
@@ -572,7 +572,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = ids.Select(Identity.Create)
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
 
@@ -639,7 +639,7 @@ namespace ExtractorUtils.Test.Integration
                         {
                             ExternalId = ts.extId
                         }).ToArray()
-                    });
+                    }, TestContext.Current.CancellationToken);
                     if (foundDps.Items.Count == 3)
                     {
                         counts[0] = foundDps.Items[0]?.NumericDatapoints?.Datapoints?.Count ?? 0;
@@ -647,7 +647,7 @@ namespace ExtractorUtils.Test.Integration
                         counts[2] = foundDps.Items[2]?.NumericDatapoints?.Datapoints?.Count ?? 0;
                         if (counts.All(cnt => cnt == 10)) break;
                     }
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, TestContext.Current.CancellationToken);
                 }
                 Assert.All(counts, cnt => Assert.Equal(10, cnt));
             }
@@ -657,7 +657,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = tss.Select(ts => Identity.Create(ts.extId))
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
         [Theory]
@@ -749,7 +749,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = tss.Select(ts => Identity.Create(ts.extId))
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
         [Theory]
@@ -814,7 +814,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = tss.Select(ts => Identity.Create(ts.extId))
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
         [Theory]
@@ -860,7 +860,7 @@ namespace ExtractorUtils.Test.Integration
                         .Select(ts => ts.extId)
                         .Concat(new[] { $"{tester.Prefix} utils-test-ts-missing-1", $"{tester.Prefix} utils-test-ts-missing-2" })
                         .Select(Identity.Create)
-                });
+                }, TestContext.Current.CancellationToken);
             }
 
         }
@@ -980,7 +980,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     IgnoreUnknownIds = true,
                     Items = ids
-                });
+                }, TestContext.Current.CancellationToken);
             }
         }
 
