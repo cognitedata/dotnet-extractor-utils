@@ -86,6 +86,21 @@ namespace Cognite.Extractor.Testing
         }
 
         /// <summary>
+        /// Register a logger that writes to console.
+        /// </summary>
+        /// <param name="services">Service collection to add to</param>
+        public static void AddTestLogging(
+            this ServiceCollection services)
+        {
+            services.AddLogger(cfg =>
+            {
+                return LoggingUtils.GetConfiguration(cfg)
+                    .WriteTo.Console()
+                    .CreateLogger();
+            }, true, LogEventLevel.Verbose);
+        }
+
+        /// <summary>
         /// Register a logger that also writes to a test output helper.
         /// </summary>
         /// <param name="services">Service collection to add to</param>
