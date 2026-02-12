@@ -137,7 +137,19 @@ namespace Cognite.Extensions
 
             foreach (var ts in timeseries)
             {
-                var idt = datapoints.ContainsKey(Identity.Create(ts.Id)) ? Identity.Create(ts.Id) : Identity.Create(ts.ExternalId);
+                Identity idt;
+                if (datapoints.ContainsKey(Identity.Create(ts.Id))) idt = Identity.Create(ts.Id);
+                else if (ts.InstanceId != null && datapoints.ContainsKey(Identity.Create(ts.InstanceId))) idt = Identity.Create(ts.InstanceId);
+                else if (ts.ExternalId != null && datapoints.ContainsKey(Identity.Create(ts.ExternalId))) idt = Identity.Create(ts.ExternalId);
+                else
+                {
+                    // This should not happen, and would indicate a bug in CDF itself, or some future
+                    // change to the timeseries API that would make this possible. Throw an explicit exception,
+                    // there is no safe recovery possible here, since we don't have a way to communicate to the caller
+                    // to remove this timeseries, since we don't know how to identify it in the original request.
+                    throw new InvalidOperationException($"Retrieved timeseries {ts.Id} which was not requested");
+                }
+
                 var points = datapoints[idt];
 
                 var bad = new List<Datapoint>();
