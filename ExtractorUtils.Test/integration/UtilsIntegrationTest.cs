@@ -1,5 +1,7 @@
 ﻿using Cognite.Extensions;
 using CogniteSdk;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -50,6 +52,39 @@ namespace ExtractorUtils.Test.Integration
             config.ExternalId = "some-dataset-that-doesnt-exist";
             await Assert.ThrowsAsync<ResponseException>(async () => await tester.Destination.CogniteClient.DataSets.Get(config, tester.Source.Token));
             await Assert.ThrowsAsync<ResponseException>(async () => await tester.Destination.CogniteClient.DataSets.GetId(config, tester.Source.Token));
+        }
+
+        [Fact]
+        public async Task TestGetDataSets()
+        {
+            using var tester = new CDFTester(CDFTester.GetConfig(CogniteHost.BlueField), _output);
+
+            var dataSetId = await tester.GetDataSetId();
+            var dataSetExternalId = "test-dataset";
+
+            // No ids provided
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await tester.Destination.CogniteClient.DataSets.GetIds(null, tester.Source.Token));
+
+            // Retrieve external ID
+            var id = Identity.Create(dataSetExternalId);
+            var datasets = await tester.Destination.CogniteClient.DataSets.GetIds(new[] { id }, tester.Source.Token);
+            Assert.Single(datasets);
+            Assert.Equal(dataSetId, datasets.FirstOrDefault()?.Id);
+
+            // Retrieve incorrect external ID
+            var id2 = Identity.Create("some-dataset-that-doesnt-exist");
+            var ids = new[] { id, id2 };
+            await Assert.ThrowsAsync<ResponseException>(async () => await tester.Destination.CogniteClient.DataSets.GetIds(ids, tester.Source.Token));
+
+
+            // Retrieve multiple datasets
+            var dataSetId2 = await tester.GetDataSetId("test-dataset-2");
+            var dataSetExternalId2 = "test-dataset-2";
+            var existing_ids = new[] { id, Identity.Create(dataSetExternalId2) };
+            var datasets2 = await tester.Destination.CogniteClient.DataSets.GetIds(existing_ids, tester.Source.Token);
+            Assert.Equal(2, datasets2.Count());
+            Assert.Contains(datasets2, ds => ds.Id == dataSetId);
+            Assert.Contains(datasets2, ds => ds.Id == dataSetId2);
         }
     }
 }

@@ -71,15 +71,15 @@ namespace ExtractorUtils.Test
             return _spaceId;
         }
 
-        public async Task<long> GetDataSetId()
+        public async Task<long> GetDataSetId(string dataSetExternalId = "test-dataset")
         {
-            var dataSets = await Destination.CogniteClient.DataSets.RetrieveAsync(new[] { "test-dataset" }, true);
+            var dataSets = await Destination.CogniteClient.DataSets.RetrieveAsync(new[] { dataSetExternalId }, true);
             if (!dataSets.Any())
             {
                 dataSets = await Destination.CogniteClient.DataSets.CreateAsync(new[] { new DataSetCreate
                 {
                     Description = ".NET utils test dataset",
-                    ExternalId = "test-dataset",
+                    ExternalId = dataSetExternalId,
                     Name = "Test dataset"
                 } });
             }

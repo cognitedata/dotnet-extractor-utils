@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Generic;
 using CogniteSdk.Resources;
 using System.Linq;
 
@@ -73,6 +74,22 @@ namespace Cognite.Extensions
             }
             var dss = await resource.RetrieveAsync(new[] { id }, false, token).ConfigureAwait(false);
             return dss.FirstOrDefault();
+        }
+        /// <summary>
+        /// Retrieve the configured data sets for the given IDs. Will throw an exception if any dataset does not exist,
+        /// or if retrieval failed.
+        /// </summary>
+        /// <param name="resource">Client to use for retrieval.</param>
+        /// <param name="ids">IDs to retrieve data sets for.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Datasets if ids are valid</returns>
+
+        public static async Task<IEnumerable<DataSet>> GetIds(this DataSetsResource resource, IEnumerable<Identity> ids, CancellationToken token = default)
+        {
+            if (ids == null) throw new ArgumentNullException(nameof(ids));
+            if (resource == null) throw new ArgumentNullException(nameof(resource));
+            var dataSets = await resource.RetrieveAsync(ids.ToArray(), false, token).ConfigureAwait(false);
+            return dataSets;
         }
     }
 }
