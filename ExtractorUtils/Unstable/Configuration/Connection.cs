@@ -37,9 +37,9 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         /// <summary>
         /// Configuration for the connection to CDF.
         /// </summary>
-        public CdfConnectionConfig CdfConnection { get => _cdfConnection; set { _cdfConnection = value ?? _cdfConnection; } }
+        public CdfConnectionConfig Connection { get => _connection; set { _connection = value ?? _connection; } }
 
-        private CdfConnectionConfig _cdfConnection = new CdfConnectionConfig();
+        private CdfConnectionConfig _connection = new CdfConnectionConfig();
 
         /// <summary>
         /// Register any necessary yaml converters.
