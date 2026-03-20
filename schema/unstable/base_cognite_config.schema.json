@@ -1,0 +1,192 @@
+{
+    "$id": "base_cognite_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "unevaluatedProperties": false,
+    "properties": {
+        "cdf-chunking": {
+            "type": "object",
+            "description": "Configure chunking of data on requests to CDF. Note that increasing these may cause requests to fail due to limits in the API itself",
+            "properties": {
+                "time-series": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of timeseries per get/create timeseries request",
+                    "max": 1000,
+                    "min": 1
+                },
+                "assets": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of assets per get/create assets request",
+                    "max": 1000,
+                    "min": 1
+                },
+                "data-point-time-series": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Maximum number of timeseries per datapoint create request",
+                    "max": 10000,
+                    "min": 1
+                },
+                "data-point-delete": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Maximum number of ranges per delete datapoints request",
+                    "max": 10000,
+                    "min": 1
+                },
+                "data-point-list": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Maximum number of timeseries per datapoint read request. Used when getting the first point in a timeseries.",
+                    "max": 100,
+                    "min": 1
+                },
+                "data-points": {
+                    "type": "integer",
+                    "default": 100000,
+                    "description": "Maximum number of datapoints per datapoints create request",
+                    "max": 100000,
+                    "min": 1
+                },
+                "data-points-gzip-limit": {
+                    "type": "integer",
+                    "default": 5000,
+                    "description": "Minimum number of datapoints in request to switch to using gzip. Set to -1 to disable, and 0 to always enable (not recommended). The minimum HTTP packet size is generally 1500 bytes, so this should never be set below 100 for numeric datapoints. Even for larger packages gzip is efficient enough that packages are compressed below 1500 bytes. At 5000 it is always a performance gain. It can be set lower if bandwidth is a major issue",
+                    "max": 100000,
+                    "min": 1
+                },
+                "raw-rows": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Maximum number of rows per request to cdf raw",
+                    "max": 10000,
+                    "min": 1
+                },
+                "raw-rows-delete": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of row keys per delete request to raw",
+                    "max": 1000,
+                    "min": 1
+                },
+                "data-point-latest": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Maximum number of timeseries per datapoint read latest request",
+                    "max": 100,
+                    "min": 1
+                },
+                "events": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of events per get/create events request",
+                    "max": 1000,
+                    "min": 1
+                },
+                "sequences": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of sequences per get/create sequences request",
+                    "max": 1000,
+                    "min": 1
+                },
+                "sequence-row-sequences": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of sequences per create sequence rows request",
+                    "max": 1000,
+                    "min": 1
+                },
+                "sequence-rows": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Maximum number of sequence rows per sequence when creating rows",
+                    "max": 10000,
+                    "min": 1
+                },
+                "instances": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of data modeling instances per get/create instance request",
+                    "max": 1000,
+                    "min": 1
+                },
+                "stream-records": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of stream records per get/create stream records request",
+                    "max": 1000,
+                    "min": 1
+                }
+            },
+            "unevaluatedProperties": false
+        },
+        "cdf-throttling": {
+            "type": "object",
+            "description": "Configure the maximum number of parallel requests for different CDF resources.",
+            "properties": {
+                "time-series": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Maximum number of parallel requests per timeseries operation",
+                    "min": 1
+                },
+                "assets": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Maximum number of parallel requests per assets operation",
+                    "min": 1
+                },
+                "data-points": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Maximum number of parallel requests per datapoints operation",
+                    "min": 1
+                },
+                "raw": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Maximum number of parallel requests per raw operation",
+                    "min": 1
+                },
+                "ranges": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Maximum number of parallel requests per get first/last datapoint operation",
+                    "min": 1
+                },
+                "events": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Maximum number of parallel requests per events operation",
+                    "min": 1
+                },
+                "sequences": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Maximum number of parallel requests per sequences operation",
+                    "min": 1
+                },
+                "instances": {
+                    "type": "integer",
+                    "default": 2,
+                    "description": "Maximum number of parallel requests per data modeling instances operation",
+                    "min": 1
+                },
+                "stream-records": {
+                    "type": "integer",
+                    "default": 4,
+                    "description": "Maximum number of parallel requests per stream records operation",
+                    "min": 1
+                }
+            },
+            "unevaluatedProperties": false
+        },
+        "nan-replacement": {
+            "type": "number",
+            "description": "Replacement for NaN values when writing to CDF. If left out, NaN values are skipped."
+        }
+    }
+}
