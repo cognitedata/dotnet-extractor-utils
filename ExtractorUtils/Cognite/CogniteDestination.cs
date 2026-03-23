@@ -719,12 +719,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancellation token</param>
         /// <param name="earliest">If true, fetch earliest timestamps, default true</param>
         /// <param name="latest">If true, fetch latest timestamps, default true</param>
+        /// <param name="ignoreBadDataPoints">Ignore bad status datapoints, true by default</param>
         /// <returns></returns>
         public Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
             IEnumerable<Identity> ids,
             CancellationToken token,
             bool earliest = true,
-            bool latest = true
+            bool latest = true,
+            bool ignoreBadDataPoints = true
             )
         {
             return _client.DataPoints.GetExtractedRanges(
@@ -734,7 +736,8 @@ namespace Cognite.Extractor.Utils
                 _throttling.Ranges,
                 latest,
                 earliest,
-                token);
+                token,
+                ignoreBadDataPoints);
         }
 
 
@@ -747,12 +750,14 @@ namespace Cognite.Extractor.Utils
         /// <param name="token">Cancellation token</param>
         /// <param name="earliest">If true, fetch earliest timestamps, default true</param>
         /// <param name="latest">If true, fetch latest timestamps, default true</param>
+        /// <param name="ignoreBadDataPoints">Ignore bad status datapoints, true by default</param>
         /// <returns></returns>
         public Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
             IEnumerable<(Identity id, TimeRange limit)> ids,
             CancellationToken token,
             bool earliest = true,
-            bool latest = true
+            bool latest = true,
+            bool ignoreBadDataPoints = true
             )
         {
             return _client.DataPoints.GetExtractedRanges(
@@ -762,7 +767,8 @@ namespace Cognite.Extractor.Utils
                 _throttling.Ranges,
                 latest,
                 earliest,
-                token);
+                token,
+                ignoreBadDataPoints);
         }
 
 
