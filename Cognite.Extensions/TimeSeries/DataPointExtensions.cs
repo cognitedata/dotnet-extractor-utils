@@ -610,8 +610,7 @@ namespace Cognite.Extensions
                             {
                                 IgnoreUnknownIds = true,
                                 Items = chunk,
-                                Limit = 1,
-                                
+                                Limit = 1
                             }, token).ConfigureAwait(false);
                     }
 
