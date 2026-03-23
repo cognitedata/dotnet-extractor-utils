@@ -3010,15 +3010,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.DataPointExtensions.DeleteIgnoreErrorsAsync
   nameWithType: DataPointExtensions.DeleteIgnoreErrorsAsync
-- uid: Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken)
-  name: GetEarliestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime after)>, int, int, CancellationToken)
-  href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetEarliestTimestamps_CogniteSdk_Resources_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_System_DateTime___System_Int32_System_Int32_System_Threading_CancellationToken_
-  commentId: M:Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken)
-  name.vb: GetEarliestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, after As Date)), Integer, Integer, CancellationToken)
-  fullName: Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable<(CogniteSdk.Identity id, System.DateTime after)>, int, int, System.Threading.CancellationToken)
-  fullName.vb: Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable(Of (id As CogniteSdk.Identity, after As Date)), Integer, Integer, System.Threading.CancellationToken)
-  nameWithType: DataPointExtensions.GetEarliestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime after)>, int, int, CancellationToken)
-  nameWithType.vb: DataPointExtensions.GetEarliestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, after As Date)), Integer, Integer, CancellationToken)
+- uid: Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken,System.Boolean)
+  name: GetEarliestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime after)>, int, int, CancellationToken, bool)
+  href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetEarliestTimestamps_CogniteSdk_Resources_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_System_DateTime___System_Int32_System_Int32_System_Threading_CancellationToken_System_Boolean_
+  commentId: M:Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken,System.Boolean)
+  name.vb: GetEarliestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, after As Date)), Integer, Integer, CancellationToken, Boolean)
+  fullName: Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable<(CogniteSdk.Identity id, System.DateTime after)>, int, int, System.Threading.CancellationToken, bool)
+  fullName.vb: Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable(Of (id As CogniteSdk.Identity, after As Date)), Integer, Integer, System.Threading.CancellationToken, Boolean)
+  nameWithType: DataPointExtensions.GetEarliestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime after)>, int, int, CancellationToken, bool)
+  nameWithType.vb: DataPointExtensions.GetEarliestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, after As Date)), Integer, Integer, CancellationToken, Boolean)
 - uid: Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps*
   name: GetEarliestTimestamps
   href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetEarliestTimestamps_
@@ -3026,15 +3026,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.DataPointExtensions.GetEarliestTimestamps
   nameWithType: DataPointExtensions.GetEarliestTimestamps
-- uid: Cognite.Extensions.DataPointExtensions.GetExtractedRanges(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Threading.CancellationToken)
-  name: GetExtractedRanges(DataPointsResource, IEnumerable<(Identity id, TimeRange limit)>, int, int, int, bool, bool, CancellationToken)
-  href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetExtractedRanges_CogniteSdk_Resources_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_Cognite_Extractor_Common_TimeRange___System_Int32_System_Int32_System_Int32_System_Boolean_System_Boolean_System_Threading_CancellationToken_
-  commentId: M:Cognite.Extensions.DataPointExtensions.GetExtractedRanges(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Threading.CancellationToken)
-  name.vb: GetExtractedRanges(DataPointsResource, IEnumerable(Of (id As Identity, limit As TimeRange)), Integer, Integer, Integer, Boolean, Boolean, CancellationToken)
-  fullName: Cognite.Extensions.DataPointExtensions.GetExtractedRanges(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable<(CogniteSdk.Identity id, Cognite.Extractor.Common.TimeRange limit)>, int, int, int, bool, bool, System.Threading.CancellationToken)
-  fullName.vb: Cognite.Extensions.DataPointExtensions.GetExtractedRanges(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable(Of (id As CogniteSdk.Identity, limit As Cognite.Extractor.Common.TimeRange)), Integer, Integer, Integer, Boolean, Boolean, System.Threading.CancellationToken)
-  nameWithType: DataPointExtensions.GetExtractedRanges(DataPointsResource, IEnumerable<(Identity id, TimeRange limit)>, int, int, int, bool, bool, CancellationToken)
-  nameWithType.vb: DataPointExtensions.GetExtractedRanges(DataPointsResource, IEnumerable(Of (id As Identity, limit As TimeRange)), Integer, Integer, Integer, Boolean, Boolean, CancellationToken)
+- uid: Cognite.Extensions.DataPointExtensions.GetExtractedRanges(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Threading.CancellationToken,System.Boolean)
+  name: GetExtractedRanges(DataPointsResource, IEnumerable<(Identity id, TimeRange limit)>, int, int, int, bool, bool, CancellationToken, bool)
+  href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetExtractedRanges_CogniteSdk_Resources_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_Cognite_Extractor_Common_TimeRange___System_Int32_System_Int32_System_Int32_System_Boolean_System_Boolean_System_Threading_CancellationToken_System_Boolean_
+  commentId: M:Cognite.Extensions.DataPointExtensions.GetExtractedRanges(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Threading.CancellationToken,System.Boolean)
+  name.vb: GetExtractedRanges(DataPointsResource, IEnumerable(Of (id As Identity, limit As TimeRange)), Integer, Integer, Integer, Boolean, Boolean, CancellationToken, Boolean)
+  fullName: Cognite.Extensions.DataPointExtensions.GetExtractedRanges(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable<(CogniteSdk.Identity id, Cognite.Extractor.Common.TimeRange limit)>, int, int, int, bool, bool, System.Threading.CancellationToken, bool)
+  fullName.vb: Cognite.Extensions.DataPointExtensions.GetExtractedRanges(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable(Of (id As CogniteSdk.Identity, limit As Cognite.Extractor.Common.TimeRange)), Integer, Integer, Integer, Boolean, Boolean, System.Threading.CancellationToken, Boolean)
+  nameWithType: DataPointExtensions.GetExtractedRanges(DataPointsResource, IEnumerable<(Identity id, TimeRange limit)>, int, int, int, bool, bool, CancellationToken, bool)
+  nameWithType.vb: DataPointExtensions.GetExtractedRanges(DataPointsResource, IEnumerable(Of (id As Identity, limit As TimeRange)), Integer, Integer, Integer, Boolean, Boolean, CancellationToken, Boolean)
 - uid: Cognite.Extensions.DataPointExtensions.GetExtractedRanges*
   name: GetExtractedRanges
   href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetExtractedRanges_
@@ -3042,15 +3042,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.DataPointExtensions.GetExtractedRanges
   nameWithType: DataPointExtensions.GetExtractedRanges
-- uid: Cognite.Extensions.DataPointExtensions.GetLatestTimestamps(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken)
-  name: GetLatestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime before)>, int, int, CancellationToken)
-  href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetLatestTimestamps_CogniteSdk_Resources_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_System_DateTime___System_Int32_System_Int32_System_Threading_CancellationToken_
-  commentId: M:Cognite.Extensions.DataPointExtensions.GetLatestTimestamps(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken)
-  name.vb: GetLatestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, before As Date)), Integer, Integer, CancellationToken)
-  fullName: Cognite.Extensions.DataPointExtensions.GetLatestTimestamps(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable<(CogniteSdk.Identity id, System.DateTime before)>, int, int, System.Threading.CancellationToken)
-  fullName.vb: Cognite.Extensions.DataPointExtensions.GetLatestTimestamps(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable(Of (id As CogniteSdk.Identity, before As Date)), Integer, Integer, System.Threading.CancellationToken)
-  nameWithType: DataPointExtensions.GetLatestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime before)>, int, int, CancellationToken)
-  nameWithType.vb: DataPointExtensions.GetLatestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, before As Date)), Integer, Integer, CancellationToken)
+- uid: Cognite.Extensions.DataPointExtensions.GetLatestTimestamps(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken,System.Boolean)
+  name: GetLatestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime before)>, int, int, CancellationToken, bool)
+  href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetLatestTimestamps_CogniteSdk_Resources_DataPointsResource_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_System_DateTime___System_Int32_System_Int32_System_Threading_CancellationToken_System_Boolean_
+  commentId: M:Cognite.Extensions.DataPointExtensions.GetLatestTimestamps(CogniteSdk.Resources.DataPointsResource,System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,System.DateTime}},System.Int32,System.Int32,System.Threading.CancellationToken,System.Boolean)
+  name.vb: GetLatestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, before As Date)), Integer, Integer, CancellationToken, Boolean)
+  fullName: Cognite.Extensions.DataPointExtensions.GetLatestTimestamps(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable<(CogniteSdk.Identity id, System.DateTime before)>, int, int, System.Threading.CancellationToken, bool)
+  fullName.vb: Cognite.Extensions.DataPointExtensions.GetLatestTimestamps(CogniteSdk.Resources.DataPointsResource, System.Collections.Generic.IEnumerable(Of (id As CogniteSdk.Identity, before As Date)), Integer, Integer, System.Threading.CancellationToken, Boolean)
+  nameWithType: DataPointExtensions.GetLatestTimestamps(DataPointsResource, IEnumerable<(Identity id, DateTime before)>, int, int, CancellationToken, bool)
+  nameWithType.vb: DataPointExtensions.GetLatestTimestamps(DataPointsResource, IEnumerable(Of (id As Identity, before As Date)), Integer, Integer, CancellationToken, Boolean)
 - uid: Cognite.Extensions.DataPointExtensions.GetLatestTimestamps*
   name: GetLatestTimestamps
   href: api/Cognite.Extensions.DataPointExtensions.html#Cognite_Extensions_DataPointExtensions_GetLatestTimestamps_
@@ -10853,24 +10853,24 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.CogniteDestination.EnsureTimeSeriesExistsAsync
   nameWithType: CogniteDestination.EnsureTimeSeriesExistsAsync
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Threading.CancellationToken,System.Boolean,System.Boolean)
-  name: GetExtractedRanges(IEnumerable<Identity>, CancellationToken, bool, bool)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_System_Collections_Generic_IEnumerable_CogniteSdk_Identity__System_Threading_CancellationToken_System_Boolean_System_Boolean_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Threading.CancellationToken,System.Boolean,System.Boolean)
-  name.vb: GetExtractedRanges(IEnumerable(Of Identity), CancellationToken, Boolean, Boolean)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable<CogniteSdk.Identity>, System.Threading.CancellationToken, bool, bool)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable(Of CogniteSdk.Identity), System.Threading.CancellationToken, Boolean, Boolean)
-  nameWithType: CogniteDestination.GetExtractedRanges(IEnumerable<Identity>, CancellationToken, bool, bool)
-  nameWithType.vb: CogniteDestination.GetExtractedRanges(IEnumerable(Of Identity), CancellationToken, Boolean, Boolean)
-- uid: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Threading.CancellationToken,System.Boolean,System.Boolean)
-  name: GetExtractedRanges(IEnumerable<(Identity id, TimeRange limit)>, CancellationToken, bool, bool)
-  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_Cognite_Extractor_Common_TimeRange___System_Threading_CancellationToken_System_Boolean_System_Boolean_
-  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Threading.CancellationToken,System.Boolean,System.Boolean)
-  name.vb: GetExtractedRanges(IEnumerable(Of (id As Identity, limit As TimeRange)), CancellationToken, Boolean, Boolean)
-  fullName: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable<(CogniteSdk.Identity id, Cognite.Extractor.Common.TimeRange limit)>, System.Threading.CancellationToken, bool, bool)
-  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable(Of (id As CogniteSdk.Identity, limit As Cognite.Extractor.Common.TimeRange)), System.Threading.CancellationToken, Boolean, Boolean)
-  nameWithType: CogniteDestination.GetExtractedRanges(IEnumerable<(Identity id, TimeRange limit)>, CancellationToken, bool, bool)
-  nameWithType.vb: CogniteDestination.GetExtractedRanges(IEnumerable(Of (id As Identity, limit As TimeRange)), CancellationToken, Boolean, Boolean)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Threading.CancellationToken,System.Boolean,System.Boolean,System.Boolean)
+  name: GetExtractedRanges(IEnumerable<Identity>, CancellationToken, bool, bool, bool)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_System_Collections_Generic_IEnumerable_CogniteSdk_Identity__System_Threading_CancellationToken_System_Boolean_System_Boolean_System_Boolean_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{CogniteSdk.Identity},System.Threading.CancellationToken,System.Boolean,System.Boolean,System.Boolean)
+  name.vb: GetExtractedRanges(IEnumerable(Of Identity), CancellationToken, Boolean, Boolean, Boolean)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable<CogniteSdk.Identity>, System.Threading.CancellationToken, bool, bool, bool)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable(Of CogniteSdk.Identity), System.Threading.CancellationToken, Boolean, Boolean, Boolean)
+  nameWithType: CogniteDestination.GetExtractedRanges(IEnumerable<Identity>, CancellationToken, bool, bool, bool)
+  nameWithType.vb: CogniteDestination.GetExtractedRanges(IEnumerable(Of Identity), CancellationToken, Boolean, Boolean, Boolean)
+- uid: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Threading.CancellationToken,System.Boolean,System.Boolean,System.Boolean)
+  name: GetExtractedRanges(IEnumerable<(Identity id, TimeRange limit)>, CancellationToken, bool, bool, bool)
+  href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_System_Collections_Generic_IEnumerable_System_ValueTuple_CogniteSdk_Identity_Cognite_Extractor_Common_TimeRange___System_Threading_CancellationToken_System_Boolean_System_Boolean_System_Boolean_
+  commentId: M:Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable{System.ValueTuple{CogniteSdk.Identity,Cognite.Extractor.Common.TimeRange}},System.Threading.CancellationToken,System.Boolean,System.Boolean,System.Boolean)
+  name.vb: GetExtractedRanges(IEnumerable(Of (id As Identity, limit As TimeRange)), CancellationToken, Boolean, Boolean, Boolean)
+  fullName: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable<(CogniteSdk.Identity id, Cognite.Extractor.Common.TimeRange limit)>, System.Threading.CancellationToken, bool, bool, bool)
+  fullName.vb: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges(System.Collections.Generic.IEnumerable(Of (id As CogniteSdk.Identity, limit As Cognite.Extractor.Common.TimeRange)), System.Threading.CancellationToken, Boolean, Boolean, Boolean)
+  nameWithType: CogniteDestination.GetExtractedRanges(IEnumerable<(Identity id, TimeRange limit)>, CancellationToken, bool, bool, bool)
+  nameWithType.vb: CogniteDestination.GetExtractedRanges(IEnumerable(Of (id As Identity, limit As TimeRange)), CancellationToken, Boolean, Boolean, Boolean)
 - uid: Cognite.Extractor.Utils.CogniteDestination.GetExtractedRanges*
   name: GetExtractedRanges
   href: api/Cognite.Extractor.Utils.CogniteDestination.html#Cognite_Extractor_Utils_CogniteDestination_GetExtractedRanges_
@@ -11411,14 +11411,14 @@ references:
   fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).AddOptionsToCommand
   nameWithType: AttributeBinder<T>.AddOptionsToCommand
   nameWithType.vb: AttributeBinder(Of T).AddOptionsToCommand
-- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue(System.CommandLine.Binding.BindingContext)
-  name: GetBoundValue(BindingContext)
-  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_GetBoundValue_System_CommandLine_Binding_BindingContext_
-  commentId: M:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue(System.CommandLine.Binding.BindingContext)
-  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.GetBoundValue(System.CommandLine.Binding.BindingContext)
-  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).GetBoundValue(System.CommandLine.Binding.BindingContext)
-  nameWithType: AttributeBinder<T>.GetBoundValue(BindingContext)
-  nameWithType.vb: AttributeBinder(Of T).GetBoundValue(BindingContext)
+- uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue(System.CommandLine.ParseResult)
+  name: GetBoundValue(ParseResult)
+  href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_GetBoundValue_System_CommandLine_ParseResult_
+  commentId: M:Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue(System.CommandLine.ParseResult)
+  fullName: Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>.GetBoundValue(System.CommandLine.ParseResult)
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).GetBoundValue(System.CommandLine.ParseResult)
+  nameWithType: AttributeBinder<T>.GetBoundValue(ParseResult)
+  nameWithType.vb: AttributeBinder(Of T).GetBoundValue(ParseResult)
 - uid: Cognite.Extractor.Utils.CommandLine.AttributeBinder`1.GetBoundValue*
   name: GetBoundValue
   href: api/Cognite.Extractor.Utils.CommandLine.AttributeBinder-1.html#Cognite_Extractor_Utils_CommandLine_AttributeBinder_1_GetBoundValue_
@@ -11445,6 +11445,69 @@ references:
   fullName.vb: Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T).Options
   nameWithType: AttributeBinder<T>.Options
   nameWithType.vb: AttributeBinder(Of T).Options
+- uid: Cognite.Extractor.Utils.CommandLine.CommandExtensions
+  name: CommandExtensions
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html
+  commentId: T:Cognite.Extractor.Utils.CommandLine.CommandExtensions
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandExtensions
+  nameWithType: CommandExtensions
+- uid: Cognite.Extractor.Utils.CommandLine.CommandExtensions.Invoke(System.CommandLine.Command,System.String[])
+  name: Invoke(Command, string[])
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html#Cognite_Extractor_Utils_CommandLine_CommandExtensions_Invoke_System_CommandLine_Command_System_String___
+  commentId: M:Cognite.Extractor.Utils.CommandLine.CommandExtensions.Invoke(System.CommandLine.Command,System.String[])
+  name.vb: Invoke(Command, String())
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandExtensions.Invoke(System.CommandLine.Command, string[])
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.CommandExtensions.Invoke(System.CommandLine.Command, String())
+  nameWithType: CommandExtensions.Invoke(Command, string[])
+  nameWithType.vb: CommandExtensions.Invoke(Command, String())
+- uid: Cognite.Extractor.Utils.CommandLine.CommandExtensions.Invoke*
+  name: Invoke
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html#Cognite_Extractor_Utils_CommandLine_CommandExtensions_Invoke_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.CommandExtensions.Invoke
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandExtensions.Invoke
+  nameWithType: CommandExtensions.Invoke
+- uid: Cognite.Extractor.Utils.CommandLine.CommandExtensions.InvokeAsync(System.CommandLine.Command,System.String[])
+  name: InvokeAsync(Command, string[])
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html#Cognite_Extractor_Utils_CommandLine_CommandExtensions_InvokeAsync_System_CommandLine_Command_System_String___
+  commentId: M:Cognite.Extractor.Utils.CommandLine.CommandExtensions.InvokeAsync(System.CommandLine.Command,System.String[])
+  name.vb: InvokeAsync(Command, String())
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandExtensions.InvokeAsync(System.CommandLine.Command, string[])
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.CommandExtensions.InvokeAsync(System.CommandLine.Command, String())
+  nameWithType: CommandExtensions.InvokeAsync(Command, string[])
+  nameWithType.vb: CommandExtensions.InvokeAsync(Command, String())
+- uid: Cognite.Extractor.Utils.CommandLine.CommandExtensions.InvokeAsync*
+  name: InvokeAsync
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html#Cognite_Extractor_Utils_CommandLine_CommandExtensions_InvokeAsync_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.CommandExtensions.InvokeAsync
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandExtensions.InvokeAsync
+  nameWithType: CommandExtensions.InvokeAsync
+- uid: Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler*
+  name: SetHandler
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html#Cognite_Extractor_Utils_CommandLine_CommandExtensions_SetHandler_
+  commentId: Overload:Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler
+  nameWithType: CommandExtensions.SetHandler
+- uid: Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler``1(System.CommandLine.Command,System.Action{``0},Cognite.Extractor.Utils.CommandLine.AttributeBinder{``0})
+  name: SetHandler<T>(Command, Action<T>, AttributeBinder<T>)
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html#Cognite_Extractor_Utils_CommandLine_CommandExtensions_SetHandler__1_System_CommandLine_Command_System_Action___0__Cognite_Extractor_Utils_CommandLine_AttributeBinder___0__
+  commentId: M:Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler``1(System.CommandLine.Command,System.Action{``0},Cognite.Extractor.Utils.CommandLine.AttributeBinder{``0})
+  name.vb: SetHandler(Of T)(Command, Action(Of T), AttributeBinder(Of T))
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler<T>(System.CommandLine.Command, System.Action<T>, Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>)
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler(Of T)(System.CommandLine.Command, System.Action(Of T), Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T))
+  nameWithType: CommandExtensions.SetHandler<T>(Command, Action<T>, AttributeBinder<T>)
+  nameWithType.vb: CommandExtensions.SetHandler(Of T)(Command, Action(Of T), AttributeBinder(Of T))
+- uid: Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler``1(System.CommandLine.Command,System.Func{``0,System.Threading.Tasks.Task},Cognite.Extractor.Utils.CommandLine.AttributeBinder{``0})
+  name: SetHandler<T>(Command, Func<T, Task>, AttributeBinder<T>)
+  href: api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html#Cognite_Extractor_Utils_CommandLine_CommandExtensions_SetHandler__1_System_CommandLine_Command_System_Func___0_System_Threading_Tasks_Task__Cognite_Extractor_Utils_CommandLine_AttributeBinder___0__
+  commentId: M:Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler``1(System.CommandLine.Command,System.Func{``0,System.Threading.Tasks.Task},Cognite.Extractor.Utils.CommandLine.AttributeBinder{``0})
+  name.vb: SetHandler(Of T)(Command, Func(Of T, Task), AttributeBinder(Of T))
+  fullName: Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler<T>(System.CommandLine.Command, System.Func<T, System.Threading.Tasks.Task>, Cognite.Extractor.Utils.CommandLine.AttributeBinder<T>)
+  fullName.vb: Cognite.Extractor.Utils.CommandLine.CommandExtensions.SetHandler(Of T)(System.CommandLine.Command, System.Func(Of T, System.Threading.Tasks.Task), Cognite.Extractor.Utils.CommandLine.AttributeBinder(Of T))
+  nameWithType: CommandExtensions.SetHandler<T>(Command, Func<T, Task>, AttributeBinder<T>)
+  nameWithType.vb: CommandExtensions.SetHandler(Of T)(Command, Func(Of T, Task), AttributeBinder(Of T))
 - uid: Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute
   name: CommandLineOptionAttribute
   href: api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.html

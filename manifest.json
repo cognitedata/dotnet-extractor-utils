@@ -1922,6 +1922,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.CommandLine.CommandExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.CommandLine.CommandExtensions.yml\" sourcestartlinenumber=\"1\">Extensions for Command, to make our command line interface backwards compatible.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.CommandLine.CommandLineOptionAttribute.yml",
       "output": {
         ".html": {
