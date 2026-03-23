@@ -466,13 +466,15 @@ namespace Cognite.Extensions
         /// <param name="chunkSize">Number of timeseries per request</param>
         /// <param name="throttleSize">Maximum number of parallel requests</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="ignoreBadDataPoints">Ignore bad status datapoints, true by default</param>
         /// <returns>Dictionary from externalId to last timestamp, only contains existing timeseries</returns>
         public static async Task<IDictionary<Identity, DateTime>> GetLatestTimestamps(
             this DataPointsResource dataPoints,
             IEnumerable<(Identity id, DateTime before)> ids,
             int chunkSize,
             int throttleSize,
-            CancellationToken token)
+            CancellationToken token,
+            bool ignoreBadDataPoints = true)
         {
             var ret = new ConcurrentDictionary<Identity, DateTime>();
             var idSet = new HashSet<Identity>(ids.Select(id => id.id));
@@ -497,6 +499,7 @@ namespace Cognite.Extensions
                     {
                         idt.Before = pair.before.ToUnixTimeMilliseconds().ToString();
                     }
+                    idt.IgnoreBadDataPoints = ignoreBadDataPoints;
                     return idt;
                 })
                 .ChunkBy(chunkSize)
@@ -558,13 +561,15 @@ namespace Cognite.Extensions
         /// <param name="chunkSize">Number of timeseries per request</param>
         /// <param name="throttleSize">Maximum number of parallel requests</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="ignoreBadDataPoints">Ignore bad status datapoints, true by default</param>
         /// <returns>Dictionary from externalId to first timestamp, only contains existing timeseries</returns>
         public static async Task<IDictionary<Identity, DateTime>> GetEarliestTimestamps(
             this DataPointsResource dataPoints,
             IEnumerable<(Identity id, DateTime after)> ids,
             int chunkSize,
             int throttleSize,
-            CancellationToken token)
+            CancellationToken token,
+            bool ignoreBadDataPoints = true)
         {
             var ret = new ConcurrentDictionary<Identity, DateTime>();
             var idSet = new HashSet<Identity>(ids.Select(id => id.id));
@@ -572,7 +577,7 @@ namespace Cognite.Extensions
             var chunks = ids
                 .Select((pair) =>
                 {
-                    var query = new DataPointsQueryItem();
+                    var query = new DataPointsQueryItem() { IgnoreBadDataPoints = ignoreBadDataPoints };
                     if (pair.id.Id.HasValue)
                     {
                         query.Id = pair.id.Id.Value;
@@ -660,6 +665,7 @@ namespace Cognite.Extensions
         /// <param name="latest">If true, fetch latest timestamps</param>
         /// <param name="earliest">If true, fetch earliest timestamps</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="ignoreBadDataPoints">Ignore bad status datapoints, true by default</param>
         /// <returns></returns>
         public static async Task<IDictionary<Identity, TimeRange>> GetExtractedRanges(
             this DataPointsResource dataPoints,
@@ -669,7 +675,8 @@ namespace Cognite.Extensions
             int throttleSize,
             bool latest,
             bool earliest,
-            CancellationToken token)
+            CancellationToken token,
+            bool ignoreBadDataPoints = true)
         {
             if (ids == null)
             {
@@ -684,12 +691,12 @@ namespace Cognite.Extensions
             if (latest)
             {
                 tasks.Add(dataPoints.GetLatestTimestamps(ids.Select(pair => (pair.id, pair.limit?.Last ?? DateTime.MaxValue)),
-                    chunkSizeLatest, throttleSize, token));
+                    chunkSizeLatest, throttleSize, token, ignoreBadDataPoints));
             }
             if (earliest)
             {
                 tasks.Add(dataPoints.GetEarliestTimestamps(ids.Select(pair => (pair.id, pair.limit?.First ?? CogniteTime.DateTimeEpoch)),
-                    chunkSizeEarliest, throttleSize, token));
+                    chunkSizeEarliest, throttleSize, token, ignoreBadDataPoints));
             }
             var results = await Task.WhenAll(tasks).ConfigureAwait(false);
             if (latest)
