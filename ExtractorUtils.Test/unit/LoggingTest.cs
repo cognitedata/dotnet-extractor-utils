@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Xunit;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
-using Serilog;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -128,6 +127,97 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(4, sideEffect.logCount); // should be evaluated
             logger.LogTrace("This is a trace message with {SideEffect}", sideEffect);
             Assert.Equal(4, sideEffect.logCount); // should not be evaluated
+        }
+
+        [Theory]
+        [InlineData("console")]
+        [InlineData("file")]
+        [InlineData("trace-listener")]
+        public void TestLogger_WithDifferentLogTypes(string logType)
+        {
+            var services = new ServiceCollection();
+
+            switch (logType)
+            {
+                case "console":
+                    services.AddSingleton(new LoggerConfig
+                    {
+                        Console = new ConsoleConfig { Level = "information" }
+                    });
+                    break;
+                case "file":
+                    services.AddSingleton(new LoggerConfig
+                    {
+                        File = new FileConfig { Level = "warning", Path = "test.log" }
+                    });
+                    break;
+                case "trace-listener":
+                    services.AddSingleton(new LoggerConfig
+                    {
+                        TraceListener = new TraceListenerConfig { Level = "error" }
+                    });
+                    break;
+            }
+            services.AddLogger();
+
+            using var provider = services.BuildServiceProvider();
+            var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
+
+            Assert.NotNull(logger);
+        }
+
+        [Theory]
+        [InlineData("console", "debug")]
+        [InlineData("console", "information")]
+        [InlineData("file", "warning")]
+        [InlineData("trace-listener", "error")]
+        public void TestLogger_WithTypeAndLevel(string configType, string level)
+        {
+            var services = new ServiceCollection();
+
+            // Configure logger based on the specified type and level
+            var loggerConfig = new LoggerConfig();
+            switch (configType)
+            {
+                case "console":
+                    loggerConfig.Console = new ConsoleConfig { Level = level };
+                    break;
+                case "file":
+                    loggerConfig.File = new FileConfig { Level = level, Path = "test.log" };
+                    break;
+                case "trace-listener":
+                    loggerConfig.TraceListener = new TraceListenerConfig { Level = level };
+                    break;
+            }
+
+            services.AddSingleton(loggerConfig);
+            services.AddLogger();
+
+            using var provider = services.BuildServiceProvider();
+            var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
+
+            // Assert logger is configured
+            Assert.NotNull(logger);
+
+            // Verify the configuration was applied
+            var retrievedConfig = provider.GetRequiredService<LoggerConfig>();
+            Assert.NotNull(retrievedConfig);
+
+            switch (configType)
+            {
+                case "console":
+                    Assert.NotNull(retrievedConfig.Console);
+                    Assert.Equal(level, retrievedConfig.Console.Level);
+                    break;
+                case "file":
+                    Assert.NotNull(retrievedConfig.File);
+                    Assert.Equal(level, retrievedConfig.File.Level);
+                    break;
+                case "trace-listener":
+                    Assert.NotNull(retrievedConfig.TraceListener);
+                    Assert.Equal(level, retrievedConfig.TraceListener.Level);
+                    break;
+            }
         }
     }
 }
