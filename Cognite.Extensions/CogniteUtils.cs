@@ -7,9 +7,9 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions.DataModels;
+using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Common;
 using CogniteSdk;
-using CogniteSdk.Alpha;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -665,6 +665,8 @@ namespace Cognite.Extensions
             EventExtensions.SetLogger(logger);
             SequenceExtensions.SetLogger(logger);
             StreamRecordExtensions.SetLogger(logger);
+            DataModelUtils.SetLogger(logger);
+            DataPointExtensionsWithInstanceId.SetLogger(logger);
         }
     }
 
