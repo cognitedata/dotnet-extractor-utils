@@ -160,10 +160,12 @@ namespace ExtractorUtils.Test.Unit
             }
             services.AddLogger();
 
-            using var provider = services.BuildServiceProvider();
-            var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
+            {
+                using var provider = services.BuildServiceProvider();
+                var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
 
-            Assert.NotNull(logger);
+                Assert.NotNull(logger);
+            } // provider is disposed here
 
             // Cleanup test.log file if created
             if (File.Exists("test.log"))
@@ -199,31 +201,33 @@ namespace ExtractorUtils.Test.Unit
             services.AddSingleton(loggerConfig);
             services.AddLogger();
 
-            using var provider = services.BuildServiceProvider();
-            var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
-
-            // Assert logger is configured
-            Assert.NotNull(logger);
-
-            // Verify the configuration was applied
-            var retrievedConfig = provider.GetRequiredService<LoggerConfig>();
-            Assert.NotNull(retrievedConfig);
-
-            switch (configType)
             {
-                case "console":
-                    Assert.NotNull(retrievedConfig.Console);
-                    Assert.Equal(level, retrievedConfig.Console.Level);
-                    break;
-                case "file":
-                    Assert.NotNull(retrievedConfig.File);
-                    Assert.Equal(level, retrievedConfig.File.Level);
-                    break;
-                case "trace-listener":
-                    Assert.NotNull(retrievedConfig.TraceListener);
-                    Assert.Equal(level, retrievedConfig.TraceListener.Level);
-                    break;
-            }
+                using var provider = services.BuildServiceProvider();
+                var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
+
+                // Assert logger is configured
+                Assert.NotNull(logger);
+
+                // Verify the configuration was applied
+                var retrievedConfig = provider.GetRequiredService<LoggerConfig>();
+                Assert.NotNull(retrievedConfig);
+
+                switch (configType)
+                {
+                    case "console":
+                        Assert.NotNull(retrievedConfig.Console);
+                        Assert.Equal(level, retrievedConfig.Console.Level);
+                        break;
+                    case "file":
+                        Assert.NotNull(retrievedConfig.File);
+                        Assert.Equal(level, retrievedConfig.File.Level);
+                        break;
+                    case "trace-listener":
+                        Assert.NotNull(retrievedConfig.TraceListener);
+                        Assert.Equal(level, retrievedConfig.TraceListener.Level);
+                        break;
+                }
+            } // provider is disposed here
 
             // Cleanup test.log file if created
             if (File.Exists("test.log"))
