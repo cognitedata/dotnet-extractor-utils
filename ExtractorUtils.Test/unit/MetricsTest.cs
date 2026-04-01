@@ -1,15 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
 using Prometheus;
 using Xunit;
-using Cognite.Extractor.Logging;
 using Cognite.Extractor.Metrics;
 using Cognite.Extractor.Utils;
 using System.Reflection;
@@ -246,6 +247,65 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
+        public async Task TestRetryPolicyRetriesOnTransientErrorAsync()
+        {
+            Metrics.SuppressDefaultMetrics();
+            var callCount = 0;
+            var (provider, logger) = BuildRetryTestServices((request, token) =>
+            {
+                var status = callCount++ == 0 ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.OK;
+                return Task.FromResult(new HttpResponseMessage(status));
+            });
+
+            using (provider)
+                await provider.GetRequiredService<IHttpClientFactory>()
+                    .CreateClient("prometheus-httpclient").GetAsync("http://example.com/test");
+
+            Assert.Equal(2, callCount);
+            Assert.Contains(logger.Entries, e => e.Level == LogLevel.Warning && e.Message.Contains("failed with status code"));
+        }
+
+        [Fact]
+        public async Task TestRetryPolicyRetriesOnExceptionAsync()
+        {
+            Metrics.SuppressDefaultMetrics();
+            var callCount = 0;
+            var (provider, logger) = BuildRetryTestServices((request, token) =>
+            {
+                if (callCount++ == 0)
+                    throw new HttpRequestException("connection failed", new Exception("inner failure"));
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+            });
+
+            using (provider)
+                await provider.GetRequiredService<IHttpClientFactory>()
+                    .CreateClient("prometheus-httpclient").GetAsync("http://example.com/test");
+
+            Assert.Equal(2, callCount);
+            Assert.Contains(logger.Entries, e => e.Level == LogLevel.Warning && e.Message.Contains("connection failed"));
+            Assert.Contains(logger.Entries, e => e.Level == LogLevel.Debug && e.Message.Contains("inner failure"));
+        }
+
+        private (ServiceProvider provider, FakeLogger<MetricServer> logger) BuildRetryTestServices(
+            Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler)
+        {
+            var fakeLogger = new FakeLogger<MetricServer>();
+            var services = new ServiceCollection();
+            services.AddTestLogging(_output);
+            services.AddSingleton<ILogger<MetricServer>>(fakeLogger);
+            services.AddCogniteMetrics();
+            services.AddHttpClient("prometheus-httpclient")
+                .ConfigurePrimaryHttpMessageHandler(() => new TestHttpHandler(handler));
+            return (services.BuildServiceProvider(), fakeLogger);
+        }
+
+        private sealed class TestHttpHandler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler) : HttpMessageHandler
+        {
+            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+                => handler(request, cancellationToken);
+        }
+
+        [Fact]
         public void TestVersion()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -256,6 +316,23 @@ namespace ExtractorUtils.Test.Unit
             // Assert.False(string.IsNullOrWhiteSpace(version));
             // Assert.False(string.IsNullOrWhiteSpace(desc));
             // Assert.NotEqual(version.Trim(), desc.Trim());
+        }
+
+#nullable enable
+        private sealed class FakeLogger<T> : ILogger<T>
+        {
+            public List<(LogLevel Level, string Message)> Entries { get; } = new List<(LogLevel Level, string Message)>();
+
+            IDisposable ILogger.BeginScope<TState>(TState state) => NullScope.Instance;
+            bool ILogger.IsEnabled(LogLevel logLevel) => true;
+            void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+                => Entries.Add((logLevel, formatter(state, exception)));
+
+            private sealed class NullScope : IDisposable
+            {
+                public static readonly NullScope Instance = new NullScope();
+                public void Dispose() { }
+            }
         }
     }
 }
