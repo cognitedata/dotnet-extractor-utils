@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Xunit;
 using Cognite.Extractor.Logging;
 using Cognite.Extractor.Utils;
-using Serilog;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -128,6 +127,107 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(4, sideEffect.logCount); // should be evaluated
             logger.LogTrace("This is a trace message with {SideEffect}", sideEffect);
             Assert.Equal(4, sideEffect.logCount); // should not be evaluated
+        }
+
+        private static ServiceCollection ConfigureLoggerService(string logType, string level = null)
+        {
+            var services = new ServiceCollection();
+            var loggerConfig = new LoggerConfig();
+
+            switch (logType)
+            {
+                case "console":
+                    loggerConfig.Console = new ConsoleConfig { Level = level ?? "information" };
+                    break;
+                case "file":
+                    loggerConfig.File = new FileConfig { Level = level ?? "warning", Path = "test.log" };
+                    break;
+                case "trace-listener":
+                    loggerConfig.TraceListener = new TraceListenerConfig { Level = level ?? "error" };
+                    break;
+            }
+
+            services.AddSingleton(loggerConfig);
+            services.AddLogger();
+            return services;
+        }
+
+        [Theory]
+        [InlineData("console")]
+        [InlineData("file")]
+        [InlineData("trace-listener")]
+        public void TestLogger_WithDifferentLogTypes(string logType)
+        {
+            var services = ConfigureLoggerService(logType);
+
+            using (var provider = services.BuildServiceProvider())
+            {
+                var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
+
+                Assert.NotNull(logger);
+                logger.LogWarning("Test log message");
+            } // provider is disposed here, which flushes async logs
+
+            // Assert and cleanup test.log file if created by file logger
+            if (logType == "file")
+            {
+                var logFile = $"test{DateTime.Now:yyyyMMdd}.log";
+                Assert.True(File.Exists(logFile));
+                File.Delete(logFile);
+            }
+        }
+
+        [Theory]
+        [InlineData("console", "debug")]
+        [InlineData("console", "information")]
+        [InlineData("file", "warning")]
+        [InlineData("trace-listener", "error")]
+        public void TestLogger_WithTypeAndLevel(string configType, string level)
+        {
+            var services = ConfigureLoggerService(configType, level);
+
+            using (var provider = services.BuildServiceProvider())
+            {
+                var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
+                Assert.NotNull(logger);
+
+                // Verify the logger respects the configured level using side effects
+                // Note: trace-listener alone falls back to default logger, so we only verify console and file
+                if (configType != "trace-listener")
+                {
+                    var sideEffect = new LogSideEffect();
+                    logger.LogDebug("Debug: {SideEffect}", sideEffect);
+                    logger.LogInformation("Info: {SideEffect}", sideEffect);
+                    logger.LogWarning("Warning: {SideEffect}", sideEffect);
+                    logger.LogError("Error: {SideEffect}", sideEffect);
+
+                    // Verify only messages at or above the configured level were evaluated
+                    int expectedCount = level switch
+                    {
+                        "debug" => 4, // debug, info, warning, error
+                        "information" => 3, // info, warning, error
+                        "warning" => 2, // warning, error
+                        "error" => 1, // error only
+                        _ => 0
+                    };
+                    Assert.Equal(expectedCount, sideEffect.logCount);
+                }
+                else
+                {
+                    // For trace-listener, just verify it doesn't throw
+                    logger.LogError("Test log message");
+                }
+            } // provider is disposed here
+
+            // Cleanup file if created by file logger
+            if (configType == "file")
+            {
+                var logFile = $"test.log";
+                if (File.Exists(logFile))
+                {
+                    File.Delete(logFile);
+                }
+            }
         }
     }
 }
