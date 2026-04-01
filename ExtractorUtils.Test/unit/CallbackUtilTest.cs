@@ -28,8 +28,6 @@ namespace ExtractorUtils.Test.Unit
             return new TestCogniteDestination();
         }
 
-        #region FunctionCallWrapper TryCall Tests
-
         [Fact]
         public async Task TryCallWithMissingConfiguration_ReturnsFalseAndLogsWarning()
         {
@@ -66,12 +64,12 @@ namespace ExtractorUtils.Test.Unit
             var wrapper = new FunctionCallWrapper<string>(destination, config, null);
 
             // Act
+            // Note: The stub destination always returns true for function calls.
+            // If the underlying function's behavior changes, this test will need to be updated.
             var result = await wrapper.TryCall("test-argument", CancellationToken.None);
 
             // Assert
             Assert.True(result);
         }
-
-        #endregion
     }
 }

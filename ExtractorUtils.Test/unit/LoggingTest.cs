@@ -164,6 +164,12 @@ namespace ExtractorUtils.Test.Unit
             var logger = provider.GetRequiredService<ILogger<LoggingTest>>();
 
             Assert.NotNull(logger);
+
+            // Cleanup test.log file if created
+            if (File.Exists("test.log"))
+            {
+                File.Delete("test.log");
+            }
         }
 
         [Theory]
@@ -217,6 +223,12 @@ namespace ExtractorUtils.Test.Unit
                     Assert.NotNull(retrievedConfig.TraceListener);
                     Assert.Equal(level, retrievedConfig.TraceListener.Level);
                     break;
+            }
+
+            // Cleanup test.log file if created
+            if (File.Exists("test.log"))
+            {
+                File.Delete("test.log");
             }
         }
     }
