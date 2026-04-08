@@ -171,7 +171,7 @@ namespace ExtractorUtils.Test.Unit
             // Assert and cleanup test.log file if created by file logger
             if (logType == "file")
             {
-                var logFile = $"test{DateTime.Now:yyyyMMdd}.log";
+                var logFile = "test.log";
                 Assert.True(File.Exists(logFile));
                 File.Delete(logFile);
             }
@@ -222,7 +222,7 @@ namespace ExtractorUtils.Test.Unit
             // Cleanup file if created by file logger
             if (configType == "file")
             {
-                var logFile = $"test.log";
+                var logFile = "test.log";
                 if (File.Exists(logFile))
                 {
                     File.Delete(logFile);
