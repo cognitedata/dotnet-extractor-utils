@@ -171,9 +171,15 @@ namespace ExtractorUtils.Test.Unit
             // Assert and cleanup test.log file if created by file logger
             if (logType == "file")
             {
-                var logFile = "test.log";
-                Assert.True(File.Exists(logFile));
-                File.Delete(logFile);
+                // Wait a bit for async logging to complete
+                System.Threading.Thread.Sleep(100);
+                // The file logger uses rolling interval, so we need to find files matching the pattern
+                var logFiles = Directory.GetFiles(".", "test*.log");
+                Assert.NotEmpty(logFiles);
+                foreach (var logFile in logFiles)
+                {
+                    File.Delete(logFile);
+                }
             }
         }
 
