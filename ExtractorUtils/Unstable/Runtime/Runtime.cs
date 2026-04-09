@@ -36,6 +36,11 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// The extractor crashed.
         /// </summary>
         Error,
+        /// <summary>
+        /// The extractor was stopped with a clean shutdown.
+        /// But we need to restart it (possibly due to a revision change).
+        /// </summary>
+        RestartRequired
     }
 
     /// <summary>
@@ -138,6 +143,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 }
                 else if (result == ExtractorRunResult.CleanShutdown)
                 {
+                    _activeLogger.LogInformation("Extractor stopped cleanly with policy {Policy}", _params.RestartPolicy);
                     // Shut down, if the extractor is configured to only restart on error.
                     if (_params.RestartPolicy != ExtractorRestartPolicy.Always)
                     {
@@ -146,6 +152,11 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                     }
                     // Otherwise, immediately restart.
                     backoff = 0;
+                }
+                else if (result == ExtractorRunResult.RestartRequired)
+                {
+                    _activeLogger.LogInformation("Extractor stopped cleanly with restart required, restarting with backoff");
+                    backoff = 1;
                 }
 
                 if (backoff == 0)
@@ -328,6 +339,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         {
             using var internalTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
             TExtractor extractor;
+            var shouldRestart = false;
             try
             {
                 if (_params.AddMetrics)
@@ -386,6 +398,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 {
                     _activeLogger.LogInformation("Revision changed, reloading config");
                     internalTokenSource.Cancel();
+                    shouldRestart = true;
                     await extractorTask.ConfigureAwait(false);
                 }
 
@@ -394,6 +407,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 {
                     ExceptionDispatchInfo.Capture(extractorTask.Exception).Throw();
                 }
+
             }
             catch (OperationCanceledException) when (internalTokenSource.IsCancellationRequested)
             {
@@ -415,7 +429,11 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
 
                 return ExtractorRunResult.Error;
             }
-
+            if (shouldRestart)
+            {
+                _activeLogger.LogInformation("Extractor stopped cleanly with policy {Policy}, restart is required", _params.RestartPolicy);
+                return ExtractorRunResult.RestartRequired;
+            }
             return ExtractorRunResult.CleanShutdown;
         }
 
