@@ -339,6 +339,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         {
             using var internalTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
             TExtractor extractor;
+            var shouldRestart = false;
             try
             {
                 if (_params.AddMetrics)
