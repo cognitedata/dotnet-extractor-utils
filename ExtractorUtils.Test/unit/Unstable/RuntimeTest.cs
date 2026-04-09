@@ -180,6 +180,9 @@ authentication:
             builder.ExternalServices = services;
             builder.AddLogger = false;
 
+            // Reduce backoff times for faster tests
+            builder.BackoffBase = 50;
+
             return builder;
         }
 
