@@ -225,8 +225,9 @@ namespace ExtractorUtils.Test.Unit
             // Cleanup file if created by file logger
             if (configType == "file")
             {
-                var logFile = "test.log";
-                if (File.Exists(logFile))
+                var logFiles = Directory.GetFiles(".", "test*.log");
+                Assert.NotEmpty(logFiles);
+                foreach (var logFile in logFiles)
                 {
                     File.Delete(logFile);
                 }
