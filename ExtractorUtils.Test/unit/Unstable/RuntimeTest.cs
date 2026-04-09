@@ -248,7 +248,6 @@ authentication:
                     extractor = ext;
                 };
             };
-            
 
             using var source = new CancellationTokenSource();
 
