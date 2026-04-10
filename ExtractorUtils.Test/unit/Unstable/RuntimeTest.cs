@@ -180,6 +180,9 @@ authentication:
             builder.ExternalServices = services;
             builder.AddLogger = false;
 
+            // Reduce backoff times for faster tests
+            builder.BackoffBase = 50;
+
             return builder;
         }
 
@@ -187,6 +190,9 @@ authentication:
         public async Task TestRuntimeRestartNewConfig()
         {
             var builder = CreateMockRuntimeBuilder();
+            // Restart policy won't be the default "Always" in customer envs, but we should 
+            // still restart on config change. 
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
 
             using var evt = new ManualResetEventSlim(false);
 
