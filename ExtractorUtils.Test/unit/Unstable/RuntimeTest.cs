@@ -186,16 +186,8 @@ authentication:
             return builder;
         }
 
-        [Fact(Timeout = 5000)]
-        public async Task TestRuntimeRestartNewConfig()
+        private async Task<(DummyExtractor, ExtractorRuntime<DummyConfig, DummyExtractor>)> createExtractorForRestartTest(ManualResetEventSlim evt, ExtractorRuntimeBuilder<DummyConfig, DummyExtractor> builder, CancellationToken token)
         {
-            var builder = CreateMockRuntimeBuilder();
-            // Restart policy won't be the default "Always" in customer envs, but we should 
-            // still restart on config change. 
-            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
-
-            using var evt = new ManualResetEventSlim(false);
-
             DummyExtractor extractor = null;
             builder.OnCreateExtractor = (_, ext) =>
             {
@@ -206,15 +198,27 @@ authentication:
                 };
             };
 
-            using var source = new CancellationTokenSource();
-
-            var runtime = await builder.MakeRuntime(source.Token);
+            var runtime = await builder.MakeRuntime(token);
             var runTask = runtime.Run();
 
-            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), token));
             Assert.NotNull(extractor);
+            return (extractor, runtime);
+        }
 
-            // Wait for a startup to be reported.
+        [Fact(Timeout = 5000)]
+        public async Task TestRuntimeRestartNewConfig()
+        {
+            var builder = CreateMockRuntimeBuilder();
+            // Restart policy won't be the default "Always" in customer envs, but we should 
+            // still restart on config change. 
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
+
+            using var evt = new ManualResetEventSlim(false);
+            using var source = new CancellationTokenSource();
+
+            var (extractor, runtime) = await createExtractorForRestartTest(evt, builder, source.Token);
+
             await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
 
             // Update the config revision and the extractor should be restarted.
@@ -239,8 +243,42 @@ authentication:
             // Finally, shut down the extractor.
             source.Cancel();
 
-            await runTask;
+            await runtime.Run();
         }
+
+        [Fact(Timeout = 5000)]
+        public async Task TestNeverRestartPolicy()
+        {
+            var builder = CreateMockRuntimeBuilder();
+            // Restart policy won't be the default "Always" in customer envs, but we should 
+            // still restart on config change. 
+            builder.RestartPolicy = ExtractorRestartPolicy.Never;
+
+            using var evt = new ManualResetEventSlim(false);
+            using var source = new CancellationTokenSource();
+
+            var (extractor, runtime) = await createExtractorForRestartTest(evt, builder, source.Token);
+            // Wait for a startup to be reported.
+            await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
+
+            // Update the config revision and the extractor should be restarted.
+            var oldExtractor = extractor;
+            extractor = null;
+            evt.Reset();
+            _responseRevision = new ConfigRevision
+            {
+                Revision = 2,
+                Config = "foo: baz"
+            };
+
+            // Flush the sink to speed things along
+            await oldExtractor.Sink.Flush(source.Token);
+
+            // Extractor should not be restarted, so we should time out waiting for the event to be set.
+            Assert.False(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(1), source.Token));
+            Assert.Null(extractor);
+        }
+
 
         [Fact(Timeout = 5000)]
         public async Task TestRuntimeRestartExtractorCrash()
