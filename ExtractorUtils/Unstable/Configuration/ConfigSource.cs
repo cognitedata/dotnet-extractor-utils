@@ -155,7 +155,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 var msg = ex.Message;
                 if (_lastErrorMsg != msg)
                 {
-                    reporter.Fatal($"Fatally failed to load configuration file {_configFilePath}: {ex.Message}", ex.Message + "\n" + ex.StackTrace);
+                    reporter.Fatal($"Fatally failed to load configuration file from {_configFilePath}: {ex.Message}");
                 }
                 _lastErrorMsg = msg;
                 throw;
@@ -170,7 +170,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 if (isNewConfig)
                 {
-                    reporter.Fatal($"Failed to parse configuration file {_configFilePath}: {ex.Message}", ex.Message + "\n" + ex.StackTrace);
+                    reporter.Fatal($"Failed to parse configuration file from {_configFilePath}: {ex.Message}");
                 }
                 throw;
             }
@@ -256,7 +256,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 var msg = ex.Message;
                 if (_lastErrorMsg != msg)
                 {
-                    reporter.Fatal($"Fatally failed to load0 configuration file from CDF: {msg}", msg + "\n" + ex.StackTrace);
+                    reporter.Fatal($"Fatally failed to load configuration file from CDF: {msg}");
                 }
                 _lastErrorMsg = msg;
                 throw;
@@ -275,7 +275,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 if (isNewConfig)
                 {
-                    reporter.Fatal($"Failed to parse configuration file from CDF: {ex.Message}", ex.Message + "\n" + ex.StackTrace);
+                    reporter.Fatal($"Failed to parse configuration file from CDF: {ex.Message}");
                 }
                 throw;
             }
