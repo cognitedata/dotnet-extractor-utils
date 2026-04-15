@@ -353,18 +353,11 @@ namespace ExtractorUtils.Test.Unit.Unstable
             var longDescription = new string('a', 6000);
             var longDetails = new string('b', 6000);
             
-            // Verify that SDK CheckInAsync throws exception with too long error
-            var client = provider.GetRequiredService<Client>(); 
-            await client.Alpha.Integrations.CheckInAsync(new CheckInRequest { ExternalId = "test-integration", Errors = new[] { new ErrorWithTask { ExternalId = "test", Description = longDescription, Details = longDetails, StartTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() } } }, source.Token);
-            Assert.Single(errors);
-            Assert.Equal(longDescription, (string)errors[0].description);
-            Assert.Equal(longDetails, (string)errors[0].details);
-            
             checkIn.ReportError(new ExtractorError(ErrorLevel.error, longDescription, checkIn, longDetails, now: start));
 
             await checkIn.Flush(source.Token);
 
-           // Assert.Single(errors);
+            Assert.Single(errors);
             Assert.Equal(5000, ((string)errors[0].description).Length);
             Assert.Equal(5000, ((string)errors[0].details).Length);
         }
