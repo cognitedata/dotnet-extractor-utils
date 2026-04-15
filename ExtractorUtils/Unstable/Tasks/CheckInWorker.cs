@@ -266,7 +266,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                             _logger.LogWarning("Truncating description for error {ExternalId} to 5,000 characters. Original length was {OriginalLength}", err.ExternalId, err.Description.Length);
                             err.Description = err.Description.Substring(0, 5000);
                         }
-                        else if (err.Details != null && err.Details.Length > 5000)
+                        if (err.Details != null && err.Details.Length > 5000)
                         {
                             _logger.LogWarning("Error {ExternalId} has details exceeding 5,000 characters, truncating. Original length was {OriginalLength}", err.ExternalId, err.Details.Length);
                             err.Details = err.Details.Substring(0, 5000);

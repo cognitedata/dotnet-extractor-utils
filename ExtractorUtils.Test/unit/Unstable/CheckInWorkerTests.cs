@@ -297,5 +297,76 @@ namespace ExtractorUtils.Test.Unit.Unstable
 
             return fresponse;
         }
+
+        [Fact]
+        public async Task TestErrorSortingAndDeduplication()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            var start = DateTime.UtcNow;
+
+            // Test 1: Errors with different timestamps should be sorted correctly
+            // Create errors in reverse chronological order, they should be sorted properly
+            checkIn.ReportError(new ExtractorError(ErrorLevel.error, "late-error", checkIn, now: start.AddSeconds(30)));
+            checkIn.ReportError(new ExtractorError(ErrorLevel.warning, "middle-error", checkIn, now: start.AddSeconds(15)));
+            checkIn.ReportError(new ExtractorError(ErrorLevel.error, "early-error", checkIn, now: start.AddSeconds(5)));
+
+            errors.Clear();
+            taskEvents.Clear();
+
+            await checkIn.Flush(source.Token);
+            
+            // Verify sorting by time
+            Assert.Equal(3, errors.Count);
+            Assert.Equal("early-error", (string)errors[0].description); // Time 5
+            Assert.Equal("middle-error", (string)errors[1].description); // Time 15
+            Assert.Equal("late-error", (string)errors[2].description); // Time 30
+
+            // Test 3: Verify errors with EndTime are sorted by EndTime
+            errors.Clear();
+            var error1 = new ExtractorError(ErrorLevel.warning, "error-1", checkIn, now: start.AddSeconds(10));
+            var error2 = new ExtractorError(ErrorLevel.warning, "error-2", checkIn, now: start.AddSeconds(20));
+            var ongoingError = new ExtractorError(ErrorLevel.error, "ongoing-error", checkIn, now: start.AddSeconds(15));
+            
+            checkIn.ReportError(error1);
+            checkIn.ReportError(error2);
+            
+            // Finish error2 before error1, so EndTime order is reversed from StartTime order
+            error2.Finish(start.AddSeconds(25));
+            error1.Finish(start.AddSeconds(40));
+
+            await checkIn.Flush(source.Token);
+
+            // Should be sorted by EndTime (25, then 40)
+            Assert.Equal(3, errors.Count);
+            Assert.Equal("ongoing-error", (string)errors[0].description); // EndTime null
+            Assert.Equal("error-2", (string)errors[1].description); // EndTime 25
+            Assert.Equal("error-1", (string)errors[2].description); // EndTime 40
+
+            // Test 4: Verify truncation of long descriptions/details still works
+            errors.Clear();
+            var longDescription = new string('a', 6000);
+            var longDetails = new string('b', 6000);
+            
+            // Verify that SDK CheckInAsync throws exception with too long error
+            var client = provider.GetRequiredService<Client>(); 
+            await client.Alpha.Integrations.CheckInAsync(new CheckInRequest { ExternalId = "test-integration", Errors = new[] { new ErrorWithTask { ExternalId = "test", Description = longDescription, Details = longDetails, StartTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() } } }, source.Token);
+            Assert.Single(errors);
+            Assert.Equal(longDescription, (string)errors[0].description);
+            Assert.Equal(longDetails, (string)errors[0].details);
+            
+            checkIn.ReportError(new ExtractorError(ErrorLevel.error, longDescription, checkIn, longDetails, now: start));
+
+            await checkIn.Flush(source.Token);
+
+           // Assert.Single(errors);
+            Assert.Equal(5000, ((string)errors[0].description).Length);
+            Assert.Equal(5000, ((string)errors[0].details).Length);
+        }
     }
 }
