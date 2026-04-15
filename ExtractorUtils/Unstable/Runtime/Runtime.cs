@@ -40,7 +40,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         /// The extractor was stopped with a clean shutdown.
         /// But we need to restart it (possibly due to a revision change).
         /// </summary>
-        RestartRequired
+        RestartRequired,
     }
 
     /// <summary>
@@ -339,7 +339,6 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         {
             using var internalTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
             TExtractor extractor;
-            var shouldRestart = false;
             try
             {
                 if (_params.AddMetrics)
@@ -377,6 +376,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 return ExtractorRunResult.EarlyError;
             }
 
+            var shouldRestart = false;
             try
             {
                 // Do not wait for the cancellation token here, since we want to give the extractor the opportunity
@@ -429,6 +429,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
 
                 return ExtractorRunResult.Error;
             }
+            
             if (shouldRestart)
             {
                 _activeLogger.LogInformation("Extractor stopped cleanly with policy {Policy}, restart is required", _params.RestartPolicy);

@@ -187,6 +187,49 @@ authentication:
         }
 
         [Fact(Timeout = 5000)]
+        public async Task TestCleanShutdownNoRestart()
+        {
+            var builder = CreateMockRuntimeBuilder();
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
+
+            using var evt = new ManualResetEventSlim(false);
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    evt.Set();
+                    extractor = ext;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+            var runTask = runtime.Run();
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.NotNull(extractor);
+
+            // Wait for a startup to be reported.
+            await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
+
+            // Reset the event before disposing so we can detect if another extractor starts.
+            evt.Reset();
+
+            await extractor.DisposeAsync();
+
+            // The runtime should exit without restarting since the policy is OnError
+            // and this was a clean shutdown.
+            await runTask;
+
+            // Wait a little bit to be sure it doesn't restart.
+            Assert.False(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromMilliseconds(300), source.Token));
+            Assert.Equal(1, _startupCount);
+        }
+
+        [Fact(Timeout = 5000)]
         public async Task TestRuntimeRestartNewConfig()
         {
             var builder = CreateMockRuntimeBuilder();
