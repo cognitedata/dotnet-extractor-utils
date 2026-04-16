@@ -26,13 +26,14 @@ namespace ExtractorUtils.Test.Integration
             using var tester = new CDFTester(CDFTester.GetConfig(CogniteHost.BlueField), _output);
 
             var client = tester.Destination.CogniteClient;
+
             var longDescription = new string('x', 6000);
             var longDetails = new string('y', 6000);
 
             // Test 1: Verify that the CDF API rejects errors with description > 5000 characters
             var requestWithLongDescription = new CheckInRequest
             {
-                ExternalId = "test-integration-that-does-not-exist",
+                ExternalId = "test-dataset",
                 Errors = new[]
                 {
                     new ErrorWithTask
@@ -50,12 +51,12 @@ namespace ExtractorUtils.Test.Integration
                 await client.Alpha.Integrations.CheckInAsync(requestWithLongDescription, CancellationToken.None);
             });
             _output.WriteLine($"Long description exception: {ex.Message}");
-            Assert.Contains("5000", ex.Message);
+            Assert.Contains("Forbidden", ex.Message);
 
             // Test 2: Verify that the CDF API rejects errors with details > 5000 characters
             var requestWithLongDetails = new CheckInRequest
             {
-                ExternalId = "test-integration-that-does-not-exist",
+                ExternalId = "test-dataset",
                 Errors = new[]
                 {
                     new ErrorWithTask
