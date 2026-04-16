@@ -429,7 +429,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
 
                 return ExtractorRunResult.Error;
             }
-            
+
             if (shouldRestart)
             {
                 _activeLogger.LogInformation("Extractor stopped cleanly with policy {Policy}, restart is required", _params.RestartPolicy);
