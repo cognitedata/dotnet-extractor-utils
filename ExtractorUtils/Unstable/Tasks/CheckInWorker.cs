@@ -229,6 +229,16 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
         }
 
+        private string? Truncate(string? value, string fieldName, string externalId)
+        {
+            if (value != null && value.Length > 5000)
+            {
+                _logger.LogWarning("Truncating {FieldName} for error {ExternalId} to 5,000 characters. Original length was {OriginalLength}", fieldName, externalId, value.Length);
+                return value.Substring(0, 5000);
+            }
+            return value;
+        }
+
         private async Task ReportCheckIn(CancellationToken token)
         {
             List<ErrorWithTask> newErrors;
@@ -261,16 +271,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                         // but we want to log the full error before truncating.
                         _logger.LogInformation("Error: {ExternalId}, Level: {Level}, Description: {Description}, Details: {Details}, Task: {Task}, StartTime: {StartTime}, EndTime: {EndTime}",
                             err.ExternalId, err.Level, err.Description, err.Details, err.Task, err.StartTime, err.EndTime);
-                        if (err.Description != null && err.Description.Length > 5000)
-                        {
-                            _logger.LogWarning("Truncating description for error {ExternalId} to 5,000 characters. Original length was {OriginalLength}", err.ExternalId, err.Description.Length);
-                            err.Description = err.Description.Substring(0, 5000);
-                        }
-                        if (err.Details != null && err.Details.Length > 5000)
-                        {
-                            _logger.LogWarning("Error {ExternalId} has details exceeding 5,000 characters, truncating. Original length was {OriginalLength}", err.ExternalId, err.Details.Length);
-                            err.Details = err.Details.Substring(0, 5000);
-                        }
+                        err.Description = Truncate(err.Description, "Description", err.ExternalId);
+                        err.Details = Truncate(err.Details, "Details", err.ExternalId);
                     }
                     _errors.Clear();
                     taskUpdates = _taskUpdates;
