@@ -320,7 +320,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             taskEvents.Clear();
 
             await checkIn.Flush(source.Token);
-            
+
             // Verify sorting by time
             Assert.Equal(3, errors.Count);
             Assert.Equal("early-error", (string)errors[0].description); // Time 5
@@ -332,10 +332,10 @@ namespace ExtractorUtils.Test.Unit.Unstable
             var error1 = new ExtractorError(ErrorLevel.warning, "error-1", checkIn, now: start.AddSeconds(10));
             var error2 = new ExtractorError(ErrorLevel.warning, "error-2", checkIn, now: start.AddSeconds(20));
             var ongoingError = new ExtractorError(ErrorLevel.error, "ongoing-error", checkIn, now: start.AddSeconds(15));
-            
+
             checkIn.ReportError(error1);
             checkIn.ReportError(error2);
-            
+
             // Finish error2 before error1, so EndTime order is reversed from StartTime order
             error2.Finish(start.AddSeconds(25));
             error1.Finish(start.AddSeconds(40));
@@ -352,7 +352,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             errors.Clear();
             var longDescription = new string('a', 6000);
             var longDetails = new string('b', 6000);
-            
+
             checkIn.ReportError(new ExtractorError(ErrorLevel.error, longDescription, checkIn, longDetails, now: start));
 
             await checkIn.Flush(source.Token);
