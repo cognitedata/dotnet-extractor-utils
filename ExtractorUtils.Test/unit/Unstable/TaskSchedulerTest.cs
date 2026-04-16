@@ -297,7 +297,7 @@ namespace ExtractorUtils.Test.unit.Unstable
 
             using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
             using var source = new CancellationTokenSource();
-            
+
             var running = sched.Run(source.Token);
 
             using var startEvt = new ManualResetEvent(false);
@@ -327,7 +327,7 @@ namespace ExtractorUtils.Test.unit.Unstable
             sched.CancelTask("Task1", "Test cancellation");
 
             await Assert.ThrowsAsync<AggregateException>(async () => await waitTask);
-            
+
             Assert.True(taskTokenWasCancelled);
             Assert.Single(sink.Errors.DistinctBy(e => e.ExternalId));
             var err = sink.Errors[0];

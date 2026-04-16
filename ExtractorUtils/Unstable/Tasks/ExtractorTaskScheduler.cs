@@ -23,12 +23,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         /// <summary>
         /// Return whether the task can run now.
-        /// 
+        ///
         /// The task should make sure to call the callback provided in `RegisterReadyCallback`
         /// once this will return `true`.
-        /// 
+        ///
         /// Once this returns `true`, the task may be started immediately.
-        /// 
+        ///
         /// Note that this may be called frequently, and should not do any expensive calculations.
         /// </summary>
         public abstract bool CanRunNow();
@@ -41,7 +41,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         /// <summary>
         /// Register a callback that should be invoked once `CanRunNow` returns `true`.
-        /// 
+        ///
         /// You may call this callback even if `CanRunNow` isn't guaranteed to return `true`.
         /// </summary>
         /// <param name="callback"></param>
@@ -84,7 +84,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         {
             Source = tokenSource;
             Task = activeTask;
-            CancellationReason = "null";
+            CancellationReason = "";
         }
 
         public void Dispose()
@@ -148,7 +148,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             _reporter.ReportStart(null, now);
         }
 
-        public void Cancel(string reason = null)
+        public void Cancel(string reason = "")
         {
             lock (_lock)
             {
@@ -324,7 +324,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// </summary>
         /// <param name="name">Name of the task to cancel</param>
         /// <param name="reason">Reason for canceling the task</param>
-        public void CancelTask(string name, string reason = null)
+        public void CancelTask(string name, string reason = "")
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
@@ -339,7 +339,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         }
 
         /// <summary>
-        /// Schedule a task now. If it is already running it will 
+        /// Schedule a task now. If it is already running it will
         /// </summary>
         /// <param name="name">Name of the task to schedule</param>
         /// <param name="reScheduleIfRunning">If true, re-schedule the
@@ -365,10 +365,10 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         /// <summary>
         /// Wait for the next time the task given by <paramref name="task"/> ends.
-        /// 
+        ///
         /// If the task is not currently running, this will wait until it starts running and
         /// then ends.
-        /// 
+        ///
         /// Note that if the task fails, this will re-throw the exception that caused
         /// the task failure, or a TaskCanceledException if it was canceled.
         /// </summary>
@@ -433,9 +433,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         /// <summary>
         /// Run the scheduler.
-        /// 
+        ///
         /// This should only be called once on a given scheduler.
-        /// 
+        ///
         /// To re-run it after a crash, the scheduler must be re-initialized.
         /// </summary>
         /// <param name="token">Global cancellation token for stopping the entire scheduler.</param>
@@ -571,7 +571,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         /// <summary>
         /// Dispose of the scheduler.
-        /// 
+        ///
         /// Can be overridden in base classes.
         /// </summary>
         /// <param name="disposing">Whether to dispose managed resources.</param>
