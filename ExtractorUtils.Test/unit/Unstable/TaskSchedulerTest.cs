@@ -289,5 +289,50 @@ namespace ExtractorUtils.Test.unit.Unstable
             Assert.Equal("Task1", err.TaskName);
             Assert.Equal("Task was cancelled", err.Description);
         }
+
+        [Fact]
+        public async Task TestWaitWhenCancel()
+        {
+            var sink = new DummySink();
+
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+            
+            var running = sched.Run(source.Token);
+
+            using var startEvt = new ManualResetEvent(false);
+            using var evt = new ManualResetEvent(false);
+            bool taskTokenWasCancelled = false;
+            var task = new RunQuickTask("Task1", async (cbs, tok) =>
+            {
+                startEvt.Set();
+                try
+                {
+                    await CommonUtils.WaitAsync(evt, TimeSpan.FromSeconds(5), tok);
+                }
+                catch (OperationCanceledException)
+                {
+                    taskTokenWasCancelled = tok.IsCancellationRequested;
+                    throw;
+                }
+                return null;
+            });
+
+            sched.AddScheduledTask(task, true);
+            startEvt.WaitOne();
+
+            // Task should be canceled while waiting for it to finish, and WaitForNextEndOfTask should throw TaskCanceledException.
+            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(3));
+
+            sched.CancelTask("Task1", "Test cancellation");
+
+            await Assert.ThrowsAsync<AggregateException>(async () => await waitTask);
+            
+            Assert.True(taskTokenWasCancelled);
+            Assert.Single(sink.Errors.DistinctBy(e => e.ExternalId));
+            var err = sink.Errors[0];
+            Assert.Equal("Task1", err.TaskName);
+            Assert.Equal("Task was cancelled", err.Description);
+        }
     }
 }

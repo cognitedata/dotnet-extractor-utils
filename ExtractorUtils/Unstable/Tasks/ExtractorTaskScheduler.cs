@@ -79,10 +79,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public Task<TaskUpdatePayload?> Task { get; }
         public CancellationTokenSource Source { get; }
 
+        public string CancellationReason { get; set; }
         public RunningTaskInfo(Task<TaskUpdatePayload?> activeTask, CancellationTokenSource tokenSource)
         {
             Source = tokenSource;
             Task = activeTask;
+            CancellationReason = "null";
         }
 
         public void Dispose()
@@ -146,13 +148,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             _reporter.ReportStart(null, now);
         }
 
-        public void Cancel()
+        public void Cancel(string reason = null)
         {
             lock (_lock)
             {
                 if (ActiveTask != null)
                 {
                     ActiveTask.Source.Cancel();
+                    ActiveTask.CancellationReason = reason;
                     foreach (var waiter in _waiters)
                     {
                         Task.Run(() => waiter.TrySetCanceled());
@@ -190,7 +193,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 // This typically means a crash or manual cancellation.
                 if (finished.Task.IsCanceled || finished.Source.IsCancellationRequested)
                 {
-                    _reporter.Warning("Task was cancelled", null, now);
+                    _reporter.Warning("Task was cancelled", finished.CancellationReason, now);
                     exc = new TaskCanceledException();
                 }
                 else if (exc != null)
@@ -320,7 +323,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// Cancel a task if it is currently running.
         /// </summary>
         /// <param name="name">Name of the task to cancel</param>
-        public void CancelTask(string name)
+        /// <param name="reason">Reason for canceling the task</param>
+        public void CancelTask(string name, string reason = null)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
@@ -330,7 +334,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     throw new InvalidOperationException($"No task with name {name}");
                 }
-                task.Cancel();
+                task.Cancel(reason);
             }
         }
 
