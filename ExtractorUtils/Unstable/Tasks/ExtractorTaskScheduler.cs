@@ -79,11 +79,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public Task<TaskUpdatePayload?> Task { get; }
         public CancellationTokenSource Source { get; }
 
-        public string CancellationReason { get; set; } = "";
+        public string CancellationReason { get; set; }
         public RunningTaskInfo(Task<TaskUpdatePayload?> activeTask, CancellationTokenSource tokenSource)
         {
             Source = tokenSource;
             Task = activeTask;
+            CancellationReason = "null";
         }
 
         public void Dispose()
@@ -147,14 +148,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             _reporter.ReportStart(null, now);
         }
 
-        public void Cancel(string reason = "")
+        public void Cancel(string? reason = null)
         {
             lock (_lock)
             {
                 if (ActiveTask != null)
                 {
                     ActiveTask.Source.Cancel();
-                    ActiveTask.CancellationReason = reason;
+                    ActiveTask.CancellationReason = reason ?? "null";
                     foreach (var waiter in _waiters)
                     {
                         Task.Run(() => waiter.TrySetCanceled());
@@ -323,7 +324,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// </summary>
         /// <param name="name">Name of the task to cancel</param>
         /// <param name="reason">Reason for canceling the task</param>
-        public void CancelTask(string name, string reason = "")
+        public void CancelTask(string name, string? reason = null)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
@@ -521,7 +522,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     if (minNextRun != null)
                     {
 #pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods
-                        toAwait.Add(Task.Delay(tickTime - minNextRun.Value));
+                        toAwait.Add(Task.Delay(minNextRun.Value - tickTime));
 #pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
                     }
                     if (tasksToWaitFor.Count > 0)
@@ -559,12 +560,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             if (completed == waitTask)
             {
                 _logger.LogWarning("Failed to shut down gracefully within timeout");
-                outerReporter?.Warning("Failed to shut down gracefully within timeout");
+                outerReporter?.Warning("Failed to shut down gracefully within timeout", null, DateTime.UtcNow);
             }
 
             if (completed.Exception != null)
             {
-                outerReporter?.Fatal($"Failed to shut down gracefully: {completed.Exception.Message}", completed.Exception.StackTrace?.ToString());
+                outerReporter?.Fatal($"Failed to shut down gracefully: {completed.Exception.Message}", completed.Exception.StackTrace?.ToString(), DateTime.UtcNow);
             }
         }
 
