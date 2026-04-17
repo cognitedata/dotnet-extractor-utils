@@ -333,6 +333,7 @@ namespace ExtractorUtils.Test.unit.Unstable
             var err = sink.Errors[0];
             Assert.Equal("Task1", err.TaskName);
             Assert.Equal("Task was cancelled", err.Description);
+            Assert.Equal("Test cancellation", err.Details);
         }
     }
 }
