@@ -53,7 +53,7 @@ namespace Cognite.Extractor.Utils.Unstable
 
         /// <summary>
         /// Cancellation token source.
-        /// 
+        ///
         /// Note that this is null until initialized in `Init`.
         /// </summary>
         protected CancellationTokenSource Source { get; private set; } = null!;
@@ -104,12 +104,12 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <summary>
         /// Initialize the extractor, adding tasks to the
         /// task runner as needed.
-        /// 
+        ///
         /// This runs _before_ the extractor reports startup, if you
         /// have complex or heavy startup tasks, they should run
         /// in one or more tasks in the task scheduler, set to run
         /// immediately on startup.
-        /// 
+        ///
         /// The task runner is not started yet when this method is called.
         /// </summary>
         /// <returns></returns>
@@ -130,7 +130,7 @@ namespace Cognite.Extractor.Utils.Unstable
 
         /// <summary>
         /// Add a task that should be watched by the extractor.
-        /// 
+        ///
         /// Use this for tasks that will not be reported to integrations,
         /// but that you still want to monitor, so that the extractor can crash
         /// if they fail or exit unexpectedly.
@@ -147,7 +147,7 @@ namespace Cognite.Extractor.Utils.Unstable
 
         /// <summary>
         /// Cancel a monitored task, then wait for it to complete.
-        /// 
+        ///
         /// This is typically used for ordered shutdown.
         /// </summary>
         /// <param name="name">Name of task to cancel.
@@ -160,11 +160,11 @@ namespace Cognite.Extractor.Utils.Unstable
 
         /// <summary>
         /// Add a monitored task that should be watched by the extractor.
-        /// 
+        ///
         /// Use this for tasks that will not be reported to integrations,
         /// but that you still want to monitor, so that the extractor can crash
         /// if they fail or exit unexpectedly.
-        /// 
+        ///
         /// This variant takes a static SchedulerTaskResult, to indicate whether the
         /// task is expected to terminate on its own or not.
         /// </summary>
@@ -185,7 +185,7 @@ namespace Cognite.Extractor.Utils.Unstable
         private bool _initialized;
         /// <summary>
         /// Initialize the extractor, if it has not already been initialized.
-        /// 
+        ///
         /// This is called automatically if you call Start, so only use this if you need to separate
         /// the init stage from the run stage, for example for testing.
         /// </summary>
@@ -249,14 +249,22 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 var flattened = CommonUtils.SimplifyException(ex);
                 _logger.LogError(flattened, "Extractor failed: {Message}", flattened.Message);
-                Fatal(flattened.Message, flattened.StackTrace?.ToString());
-                return;
+                if (ex is ConfigurationException)
+                {
+                    // We shouldn't ever reach here since config exceptions should be caught in Init and reported as startup errors,
+                    // but just in case, we want to make sure these are treated as fatal and reported to the user as they are actionable.
+                    // If there's a genuine case of fatal errors seen during runtime, we should consider introducing a new Exception for that case,
+                    // and add it here, to avoid accidentally treating transient errors as fatal.
+                    Fatal(flattened.Message, flattened.StackTrace?.ToString());
+                    return;
+                }
+                throw;
             }
         }
 
         /// <summary>
         /// Verify that the extractor is configured correctly.
-        /// 
+        ///
         /// Does nothing by default.
         /// </summary>
         /// <returns>Task</returns>
@@ -284,11 +292,11 @@ namespace Cognite.Extractor.Utils.Unstable
 
         /// <summary>
         /// Perform graceful shutdown.
-        /// 
+        ///
         /// By default this method cancels the task scheduler and flushes the sink,
         /// you may wish to override this entirely to perform a different sequence of
         /// cleanup tasks.
-        /// 
+        ///
         /// Shutdown is required to be idempotent, and should not throw exceptions.
         /// </summary>
         /// <returns></returns>
@@ -302,9 +310,9 @@ namespace Cognite.Extractor.Utils.Unstable
 
         /// <summary>
         /// Shut down the extractor.
-        /// 
+        ///
         /// This calls `ShutdownInternal` then cancels the token.
-        /// 
+        ///
         /// If you wish to change shutdown behavior, override `ShutdownInternal`.
         /// </summary>
         /// <returns></returns>
@@ -317,10 +325,10 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <summary>
         /// Dispose asynchronously, override this to clean up your resources
         /// on shutdown.
-        /// 
+        ///
         /// Prefer overriding `ShutdownInternal` instead or in addition to this method,
         /// if what you are doing is performing a graceful shutdown.
-        /// 
+        ///
         /// Typically, you will want to override this to call `Dispose` on any disposable
         /// resources, and `ShutdownInternal` to perform graceful cleanup.
         /// </summary>
