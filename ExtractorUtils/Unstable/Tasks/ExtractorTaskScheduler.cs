@@ -8,7 +8,6 @@ using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 
 namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
@@ -502,14 +501,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                             // Only spawn new tasks when we are not cancelled.
                             && !_source.IsCancellationRequested)
                         {
-                            var str1 = $"Next run of task {task.Operation.Name} scheduled for {task.NextRun.Value}, now: {tickTime}";
-                            _logger.LogError(str1);
                             if (task.NextRun.Value <= tickTime)
                             {
-                                var str2 = $"Start new run of task {task.Operation.Name}";
-                                _logger.LogError(str2);
                                 task.Run(tickTime, _source.Token);
-                                _logger.LogError($"Finished run of task {task.Operation.Name} Next run for {task.NextRun.Value}, now: {tickTime}");
                             }
                             else if (minNextRun == null || minNextRun > task.NextRun.Value)
                             {
