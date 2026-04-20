@@ -7,6 +7,7 @@ using Cognite.Extractor.Common;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils.Unstable.Tasks;
 using CogniteSdk.Alpha;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 using Xunit.Abstractions;
@@ -58,6 +59,7 @@ namespace ExtractorUtils.Test.unit.Unstable
         bool _errorIsFatal;
         public override bool ErrorIsFatal => _errorIsFatal;
 
+        private TimeSpan _schedule = TimeSpan.Zero;
         public bool SetErrorFatal { set => _errorIsFatal = value; }
         public Func<bool> CanRun { get; set; } = () => true;
 
@@ -76,6 +78,8 @@ namespace ExtractorUtils.Test.unit.Unstable
             Name = name;
         }
 
+        public override ITimeSpanProvider Schedule => _schedule != TimeSpan.Zero ? new BasicTimeSpanProvider(_schedule) : null;
+
         public override bool CanRunNow()
         {
             return CanRun();
@@ -84,6 +88,11 @@ namespace ExtractorUtils.Test.unit.Unstable
         public override Task<TaskUpdatePayload> Run(BaseErrorReporter task, CancellationToken token)
         {
             return _func(task, token);
+        }
+
+        public void SetSchedule(TimeSpan schedule)
+        {
+            _schedule = schedule;
         }
     }
 
@@ -334,6 +343,101 @@ namespace ExtractorUtils.Test.unit.Unstable
             Assert.Equal("Task1", err.TaskName);
             Assert.Equal("Task was cancelled", err.Description);
             Assert.Equal("Test cancellation", err.Details);
+        }
+
+        [Fact]
+        public async Task TestFutureScheduledTasks()
+        {
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            var task1RunCount = 0;
+            var task2RunCount = 0;
+
+            // Create tasks with schedules in the future
+            var task1 = new ScheduledTask("FutureTask1", async (_, tok) =>
+            {
+                task1RunCount++;
+                _output.WriteLine($"FutureTask1 ran, count: {task1RunCount}");
+                return null;
+            }, TimeSpan.FromMilliseconds(1000)); // Scheduled 1 second in the future
+
+            var task2 = new ScheduledTask("FutureTask2", async (_, tok) =>
+            {
+                task2RunCount++;
+                _output.WriteLine($"FutureTask2 ran, count: {task2RunCount}");
+                return null;
+            }, TimeSpan.FromSeconds(2)); // Scheduled 2 seconds in the future
+
+            // Add tasks with runImmediately=false, so they will use their schedule
+            sched.AddScheduledTask(task1, false);
+            sched.AddScheduledTask(task2, false);
+
+            // Give the scheduler a moment to process
+            await Task.Delay(50);
+
+            // Neither task should have run yet since they are scheduled in the future
+            Assert.Equal(0, task1RunCount);
+            Assert.Equal(0, task2RunCount);
+            Assert.Empty(sink.TaskStart);
+            Assert.Empty(sink.TaskEnd);
+
+            await Task.Delay(1000); // Ensure some time has passed
+
+
+            // Task1 should have run, Task2 should not
+            Assert.Equal(1, task1RunCount);
+            Assert.Equal(0, task2RunCount);
+            Assert.Single(sink.TaskEnd);
+            Assert.Equal("FutureTask1", sink.TaskEnd[0].Item1);
+
+            await Task.Delay(1000); // Ensure some time has passed
+            await Task.Delay(50);
+
+            // Both tasks should have run now
+            Assert.Equal(2, task1RunCount);
+            Assert.Equal(1, task2RunCount);
+            Assert.Equal(3, sink.TaskEnd.Count);
+            Assert.Contains(sink.TaskEnd, item => item.Item1 == "FutureTask2");
+
+            source.Cancel();
+            await running;
+        }
+    }
+
+    class ScheduledTask : BaseSchedulableTask
+    {
+        private readonly bool _errorIsFatal;
+        public override bool ErrorIsFatal => _errorIsFatal;
+
+        public override string Name { get; }
+
+        private readonly Func<BaseErrorReporter, CancellationToken, Task<TaskUpdatePayload>> _func;
+        private readonly TimeSpan _schedule;
+
+        public override ITimeSpanProvider Schedule => new BasicTimeSpanProvider(_schedule);
+
+        public override TaskMetadata Metadata { get; } = new TaskMetadata(TaskType.batch)
+        {
+            Description = "Scheduled task"
+        };
+
+        public ScheduledTask(string name, Func<BaseErrorReporter, CancellationToken, Task<TaskUpdatePayload>> func, TimeSpan schedule, bool errorIsFatal = false)
+        {
+            _func = func;
+            Name = name;
+            _schedule = schedule;
+            _errorIsFatal = errorIsFatal;
+        }
+
+        public override bool CanRunNow() => true;
+
+        public override Task<TaskUpdatePayload> Run(BaseErrorReporter task, CancellationToken token)
+        {
+            return _func(task, token);
         }
     }
 }

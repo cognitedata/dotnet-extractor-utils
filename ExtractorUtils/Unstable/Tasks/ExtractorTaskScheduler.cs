@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
 
 namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
@@ -500,10 +502,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                             // Only spawn new tasks when we are not cancelled.
                             && !_source.IsCancellationRequested)
                         {
+                            var str1 = $"Next run of task {task.Operation.Name} scheduled for {task.NextRun.Value}, now: {tickTime}";
+                            _logger.LogError(str1);
                             if (task.NextRun.Value <= tickTime)
                             {
-                                _logger.LogDebug("Start new run of task {Name}", task.Operation.Name);
+                                var str2 = $"Start new run of task {task.Operation.Name}";
+                                _logger.LogError(str2);
                                 task.Run(tickTime, _source.Token);
+                                _logger.LogError($"Finished run of task {task.Operation.Name} Next run for {task.NextRun.Value}, now: {tickTime}");
                             }
                             else if (minNextRun == null || minNextRun > task.NextRun.Value)
                             {
@@ -521,6 +527,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     // If there is a task that is going to run in the future, add a task to wait for that time.
                     if (minNextRun != null)
                     {
+                        Debug.Assert(minNextRun.Value > tickTime, "minNextRun should always be in the future");
 #pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods
                         toAwait.Add(Task.Delay(minNextRun.Value - tickTime));
 #pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
