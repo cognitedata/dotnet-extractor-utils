@@ -155,6 +155,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     ActiveTask.Source.Cancel();
                     ActiveTask.CancellationReason = reason;
+                    ActiveTask.Source.Cancel();
                     foreach (var waiter in _waiters)
                     {
                         Task.Run(() => waiter.TrySetCanceled());
