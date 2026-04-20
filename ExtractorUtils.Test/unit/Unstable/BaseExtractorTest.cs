@@ -158,7 +158,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
                 throw new Exception("Monitored error");
             }, SchedulerTaskResult.Unexpected, "task1");
             var delayTask = Task.Delay(2000);
-            Assert.NotEqual(delayTask, await Task.WhenAny(runTask, delayTask));
+            var ranTask = await Task.WhenAny(runTask, delayTask);
+            Assert.NotEqual(delayTask, ranTask);
             Assert.Equal(2, sink.Errors.Count);
             Assert.Equal("Task task1 failed: Monitored error", sink.Errors[0].Description);
         }
