@@ -79,12 +79,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public Task<TaskUpdatePayload?> Task { get; }
         public CancellationTokenSource Source { get; }
 
-        public string CancellationReason { get; set; }
+        public string? CancellationReason { get; set; }
         public RunningTaskInfo(Task<TaskUpdatePayload?> activeTask, CancellationTokenSource tokenSource)
         {
             Source = tokenSource;
             Task = activeTask;
-            CancellationReason = "null";
         }
 
         public void Dispose()
@@ -155,7 +154,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 if (ActiveTask != null)
                 {
                     ActiveTask.Source.Cancel();
-                    ActiveTask.CancellationReason = reason ?? "null";
+                    ActiveTask.CancellationReason = reason;
                     foreach (var waiter in _waiters)
                     {
                         Task.Run(() => waiter.TrySetCanceled());
