@@ -154,7 +154,6 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             {
                 if (ActiveTask != null)
                 {
-                    ActiveTask.Source.Cancel();
                     ActiveTask.CancellationReason = reason;
                     ActiveTask.Source.Cancel();
                     foreach (var waiter in _waiters)
