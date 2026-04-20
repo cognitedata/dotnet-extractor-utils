@@ -258,6 +258,7 @@ namespace Cognite.Extractor.Utils.Unstable
                     Fatal(flattened.Message, flattened.StackTrace?.ToString());
                     return;
                 }
+                NewError(ErrorLevel.error, $"{flattened.Message}", flattened.StackTrace?.ToString()).Instant();
                 throw;
             }
         }
