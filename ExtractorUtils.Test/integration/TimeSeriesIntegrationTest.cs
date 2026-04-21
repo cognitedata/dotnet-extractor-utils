@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -577,27 +576,14 @@ namespace ExtractorUtils.Test.Integration
             }
         }
 
-        private async Task<(string extId, long id)[]> CreateTestTimeSeries(CDFTester tester)
+        private async Task<(string extId, long id)[]> CreateTestTimeSeries(CDFTester tester, int count = 3)
         {
-            var timeseries = new[]
+            var timeseries = Enumerable.Range(1, count).Select(i => new TimeSeriesCreate
             {
-                new TimeSeriesCreate
-                {
-                    Name = "utils-test-ts-1",
-                    ExternalId = $"{tester.Prefix} utils-test-ts-1"
-                },
-                new TimeSeriesCreate
-                {
-                    Name = "utils-test-ts-2",
-                    ExternalId = $"{tester.Prefix} utils-test-ts-2",
-                    IsString = true
-                },
-                new TimeSeriesCreate
-                {
-                    Name = "utils-test-ts-3",
-                    ExternalId = $"{tester.Prefix} utils-test-ts-3"
-                }
-            };
+                Name = $"utils-test-ts-{i}",
+                ExternalId = $"{tester.Prefix} utils-test-ts-{i}",
+                IsString = i % 2 == 0
+            }).ToArray();
 
             var result = await tester.Destination.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.None, SanitationMode.None, tester.Source.Token);
             return result.Results.Select(ts => (ts.ExternalId, ts.Id)).ToArray();
@@ -985,6 +971,89 @@ namespace ExtractorUtils.Test.Integration
             }
         }
 
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestGetExtractedRanges(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
 
+            var tss = await CreateTestTimeSeries(tester, 5);
+            var identities = tss.Select(x => Identity.Create(x.extId)).ToArray();
+            var now = DateTime.UtcNow;
+
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
+            {
+                { identities[0], new[]
+                    {
+                        new Datapoint(now.AddSeconds(-20), Double.NaN, StatusCode.Bad),
+                        new Datapoint(now.AddSeconds(-10), 1.0),
+                        new Datapoint(now, Double.NaN, StatusCode.Bad),
+                    }
+                },
+                { identities[1], new[]
+                    {
+                        new Datapoint(now.AddSeconds(-20), null, StatusCode.Bad),
+                        new Datapoint(now.AddSeconds(-10), "value"),
+                        new Datapoint(now, null, StatusCode.Bad),
+                    }
+                },
+                { identities[2], new[]
+                    {
+                        new Datapoint(now.AddSeconds(-20), Double.NegativeInfinity, StatusCode.Bad),
+                        new Datapoint(now.AddSeconds(-10), 1.0),
+                        new Datapoint(now, Double.NegativeInfinity, StatusCode.Bad),
+                    }
+                },
+                { identities[3], new[]
+                    {
+                        new Datapoint(now.AddSeconds(-20), null, StatusCode.Bad),
+                        new Datapoint(now.AddSeconds(-10), "value"),
+                        new Datapoint(now, null, StatusCode.Bad),
+                    }
+                },
+                { identities[4], new[]
+                    {
+                        new Datapoint(now.AddSeconds(-20), Double.PositiveInfinity, StatusCode.Bad),
+                        new Datapoint(now.AddSeconds(-10), 1.0),
+                        new Datapoint(now, Double.PositiveInfinity, StatusCode.Bad),
+                    }
+                },
+            };
+
+            try
+            {
+                await tester.Destination.InsertDataPointsAsync(dps, SanitationMode.None, RetryMode.None, tester.Source.Token);
+
+                var result = await tester.Destination.GetExtractedRanges(identities, tester.Source.Token, ignoreBadDataPoints: false);
+
+                Assert.Equal(5, result.Count);
+                var hashedIdentities = identities.ToHashSet();
+                foreach (var item in result)
+                {
+                    Assert.Contains(item.Key, hashedIdentities);
+                    Assert.Equal(now.ToISOString(), item.Value.Last.ToISOString());
+                    Assert.Equal(now.AddSeconds(-20).ToISOString(), item.Value.First.ToISOString());
+                }
+
+                result = await tester.Destination.GetExtractedRanges(identities, tester.Source.Token, ignoreBadDataPoints: true);
+
+                Assert.Equal(5, result.Count);
+                foreach (var item in result)
+                {
+                    Assert.Contains(item.Key, hashedIdentities);
+                    Assert.Equal(now.AddSeconds(-10).ToISOString(), item.Value.Last.ToISOString());
+                    Assert.Equal(now.AddSeconds(-10).ToISOString(), item.Value.First.ToISOString());
+                }
+            }
+            finally
+            {
+                await tester.Destination.CogniteClient.TimeSeries.DeleteAsync(new TimeSeriesDelete
+                {
+                    IgnoreUnknownIds = true,
+                    Items = identities
+                });
+            }
+        }
     }
 }
