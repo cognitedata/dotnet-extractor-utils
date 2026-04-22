@@ -658,6 +658,25 @@ namespace Cognite.Extractor.Utils
         }
 
         /// <summary>
+        /// Creates a stream record upload queue. It is used to queue stream records before uploading them to CDF streams.
+        /// The items are dequeued and uploaded every <paramref name="interval"/>. If <paramref name="maxQueueSize"/> is greater than zero,
+        /// the queue will have a maximum size, and items are also uploaded as soon as the maximum size is reached.
+        /// If <paramref name="interval"/> is zero or infinite, the queue will never upload unless prompted or <paramref name="maxQueueSize"/> is reached.
+        /// To start the upload loop, use the <see cref="BaseUploadQueue{T}.Start(CancellationToken)"/> method. To stop it, dispose of the queue or
+        /// cancel the token.
+        /// Records are grouped by stream ID and uploaded to their respective streams.
+        /// </summary>
+        /// <param name="interval">Upload interval</param>
+        /// <param name="maxQueueSize">Maximum queue size</param>
+        /// <param name="callback">Callback on upload</param>
+        /// <returns>An upload queue object</returns>
+        public StreamRecordUploadQueue CreateStreamRecordUploadQueue(TimeSpan interval, int maxQueueSize = 0,
+            Func<QueueUploadResult<(string streamId, StreamRecordWrite record)>, Task>? callback = null)
+        {
+            return new StreamRecordUploadQueue(this, interval, maxQueueSize, _logger, callback);
+        }
+
+        /// <summary>
         /// Returns all rows from the given database and table
         /// </summary>
         /// <param name="dbName">Database to read from</param>
