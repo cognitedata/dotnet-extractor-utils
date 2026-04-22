@@ -391,6 +391,62 @@ authentication:
             Assert.Contains("Failed to parse configuration file from CDF", (string)errors[0].description);
         }
 
+        [Fact(Timeout = 5000)]
+        public async Task TestRuntimeTaskThrowsError()
+        {
+            var builder = CreateMockRuntimeBuilder();
+            builder.MaxBackoff = 100;
+            builder.BackoffBase = 10;
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
+
+            using var evt = new ManualResetEventSlim(false);
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    evt.Set();
+                    extractor = ext;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+
+            // Call RunExtractorIteration to run a single iteration of the extractor
+            var runIterationMethod = runtime.GetType().GetMethod("RunExtractorIteration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var runTask = (Task)runIterationMethod.Invoke(runtime, null);
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.NotNull(extractor);
+
+            // Add a monitored task that throws an error
+            // This should cause the extractor to crash and the runtime to return ExtractorRunResult.Error
+            extractor.AddMonitoredTaskPub(async token =>
+            {
+                await Task.Delay(100, token);
+                throw new Exception("Dummy task error");
+            }, SchedulerTaskResult.Unexpected, "error-task");
+
+            // The extractor should have crashed due to the task error
+            var delayTask = Task.Delay(3000);
+            Assert.Equal(runTask, await Task.WhenAny(runTask, delayTask));
+
+            // Get the result property from the Task<ExtractorRunResult>
+            var resultProperty = runTask.GetType().GetProperty("Result");
+            var result = resultProperty.GetValue(runTask);
+
+            // Verify that the result is ExtractorRunResult.Error
+            Assert.Equal("Error", result.ToString());
+
+            // Verify that an error was reported containing the task error
+            Assert.NotEmpty(errors);
+            Assert.Contains("Task error-task failed: Dummy task error", (string)errors[0].description);
+        }
+
+
         private ConnectionConfig GetConfig()
         {
             return new ConnectionConfig
