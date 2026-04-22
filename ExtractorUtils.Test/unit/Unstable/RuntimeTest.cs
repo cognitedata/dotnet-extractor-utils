@@ -402,12 +402,14 @@ authentication:
             using var evt = new ManualResetEventSlim(false);
 
             DummyExtractor extractor = null;
+            int extractorRuns = 0;
             builder.OnCreateExtractor = (_, ext) =>
             {
                 ext.InitAction = (_) =>
                 {
                     evt.Set();
                     extractor = ext;
+                    extractorRuns++;
                 };
             };
 
@@ -418,7 +420,8 @@ authentication:
             var runIterationMethod = runtime.GetType().GetMethod("RunExtractorIteration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var runTask = (Task)runIterationMethod.Invoke(runtime, null);
 
-            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(3), source.Token));
+            Assert.Equal(1, extractorRuns);
             Assert.NotNull(extractor);
 
             // Add a monitored task that throws an error
@@ -433,18 +436,66 @@ authentication:
             var delayTask = Task.Delay(3000);
             Assert.Equal(runTask, await Task.WhenAny(runTask, delayTask));
 
-            // Get the result property from the Task<ExtractorRunResult>
             var resultProperty = runTask.GetType().GetProperty("Result");
             var result = resultProperty.GetValue(runTask);
 
-            // Verify that the result is ExtractorRunResult.Error
             Assert.Equal("Error", result.ToString());
 
-            // Verify that an error was reported containing the task error
             Assert.NotEmpty(errors);
             Assert.Contains("Task error-task failed: Dummy task error", (string)errors[0].description);
         }
 
+        [Fact(Timeout = 5000)]
+        public async Task TestRestartOnErrorPolicy()
+        {
+            var builder = CreateMockRuntimeBuilder();
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
+            builder.MaxBackoff = 100;
+            builder.BackoffBase = 10;
+
+            using var evt = new ManualResetEventSlim(false);
+
+            DummyExtractor extractor = null;
+            int extractorRuns = 0;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    evt.Set();
+                    extractor = ext;
+                    extractorRuns++;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+            var runTask = runtime.Run();
+
+            // Wait for first extractor to start
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.Equal(1, extractorRuns);
+            Assert.NotNull(extractor);
+
+            // Add a monitored task that throws an error to cause the extractor to crash
+            var firstExtractor = extractor;
+            extractor = null;
+            evt.Reset();
+            firstExtractor.AddMonitoredTaskPub(async token =>
+            {
+                await Task.Delay(100, token);
+                throw new Exception("Extractor error");
+            }, SchedulerTaskResult.Unexpected, "error-task");
+
+            // Wait for the extractor to restart due to the error
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.Equal(2, extractorRuns);
+            Assert.NotNull(extractor);
+
+            // Shut down cleanly
+            source.Cancel();
+            await runTask;
+        }
 
         private ConnectionConfig GetConfig()
         {
