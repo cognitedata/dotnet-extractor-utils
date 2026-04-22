@@ -415,7 +415,6 @@ authentication:
 
             var runtime = await builder.MakeRuntime(source.Token);
 
-            // Call RunExtractorIteration to run a single iteration of the extractor
             var runIterationMethod = runtime.GetType().GetMethod("RunExtractorIteration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var runTask = (Task)runIterationMethod.Invoke(runtime, null);
 
