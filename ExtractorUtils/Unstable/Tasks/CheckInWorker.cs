@@ -229,6 +229,16 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
         }
 
+        private string? Truncate(string? value, string fieldName, string externalId)
+        {
+            if (value != null && value.Length > 5000)
+            {
+                _logger.LogWarning("Truncating {FieldName} for error {ExternalId} to 5,000 characters. Original length was {OriginalLength}", fieldName, externalId, value.Length);
+                return value.Substring(0, 5000);
+            }
+            return value;
+        }
+
         private async Task ReportCheckIn(CancellationToken token)
         {
             List<ErrorWithTask> newErrors;
@@ -254,14 +264,29 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 }
                 else
                 {
-                    newErrors = _errors.Values.ToList();
+                    newErrors = new List<ErrorWithTask>(_errors.Values);
+                    foreach (var err in _errors.Values)
+                    {
+                        // Modifying err since it's an object reference in the dictionary, so changes will be reflected when we write the check-in,
+                        // but we want to log the full error before truncating.
+                        _logger.LogInformation("Error: {ExternalId}, Level: {Level}, Description: {Description}, Details: {Details}, Task: {Task}, StartTime: {StartTime}, EndTime: {EndTime}",
+                            err.ExternalId, err.Level, err.Description, err.Details, err.Task, err.StartTime, err.EndTime);
+                        err.Description = Truncate(err.Description, "Description", err.ExternalId);
+                        err.Details = Truncate(err.Details, "Details", err.ExternalId);
+                    }
                     _errors.Clear();
                     taskUpdates = _taskUpdates;
                     _taskUpdates = new List<TaskUpdate>();
                 }
             }
 
-            newErrors.Sort((a, b) => (a.EndTime ?? a.StartTime).CompareTo(b.EndTime ?? b.StartTime));
+            newErrors.Sort((a, b) =>
+            {
+                long? aTime = a.EndTime ?? a.StartTime;
+                long? bTime = b.EndTime ?? b.StartTime;
+                // Handle null timestamps by treating them as 0 (earliest possible time)
+                return (aTime ?? 0).CompareTo(bTime ?? 0);
+            });
             taskUpdates.Sort((a, b) => a.Timestamp.CompareTo(b.Timestamp));
 
             while (!token.IsCancellationRequested)
