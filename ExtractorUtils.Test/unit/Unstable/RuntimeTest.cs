@@ -395,21 +395,14 @@ authentication:
         public async Task TestRuntimeTaskThrowsError()
         {
             var builder = CreateMockRuntimeBuilder();
-            builder.MaxBackoff = 100;
-            builder.BackoffBase = 10;
             builder.RestartPolicy = ExtractorRestartPolicy.OnError;
 
-            using var evt = new ManualResetEventSlim(false);
-
             DummyExtractor extractor = null;
-            int extractorRuns = 0;
             builder.OnCreateExtractor = (_, ext) =>
             {
                 ext.InitAction = (_) =>
                 {
-                    evt.Set();
                     extractor = ext;
-                    extractorRuns++;
                 };
             };
 
@@ -420,8 +413,7 @@ authentication:
             var runIterationMethod = runtime.GetType().GetMethod("RunExtractorIteration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var runTask = (Task)runIterationMethod.Invoke(runtime, null);
 
-            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(3), source.Token));
-            Assert.Equal(1, extractorRuns);
+            await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
             Assert.NotNull(extractor);
 
             // Add a monitored task that throws an error
@@ -432,7 +424,7 @@ authentication:
                 throw new Exception("Dummy task error");
             }, SchedulerTaskResult.Unexpected, "error-task");
 
-            // The extractor should have crashed due to the task error
+            // The extractor should have returned ExtractorRunResult.Error due to the task error
             var delayTask = Task.Delay(3000);
             Assert.Equal(runTask, await Task.WhenAny(runTask, delayTask));
 
@@ -450,20 +442,13 @@ authentication:
         {
             var builder = CreateMockRuntimeBuilder();
             builder.RestartPolicy = ExtractorRestartPolicy.OnError;
-            builder.MaxBackoff = 100;
-            builder.BackoffBase = 10;
-
-            using var evt = new ManualResetEventSlim(false);
 
             DummyExtractor extractor = null;
-            int extractorRuns = 0;
             builder.OnCreateExtractor = (_, ext) =>
             {
                 ext.InitAction = (_) =>
                 {
-                    evt.Set();
                     extractor = ext;
-                    extractorRuns++;
                 };
             };
 
@@ -473,24 +458,17 @@ authentication:
             var runTask = runtime.Run();
 
             // Wait for first extractor to start
-            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
-            Assert.Equal(1, extractorRuns);
-            Assert.NotNull(extractor);
+            await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
 
             // Add a monitored task that throws an error to cause the extractor to crash
-            var firstExtractor = extractor;
-            extractor = null;
-            evt.Reset();
-            firstExtractor.AddMonitoredTaskPub(async token =>
+            extractor.AddMonitoredTaskPub(async token =>
             {
                 await Task.Delay(100, token);
                 throw new Exception("Extractor error");
             }, SchedulerTaskResult.Unexpected, "error-task");
 
             // Wait for the extractor to restart due to the error
-            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
-            Assert.Equal(2, extractorRuns);
-            Assert.NotNull(extractor);
+            await TestUtils.WaitForCondition(() => _startupCount == 2, 5);
 
             // Shut down cleanly
             source.Cancel();
