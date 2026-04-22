@@ -453,7 +453,6 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 }
                 else
                 {
-                    _logger.LogError(ex, "Scheduler failed with exception: {Message}", ex.Message);
                     _runMethodClosed.TrySetException(ex);
                     throw;
                 }

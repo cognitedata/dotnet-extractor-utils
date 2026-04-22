@@ -249,15 +249,6 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 var flattened = CommonUtils.SimplifyException(ex);
                 _logger.LogError(flattened, "Extractor failed: {Message}", flattened.Message);
-                if (ex is ConfigurationException)
-                {
-                    // We shouldn't ever reach here since config exceptions should be caught in Init and reported as startup errors,
-                    // but just in case, we want to make sure these are treated as fatal and reported to the user as they are actionable.
-                    // If there's a genuine case of fatal errors seen during runtime, we should consider introducing a new Exception for that case,
-                    // and add it here, to avoid accidentally treating transient errors as fatal.
-                    Fatal(flattened.Message, flattened.StackTrace?.ToString());
-                    return;
-                }
                 NewError(ErrorLevel.error, $"{flattened.Message}", flattened.StackTrace?.ToString()).Instant();
                 throw;
             }

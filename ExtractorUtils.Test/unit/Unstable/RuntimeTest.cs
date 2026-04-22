@@ -233,8 +233,8 @@ authentication:
         public async Task TestRuntimeRestartNewConfig()
         {
             var builder = CreateMockRuntimeBuilder();
-            // Restart policy won't be the default "Always" in customer envs, but we should 
-            // still restart on config change. 
+            // Restart policy won't be the default "Always" in customer envs, but we should
+            // still restart on config change.
             builder.RestartPolicy = ExtractorRestartPolicy.OnError;
 
             using var evt = new ManualResetEventSlim(false);
@@ -337,6 +337,7 @@ authentication:
 
             builder.MaxBackoff = 100;
             builder.BackoffBase = 10;
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
 
             _responseRevision = new ConfigRevision
             {
