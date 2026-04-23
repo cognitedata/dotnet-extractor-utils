@@ -15790,15 +15790,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelInnerAndWait
   nameWithType: ExtractorTaskScheduler.CancelInnerAndWait
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(System.String)
-  name: CancelTask(string)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorTaskScheduler_CancelTask_System_String_
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(System.String)
-  name.vb: CancelTask(String)
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(string)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(String)
-  nameWithType: ExtractorTaskScheduler.CancelTask(string)
-  nameWithType.vb: ExtractorTaskScheduler.CancelTask(String)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(System.String,System.String)
+  name: CancelTask(string, string?)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorTaskScheduler_CancelTask_System_String_System_String_
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(System.String,System.String)
+  name.vb: CancelTask(String, String)
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(string, string?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask(String, String)
+  nameWithType: ExtractorTaskScheduler.CancelTask(string, string?)
+  nameWithType.vb: ExtractorTaskScheduler.CancelTask(String, String)
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.CancelTask*
   name: CancelTask
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorTaskScheduler_CancelTask_
