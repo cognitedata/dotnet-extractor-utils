@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,6 +80,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public Task<TaskUpdatePayload?> Task { get; }
         public CancellationTokenSource Source { get; }
 
+        public string? CancellationReason { get; set; }
         public RunningTaskInfo(Task<TaskUpdatePayload?> activeTask, CancellationTokenSource tokenSource)
         {
             Source = tokenSource;
@@ -146,12 +148,13 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             _reporter.ReportStart(null, now);
         }
 
-        public void Cancel()
+        public void Cancel(string? reason = null)
         {
             lock (_lock)
             {
                 if (ActiveTask != null)
                 {
+                    ActiveTask.CancellationReason = reason;
                     ActiveTask.Source.Cancel();
                     foreach (var waiter in _waiters)
                     {
@@ -190,7 +193,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 // This typically means a crash or manual cancellation.
                 if (finished.Task.IsCanceled || finished.Source.IsCancellationRequested)
                 {
-                    _reporter.Warning("Task was cancelled", null, now);
+                    _reporter.Warning("Task was cancelled", finished.CancellationReason, now);
                     exc = new TaskCanceledException();
                 }
                 else if (exc != null)
@@ -320,7 +323,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// Cancel a task if it is currently running.
         /// </summary>
         /// <param name="name">Name of the task to cancel</param>
-        public void CancelTask(string name)
+        /// <param name="reason">Reason for canceling the task</param>
+        public void CancelTask(string name, string? reason = null)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
@@ -330,7 +334,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     throw new InvalidOperationException($"No task with name {name}");
                 }
-                task.Cancel();
+                task.Cancel(reason);
             }
         }
 
@@ -498,7 +502,6 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                         {
                             if (task.NextRun.Value <= tickTime)
                             {
-                                _logger.LogDebug("Start new run of task {Name}", task.Operation.Name);
                                 task.Run(tickTime, _source.Token);
                             }
                             else if (minNextRun == null || minNextRun > task.NextRun.Value)
@@ -517,8 +520,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     // If there is a task that is going to run in the future, add a task to wait for that time.
                     if (minNextRun != null)
                     {
+                        Debug.Assert(minNextRun.Value > tickTime, "minNextRun should always be in the future");
 #pragma warning disable CA2016 // Forward the 'CancellationToken' parameter to methods
-                        toAwait.Add(Task.Delay(tickTime - minNextRun.Value));
+                        toAwait.Add(Task.Delay(minNextRun.Value - tickTime));
 #pragma warning restore CA2016 // Forward the 'CancellationToken' parameter to methods
                     }
                     if (tasksToWaitFor.Count > 0)
@@ -556,12 +560,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             if (completed == waitTask)
             {
                 _logger.LogWarning("Failed to shut down gracefully within timeout");
-                outerReporter?.Warning("Failed to shut down gracefully within timeout");
+                outerReporter?.Warning("Failed to shut down gracefully within timeout", null, DateTime.UtcNow);
             }
 
             if (completed.Exception != null)
             {
-                outerReporter?.Fatal($"Failed to shut down gracefully: {completed.Exception.Message}", completed.Exception.StackTrace?.ToString());
+                outerReporter?.Fatal($"Failed to shut down gracefully: {completed.Exception.Message}", completed.Exception.StackTrace?.ToString(), DateTime.UtcNow);
             }
         }
 
