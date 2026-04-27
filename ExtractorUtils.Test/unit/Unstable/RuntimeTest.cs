@@ -233,8 +233,8 @@ authentication:
         public async Task TestRuntimeRestartNewConfig()
         {
             var builder = CreateMockRuntimeBuilder();
-            // Restart policy won't be the default "Always" in customer envs, but we should 
-            // still restart on config change. 
+            // Restart policy won't be the default "Always" in customer envs, but we should
+            // still restart on config change.
             builder.RestartPolicy = ExtractorRestartPolicy.OnError;
 
             using var evt = new ManualResetEventSlim(false);
@@ -337,6 +337,7 @@ authentication:
 
             builder.MaxBackoff = 100;
             builder.BackoffBase = 10;
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
 
             _responseRevision = new ConfigRevision
             {
@@ -388,6 +389,90 @@ authentication:
             // We should have exactly one error reported, since we crashed.
             Assert.Single(errors);
             Assert.Contains("Failed to parse configuration file from CDF", (string)errors[0].description);
+        }
+
+        [Fact(Timeout = 5000)]
+        public async Task TestRuntimeTaskThrowsError()
+        {
+            var builder = CreateMockRuntimeBuilder();
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    extractor = ext;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+
+            var runIterationMethod = runtime.GetType().GetMethod("RunExtractorIteration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var runTask = (Task)runIterationMethod.Invoke(runtime, null);
+
+            await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
+            Assert.NotNull(extractor);
+
+            // Add a monitored task that throws an error
+            // This should cause the extractor to crash and the runtime to return ExtractorRunResult.Error
+            extractor.AddMonitoredTaskPub(async token =>
+            {
+                await Task.Delay(100, token);
+                throw new Exception("Dummy task error");
+            }, SchedulerTaskResult.Unexpected, "error-task");
+
+            // The extractor should have returned ExtractorRunResult.Error due to the task error
+            var delayTask = Task.Delay(3000);
+            Assert.Equal(runTask, await Task.WhenAny(runTask, delayTask));
+
+            var resultProperty = runTask.GetType().GetProperty("Result");
+            var result = resultProperty.GetValue(runTask);
+
+            Assert.Equal("Error", result.ToString());
+
+            Assert.NotEmpty(errors);
+            Assert.Contains("Task error-task failed: Dummy task error", (string)errors[0].description);
+        }
+
+        [Fact(Timeout = 5000)]
+        public async Task TestRestartOnErrorPolicy()
+        {
+            var builder = CreateMockRuntimeBuilder();
+            builder.RestartPolicy = ExtractorRestartPolicy.OnError;
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    extractor = ext;
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+            var runTask = runtime.Run();
+
+            // Wait for first extractor to start
+            await TestUtils.WaitForCondition(() => _startupCount == 1, 5);
+
+            // Add a monitored task that throws an error to cause the extractor to crash
+            extractor.AddMonitoredTaskPub(async token =>
+            {
+                await Task.Delay(100, token);
+                throw new Exception("Extractor error");
+            }, SchedulerTaskResult.Unexpected, "error-task");
+
+            // Wait for the extractor to restart due to the error
+            await TestUtils.WaitForCondition(() => _startupCount == 2, 5);
+
+            // Shut down cleanly
+            source.Cancel();
+            await runTask;
         }
 
         private ConnectionConfig GetConfig()
