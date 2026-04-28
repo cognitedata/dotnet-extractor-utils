@@ -110,7 +110,7 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 try
                 {
-                    var retryConfig = provider.GetService<ConnectionConfig>()?.CdfConnection.Retries ?? new Configuration.RetryConfig();
+                    var retryConfig = provider.GetService<ConnectionConfig>()?.Connection.Retries ?? new Configuration.RetryConfig();
                     return CogniteExtensions.GetRetryPolicy(provider.GetService<ILogger<Client>>(),
                         retryConfig.MaxRetries, retryConfig.MaxBackoffValue.Value);
                 }
@@ -123,7 +123,7 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 try
                 {
-                    var retryConfig = provider.GetService<ConnectionConfig>()?.CdfConnection.Retries ?? new Configuration.RetryConfig();
+                    var retryConfig = provider.GetService<ConnectionConfig>()?.Connection.Retries ?? new Configuration.RetryConfig();
                     return CogniteExtensions.GetTimeoutPolicy(retryConfig.TimeoutValue.Value);
                 }
                 catch (ObjectDisposedException)
@@ -136,7 +136,7 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 try
                 {
-                    var certConfig = provider.GetService<ConnectionConfig>()?.CdfConnection?.SslCertificates;
+                    var certConfig = provider.GetService<ConnectionConfig>()?.Connection?.SslCertificates;
                     return GetClientHandler(certConfig);
                 }
                 catch (ObjectDisposedException)
