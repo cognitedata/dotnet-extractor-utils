@@ -121,7 +121,11 @@ namespace Cognite.Extensions
                 {
                     ParseDatapointsException(rex, result);
                 }
-                return result;
+                else if (type == RequestType.UpsertInstances)
+                {
+                    ParseInstancesException(rex, result);
+                }
+                    return result;
             }
             else
             {
@@ -768,6 +772,10 @@ namespace Cognite.Extensions
         /// Data modeling instance id
         /// </summary>
         InstanceId,
+        /// <summary>
+        /// Data modeling instance property
+        /// </summary>
+        InstanceProperty,
         /// <summary>
         /// None or unknown
         /// </summary>

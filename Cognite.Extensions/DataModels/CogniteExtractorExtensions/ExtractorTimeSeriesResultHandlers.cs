@@ -1,34 +1,46 @@
-﻿using CogniteSdk;
-using CogniteSdk.DataModels;
+﻿using CogniteSdk.DataModels;
+using CogniteSdk.DataModels.Core;
+using CogniteSdk.Resources.DataModels;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cognite.Extensions
 {
     public static partial class ResultHandlers
     {
-        private static bool IsAffected<T>(SourcedNodeWrite<T> ts, HashSet<Identity> badValues, CogniteError<SourcedNodeWrite<T>> error)
+        /// <summary>
+        /// Fetches Cognite Time Series
+        /// </summary>
+        /// <param name="resource">CDF resource to fetch with</param>
+        /// <param name="items">Items to fetch</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Cognite Time Series</returns>
+        public static async Task<IEnumerable<SourcedInstance<CogniteTimeSeriesBase>>> FetchItems<T2, T>(
+            T2 resource,
+            IEnumerable<SourcedNodeWrite<T>> items,
+            CancellationToken token
+        ) where T2 : BaseDataModelResource<T>
         {
-            return error.Resource switch
-            {
-                ResourceType.InstanceId => badValues.ContainsIdentity(new InstanceIdentifier(ts.Space, ts.ExternalId)),
-                _ => false,
-            };
+            return await resource.RetrieveAsync<CogniteTimeSeriesBase>(
+                items.Select(x => new InstanceIdentifierWithType(InstanceType.node, x.Space, x.ExternalId)),
+                CoreTimeSeriesResource<CogniteTimeSeriesBase>.DefaultView,
+                token
+            ).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Clean list of SourceNodeWrite objects based on CogniteError
+        /// Clean Cognite Time Series from Type Immutability Errors
         /// </summary>
-        /// <param name="error">Error that occured with a previous push</param>
-        /// <param name="timeseries">Nodes to clean</param>
-        /// <returns>Nodes that are not affected by the error</returns>
-        public static IEnumerable<SourcedNodeWrite<T>> CleanFromError<T>(
-            CogniteError<SourcedNodeWrite<T>> error,
-            IEnumerable<SourcedNodeWrite<T>> timeseries)
+        /// <param name="items">Items to clean</param>
+        /// <param name="fetchedItems">Original items retrieved from CDF</param>
+        /// <returns>Cognite Time Series without type conflicts and ones not present in CDF</returns>
+        public static IEnumerable<SourcedNodeWrite<T>> CleanTypeImmutabilityError<T>(
+            IEnumerable<SourcedNodeWrite<T>> items, IEnumerable<SourcedInstance<CogniteTimeSeriesBase>> fetchedItems)
         {
-            return CleanFromErrorCommon(error, timeseries, IsAffected,
-                ts => ts.ExternalId == null || ts.Space == null ? null : Identity.Create(new InstanceIdentifier(ts.Space, ts.ExternalId)),
-                CdfMetrics.TimeSeriesSkipped);
+            var foundTypeDict = fetchedItems.ToDictionarySafe(x => new InstanceIdentifier(x.Space, x.ExternalId), x => x.Properties.Type);
+            return items.Where(x => !foundTypeDict.ContainsKey(new InstanceIdentifier(x.Space, x.ExternalId)) || foundTypeDict[new InstanceIdentifier(x.Space, x.ExternalId)] == (x.Properties as CogniteTimeSeriesBase)?.Type);
         }
     }
 }

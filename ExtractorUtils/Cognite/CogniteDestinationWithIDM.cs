@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Cognite.Extensions;
+﻿using Cognite.Extensions;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Utils.Unstable.Configuration;
 using CogniteSdk;
 using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
+using CogniteSdk.Resources.DataModels;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cognite.Extractor.Utils
 {
@@ -90,7 +91,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier)
+            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new HashSet<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView })
                 .GetOrCreateTimeSeriesAsync(
                     instanceIds,
                     buildTimeSeries,
@@ -125,7 +126,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetOrCreateTimeSeriesAsync(
+            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new HashSet<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView }).GetOrCreateTimeSeriesAsync(
                 instanceIds,
                 buildTimeSeries,
                 Chunking.Instances,
