@@ -580,6 +580,17 @@ namespace ExtractorUtils.Test.Integration
                     tester.Source.Token
                 );
 
+                Assert.Single(result.Errors);
+                var error = result.Errors.First();
+                Assert.StartsWith("Cannot update immutable property 'cdf_cdm.CogniteTimeSeries.type'", error.Message);
+                Assert.Equal(ResourceType.InstanceProperty, error.Resource);
+                Assert.Equal(ErrorType.IllegalItem, error.Type);
+                Assert.Equal(400, error.Status);
+
+                var identitiesToBeSkipped = tss.externalIds.Skip(1).Take(4).Select(x => new Identity(new InstanceIdentifier(tss.space, x))).ToHashSet();
+                Assert.Equal(identitiesToBeSkipped, error.Values.ToHashSet());
+                Assert.Equal(identitiesToBeSkipped, error.Skipped.Select(x => new Identity(new InstanceIdentifier(x.Space, x.ExternalId))).ToHashSet());
+
                 var resultsDict = new Dictionary<string, SourcedNode<CogniteExtractorTimeSeries>>(
                     result.Results.Select(x => new KeyValuePair<string, SourcedNode<CogniteExtractorTimeSeries>>(x.ExternalId, x))
                 );

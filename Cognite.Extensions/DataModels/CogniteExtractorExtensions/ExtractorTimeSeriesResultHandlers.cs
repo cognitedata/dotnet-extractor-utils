@@ -35,12 +35,27 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="items">Items to clean</param>
         /// <param name="fetchedItems">Original items retrieved from CDF</param>
-        /// <returns>Cognite Time Series without type conflicts and ones not present in CDF</returns>
-        public static IEnumerable<SourcedNodeWrite<T>> CleanTypeImmutabilityError<T>(
+        /// <returns>Cognite Time Series without type conflicts and ones not present in CDF, along with skipped items</returns>
+        public static (List<SourcedNodeWrite<T>> cleanItems, List<SourcedNodeWrite<T>> skipped) CleanTypeImmutabilityError<T>(
             IEnumerable<SourcedNodeWrite<T>> items, IEnumerable<SourcedInstance<CogniteTimeSeriesBase>> fetchedItems)
         {
             var foundTypeDict = fetchedItems.ToDictionarySafe(x => new InstanceIdentifier(x.Space, x.ExternalId), x => x.Properties.Type);
-            return items.Where(x => !foundTypeDict.ContainsKey(new InstanceIdentifier(x.Space, x.ExternalId)) || foundTypeDict[new InstanceIdentifier(x.Space, x.ExternalId)] == (x.Properties as CogniteTimeSeriesBase)?.Type);
+            var cleanItems = new List<SourcedNodeWrite<T>>();
+            var skipped = new List<SourcedNodeWrite<T>>();
+            foreach(var item in items)
+            {
+                var identifier = new InstanceIdentifier(item.Space, item.ExternalId);
+                if(!foundTypeDict.ContainsKey(identifier) || foundTypeDict[identifier] == (item.Properties as CogniteTimeSeriesBase)?.Type)
+                {
+                    cleanItems.Add(item);
+                }
+                else
+                {
+                    skipped.Add(item);
+                }
+            }
+
+            return (cleanItems, skipped);
         }
     }
 }

@@ -52,7 +52,13 @@ namespace Cognite.Extensions
                     var fetched = await FetchItems(resource, items, token).ConfigureAwait(false);
                     if (error.Message!.Contains("'cdf_cdm.CogniteTimeSeries.type'"))
                     {
-                        return CleanTypeImmutabilityError(items, fetched);
+                        var (cleanItems, itemsWithTypeError) = CleanTypeImmutabilityError(items, fetched);
+                        if (itemsWithTypeError.Count > 0)
+                        {
+                            error.Values = itemsWithTypeError.Select(x => new Identity(new InstanceIdentifier(x.Space, x.ExternalId))).Concat(error.Values ?? new List<Identity>());
+                            error.Skipped = itemsWithTypeError.Concat(error.Skipped ?? new List<SourcedNodeWrite<T>>());
+                        }
+                        return cleanItems;
                     }
                 }
                 // else if(typeof(CogniteAssetBase).IsAssignableFrom(typeof(T))) { }
