@@ -76,9 +76,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         }
 
         /// <inheritdoc />
-        public override ExtractorError NewError(ErrorLevel level, string description, string? details = null, DateTime? now = null)
+        public override ExtractorError NewError(ErrorLevel level, string description, string? details = null, DateTime? now = null, string? type = null, int? configRevision = null)
         {
-            return new ExtractorError(level, description, _sink, details, TaskName, now);
+            return new ExtractorError(level, description, _sink, details, TaskName, now, type, configRevision);
         }
 
         /// <summary>
