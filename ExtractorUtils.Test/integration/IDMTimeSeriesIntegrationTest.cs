@@ -536,7 +536,7 @@ namespace ExtractorUtils.Test.Integration
         }
 
         [Theory]
-        // [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
         public async Task TestGetOrCreate(CogniteHost host)
         {
