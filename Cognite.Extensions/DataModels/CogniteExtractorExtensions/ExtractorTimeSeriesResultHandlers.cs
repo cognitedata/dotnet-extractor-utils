@@ -42,7 +42,7 @@ namespace Cognite.Extensions
             IEnumerable<SourcedNodeWrite<T>> items, IEnumerable<SourcedInstance<CogniteTimeSeriesBase>> fetchedItems)
         {
             if (items == null) throw new ArgumentNullException(nameof(items));
-            var foundTypeDict = fetchedItems.ToDictionarySafe(x => new InstanceIdentifier(x.Space, x.ExternalId), x => x.Properties.Type);
+            var foundTypeDict = fetchedItems.ToDictionarySafe(x => new InstanceIdentifier(x.Space, x.ExternalId), x => x.Properties?.Type);
             var cleanItems = new List<SourcedNodeWrite<T>>();
             var skipped = new List<SourcedNodeWrite<T>>();
             foreach (var item in items)

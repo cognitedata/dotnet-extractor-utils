@@ -50,7 +50,7 @@ namespace Cognite.Extensions
                 if (typeof(CogniteTimeSeriesBase).IsAssignableFrom(typeof(T)))
                 {
                     var fetched = await FetchItems(resource, items, token).ConfigureAwait(false);
-                    if (error.Message!.Contains("'cdf_cdm.CogniteTimeSeries.type'"))
+                    if (error.Message?.Contains("'cdf_cdm.CogniteTimeSeries.type'") == true)
                     {
                         var (cleanItems, itemsWithTypeError) = CleanTypeImmutabilityError(items, fetched);
                         if (itemsWithTypeError.Count > 0)
