@@ -155,7 +155,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 var msg = ex.Message;
                 if (_lastErrorMsg != msg)
                 {
-                    reporter.Fatal($"Fatally failed to load configuration file from {_configFilePath}: {ex.Message}");
+                    reporter.Fatal($"Fatally failed to load configuration file from {_configFilePath}: {ex.Message}", type: "config");
                 }
                 _lastErrorMsg = msg;
                 throw;
@@ -170,7 +170,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 if (isNewConfig)
                 {
-                    reporter.Fatal($"Failed to parse configuration file from {_configFilePath}: {ex.Message}");
+                    reporter.Fatal($"Failed to parse configuration file from {_configFilePath}: {ex.Message}", type: "config");
                 }
                 throw;
             }
@@ -256,7 +256,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 var msg = ex.Message;
                 if (_lastErrorMsg != msg)
                 {
-                    reporter.Fatal($"Fatally failed to load configuration file from CDF: {msg}");
+                    reporter.Fatal($"Fatally failed to load configuration file from CDF: {msg}", type: "config");
                 }
                 _lastErrorMsg = msg;
                 throw;
@@ -268,14 +268,14 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 _lastAttemptedRevision = revision;
                 var config = ConfigurationUtils.TryReadConfigFromString<T>(rawConfig);
-                Config = config;
                 Revision = revision;
+                Config = config;
             }
             catch (Exception ex)
             {
                 if (isNewConfig)
                 {
-                    reporter.Fatal($"Failed to parse configuration file from CDF: {ex.Message}");
+                    reporter.Fatal(ErrorLevel.fatal, $"Failed to parse configuration file from CDF: {ex.Message}", type: "config", configRevision: revision);
                 }
                 throw;
             }

@@ -288,10 +288,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="description">Fatal error description.</param>
         /// <param name="details">Long fatal error details.</param>
         /// <param name="now">Current time, for synchronization. Defaults to DateTime.UtcNow</param>
+        /// <param name="type">Type of the error.</param>
+        /// <param name="configRevision">Configuration revision associated with the error.</param>
         /// <returns>An error that should be completed later.</returns>
-        public ExtractorError BeginFatal(string description, string? details = null, DateTime? now = null)
+        public ExtractorError BeginFatal(string description, string? details = null, DateTime? now = null, string? type = null, int? configRevision = null)
         {
-            return NewError(ErrorLevel.fatal, description, details, now);
+            return NewError(ErrorLevel.fatal, description, details, now, type, configRevision);
         }
 
         /// <summary>
@@ -300,9 +302,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="description">Fatal error description.</param>
         /// <param name="details">Long fatal error details.</param>
         /// <param name="now">Current time, for synchronization. Defaults to DateTime.UtcNow</param>
-        public void Fatal(string description, string? details = null, DateTime? now = null)
+        /// <param name="type">Type of the error.</param>
+        /// <param name="configRevision">Configuration revision associated with the error.</param>
+        public void Fatal(string description, string? details = null, DateTime? now = null, string? type = null, int? configRevision = null)
         {
-            BeginFatal(description, details, now).Instant();
+            BeginFatal(description, details, now, type, configRevision).Instant();
         }
     }
 }
