@@ -55,7 +55,7 @@ namespace ExtractorUtils.Test.Integration
                 new UpsertOptions(),
                 tester.Source.Token
             );
-                
+
             return (spaceId, result.Select(ts => ts.ExternalId).ToList());
         }
 

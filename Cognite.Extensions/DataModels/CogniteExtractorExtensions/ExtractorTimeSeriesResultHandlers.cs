@@ -1,6 +1,7 @@
 ﻿using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
 using CogniteSdk.Resources.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -23,6 +24,7 @@ namespace Cognite.Extensions
             CancellationToken token
         ) where T2 : BaseDataModelResource<T>
         {
+            if (resource == null) throw new ArgumentNullException(nameof(resource));
             return await resource.RetrieveAsync<CogniteTimeSeriesBase>(
                 items.Select(x => new InstanceIdentifierWithType(InstanceType.node, x.Space, x.ExternalId)),
                 CoreTimeSeriesResource<CogniteTimeSeriesBase>.DefaultView,
@@ -39,13 +41,14 @@ namespace Cognite.Extensions
         public static (List<SourcedNodeWrite<T>> cleanItems, List<SourcedNodeWrite<T>> skipped) CleanTypeImmutabilityError<T>(
             IEnumerable<SourcedNodeWrite<T>> items, IEnumerable<SourcedInstance<CogniteTimeSeriesBase>> fetchedItems)
         {
+            if (items == null) throw new ArgumentNullException(nameof(items));
             var foundTypeDict = fetchedItems.ToDictionarySafe(x => new InstanceIdentifier(x.Space, x.ExternalId), x => x.Properties.Type);
             var cleanItems = new List<SourcedNodeWrite<T>>();
             var skipped = new List<SourcedNodeWrite<T>>();
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 var identifier = new InstanceIdentifier(item.Space, item.ExternalId);
-                if(!foundTypeDict.ContainsKey(identifier) || foundTypeDict[identifier] == (item.Properties as CogniteTimeSeriesBase)?.Type)
+                if (!foundTypeDict.ContainsKey(identifier) || foundTypeDict[identifier] == (item.Properties as CogniteTimeSeriesBase)?.Type)
                 {
                     cleanItems.Add(item);
                 }

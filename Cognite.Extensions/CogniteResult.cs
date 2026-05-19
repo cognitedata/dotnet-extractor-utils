@@ -125,7 +125,7 @@ namespace Cognite.Extensions
                 {
                     ParseInstancesException(rex, result);
                 }
-                    return result;
+                return result;
             }
             else
             {

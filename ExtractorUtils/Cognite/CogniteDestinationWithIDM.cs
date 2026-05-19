@@ -91,7 +91,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new HashSet<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView })
+            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView })
                 .GetOrCreateTimeSeriesAsync(
                     instanceIds,
                     buildTimeSeries,
@@ -126,7 +126,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new HashSet<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView }).GetOrCreateTimeSeriesAsync(
+            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView }).GetOrCreateTimeSeriesAsync(
                 instanceIds,
                 buildTimeSeries,
                 Chunking.Instances,

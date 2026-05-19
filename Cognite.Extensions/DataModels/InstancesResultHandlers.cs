@@ -47,7 +47,7 @@ namespace Cognite.Extensions
         {
             if (resource != null && error?.Type == ErrorType.IllegalItem)
             {
-                if(typeof(CogniteTimeSeriesBase).IsAssignableFrom(typeof(T)))
+                if (typeof(CogniteTimeSeriesBase).IsAssignableFrom(typeof(T)))
                 {
                     var fetched = await FetchItems(resource, items, token).ConfigureAwait(false);
                     if (error.Message!.Contains("'cdf_cdm.CogniteTimeSeries.type'"))
