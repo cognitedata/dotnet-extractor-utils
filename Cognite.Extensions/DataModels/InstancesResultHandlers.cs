@@ -49,10 +49,12 @@ namespace Cognite.Extensions
             {
                 if (typeof(CogniteTimeSeriesBase).IsAssignableFrom(typeof(T)))
                 {
-                    var fetched = await FetchItems(resource, items, token).ConfigureAwait(false);
+                    IEnumerable<SourcedInstance<CogniteTimeSeriesBase>>? __fetched = null;
+                    Func<Task<IEnumerable<SourcedInstance<CogniteTimeSeriesBase>>>> FetchItemsCached = async () => { __fetched ??= await FetchItems(resource, items, token).ConfigureAwait(false); return __fetched; };
+
                     if (error.Message?.Contains("'cdf_cdm.CogniteTimeSeries.type'") == true)
                     {
-                        var (cleanItems, itemsWithTypeError) = CleanTypeImmutabilityError(items, fetched);
+                        var (cleanItems, itemsWithTypeError) = CleanTypeImmutabilityError(items, await FetchItemsCached().ConfigureAwait(false));
                         if (itemsWithTypeError.Count > 0)
                         {
                             error.Values = itemsWithTypeError.Select(x => new Identity(new InstanceIdentifier(x.Space, x.ExternalId))).Concat(error.Values ?? new List<Identity>());
