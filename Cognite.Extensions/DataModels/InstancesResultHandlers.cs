@@ -63,6 +63,7 @@ namespace Cognite.Extensions
                         return cleanItems;
                     }
                 }
+                // Other handlers can later be added similarly
                 // else if(typeof(CogniteAssetBase).IsAssignableFrom(typeof(T))) { }
             }
             return CleanFromErrorCommon(error!, items, IsAffected,
