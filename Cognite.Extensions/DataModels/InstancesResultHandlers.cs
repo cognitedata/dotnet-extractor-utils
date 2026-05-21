@@ -31,7 +31,7 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
-        /// Clean list of SourceNodeWrite objects based on CogniteError
+        /// List of SourceNodeWrite objects, offending objects removed from input items based on CogniteError
         /// </summary>
         /// <param name="error">Error that occured with a previous push</param>
         /// <param name="items">Nodes to clean</param>
@@ -43,7 +43,7 @@ namespace Cognite.Extensions
             IEnumerable<SourcedNodeWrite<T>> items,
             T2 resource,
             CancellationToken token
-            ) where T2 : BaseDataModelResource<T>
+        ) where T2 : BaseDataModelResource<T>
         {
             if (resource != null && error?.Type == ErrorType.IllegalItem)
             {

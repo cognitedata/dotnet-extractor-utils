@@ -238,7 +238,7 @@ namespace ExtractorUtils.Test.Integration
             }
         }
 
-        //This feature depends on fields currently not present on DM, ex: https://api-docs.cognite.com/20230101/tag/Time-series/operation/alterTimeSeries#!c=422&path=error/duplicated&t=response
+        // This feature depends on fields currently not present on DM, ex: https://api-docs.cognite.com/20230101/tag/Time-series/operation/alterTimeSeries#!c=422&path=error/duplicated&t=response
         //[Theory]
         //[InlineData(CogniteHost.GreenField)]
         //[InlineData(CogniteHost.BlueField)]
