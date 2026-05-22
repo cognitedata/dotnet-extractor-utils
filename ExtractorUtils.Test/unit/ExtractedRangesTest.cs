@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Cognite.Extractor.Logging;
 using System.Linq;
 using CogniteSdk;
+using CogniteSdk.DataModels;
 using Cognite.Extractor.Common;
 using Xunit.Abstractions;
 using Cognite.Extractor.Testing;
@@ -135,12 +136,21 @@ namespace ExtractorUtils.Test.Unit
             [JsonPropertyName("value")]
             public double Value { get; set; }
         }
+        private class MockInstanceId
+        {
+            [JsonPropertyName("space")]
+            public string Space { get; set; }
+            [JsonPropertyName("externalId")]
+            public string ExternalId { get; set; }
+        }
         private class MockDataPointsItem
         {
             [JsonPropertyName("datapoints")]
             public IEnumerable<MockDataPoint> DataPoints { get; set; }
             [JsonPropertyName("externalId")]
             public string ExternalId { get; set; }
+            [JsonPropertyName("instanceId")]
+            public MockInstanceId InstanceId { get; set; }
             [JsonPropertyName("isString")]
             public bool IsString { get; set; }
         }
@@ -150,6 +160,198 @@ namespace ExtractorUtils.Test.Unit
             [JsonPropertyName("items")]
             public IEnumerable<T> Items { get; set; }
         }
+        private static readonly string[] _configLines = [
+            "version: 2",
+            "logger:",
+            "  console:",
+            "    level: verbose",
+            "cognite:",
+           $"  project: someProject",
+           $"  host: https://test.cognitedata.com",
+            "  cdf-chunking:",
+            "    data-points: 4",
+            "    data-point-time-series: 2",
+            "    data-point-latest: 2",
+            "    data-point-list: 2",
+            "  cdf-throttling:",
+            "    data-points: 2",
+            "    ranges: 2"
+        ];
+
+        private async Task<CogniteDestination> BuildDestination(
+            string configPath,
+            Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler)
+        {
+            System.IO.File.WriteAllLines(configPath, _configLines);
+            var mockFactory = TestUtilities.GetMockedHttpClientFactory(handler).factory;
+            var services = new ServiceCollection();
+            services.AddSingleton<IHttpClientFactory>(mockFactory.Object);
+            services.AddConfig<BaseConfig>(configPath, 2);
+            services.AddTestLogging(_output);
+            services.AddCogniteClient("testApp");
+            var provider = services.BuildServiceProvider();
+            return provider.GetRequiredService<CogniteDestination>();
+        }
+
+        // Latest timestamp: fixed epoch 2020-01-01 00:00:00 UTC
+        private const long _latestTs = 1577836800000L;
+        // Earliest timestamp: fixed epoch 2019-01-01 00:00:00 UTC
+        private const long _earliestTs = 1546300800000L;
+
+        /// <summary>
+        /// Verifies ExternalId identity resolution in both GetLatestTimestamps (JSON/latest endpoint)
+        /// and GetEarliestTimestamps (protobuf/list endpoint), which are called together by GetExtractedRanges.
+        ///
+        /// "test1" → response ExternalId matches request → timestamps stored → non-empty range.
+        /// ""      → !IsNullOrEmpty("") = false → falls to Identity(dp.Id) → not in idSet → Empty.
+        /// </summary>
+        [Theory]
+        [InlineData("test1", false)]
+        [InlineData("", true)]
+        public async Task TestGetExtractedRangesExternalIdResolution(string responseExternalId, bool expectEmpty)
+        {
+            Task<HttpResponseMessage> Handler(HttpRequestMessage req, CancellationToken ct)
+            {
+                string uri = req.RequestUri.ToString();
+                if (uri.Contains("timeseries/data/latest"))
+                {
+                    // Simulates GetLatestTimestamps response (JSON)
+                    var body = new ItemWrapper<MockDataPointsItem>
+                    {
+                        Items =
+                        [
+                            new MockDataPointsItem
+                            {
+                                ExternalId = responseExternalId,
+                                DataPoints = [new MockDataPoint { Timestamp = _latestTs, Value = 0 }],
+                                IsString = false
+                            }
+                        ]
+                    };
+                    var resp = new HttpResponseMessage
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Content = new StringContent(JsonSerializer.Serialize(body))
+                    };
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    resp.Headers.Add("x-request-id", "1");
+                    return Task.FromResult(resp);
+                }
+                else
+                {
+                    // Simulates GetEarliestTimestamps response (protobuf)
+                    DataPointListResponse dpList = new();
+                    DataPointListItem dpItem = new()
+                    {
+                        ExternalId = responseExternalId ?? "",
+                        NumericDatapoints = new() { Datapoints = { new NumericDatapoint { Timestamp = _earliestTs, Value = 0 } } }
+                    };
+                    dpList.Items.Add(dpItem);
+                    HttpContent responseBody;
+                    using (var stream = new MemoryStream())
+                    {
+                        dpList.WriteTo(stream);
+                        responseBody = new ByteArrayContent(stream.ToArray());
+                    }
+                    var resp = new HttpResponseMessage
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Content = responseBody
+                    };
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/protobuf");
+                    resp.Headers.Add("x-request-id", "1");
+                    return Task.FromResult(resp);
+                }
+            }
+
+            var destination = await BuildDestination("test-extid-resolution-config.yml", Handler);
+            var ids = new[] { Identity.Create("test1") };
+
+            var ranges = await destination.GetExtractedRanges(ids, CancellationToken.None);
+
+            if (expectEmpty)
+            {
+                Assert.Equal(TimeRange.Empty, ranges[ids[0]]);
+            }
+            else
+            {
+                Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_earliestTs), ranges[ids[0]].First);
+                Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_latestTs), ranges[ids[0]].Last);
+            }
+        }
+
+        /// <summary>
+        /// Verifies InstanceId identity resolution in both GetLatestTimestamps and GetEarliestTimestamps.
+        /// When response has empty ExternalId but a valid InstanceId, the code takes the InstanceId branch
+        /// and stores the timestamp under the InstanceId-based Identity.
+        /// </summary>
+        [Fact]
+        public async Task TestGetExtractedRangesInstanceIdResolution()
+        {
+            static Task<HttpResponseMessage> Handler(HttpRequestMessage req, CancellationToken ct)
+            {
+                string uri = req.RequestUri.ToString();
+                if (uri.Contains("timeseries/data/latest"))
+                {
+                    // ExternalId omitted — forces the InstanceId branch in GetLatestTimestamps
+                    var body = new ItemWrapper<MockDataPointsItem>
+                    {
+                        Items =
+                        [
+                            new MockDataPointsItem
+                            {
+                                InstanceId = new MockInstanceId { Space = "space1", ExternalId = "inst1" },
+                                DataPoints = [new MockDataPoint { Timestamp = _latestTs, Value = 0 }],
+                                IsString = false
+                            }
+                        ]
+                    };
+                    var resp = new HttpResponseMessage
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Content = new StringContent(JsonSerializer.Serialize(body))
+                    };
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    resp.Headers.Add("x-request-id", "1");
+                    return Task.FromResult(resp);
+                }
+                else
+                {
+                    // ExternalId defaults to "" in proto — forces the InstanceId branch in GetEarliestTimestamps
+                    DataPointListResponse dpList = new();
+                    DataPointListItem dpItem = new()
+                    {
+                        InstanceId = new InstanceId { Space = "space1", ExternalId = "inst1" },
+                        NumericDatapoints = new() { Datapoints = { new NumericDatapoint { Timestamp = _earliestTs, Value = 0 } } }
+                    };
+                    dpList.Items.Add(dpItem);
+                    HttpContent responseBody;
+                    using (var stream = new MemoryStream())
+                    {
+                        dpList.WriteTo(stream);
+                        responseBody = new ByteArrayContent(stream.ToArray());
+                    }
+                    var resp = new HttpResponseMessage
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Content = responseBody
+                    };
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/protobuf");
+                    resp.Headers.Add("x-request-id", "1");
+                    return Task.FromResult(resp);
+                }
+            }
+
+            var destination = await BuildDestination("test-instanceid-resolution-config.yml", Handler);
+            var instanceId = new Identity(new InstanceIdentifier("space1", "inst1"));
+            var ids = new[] { instanceId };
+
+            var ranges = await destination.GetExtractedRanges(ids, CancellationToken.None);
+
+            Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_earliestTs), ranges[instanceId].First);
+            Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_latestTs), ranges[instanceId].Last);
+        }
+
         private ConcurrentDictionary<string, TimeRange> _mockedRanges = new ConcurrentDictionary<string, TimeRange>();
         private async Task<HttpResponseMessage> MockGetFirstLatestAsync(HttpRequestMessage message, CancellationToken token)
         {
