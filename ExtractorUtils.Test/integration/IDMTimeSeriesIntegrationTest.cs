@@ -558,10 +558,6 @@ namespace ExtractorUtils.Test.Integration
                     tester.Logger.LogInformation(
                         "GetExtractedRanges [{id}] — First: {first}, Last: {last} (expected First: {expectedFirst})",
                         id, result[id].First.ToISOString(), result[id].Last.ToISOString(), firstTimestamp.ToISOString());
-                    // First must be the actual earliest datapoint, not DateTimeEpoch.
-                    // With the old dp.ExternalId != null check, proto responses return ExternalId=""
-                    // which is non-null, causing identity resolution to fall through to Identity(dp.Id)
-                    // (not in idSet) — so First stays at DateTimeEpoch and this assertion fails.
                     Assert.Equal(firstTimestamp.ToISOString(), result[id].First.ToISOString());
                     Assert.Equal(lastTimestamp.ToISOString(), result[id].Last.ToISOString());
                 }
