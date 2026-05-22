@@ -561,19 +561,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError__1_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError%60%601(Cognite.Extensions.CogniteError%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanFromError__2_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0_____1_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanFromError%60%602(Cognite.Extensions.CogniteError%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2C%60%601%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/ExtractorTimeSeriesResultHandlers.cs/#L25">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/InstancesResultHandlers.cs/#L41">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_CleanFromError_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError*"></a>
-  <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError__1_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError``1(Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}})">CleanFromError&lt;T&gt;(CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;)</h4>
-  <div class="markdown level1 summary"><p>Clean list of SourceNodeWrite objects based on CogniteError</p>
+  <h4 id="Cognite_Extensions_ResultHandlers_CleanFromError__2_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0_____1_System_Threading_CancellationToken_" data-uid="Cognite.Extensions.ResultHandlers.CleanFromError``2(Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},``1,System.Threading.CancellationToken)">CleanFromError&lt;T, T2&gt;(CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, T2, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>List of SourceNodeWrite objects, offending objects removed from input items based on CogniteError</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; CleanFromError&lt;T&gt;(CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt; error, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; timeseries)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;&gt; CleanFromError&lt;T, T2&gt;(CogniteError&lt;SourcedNodeWrite&lt;T&gt;&gt; error, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; items, T2 resource, CancellationToken token) where T2 : BaseDataModelResource&lt;T&gt;</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -593,8 +593,20 @@
       </tr>
       <tr>
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;</td>
-        <td><span class="parametername">timeseries</span></td>
+        <td><span class="parametername">items</span></td>
         <td><p>Nodes to clean</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">T2</span></td>
+        <td><span class="parametername">resource</span></td>
+        <td><p>Resource to query for underlying timeseries with, when T is a child of CogniteTimeSeries</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
 </td>
       </tr>
     </tbody>
@@ -609,8 +621,83 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;</td>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;&gt;</td>
         <td><p>Nodes that are not affected by the error</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_CleanTypeImmutabilityError__1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedInstance_CogniteSdk_DataModels_Core_CogniteTimeSeriesBase___.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError%60%601(System.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%600%7D%7D%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedInstance%7BCogniteSdk.DataModels.Core.CogniteTimeSeriesBase%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/ExtractorTimeSeriesResultHandlers.cs/#L41">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_ResultHandlers_CleanTypeImmutabilityError_" data-uid="Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError*"></a>
+  <h4 id="Cognite_Extensions_ResultHandlers_CleanTypeImmutabilityError__1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedInstance_CogniteSdk_DataModels_Core_CogniteTimeSeriesBase___" data-uid="Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError``1(System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedInstance{CogniteSdk.DataModels.Core.CogniteTimeSeriesBase}})">CleanTypeImmutabilityError&lt;T&gt;(IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, IEnumerable&lt;SourcedInstance&lt;CogniteTimeSeriesBase&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Clean Cognite Time Series from Type Immutability Errors</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (List&lt;SourcedNodeWrite&lt;T&gt;&gt; cleanItems, List&lt;SourcedNodeWrite&lt;T&gt;&gt; skipped) CleanTypeImmutabilityError&lt;T&gt;(IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; items, IEnumerable&lt;SourcedInstance&lt;CogniteTimeSeriesBase&gt;&gt; fetchedItems)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;</td>
+        <td><span class="parametername">items</span></td>
+        <td><p>Items to clean</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedInstance</span>&lt;<span class="xref">CogniteTimeSeriesBase</span>&gt;&gt;</td>
+        <td><span class="parametername">fetchedItems</span></td>
+        <td><p>Original items retrieved from CDF</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.collections.generic.list-cognitesdk.datamodels.sourcednodewrite---0--,system.collections.generic.list-cognitesdk.datamodels.sourcednodewrite---0---.cleanitems">cleanItems</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.collections.generic.list-cognitesdk.datamodels.sourcednodewrite---0--,system.collections.generic.list-cognitesdk.datamodels.sourcednodewrite---0---.skipped">skipped</a>)</td>
+        <td><p>Cognite Time Series without type conflicts and ones not present in CDF, along with skipped items</p>
 </td>
       </tr>
     </tbody>
@@ -714,7 +801,7 @@
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_ContainsIdentity_System_Collections_Generic_HashSet_CogniteSdk_Identity__CogniteSdk_DataModels_InstanceIdentifier_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.ContainsIdentity(System.Collections.Generic.HashSet%7BCogniteSdk.Identity%7D%2CCogniteSdk.DataModels.InstanceIdentifier)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteResult.cs/#L208">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteResult.cs/#L211">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_ContainsIdentity_" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_ContainsIdentity_System_Collections_Generic_HashSet_CogniteSdk_Identity__CogniteSdk_DataModels_InstanceIdentifier_" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity(System.Collections.Generic.HashSet{CogniteSdk.Identity},CogniteSdk.DataModels.InstanceIdentifier)">ContainsIdentity(HashSet&lt;Identity&gt;, InstanceIdentifier)</h4>
@@ -770,7 +857,7 @@
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_ContainsIdentity_System_Collections_Generic_HashSet_CogniteSdk_Identity__System_Nullable_System_Int64__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.ContainsIdentity(System.Collections.Generic.HashSet%7BCogniteSdk.Identity%7D%2CSystem.Nullable%7BSystem.Int64%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteResult.cs/#L196">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteResult.cs/#L199">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_ContainsIdentity_" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_ContainsIdentity_System_Collections_Generic_HashSet_CogniteSdk_Identity__System_Nullable_System_Int64__" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity(System.Collections.Generic.HashSet{CogniteSdk.Identity},System.Nullable{System.Int64})">ContainsIdentity(HashSet&lt;Identity&gt;, long?)</h4>
@@ -826,7 +913,7 @@
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_ContainsIdentity_System_Collections_Generic_HashSet_CogniteSdk_Identity__System_String_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.ContainsIdentity(System.Collections.Generic.HashSet%7BCogniteSdk.Identity%7D%2CSystem.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteResult.cs/#L184">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteResult.cs/#L187">View Source</a>
   </span>
   <a id="Cognite_Extensions_ResultHandlers_ContainsIdentity_" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity*"></a>
   <h4 id="Cognite_Extensions_ResultHandlers_ContainsIdentity_System_Collections_Generic_HashSet_CogniteSdk_Identity__System_String_" data-uid="Cognite.Extensions.ResultHandlers.ContainsIdentity(System.Collections.Generic.HashSet{CogniteSdk.Identity},System.String)">ContainsIdentity(HashSet&lt;Identity&gt;, string?)</h4>
@@ -874,6 +961,87 @@
         <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
         <td><p>True if externalId is non-null and set contains it, false otherwise</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_ResultHandlers_FetchItems__2___0_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___1___System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.ResultHandlers.FetchItems%60%602(%60%600%2CSystem.Collections.Generic.IEnumerable%7BCogniteSdk.DataModels.SourcedNodeWrite%7B%60%601%7D%7D%2CSystem.Threading.CancellationToken)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/DataModels/CogniteExtractorExtensions/ExtractorTimeSeriesResultHandlers.cs/#L21">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_ResultHandlers_FetchItems_" data-uid="Cognite.Extensions.ResultHandlers.FetchItems*"></a>
+  <h4 id="Cognite_Extensions_ResultHandlers_FetchItems__2___0_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___1___System_Threading_CancellationToken_" data-uid="Cognite.Extensions.ResultHandlers.FetchItems``2(``0,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``1}},System.Threading.CancellationToken)">FetchItems&lt;T2, T&gt;(T2, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Fetches Cognite Time Series</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;IEnumerable&lt;SourcedInstance&lt;CogniteTimeSeriesBase&gt;&gt;&gt; FetchItems&lt;T2, T&gt;(T2 resource, IEnumerable&lt;SourcedNodeWrite&lt;T&gt;&gt; items, CancellationToken token) where T2 : BaseDataModelResource&lt;T&gt;</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T2</span></td>
+        <td><span class="parametername">resource</span></td>
+        <td><p>CDF resource to fetch with</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedNodeWrite</span>&lt;T&gt;&gt;</td>
+        <td><span class="parametername">items</span></td>
+        <td><p>Items to fetch</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></td>
+        <td><span class="parametername">token</span></td>
+        <td><p>Cancellation token</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">SourcedInstance</span>&lt;<span class="xref">CogniteTimeSeriesBase</span>&gt;&gt;&gt;</td>
+        <td><p>Cognite Time Series</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>

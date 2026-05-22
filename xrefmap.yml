@@ -3833,6 +3833,12 @@ references:
   commentId: F:Cognite.Extensions.ResourceType.InstanceId
   fullName: Cognite.Extensions.ResourceType.InstanceId
   nameWithType: ResourceType.InstanceId
+- uid: Cognite.Extensions.ResourceType.InstanceProperty
+  name: InstanceProperty
+  href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_InstanceProperty
+  commentId: F:Cognite.Extensions.ResourceType.InstanceProperty
+  fullName: Cognite.Extensions.ResourceType.InstanceProperty
+  nameWithType: ResourceType.InstanceProperty
 - uid: Cognite.Extensions.ResourceType.Labels
   name: Labels
   href: api/Cognite.Extensions.ResourceType.html#Cognite_Extensions_ResourceType_Labels
@@ -4032,15 +4038,31 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.ResultHandlers.CleanFromError
   nameWithType: ResultHandlers.CleanFromError
-- uid: Cognite.Extensions.ResultHandlers.CleanFromError``1(Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}})
-  name: CleanFromError<T>(CogniteError<SourcedNodeWrite<T>>, IEnumerable<SourcedNodeWrite<T>>)
-  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError__1_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___
-  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError``1(Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}})
-  name.vb: CleanFromError(Of T)(CogniteError(Of SourcedNodeWrite(Of T)), IEnumerable(Of SourcedNodeWrite(Of T)))
-  fullName: Cognite.Extensions.ResultHandlers.CleanFromError<T>(Cognite.Extensions.CogniteError<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>)
-  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Of T)(Cognite.Extensions.CogniteError(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)))
-  nameWithType: ResultHandlers.CleanFromError<T>(CogniteError<SourcedNodeWrite<T>>, IEnumerable<SourcedNodeWrite<T>>)
-  nameWithType.vb: ResultHandlers.CleanFromError(Of T)(CogniteError(Of SourcedNodeWrite(Of T)), IEnumerable(Of SourcedNodeWrite(Of T)))
+- uid: Cognite.Extensions.ResultHandlers.CleanFromError``2(Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},``1,System.Threading.CancellationToken)
+  name: CleanFromError<T, T2>(CogniteError<SourcedNodeWrite<T>>, IEnumerable<SourcedNodeWrite<T>>, T2, CancellationToken)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanFromError__2_Cognite_Extensions_CogniteError_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0_____1_System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanFromError``2(Cognite.Extensions.CogniteError{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},``1,System.Threading.CancellationToken)
+  name.vb: CleanFromError(Of T, T2)(CogniteError(Of SourcedNodeWrite(Of T)), IEnumerable(Of SourcedNodeWrite(Of T)), T2, CancellationToken)
+  fullName: Cognite.Extensions.ResultHandlers.CleanFromError<T, T2>(Cognite.Extensions.CogniteError<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, T2, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanFromError(Of T, T2)(Cognite.Extensions.CogniteError(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), T2, System.Threading.CancellationToken)
+  nameWithType: ResultHandlers.CleanFromError<T, T2>(CogniteError<SourcedNodeWrite<T>>, IEnumerable<SourcedNodeWrite<T>>, T2, CancellationToken)
+  nameWithType.vb: ResultHandlers.CleanFromError(Of T, T2)(CogniteError(Of SourcedNodeWrite(Of T)), IEnumerable(Of SourcedNodeWrite(Of T)), T2, CancellationToken)
+- uid: Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError*
+  name: CleanTypeImmutabilityError
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanTypeImmutabilityError_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError
+  nameWithType: ResultHandlers.CleanTypeImmutabilityError
+- uid: Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError``1(System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedInstance{CogniteSdk.DataModels.Core.CogniteTimeSeriesBase}})
+  name: CleanTypeImmutabilityError<T>(IEnumerable<SourcedNodeWrite<T>>, IEnumerable<SourcedInstance<CogniteTimeSeriesBase>>)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CleanTypeImmutabilityError__1_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___0___System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedInstance_CogniteSdk_DataModels_Core_CogniteTimeSeriesBase___
+  commentId: M:Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError``1(System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``0}},System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedInstance{CogniteSdk.DataModels.Core.CogniteTimeSeriesBase}})
+  name.vb: CleanTypeImmutabilityError(Of T)(IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of SourcedInstance(Of CogniteTimeSeriesBase)))
+  fullName: Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError<T>(System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedInstance<CogniteSdk.DataModels.Core.CogniteTimeSeriesBase>>)
+  fullName.vb: Cognite.Extensions.ResultHandlers.CleanTypeImmutabilityError(Of T)(System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedInstance(Of CogniteSdk.DataModels.Core.CogniteTimeSeriesBase)))
+  nameWithType: ResultHandlers.CleanTypeImmutabilityError<T>(IEnumerable<SourcedNodeWrite<T>>, IEnumerable<SourcedInstance<CogniteTimeSeriesBase>>)
+  nameWithType.vb: ResultHandlers.CleanTypeImmutabilityError(Of T)(IEnumerable(Of SourcedNodeWrite(Of T)), IEnumerable(Of SourcedInstance(Of CogniteTimeSeriesBase)))
 - uid: Cognite.Extensions.ResultHandlers.CompleteAssetError(CogniteSdk.Resources.AssetsResource,Cognite.Extensions.CogniteError,System.Collections.Generic.IEnumerable{CogniteSdk.AssetCreate},System.Int32,System.Int32,System.Threading.CancellationToken)
   name: CompleteAssetError(AssetsResource, CogniteError, IEnumerable<AssetCreate>, int, int, CancellationToken)
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_CompleteAssetError_CogniteSdk_Resources_AssetsResource_Cognite_Extensions_CogniteError_System_Collections_Generic_IEnumerable_CogniteSdk_AssetCreate__System_Int32_System_Int32_System_Threading_CancellationToken_
@@ -4091,6 +4113,22 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.ResultHandlers.ContainsIdentity
   nameWithType: ResultHandlers.ContainsIdentity
+- uid: Cognite.Extensions.ResultHandlers.FetchItems*
+  name: FetchItems
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_FetchItems_
+  commentId: Overload:Cognite.Extensions.ResultHandlers.FetchItems
+  isSpec: "True"
+  fullName: Cognite.Extensions.ResultHandlers.FetchItems
+  nameWithType: ResultHandlers.FetchItems
+- uid: Cognite.Extensions.ResultHandlers.FetchItems``2(``0,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``1}},System.Threading.CancellationToken)
+  name: FetchItems<T2, T>(T2, IEnumerable<SourcedNodeWrite<T>>, CancellationToken)
+  href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_FetchItems__2___0_System_Collections_Generic_IEnumerable_CogniteSdk_DataModels_SourcedNodeWrite___1___System_Threading_CancellationToken_
+  commentId: M:Cognite.Extensions.ResultHandlers.FetchItems``2(``0,System.Collections.Generic.IEnumerable{CogniteSdk.DataModels.SourcedNodeWrite{``1}},System.Threading.CancellationToken)
+  name.vb: FetchItems(Of T2, T)(T2, IEnumerable(Of SourcedNodeWrite(Of T)), CancellationToken)
+  fullName: Cognite.Extensions.ResultHandlers.FetchItems<T2, T>(T2, System.Collections.Generic.IEnumerable<CogniteSdk.DataModels.SourcedNodeWrite<T>>, System.Threading.CancellationToken)
+  fullName.vb: Cognite.Extensions.ResultHandlers.FetchItems(Of T2, T)(T2, System.Collections.Generic.IEnumerable(Of CogniteSdk.DataModels.SourcedNodeWrite(Of T)), System.Threading.CancellationToken)
+  nameWithType: ResultHandlers.FetchItems<T2, T>(T2, IEnumerable<SourcedNodeWrite<T>>, CancellationToken)
+  nameWithType.vb: ResultHandlers.FetchItems(Of T2, T)(T2, IEnumerable(Of SourcedNodeWrite(Of T)), CancellationToken)
 - uid: Cognite.Extensions.ResultHandlers.ParseException*
   name: ParseException
   href: api/Cognite.Extensions.ResultHandlers.html#Cognite_Extensions_ResultHandlers_ParseException_
