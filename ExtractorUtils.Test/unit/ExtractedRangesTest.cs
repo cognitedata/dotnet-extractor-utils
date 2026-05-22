@@ -70,33 +70,38 @@ namespace ExtractorUtils.Test.Unit
 
             var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
 
+            try
+            {
+                _mockedRanges["test1"] = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
+                _mockedRanges["test2"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2050, 01, 01));
+                _mockedRanges["test3"] = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
+                _mockedRanges["test4"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2050, 01, 01));
 
+                var ids = new[] { "test1", "test2", "test3", "test4", "test5" }.Select(Identity.Create).ToArray();
 
-            _mockedRanges["test1"] = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
-            _mockedRanges["test2"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2050, 01, 01));
-            _mockedRanges["test3"] = new TimeRange(new DateTime(2000, 01, 01), new DateTime(2010, 01, 01));
-            _mockedRanges["test4"] = new TimeRange(new DateTime(2010, 01, 01), new DateTime(2050, 01, 01));
+                var ranges = await cogniteDestination.GetExtractedRanges(ids, CancellationToken.None);
 
-            var ids = new[] { "test1", "test2", "test3", "test4", "test5" }.Select(Identity.Create).ToArray();
+                Assert.Equal(_mockedRanges["test1"], ranges[ids[0]]);
+                Assert.Equal(_mockedRanges["test2"], ranges[ids[1]]);
+                Assert.Equal(_mockedRanges["test3"], ranges[ids[2]]);
+                Assert.Equal(_mockedRanges["test4"], ranges[ids[3]]);
+                Assert.Equal(TimeRange.Empty, ranges[ids[4]]);
 
-            var ranges = await cogniteDestination.GetExtractedRanges(ids, CancellationToken.None);
+                var limit = new DateTime(2020, 01, 01);
 
-            Assert.Equal(_mockedRanges["test1"], ranges[ids[0]]);
-            Assert.Equal(_mockedRanges["test2"], ranges[ids[1]]);
-            Assert.Equal(_mockedRanges["test3"], ranges[ids[2]]);
-            Assert.Equal(_mockedRanges["test4"], ranges[ids[3]]);
-            Assert.Equal(TimeRange.Empty, ranges[ids[4]]);
+                var ranges2 = await cogniteDestination.GetExtractedRanges(ids.Select(id => (id, new TimeRange(CogniteTime.DateTimeEpoch, limit))),
+                    CancellationToken.None);
 
-            var limit = new DateTime(2020, 01, 01);
-
-            var ranges2 = await cogniteDestination.GetExtractedRanges(ids.Select(id => (id, new TimeRange(CogniteTime.DateTimeEpoch, limit))),
-                CancellationToken.None);
-
-            Assert.Equal(_mockedRanges["test1"], ranges2[ids[0]]);
-            Assert.Equal(new TimeRange(new DateTime(2010, 01, 01), limit), ranges2[ids[1]]);
-            Assert.Equal(_mockedRanges["test3"], ranges2[ids[2]]);
-            Assert.Equal(new TimeRange(new DateTime(2010, 01, 01), limit), ranges2[ids[3]]);
-            Assert.Equal(TimeRange.Empty, ranges2[ids[4]]);
+                Assert.Equal(_mockedRanges["test1"], ranges2[ids[0]]);
+                Assert.Equal(new TimeRange(new DateTime(2010, 01, 01), limit), ranges2[ids[1]]);
+                Assert.Equal(_mockedRanges["test3"], ranges2[ids[2]]);
+                Assert.Equal(new TimeRange(new DateTime(2010, 01, 01), limit), ranges2[ids[3]]);
+                Assert.Equal(TimeRange.Empty, ranges2[ids[4]]);
+            }
+            finally
+            {
+                System.IO.File.Delete(path);
+            }
         }
 
         private class MockIdentityWithBefore
@@ -264,19 +269,27 @@ namespace ExtractorUtils.Test.Unit
                 }
             }
 
-            var destination = await BuildDestination("test-extid-resolution-config.yml", Handler);
-            var ids = new[] { Identity.Create("test1") };
-
-            var ranges = await destination.GetExtractedRanges(ids, CancellationToken.None);
-
-            if (expectEmpty)
+            string configPath = "test-extid-resolution-config.yml";
+            var destination = await BuildDestination(configPath, Handler);
+            try
             {
-                Assert.Equal(TimeRange.Empty, ranges[ids[0]]);
+                var ids = new[] { Identity.Create("test1") };
+
+                var ranges = await destination.GetExtractedRanges(ids, CancellationToken.None);
+
+                if (expectEmpty)
+                {
+                    Assert.Equal(TimeRange.Empty, ranges[ids[0]]);
+                }
+                else
+                {
+                    Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_earliestTs), ranges[ids[0]].First);
+                    Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_latestTs), ranges[ids[0]].Last);
+                }
             }
-            else
+            finally
             {
-                Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_earliestTs), ranges[ids[0]].First);
-                Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_latestTs), ranges[ids[0]].Last);
+                System.IO.File.Delete(configPath);
             }
         }
 
@@ -342,14 +355,22 @@ namespace ExtractorUtils.Test.Unit
                 }
             }
 
-            var destination = await BuildDestination("test-instanceid-resolution-config.yml", Handler);
-            var instanceId = new Identity(new InstanceIdentifier("space1", "inst1"));
-            var ids = new[] { instanceId };
+            string configPath = "test-instanceid-resolution-config.yml";
+            var destination = await BuildDestination(configPath, Handler);
+            try
+            {
+                var instanceId = new Identity(new InstanceIdentifier("space1", "inst1"));
+                var ids = new[] { instanceId };
 
-            var ranges = await destination.GetExtractedRanges(ids, CancellationToken.None);
+                var ranges = await destination.GetExtractedRanges(ids, CancellationToken.None);
 
-            Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_earliestTs), ranges[instanceId].First);
-            Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_latestTs), ranges[instanceId].Last);
+                Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_earliestTs), ranges[instanceId].First);
+                Assert.Equal(CogniteTime.FromUnixTimeMilliseconds(_latestTs), ranges[instanceId].Last);
+            }
+            finally
+            {
+                System.IO.File.Delete(configPath);
+            }
         }
 
         private ConcurrentDictionary<string, TimeRange> _mockedRanges = new ConcurrentDictionary<string, TimeRange>();
