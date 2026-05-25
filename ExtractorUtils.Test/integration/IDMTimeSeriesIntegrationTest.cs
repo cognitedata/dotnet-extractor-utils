@@ -633,8 +633,8 @@ namespace ExtractorUtils.Test.Integration
         {
             using var tester = new CDFTester(host, _output);
 
-            var tss = await CreateTestTimeSeries(tester);
-            var identities = tss.Select(x => new Identity(x)).ToArray();
+            var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
+            var identities = CreateIdentities(tss.space, tss.externalIds).ToArray();
             var lastTimestamp = DateTime.UtcNow;
             var firstTimestamp = lastTimestamp.AddSeconds(-10);
 
@@ -664,9 +664,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(
-                    tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)),
-                    tester.Source.Token);
+                await DeleteTimeseries(tester, tss.space, tss.externalIds);
             }
         }
     }
