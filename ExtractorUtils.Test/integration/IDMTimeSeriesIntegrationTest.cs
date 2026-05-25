@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Cognite.Extensions;
-using Cognite.Extensions.DataModels;
+﻿using Cognite.Extensions;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Common;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
 using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
+using CogniteSdk.Resources.DataModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
@@ -26,13 +25,13 @@ namespace ExtractorUtils.Test.Integration
             _output = output;
         }
 
-        private static SourcedNodeWrite<CogniteExtractorTimeSeries> GetWritableTS(CDFTester tester, string externalId, string spaceId, TimeSeriesType? tsType = TimeSeriesType.Numeric, Func<SourcedNodeWrite<CogniteExtractorTimeSeries>, SourcedNodeWrite<CogniteExtractorTimeSeries>> extraPopulateMethod = null)
+        private static SourcedNodeWrite<T> GetWritableTS<T>(CDFTester tester, string externalId, string spaceId, TimeSeriesType? tsType = TimeSeriesType.Numeric, Func<SourcedNodeWrite<T>, SourcedNodeWrite<T>> extraPopulateMethod = null) where T : CogniteTimeSeriesBase, new()
         {
-            var ret = new SourcedNodeWrite<CogniteExtractorTimeSeries>
+            var ret = new SourcedNodeWrite<T>
             {
                 Space = spaceId,
                 ExternalId = externalId,
-                Properties = new CogniteExtractorTimeSeries() { Type = tsType }
+                Properties = new T() { Type = tsType }
             };
             if (extraPopulateMethod != null)
             {
@@ -41,18 +40,34 @@ namespace ExtractorUtils.Test.Integration
             return ret;
         }
 
-        private static async Task<InstanceIdentifier[]> CreateTestTimeSeries(CDFTester tester)
+        private static async Task<(string space, List<string> externalIds)> CreateTestTimeSeries<T>(CDFTester tester, int count = 3, ViewIdentifier view = null, int offset = 0) where T : CogniteTimeSeriesBase, new()
         {
             var spaceId = await tester.GetSpaceId();
-            var timeseries = new[]
-            {
-                GetWritableTS(tester, "utils-test-ts-1", spaceId, extraPopulateMethod: x => {x.Properties.Name = "utils-test-ts-1"; return x;}),
-                GetWritableTS(tester, "utils-test-ts-2", spaceId, TimeSeriesType.String, x => {x.Properties.Name = "utils-test-ts-2"; return x;}),
-                GetWritableTS(tester, "utils-test-ts-3", spaceId, extraPopulateMethod: x => {x.Properties.Name = "utils-test-ts-3"; return x;}),
-            };
+            var timeseries = Enumerable.Range(offset + 1, count).Select(i => GetWritableTS<T>(
+                tester,
+                $"{tester.Prefix}utils-test-ts-{i}",
+                spaceId,
+                i % 2 == 0 ? TimeSeriesType.String : TimeSeriesType.Numeric,
+                x => { x.Properties.Name = $"utils-test-ts-{i}"; return x; }
+            ));
 
-            var result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.None, SanitationMode.None, tester.Source.Token);
-            return result.Results.Select(ts => new InstanceIdentifier(ts.Space, ts.ExternalId)).ToArray();
+            var result = await tester.DestinationWithIDM.CogniteClient.CoreDataModel.TimeSeries<T>(view ?? CogniteDestinationWithIDM.IDMViewIdentifier).UpsertAsync(
+                timeseries,
+                new UpsertOptions(),
+                tester.Source.Token
+            );
+
+            return (spaceId, result.Select(ts => ts.ExternalId).ToList());
+        }
+
+        private static List<Identity> CreateIdentities(string space, IEnumerable<string> externalIds)
+        {
+            return externalIds.Select(extId => new Identity(new InstanceIdentifier(space, extId))).ToList();
+        }
+
+        private static async Task DeleteTimeseries(CDFTester tester, string space, IEnumerable<string> externalIds)
+        {
+            await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(externalIds.Select(x => new InstanceIdentifierWithType(InstanceType.node, space, x)), tester.Source.Token);
         }
 
         [Theory]
@@ -70,7 +85,7 @@ namespace ExtractorUtils.Test.Integration
                 $"{tester.Prefix} ts-5",
             }.Select(x => new InstanceIdentifier(spaceId, x));
 
-            var timeseries1 = new[] { $"{tester.Prefix} ts-1", $"{tester.Prefix} ts-2", $"{tester.Prefix} ts-3" }.Select(x => GetWritableTS(tester, x, spaceId));
+            var timeseries1 = new[] { $"{tester.Prefix} ts-1", $"{tester.Prefix} ts-2", $"{tester.Prefix} ts-3" }.Select(x => GetWritableTS<CogniteExtractorTimeSeries>(tester, x, spaceId));
 
             try
             {
@@ -78,7 +93,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.True(result.IsAllGood);
                 Assert.Equal(3, result.Results.Count());
 
-                var timeseries2 = new[] { GetWritableTS(tester, $"{tester.Prefix} ts-1", spaceId), GetWritableTS(tester, $"{tester.Prefix} ts-4", spaceId) };
+                var timeseries2 = new[] { GetWritableTS<CogniteExtractorTimeSeries>(tester, $"{tester.Prefix} ts-1", spaceId), GetWritableTS<CogniteExtractorTimeSeries>(tester, $"{tester.Prefix} ts-4", spaceId) };
 
                 result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries2, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
 
@@ -89,7 +104,7 @@ namespace ExtractorUtils.Test.Integration
                 {
                     Assert.Single(toCreate);
                     Assert.Equal($"{tester.Prefix} ts-5", toCreate.First().ExternalId);
-                    return new[] { GetWritableTS(tester, $"{tester.Prefix} ts-5", spaceId) };
+                    return new[] { GetWritableTS<CogniteExtractorTimeSeries>(tester, $"{tester.Prefix} ts-5", spaceId) };
                 }, RetryMode.OnError, SanitationMode.None, tester.Source.Token);
 
                 Assert.Equal(5, result.Results.Count());
@@ -97,7 +112,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(ids.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await DeleteTimeseries(tester, spaceId, ids.Select(x => x.ExternalId));
             }
         }
 
@@ -110,15 +125,15 @@ namespace ExtractorUtils.Test.Integration
             var spaceId = await tester.GetSpaceId();
 
             var timeseries = new[] {
-                GetWritableTS(tester, tester.Prefix + new string('æ', 300), spaceId, extraPopulateMethod: x => {
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, tester.Prefix + new string('æ', 300), spaceId, extraPopulateMethod: x => {
                    x.Properties.Name = new string('ø', 1000);
                    x.Properties.Description = new string('æ', 1000);
                    x.Properties.SourceUnit = new string('æ', 1000);
                    x.Properties.extractedData = Enumerable.Range(0, 100).ToDictionary(i => $"key{i:000}{new string('æ', 100)}", i => new string('æ', 200));
                    return x;
                 }),
-                GetWritableTS(tester, $"{tester.Prefix} test-duplicate-externalId", spaceId, extraPopulateMethod: x => { x.Properties.Name = "test-duplicate-externalId"; return x; }),
-                GetWritableTS(tester, $"{tester.Prefix} test-duplicate-externalId", spaceId, extraPopulateMethod: x => { x.Properties.Name = "test-duplicate-externalId"; return x; }),
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, $"{tester.Prefix} test-duplicate-externalId", spaceId, extraPopulateMethod: x => { x.Properties.Name = "test-duplicate-externalId"; return x; }),
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, $"{tester.Prefix} test-duplicate-externalId", spaceId, extraPopulateMethod: x => { x.Properties.Name = "test-duplicate-externalId"; return x; }),
             };
 
             IEnumerable<SourcedNode<CogniteExtractorTimeSeries>> created = null;
@@ -141,8 +156,7 @@ namespace ExtractorUtils.Test.Integration
             {
                 if (created != null)
                 {
-                    var ids = created.Select(x => new InstanceIdentifier(spaceId, x.ExternalId));
-                    await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(ids.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                    await DeleteTimeseries(tester, spaceId, created.Select(x => x.ExternalId));
                 }
             }
         }
@@ -155,9 +169,10 @@ namespace ExtractorUtils.Test.Integration
             using var tester = new CDFTester(host, _output);
             var spaceId = await tester.GetSpaceId();
 
-            var tss = await CreateTestTimeSeries(tester);
+            var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
+            var identities = CreateIdentities(tss.space, tss.externalIds);
 
-            var updates = tss.Select(x => GetWritableTS(tester, x.ExternalId, spaceId, null, x => { x.Properties.Description = "new description"; return x; }));
+            var updates = tss.externalIds.Select(x => GetWritableTS<CogniteExtractorTimeSeries>(tester, x, spaceId, null, x => { x.Properties.Description = "new description"; return x; }));
 
             try
             {
@@ -168,12 +183,12 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Equal(3, result.Results.Count());
                 Assert.True(result.IsAllGood);
 
-                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(tss.Select(x => new Identity(x)), tester.Source.Token);
+                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token);
                 Assert.All(retrieved, ts => Assert.Equal("new description", ts.Properties.Description));
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await DeleteTimeseries(tester, spaceId, tss.externalIds);
             }
         }
 
@@ -185,22 +200,22 @@ namespace ExtractorUtils.Test.Integration
             using var tester = new CDFTester(host, _output);
 
             var spaceId = await tester.GetSpaceId();
-            var tss = await CreateTestTimeSeries(tester);
+            var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
 
             var meta = Enumerable.Range(0, 100)
                     .ToDictionary(i => $"key{i:000}{new string('æ', 100)}", i => new string('æ', 200));
 
             var updates = new[]
             {
-                GetWritableTS(tester, tss[0].ExternalId, spaceId, null, x => {
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, tss.externalIds[0], spaceId, null, x => {
                     x.Properties.Description = new string('æ', 2000);
                     x.Properties.extractedData = meta;
                     x.Properties.Name = new string('æ', 300);
                     x.Properties.SourceUnit = new string('æ', 200);
                     return x;
                 }),
-                GetWritableTS(tester, tss[1].ExternalId, spaceId, null, x => {x.Properties.Name = "name"; return x;}),
-                GetWritableTS(tester, tss[1].ExternalId, spaceId, null, x => {x.Properties.Name = "name"; return x;})
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, tss.externalIds[1], spaceId, null, x => {x.Properties.Name = "name"; return x;}),
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, tss.externalIds[1], spaceId, null, x => {x.Properties.Name = "name"; return x;})
             };
 
             try
@@ -220,7 +235,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await DeleteTimeseries(tester, spaceId, tss.externalIds);
             }
         }
 
@@ -232,18 +247,18 @@ namespace ExtractorUtils.Test.Integration
         //{
         //    using var tester = new CDFTester(host, _output);
 
-        //    var tss = await CreateTestTimeSeries(tester);
+        //    var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
 
         //    Func<SourcedNodeWrite<CogniteExtractorTimeSeries>, SourcedNodeWrite<CogniteExtractorTimeSeries>> upd = x => { x.Properties.Description = "new description"; return x; };
 
         //    var updates1 = new[]
         //    {
         //        // Existing timeseries
-        //        GetWritableTS(tester, tss[0].ExternalId, null, x => {x.ExternalId =tss[1].ExternalId; return x;}),
+        //        GetWritableTS<CogniteExtractorTimeSeries>(tester, tss.externalIds[0], tss.space, TimeSeriesType.String, x => {x.ExternalId =tss.externalIds[1]; return x;}),
         //        // Update OK
-        //        GetWritableTS(tester, tss[1].ExternalId, null, upd),
+        //        GetWritableTS<CogniteExtractorTimeSeries>(tester, tss.externalIds[1], tss.space, TimeSeriesType.Numeric),
         //        // Missing by external id
-        //        GetWritableTS(tester, "missing-ts", null, upd),
+        //        GetWritableTS<CogniteExtractorTimeSeries>(tester, "missing-ts", tss.space, TimeSeriesType.String, upd),
         //    };
 
         //    try
@@ -256,7 +271,7 @@ namespace ExtractorUtils.Test.Integration
 
         //        var err = errs.First(e => e.Type == ErrorType.ItemExists && e.Resource == ResourceType.ExternalId);
         //        Assert.Single(err.Skipped);
-        //        Assert.Contains(err.Values, e => e.ExternalId == tss[1].ExternalId);
+        //        Assert.Contains(err.Values, e => e.ExternalId == tss.externalIds[1]);
 
         //        err = errs.First(e => e.Type == ErrorType.ItemMissing && e.Resource == ResourceType.AssetId);
         //        Assert.Single(err.Skipped);
@@ -264,7 +279,7 @@ namespace ExtractorUtils.Test.Integration
         //    }
         //    finally
         //    {
-        //        await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+        //        await DeleteTimeseries(tester, tss.space, tss.externalIds);
         //    }
         //}
 
@@ -275,15 +290,16 @@ namespace ExtractorUtils.Test.Integration
         {
             using var tester = new CDFTester(host, _output);
 
-            var tss = await CreateTestTimeSeries(tester);
+            var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
+            var identities = CreateIdentities(tss.space, tss.externalIds);
 
             var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
-                { new Identity(tss[0]), Enumerable.Range(0, 10)
+                { identities[0], Enumerable.Range(0, 10)
                     .Select(i => new Datapoint(DateTime.UtcNow.AddSeconds(i), i)).ToList() },
-                { new Identity(tss[1]), Enumerable.Range(0, 10)
+                { identities[1], Enumerable.Range(0, 10)
                     .Select(i => new Datapoint(DateTime.UtcNow.AddSeconds(i), $"value{i}")).ToList() },
-                { new Identity(tss[2]), Enumerable.Range(0, 10)
+                { identities[2], Enumerable.Range(0, 10)
                     .Select(i => new Datapoint(DateTime.UtcNow.AddSeconds(i), i)).ToList() }
             };
 
@@ -301,9 +317,9 @@ namespace ExtractorUtils.Test.Integration
                 {
                     var foundDps = await tester.DestinationWithIDM.CogniteClient.DataPoints.ListAsync(new DataPointsQuery
                     {
-                        Items = tss.Select(ts => new DataPointsQueryItem
+                        Items = tss.externalIds.Select(ts => new DataPointsQueryItem
                         {
-                            InstanceId = ts,
+                            InstanceId = new InstanceIdentifier(tss.space, ts),
                             End = DateTime.UtcNow.AddDays(1).ToUnixTimeMilliseconds().ToString()
                         }).ToArray()
                     });
@@ -320,7 +336,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await DeleteTimeseries(tester, tss.space, tss.externalIds);
             }
         }
         [Theory]
@@ -330,13 +346,14 @@ namespace ExtractorUtils.Test.Integration
         {
             using var tester = new CDFTester(host, _output);
 
-            var tss = await CreateTestTimeSeries(tester);
+            var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
+            var identities = CreateIdentities(tss.space, tss.externalIds);
 
             Dictionary<Identity, IEnumerable<Datapoint>> GetCreates()
             {
                 return new Dictionary<Identity, IEnumerable<Datapoint>>()
                 {
-                    { Identity.Create(tss[0]), new []
+                    { identities[0], new []
                     {
                         new Datapoint(DateTime.UtcNow, 1.0),
                         new Datapoint(DateTime.MaxValue, 2.0),
@@ -347,13 +364,13 @@ namespace ExtractorUtils.Test.Integration
                         new Datapoint(DateTime.UtcNow.AddSeconds(4), 1E101),
                         new Datapoint(DateTime.UtcNow.AddSeconds(5), -1E101),
                     } },
-                    { Identity.Create(tss[1]), new []
+                    { identities[1], new []
                     {
                         new Datapoint(DateTime.UtcNow, new string('æ', CogniteUtils.TimeSeriesStringBytesMax + 1)),
                         new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
                         new Datapoint(DateTime.UtcNow, null)
                     } },
-                    { Identity.Create(tss[2]), new[]
+                    { identities[2], new[]
                     {
                         new Datapoint(DateTime.UtcNow, double.NaN)
                     } }
@@ -374,7 +391,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Single(err.Skipped);
                 var iErr = err.Skipped.OfType<DataPointInsertError>().First();
                 Assert.Equal(2, iErr.DataPoints.Count());
-                Assert.Equal(tss[0].ToString(), ((Identity)iErr.Id).ToString());
+                Assert.Equal(identities[0].ToString(), ((Identity)iErr.Id).ToString());
 
                 err = errs[1];
                 Assert.Equal(ResourceType.DataPointValue, err.Resource);
@@ -384,13 +401,13 @@ namespace ExtractorUtils.Test.Integration
 
                 iErr = insertErrs[0];
                 Assert.Equal(5, iErr.DataPoints.Count());
-                Assert.Equal(tss[0].ToString(), ((Identity)iErr.Id).ToString());
+                Assert.Equal(identities[0].ToString(), ((Identity)iErr.Id).ToString());
                 iErr = insertErrs[1];
                 Assert.Equal(2, iErr.DataPoints.Count());
-                Assert.Equal(tss[1].ToString(), ((Identity)iErr.Id).ToString());
+                Assert.Equal(identities[1].ToString(), ((Identity)iErr.Id).ToString());
                 iErr = insertErrs[2];
                 Assert.Single(iErr.DataPoints);
-                Assert.Equal(tss[2].ToString(), ((Identity)iErr.Id).ToString());
+                Assert.Equal(identities[2].ToString(), ((Identity)iErr.Id).ToString());
 
                 typeof(CogniteDestination).GetField("_nanReplacement", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(tester.DestinationWithIDM, new double?(123));
 
@@ -405,11 +422,11 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Single(err.Skipped);
                 iErr = err.Skipped.OfType<DataPointInsertError>().First();
                 Assert.Equal(2, iErr.DataPoints.Count());
-                Assert.Equal(tss[0].ToString(), ((Identity)iErr.Id).ToString());
+                Assert.Equal(identities[0].ToString(), ((Identity)iErr.Id).ToString());
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await DeleteTimeseries(tester, tss.space, tss.externalIds);
             }
         }
         [Theory]
@@ -420,23 +437,24 @@ namespace ExtractorUtils.Test.Integration
             using var tester = new CDFTester(host, _output);
 
             var spaceId = await tester.GetSpaceId();
-            var tss = await CreateTestTimeSeries(tester);
+            var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
+            var identities = CreateIdentities(tss.space, tss.externalIds);
 
             var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
                 // All mismatched
-                { Identity.Create(tss[0]), new [] {
+                { identities[0], new [] {
                     new Datapoint(DateTime.UtcNow, "test"),
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), "test2")
                 } },
                 // Some mismatched datapoints
-                { Identity.Create(tss[1]), new[]
+                { identities[1], new[]
                 {
                     new Datapoint(DateTime.UtcNow, 1.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), 2.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(2), "test")
                 } },
-                { Identity.Create(tss[2]), new[]
+                { identities[2], new[]
                 {
                     new Datapoint(DateTime.UtcNow, 1.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), "test"),
@@ -471,7 +489,7 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(tss.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await DeleteTimeseries(tester, spaceId, tss.externalIds);
             }
         }
         [Theory]
@@ -482,11 +500,11 @@ namespace ExtractorUtils.Test.Integration
             using var tester = new CDFTester(host, _output);
 
             var spaceId = await tester.GetSpaceId();
-            var tss = await CreateTestTimeSeries(tester);
+            var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
 
             var dps = new Dictionary<Identity, IEnumerable<Datapoint>>()
             {
-                { Identity.Create(tss[0]), new[]
+                { Identity.Create(new InstanceIdentifier(tss.space, tss.externalIds.First())), new[]
                 {
                     new Datapoint(DateTime.UtcNow, 1.0),
                     new Datapoint(DateTime.UtcNow.AddSeconds(1), 2.0),
@@ -514,11 +532,93 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                var toDel = tss
-                    .Select(ts => ts.ExternalId)
-                    .Concat(new[] { $"{tester.Prefix} utils-test-ts-missing-1", $"{tester.Prefix} utils-test-ts-missing-2" })
-                    .Select(x => new InstanceIdentifier(spaceId, x));
-                await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(toDel.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), tester.Source.Token);
+                await DeleteTimeseries(tester, spaceId, tss.externalIds.Concat([$"{tester.Prefix} utils-test-ts-missing-1", $"{tester.Prefix} utils-test-ts-missing-2"]));
+            }
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestGetOrCreate(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+
+            var tss = await CreateTestTimeSeries<CogniteTimeSeriesBase>(tester, 5, CoreTimeSeriesResource<CogniteTimeSeriesBase>.DefaultView);
+            var newItemExtId = tester.Prefix + "new-item";
+            var existingGood = (await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester, 1, offset: 5)).externalIds[0];
+
+            var allCreated = tss.externalIds.Append(newItemExtId).Append(existingGood);
+
+            async Task<IEnumerable<SourcedNodeWrite<CogniteExtractorTimeSeries>>> createFunction(IEnumerable<InstanceIdentifier> ids)
+            {
+                await Task.CompletedTask;
+                var missingIds = ids.ToHashSet();
+                var filtered = allCreated.Where(extId => missingIds.Contains(new InstanceIdentifier(tss.space, extId)));
+
+                Assert.Equal(6, filtered.Count());
+
+                return filtered.Select((extId, index) => new SourcedNodeWrite<CogniteExtractorTimeSeries>
+                {
+                    Space = tss.space,
+                    ExternalId = extId,
+                    Properties = new CogniteExtractorTimeSeries()
+                    {
+                        // Match type in first, type conflict on the rest of the existing ones.
+                        Type = index == 0 ? TimeSeriesType.Numeric : (index % 2 == 0 ? TimeSeriesType.String : TimeSeriesType.Numeric),
+                        Name = $"utils-test-ts-updated-{index + 1}",
+                        extractedData = new Dictionary<string, string>() { { "test", "value" } },
+                    }
+                });
+            }
+
+            try
+            {
+                var result = await tester.DestinationWithIDM.GetOrCreateTimeSeriesAsync<CogniteExtractorTimeSeries>(
+                    allCreated.Select(x => new InstanceIdentifier(tss.space, x)),
+                    createFunction,
+                    RetryMode.OnError,
+                    SanitationMode.Remove,
+                    tester.Source.Token
+                );
+
+                Assert.Single(result.Errors);
+                var error = result.Errors.First();
+                Assert.StartsWith("Cannot update immutable property 'cdf_cdm.CogniteTimeSeries.type'", error.Message);
+                Assert.Equal(ResourceType.InstanceProperty, error.Resource);
+                Assert.Equal(ErrorType.IllegalItem, error.Type);
+                Assert.Equal(400, error.Status);
+
+                var identitiesToBeSkipped = tss.externalIds.Skip(1).Take(4).Select(x => new Identity(new InstanceIdentifier(tss.space, x))).ToHashSet();
+                Assert.Equal(identitiesToBeSkipped, error.Values.ToHashSet());
+                Assert.Equal(identitiesToBeSkipped, error.Skipped.Select(x => new Identity(new InstanceIdentifier(x.Space, x.ExternalId))).ToHashSet());
+
+                var resultsDict = new Dictionary<string, SourcedNode<CogniteExtractorTimeSeries>>(
+                    result.Results.Select(x => new KeyValuePair<string, SourcedNode<CogniteExtractorTimeSeries>>(x.ExternalId, x))
+                );
+
+                Assert.Equal(3, resultsDict.Count);
+                var existingItemUpgraded = resultsDict[tss.externalIds[0]];
+                var newItem = resultsDict[newItemExtId];
+                var existingGoodItem = resultsDict[existingGood];
+
+                Assert.Equal(tss.space, existingItemUpgraded.Space);
+                Assert.Equal("utils-test-ts-updated-1", existingItemUpgraded.Properties.Name);
+                Assert.Equal(TimeSeriesType.Numeric, existingItemUpgraded.Properties.Type);
+                Assert.Equal("value", existingItemUpgraded.Properties.extractedData["test"]);
+
+                Assert.Equal(tss.space, newItem.Space);
+                Assert.Equal("utils-test-ts-updated-6", newItem.Properties.Name);
+                Assert.Equal(TimeSeriesType.Numeric, newItem.Properties.Type);
+                Assert.Equal("value", newItem.Properties.extractedData["test"]);
+
+                Assert.Equal(tss.space, existingGoodItem.Space);
+                Assert.Equal("utils-test-ts-6", existingGoodItem.Properties.Name);
+                Assert.Equal(TimeSeriesType.String, existingGoodItem.Properties.Type);
+                Assert.Null(existingGoodItem.Properties.extractedData);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, tss.space, allCreated);
             }
         }
         /// <summary>
