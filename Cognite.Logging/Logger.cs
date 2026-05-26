@@ -124,6 +124,8 @@ namespace Cognite.Extractor.Logging
         public static Serilog.ILogger GetConfiguredLogger(LoggerConfig config, LogEventLevel baseMinLevel)
         {
             var logConfig = GetConfiguration(config, baseMinLevel);
+            GetSerilogDefault().Information("Logger configured with minimum level {Level} and output to Console: {Console}, File: {File}, Stderr: {Stderr}",
+                logConfig.MinimumLevel, config.Console?.Level, config.File?.Level, config.Console?.StderrLevel);
             return logConfig.CreateLogger();
         }
 
@@ -166,7 +168,7 @@ namespace Cognite.Extractor.Logging
     }
 
     /// <summary>
-    /// This class implements a <see cref="TraceListener"/> that, when configured, writes trace messages to the injected 
+    /// This class implements a <see cref="TraceListener"/> that, when configured, writes trace messages to the injected
     /// logger
     /// </summary>
     public class LoggerTraceListener : TraceListener
