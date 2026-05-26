@@ -82,45 +82,48 @@ namespace Cognite.Extensions
             if (ex is ResponseException rex)
             {
                 var result = ParseCommonErrors<TError>(rex);
-                if (result == null) result = new CogniteError<TError>
+
+                if (result != null) return result;
+
+
+                result = new CogniteError<TError>()
                 {
                     Status = rex.Code,
                     Message = rex.Message,
                     Exception = ex
                 };
-                else return result;
-                if (type == RequestType.CreateAssets)
+
+                switch (type)
                 {
-                    ParseAssetException(rex, result);
+                    case RequestType.CreateAssets:
+                        ParseAssetException(rex, result);
+                        break;
+                    case RequestType.UpdateAssets:
+                        ParseAssetUpdateException(rex, result);
+                        break;
+                    case RequestType.CreateTimeSeries:
+                        ParseTimeSeriesException(rex, result);
+                        break;
+                    case RequestType.UpdateTimeSeries:
+                        ParseTimeSeriesUpdateException(rex, result);
+                        break;
+                    case RequestType.CreateEvents:
+                        ParseEventException(rex, result);
+                        break;
+                    case RequestType.CreateSequences:
+                        ParseSequencesException(rex, result);
+                        break;
+                    case RequestType.CreateSequenceRows:
+                        ParseSequenceRowException(rex, result);
+                        break;
+                    case RequestType.CreateDatapoints:
+                        ParseDatapointsException(rex, result);
+                        break;
+                    case RequestType.UpsertInstances:
+                        ParseInstancesException(rex, result);
+                        break;
                 }
-                else if (type == RequestType.UpdateAssets)
-                {
-                    ParseAssetUpdateException(rex, result);
-                }
-                else if (type == RequestType.CreateTimeSeries)
-                {
-                    ParseTimeSeriesException(rex, result);
-                }
-                else if (type == RequestType.UpdateTimeSeries)
-                {
-                    ParseTimeSeriesUpdateException(rex, result);
-                }
-                else if (type == RequestType.CreateEvents)
-                {
-                    ParseEventException(rex, result);
-                }
-                else if (type == RequestType.CreateSequences)
-                {
-                    ParseSequencesException(rex, result);
-                }
-                else if (type == RequestType.CreateSequenceRows)
-                {
-                    ParseSequenceRowException(rex, result);
-                }
-                else if (type == RequestType.CreateDatapoints)
-                {
-                    ParseDatapointsException(rex, result);
-                }
+
                 return result;
             }
             else
@@ -768,6 +771,10 @@ namespace Cognite.Extensions
         /// Data modeling instance id
         /// </summary>
         InstanceId,
+        /// <summary>
+        /// Data modeling instance property
+        /// </summary>
+        InstanceProperty,
         /// <summary>
         /// None or unknown
         /// </summary>

@@ -360,18 +360,18 @@ namespace ExtractorUtils.Test.unit.Unstable
             var task2RunCount = 0;
 
             // Create tasks with schedules in the future
-            var task1 = new ScheduledTask("FutureTask1", async (_, tok) =>
+            var task1 = new ScheduledTask("FutureTask1", (_, tok) =>
             {
                 task1RunCount++;
                 _output.WriteLine($"FutureTask1 ran, count: {task1RunCount}");
-                return null;
+                return Task.FromResult<TaskUpdatePayload>(null);
             }, TimeSpan.FromMilliseconds(1000)); // Scheduled 1 second in the future
 
-            var task2 = new ScheduledTask("FutureTask2", async (_, tok) =>
+            var task2 = new ScheduledTask("FutureTask2", (_, tok) =>
             {
                 task2RunCount++;
                 _output.WriteLine($"FutureTask2 ran, count: {task2RunCount}");
-                return null;
+                return Task.FromResult<TaskUpdatePayload>(null);
             }, TimeSpan.FromSeconds(2)); // Scheduled 2 seconds in the future
 
             // Add tasks with runImmediately=false, so they will use their schedule
