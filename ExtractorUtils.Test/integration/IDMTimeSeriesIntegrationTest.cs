@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -618,6 +619,52 @@ namespace ExtractorUtils.Test.Integration
             finally
             {
                 await DeleteTimeseries(tester, tss.space, allCreated);
+            }
+        }
+        /// <summary>
+        /// Verifies that GetExtractedRanges resolves identity via InstanceId when ExternalId is empty.
+        /// IDM time series responses return InstanceId (not ExternalId), so the InstanceId branch
+        /// in GetLatestTimestamps and GetEarliestTimestamps is exercised here.
+        /// </summary>
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestGetExtractedRangesInstanceIdResolution(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+
+            var tss = await CreateTestTimeSeries<CogniteExtractorTimeSeries>(tester);
+            var identities = CreateIdentities(tss.space, tss.externalIds).ToArray();
+            var lastTimestamp = DateTime.UtcNow;
+            var firstTimestamp = lastTimestamp.AddSeconds(-10);
+
+            var dps = new Dictionary<Identity, IEnumerable<Datapoint>>
+            {
+                { identities[0], new[] { new Datapoint(firstTimestamp, 1.0), new Datapoint(lastTimestamp, 2.0) } },
+                { identities[1], new[] { new Datapoint(firstTimestamp, "first"), new Datapoint(lastTimestamp, "last") } },
+                { identities[2], new[] { new Datapoint(firstTimestamp, 1.0), new Datapoint(lastTimestamp, 2.0) } },
+            };
+
+            try
+            {
+                await tester.DestinationWithIDM.InsertDataPointsIDMAsync(dps, SanitationMode.None, RetryMode.None, tester.Source.Token);
+
+                var result = await tester.DestinationWithIDM.GetExtractedRanges(identities, tester.Source.Token);
+
+                Assert.Equal(3, result.Count);
+                foreach (var id in identities)
+                {
+                    Assert.True(result.ContainsKey(id), $"Missing range for {id}");
+                    tester.Logger.LogInformation(
+                        "GetExtractedRanges [{id}] — First: {first}, Last: {last} (expected First: {expectedFirst})",
+                        id, result[id].First.ToISOString(), result[id].Last.ToISOString(), firstTimestamp.ToISOString());
+                    Assert.Equal(firstTimestamp.ToISOString(), result[id].First.ToISOString());
+                    Assert.Equal(lastTimestamp.ToISOString(), result[id].Last.ToISOString());
+                }
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, tss.space, tss.externalIds);
             }
         }
     }
