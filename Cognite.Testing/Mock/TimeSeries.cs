@@ -197,24 +197,6 @@ namespace Cognite.Extractor.Testing.Mock
             return new SimpleMatcher("POST", "/timeseries/data", CreateDatapointsImpl, times);
         }
 
-        private static Dictionary<string, MultiValue> ToMultiValueDict(Identity id)
-        {
-            var dict = new Dictionary<string, MultiValue>();
-            if (id.Id.HasValue)
-            {
-                dict["id"] = MultiValue.Create(id.Id.Value);
-            }
-            else if (id.InstanceId != null)
-            {
-                dict["instanceId"] = MultiValue.Create(id.InstanceId);
-            }
-            else if (!string.IsNullOrEmpty(id.ExternalId))
-            {
-                dict["externalId"] = MultiValue.Create(id.ExternalId);
-            }
-            return dict;
-        }
-
         private async Task<HttpResponseMessage> TimeSeriesByIdsImpl(RequestContext context, CancellationToken token)
         {
             var ids = await context.ReadJsonBody<ItemsWithIgnoreUnknownIds<RawIdentity>>().ConfigureAwait(false);
@@ -240,7 +222,7 @@ namespace Cognite.Extractor.Testing.Mock
                 {
                     Code = 400,
                     Message = "Timeseries not found",
-                    Missing = missing.Distinct().Select(ToMultiValueDict).ToList(),
+                    Missing = missing.Distinct().Select(MockUtils.ToMultiValueDict).ToList(),
                 });
             }
             return context.CreateJsonResponse(new ItemsWithoutCursor<TimeSeries>
@@ -302,7 +284,7 @@ namespace Cognite.Extractor.Testing.Mock
                 {
                     Code = 400,
                     Message = "Timeseries not found",
-                    Missing = missing.Distinct().Select(ToMultiValueDict).ToList(),
+                    Missing = missing.Distinct().Select(MockUtils.ToMultiValueDict).ToList(),
                 });
             }
             if (mismatchedExpected != null)

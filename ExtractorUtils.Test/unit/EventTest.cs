@@ -19,6 +19,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
+using Cognite.Extractor.Testing.Mock;
+using Moq;
 
 namespace ExtractorUtils.Test.Unit
 {
@@ -26,8 +28,6 @@ namespace ExtractorUtils.Test.Unit
     {
         private const string _project = "someProject";
         private const string _host = "https://test.cognitedata.com";
-
-        private bool _failInsert;
 
         private readonly ITestOutputHelper _output;
         public EventTest(ITestOutputHelper output)
@@ -44,17 +44,9 @@ namespace ExtractorUtils.Test.Unit
         [InlineData("id11", "id12", "duplicated3", "id13", "duplicated4")]
         [InlineData("id14", "missing5", "id15", "duplicated5", "missing6", "duplicated6")]
         [InlineData("id16", "id17", "missing7", "duplicated7-2", "duplicated8-4", "duplicated9-3")]
-        /// <summary>
-        /// External ids starting with 'id' exist in the mocked endpoint.
-        /// External ids starting with 'missing' do not exist, but can be successfully created.
-        /// External ids starting with 'duplicated' do not exist, and fail during creation as duplicated.
-        /// Duplicated with a suffix '-N', where N is an int will be reported by the endpoint as duplicated
-        /// a total of N times.
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
         public async Task TestEnsureEvents(params string[] ids)
         {
+            if (ids == null) throw new ArgumentNullException(nameof(ids));
             string path = "test-ensure-events-config.yml";
             string[] lines = {  "version: 2",
                                 "logger:",
@@ -69,20 +61,28 @@ namespace ExtractorUtils.Test.Unit
                                 "    events: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureEventsSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             // Setup services
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp");
             using (var provider = services.BuildServiceProvider())
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
+                var mock = provider.GetRequiredService<CdfMock>();
+                var events = new EventsMock();
 
+                foreach (var id in ids)
+                {
+                    if (id.StartsWith("duplicated"))
+                    {
+                        events.MockEvent(id);
+                    }
+                }
+
+                mock.AddMatcher(events.MakeCreateEventsMatcher(Times.AtLeast(1)));
+                mock.AddMatcher(events.MakeGetByIdsMatcher(Times.AtLeast(1)));
                 Func<IEnumerable<string>, IEnumerable<EventCreate>> createFunction =
                     (idxs) =>
                     {
@@ -103,10 +103,16 @@ namespace ExtractorUtils.Test.Unit
                     SanitationMode.Remove,
                     CancellationToken.None
                 );
-                Assert.Equal(ids?.Length, ts.Results.Where(t => ids.Contains(t.ExternalId)).Count());
-                foreach (var t in ts.Results)
+                Assert.Equal(ids.Length, ts.Results.Count());
+                Assert.Equal(events.Events.Count, ids.Length);
+                events.Clear();
+
+                foreach (var id in ids)
                 {
-                    _ensuredEvents.Remove(t.ExternalId, out _);
+                    if (id.StartsWith("duplicated"))
+                    {
+                        events.MockEvent(id);
+                    }
                 }
 
                 var newEvents = createFunction(ids);
@@ -115,8 +121,7 @@ namespace ExtractorUtils.Test.Unit
                     // a timeout would fail the test
                     await cogniteDestination.EnsureEventsExistsAsync(newEvents, RetryMode.OnFatal, SanitationMode.Remove, source.Token);
                 }
-                Assert.Equal(ids.Length, _ensuredEvents
-                    .Where(kvp => ids.Contains(kvp.Key)).Count());
+                Assert.Equal(ids.Length, events.Events.Count);
             }
 
             System.IO.File.Delete(path);
@@ -139,14 +144,10 @@ namespace ExtractorUtils.Test.Unit
                                 "    events: 2" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureEventsSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
             var index = 0;
 
@@ -158,6 +159,9 @@ namespace ExtractorUtils.Test.Unit
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<EventTest>>();
+                var mock = provider.GetRequiredService<CdfMock>();
+                var events = new EventsMock();
+                mock.AddMatcher(events.MakeCreateEventsMatcher(Times.Between(7, 13, Moq.Range.Inclusive)));
                 // queue with 1 sec upload interval
                 await using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromSeconds(1), 0, res =>
                 {
@@ -191,6 +195,8 @@ namespace ExtractorUtils.Test.Unit
                 Assert.Equal(13, evtCount);
                 Assert.True(cbCount <= 3);
                 cbCount = 0;
+                mock.AssertAndClear();
+                mock.AddMatcher(events.MakeCreateEventsMatcher(Times.Exactly(6)));
 
                 // queue with maximum size
                 await using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.FromMinutes(10), 5, res =>
@@ -247,17 +253,15 @@ namespace ExtractorUtils.Test.Unit
                                 "  cdf-chunking:",
                                 "    events: 2",
                                 "  cdf-throttling:",
-                                "    events: 2" };
+                                "    events: 2",
+                                "  cdf-retries:",
+                                "    max-retries: 0" };
             System.IO.File.WriteAllLines(path, lines);
 
-            var mocks = TestUtilities.GetMockedHttpClientFactory(mockEnsureEventsSendAsync);
-            var mockHttpMessageHandler = mocks.handler;
-            var mockFactory = mocks.factory;
-
             var services = new ServiceCollection();
-            services.AddSingleton<IHttpClientFactory>(mockFactory.Object); // inject the mock factory
             services.AddConfig<BaseConfig>(path, 2);
             services.AddTestLogging(_output);
+            CdfMock.RegisterHttpClient(services);
             services.AddCogniteClient("testApp", setLogger: true, setMetrics: false);
 
             System.IO.File.Create("event-buffer.bin").Close();
@@ -267,6 +271,11 @@ namespace ExtractorUtils.Test.Unit
             {
                 var cogniteDestination = provider.GetRequiredService<CogniteDestination>();
                 var logger = provider.GetRequiredService<ILogger<EventTest>>();
+                var mock = provider.GetRequiredService<CdfMock>();
+                var events = new EventsMock();
+                // Just the successful inserts, 5 batches of 2
+                mock.AddMatcher(events.MakeCreateEventsMatcher(Times.Exactly(5)));
+                mock.AddTokenInspectEndpoint(Times.AtLeastOnce(), _project);
                 await using (var queue = cogniteDestination.CreateEventUploadQueue(TimeSpan.Zero, 0, null, "event-buffer.bin"))
                 {
                     var _ = queue.Start(source.Token);
@@ -279,18 +288,18 @@ namespace ExtractorUtils.Test.Unit
                             EndTime = DateTime.UtcNow.ToUnixTimeMilliseconds()
                         });
                     }
-                    _failInsert = true;
+                    mock.RejectAllMessages = true;
                     Assert.Equal(0, new FileInfo("event-buffer.bin").Length);
                     await queue.Trigger(CancellationToken.None);
                     Assert.True(new FileInfo("event-buffer.bin").Length > 0);
-                    Assert.Empty(_ensuredEvents);
+                    Assert.Empty(events.Events);
                     await queue.Trigger(CancellationToken.None);
                     Assert.True(new FileInfo("event-buffer.bin").Length > 0);
-                    Assert.Empty(_ensuredEvents);
-                    _failInsert = false;
+                    Assert.Empty(events.Events);
+                    mock.RejectAllMessages = false;
                     await queue.Trigger(CancellationToken.None);
                     Assert.Equal(0, new FileInfo("event-buffer.bin").Length);
-                    Assert.Equal(10, _ensuredEvents.Count);
+                    Assert.Equal(10, events.Events.Count);
                     logger.LogInformation("Disposing of the upload queue");
                 }
                 logger.LogInformation("Upload queue disposed");
@@ -298,139 +307,5 @@ namespace ExtractorUtils.Test.Unit
             System.IO.File.Delete("event-buffer.bin");
             System.IO.File.Delete(path);
         }
-
-
-        #region mock
-        private ConcurrentDictionary<string, int> _ensuredEvents = new ConcurrentDictionary<string, int>();
-
-        private async Task<HttpResponseMessage> mockEnsureEventsSendAsync(
-            HttpRequestMessage message,
-            CancellationToken token)
-        {
-            var uri = message.RequestUri.ToString();
-            var responseBody = "";
-
-            if (_failInsert)
-            {
-                dynamic failResponse = new ExpandoObject();
-                failResponse.error = new ExpandoObject();
-                failResponse.error.code = 500;
-                failResponse.error.message = "Something went wrong";
-
-                responseBody = JsonConvert.SerializeObject(failResponse);
-                var fail = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    Content = new StringContent(responseBody)
-                };
-                fail.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                fail.Headers.Add("x-request-id", "1");
-                return fail;
-            }
-
-            if (uri.Contains("/token/inspect"))
-            {
-                dynamic inspectResponse = new ExpandoObject();
-                inspectResponse.projects = new List<ExpandoObject>();
-                dynamic project = new ExpandoObject();
-                project.projectUrlName = _project;
-                inspectResponse.projects.Add(project);
-
-                responseBody = JsonConvert.SerializeObject(inspectResponse);
-                var msg = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(responseBody)
-                };
-
-                msg.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                msg.Headers.Add("x-request-id", "1");
-                return msg;
-            }
-
-            var statusCode = HttpStatusCode.OK;
-
-            var content = await message.Content.ReadAsStringAsync(token);
-            var ids = JsonConvert.DeserializeObject<dynamic>(content);
-            IEnumerable<dynamic> items = ids.items;
-
-
-
-            if (uri.Contains("/events/byids"))
-            {
-                Assert.True((bool)ids.ignoreUnknownIds);
-
-                dynamic result = new ExpandoObject();
-                result.items = new List<ExpandoObject>();
-
-                foreach (var item in items)
-                {
-                    string id = item.externalId;
-                    var ensured = _ensuredEvents.TryGetValue(id, out int countdown) && countdown <= 0;
-                    if (ensured || id.StartsWith("id"))
-                    {
-                        dynamic eventData = new ExpandoObject();
-                        eventData.externalId = id;
-                        result.items.Add(eventData);
-                        _ensuredEvents.TryAdd(id, 0);
-                    }
-                }
-                responseBody = JsonConvert.SerializeObject(result);
-            }
-            else
-            {
-                dynamic duplicateData = new ExpandoObject();
-                duplicateData.error = new ExpandoObject();
-                duplicateData.error.code = 409;
-                duplicateData.error.message = "ExternalIds duplicated";
-                duplicateData.error.duplicated = new List<ExpandoObject>();
-
-                dynamic result = new ExpandoObject();
-                result.items = new List<ExpandoObject>();
-
-                foreach (var item in items)
-                {
-                    string id = item.externalId;
-                    var hasValue = _ensuredEvents.TryGetValue(id, out int countdown);
-                    if ((!hasValue || countdown > 0) && id.StartsWith("duplicated"))
-                    {
-                        var splittedId = id.Split('-');
-                        var count = splittedId.Length == 2 ? int.Parse(splittedId[1]) - 1 : 0;
-                        dynamic duplicatedId = new ExpandoObject();
-                        duplicatedId.externalId = id;
-                        duplicateData.error.duplicated.Add(duplicatedId);
-                        _ensuredEvents[id] = hasValue ? countdown - 1 : count;
-                    }
-                    else
-                    {
-                        dynamic eventData = new ExpandoObject();
-                        eventData.externalId = id;
-                        result.items.Add(eventData);
-                        _ensuredEvents.TryAdd(id, 0);
-                    }
-
-                }
-                if (duplicateData.error.duplicated.Count > 0)
-                {
-                    responseBody = JsonConvert.SerializeObject(duplicateData);
-                    statusCode = HttpStatusCode.Conflict;
-                }
-                else
-                {
-                    responseBody = JsonConvert.SerializeObject(result);
-                }
-            }
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = statusCode,
-                Content = new StringContent(responseBody)
-            };
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            response.Headers.Add("x-request-id", "1");
-
-            return response;
-        }
-        #endregion
     }
 }
