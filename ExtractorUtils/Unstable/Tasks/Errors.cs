@@ -45,7 +45,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <summary>
         /// Config revision active when this error was reported.
         /// </summary>
-        public int? ConfigRevision { get; set; }
+        public string? Type { get; }
+        public int? ConfigRevision { get; }
 
         /// <summary>
         /// Time the error started.
