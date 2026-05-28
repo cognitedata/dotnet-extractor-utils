@@ -41,11 +41,10 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <summary>
         /// Optional error type, used to categorize errors.
         /// </summary>
-        public string? Type { get; set; }
+        public string? Type { get; }
         /// <summary>
         /// Config revision active when this error was reported.
         /// </summary>
-        public string? Type { get; }
         public int? ConfigRevision { get; }
 
         /// <summary>

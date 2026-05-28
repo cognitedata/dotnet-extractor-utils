@@ -124,8 +124,8 @@ namespace Cognite.Extractor.Logging
         public static Serilog.ILogger GetConfiguredLogger(LoggerConfig config, LogEventLevel baseMinLevel)
         {
             var logConfig = GetConfiguration(config, baseMinLevel);
-            GetSerilogDefault().Information("Logger configured with minimum level {Level} and output to Console: {Console}, File: {File}, Stderr: {Stderr}",
-                logConfig.MinimumLevel, config.Console?.Level, config.File?.Level, config.Console?.StderrLevel);
+            GetSerilogDefault().Information("Configuring Logger with minimum level {Level} and output to Console: {Console}, File: {File}, Stderr: {Stderr}",
+                logConfig.MinimumLevel.ToString(), config.Console?.Level, config.File?.Level, config.Console?.StderrLevel);
             return logConfig.CreateLogger();
         }
 
