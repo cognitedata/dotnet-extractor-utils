@@ -155,7 +155,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 var msg = ex.Message;
                 if (_lastErrorMsg != msg)
                 {
-                    reporter.Fatal($"Fatally failed to load local configuration file from {_configFilePath}: {ex.Message}");
+                    reporter.Fatal($"Fatally failed to load local configuration file from {_configFilePath}: {ex.Message}", type: "config");
                 }
                 _lastErrorMsg = msg;
                 throw;
@@ -170,7 +170,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 if (isNewConfig)
                 {
-                    reporter.Fatal($"Failed to parse configuration file from {_configFilePath}: {ex.Message}");
+                    reporter.Fatal($"Failed to parse configuration file from {_configFilePath}: {ex.Message}", type: "config");
                 }
                 throw;
             }
@@ -256,7 +256,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 var msg = ex.Message;
                 if (_lastErrorMsg != msg)
                 {
-                    reporter.Fatal($"Fatally failed to load configuration file from CDF: {msg}");
+                    reporter.Fatal($"Fatally failed to load configuration file from CDF: {msg}", type: "config", configRevision: targetRevision);
                 }
                 _lastErrorMsg = msg;
                 throw;
@@ -275,7 +275,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 if (isNewConfig)
                 {
-                    reporter.Fatal($"Failed to parse configuration file from CDF: {ex.Message}", configRevision: revision);
+                    reporter.Fatal($"Failed to parse configuration file from CDF: {ex.Message}", type: "config", configRevision: revision);
                 }
                 throw;
             }

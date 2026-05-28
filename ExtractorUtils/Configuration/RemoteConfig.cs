@@ -168,7 +168,7 @@ namespace Cognite.Extractor.Utils
             {
                 var rawConfig = await _destination.CogniteClient.ExtPipes.GetCurrentConfigAsync(_pipelineId, token).ConfigureAwait(false);
                 var config = ConfigurationUtils.TryReadConfigFromString<T>(rawConfig.Config, _acceptedConfigVersions);
-                _logger.LogCritical("Successfully fetched configuration from CDF for pipeline {Pipeline}. Revision: {Rev}", _pipelineId, rawConfig.Revision);
+                _logger.LogInformation("Successfully fetched configuration from CDF for pipeline {Pipeline}. Revision: {Rev}", _pipelineId, rawConfig.Revision);
                 if (_bufferFilePath != null)
                 {
                     try
