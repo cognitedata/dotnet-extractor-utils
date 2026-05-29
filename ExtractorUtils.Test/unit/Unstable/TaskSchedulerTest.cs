@@ -27,10 +27,12 @@ namespace ExtractorUtils.Test.unit.Unstable
             return Task.CompletedTask;
         }
 
-        public override ExtractorError NewError(ErrorLevel level, string description, string details = null, DateTime? now = null)
+#nullable enable
+        public override ExtractorError NewError(ErrorLevel level, string description, string? details = null, DateTime? now = null, string? type = null, int? configRevision = null)
         {
-            return new ExtractorError(level, description, this, details, null, now);
+            return new ExtractorError(level, description, this, details, null, now, type, configRevision);
         }
+#nullable restore
 
         public void ReportError(ExtractorError error)
         {

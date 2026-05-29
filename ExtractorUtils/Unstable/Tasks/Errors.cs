@@ -8,10 +8,10 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
     /// <summary>
     /// Utility type for reporting errors to integrations.
-    /// 
+    ///
     /// After creation you should immediately either `Dispose`,
     /// call `Finish`, or call `Instant`.
-    /// 
+    ///
     /// Typically created through utility methods on `IErrorReporter`
     /// </summary>
     public class ExtractorError : IDisposable
@@ -30,7 +30,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public string Description { get; }
         /// <summary>
         /// Task that generated this error.
-        /// 
+        ///
         /// If left out, the error is assigned to the extractor itself.
         /// </summary>
         public string? TaskName { get; }
@@ -38,6 +38,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// Long error details.
         /// </summary>
         public string? Details { get; set; }
+        /// <summary>
+        /// Optional error type, used to categorize errors.
+        /// </summary>
+        public string? Type { get; }
+        /// <summary>
+        /// Config revision active when this error was reported.
+        /// </summary>
+        public int? ConfigRevision { get; }
 
         /// <summary>
         /// Time the error started.
@@ -61,19 +69,25 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="details">Long error details.</param>
         /// <param name="taskName">Task that generated this error. If left out, the error is assigned to the extractor itself.</param>
         /// <param name="now">Current time, for synchronization. Defaults to DateTime.UtcNow</param>
+        /// <param name="type">Optional error type, used to categorize errors.</param>
+        /// <param name="configRevision">Config revision active when this error was reported.</param>
         public ExtractorError(
             ErrorLevel level,
             string description,
             IIntegrationSink sink,
             string? details = null,
             string? taskName = null,
-            DateTime? now = null)
+            DateTime? now = null,
+            string? type = null,
+            int? configRevision = null)
         {
             Level = level;
             Description = description;
             _sink = sink;
             Details = details;
             TaskName = taskName;
+            Type = type;
+            ConfigRevision = configRevision;
             StartTime = now ?? DateTime.UtcNow;
             ExternalId = Guid.NewGuid().ToString();
 
@@ -122,6 +136,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 Task = TaskName,
                 StartTime = StartTime.ToUnixTimeMilliseconds(),
                 EndTime = EndTime?.ToUnixTimeMilliseconds(),
+                Type = Type,
+                ConfigRevision = ConfigRevision,
             };
         }
 
@@ -208,12 +224,16 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="description">Short error description.</param>
         /// <param name="details">Long error details.</param>
         /// <param name="now">Optional current timestamp.</param>
+        /// <param name="type">Optional error type, used to categorize errors.</param>
+        /// <param name="configRevision">Config revision active when this error was reported.</param>
         /// <returns></returns>
         public abstract ExtractorError NewError(
             ErrorLevel level,
             string description,
             string? details = null,
-            DateTime? now = null
+            DateTime? now = null,
+            string? type = null,
+            int? configRevision = null
         );
 
         /// <summary>
@@ -268,10 +288,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="description">Fatal error description.</param>
         /// <param name="details">Long fatal error details.</param>
         /// <param name="now">Current time, for synchronization. Defaults to DateTime.UtcNow</param>
+        /// <param name="type">Type of the error.</param>
+        /// <param name="configRevision">Configuration revision associated with the error.</param>
         /// <returns>An error that should be completed later.</returns>
-        public ExtractorError BeginFatal(string description, string? details = null, DateTime? now = null)
+        public ExtractorError BeginFatal(string description, string? details = null, DateTime? now = null, string? type = null, int? configRevision = null)
         {
-            return NewError(ErrorLevel.fatal, description, details, now);
+            return NewError(ErrorLevel.fatal, description, details, now, type, configRevision);
         }
 
         /// <summary>
@@ -280,9 +302,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="description">Fatal error description.</param>
         /// <param name="details">Long fatal error details.</param>
         /// <param name="now">Current time, for synchronization. Defaults to DateTime.UtcNow</param>
-        public void Fatal(string description, string? details = null, DateTime? now = null)
+        /// <param name="type">Type of the error.</param>
+        /// <param name="configRevision">Configuration revision associated with the error.</param>
+        public void Fatal(string description, string? details = null, DateTime? now = null, string? type = null, int? configRevision = null)
         {
-            BeginFatal(description, details, now).Instant();
+            BeginFatal(description, details, now, type, configRevision).Instant();
         }
     }
 }
