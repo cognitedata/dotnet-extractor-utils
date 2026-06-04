@@ -13562,15 +13562,15 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).InitTasks
   nameWithType: BaseExtractor<TConfig>.InitTasks
   nameWithType.vb: BaseExtractor(Of TConfig).InitTasks
-- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime})
-  name: NewError(ErrorLevel, string, string?, DateTime?)
-  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_NewError_CogniteSdk_Alpha_ErrorLevel_System_String_System_String_System_Nullable_System_DateTime__
-  commentId: M:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime})
-  name.vb: NewError(ErrorLevel, String, String, Date?)
-  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.NewError(CogniteSdk.Alpha.ErrorLevel, string, string?, System.DateTime?)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).NewError(CogniteSdk.Alpha.ErrorLevel, String, String, Date?)
-  nameWithType: BaseExtractor<TConfig>.NewError(ErrorLevel, string, string?, DateTime?)
-  nameWithType.vb: BaseExtractor(Of TConfig).NewError(ErrorLevel, String, String, Date?)
+- uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name: NewError(ErrorLevel, string, string?, DateTime?, string?, int?)
+  href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_NewError_CogniteSdk_Alpha_ErrorLevel_System_String_System_String_System_Nullable_System_DateTime__System_String_System_Nullable_System_Int32__
+  commentId: M:Cognite.Extractor.Utils.Unstable.BaseExtractor`1.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name.vb: NewError(ErrorLevel, String, String, Date?, String, Integer?)
+  fullName: Cognite.Extractor.Utils.Unstable.BaseExtractor<TConfig>.NewError(CogniteSdk.Alpha.ErrorLevel, string, string?, System.DateTime?, string?, int?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.BaseExtractor(Of TConfig).NewError(CogniteSdk.Alpha.ErrorLevel, String, String, Date?, String, Integer?)
+  nameWithType: BaseExtractor<TConfig>.NewError(ErrorLevel, string, string?, DateTime?, string?, int?)
+  nameWithType.vb: BaseExtractor(Of TConfig).NewError(ErrorLevel, String, String, Date?, String, Integer?)
 - uid: Cognite.Extractor.Utils.Unstable.BaseExtractor`1.NewError*
   name: NewError
   href: api/Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_NewError_
@@ -15289,15 +15289,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginError
   nameWithType: BaseErrorReporter.BeginError
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal(System.String,System.String,System.Nullable{System.DateTime})
-  name: BeginFatal(string, string?, DateTime?)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_BeginFatal_System_String_System_String_System_Nullable_System_DateTime__
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal(System.String,System.String,System.Nullable{System.DateTime})
-  name.vb: BeginFatal(String, String, Date?)
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal(string, string?, System.DateTime?)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal(String, String, Date?)
-  nameWithType: BaseErrorReporter.BeginFatal(string, string?, DateTime?)
-  nameWithType.vb: BaseErrorReporter.BeginFatal(String, String, Date?)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal(System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name: BeginFatal(string, string?, DateTime?, string?, int?)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_BeginFatal_System_String_System_String_System_Nullable_System_DateTime__System_String_System_Nullable_System_Int32__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal(System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name.vb: BeginFatal(String, String, Date?, String, Integer?)
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal(string, string?, System.DateTime?, string?, int?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal(String, String, Date?, String, Integer?)
+  nameWithType: BaseErrorReporter.BeginFatal(string, string?, DateTime?, string?, int?)
+  nameWithType.vb: BaseErrorReporter.BeginFatal(String, String, Date?, String, Integer?)
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.BeginFatal*
   name: BeginFatal
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_BeginFatal_
@@ -15337,15 +15337,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Error
   nameWithType: BaseErrorReporter.Error
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal(System.String,System.String,System.Nullable{System.DateTime})
-  name: Fatal(string, string?, DateTime?)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_Fatal_System_String_System_String_System_Nullable_System_DateTime__
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal(System.String,System.String,System.Nullable{System.DateTime})
-  name.vb: Fatal(String, String, Date?)
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal(string, string?, System.DateTime?)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal(String, String, Date?)
-  nameWithType: BaseErrorReporter.Fatal(string, string?, DateTime?)
-  nameWithType.vb: BaseErrorReporter.Fatal(String, String, Date?)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal(System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name: Fatal(string, string?, DateTime?, string?, int?)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_Fatal_System_String_System_String_System_Nullable_System_DateTime__System_String_System_Nullable_System_Int32__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal(System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name.vb: Fatal(String, String, Date?, String, Integer?)
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal(string, string?, System.DateTime?, string?, int?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal(String, String, Date?, String, Integer?)
+  nameWithType: BaseErrorReporter.Fatal(string, string?, DateTime?, string?, int?)
+  nameWithType.vb: BaseErrorReporter.Fatal(String, String, Date?, String, Integer?)
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal*
   name: Fatal
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_Fatal_
@@ -15353,15 +15353,15 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.Fatal
   nameWithType: BaseErrorReporter.Fatal
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime})
-  name: NewError(ErrorLevel, string, string?, DateTime?)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_NewError_CogniteSdk_Alpha_ErrorLevel_System_String_System_String_System_Nullable_System_DateTime__
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime})
-  name.vb: NewError(ErrorLevel, String, String, Date?)
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError(CogniteSdk.Alpha.ErrorLevel, string, string?, System.DateTime?)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError(CogniteSdk.Alpha.ErrorLevel, String, String, Date?)
-  nameWithType: BaseErrorReporter.NewError(ErrorLevel, string, string?, DateTime?)
-  nameWithType.vb: BaseErrorReporter.NewError(ErrorLevel, String, String, Date?)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name: NewError(ErrorLevel, string, string?, DateTime?, string?, int?)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_NewError_CogniteSdk_Alpha_ErrorLevel_System_String_System_String_System_Nullable_System_DateTime__System_String_System_Nullable_System_Int32__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name.vb: NewError(ErrorLevel, String, String, Date?, String, Integer?)
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError(CogniteSdk.Alpha.ErrorLevel, string, string?, System.DateTime?, string?, int?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError(CogniteSdk.Alpha.ErrorLevel, String, String, Date?, String, Integer?)
+  nameWithType: BaseErrorReporter.NewError(ErrorLevel, string, string?, DateTime?, string?, int?)
+  nameWithType.vb: BaseErrorReporter.NewError(ErrorLevel, String, String, Date?, String, Integer?)
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.NewError*
   name: NewError
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_BaseErrorReporter_NewError_
@@ -15597,15 +15597,15 @@ references:
   commentId: T:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError
   nameWithType: ExtractorError
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.#ctor(CogniteSdk.Alpha.ErrorLevel,System.String,Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink,System.String,System.String,System.Nullable{System.DateTime})
-  name: ExtractorError(ErrorLevel, string, IIntegrationSink, string?, string?, DateTime?)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError__ctor_CogniteSdk_Alpha_ErrorLevel_System_String_Cognite_Extractor_Utils_Unstable_Tasks_IIntegrationSink_System_String_System_String_System_Nullable_System_DateTime__
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.#ctor(CogniteSdk.Alpha.ErrorLevel,System.String,Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink,System.String,System.String,System.Nullable{System.DateTime})
-  name.vb: New(ErrorLevel, String, IIntegrationSink, String, String, Date?)
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ExtractorError(CogniteSdk.Alpha.ErrorLevel, string, Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink, string?, string?, System.DateTime?)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.New(CogniteSdk.Alpha.ErrorLevel, String, Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink, String, String, Date?)
-  nameWithType: ExtractorError.ExtractorError(ErrorLevel, string, IIntegrationSink, string?, string?, DateTime?)
-  nameWithType.vb: ExtractorError.New(ErrorLevel, String, IIntegrationSink, String, String, Date?)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.#ctor(CogniteSdk.Alpha.ErrorLevel,System.String,Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink,System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name: ExtractorError(ErrorLevel, string, IIntegrationSink, string?, string?, DateTime?, string?, int?)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError__ctor_CogniteSdk_Alpha_ErrorLevel_System_String_Cognite_Extractor_Utils_Unstable_Tasks_IIntegrationSink_System_String_System_String_System_Nullable_System_DateTime__System_String_System_Nullable_System_Int32__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.#ctor(CogniteSdk.Alpha.ErrorLevel,System.String,Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink,System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name.vb: New(ErrorLevel, String, IIntegrationSink, String, String, Date?, String, Integer?)
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ExtractorError(CogniteSdk.Alpha.ErrorLevel, string, Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink, string?, string?, System.DateTime?, string?, int?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.New(CogniteSdk.Alpha.ErrorLevel, String, Cognite.Extractor.Utils.Unstable.Tasks.IIntegrationSink, String, String, Date?, String, Integer?)
+  nameWithType: ExtractorError.ExtractorError(ErrorLevel, string, IIntegrationSink, string?, string?, DateTime?, string?, int?)
+  nameWithType.vb: ExtractorError.New(ErrorLevel, String, IIntegrationSink, String, String, Date?, String, Integer?)
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.#ctor*
   name: ExtractorError
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError__ctor_
@@ -15616,6 +15616,19 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.New
   nameWithType: ExtractorError.ExtractorError
   nameWithType.vb: ExtractorError.New
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ConfigRevision
+  name: ConfigRevision
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError_ConfigRevision
+  commentId: P:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ConfigRevision
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ConfigRevision
+  nameWithType: ExtractorError.ConfigRevision
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ConfigRevision*
+  name: ConfigRevision
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError_ConfigRevision_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ConfigRevision
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ConfigRevision
+  nameWithType: ExtractorError.ConfigRevision
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.Description
   name: Description
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError_Description
@@ -15771,6 +15784,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.ToSdk
   nameWithType: ExtractorError.ToSdk
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.Type
+  name: Type
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError_Type
+  commentId: P:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.Type
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.Type
+  nameWithType: ExtractorError.Type
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.Type*
+  name: Type
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html#Cognite_Extractor_Utils_Unstable_Tasks_ExtractorError_Type_
+  commentId: Overload:Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.Type
+  isSpec: "True"
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.Type
+  nameWithType: ExtractorError.Type
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler
   name: ExtractorTaskScheduler
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.ExtractorTaskScheduler.html
@@ -16116,15 +16142,15 @@ references:
   fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.New
   nameWithType: TaskReporter.TaskReporter
   nameWithType.vb: TaskReporter.New
-- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime})
-  name: NewError(ErrorLevel, string, string?, DateTime?)
-  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskReporter_NewError_CogniteSdk_Alpha_ErrorLevel_System_String_System_String_System_Nullable_System_DateTime__
-  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime})
-  name.vb: NewError(ErrorLevel, String, String, Date?)
-  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError(CogniteSdk.Alpha.ErrorLevel, string, string?, System.DateTime?)
-  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError(CogniteSdk.Alpha.ErrorLevel, String, String, Date?)
-  nameWithType: TaskReporter.NewError(ErrorLevel, string, string?, DateTime?)
-  nameWithType.vb: TaskReporter.NewError(ErrorLevel, String, String, Date?)
+- uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name: NewError(ErrorLevel, string, string?, DateTime?, string?, int?)
+  href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskReporter_NewError_CogniteSdk_Alpha_ErrorLevel_System_String_System_String_System_Nullable_System_DateTime__System_String_System_Nullable_System_Int32__
+  commentId: M:Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError(CogniteSdk.Alpha.ErrorLevel,System.String,System.String,System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})
+  name.vb: NewError(ErrorLevel, String, String, Date?, String, Integer?)
+  fullName: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError(CogniteSdk.Alpha.ErrorLevel, string, string?, System.DateTime?, string?, int?)
+  fullName.vb: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError(CogniteSdk.Alpha.ErrorLevel, String, String, Date?, String, Integer?)
+  nameWithType: TaskReporter.NewError(ErrorLevel, string, string?, DateTime?, string?, int?)
+  nameWithType.vb: TaskReporter.NewError(ErrorLevel, String, String, Date?, String, Integer?)
 - uid: Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.NewError*
   name: NewError
   href: api/Cognite.Extractor.Utils.Unstable.Tasks.TaskReporter.html#Cognite_Extractor_Utils_Unstable_Tasks_TaskReporter_NewError_
