@@ -57,7 +57,7 @@
                     "default": 5000,
                     "description": "Minimum number of datapoints in request to switch to using gzip. Set to -1 to disable, 0 to always enable. The minimum HTTP packet size is generally 1500 bytes, so this should not be set below 100 for numeric datapoints.",
                     "max": 100000,
-                    "min": 1
+                    "min": -1
                 },
                 "raw-rows": {
                     "type": "integer",
