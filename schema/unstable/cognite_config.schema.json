@@ -1,0 +1,180 @@
+{
+    "$id": "cognite_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "description": "Configuration for the CDF pusher (BaseCogniteConfig). Authentication, project, and connection settings belong in connection.yml (see connection_config.schema.json).",
+    "unevaluatedProperties": false,
+    "properties": {
+        "cdf-chunking": {
+            "type": "object",
+            "description": "Configure chunking of data on requests to CDF. Note that increasing these may cause requests to fail due to limits in the API itself.",
+            "unevaluatedProperties": false,
+            "properties": {
+                "time-series": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of timeseries per get/create timeseries request.",
+                    "max": 1000,
+                    "min": 1
+                },
+                "assets": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of assets per get/create assets request.",
+                    "max": 1000,
+                    "min": 1
+                },
+                "data-point-time-series": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Maximum number of timeseries per datapoint create request.",
+                    "max": 10000,
+                    "min": 1
+                },
+                "data-point-delete": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Maximum number of ranges per delete datapoints request.",
+                    "max": 10000,
+                    "min": 1
+                },
+                "data-point-list": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Maximum number of timeseries per datapoint read request. Used when getting the first point in a timeseries.",
+                    "max": 100,
+                    "min": 1
+                },
+                "data-points": {
+                    "type": "integer",
+                    "default": 100000,
+                    "description": "Maximum number of datapoints per datapoints create request.",
+                    "max": 100000,
+                    "min": 1
+                },
+                "data-points-gzip-limit": {
+                    "type": "integer",
+                    "default": 5000,
+                    "description": "Minimum number of datapoints in request to switch to using gzip. Set to -1 to disable, 0 to always enable. The minimum HTTP packet size is generally 1500 bytes, so this should not be set below 100 for numeric datapoints.",
+                    "max": 100000,
+                    "min": 1
+                },
+                "raw-rows": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Maximum number of rows per request to CDF Raw.",
+                    "max": 10000,
+                    "min": 1
+                },
+                "raw-rows-delete": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of row keys per delete request to CDF Raw.",
+                    "max": 1000,
+                    "min": 1
+                },
+                "data-point-latest": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Maximum number of timeseries per datapoint read latest request.",
+                    "max": 100,
+                    "min": 1
+                },
+                "events": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of events per get/create events request.",
+                    "max": 1000,
+                    "min": 1
+                },
+                "sequences": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of sequences per get/create sequences request.",
+                    "max": 1000,
+                    "min": 1
+                },
+                "sequence-row-sequences": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of sequences per create sequence rows request.",
+                    "max": 1000,
+                    "min": 1
+                },
+                "sequence-rows": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Maximum number of sequence rows per sequence when creating rows.",
+                    "max": 10000,
+                    "min": 1
+                },
+                "instances": {
+                    "type": "integer",
+                    "default": 1000,
+                    "description": "Maximum number of data modeling instances per get/create instance request.",
+                    "max": 1000,
+                    "min": 1
+                }
+            }
+        },
+        "cdf-throttling": {
+            "type": "object",
+            "description": "Configure the maximum number of parallel requests for different CDF resources.",
+            "unevaluatedProperties": false,
+            "properties": {
+                "time-series": {
+                    "type": "integer",
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per timeseries operation.",
+                    "min": 1
+                },
+                "assets": {
+                    "type": "integer",
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per assets operation.",
+                    "min": 1
+                },
+                "data-points": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Maximum number of parallel requests per datapoints operation.",
+                    "min": 1
+                },
+                "raw": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Maximum number of parallel requests per CDF Raw operation.",
+                    "min": 1
+                },
+                "ranges": {
+                    "type": "integer",
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per get first/last datapoint operation.",
+                    "min": 1
+                },
+                "events": {
+                    "type": "integer",
+                    "default": 20,
+                    "description": "Maximum number of parallel requests per events operation.",
+                    "min": 1
+                },
+                "sequences": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Maximum number of parallel requests per sequences operation.",
+                    "min": 1
+                },
+                "instances": {
+                    "type": "integer",
+                    "default": 4,
+                    "description": "Maximum number of parallel requests per data modeling instances operation.",
+                    "min": 1
+                }
+            }
+        },
+        "nan-replacement": {
+            "type": ["number", "null"],
+            "description": "Replacement for NaN/Infinity double values when writing datapoints to CDF. If omitted, non-finite values are skipped."
+        }
+    }
+}
