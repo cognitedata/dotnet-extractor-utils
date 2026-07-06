@@ -92,7 +92,7 @@ namespace Cognite.Extractor.Common
         private readonly bool _keepAllResults;
 
         private int _taskIndex;
-        private const int DefaultWaitTime = 5 * 60 * 1000; // 5 minutes
+        private const int DefaultWaitTime = 30 * 1000; // 30 seconds
 
         /// <summary>
         /// Constructor
