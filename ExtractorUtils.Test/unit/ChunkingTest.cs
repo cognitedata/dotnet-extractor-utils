@@ -229,6 +229,47 @@ namespace ExtractorUtils.Test.Unit
 
             await Assert.ThrowsAsync<AggregateException>(() => throttler2.EnqueueAndWait(badGenerator));
         }
+
+        [Fact(Timeout = 10000)]
+        public async Task TestTaskThrottlerWaitForCompletionWhenQueueBecomesIdle()
+        {
+            using var throttler = new TaskThrottler(1, keepAllResults: true);
+
+            await throttler.EnqueueAndWait(() => Task.Delay(100));
+
+            // Give the background loop time to start waiting for more work after the queued task completes.
+            await Task.Delay(100);
+
+            var completionTask = throttler.WaitForCompletion();
+            await RunWithTimeout(completionTask, 1000);
+
+            var results = (await completionTask).ToList();
+            Assert.Single(results);
+            Assert.Equal(0, results[0].Index);
+            Assert.True(results[0].IsCompleted);
+            Assert.Null(results[0].Exception);
+        }
+
+        [Fact(Timeout = 10000)]
+        public async Task TestTaskThrottlerWaitForCompletionWithSingleFailingTask()
+        {
+            using var throttler = new TaskThrottler(1, true);
+
+            static Task badGenerator() => Task.Run(() =>
+            {
+                SpinWait.SpinUntil(() => false, 200);
+                throw new InvalidOperationException("Failed task");
+            });
+
+            throttler.EnqueueTask(badGenerator);
+
+            var completionTask = throttler.WaitForCompletion();
+            await RunWithTimeout(completionTask, 2000);
+
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () => await completionTask);
+            Assert.Equal("Failed task", exception.Message);
+        }
+
         [Theory]
         [InlineData(1, new[] { 3, 2, 1, 1 })]
         [InlineData(2, new[] { 3, 2, 2 })]

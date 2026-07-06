@@ -58,9 +58,9 @@ namespace Cognite.Extractor.Common
     /// <summary>
     /// Tool to throttle the execution of tasks based on max perallelism, and max number of tasks
     /// scheduled per time unit.
-    /// 
+    ///
     /// Maximum parallelism simply limits the number of parallel tasks.
-    /// 
+    ///
     /// Per unit sets the maximum number of tasks scheduled per time unit.
     ///
     /// Tasks are enqueued and scheduled for execution in order.
@@ -92,6 +92,7 @@ namespace Cognite.Extractor.Common
         private readonly bool _keepAllResults;
 
         private int _taskIndex;
+        private const int DefaultWaitTime = 5 * 60 * 1000; // 5 minutes
 
         /// <summary>
         /// Constructor
@@ -279,10 +280,15 @@ namespace Cognite.Extractor.Common
                 {
                     try
                     {
-                        var generator = _generators.Take(token);
-                        lock (_lock)
+                        // Wait for upto DefaultWaitTime for a new task to be scheduled, if none is scheduled,
+                        // we will move ahead and check if we are done.
+                        var generator = _generators.TryTake(out var item, DefaultWaitTime, token) ? item : null;
+                        if (generator != null)
                         {
-                            _runningTasks.Add(generator());
+                            lock (_lock)
+                            {
+                                _runningTasks.Add(generator());
+                            }
                         }
                     }
                     catch (InvalidOperationException)
