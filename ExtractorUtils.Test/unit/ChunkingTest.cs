@@ -250,7 +250,7 @@ namespace ExtractorUtils.Test.Unit
             Assert.Null(results[0].Exception);
         }
 
-        [Fact(Timeout = 40000)]
+        [Fact(Timeout = 10000)]
         public async Task TestTaskThrottlerQuitsOnFailureEvenWhenIdleAfterScheduling()
         {
             // maxParallelism=2 but only one task is ever enqueued. Once that task is dequeued and
@@ -261,7 +261,7 @@ namespace ExtractorUtils.Test.Unit
             // from that wait, so it never notices the task fail and RunTask hangs forever. The
             // bounded wait (DefaultWaitTime) lets the loop wake up on its own, see the failure via
             // quitOnFailure, and complete.
-            using var throttler = new TaskThrottler(2, true);
+            using var throttler = new TaskThrottler(2, true, waitTime: TimeSpan.FromSeconds(5).Milliseconds);
 
             static Task badGenerator() => Task.Run(() =>
             {

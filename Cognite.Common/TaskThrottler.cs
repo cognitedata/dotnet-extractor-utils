@@ -92,7 +92,7 @@ namespace Cognite.Extractor.Common
         private readonly bool _keepAllResults;
 
         private int _taskIndex;
-        private const int DefaultWaitTime = 30 * 1000; // 30 seconds
+        private long _waitTimeMs { get; set; } = TimeSpan.FromMinutes(5).Milliseconds; // 5 minutes, default wait time for a new task to be scheduled before checking if we are done
 
         /// <summary>
         /// Constructor
@@ -104,11 +104,13 @@ namespace Cognite.Extractor.Common
         /// <param name="keepAllResults">Keep all task result objects, not those who have failed or are within the
         /// last <paramref name="timeUnit"/>. This means that the size in memory of the task throttler will grow forever,
         /// do not use this unless you intend to dispose of the throttler within a short period of time.</param>
+        /// <param name="waitTime">Time to wait for a new task to be scheduled before checking if we are done.
         public TaskThrottler(int maxParallelism,
             bool quitOnFailure = false,
             int perUnit = 0,
             TimeSpan? timeUnit = null,
-            bool keepAllResults = false)
+            bool keepAllResults = false,
+            long waitTime = 0)
         {
             _maxParallelism = maxParallelism;
             _maxPerUnit = perUnit;
@@ -126,6 +128,7 @@ namespace Cognite.Extractor.Common
             _quitOnFailure = quitOnFailure;
             _completionSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
             _keepAllResults = keepAllResults;
+            _waitTimeMs = waitTime > 0 ? waitTime : _waitTimeMs;
             RunTask = Task.Run(async () => await Run().ConfigureAwait(false));
         }
 
@@ -280,9 +283,9 @@ namespace Cognite.Extractor.Common
                 {
                     try
                     {
-                        // Wait for upto DefaultWaitTime for a new task to be scheduled, if none is scheduled,
+                        // Wait for upto waitTimeMs for a new task to be scheduled, if none is scheduled,
                         // we will move ahead and check if we are done.
-                        var generator = _generators.TryTake(out var item, DefaultWaitTime, token) ? item : null;
+                        var generator = _generators.TryTake(out var item, (int)_waitTimeMs, token) ? item : null;
                         if (generator != null)
                         {
                             lock (_lock)
