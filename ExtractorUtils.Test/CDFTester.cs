@@ -16,7 +16,12 @@ namespace ExtractorUtils.Test
     public enum CogniteHost
     {
         GreenField,
-        BlueField
+        BlueField,
+        /// <summary>
+        /// The az-arn-dev-002 cluster where Charon is deployed.
+        /// Credentials come from CHARON_TEST_* env vars.
+        /// </summary>
+        Charon
     }
 
     class CDFTester : IDisposable
@@ -53,6 +58,8 @@ namespace ExtractorUtils.Test
             Prefix = TestUtils.AlphaNumericPrefix("net-utils-test-");
             Source = new CancellationTokenSource();
             _spaceId = $"dotnet-extractor-utils-test-space{i}";
+            Project = Config.Cognite?.Project ?? "";
+            Host = Config.Cognite?.Host ?? "";
         }
         public CDFTester(CogniteHost host, ITestOutputHelper output) : this(GetConfig(host), output)
         {
@@ -125,6 +132,21 @@ namespace ExtractorUtils.Test
                         "    secret: ${BF_TEST_SECRET}",
                         "    scopes:",
                         "    - ${BF_TEST_SCOPE}"
+                    }).ToList();
+                    break;
+                case CogniteHost.Charon:
+                    config = config.Concat(new List<String>() {
+                        "  project: ${CHARON_TEST_PROJECT}",
+                        "  host: ${CHARON_TEST_HOST}",
+                        "  idp-authentication:",
+                        "    client-id: ${CHARON_TEST_CLIENT_ID}",
+                        "    tenant: ${CHARON_TEST_TENANT}",
+                        "    secret: ${CHARON_TEST_SECRET}",
+                        "    scopes:",
+                        "    - ${CHARON_TEST_SCOPE}",
+                        "  charon:",
+                        "    enabled: true"
+                        // base-url omitted — defaults to cognite.host (same gateway)
                     }).ToList();
                     break;
             }

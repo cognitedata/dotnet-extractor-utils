@@ -227,6 +227,57 @@ namespace Cognite.Extractor.Utils
             services.AddTransient<IRawDestination, CogniteDestination>(GetCogniteDestination);
             services.AddTransient(GetCogniteDestinationWithIDM);
             services.AddTransient<IRawDestination, CogniteDestinationWithIDM>(GetCogniteDestinationWithIDM);
+
+            // Register Charon — enabled by default, opt-out via CogniteConfig.Charon.Enabled = false.
+            // Named HTTP clients for session creation and Charon API calls are registered separately
+            // so they can be independently configured with Polly policies if needed.
+            services.AddHttpClient(SessionsResource.HTTP_CLIENT_NAME)
+                .ConfigureCogniteHttpClientHandlers();
+            services.AddHttpClient(CharonClient.HTTP_CLIENT_NAME)
+                .ConfigureCogniteHttpClientHandlers();
+
+            services.AddTransient<SessionsResource>(provider =>
+            {
+                var conf = provider.GetService<CogniteConfig>();
+                var auth = provider.GetService<IAuthenticator>();
+                if (conf == null || auth == null) return null!;
+                var baseUrl = conf.Charon.BaseUrl ?? conf.Host;
+                var project = conf.Project;
+                if (string.IsNullOrEmpty(project)) return null!;
+                // Pass client credentials so SessionsResource can create a proper
+                // client-credentials session, matching the Python SDK's behaviour:
+                // {"items": [{"clientId": "...", "clientSecret": "..."}]}
+                var clientId = conf.IdpAuthentication?.ClientId;
+                var clientSecret = conf.IdpAuthentication?.Secret;
+                return new SessionsResource(
+                    auth,
+                    provider.GetRequiredService<IHttpClientFactory>(),
+                    baseUrl,
+                    project!,
+                    clientId,
+                    clientSecret,
+                    provider.GetService<ILogger<SessionsResource>>());
+            });
+
+            services.AddTransient<ICharonClient>(provider =>
+            {
+                var conf = provider.GetService<CogniteConfig>();
+                // Only skip when explicitly disabled.
+                if (conf == null || !conf.Charon.Enabled) return null!;
+                var auth = provider.GetService<IAuthenticator>();
+                if (auth == null) return null!;
+                var sessions = provider.GetRequiredService<SessionsResource>();
+                var baseUrl = conf.Charon.BaseUrl ?? conf.Host;
+                var project = conf.Project;
+                if (string.IsNullOrEmpty(project)) return null!;
+                return new CharonClient(
+                    baseUrl,
+                    project!,
+                    auth,
+                    sessions,
+                    provider.GetRequiredService<IHttpClientFactory>(),
+                    provider.GetService<ILogger<CharonClient>>());
+            });
         }
 
 

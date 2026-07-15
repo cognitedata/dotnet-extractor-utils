@@ -14,14 +14,16 @@ using System.Threading.Tasks;
 namespace Cognite.Extractor.Utils
 {
     /// <summary>
-    /// Upload queue for timeseries datapoints
+    /// Upload queue for timeseries datapoints.
+    /// When an <see cref="ICharonClient"/> is provided the queue routes datapoints
+    /// through the Charon REST-poll pipeline instead of writing directly to the CDF
+    /// time series API. Pass <c>null</c> to use the direct CDF write path.
     /// </summary>
     public class TimeSeriesUploadQueue : BaseUploadQueue<(Identity id, Datapoint dp)>
     {
         private IExtractionStateStore? _store;
         private IDictionary<Identity, BaseExtractionState>? _states;
         private string? _collection;
-
 
         private static readonly Counter _numberPoints = Prometheus.Metrics.CreateCounter("extractor_utils_queue_datapoints",
             "Number of datapoints uploaded to CDF from the queue");
@@ -33,8 +35,13 @@ namespace Cognite.Extractor.Utils
         private bool _bufferAny;
         private bool _createMissingTimeseries;
         private long? _dataSetId;
+
+        // Charon fields
+        private readonly ICharonClient? _charon;
+        private bool _charonSetupDone;
+
         /// <summary>
-        /// Upload queue for timeseries datapoints
+        /// Upload queue for timeseries datapoints.
         /// </summary>
         /// <param name="destination">CogniteDestination to use for uploading</param>
         /// <param name="interval">Interval between each automated push, leave at zero to disable timed pushing</param>
@@ -45,6 +52,11 @@ namespace Cognite.Extractor.Utils
         /// <param name="createMissingTimeseries">Create missing timeseries when insert fails, only works if datapoints
         /// are inserted by external id.</param>
         /// <param name="dataSetId">DataSetId to use if creating missing timeseries.</param>
+        /// <param name="charon">
+        /// Optional Charon client. When non-null, datapoints are routed through the Charon
+        /// REST-poll pipeline instead of the CDF time series API. Fails hard on Charon errors —
+        /// there is no silent fallback to the direct CDF write path.
+        /// </param>
         public TimeSeriesUploadQueue(
             CogniteDestination destination,
             TimeSpan interval,
@@ -53,11 +65,13 @@ namespace Cognite.Extractor.Utils
             Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>? callback,
             string? bufferPath,
             bool createMissingTimeseries = false,
-            long? dataSetId = null) : base(destination, interval, maxSize, logger, callback)
+            long? dataSetId = null,
+            ICharonClient? charon = null) : base(destination, interval, maxSize, logger, callback)
         {
             _createMissingTimeseries = createMissingTimeseries;
             _bufferPath = bufferPath;
             _dataSetId = dataSetId;
+            _charon = charon;
             if (!string.IsNullOrWhiteSpace(_bufferPath))
             {
                 _bufferEnabled = true;
@@ -248,6 +262,13 @@ namespace Cognite.Extractor.Utils
         {
             _queueSize.Dec(dps.Count());
 
+            // --- Charon path ---
+            if (_charon != null)
+            {
+                return await UploadEntriesCharon(dps, token).ConfigureAwait(false);
+            }
+
+            // --- Direct CDF path ---
             if (!dps.Any())
             {
                 if (_bufferAny)
@@ -309,6 +330,60 @@ namespace Cognite.Extractor.Utils
             var uploaded = dpMap.SelectMany(kvp => kvp.Value.Select(dp => (kvp.Key, dp))).ToList();
             _numberPoints.Inc(uploaded.Count);
             return new QueueUploadResult<(Identity, Datapoint)>(uploaded, skipped);
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007: Do not directly await a Task", Justification = "Awaiter configured by the caller")]
+        private async Task<QueueUploadResult<(Identity id, Datapoint dp)>> UploadEntriesCharon(
+            IEnumerable<(Identity id, Datapoint dp)> dps,
+            CancellationToken token)
+        {
+            var dpList = dps.ToList();
+            if (dpList.Count == 0)
+            {
+                return new QueueUploadResult<(Identity id, Datapoint dp)>(
+                    Enumerable.Empty<(Identity id, Datapoint dp)>(),
+                    Enumerable.Empty<(Identity id, Datapoint dp)>());
+            }
+
+            // Lazy /setup — called once before the first real upload.
+            if (!_charonSetupDone)
+            {
+                await _charon!.SetupAsync(token);
+                _charonSetupDone = true;
+            }
+
+            // Charon requires externalId. Items with only internalId are logged and skipped,
+            // matching the behaviour of python-extractor-utils _upload_charon().
+            var skipped = dpList.Where(p => p.id.ExternalId == null).ToList();
+            if (skipped.Count > 0)
+            {
+                DestLogger.LogWarning(
+                    "{Count} datapoints skipped: Charon requires externalId, internalId-only items cannot be sent",
+                    skipped.Count);
+            }
+
+            var items = dpList
+                .Where(p => p.id.ExternalId != null)
+                .Select(p => new CharonItem
+                {
+                    ExternalId = p.id.ExternalId!,
+                    Timestamp = p.dp.Timestamp,
+                    Value = p.dp.NumericValue ?? 0,
+                })
+                .ToList();
+
+            if (items.Count > 0)
+            {
+                // Fails hard on error — no silent fallback to direct CDF writes.
+                await _charon!.InsertPayloadAsync(items, token);
+                _numberPoints.Inc(items.Count);
+            }
+
+            var uploadedPairs = dpList
+                .Where(p => p.id.ExternalId != null)
+                .ToList();
+
+            return new QueueUploadResult<(Identity id, Datapoint dp)>(uploadedPairs, skipped);
         }
     }
 }

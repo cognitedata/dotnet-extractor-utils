@@ -115,6 +115,32 @@ namespace Cognite.Extractor.Utils
         /// Configuration for handling SSL certificates.
         /// </summary>
         public CertificateConfig? Certificates { get; set; }
+
+        /// <summary>
+        /// Charon pipeline configuration. Charon routes datapoints through the REST-poll
+        /// pipeline instead of writing directly to the CDF time series API.
+        /// Set <see cref="CharonConfig.Enabled"/> to <c>false</c> to disable.
+        /// Default: enabled (Charon active whenever a CDF connection is configured).
+        /// </summary>
+        public CharonConfig Charon { get; set; } = new CharonConfig();
+    }
+
+    /// <summary>
+    /// Configuration for the Charon REST-poll pipeline.
+    /// </summary>
+    public class CharonConfig
+    {
+        /// <summary>
+        /// Set to <c>false</c> to disable Charon and write datapoints directly to the
+        /// CDF time series API. Default: <c>true</c>.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Base URL of the Charon endpoint. Defaults to <see cref="CogniteConfig.Host"/>
+        /// (Charon is co-hosted at the same CDF gateway).
+        /// </summary>
+        public string? BaseUrl { get; set; }
     }
 
     /// <summary>

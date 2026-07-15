@@ -630,11 +630,17 @@ namespace Cognite.Extractor.Utils
         /// <param name="callback">Callback on upload</param>
         /// <param name="bufferPath">Path to local binary buffer file. If this is non-null, points are automatically buffered to
         /// a local file if inserting times out or fails with status >= 500</param>
+        /// <param name="charon">
+        /// Optional Charon client. When non-null, datapoints are routed through the Charon REST-poll
+        /// pipeline instead of the CDF time series API. Resolve via <c>provider.GetService&lt;ICharonClient&gt;()</c>
+        /// to automatically use Charon when configured, or pass <c>null</c> to use the direct CDF path.
+        /// </param>
         /// <returns>An upload queue object</returns>
         public TimeSeriesUploadQueue CreateTimeSeriesUploadQueue(TimeSpan interval, int maxQueueSize = 0,
-            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>? callback = null, string? bufferPath = null)
+            Func<QueueUploadResult<(Identity id, Datapoint dp)>, Task>? callback = null, string? bufferPath = null,
+            ICharonClient? charon = null)
         {
-            return new TimeSeriesUploadQueue(this, interval, maxQueueSize, _logger, callback, bufferPath);
+            return new TimeSeriesUploadQueue(this, interval, maxQueueSize, _logger, callback, bufferPath, charon: charon);
         }
 
         /// <summary>
