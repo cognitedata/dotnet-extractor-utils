@@ -363,7 +363,7 @@ namespace Cognite.Extensions.DataModels
                     else
                     {
                         errors.Add(error);
-                        toCreate = ResultHandlers.CleanFromError(error, toCreate);
+                        toCreate = await ResultHandlers.CleanFromError(error, toCreate, resource, token).ConfigureAwait(false);
                     }
                 }
             }
@@ -479,7 +479,7 @@ namespace Cognite.Extensions.DataModels
                     else
                     {
                         errors.Add(error);
-                        items = ResultHandlers.CleanFromError(error, items);
+                        items = await ResultHandlers.CleanFromError(error, items, resource, token).ConfigureAwait(false);
                     }
                 }
             }

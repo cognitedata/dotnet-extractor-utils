@@ -232,7 +232,7 @@ namespace Cognite.Extensions.DataModels.QueryBuilder
             if (sources == null) throw new ArgumentNullException(nameof(sources));
             return new HasDataFilter
             {
-                Models = sources
+                HasData = sources
             };
         }
 

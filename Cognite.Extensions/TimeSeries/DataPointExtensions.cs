@@ -524,7 +524,7 @@ namespace Cognite.Extensions
                         if (dp.DataPoints.Any())
                         {
                             Identity id;
-                            if (dp.ExternalId != null)
+                            if (!string.IsNullOrEmpty(dp.ExternalId))
                             {
                                 id = new Identity(dp.ExternalId);
                                 if (!idSet.Contains(id))
@@ -617,7 +617,7 @@ namespace Cognite.Extensions
                     foreach (var dp in dps.Items)
                     {
                         Identity id;
-                        if (dp.ExternalId != null)
+                        if (!string.IsNullOrEmpty(dp.ExternalId))
                         {
                             id = new Identity(dp.ExternalId);
                             if (!idSet.Contains(id))

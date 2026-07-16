@@ -41,7 +41,7 @@ namespace ExtractorUtils.Test.Integration
                 + @"{""or"":[{""equals"":{""property"":[""node"",""externalId""],""value"":""test2""}},"
                 + @"{""equals"":{""property"":[""node"",""space""],""value"":""space""}},"
                 + @"{""in"":{""property"":[""some"",""property"",""value""],""values"":[""test"",""test2""]}},"
-                + @"{""hasData"":{""models"":[{""type"":""container"",""space"":""space"",""externalId"":""id""}]}}]},"
+                + @"{""hasData"":[{""type"":""container"",""space"":""space"",""externalId"":""id""}]}]},"
                 + @"{""nested"":{""scope"":[""some"",""scope""],""filter"":"
                  + @"{""equals"":{""property"":[""some"",""long"",""prop""],""value"":123}}}}]}}",
                 json);

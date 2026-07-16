@@ -87,7 +87,7 @@ namespace ExtractorUtils.Test.Unit
         }
 
         [Fact]
-        public async Task TestAsyncCli()
+        public Task TestAsyncCli()
         {
             var binder = new AttributeBinder<CliType>();
 
@@ -107,6 +107,7 @@ namespace ExtractorUtils.Test.Unit
             }, binder);
 
             Assert.Equal(0, command.Invoke(new[] { "--string-type", "stringvalue", "-b", "-i", "123" }));
+            return Task.CompletedTask;
         }
     }
 }
