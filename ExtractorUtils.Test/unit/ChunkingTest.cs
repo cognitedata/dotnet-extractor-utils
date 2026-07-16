@@ -233,7 +233,7 @@ namespace ExtractorUtils.Test.Unit
         [Fact(Timeout = 10000)]
         public async Task TestTaskThrottlerWaitForCompletionWhenQueueBecomesIdle()
         {
-            using var throttler = new TaskThrottler(1, keepAllResults: true);
+            using var throttler = new TaskThrottler(1, keepAllResults: true, waitTime: TimeSpan.FromSeconds(5).Milliseconds);
 
             await throttler.EnqueueAndWait(() => Task.Delay(100));
 
