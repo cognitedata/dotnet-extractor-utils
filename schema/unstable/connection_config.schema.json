@@ -1,0 +1,159 @@
+{
+    "$id": "connection_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "description": "Configuration for connecting to CDF. This is typically stored in a separate connection.yml file.",
+    "unevaluatedProperties": false,
+    "required": ["project"],
+    "properties": {
+        "version": {
+            "type": "integer",
+            "description": "Config version.",
+            "default": 1
+        },
+        "project": {
+            "type": "string",
+            "description": "CDF project to connect to."
+        },
+        "base-url": {
+            "type": "string",
+            "description": "CDF API base URL.",
+            "default": "https://api.cognitedata.com"
+        },
+        "authentication": {
+            "type": "object",
+            "description": "Authentication configuration. The `type` field selects the authentication method.",
+            "required": ["type"],
+            "unevaluatedProperties": false,
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "Authentication method.",
+                    "enum": ["client-credentials", "client-certificate"]
+                }
+            },
+            "oneOf": [
+                {
+                    "properties": {
+                        "type": { "const": "client-credentials" },
+                        "client-id": {
+                            "type": "string",
+                            "description": "OAuth2 client ID."
+                        },
+                        "client-secret": {
+                            "type": "string",
+                            "description": "OAuth2 client secret."
+                        },
+                        "token-url": {
+                            "type": "string",
+                            "description": "URL to fetch tokens from."
+                        },
+                        "scopes": {
+                            "type": ["string", "array"],
+                            "description": "OAuth2 scopes, as a space-separated string or a list.",
+                            "items": { "type": "string" }
+                        },
+                        "resource": {
+                            "type": "string",
+                            "description": "Optional resource parameter passed with token requests."
+                        },
+                        "audience": {
+                            "type": "string",
+                            "description": "Optional audience parameter passed with token requests."
+                        },
+                        "min-ttl": {
+                            "type": ["string", "integer"],
+                            "description": "Minimum time-to-live for cached tokens before they are refreshed. Syntax is `N[timeUnit]` where `timeUnit` is `d`, `h`, `m`, `s` or `ms`.",
+                            "default": "30s"
+                        }
+                    },
+                    "required": ["client-id", "client-secret", "token-url"]
+                },
+                {
+                    "properties": {
+                        "type": { "const": "client-certificate" },
+                        "client-id": {
+                            "type": "string",
+                            "description": "OAuth2 client ID."
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "Path to a base64-encoded x509 certificate file."
+                        },
+                        "authority-url": {
+                            "type": "string",
+                            "description": "Authority URL for token acquisition."
+                        },
+                        "password": {
+                            "type": "string",
+                            "description": "Optional certificate password."
+                        },
+                        "scopes": {
+                            "type": ["string", "array"],
+                            "description": "OAuth2 scopes, as a space-separated string or a list.",
+                            "items": { "type": "string" }
+                        }
+                    },
+                    "required": ["client-id", "path", "authority-url"]
+                }
+            ]
+        },
+        "integration": {
+            "type": "object",
+            "description": "CDF integration (extraction pipeline) to report heartbeats and status to. Required when using remote config.",
+            "unevaluatedProperties": false,
+            "properties": {
+                "external-id": {
+                    "type": "string",
+                    "description": "External ID of the CDF integration."
+                }
+            }
+        },
+        "cdf-connection": {
+            "type": "object",
+            "description": "Low-level settings for the HTTP connection to CDF.",
+            "unevaluatedProperties": false,
+            "properties": {
+                "retries": {
+                    "type": "object",
+                    "description": "Configure automatic retries on requests to CDF.",
+                    "unevaluatedProperties": false,
+                    "properties": {
+                        "timeout": {
+                            "type": ["string", "integer"],
+                            "description": "Timeout for each individual request. Syntax is `N[timeUnit]` where `timeUnit` is `d`, `h`, `m`, `s` or `ms`.",
+                            "default": "80s"
+                        },
+                        "max-retries": {
+                            "type": "integer",
+                            "description": "Maximum number of retries. Less than 0 retries forever.",
+                            "default": 5
+                        },
+                        "max-backoff": {
+                            "type": ["string", "integer"],
+                            "description": "Maximum backoff delay between retries. Base delay is calculated as `125 * 2^retry` ms. Less than 0 means no maximum. Syntax is `N[timeUnit]` where `timeUnit` is `d`, `h`, `m`, `s` or `ms`.",
+                            "default": "80s"
+                        }
+                    }
+                },
+                "ssl-certificates": {
+                    "type": "object",
+                    "description": "Options for SSL certificate verification.",
+                    "unevaluatedProperties": false,
+                    "properties": {
+                        "verify": {
+                            "type": "boolean",
+                            "description": "Set to `false` to disable SSL certificate verification. This is a security risk and should only be used as a last resort.",
+                            "default": true
+                        },
+                        "allow-list": {
+                            "type": "array",
+                            "description": "List of certificate thumbprints to explicitly trust, as an alternative to disabling verification entirely.",
+                            "items": { "type": "string" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
