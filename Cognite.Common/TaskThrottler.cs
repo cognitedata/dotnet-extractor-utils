@@ -92,7 +92,7 @@ namespace Cognite.Extractor.Common
         private readonly bool _keepAllResults;
 
         private int _taskIndex;
-        private long _waitTimeMs { get; set; } = TimeSpan.FromMinutes(5).Milliseconds; // 5 minutes, default wait time for a new task to be scheduled before checking if we are done
+        private long _waitTimeMs { get; set; } = (long)TimeSpan.FromMinutes(5).TotalMilliseconds; // 5 minutes, default wait time for a new task to be scheduled before checking if we are done
 
         /// <summary>
         /// Constructor
@@ -104,7 +104,7 @@ namespace Cognite.Extractor.Common
         /// <param name="keepAllResults">Keep all task result objects, not those who have failed or are within the
         /// last <paramref name="timeUnit"/>. This means that the size in memory of the task throttler will grow forever,
         /// do not use this unless you intend to dispose of the throttler within a short period of time.</param>
-        /// <param name="waitTime">Time to wait for a new task to be scheduled before checking if we are done.
+        /// <param name="waitTime">Time to wait for a new task to be scheduled before checking if we are done. </param>
         public TaskThrottler(int maxParallelism,
             bool quitOnFailure = false,
             int perUnit = 0,
