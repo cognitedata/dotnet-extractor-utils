@@ -233,7 +233,7 @@ namespace ExtractorUtils.Test.Unit
         [Fact(Timeout = 10000)]
         public async Task TestTaskThrottlerWaitForCompletionWhenQueueBecomesIdle()
         {
-            using var throttler = new TaskThrottler(1, keepAllResults: true, waitTime: TimeSpan.FromSeconds(5).Milliseconds);
+            using var throttler = new TaskThrottler(1, keepAllResults: true, waitTime: (long)TimeSpan.FromSeconds(5).TotalMilliseconds);
 
             await throttler.EnqueueAndWait(() => Task.Delay(100));
 
@@ -261,7 +261,7 @@ namespace ExtractorUtils.Test.Unit
             // from that wait, so it never notices the task fail and RunTask hangs forever. The
             // bounded wait (DefaultWaitTime) lets the loop wake up on its own, see the failure via
             // quitOnFailure, and complete.
-            using var throttler = new TaskThrottler(2, true, waitTime: TimeSpan.FromSeconds(5).Milliseconds);
+            using var throttler = new TaskThrottler(2, true, waitTime: (long)TimeSpan.FromSeconds(5).TotalMilliseconds);
 
             static Task badGenerator() => Task.Run(() =>
             {
