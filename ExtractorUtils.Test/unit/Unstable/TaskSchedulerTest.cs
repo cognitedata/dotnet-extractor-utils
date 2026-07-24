@@ -387,7 +387,7 @@ namespace ExtractorUtils.Test.unit.Unstable
             Assert.Empty(sink.TaskStart);
             Assert.Empty(sink.TaskEnd);
 
-            await Task.Delay(1000); // Ensure some time has passed
+            await Task.Delay(1050); // Ensure some time has passed
 
 
             // Task1 should have run, Task2 should not

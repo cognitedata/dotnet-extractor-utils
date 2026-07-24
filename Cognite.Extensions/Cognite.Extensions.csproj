@@ -27,7 +27,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Identity.Client" Version="4.79.2" />
+<<<<<<< HEAD
     <PackageReference Include="CogniteSdk" Version="5.12.3" />
+=======
+    <PackageReference Include="CogniteSdk" Version="5.12.1" />
+>>>>>>> 0adfe58 ( Limit wait time for queue elements (#677))
     <PackageReference Include="System.Text.Json" Version="10.0.3" />
     <PackageReference Include="prometheus-net" Version="8.2.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.3" />

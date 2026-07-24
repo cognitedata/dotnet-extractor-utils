@@ -35,6 +35,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
+            if (options == null) throw new ArgumentNullException(nameof(options));
             if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
             return BetaResourceExtensions.GetOrCreateAsync(
                 StateSetsResource.View,
@@ -63,6 +65,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
+            if (options == null) throw new ArgumentNullException(nameof(options));
             if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
             return BetaResourceExtensions.GetOrCreateAsync(
                 StateSetsResource.View,
@@ -89,6 +93,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (options == null) throw new ArgumentNullException(nameof(options));
             if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
             return BetaResourceExtensions.EnsureExistsAsync(
                 StateSetsResource.View,
@@ -136,6 +141,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (options == null) throw new ArgumentNullException(nameof(options));
             if (resource == null) throw new ArgumentNullException(nameof(resource));
             return BetaResourceExtensions.UpsertAsync(
                 StateSetsResource.View,
