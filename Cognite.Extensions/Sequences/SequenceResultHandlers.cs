@@ -77,22 +77,24 @@ namespace Cognite.Extensions
 
         private static void ParseSequenceRowException(ResponseException ex, CogniteError err)
         {
-            if (ex.Missing?.Any() ?? false)
+            var missingValues = ex.Missing?.Select(dict =>
+            {
+                if (dict.TryGetValue("id", out var idVal) && idVal is MultiValue.Long longVal)
+                {
+                    return Identity.Create(longVal.Value);
+                }
+                else if (dict.TryGetValue("externalId", out var extIdVal) && extIdVal is MultiValue.String stringVal)
+                {
+                    return Identity.Create(stringVal.Value);
+                }
+                return null!;
+            }).Where(id => id != null).ToList();
+
+            if (missingValues != null && missingValues.Count > 0)
             {
                 err.Type = ErrorType.ItemMissing;
                 err.Resource = ResourceType.Id;
-                err.Values = ex.Missing.Select(dict =>
-                {
-                    if (dict.TryGetValue("id", out var idVal) && idVal is MultiValue.Long longVal)
-                    {
-                        return Identity.Create(longVal.Value);
-                    }
-                    else if (dict.TryGetValue("externalId", out var extIdVal) && extIdVal is MultiValue.String stringVal)
-                    {
-                        return Identity.Create(stringVal.Value);
-                    }
-                    return null!;
-                }).Where(id => id != null);
+                err.Values = missingValues;
             }
             // Error messages are completely different in greenfield and bluefield
             else if (ex.Code == 400 && (ex.Message.StartsWith("error in sequence", StringComparison.InvariantCultureIgnoreCase)
@@ -106,6 +108,15 @@ namespace Cognite.Extensions
             {
                 err.Type = ErrorType.ItemMissing;
                 err.Resource = ResourceType.ColumnExternalId;
+                err.Complete = false;
+            }
+            else
+            {
+                // Nothing recognized -- including the case where ex.Missing was present but didn't
+                // map to a recognizable sequence identity. Leaving Complete at its default (true)
+                // with no Values would make CleanFromError treat the entire remaining batch as
+                // skipped by this one under-specified error, so fall back to local verification
+                // (VerifySequencesFromCDF) instead.
                 err.Complete = false;
             }
         }
