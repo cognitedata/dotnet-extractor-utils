@@ -94,7 +94,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 {
                     Space = id.InstanceId.Space,
                     ExternalId = id.InstanceId.ExternalId,
-                    Properties = new CogniteTimeSeriesBase() { Type = isString ? TimeSeriesType.String : TimeSeriesType.Numeric }
+                    Properties = new CogniteTimeSeriesBase() { Type = isString ? CogniteSdk.DataModels.Core.TimeSeriesType.String : CogniteSdk.DataModels.Core.TimeSeriesType.Numeric }
                 });
             }
 
