@@ -71,6 +71,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
+            if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
+            if (options == null) throw new ArgumentNullException(nameof(options));
             var chunks = instanceIds
                 .ChunkBy(options.ChunkSize)
                 .ToList();
@@ -241,6 +243,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
+            if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
+            if (options == null) throw new ArgumentNullException(nameof(options));
             IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
             (itemsToEnsure, errors) = sanitize(itemsToEnsure, options.SanitationMode);
 
@@ -311,6 +315,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
+            if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
+            if (options == null) throw new ArgumentNullException(nameof(options));
             IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
             (items, errors) = sanitize(items, options.SanitationMode);
 
