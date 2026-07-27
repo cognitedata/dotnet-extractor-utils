@@ -155,7 +155,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 }
             }
 
-            var missing = instanceIds.Except(found.Select(ts => new InstanceIdentifier(ts.Space, ts.ExternalId))).ToList();
+            var missing = instanceIds.Except(found?.Select(ts => new InstanceIdentifier(ts.Space, ts.ExternalId)) ?? Enumerable.Empty<InstanceIdentifier>()).ToList();
 
             if (missing.Count == 0)
             {
@@ -190,7 +190,16 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 foreach (var error in duplicateErrors)
                 {
                     if (error.Values == null || !error.Values.Any()) continue;
-                    foreach (var idt in error.Values) duplicatedIds.Add(idt.InstanceId);
+                    foreach (var idt in error.Values)
+                    {
+                        if (idt.InstanceId == null)
+                        {
+                            _logger.LogError("No instance id for view {View} with error {Error}", view.ExternalId, error);
+                            continue;
+                        }
+                        ;
+                        duplicatedIds.Add(idt.InstanceId);
+                    }
                 }
             }
 
