@@ -229,6 +229,56 @@ namespace ExtractorUtils.Test.Unit
 
             await Assert.ThrowsAsync<AggregateException>(() => throttler2.EnqueueAndWait(badGenerator));
         }
+
+        [Fact(Timeout = 10000)]
+        public async Task TestTaskThrottlerWaitForCompletionWhenQueueBecomesIdle()
+        {
+            using var throttler = new TaskThrottler(1, keepAllResults: true, waitTime: (long)TimeSpan.FromSeconds(5).TotalMilliseconds);
+
+            await throttler.EnqueueAndWait(() => Task.Delay(100));
+
+            // Give the background loop time to start waiting for more work after the queued task completes.
+            await Task.Delay(100);
+
+            var completionTask = throttler.WaitForCompletion();
+            await RunWithTimeout(completionTask, 1000);
+
+            var results = (await completionTask).ToList();
+            Assert.Single(results);
+            Assert.Equal(0, results[0].Index);
+            Assert.True(results[0].IsCompleted);
+            Assert.Null(results[0].Exception);
+        }
+
+        [Fact(Timeout = 10000)]
+        public async Task TestTaskThrottlerQuitsOnFailureEvenWhenIdleAfterScheduling()
+        {
+            // maxParallelism=2 but only one task is ever enqueued. Once that task is dequeued and
+            // running, AllowSchedule() still returns true (1 running < 2 max), so the loop goes
+            // straight back to _generators.Take()/TryTake() on the now-empty queue instead of
+            // waiting on _taskCompletionEvent for the running task, since a parallelism slot is
+            // free. With the old unbounded _generators.Take(token), the loop then never returns
+            // from that wait, so it never notices the task fail and RunTask hangs forever. The
+            // bounded wait (DefaultWaitTime) lets the loop wake up on its own, see the failure via
+            // quitOnFailure, and complete.
+            using var throttler = new TaskThrottler(2, true, waitTime: (long)TimeSpan.FromSeconds(5).TotalMilliseconds);
+
+            static Task badGenerator() => Task.Run(() =>
+            {
+                SpinWait.SpinUntil(() => false, 200);
+                throw new InvalidOperationException("Failed task");
+            });
+
+            throttler.EnqueueTask(badGenerator);
+
+            // Wait past DefaultWaitTime (30s) so the loop has time to wake up on its own and
+            // notice the failed task even though nothing else was ever scheduled.
+            var finished = await Task.WhenAny(throttler.RunTask, Task.Delay(35000));
+
+            Assert.Equal(throttler.RunTask, finished);
+            Assert.True(throttler.RunTask.IsCompleted);
+        }
+
         [Theory]
         [InlineData(1, new[] { 3, 2, 1, 1 })]
         [InlineData(2, new[] { 3, 2, 2 })]
