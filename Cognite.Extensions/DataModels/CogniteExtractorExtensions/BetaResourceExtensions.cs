@@ -63,7 +63,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         }
 
         /// <summary>
-        /// Retrieves instances by id for the beta CDM resource wrapped by a <see cref="BetaResourceExtensions"/> method. If any instances are missing, they will be created using the provided <see cref="buildItems"/> function.
+        /// Retrieves instances by id for the beta CDM resource wrapped by a <see cref="BetaResourceExtensions"/> method. If any instances are missing,
+        /// they will be created using the provided <see paramref="buildItems"/> function.
         /// </summary>
         /// <typeparam name="T">The type of the instance properties.</typeparam>
         /// <param name="view">The view to retrieve instances from.</param>
