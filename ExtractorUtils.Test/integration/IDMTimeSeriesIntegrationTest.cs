@@ -709,6 +709,45 @@ namespace ExtractorUtils.Test.Integration
                 await DeleteTimeseries(tester, tss.space, allCreated);
             }
         }
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestStateTimeSeries(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+
+            var stateSetXid = $"{tester.Prefix}utils-test-state-set";
+            var tsXid = $"{tester.Prefix}utils-test-state-ts";
+
+            // A state set must exist before a state time series can reference it.
+            await CreateStateSet(tester, spaceId, stateSetXid);
+
+            var timeseries = new[]
+            {
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, tsXid, spaceId, TimeSeriesType.State,
+                    x => { x.Properties.Name = "utils-test-state-ts"; return x; },
+                    new InstanceIdentifier(spaceId, stateSetXid))
+            };
+
+            try
+            {
+                var result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token, isBeta: true);
+                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
+                result.Throw();
+                Assert.Single(result.Results);
+
+                var identities = CreateIdentities(spaceId, new[] { tsXid });
+                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true);
+                var ts = Assert.Single(retrieved);
+                Assert.Equal(TimeSeriesType.State, ts.Properties.Type);
+                Assert.Equal(stateSetXid, ts.Properties.StateSet?.ExternalId);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
+            }
+        }
         /// <summary>
         /// Verifies that GetExtractedRanges resolves identity via InstanceId when ExternalId is empty.
         /// IDM time series responses return InstanceId (not ExternalId), so the InstanceId branch

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using CogniteSdk.DataModels;
+using Prometheus;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Prometheus;
+
 
 namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
@@ -192,15 +193,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             }
 
             if (!duplicatedIds.Any()) return result;
-            if (backoff == 3)
-            {
-                // We should never reach here anyway. The duplicates are objects that were created between
-                // retrieve and CreateHandleErrors call. If there are persistent duplicates, we will just return
-                // the results as is.
-                _logger.LogError("Failed to resolve {Count} duplicated instance ids in view {View} after {Backoff} retries, giving up",
-                    duplicatedIds.Count, view.ExternalId, backoff);
-                return result;
-            }
 
             await Task.Delay(TimeSpan.FromSeconds(0.1 * Math.Pow(2, backoff)), token).ConfigureAwait(false);
             var nextResult = await GetOrCreateChunk(view, retrieve, upsert, sanitize, duplicatedIds,
