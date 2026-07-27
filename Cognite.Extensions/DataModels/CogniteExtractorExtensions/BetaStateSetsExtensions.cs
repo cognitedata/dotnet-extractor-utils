@@ -35,6 +35,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
             if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
             if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.GetOrCreateAsync(
@@ -64,6 +65,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
             if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
             if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.GetOrCreateAsync(
@@ -91,6 +93,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
             if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.EnsureExistsAsync(
                 StateSetsResource.View,
@@ -115,6 +118,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             int throttleSize,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
             return BetaResourceExtensions.GetByIdsIgnoreErrors(
                 StateSetsResource.View,
                 (chunkIds, tok) => stateSets.RetrieveAsync<T>(chunkIds, tok),
@@ -137,6 +141,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (resource == null) throw new ArgumentNullException(nameof(resource));
             if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.UpsertAsync(
                 StateSetsResource.View,
