@@ -10,6 +10,7 @@ using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Com.Cognite.V1.Timeseries.Proto;
 
 namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
@@ -203,24 +204,44 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 try
                 {
                     bool useGzip = false;
-                    int count = request.Items.Sum(r => r.NumericDatapoints?.Datapoints?.Count ?? 0 + r.StringDatapoints?.Datapoints?.Count ?? 0);
+                    int count = request.Items.Sum(r =>
+                        (r.NumericDatapoints?.Datapoints?.Count ?? 0)
+                        + (r.StringDatapoints?.Datapoints?.Count ?? 0)
+                        + (r.StateDatapoints?.Datapoints?.Count ?? 0));
                     if (gzipCountLimit >= 0 && count >= gzipCountLimit)
                     {
                         useGzip = true;
                     }
 
+                    // State datapoints are only supported through the beta data points API.
+                    bool hasStateDatapoints = request.Items.Any(r => r.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.StateDatapoints);
+
                     if (useGzip)
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            if (hasStateDatapoints)
+                            {
+                                await client.Beta.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                await client.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            }
                         }
                     }
                     else
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            if (hasStateDatapoints)
+                            {
+                                await client.Beta.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            }
                         }
                     }
 

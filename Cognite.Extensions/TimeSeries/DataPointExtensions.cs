@@ -62,6 +62,7 @@ namespace Cognite.Extensions
                     continue;
                 }
                 var isString = kvp.Value.First().IsString;
+                var isState = kvp.Value.First().IsState;
                 if (isString)
                 {
                     var finalDps = new StringDatapoints();
@@ -81,6 +82,26 @@ namespace Cognite.Extensions
                     }
                     dataPointCount += finalDps.Datapoints.Count;
                     item.StringDatapoints = finalDps;
+                }
+                else if (isState)
+                {
+                    var finalDps = new StateDatapoints();
+                    foreach (var dp in kvp.Value)
+                    {
+                        if (!dp.IsState) continue;
+                        finalDps.Datapoints.Add(new StateDatapoint
+                        {
+                            Timestamp = dp.Timestamp,
+                            NumericValue = (long)Math.Round(dp.NumericValue!.Value),
+                            StringValue = dp.StringValue!,
+                            Status = new Status
+                            {
+                                Code = (long)dp.Status.Code
+                            }
+                        });
+                    }
+                    dataPointCount += finalDps.Datapoints.Count;
+                    item.StateDatapoints = finalDps;
                 }
                 else
                 {
@@ -354,7 +375,7 @@ namespace Cognite.Extensions
         /// <summary>
         /// Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
         /// and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
-        /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 
+        /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to
         /// confirm the deletion does not mean that the operation failed in CDF
         /// </summary>
         /// <param name="dataPoints">Cognite datapoints resource</param>

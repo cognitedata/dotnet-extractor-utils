@@ -441,6 +441,11 @@ namespace ExtractorUtils.Test.Unit
                     new Datapoint(DateTime.UtcNow, "foo"),
                     new Datapoint(DateTime.UtcNow, true),
                     new Datapoint(DateTime.UtcNow, 123),
+                }}, { Identity.Create("dp-state"), new[] {
+                    new Datapoint(DateTime.UtcNow, 1.6, "OPEN", StatusCode.Parse("Bad")),
+                    new Datapoint(DateTime.UtcNow, 2.4, "CLOSED", StatusCode.Parse("Good")),
+                    new Datapoint(DateTime.UtcNow, 3.0, "UNKNOWN"),
+                    new Datapoint(DateTime.UtcNow, 123),
                 }}
             };
 
@@ -477,6 +482,19 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(StatusCode.Parse("Bad").Code, (ulong)d2[3].Status.Code);
             Assert.Equal("", d2[3].Value);
             Assert.True(d2[3].NullValue);
+
+            var c3 = byId["dp-state"];
+            Assert.Equal(3, c3.StateDatapoints.Datapoints.Count);
+            var d3 = c3.StateDatapoints.Datapoints;
+            Assert.Equal(StatusCode.Parse("Bad").Code, (ulong)d3[0].Status.Code);
+            Assert.Equal(2, d3[0].NumericValue);
+            Assert.Equal("OPEN", d3[0].StringValue);
+            Assert.Equal(StatusCode.Parse("Good").Code, (ulong)d3[1].Status.Code);
+            Assert.Equal(2, d3[1].NumericValue);
+            Assert.Equal("CLOSED", d3[1].StringValue);
+            Assert.Equal(StatusCode.Parse("Good").Code, (ulong)d3[2].Status.Code);
+            Assert.Equal(3, d3[2].NumericValue);
+            Assert.Equal("UNKNOWN", d3[2].StringValue);
         }
 
         #region mock

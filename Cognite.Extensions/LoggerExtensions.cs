@@ -80,8 +80,8 @@ namespace Cognite.Extensions
             switch (error.Type)
             {
                 case ErrorType.FatalFailure:
-                    logger.Log(fatalLevel, "Fatal error in request of type {type}: {msg}. {cdf}",
-                        requestType, error.Message, cogniteString);
+                    logger.Log(fatalLevel, "Fatal error in request of type {type}: {msg}. {cdf}\n Affected resources: {rsc}",
+                        requestType, error.Message, cogniteString, error.Values);
                     break;
                 case ErrorType.ItemDuplicated:
                     logger.Log(handledLevel, "The following {resource}s were duplicated in the request: {values}, " +

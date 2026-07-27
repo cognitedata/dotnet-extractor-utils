@@ -668,7 +668,12 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, -1E101),
                 new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Bad")),
                 new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Good")),
-                new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Uncertain"))
+                new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Uncertain")),
+                new Datapoint(DateTime.UtcNow, 5.0, "open"),
+                new Datapoint(DateTime.UtcNow, 10.0, new string('æ', 500)),
+                new Datapoint(DateTime.UtcNow, 1E101, "high"),
+                new Datapoint(DateTime.UtcNow, double.NaN, "nan-state"),
+                new Datapoint(DateTime.UtcNow, 20.0, new string('æ', 500), StatusCode.Parse("Bad"))
             };
 
             var cleanDps = dps.Select(dp => dp.Sanitize(nanRepl)).ToArray();
@@ -694,6 +699,37 @@ namespace ExtractorUtils.Test.Unit
             Assert.Null(cleanDps[11].NumericValue);
             Assert.Equal(0.0, cleanDps[12].NumericValue.Value);
             Assert.Equal(0.0, cleanDps[13].NumericValue.Value);
+
+            Assert.True(cleanDps[14].IsState);
+            Assert.Equal(5.0, cleanDps[14].NumericValue.Value);
+            Assert.Equal("open", cleanDps[14].StringValue);
+
+            Assert.True(cleanDps[15].IsState);
+            Assert.Equal(10.0, cleanDps[15].NumericValue.Value);
+            Assert.Equal(new string('æ', 500).TruncateBytes(CogniteUtils.TimeSeriesStringBytesMax), cleanDps[15].StringValue);
+
+            Assert.True(cleanDps[16].IsState);
+            Assert.Equal(1E100, cleanDps[16].NumericValue.Value);
+            Assert.Equal("high", cleanDps[16].StringValue);
+
+            Assert.True(cleanDps[17].IsState);
+            if (nanRepl.HasValue)
+            {
+                Assert.Equal(nanRepl, cleanDps[17].NumericValue.Value);
+            }
+            else
+            {
+                Assert.True(double.IsNaN(cleanDps[17].NumericValue.Value));
+            }
+            Assert.Equal("nan-state", cleanDps[17].StringValue);
+
+            // A Bad-status state datapoint still has its oversized string truncated, same as a
+            // Bad-status pure-string datapoint would (the byte-length limit is a wire-format
+            // constraint, not conditional on status).
+            Assert.True(cleanDps[18].IsState);
+            Assert.True(cleanDps[18].Status.IsBad);
+            Assert.Equal(20.0, cleanDps[18].NumericValue.Value);
+            Assert.Equal(new string('æ', 500).TruncateBytes(CogniteUtils.TimeSeriesStringBytesMax), cleanDps[18].StringValue);
         }
 
         [Fact]
@@ -704,6 +740,7 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, 123.123),
                 new Datapoint(DateTime.UtcNow, "test"),
                 new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Bad")),
+                new Datapoint(DateTime.UtcNow, 5.0, "open"),
                 new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Uncertain")),
                 new Datapoint(DateTime.UtcNow, false, StatusCode.Parse("Good")),
                 new Datapoint(DateTime.UtcNow, new string('æ', CogniteUtils.TimeSeriesStringBytesMax + 1)),
@@ -715,14 +752,16 @@ namespace ExtractorUtils.Test.Unit
                 new Datapoint(DateTime.UtcNow, double.MinValue),
                 new Datapoint(DateTime.UtcNow, 1E101),
                 new Datapoint(DateTime.UtcNow, -1E101),
+                new Datapoint(DateTime.UtcNow, 5.0, new string('æ', CogniteUtils.TimeSeriesStringBytesMax + 1)),
+                new Datapoint(DateTime.UtcNow, 5.0, new string('æ', CogniteUtils.TimeSeriesStringBytesMax + 1), StatusCode.Parse("Bad")),
                 new Datapoint(DateTime.MaxValue, 1),
                 new Datapoint(DateTime.MinValue, 1)
             };
 
             var result = dps.Select(dp => dp.Verify()).ToArray();
 
-            var countGood = 3;
-            var countValue = 11;
+            var countGood = 4;
+            var countValue = 13;
 
             for (int i = 0; i < countGood; i++) Assert.Null(result[i]);
             for (int i = countGood; i < countGood + countValue; i++) Assert.Equal(ResourceType.DataPointValue, result[i]);
@@ -975,22 +1014,39 @@ namespace ExtractorUtils.Test.Unit
                     new Datapoint(DateTime.UtcNow, "test"),
                     new Datapoint(DateTime.UtcNow, "test2"),
                     new Datapoint(DateTime.UtcNow, "test3")
+                } },
+                { Identity.Create("all-state-good"), new[]
+                {
+                    new Datapoint(DateTime.UtcNow, 1.0, "OPEN"),
+                    new Datapoint(DateTime.UtcNow, 2.0, "CLOSED"),
+                    new Datapoint(DateTime.UtcNow, 3.0, "UNKNOWN")
+                } },
+                { Identity.Create("state-mixed-type"), new[]
+                {
+                    new Datapoint(DateTime.UtcNow, 1.0, "OPEN"),
+                    new Datapoint(DateTime.UtcNow, 5.0)
                 } }
             };
 
             var (result, errors) = Sanitation.CleanDataPointsRequest(dps, SanitationMode.Clean, null);
-            Assert.Equal(2, result.Count);
+            Assert.Equal(4, result.Count);
             Assert.True(result.TryGetValue(Identity.Create("some-bad"), out var ts));
             Assert.Equal(3, ts.Count());
             Assert.True(result.TryGetValue(Identity.Create("all-good"), out ts));
             Assert.Equal(3, ts.Count());
+            Assert.True(result.TryGetValue(Identity.Create("all-state-good"), out ts));
+            Assert.Equal(3, ts.Count());
+            Assert.True(ts.All(dp => dp.IsState));
+            Assert.True(result.TryGetValue(Identity.Create("state-mixed-type"), out ts));
+            Assert.Single(ts);
+            Assert.True(ts.First().IsState);
 
             Assert.Equal(2, errors.Count());
             var err = errors.First(e => e.Resource == ResourceType.DataPointTimestamp);
             Assert.Equal(2, err.Skipped.Count());
 
             err = errors.First(e => e.Resource == ResourceType.DataPointValue);
-            Assert.Equal(3, err.Skipped.Count());
+            Assert.Equal(4, err.Skipped.Count());
         }
         [Fact]
         public void TestSanitizeAssetUpdateRequest()

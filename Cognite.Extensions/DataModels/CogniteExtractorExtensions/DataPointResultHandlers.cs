@@ -68,7 +68,8 @@ namespace Cognite.Extensions
 
                 foreach (var dp in points)
                 {
-                    if (dp.IsString == (ts.Properties.Type == TimeSeriesType.String)) good.Add(dp);
+                    // State timeseries accept both numeric and string datapoints
+                    if (ts.Properties.Type == TimeSeriesType.State || dp.IsString == (ts.Properties.Type == TimeSeriesType.String)) good.Add(dp);
                     else bad.Add(dp);
                 }
 

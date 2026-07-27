@@ -426,7 +426,7 @@ namespace Cognite.Extensions
             {
                 var evt = EventFromStream(stream);
                 if (evt == null) break;
-                events.Add(evt);
+                events.Add((EventCreate)evt);
                 if (chunkSize > 0 && ++total >= chunkSize) break;
             }
             return events;
@@ -702,6 +702,12 @@ namespace Cognite.Extensions
         public bool IsString { get; }
 
         /// <summary>
+        /// True if datapoint is a state datapoint, carrying both a numeric and a string value.
+        /// This is used for the beta state timeseries endpoint.
+        /// </summary>
+        public bool IsState => !IsString && _numericValue.HasValue && _stringValue != null;
+
+        /// <summary>
         /// Datapoint status code.
         /// </summary>
         public StatusCode Status => _statusCode;
@@ -714,6 +720,18 @@ namespace Cognite.Extensions
         /// <param name="statusCode">BETA: set the data point status code.
         /// This is only used if the beta datapoints endpoint is used.</param>
         public Datapoint(DateTime timestamp, double numericValue, StatusCode? statusCode = null) : this(timestamp.ToUnixTimeMilliseconds(), numericValue, statusCode)
+        {
+        }
+
+        /// <summary>
+        /// Creates a state data point with a string and numeric value. This is used for the beta state timeseries endpoint.
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="numericValue">double value</param>
+        /// <param name="str">string value</param>
+        /// <param name="statusCode">BETA: set the data point status code.
+        /// This is only used if the beta datapoints endpoint is used.</param>
+        public Datapoint(DateTime timestamp, double numericValue, string str, StatusCode? statusCode = null) : this(timestamp.ToUnixTimeMilliseconds(), numericValue, str, statusCode)
         {
         }
 
@@ -757,6 +775,22 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
+        /// Creates a state data point with a string and numeric value. This is used for the beta state timeseries endpoint.
+        /// </summary>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="numericValue">double value</param>
+        /// <param name="str">string value</param>
+        /// <param name="statusCode">BETA: set the data point status code.
+        /// This is only used if the beta datapoints endpoint is used.</param>
+        public Datapoint(long timestamp, double numericValue, string str, StatusCode? statusCode = null)
+        {
+            _timestamp = timestamp;
+            _numericValue = numericValue;
+            IsString = false;
+            _stringValue = str;
+            _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Good);
+        }
+        /// <summary>
         /// Creates a string data point
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
@@ -790,21 +824,36 @@ namespace Cognite.Extensions
         }
         /// <summary>
         /// Convert datapoint into an array of bytes on the form
-        /// [long timestamp][boolean isString]{Either [ushort length][string value] or [double value]}
+        /// [long timestamp][byte kind (0 = numeric, 1 = string, 2 = state)][ulong statusCode]
+        /// {[double value] or [ushort length][string value] or [double value][ushort length][string value]}.
+        /// The kind byte occupies the same slot and size as the old boolean isString flag, so
+        /// existing numeric (0)/string (1) records on disk remain readable.
         /// </summary>
         /// <returns></returns>
         public byte[] ToStorableBytes()
         {
-            ushort size = sizeof(long) + sizeof(bool) + sizeof(ulong);
+            ushort size = sizeof(long) + sizeof(byte) + sizeof(ulong);
 
             byte[] valBytes;
+            byte kind;
 
             if (IsString)
             {
+                kind = 1;
                 valBytes = CogniteUtils.StringToStorable(_stringValue);
+            }
+            else if (IsState)
+            {
+                kind = 2;
+                var numBytes = BitConverter.GetBytes(_numericValue!.Value);
+                var strBytes = CogniteUtils.StringToStorable(_stringValue);
+                valBytes = new byte[numBytes.Length + strBytes.Length];
+                Buffer.BlockCopy(numBytes, 0, valBytes, 0, numBytes.Length);
+                Buffer.BlockCopy(strBytes, 0, valBytes, numBytes.Length, strBytes.Length);
             }
             else
             {
+                kind = 0;
                 valBytes = BitConverter.GetBytes(_numericValue!.Value);
             }
             size += (ushort)valBytes.Length;
@@ -813,8 +862,8 @@ namespace Cognite.Extensions
             int pos = 0;
             Buffer.BlockCopy(BitConverter.GetBytes(_timestamp), 0, bytes, pos, sizeof(long));
             pos += sizeof(long);
-            Buffer.BlockCopy(BitConverter.GetBytes(IsString), 0, bytes, pos, sizeof(bool));
-            pos += sizeof(bool);
+            bytes[pos] = kind;
+            pos += sizeof(byte);
             Buffer.BlockCopy(BitConverter.GetBytes(_statusCode.Code), 0, bytes, pos, sizeof(ulong));
             pos += sizeof(ulong);
 
@@ -832,19 +881,27 @@ namespace Cognite.Extensions
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            var readLength = sizeof(long) + sizeof(bool) + sizeof(ulong);
+            var readLength = sizeof(long) + sizeof(byte) + sizeof(ulong);
             var baseBytes = new byte[readLength];
             int read = stream.Read(baseBytes, 0, readLength);
             if (read < readLength) return null;
 
             var timestamp = BitConverter.ToInt64(baseBytes, 0);
-            var isString = BitConverter.ToBoolean(baseBytes, sizeof(long));
-            var statusCode = BitConverter.ToUInt64(baseBytes, sizeof(long) + sizeof(bool));
+            var kind = baseBytes[sizeof(long)];
+            var statusCode = BitConverter.ToUInt64(baseBytes, sizeof(long) + sizeof(byte));
 
-            if (isString)
+            if (kind == 1)
             {
                 string? value = CogniteUtils.StringFromStream(stream);
                 return new Datapoint(timestamp, value, StatusCode.Create(statusCode));
+            }
+            else if (kind == 2)
+            {
+                var valueBytes = new byte[sizeof(double)];
+                if (stream.Read(valueBytes, 0, sizeof(double)) < sizeof(double)) return null;
+                double numericValue = BitConverter.ToDouble(valueBytes, 0);
+                string? stringValue = CogniteUtils.StringFromStream(stream);
+                return new Datapoint(timestamp, numericValue, stringValue ?? "", StatusCode.Create(statusCode));
             }
             else
             {
