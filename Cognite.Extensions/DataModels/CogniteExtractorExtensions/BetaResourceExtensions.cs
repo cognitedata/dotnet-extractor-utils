@@ -62,6 +62,19 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             return GetOrCreateAsync(view, retrieve, upsert, sanitize, instanceIds, AsyncBuildItems, options, token);
         }
 
+        /// <summary>
+        /// Retrieves instances by id for the beta CDM resource wrapped by a <see cref="BetaResourceExtensions"/> method. If any instances are missing, they will be created using the provided <see cref="buildItems"/> function.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance properties.</typeparam>
+        /// <param name="view">The view to retrieve instances from.</param>
+        /// <param name="retrieve">The function to retrieve instances.</param>
+        /// <param name="upsert">The function to upsert instances.</param>
+        /// <param name="sanitize">The function to sanitize instances.</param>
+        /// <param name="instanceIds">The ids of the instances to retrieve or create.</param>
+        /// <param name="buildItems">The function to build instances to create.</param>
+        /// <param name="options">The options for the get-or-create operation.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing the retrieved or created instances and any errors that occurred during the operation.</returns>
         public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateAsync<T>(
             ViewIdentifier view,
             RetrieveInstancesFunc<T> retrieve,
