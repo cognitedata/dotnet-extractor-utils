@@ -235,6 +235,7 @@ namespace Cognite.Extractor.Utils
             SanitationMode sanitationMode,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (instanceIds == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
             _logger.LogInformation("Getting or creating {Number} state sets in CDF", instanceIds.Count());
             return await _client.Beta.StateSets.GetOrCreateStateSetsAsync(
                 instanceIds,
@@ -263,6 +264,7 @@ namespace Cognite.Extractor.Utils
             SanitationMode sanitationMode,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (instanceIds == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
             _logger.LogInformation("Getting or creating {Number} state sets in CDF", instanceIds.Count());
             return await _client.Beta.StateSets.GetOrCreateStateSetsAsync(
                 instanceIds,
@@ -307,6 +309,7 @@ namespace Cognite.Extractor.Utils
             IEnumerable<Identity> stateSets,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (stateSets == null) return new List<SourcedNode<T>>();
             _logger.LogInformation("Getting {Number} state sets from CDF", stateSets.Count());
             return await _client.Beta.StateSets.GetStateSetsByIdsIgnoreErrors<T>(
                 stateSets,
@@ -347,7 +350,7 @@ namespace Cognite.Extractor.Utils
         /// according to <see cref="CogniteConfig.CdfChunking"/> and trimmed according to the
         /// <see href="https://docs.cognite.com/api/v1/#operation/postMultiTimeSeriesDatapoints">CDF limits</see>.
         /// The <paramref name="points"/> dictionary keys are time series identities (Id or ExternalId) and the values are numeric or string data points
-        /// 
+        ///
         /// On error, the offending timeseries/datapoints can optionally be removed.
         /// </summary>
         /// <param name="points">Data points</param>
@@ -363,7 +366,7 @@ namespace Cognite.Extractor.Utils
             if (points == null || !points.Any()) return new CogniteResult<DataPointInsertError>(null);
 
             _logger.LogDebug("Uploading {Number} data points to CDF for {NumberTs} time series",
-                points.Values.Select(dp => dp.Count()).Sum(),
+                points.Values.Sum(dp => dp.Count()),
                 points.Keys.Count);
             return await DataPointExtensionsWithInstanceId.InsertAsync(
                 _client,
