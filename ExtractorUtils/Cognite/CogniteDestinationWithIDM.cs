@@ -66,13 +66,33 @@ namespace Cognite.Extractor.Utils
             }
         }
 
-        /// <summary>
-        /// Runs <paramref name="beta"/> if <paramref name="isBeta"/> is true, otherwise <paramref name="classic"/>.
-        /// Centralizes the beta-CDM-vs-IDM-view resource selection shared by the TimeSeries methods below.
-        /// </summary>
-        private static Task<TResult> DispatchTimeSeriesAsync<TResult>(bool isBeta, Func<Task<TResult>> beta, Func<Task<TResult>> classic)
+        private enum TimeSeriesOperation { GetOrCreate, Ensure }
+
+        private Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> DispatchTimeSeriesAsync<T>(
+            bool isBeta,
+            TimeSeriesOperation op,
+            IEnumerable<InstanceIdentifier>? instanceIds,
+            Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>>? buildTimeSeries,
+            IEnumerable<SourcedNodeWrite<T>>? items,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token) where T : CogniteTimeSeriesBase
         {
-            return isBeta ? beta() : classic();
+            var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
+            return op switch
+            {
+                TimeSeriesOperation.GetOrCreate when isBeta =>
+                    _client.Beta.TimeSeries.GetOrCreateTimeSeriesAsync(instanceIds!, buildTimeSeries!, betaParams, token),
+                TimeSeriesOperation.GetOrCreate =>
+                    _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier> { CoreTimeSeriesResource<T>.DefaultView })
+                        .GetOrCreateTimeSeriesAsync(instanceIds!, buildTimeSeries!, Chunking.Instances, Throttling.Instances, retryMode, sanitationMode, token),
+                TimeSeriesOperation.Ensure when isBeta =>
+                    _client.Beta.TimeSeries.EnsureTimeSeriesExistsAsync(items!, betaParams, token),
+                TimeSeriesOperation.Ensure =>
+                    _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier)
+                        .EnsureTimeSeriesExistsAsync<T>(items!, Chunking.Instances, Throttling.Instances, retryMode, sanitationMode, token),
+                _ => throw new ArgumentOutOfRangeException(nameof(op))
+            };
         }
 
         #region timeseries
@@ -103,22 +123,8 @@ namespace Cognite.Extractor.Utils
             bool isBeta = false) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await DispatchTimeSeriesAsync(isBeta,
-                () => _client.Beta.TimeSeries.GetOrCreateTimeSeriesAsync(
-                    instanceIds,
-                    buildTimeSeries,
-                    new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode),
-                    token),
-                () => _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView })
-                    .GetOrCreateTimeSeriesAsync(
-                        instanceIds,
-                        buildTimeSeries,
-                        Chunking.Instances,
-                        Throttling.Instances,
-                        retryMode,
-                        sanitationMode,
-                        token)
-            ).ConfigureAwait(false);
+            return await DispatchTimeSeriesAsync(isBeta, TimeSeriesOperation.GetOrCreate, instanceIds,
+                ids => Task.FromResult(buildTimeSeries(ids)), null, retryMode, sanitationMode, token).ConfigureAwait(false);
         }
         /// <summary>
         /// Ensures the the time series with the provided <paramref name="instanceIds"/> exist in CDF.
@@ -147,21 +153,8 @@ namespace Cognite.Extractor.Utils
             bool isBeta = false) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await DispatchTimeSeriesAsync(isBeta,
-                () => _client.Beta.TimeSeries.GetOrCreateTimeSeriesAsync(
-                    instanceIds,
-                    buildTimeSeries,
-                    new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode),
-                    token),
-                () => _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView }).GetOrCreateTimeSeriesAsync(
-                    instanceIds,
-                    buildTimeSeries,
-                    Chunking.Instances,
-                    Throttling.Instances,
-                    retryMode,
-                    sanitationMode,
-                    token)
-            ).ConfigureAwait(false);
+            return await DispatchTimeSeriesAsync(isBeta, TimeSeriesOperation.GetOrCreate, instanceIds,
+                buildTimeSeries, null, retryMode, sanitationMode, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -190,19 +183,8 @@ namespace Cognite.Extractor.Utils
         {
             if (timeSeries == null) throw new ArgumentNullException(nameof(timeSeries));
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
-            return await DispatchTimeSeriesAsync(isBeta,
-                () => _client.Beta.TimeSeries.EnsureTimeSeriesExistsAsync(
-                    timeSeries,
-                    new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode),
-                    token),
-                () => _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).EnsureTimeSeriesExistsAsync<T>(
-                    timeSeries,
-                    Chunking.Instances,
-                    Throttling.Instances,
-                    retryMode,
-                    sanitationMode,
-                    token)
-            ).ConfigureAwait(false);
+            return await DispatchTimeSeriesAsync(isBeta, TimeSeriesOperation.Ensure, null,
+                null, timeSeries, retryMode, sanitationMode, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -219,17 +201,10 @@ namespace Cognite.Extractor.Utils
             bool isBeta = false) where T : CogniteTimeSeriesBase
         {
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
-            return await DispatchTimeSeriesAsync(isBeta,
-                () => _client.Beta.TimeSeries.GetTimeSeriesByIdsIgnoreErrors<T>(
-                    timeSeries,
-                    Chunking.Instances,
-                    Throttling.Instances,
-                    token),
-                () => _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetTimeSeriesByIdsIgnoreErrors<T>(
-                    timeSeries,
-                    Chunking.Instances,
-                    Throttling.Instances,
-                    token)
+            return await (isBeta
+                ? _client.Beta.TimeSeries.GetTimeSeriesByIdsIgnoreErrors<T>(timeSeries, Chunking.Instances, Throttling.Instances, token)
+                : _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier)
+                    .GetTimeSeriesByIdsIgnoreErrors<T>(timeSeries, Chunking.Instances, Throttling.Instances, token)
             ).ConfigureAwait(false);
         }
 
@@ -255,18 +230,11 @@ namespace Cognite.Extractor.Utils
         {
             if (updates == null) throw new ArgumentNullException(nameof(updates));
             _logger.LogInformation("Updating {Number} timeseries in CDF", updates.Count());
-            return await DispatchTimeSeriesAsync(isBeta,
-                () => _client.Beta.TimeSeries.UpsertAsync(
-                    updates,
-                    new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode),
-                    token),
-                () => _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).UpsertAsync(
-                    updates,
-                    Chunking.Instances,
-                    Throttling.Instances,
-                    retryMode,
-                    sanitationMode,
-                    token)
+            var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
+            return await (isBeta
+                ? _client.Beta.TimeSeries.UpsertAsync(updates, betaParams, token)
+                : _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier)
+                    .UpsertAsync(updates, Chunking.Instances, Throttling.Instances, retryMode, sanitationMode, token)
             ).ConfigureAwait(false);
         }
         #endregion
