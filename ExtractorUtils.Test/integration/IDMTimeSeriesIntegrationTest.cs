@@ -40,6 +40,31 @@ namespace ExtractorUtils.Test.Integration
             return ret;
         }
 
+        /// <summary>
+        /// Creates a CogniteStateSet instance that state time series can reference.
+        /// Returns the external id of the created state set.
+        /// </summary>
+        private static async Task<string> CreateStateSet(CDFTester tester, string spaceId, string externalId)
+        {
+            var stateSet = new SourcedNodeWrite<CogniteStateSet>
+            {
+                Space = spaceId,
+                ExternalId = externalId,
+                Properties = new CogniteStateSet
+                {
+                    Name = externalId,
+                    States = new[]
+                    {
+                        new CogniteState { NumericValue = 0, StringValue = "CLOSED" },
+                        new CogniteState { NumericValue = 1, StringValue = "OPEN" }
+                    }
+                }
+            };
+            var result = await tester.DestinationWithIDM.UpsertStateSetsAsync(new[] { stateSet }, RetryMode.None, SanitationMode.None, tester.Source.Token);
+            result.Throw();
+            return externalId;
+        }
+
         private static async Task<(string space, List<string> externalIds)> CreateTestTimeSeries<T>(CDFTester tester, int count = 3, ViewIdentifier view = null, int offset = 0) where T : CogniteTimeSeriesBase, new()
         {
             var spaceId = await tester.GetSpaceId();
@@ -801,6 +826,78 @@ namespace ExtractorUtils.Test.Integration
             finally
             {
                 await DeleteTimeseries(tester, spaceId, new[] { stateSetXid });
+            }
+        }
+
+        /// <summary>
+        /// Smoke-tests the state-set convenience methods on CogniteDestinationWithIDM (UpsertStateSetsAsync,
+        /// GetStateSetsByIdsIgnoreErrors, GetOrCreateStateSetsAsync, EnsureStateSetsExistAsync). These are thin
+        /// forwarding wrappers with no logic of their own beyond building a BetaResourceParams from CogniteConfig's
+        /// chunking/throttling and delegating to BetaStateSetsExtensions, whose behavior (retries, sanitation,
+        /// duplicate handling) is already covered by the dedicated tests against that layer directly. This test
+        /// only confirms each wrapper is wired to the right resource and runs end to end.
+        /// </summary>
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestStateSets(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+            var stateSetXid = $"{tester.Prefix}utils-test-state-set-standalone";
+            var createdXid = $"{tester.Prefix}utils-test-state-set-standalone-created";
+            var ensuredXid = $"{tester.Prefix}utils-test-state-set-standalone-ensured";
+
+            try
+            {
+                // UpsertStateSetsAsync
+                await CreateStateSet(tester, spaceId, stateSetXid);
+
+                // GetStateSetsByIdsIgnoreErrors
+                var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
+                var retrieved = await tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token);
+                Assert.Single(retrieved);
+
+                // GetOrCreateStateSetsAsync
+                var getOrCreateResult = await tester.DestinationWithIDM.GetOrCreateStateSetsAsync<CogniteStateSet>(
+                    new[] { new InstanceIdentifier(spaceId, createdXid) },
+                    missing => new[]
+                    {
+                        new SourcedNodeWrite<CogniteStateSet>
+                        {
+                            Space = spaceId,
+                            ExternalId = createdXid,
+                            Properties = new CogniteStateSet
+                            {
+                                Name = createdXid,
+                                States = new[] { new CogniteState { NumericValue = 0, StringValue = "IDLE" } }
+                            }
+                        }
+                    },
+                    RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+                getOrCreateResult.Throw();
+                Assert.Single(getOrCreateResult.Results);
+
+                // EnsureStateSetsExistAsync
+                var ensureResult = await tester.DestinationWithIDM.EnsureStateSetsExistAsync(new[]
+                {
+                    new SourcedNodeWrite<CogniteStateSet>
+                    {
+                        Space = spaceId,
+                        ExternalId = ensuredXid,
+                        Properties = new CogniteStateSet
+                        {
+                            Name = ensuredXid,
+                            States = new[] { new CogniteState { NumericValue = 0, StringValue = "IDLE" } }
+                        }
+                    }
+                }, RetryMode.None, SanitationMode.Clean, tester.Source.Token);
+                ensureResult.Throw();
+                Assert.Single(ensureResult.Results);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { stateSetXid, createdXid, ensuredXid });
             }
         }
     }

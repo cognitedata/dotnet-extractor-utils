@@ -1,4 +1,5 @@
-﻿using Cognite.Extensions;
+using Cognite.Extensions;
+using Cognite.Extensions.DataModels;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Utils.Unstable.Configuration;
 using CogniteSdk;
@@ -212,6 +213,133 @@ namespace Cognite.Extractor.Utils
                 token).ConfigureAwait(false);
         }
         #endregion
+
+        #region state sets
+        /// <summary>
+        /// Ensures the the state sets with the provided <paramref name="instanceIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildStateSets"/> function to construct
+        /// the missing state set objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF. State sets are only available through the beta CDM state set API.
+        /// </summary>
+        /// <param name="instanceIds">Instance Ids</param>
+        /// <param name="buildStateSets">Function that builds CogniteSdk StateSet objects</param>
+        /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to state sets before creating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occurred and a list of the created and found state sets</returns>
+        public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateStateSetsAsync<T>(
+            IEnumerable<InstanceIdentifier> instanceIds,
+            Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildStateSets,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token) where T : CogniteStateSet
+        {
+            _logger.LogInformation("Getting or creating {Number} state sets in CDF", instanceIds.Count());
+            return await _client.Beta.StateSets.GetOrCreateStateSetsAsync(
+                instanceIds,
+                buildStateSets,
+                new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode),
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Ensures the the state sets with the provided <paramref name="instanceIds"/> exist in CDF.
+        /// If one or more do not exist, use the <paramref name="buildStateSets"/> function to construct
+        /// the missing state set objects and upload them to CDF.
+        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
+        /// against CDF. State sets are only available through the beta CDM state set API.
+        /// </summary>
+        /// <param name="instanceIds">Instance Ids</param>
+        /// <param name="buildStateSets">Async function that builds CogniteSdk StateSet objects</param>
+        /// <param name="retryMode">How to handle failed requests</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to state sets before creating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found state sets</returns>
+        public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateStateSetsAsync<T>(
+            IEnumerable<InstanceIdentifier> instanceIds,
+            Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildStateSets,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token) where T : CogniteStateSet
+        {
+            _logger.LogInformation("Getting or creating {Number} state sets in CDF", instanceIds.Count());
+            return await _client.Beta.StateSets.GetOrCreateStateSetsAsync(
+                instanceIds,
+                buildStateSets,
+                new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode),
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Ensures that all state sets in <paramref name="stateSets"/> exist in CDF.
+        /// Tries to create the state sets and returns when all are created or have been removed
+        /// due to issues with the request. State sets are only available through the beta CDM state set API.
+        /// </summary>
+        /// <param name="stateSets">List of CogniteSdk StateSet objects</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for
+        /// this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to state sets before creating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created state sets</returns>
+        public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureStateSetsExistAsync<T>(
+            IEnumerable<SourcedNodeWrite<T>> stateSets,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token) where T : CogniteStateSet
+        {
+            if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
+            _logger.LogInformation("Ensuring that {Number} state sets exist in CDF", stateSets.Count());
+            return await _client.Beta.StateSets.EnsureStateSetsExistAsync(
+                stateSets,
+                new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode),
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Gets state sets by ids in <paramref name="stateSets"/>, ignoring errors.
+        /// State sets are only available through the beta CDM state set API.
+        /// </summary>
+        /// <param name="stateSets">List of StateSet instance ids to fetch</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created state sets</returns>
+        public async Task<IEnumerable<SourcedNode<T>>> GetStateSetsByIdsIgnoreErrors<T>(
+            IEnumerable<Identity> stateSets,
+            CancellationToken token) where T : CogniteStateSet
+        {
+            _logger.LogInformation("Getting {Number} state sets from CDF", stateSets.Count());
+            return await _client.Beta.StateSets.GetStateSetsByIdsIgnoreErrors<T>(
+                stateSets,
+                Chunking.Instances,
+                Throttling.Instances,
+                token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Upsert state sets in <paramref name="updates"/>.
+        /// If items fail due to duplicated instance ids, they can be removed before retrying
+        /// by setting <paramref name="retryMode"/>. State sets are only available through the beta CDM state set API.
+        /// </summary>
+        /// <param name="updates">List of StateSet objects</param>
+        /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for this method.</param>
+        /// <param name="sanitationMode">The type of sanitation to apply to state sets before updating</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated state sets</returns>
+        public async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertStateSetsAsync<T>(
+            IEnumerable<SourcedNodeWrite<T>> updates,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token) where T : CogniteStateSet
+        {
+            if (updates == null) throw new ArgumentNullException(nameof(updates));
+            _logger.LogInformation("Updating {Number} state sets in CDF", updates.Count());
+            return await _client.Beta.StateSets.UpsertAsync(
+                updates,
+                new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode),
+                token).ConfigureAwait(false);
+        }
+        #endregion
+
 
         #region datapoints
         /// <summary>
