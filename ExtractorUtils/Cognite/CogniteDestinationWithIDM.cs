@@ -236,6 +236,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token) where T : CogniteStateSet
         {
             if (instanceIds == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
+            if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
             _logger.LogInformation("Getting or creating {Number} state sets in CDF", instanceIds.Count());
             return await _client.Beta.StateSets.GetOrCreateStateSetsAsync(
                 instanceIds,
@@ -265,6 +266,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token) where T : CogniteStateSet
         {
             if (instanceIds == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
+            if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
             _logger.LogInformation("Getting or creating {Number} state sets in CDF", instanceIds.Count());
             return await _client.Beta.StateSets.GetOrCreateStateSetsAsync(
                 instanceIds,
