@@ -33,8 +33,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
     /// <summary>
     /// Shared get-or-create/ensure-exists/get-by-ids/upsert implementation for beta CDM resources
     /// (<see cref="CogniteSdk.Resources.Beta.StateSetsResource"/>, <see cref="CogniteSdk.Resources.Beta.TimeSeriesResource"/>).
-    /// These resources do not implement <c>BaseDataModelResource&lt;T&gt;</c>, so they cannot use the
-    /// generic implementation in <see cref="Cognite.Extensions.DataModels.DataModelUtils"/>; instead
     /// <see cref="BetaStateSetsExtensions"/> is a thin public wrapper that supplies its resource's
     /// retrieve/upsert/sanitize operations to the methods here.
     /// </summary>
