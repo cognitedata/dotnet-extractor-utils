@@ -2,8 +2,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
     /// <summary>
     /// Bundles the chunking, throttling, retry, and sanitation parameters shared by the
-    /// beta CDM state-set and time-series extension methods (<see cref="BetaStateSetsExtensions"/>,
-    /// <see cref="BetaTimeSeriesExtensions"/>).
+    /// beta CDM state-set and time-series extension methods (<see cref="BetaStateSetsExtensions"/>).
     /// </summary>
     public sealed class BetaResourceParams
     {
