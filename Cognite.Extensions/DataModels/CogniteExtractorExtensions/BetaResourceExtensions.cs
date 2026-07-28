@@ -106,8 +106,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
             if (buildItems == null) throw new ArgumentNullException(nameof(buildItems));
             if (options == null) throw new ArgumentNullException(nameof(options));
-            
-            if(instanceIds == null || !instanceIds.Any()) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
+
+            if (instanceIds == null || !instanceIds.Any()) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
 
             var chunks = instanceIds.ChunkBy(options.ChunkSize).ToList();
 
@@ -257,7 +257,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (upsert == null) throw new ArgumentNullException(nameof(upsert));
             if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
             if (options == null) throw new ArgumentNullException(nameof(options));
-            
+
             return await WriteChunked(
                 sanitize,
                 itemsToEnsure,
@@ -267,6 +267,20 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 .ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Retrieves instances by their IDs, ignoring any errors that occur during the process.
+        /// Doesn't absorb exceptions, but instead returns a list of successfully retrieved instances
+        /// and logs any errors encountered.
+        /// </summary>
+        /// <typeparam name="T">The type of the instances being retrieved.</typeparam>
+        /// <param name="view">The view identifier.</param>
+        /// <param name="retrieve">The function to retrieve instances.</param>
+        /// <param name="ids">The list of instance identifiers.</param>
+        /// <param name="chunkSize">The size of each chunk for processing.</param>
+        /// <param name="throttleSize">The maximum number of concurrent tasks.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>A list of successfully retrieved instances.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when any of the required parameters are null.</exception>
         public static async Task<IEnumerable<SourcedNode<T>>> GetByIdsIgnoreErrors<T>(
             ViewIdentifier view,
             RetrieveInstancesFunc<T> retrieve,
@@ -315,7 +329,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (upsert == null) throw new ArgumentNullException(nameof(upsert));
             if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
             if (options == null) throw new ArgumentNullException(nameof(options));
-            
+
             return await WriteChunked(
                 sanitize,
                 items,
