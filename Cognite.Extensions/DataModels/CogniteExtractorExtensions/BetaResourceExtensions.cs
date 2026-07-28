@@ -245,6 +245,17 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 }).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Upserts instances for the beta CDM resource wrapped by a <see cref="BetaResourceExtensions"/> method.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance properties.</typeparam>
+        /// <param name="view">The view to upsert instances to.</param>
+        /// <param name="upsert">The function to upsert instances.</param>
+        /// <param name="sanitize">The function to sanitize instances.</param>
+        /// <param name="itemsToEnsure">The instances to upsert.</param>
+        /// <param name="options">The options for the upsert operation.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing the upserted instances and any errors that occurred during the operation.</returns>
         public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureExistsAsync<T>(
             ViewIdentifier view,
             UpsertInstancesFunc<T> upsert,
@@ -295,6 +306,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             object mutex = new object();
 
             if (ids == null || !ids.Any()) return result;
+            if (ids.Any(x => x.InstanceId == null)) throw new ArgumentException("All identities must have an InstanceId specified.", nameof(ids));
 
             var chunks = ids.ChunkBy(chunkSize).ToList();
 
