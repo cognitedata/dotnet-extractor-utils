@@ -70,5 +70,26 @@ namespace Cognite.Extensions
                 ts => ts.ExternalId == null || ts.Space == null ? null : Identity.Create(new InstanceIdentifier(ts.Space, ts.ExternalId)),
                 CdfMetrics.TimeSeriesSkipped);
         }
+
+        /// <summary>
+        /// List of SourceNodeWrite objects, offending objects removed from input items based on CogniteError.
+        /// Use this overload when there is no corresponding <see cref="BaseDataModelResource{T}"/> resource for
+        /// <typeparamref name="T"/> to query for underlying instances with (e.g. state sets), so there is no
+        /// type-immutability special case to apply.
+        /// </summary>
+        /// <param name="error">Error that occured with a previous push</param>
+        /// <param name="items">Nodes to clean</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>Nodes that are not affected by the error</returns>
+        public static Task<IEnumerable<SourcedNodeWrite<T>>> CleanFromError<T>(
+            CogniteError<SourcedNodeWrite<T>> error,
+            IEnumerable<SourcedNodeWrite<T>> items,
+            CancellationToken token
+        )
+        {
+            return Task.FromResult(CleanFromErrorCommon(error!, items, IsAffected,
+                ts => ts.ExternalId == null || ts.Space == null ? null : Identity.Create(new InstanceIdentifier(ts.Space, ts.ExternalId)),
+                CdfMetrics.InstanceUpsertsSkipped));
+        }
     }
 }
