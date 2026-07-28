@@ -35,6 +35,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
+            if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.GetOrCreateAsync(
                 StateSetsResource.View,
                 (ids, tok) => stateSets.RetrieveAsync<T>(ids, tok),
