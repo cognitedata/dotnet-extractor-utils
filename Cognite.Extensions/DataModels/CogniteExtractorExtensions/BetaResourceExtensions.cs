@@ -108,7 +108,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (options == null) throw new ArgumentNullException(nameof(options));
             
             if(instanceIds == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
-            
+
             var chunks = (instanceIds ?? Enumerable.Empty<InstanceIdentifier>())
                 .ChunkBy(options.ChunkSize)
                 .ToList();
@@ -341,6 +341,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     {
                         found = await retrieve(chunk.Select(x => new InstanceIdentifierWithType(InstanceType.node, x.InstanceId)), token).ConfigureAwait(false);
                     }
+                    if (found == null || !found.Any()) return;
                     lock (mutex)
                     {
                         result.AddRange(found);
