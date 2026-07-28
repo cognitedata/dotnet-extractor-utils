@@ -54,6 +54,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
+            if (buildItems == null) throw new ArgumentNullException(nameof(buildItems));
             Task<IEnumerable<SourcedNodeWrite<T>>> AsyncBuildItems(IEnumerable<InstanceIdentifier> ids)
             {
                 return Task.FromResult(buildItems(ids));
@@ -71,12 +72,18 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (retrieve == null) throw new ArgumentNullException(nameof(retrieve));
+            if (upsert == null) throw new ArgumentNullException(nameof(upsert));
             if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
+            if (buildItems == null) throw new ArgumentNullException(nameof(buildItems));
             if (options == null) throw new ArgumentNullException(nameof(options));
-            var chunks = instanceIds
+            
+            if(instanceIds == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
+            
+            var chunks = (instanceIds ?? Enumerable.Empty<InstanceIdentifier>())
                 .ChunkBy(options.ChunkSize)
                 .ToList();
-            if (!chunks.Any()) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
 
             var results = new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>[chunks.Count];
 
@@ -243,10 +250,15 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (upsert == null) throw new ArgumentNullException(nameof(upsert));
             if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
             if (options == null) throw new ArgumentNullException(nameof(options));
+            
+            if(itemsToEnsure == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
+
             IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
-            (itemsToEnsure, errors) = sanitize(itemsToEnsure, options.SanitationMode);
+            (itemsToEnsure, errors) = sanitize(itemsToEnsure ?? Enumerable.Empty<SourcedNodeWrite<T>>(), options.SanitationMode);
 
             var chunks = itemsToEnsure
                 .ChunkBy(options.ChunkSize)
@@ -282,10 +294,14 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             int throttleSize,
             CancellationToken token)
         {
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (retrieve == null) throw new ArgumentNullException(nameof(retrieve));
             var result = new List<SourcedNode<T>>();
             object mutex = new object();
 
-            var chunks = ids
+            if (ids == null || !ids.Any()) return result;
+
+            var chunks = (ids ?? Enumerable.Empty<Identity>())
                 .ChunkBy(chunkSize)
                 .ToList();
 
@@ -315,10 +331,15 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (upsert == null) throw new ArgumentNullException(nameof(upsert));
             if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
             if (options == null) throw new ArgumentNullException(nameof(options));
+            
+            if(items == null) return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(null, null);
+            
             IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
-            (items, errors) = sanitize(items, options.SanitationMode);
+            (items, errors) = sanitize(items ?? Enumerable.Empty<SourcedNodeWrite<T>>(), options.SanitationMode);
 
             var chunks = items
                 .ChunkBy(options.ChunkSize)

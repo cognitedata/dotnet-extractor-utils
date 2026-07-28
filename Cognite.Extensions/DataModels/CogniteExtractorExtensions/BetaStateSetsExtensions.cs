@@ -36,8 +36,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token) where T : CogniteStateSet
         {
             if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
-            if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
-            if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.GetOrCreateAsync(
                 StateSetsResource.View,
                 (ids, tok) => stateSets.RetrieveAsync<T>(ids, tok),
@@ -66,8 +64,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token) where T : CogniteStateSet
         {
             if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
-            if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
-            if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.GetOrCreateAsync(
                 StateSetsResource.View,
                 (ids, tok) => stateSets.RetrieveAsync<T>(ids, tok),
@@ -94,7 +90,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token) where T : CogniteStateSet
         {
             if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
-            if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.EnsureExistsAsync(
                 StateSetsResource.View,
                 (items, tok) => stateSets.UpsertAsync(items, null, tok),
@@ -142,7 +137,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token) where T : CogniteStateSet
         {
             if (resource == null) throw new ArgumentNullException(nameof(resource));
-            if (options == null) throw new ArgumentNullException(nameof(options));
             return BetaResourceExtensions.UpsertAsync(
                 StateSetsResource.View,
                 (chunkItems, tok) => resource.UpsertAsync(chunkItems, null, tok),
