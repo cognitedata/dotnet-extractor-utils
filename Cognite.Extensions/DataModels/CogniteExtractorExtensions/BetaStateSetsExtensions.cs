@@ -65,13 +65,9 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token) where T : CogniteStateSet
         {
-<<<<<<< HEAD
             if (buildStateSets == null) throw new ArgumentNullException(nameof(buildStateSets));
             if (options == null) throw new ArgumentNullException(nameof(options));
             if (stateSets == null) throw new ArgumentNullException(nameof(stateSets));
-=======
-            if (options == null) throw new ArgumentNullException(nameof(options));
->>>>>>> 030fd9d (Add support for State Sets (#674))
             return BetaResourceExtensions.GetOrCreateAsync(
                 StateSetsResource.View,
                 (ids, tok) => stateSets.RetrieveAsync<T>(ids, tok),
@@ -79,7 +75,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 DataModelSanitation.CleanInstanceRequest,
                 instanceIds, buildStateSets, options, token);
         }
-<<<<<<< HEAD
 
         /// <summary>
         /// Ensures that all state sets in <paramref name="stateSetsToEnsure"/> exists in CDF.
@@ -154,7 +149,5 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 DataModelSanitation.CleanInstanceRequest,
                 items, options, token);
         }
-=======
->>>>>>> 030fd9d (Add support for State Sets (#674))
     }
 }

@@ -28,11 +28,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
     internal delegate (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>) SanitizeInstancesFunc<T>(IEnumerable<SourcedNodeWrite<T>> items, SanitationMode mode);
 
     /// <summary>
-<<<<<<< HEAD
     /// Shared get-or-create/ensure-exists/get-by-ids/upsert implementation for beta CDM resources
-=======
-    /// Shared get-or-create implementation for beta CDM resources
->>>>>>> 030fd9d (Add support for State Sets (#674))
     /// (<see cref="CogniteSdk.Resources.Beta.StateSetsResource"/>, <see cref="CogniteSdk.Resources.Beta.TimeSeriesResource"/>).
     /// These resources do not implement <c>BaseDataModelResource&lt;T&gt;</c>, so they cannot use the
     /// generic implementation in <see cref="Cognite.Extensions.DataModels.DataModelUtils"/>; instead
@@ -72,10 +68,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
-<<<<<<< HEAD
             if (buildItems == null) throw new ArgumentNullException(nameof(buildItems));
-=======
->>>>>>> 030fd9d (Add support for State Sets (#674))
             Task<IEnumerable<SourcedNodeWrite<T>>> AsyncBuildItems(IEnumerable<InstanceIdentifier> ids)
             {
                 return Task.FromResult(buildItems(ids));
@@ -107,7 +100,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
-<<<<<<< HEAD
             if (view == null) throw new ArgumentNullException(nameof(view));
             if (retrieve == null) throw new ArgumentNullException(nameof(retrieve));
             if (upsert == null) throw new ArgumentNullException(nameof(upsert));
@@ -118,12 +110,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (instanceIds == null || !instanceIds.Any()) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
 
             var chunks = instanceIds.ChunkBy(options.ChunkSize).ToList();
-=======
-            var chunks = instanceIds
-                .ChunkBy(options.ChunkSize)
-                .ToList();
-            if (!chunks.Any()) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
->>>>>>> 030fd9d (Add support for State Sets (#674))
 
             var results = new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>[chunks.Count];
 
@@ -232,40 +218,24 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             RetryMode retryMode,
             CancellationToken token)
         {
-<<<<<<< HEAD
             return await HandleWriteErrors(
                 toCreate,
                 retryMode,
                 token,
                 async (currentItems, currentToken) =>
-=======
-            var errors = new List<CogniteError<SourcedNodeWrite<T>>>();
-            while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
-            {
-                try
->>>>>>> 030fd9d (Add support for State Sets (#674))
                 {
                     IEnumerable<SlimInstance> newInstances;
                     using (CdfMetrics.Instances(view, "create").NewTimer())
                     {
-<<<<<<< HEAD
                         newInstances = await upsert(currentItems, currentToken).ConfigureAwait(false);
                     }
 
                     var toCreateDict = new Dictionary<InstanceIdentifier, T>();
                     foreach (var cr in currentItems)
-=======
-                        newInstances = await upsert(toCreate, token).ConfigureAwait(false);
-                    }
-
-                    var toCreateDict = new Dictionary<InstanceIdentifier, T>();
-                    foreach (var cr in toCreate)
->>>>>>> 030fd9d (Add support for State Sets (#674))
                     {
                         toCreateDict[new InstanceIdentifier(cr.Space, cr.ExternalId)] = cr.Properties;
                     }
 
-<<<<<<< HEAD
                     return newInstances.Select(x =>
                     {
                         var id = new InstanceIdentifier(x.Space, x.ExternalId);
@@ -461,16 +431,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 {
                     var updated = await write(items, token).ConfigureAwait(false);
                     return new CogniteResult<TResult, SourcedNodeWrite<T>>(errors, updated);
-=======
-                    return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(
-                        errors,
-                        newInstances.Select(x =>
-                        {
-                            var id = new InstanceIdentifier(x.Space, x.ExternalId);
-                            toCreateDict.TryGetValue(id, out var props);
-                            return new SourcedNode<T>(x, props);
-                        }));
->>>>>>> 030fd9d (Add support for State Sets (#674))
                 }
                 catch (Exception ex)
                 {
@@ -489,19 +449,11 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     else
                     {
                         errors.Add(error);
-<<<<<<< HEAD
                         items = await ResultHandlers.CleanFromError(error, items, token).ConfigureAwait(false);
                     }
                 }
             }
             return new CogniteResult<TResult, SourcedNodeWrite<T>>(errors, null);
-=======
-                        toCreate = await ResultHandlers.CleanFromError(error, toCreate, token).ConfigureAwait(false);
-                    }
-                }
-            }
-            return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(errors, null);
->>>>>>> 030fd9d (Add support for State Sets (#674))
         }
     }
 }
