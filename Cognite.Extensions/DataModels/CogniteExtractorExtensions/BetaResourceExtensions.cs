@@ -107,11 +107,9 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (buildItems == null) throw new ArgumentNullException(nameof(buildItems));
             if (options == null) throw new ArgumentNullException(nameof(options));
             
-            if(instanceIds == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
+            if(instanceIds == null || !instanceIds.Any()) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
 
-            var chunks = (instanceIds ?? Enumerable.Empty<InstanceIdentifier>())
-                .ChunkBy(options.ChunkSize)
-                .ToList();
+            var chunks = instanceIds.ChunkBy(options.ChunkSize).ToList();
 
             var results = new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>[chunks.Count];
 
@@ -220,54 +218,31 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             RetryMode retryMode,
             CancellationToken token)
         {
-            var errors = new List<CogniteError<SourcedNodeWrite<T>>>();
-            while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
-            {
-                try
+            return await HandleWriteErrors(
+                toCreate,
+                retryMode,
+                token,
+                async (currentItems, currentToken) =>
                 {
                     IEnumerable<SlimInstance> newInstances;
                     using (CdfMetrics.Instances(view, "create").NewTimer())
                     {
-                        newInstances = await upsert(toCreate, token).ConfigureAwait(false);
+                        newInstances = await upsert(currentItems, currentToken).ConfigureAwait(false);
                     }
 
                     var toCreateDict = new Dictionary<InstanceIdentifier, T>();
-                    foreach (var cr in toCreate)
+                    foreach (var cr in currentItems)
                     {
                         toCreateDict[new InstanceIdentifier(cr.Space, cr.ExternalId)] = cr.Properties;
                     }
 
-                    return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(
-                        errors,
-                        newInstances.Select(x =>
-                        {
-                            var id = new InstanceIdentifier(x.Space, x.ExternalId);
-                            toCreateDict.TryGetValue(id, out var props);
-                            return new SourcedNode<T>(x, props);
-                        }));
-                }
-                catch (Exception ex)
-                {
-                    var error = ResultHandlers.ParseException<SourcedNodeWrite<T>>(ex, RequestType.UpsertInstances);
-                    if (error.Type == ErrorType.FatalFailure
-                        && (retryMode == RetryMode.OnFatal
-                            || retryMode == RetryMode.OnFatalKeepDuplicates))
+                    return newInstances.Select(x =>
                     {
-                        await Task.Delay(1000, token).ConfigureAwait(false);
-                    }
-                    else if (retryMode == RetryMode.None)
-                    {
-                        errors.Add(error);
-                        break;
-                    }
-                    else
-                    {
-                        errors.Add(error);
-                        toCreate = await ResultHandlers.CleanFromError(error, toCreate, token).ConfigureAwait(false);
-                    }
-                }
-            }
-            return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(errors, null);
+                        var id = new InstanceIdentifier(x.Space, x.ExternalId);
+                        toCreateDict.TryGetValue(id, out var props);
+                        return new SourcedNode<T>(x, props!);
+                    });
+                }).ConfigureAwait(false);
         }
 
         public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureExistsAsync<T>(
@@ -283,35 +258,13 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
             if (options == null) throw new ArgumentNullException(nameof(options));
             
-            if(itemsToEnsure == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
-
-            IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
-            (itemsToEnsure, errors) = sanitize(itemsToEnsure ?? Enumerable.Empty<SourcedNodeWrite<T>>(), options.SanitationMode);
-
-            var chunks = itemsToEnsure
-                .ChunkBy(options.ChunkSize)
-                .ToList();
-
-            int size = chunks.Count + (errors.Any() ? 1 : 0);
-            var results = new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>[size];
-
-            if (errors.Any())
-            {
-                results[size - 1] = new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(errors, null);
-                if (size == 1) return results[size - 1];
-            }
-            if (size == 0) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
-
-            var generators = chunks
-                .Select<IEnumerable<SourcedNodeWrite<T>>, Func<Task>>(
-                (chunk, idx) => async () =>
-                {
-                    results[idx] = await CreateHandleErrors(view, upsert, chunk, options.RetryMode, token).ConfigureAwait(false);
-                });
-
-            await generators.RunThrottled(options.ThrottleSize, token).ConfigureAwait(false);
-
-            return CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>.Merge(results);
+            return await WriteChunked(
+                sanitize,
+                itemsToEnsure,
+                options,
+                token,
+                chunk => CreateHandleErrors(view, upsert, chunk, options.RetryMode, token))
+                .ConfigureAwait(false);
         }
 
         public static async Task<IEnumerable<SourcedNode<T>>> GetByIdsIgnoreErrors<T>(
@@ -329,9 +282,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 
             if (ids == null || !ids.Any()) return result;
 
-            var chunks = (ids ?? Enumerable.Empty<Identity>())
-                .ChunkBy(chunkSize)
-                .ToList();
+            var chunks = ids.ChunkBy(chunkSize).ToList();
 
             var generators = chunks
                 .Select((Func<IEnumerable<Identity>, Func<Task>>)(chunk => async () =>
@@ -365,35 +316,13 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
             if (options == null) throw new ArgumentNullException(nameof(options));
             
-            if(items == null) return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(null, null);
-            
-            IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
-            (items, errors) = sanitize(items ?? Enumerable.Empty<SourcedNodeWrite<T>>(), options.SanitationMode);
-
-            var chunks = items
-                .ChunkBy(options.ChunkSize)
-                .ToList();
-
-            int size = chunks.Count + (errors.Any() ? 1 : 0);
-            var results = new CogniteResult<SlimInstance, SourcedNodeWrite<T>>[size];
-
-            if (errors.Any())
-            {
-                results[size - 1] = new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(errors, null);
-                if (size == 1) return results[size - 1];
-            }
-            if (size == 0) return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(null, null);
-
-            var generators = chunks
-                .Select<IEnumerable<SourcedNodeWrite<T>>, Func<Task>>(
-                (chunk, idx) => async () =>
-                {
-                    results[idx] = await UpsertHandleErrors(view, upsert, chunk, options.RetryMode, token).ConfigureAwait(false);
-                });
-
-            await generators.RunThrottled(options.ThrottleSize, token).ConfigureAwait(false);
-
-            return CogniteResult<SlimInstance, SourcedNodeWrite<T>>.Merge(results);
+            return await WriteChunked(
+                sanitize,
+                items,
+                options,
+                token,
+                chunk => UpsertHandleErrors(view, upsert, chunk, options.RetryMode, token))
+                .ConfigureAwait(false);
         }
 
         private static async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertHandleErrors<T>(
@@ -403,18 +332,67 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             RetryMode retryMode,
             CancellationToken token)
         {
+            return await HandleWriteErrors(
+                items,
+                retryMode,
+                token,
+                async (currentItems, currentToken) =>
+                {
+                    using (CdfMetrics.Instances(view, "update").NewTimer())
+                    {
+                        return await upsert(currentItems, currentToken).ConfigureAwait(false);
+                    }
+                }).ConfigureAwait(false);
+        }
+
+        private static async Task<CogniteResult<TResult, SourcedNodeWrite<T>>> WriteChunked<T, TResult>(
+            SanitizeInstancesFunc<T> sanitize,
+            IEnumerable<SourcedNodeWrite<T>> items,
+            BetaResourceParams options,
+            CancellationToken token,
+            Func<IEnumerable<SourcedNodeWrite<T>>, Task<CogniteResult<TResult, SourcedNodeWrite<T>>>> handleChunk)
+        {
+            if (items == null || !items.Any()) return new CogniteResult<TResult, SourcedNodeWrite<T>>(null, null);
+
+            IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
+            (items, errors) = sanitize(items, options.SanitationMode);
+
+            var chunks = items.ChunkBy(options.ChunkSize).ToList();
+            int size = chunks.Count + (errors.Any() ? 1 : 0);
+
+            if (size == 0) return new CogniteResult<TResult, SourcedNodeWrite<T>>(null, null);
+
+            var results = new CogniteResult<TResult, SourcedNodeWrite<T>>[size];
+            if (errors.Any())
+            {
+                results[size - 1] = new CogniteResult<TResult, SourcedNodeWrite<T>>(errors, null);
+                if (size == 1) return results[size - 1];
+            }
+
+            var generators = chunks
+                .Select<IEnumerable<SourcedNodeWrite<T>>, Func<Task>>(
+                    (chunk, idx) => async () =>
+                    {
+                        results[idx] = await handleChunk(chunk).ConfigureAwait(false);
+                    });
+
+            await generators.RunThrottled(options.ThrottleSize, token).ConfigureAwait(false);
+            return CogniteResult<TResult, SourcedNodeWrite<T>>.Merge(results);
+        }
+
+        private static async Task<CogniteResult<TResult, SourcedNodeWrite<T>>> HandleWriteErrors<T, TResult>(
+            IEnumerable<SourcedNodeWrite<T>> items,
+            RetryMode retryMode,
+            CancellationToken token,
+            Func<IEnumerable<SourcedNodeWrite<T>>, CancellationToken, Task<IEnumerable<TResult>>> write)
+        {
             var errors = new List<CogniteError<SourcedNodeWrite<T>>>();
             while (items != null && items.Any() && !token.IsCancellationRequested)
             {
                 try
                 {
-                    IEnumerable<SlimInstance> updated;
-                    using (CdfMetrics.Instances(view, "update").NewTimer())
-                    {
-                        updated = await upsert(items, token).ConfigureAwait(false);
-                    }
-
-                    return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(errors, updated);
+                    var updated = await write(items, token).ConfigureAwait(false);
+                    return new CogniteResult<TResult, SourcedNodeWrite<T>>(errors, updated);
                 }
                 catch (Exception ex)
                 {
@@ -437,7 +415,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     }
                 }
             }
-            return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(errors, null);
+            return new CogniteResult<TResult, SourcedNodeWrite<T>>(errors, null);
         }
     }
 }
