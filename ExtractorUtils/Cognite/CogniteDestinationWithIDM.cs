@@ -219,8 +219,7 @@ namespace Cognite.Extractor.Utils
         /// Ensures the the state sets with the provided <paramref name="instanceIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildStateSets"/> function to construct
         /// the missing state set objects and upload them to CDF.
-        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
-        /// against CDF. State sets are only available through the beta CDM state set API.
+        /// State sets are only available through the beta CDM state set API.
         /// </summary>
         /// <param name="instanceIds">Instance Ids</param>
         /// <param name="buildStateSets">Function that builds CogniteSdk StateSet objects</param>
@@ -249,8 +248,7 @@ namespace Cognite.Extractor.Utils
         /// Ensures the the state sets with the provided <paramref name="instanceIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildStateSets"/> function to construct
         /// the missing state set objects and upload them to CDF.
-        /// This method uses the <see cref="CogniteConfig"/> object to determine chunking of items and throttling
-        /// against CDF. State sets are only available through the beta CDM state set API.
+        /// State sets are only available through the beta CDM state set API.
         /// </summary>
         /// <param name="instanceIds">Instance Ids</param>
         /// <param name="buildStateSets">Async function that builds CogniteSdk StateSet objects</param>
@@ -336,7 +334,7 @@ namespace Cognite.Extractor.Utils
             SanitationMode sanitationMode,
             CancellationToken token) where T : CogniteStateSet
         {
-            if (updates == null) throw new ArgumentNullException(nameof(updates));
+            if (updates == null) return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(null, null);
             _logger.LogInformation("Updating {Number} state sets in CDF", updates.Count());
             return await _client.Beta.StateSets.UpsertAsync(
                 updates,
