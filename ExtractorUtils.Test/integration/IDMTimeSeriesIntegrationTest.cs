@@ -696,6 +696,20 @@ namespace ExtractorUtils.Test.Integration
                 var ts = Assert.Single(retrieved);
                 Assert.Equal(TimeSeriesType.State, ts.Properties.Type);
                 Assert.Equal(stateSetXid, ts.Properties.StateSet?.ExternalId);
+
+                // State time series accept both numeric and string datapoints; neither should be
+                // flagged as a mismatched type by the verification path.
+                var dps = new Dictionary<Identity, IEnumerable<Datapoint>>
+                {
+                    { identities[0], new[]
+                    {
+                        new Datapoint(DateTime.UtcNow, 0.0),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(1), "OPEN")
+                    } }
+                };
+                var dpResult = await tester.DestinationWithIDM.InsertDataPointsIDMAsync(dps, SanitationMode.None, RetryMode.OnError, tester.Source.Token);
+                tester.Logger.LogResult(dpResult, RequestType.CreateDatapoints, false);
+                Assert.DoesNotContain(dpResult.Errors, e => e.Type == ErrorType.MismatchedType);
             }
             finally
             {
