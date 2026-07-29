@@ -20,10 +20,7 @@ namespace ExtractorUtils.Test.Unit
 {
     /// <summary>
     /// Unit tests for the <see cref="CogniteDestinationWithIDM"/> state-set wrapper methods
-    /// (GetOrCreateStateSetsAsync/EnsureStateSetsExistAsync/GetStateSetsByIdsIgnoreErrors/UpsertStateSetsAsync),
-    /// covering the two different null-argument conventions these methods use, the async-builder overload,
-    /// and that config-derived chunking is actually honored -- none of which the integration tests
-    /// (which only call the sync-builder overload with a single item, config defaults untouched) exercise.
+    /// (GetOrCreateStateSetsAsync/EnsureStateSetsExistAsync/GetStateSetsByIdsIgnoreErrors/UpsertStateSetsAsync).
     /// </summary>
     public class CogniteDestinationWithIDMStateSetTest
     {
@@ -42,12 +39,8 @@ namespace ExtractorUtils.Test.Unit
         private (ServiceProvider provider, CdfMock mock) BuildProvider(string configPath, int instancesChunkSize = 1000)
         {
             // max-retries: 0 disables the SDK's own transport-level retry, so failures surface immediately
-            // rather than being conflated with the SDK's own retry behavior.
             string[] lines = {
                 "version: 2",
-                "logger:",
-                "  console:",
-                "    level: verbose",
                 "cognite:",
                $"  project: {_project}",
                $"  host: {_host}",
@@ -116,8 +109,7 @@ namespace ExtractorUtils.Test.Unit
 
         [Theory]
         // instanceIds/stateSets/updates == null silently returns an empty/no-error result, while
-        // buildStateSets == null and EnsureStateSetsExistAsync's stateSets == null throw -- two
-        // different conventions on the same set of wrapper methods, neither exercised anywhere else.
+        // buildStateSets == null and EnsureStateSetsExistAsync's stateSets == null throw.
         [InlineData(NullArgOp.GetOrCreateSync_InstanceIdsNull)]
         [InlineData(NullArgOp.GetOrCreateSync_BuildStateSetsNull)]
         [InlineData(NullArgOp.GetOrCreateAsync_InstanceIdsNull)]
@@ -196,7 +188,6 @@ namespace ExtractorUtils.Test.Unit
                 var destination = provider.GetRequiredService<CogniteDestinationWithIDM>();
                 var ids = new[] { new InstanceIdentifier("mySpace", "ss1"), new InstanceIdentifier("mySpace", "ss2") };
 
-                // Async-builder overload: the integration tests only ever call the sync-builder one.
                 var result = await destination.GetOrCreateStateSetsAsync<CogniteStateSet>(
                     ids,
                     missing => Task.FromResult(missing.Select(BuildStateSet)),
