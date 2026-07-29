@@ -9,9 +9,6 @@ using CogniteSdk.DataModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Prometheus;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-
 
 namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
@@ -35,6 +32,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
     /// (<see cref="CogniteSdk.Resources.Beta.StateSetsResource"/>, <see cref="CogniteSdk.Resources.Beta.TimeSeriesResource"/>).
     /// <see cref="BetaStateSetsExtensions"/> is a thin public wrapper that supplies its resource's
     /// retrieve/upsert/sanitize operations to the methods here.
+    /// These resources do not implement <c>BaseDataModelResource&lt;T&gt;</c>, so they cannot use the
+    /// generic implementation in <see cref="Cognite.Extensions.DataModels.DataModelUtils"/>; instead
     /// </summary>
     internal static class BetaResourceExtensions
     {
@@ -145,6 +144,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 {
                     found = await retrieve(
                         instanceIds.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), token).ConfigureAwait(false);
+                    found ??= Enumerable.Empty<SourcedNode<T>>();
+
                 }
                 catch (Exception ex)
                 {
@@ -153,7 +154,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 }
             }
 
-            var missing = instanceIds.Except(found?.Select(ts => new InstanceIdentifier(ts.Space, ts.ExternalId)) ?? Enumerable.Empty<InstanceIdentifier>()).ToList();
+            var missing = instanceIds.Except(found.Select(ts => new InstanceIdentifier(ts.Space, ts.ExternalId))).ToList();
 
             if (missing.Count == 0)
             {
