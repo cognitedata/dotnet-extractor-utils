@@ -28,7 +28,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
     internal delegate (IEnumerable<SourcedNodeWrite<T>>, IEnumerable<CogniteError<SourcedNodeWrite<T>>>) SanitizeInstancesFunc<T>(IEnumerable<SourcedNodeWrite<T>> items, SanitationMode mode);
 
     /// <summary>
-    /// Shared get-or-create implementation for beta CDM resources
+    /// Shared get-or-create/ensure-exists/get-by-ids/upsert implementation for beta CDM resources
     /// (<see cref="CogniteSdk.Resources.Beta.StateSetsResource"/>, <see cref="CogniteSdk.Resources.Beta.TimeSeriesResource"/>).
     /// These resources do not implement <c>BaseDataModelResource&lt;T&gt;</c>, so they cannot use the
     /// generic implementation in <see cref="Cognite.Extensions.DataModels.DataModelUtils"/>; instead
@@ -68,6 +68,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
+            if (buildItems == null) throw new ArgumentNullException(nameof(buildItems));
             Task<IEnumerable<SourcedNodeWrite<T>>> AsyncBuildItems(IEnumerable<InstanceIdentifier> ids)
             {
                 return Task.FromResult(buildItems(ids));
@@ -99,10 +100,16 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             BetaResourceParams options,
             CancellationToken token)
         {
-            var chunks = instanceIds
-                .ChunkBy(options.ChunkSize)
-                .ToList();
-            if (!chunks.Any()) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (retrieve == null) throw new ArgumentNullException(nameof(retrieve));
+            if (upsert == null) throw new ArgumentNullException(nameof(upsert));
+            if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
+            if (buildItems == null) throw new ArgumentNullException(nameof(buildItems));
+            if (options == null) throw new ArgumentNullException(nameof(options));
+
+            if (instanceIds == null || !instanceIds.Any()) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
+
+            var chunks = instanceIds.ChunkBy(options.ChunkSize).ToList();
 
             var results = new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>[chunks.Count];
 
@@ -211,31 +218,219 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             RetryMode retryMode,
             CancellationToken token)
         {
-            var errors = new List<CogniteError<SourcedNodeWrite<T>>>();
-            while (toCreate != null && toCreate.Any() && !token.IsCancellationRequested)
-            {
-                try
+            return await HandleWriteErrors(
+                toCreate,
+                retryMode,
+                token,
+                async (currentItems, currentToken) =>
                 {
                     IEnumerable<SlimInstance> newInstances;
                     using (CdfMetrics.Instances(view, "create").NewTimer())
                     {
-                        newInstances = await upsert(toCreate, token).ConfigureAwait(false);
+                        newInstances = await upsert(currentItems, currentToken).ConfigureAwait(false);
                     }
 
                     var toCreateDict = new Dictionary<InstanceIdentifier, T>();
-                    foreach (var cr in toCreate)
+                    foreach (var cr in currentItems)
                     {
                         toCreateDict[new InstanceIdentifier(cr.Space, cr.ExternalId)] = cr.Properties;
                     }
 
-                    return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(
-                        errors,
-                        newInstances.Select(x =>
-                        {
-                            var id = new InstanceIdentifier(x.Space, x.ExternalId);
-                            toCreateDict.TryGetValue(id, out var props);
-                            return new SourcedNode<T>(x, props);
-                        }));
+                    return newInstances.Select(x =>
+                    {
+                        var id = new InstanceIdentifier(x.Space, x.ExternalId);
+                        toCreateDict.TryGetValue(id, out var props);
+                        return new SourcedNode<T>(x, props!);
+                    });
+                }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Upserts instances for the beta CDM resource wrapped by a <see cref="BetaResourceExtensions"/> method.
+        /// </summary>
+        /// <typeparam name="T">The type of the instance properties.</typeparam>
+        /// <param name="view">The view to upsert instances to.</param>
+        /// <param name="upsert">The function to upsert instances.</param>
+        /// <param name="sanitize">The function to sanitize instances.</param>
+        /// <param name="itemsToEnsure">The instances to upsert.</param>
+        /// <param name="options">The options for the upsert operation.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing the upserted instances and any errors that occurred during the operation.</returns>
+        public static async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureExistsAsync<T>(
+            ViewIdentifier view,
+            UpsertInstancesFunc<T> upsert,
+            SanitizeInstancesFunc<T> sanitize,
+            IEnumerable<SourcedNodeWrite<T>> itemsToEnsure,
+            BetaResourceParams options,
+            CancellationToken token)
+        {
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (upsert == null) throw new ArgumentNullException(nameof(upsert));
+            if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
+            if (options == null) throw new ArgumentNullException(nameof(options));
+
+            return await WriteChunked(
+                sanitize,
+                itemsToEnsure,
+                options,
+                token,
+                chunk => CreateHandleErrors(view, upsert, chunk, options.RetryMode, token))
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Retrieves instances by their IDs, ignoring any errors that occur during the process.
+        /// Doesn't absorb exceptions, but instead returns a list of successfully retrieved instances
+        /// and logs any errors encountered.
+        /// </summary>
+        /// <typeparam name="T">The type of the instances being retrieved.</typeparam>
+        /// <param name="view">The view identifier.</param>
+        /// <param name="retrieve">The function to retrieve instances.</param>
+        /// <param name="ids">The list of instance identifiers.</param>
+        /// <param name="chunkSize">The size of each chunk for processing.</param>
+        /// <param name="throttleSize">The maximum number of concurrent tasks.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>A list of successfully retrieved instances.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when any of the required parameters are null.</exception>
+        public static async Task<IEnumerable<SourcedNode<T>>> GetByIdsIgnoreErrors<T>(
+            ViewIdentifier view,
+            RetrieveInstancesFunc<T> retrieve,
+            IEnumerable<Identity> ids,
+            int chunkSize,
+            int throttleSize,
+            CancellationToken token)
+        {
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (retrieve == null) throw new ArgumentNullException(nameof(retrieve));
+            var result = new List<SourcedNode<T>>();
+            object mutex = new object();
+
+            if (ids == null || !ids.Any()) return result;
+            if (ids.Any(x => x.InstanceId == null)) throw new ArgumentException("All identities must have an InstanceId specified.", nameof(ids));
+
+            var chunks = ids.ChunkBy(chunkSize).ToList();
+
+            var generators = chunks
+                .Select((Func<IEnumerable<Identity>, Func<Task>>)(chunk => async () =>
+                {
+                    IEnumerable<SourcedNode<T>> found;
+                    using (CdfMetrics.Instances(view, "retrieve").NewTimer())
+                    {
+                        found = await retrieve(chunk.Select(x => new InstanceIdentifierWithType(InstanceType.node, x.InstanceId)), token).ConfigureAwait(false);
+                    }
+                    if (found == null || !found.Any()) return;
+                    lock (mutex)
+                    {
+                        result.AddRange(found);
+                    }
+                }));
+
+            await generators.RunThrottled(throttleSize, token).ConfigureAwait(false);
+            return result;
+        }
+
+        /// <summary>
+        /// Upserts instances asynchronously, handling errors and sanitization.
+        /// </summary>
+        /// <typeparam name="T">The type of the instances being upserted.</typeparam>
+        /// <param name="view">The view identifier.</param>
+        /// <param name="upsert">The function to upsert instances.</param>
+        /// <param name="sanitize">The function to sanitize instances.</param>
+        /// <param name="items">The instances to upsert.</param>
+        /// <param name="options">The options for the upsert operation.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>A CogniteResult containing the upserted instances and any errors.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when any of the required parameters are null.</exception>
+        public static async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertAsync<T>(
+            ViewIdentifier view,
+            UpsertInstancesFunc<T> upsert,
+            SanitizeInstancesFunc<T> sanitize,
+            IEnumerable<SourcedNodeWrite<T>> items,
+            BetaResourceParams options,
+            CancellationToken token)
+        {
+            if (view == null) throw new ArgumentNullException(nameof(view));
+            if (upsert == null) throw new ArgumentNullException(nameof(upsert));
+            if (sanitize == null) throw new ArgumentNullException(nameof(sanitize));
+            if (options == null) throw new ArgumentNullException(nameof(options));
+
+            return await WriteChunked(
+                sanitize,
+                items,
+                options,
+                token,
+                chunk => UpsertHandleErrors(view, upsert, chunk, options.RetryMode, token))
+                .ConfigureAwait(false);
+        }
+
+        private static async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertHandleErrors<T>(
+            ViewIdentifier view,
+            UpsertInstancesFunc<T> upsert,
+            IEnumerable<SourcedNodeWrite<T>> items,
+            RetryMode retryMode,
+            CancellationToken token)
+        {
+            return await HandleWriteErrors(
+                items,
+                retryMode,
+                token,
+                async (currentItems, currentToken) =>
+                {
+                    using (CdfMetrics.Instances(view, "update").NewTimer())
+                    {
+                        return await upsert(currentItems, currentToken).ConfigureAwait(false);
+                    }
+                }).ConfigureAwait(false);
+        }
+
+        private static async Task<CogniteResult<TResult, SourcedNodeWrite<T>>> WriteChunked<T, TResult>(
+            SanitizeInstancesFunc<T> sanitize,
+            IEnumerable<SourcedNodeWrite<T>> items,
+            BetaResourceParams options,
+            CancellationToken token,
+            Func<IEnumerable<SourcedNodeWrite<T>>, Task<CogniteResult<TResult, SourcedNodeWrite<T>>>> handleChunk)
+        {
+            if (items == null || !items.Any()) return new CogniteResult<TResult, SourcedNodeWrite<T>>(null, null);
+
+            IEnumerable<CogniteError<SourcedNodeWrite<T>>> errors;
+            (items, errors) = sanitize(items, options.SanitationMode);
+
+            var chunks = items.ChunkBy(options.ChunkSize).ToList();
+            int size = chunks.Count + (errors.Any() ? 1 : 0);
+
+            if (size == 0) return new CogniteResult<TResult, SourcedNodeWrite<T>>(null, null);
+
+            var results = new CogniteResult<TResult, SourcedNodeWrite<T>>[size];
+            if (errors.Any())
+            {
+                results[size - 1] = new CogniteResult<TResult, SourcedNodeWrite<T>>(errors, null);
+                if (size == 1) return results[size - 1];
+            }
+
+            var generators = chunks
+                .Select<IEnumerable<SourcedNodeWrite<T>>, Func<Task>>(
+                    (chunk, idx) => async () =>
+                    {
+                        results[idx] = await handleChunk(chunk).ConfigureAwait(false);
+                    });
+
+            await generators.RunThrottled(options.ThrottleSize, token).ConfigureAwait(false);
+            return CogniteResult<TResult, SourcedNodeWrite<T>>.Merge(results);
+        }
+
+        private static async Task<CogniteResult<TResult, SourcedNodeWrite<T>>> HandleWriteErrors<T, TResult>(
+            IEnumerable<SourcedNodeWrite<T>> items,
+            RetryMode retryMode,
+            CancellationToken token,
+            Func<IEnumerable<SourcedNodeWrite<T>>, CancellationToken, Task<IEnumerable<TResult>>> write)
+        {
+            var errors = new List<CogniteError<SourcedNodeWrite<T>>>();
+            while (items != null && items.Any() && !token.IsCancellationRequested)
+            {
+                try
+                {
+                    var updated = await write(items, token).ConfigureAwait(false);
+                    return new CogniteResult<TResult, SourcedNodeWrite<T>>(errors, updated);
                 }
                 catch (Exception ex)
                 {
@@ -254,11 +449,11 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     else
                     {
                         errors.Add(error);
-                        toCreate = await ResultHandlers.CleanFromError(error, toCreate, token).ConfigureAwait(false);
+                        items = await ResultHandlers.CleanFromError(error, items, token).ConfigureAwait(false);
                     }
                 }
             }
-            return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(errors, null);
+            return new CogniteResult<TResult, SourcedNodeWrite<T>>(errors, null);
         }
     }
 }
