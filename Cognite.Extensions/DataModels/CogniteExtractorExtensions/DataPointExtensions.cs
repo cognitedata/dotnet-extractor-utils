@@ -79,16 +79,21 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             var toCreate = new List<SourcedNodeWrite<CogniteTimeSeriesBase>>();
             foreach (var id in missingIds)
             {
-                var dp = points[id].FirstOrDefault();
-                if (dp == null) continue;
+                var dps = points[id];
+                if (!dps.Any()) continue;
 
-                bool isString = dp.NumericValue == null;
+                bool hasNumeric = dps.Any(dp => !dp.IsString);
+                bool hasString = dps.Any(dp => dp.IsString);
+                if (hasNumeric && hasString)
+                {
+                    throw new ArgumentException($"Cannot infer type for timeseries with externalId {id.InstanceId.ExternalId} since it has datapoints with mixed types.");
+                }
 
                 toCreate.Add(new SourcedNodeWrite<CogniteTimeSeriesBase>
                 {
                     Space = id.InstanceId.Space,
                     ExternalId = id.InstanceId.ExternalId,
-                    Properties = new CogniteTimeSeriesBase() { Type = isString ? CogniteSdk.DataModels.Core.TimeSeriesType.String : CogniteSdk.DataModels.Core.TimeSeriesType.Numeric }
+                    Properties = new CogniteTimeSeriesBase() { Type = hasString ? CogniteSdk.DataModels.Core.TimeSeriesType.String : CogniteSdk.DataModels.Core.TimeSeriesType.Numeric }
                 });
             }
 
