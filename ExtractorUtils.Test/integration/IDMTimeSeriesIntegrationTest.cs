@@ -890,5 +890,59 @@ namespace ExtractorUtils.Test.Integration
                 await DeleteTimeseries(tester, spaceId, new[] { existingXid, missingXid });
             }
         }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestStateTimeSeries(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+
+            var stateSetXid = $"{tester.Prefix}utils-test-state-set";
+            var tsXid = $"{tester.Prefix}utils-test-state-ts";
+
+            // A state set must exist before a state time series can reference it.
+            await CreateStateSet(tester, spaceId, stateSetXid);
+
+            var timeseries = new[]
+            {
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, tsXid, spaceId, TimeSeriesType.State,
+                    x => { x.Properties.Name = "utils-test-state-ts"; return x; },
+                    new InstanceIdentifier(spaceId, stateSetXid))
+            };
+
+            try
+            {
+                var result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
+                result.Throw();
+                Assert.Single(result.Results);
+
+                var identities = CreateIdentities(spaceId, new[] { tsXid });
+                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token);
+                var ts = Assert.Single(retrieved);
+                Assert.Equal(TimeSeriesType.State, ts.Properties.Type);
+                Assert.Equal(stateSetXid, ts.Properties.StateSet?.ExternalId);
+
+                // State time series accept both numeric and string datapoints; neither should be
+                // flagged as a mismatched type by the verification path.
+                var dps = new Dictionary<Identity, IEnumerable<Datapoint>>
+                {
+                    { identities[0], new[]
+                    {
+                        new Datapoint(DateTime.UtcNow, 0.0),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(1), "OPEN")
+                    } }
+                };
+                var dpResult = await tester.DestinationWithIDM.InsertDataPointsIDMAsync(dps, SanitationMode.None, RetryMode.OnError, tester.Source.Token);
+                tester.Logger.LogResult(dpResult, RequestType.CreateDatapoints, false);
+                Assert.DoesNotContain(dpResult.Errors, e => e.Type == ErrorType.MismatchedType);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
+            }
+        }
     }
 }
