@@ -944,5 +944,76 @@ namespace ExtractorUtils.Test.Integration
                 await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
             }
         }
+
+        /// <summary>
+        /// Exercises the beta CDM state-set ensure-exists/upsert/get-by-ids path
+        /// (BetaStateSetsExtensions.EnsureStateSetsExistAsync/UpsertAsync/GetStateSetsByIdsIgnoreErrors,
+        /// backed by BetaResourceExtensions.EnsureExistsAsync/UpsertAsync/GetByIdsIgnoreErrors) directly
+        /// against the SDK resource, ahead of any CogniteDestinationWithIDM convenience wrapper.
+        /// </summary>
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestStateSetsEnsureExistsUpsertAndGetByIds(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+            var stateSetXid = $"{tester.Prefix}utils-test-state-set-ensure";
+            var stateSets = tester.DestinationWithIDM.CogniteClient.Beta.StateSets;
+            var options = new BetaResourceParams(1000, 1, RetryMode.OnError, SanitationMode.Clean);
+
+            try
+            {
+                var ensureResult = await stateSets.EnsureStateSetsExistAsync(new[]
+                {
+                    new SourcedNodeWrite<CogniteStateSet>
+                    {
+                        Space = spaceId,
+                        ExternalId = stateSetXid,
+                        Properties = new CogniteStateSet
+                        {
+                            Name = stateSetXid,
+                            States = new[] { new CogniteState { NumericValue = 0, StringValue = "CLOSED" } }
+                        }
+                    }
+                }, options, tester.Source.Token);
+                ensureResult.Throw();
+                Assert.Single(ensureResult.Results);
+
+                var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
+                var retrieved = await stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token);
+                var found = Assert.Single(retrieved);
+                Assert.Equal(stateSetXid, found.ExternalId);
+                Assert.Single(found.Properties.States);
+
+                var upsertResult = await stateSets.UpsertAsync(new[]
+                {
+                    new SourcedNodeWrite<CogniteStateSet>
+                    {
+                        Space = spaceId,
+                        ExternalId = stateSetXid,
+                        Properties = new CogniteStateSet
+                        {
+                            Name = stateSetXid,
+                            States = new[]
+                            {
+                                new CogniteState { NumericValue = 0, StringValue = "CLOSED" },
+                                new CogniteState { NumericValue = 1, StringValue = "OPEN" }
+                            }
+                        }
+                    }
+                }, options, tester.Source.Token);
+                upsertResult.Throw();
+                Assert.Single(upsertResult.Results);
+
+                retrieved = await stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token);
+                found = Assert.Single(retrieved);
+                Assert.Equal(2, found.Properties.States.Count());
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { stateSetXid });
+            }
+        }
     }
 }
