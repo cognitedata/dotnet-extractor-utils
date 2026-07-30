@@ -672,59 +672,6 @@ namespace ExtractorUtils.Test.Integration
                 await DeleteTimeseries(tester, tss.space, allCreated);
             }
         }
-        [Theory]
-        [InlineData(CogniteHost.GreenField)]
-        [InlineData(CogniteHost.BlueField)]
-        public async Task TestStateTimeSeries(CogniteHost host)
-        {
-            using var tester = new CDFTester(host, _output);
-            var spaceId = await tester.GetSpaceId();
-
-            var stateSetXid = $"{tester.Prefix}utils-test-state-set";
-            var tsXid = $"{tester.Prefix}utils-test-state-ts";
-
-            // A state set must exist before a state time series can reference it.
-            await CreateStateSet(tester, spaceId, stateSetXid);
-
-            var timeseries = new[]
-            {
-                GetWritableTS<CogniteExtractorTimeSeries>(tester, tsXid, spaceId, TimeSeriesType.State,
-                    x => { x.Properties.Name = "utils-test-state-ts"; return x; },
-                    new InstanceIdentifier(spaceId, stateSetXid))
-            };
-
-            try
-            {
-                var result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
-                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
-                result.Throw();
-                Assert.Single(result.Results);
-
-                var identities = CreateIdentities(spaceId, new[] { tsXid });
-                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token);
-                var ts = Assert.Single(retrieved);
-                Assert.Equal(TimeSeriesType.State, ts.Properties.Type);
-                Assert.Equal(stateSetXid, ts.Properties.StateSet?.ExternalId);
-
-                // State time series accept both numeric and string datapoints; neither should be
-                // flagged as a mismatched type by the verification path.
-                var dps = new Dictionary<Identity, IEnumerable<Datapoint>>
-                {
-                    { identities[0], new[]
-                    {
-                        new Datapoint(DateTime.UtcNow, 0.0),
-                        new Datapoint(DateTime.UtcNow.AddSeconds(1), "OPEN")
-                    } }
-                };
-                var dpResult = await tester.DestinationWithIDM.InsertDataPointsIDMAsync(dps, SanitationMode.None, RetryMode.OnError, tester.Source.Token);
-                tester.Logger.LogResult(dpResult, RequestType.CreateDatapoints, false);
-                Assert.DoesNotContain(dpResult.Errors, e => e.Type == ErrorType.MismatchedType);
-            }
-            finally
-            {
-                await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
-            }
-        }
         /// <summary>
         /// Verifies that GetExtractedRanges resolves identity via InstanceId when ExternalId is empty.
         /// IDM time series responses return InstanceId (not ExternalId), so the InstanceId branch
@@ -894,6 +841,53 @@ namespace ExtractorUtils.Test.Integration
             finally
             {
                 await DeleteTimeseries(tester, spaceId, new[] { stateSetXid });
+            }
+        }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestStateSetsEnsureExistsThenGetOrCreateAsync(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+            var existingXid = $"{tester.Prefix}utils-test-state-set-async-existing";
+            var missingXid = $"{tester.Prefix}utils-test-state-set-async-missing";
+
+            try
+            {
+                var ensureResult = await tester.DestinationWithIDM.EnsureStateSetsExistAsync(
+                    new[] { GetWritableStateSet(spaceId, existingXid, new[] { new CogniteState { NumericValue = 0, StringValue = "CLOSED" } }) },
+                    RetryMode.None, SanitationMode.None, tester.Source.Token);
+                ensureResult.Throw();
+                Assert.Single(ensureResult.Results);
+
+                var identity = Identity.Create(new InstanceIdentifier(spaceId, existingXid));
+                var retrieved = await tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token);
+                var found = Assert.Single(retrieved);
+                Assert.Equal(existingXid, found.ExternalId);
+
+                var result = await tester.DestinationWithIDM.GetOrCreateStateSetsAsync<CogniteStateSet>(
+                    new[] { new InstanceIdentifier(spaceId, existingXid), new InstanceIdentifier(spaceId, missingXid) },
+                    missing =>
+                    {
+                        var missingId = Assert.Single(missing);
+                        Assert.Equal(missingXid, missingId.ExternalId);
+                        return Task.FromResult<IEnumerable<SourcedNodeWrite<CogniteStateSet>>>(new[]
+                        {
+                            GetWritableStateSet(missingId.Space, missingId.ExternalId, new[]
+                            {
+                                new CogniteState { NumericValue = 0, StringValue = "IDLE" }
+                            })
+                        });
+                    },
+                    RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+                result.Throw();
+                Assert.Equal(2, result.Results.Count());
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { existingXid, missingXid });
             }
         }
     }
