@@ -582,7 +582,11 @@ namespace ExtractorUtils.Test.Integration
             }
             finally
             {
-                await DeleteTimeseries(tester, spaceId, tss.externalIds.Concat([$"{tester.Prefix} utils-test-ts-missing-1", $"{tester.Prefix} utils-test-ts-missing-2"]));
+                await DeleteTimeseries(tester, spaceId, tss.externalIds.Concat([
+                    $"{tester.Prefix} utils-test-ts-missing-1",
+                    $"{tester.Prefix} utils-test-ts-missing-2",
+                    $"{tester.Prefix} utils-test-ts-missing-3"
+                ]));
             }
         }
 
