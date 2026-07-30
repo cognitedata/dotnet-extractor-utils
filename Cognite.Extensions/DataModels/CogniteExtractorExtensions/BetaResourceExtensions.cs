@@ -329,6 +329,18 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             return result;
         }
 
+        /// <summary>
+        /// Upserts instances asynchronously, handling errors and sanitization.
+        /// </summary>
+        /// <typeparam name="T">The type of the instances being upserted.</typeparam>
+        /// <param name="view">The view identifier.</param>
+        /// <param name="upsert">The function to upsert instances.</param>
+        /// <param name="sanitize">The function to sanitize instances.</param>
+        /// <param name="items">The instances to upsert.</param>
+        /// <param name="options">The options for the upsert operation.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>A CogniteResult containing the upserted instances and any errors.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when any of the required parameters are null.</exception>
         public static async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertAsync<T>(
             ViewIdentifier view,
             UpsertInstancesFunc<T> upsert,
