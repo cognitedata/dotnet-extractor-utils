@@ -36,7 +36,7 @@ namespace Cognite.Extensions
             bool stringChanged = point.IsState && safeStringValue != point.StringValue;
 
             Datapoint Rebuild(double v) => point.IsState
-                ? new Datapoint(point.Timestamp, v, safeStringValue ?? "", point.Status)
+                ? new Datapoint(point.Timestamp, (int)v, safeStringValue ?? "", point.Status)
                 : new Datapoint(point.Timestamp, v, point.Status);
 
             if (!point.Status.IsBad)
