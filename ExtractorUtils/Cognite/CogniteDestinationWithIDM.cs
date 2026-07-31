@@ -117,6 +117,7 @@ namespace Cognite.Extractor.Utils
             CancellationToken token,
             bool isBeta = false) where T : CogniteTimeSeriesBase
         {
+            if (buildTimeSeries == null) throw new ArgumentNullException(nameof(buildTimeSeries));
             return await GetOrCreateDispatch(isBeta, instanceIds,
                 ids => Task.FromResult(buildTimeSeries(ids)), retryMode, sanitationMode, token).ConfigureAwait(false);
         }
