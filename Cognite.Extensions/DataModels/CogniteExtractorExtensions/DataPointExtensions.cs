@@ -84,9 +84,10 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 
                 bool hasNumeric = dps.Any(dp => !dp.IsString);
                 bool hasString = dps.Any(dp => dp.IsString);
-                if (hasNumeric && hasString)
-                {
-                    throw new ArgumentException($"Cannot infer type for timeseries with externalId {id.InstanceId.ExternalId} since it has datapoints with mixed types.");
+                if (hasNumeric && hasString)  
+                {  
+                    _logger.LogError("Cannot infer type for timeseries with externalId {ExternalId} since it has datapoints with mixed types.", id.InstanceId.ExternalId);  
+                    continue;  
                 }
 
                 toCreate.Add(new SourcedNodeWrite<CogniteTimeSeriesBase>
