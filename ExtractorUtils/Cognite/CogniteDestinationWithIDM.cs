@@ -4,7 +4,6 @@ using Cognite.Extractor.Utils.Unstable.Configuration;
 using CogniteSdk;
 using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
-using CogniteSdk.Resources;
 using CogniteSdk.Resources.DataModels;
 using Microsoft.Extensions.Logging;
 using System;
@@ -25,6 +24,7 @@ namespace Cognite.Extractor.Utils
     {
         private readonly Client _client;
         private readonly ILogger<CogniteDestination> _logger;
+        private readonly CogniteSdk.Resources.Beta.TimeSeriesResource _betaTimeSeries;
 
         /// <summary>
         /// View identifier for IDM TimeSeries
@@ -42,6 +42,7 @@ namespace Cognite.Extractor.Utils
         {
             _client = client;
             _logger = logger;
+            _betaTimeSeries = _client.Beta.TimeSeries;
             if (viewIdentifier != null)
             {
                 IDMViewIdentifier = viewIdentifier;
@@ -61,6 +62,7 @@ namespace Cognite.Extractor.Utils
             if (config == null) throw new ArgumentNullException(nameof(config));
             _client = client;
             _logger = logger;
+            _betaTimeSeries = _client.Beta.TimeSeries;
             if (viewIdentifier != null)
             {
                 IDMViewIdentifier = viewIdentifier;
@@ -82,7 +84,7 @@ namespace Cognite.Extractor.Utils
             {
                 var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
                 return BetaTimeSeriesExtensions.GetOrCreateTimeSeriesAsync<T>(
-                    _client.Beta.TimeSeries, instanceIds, buildTimeSeries, betaParams, token);
+                    _betaTimeSeries, instanceIds, buildTimeSeries, betaParams, token);
             }
             return _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier> { CoreTimeSeriesResource<T>.DefaultView })
                 .GetOrCreateTimeSeriesAsync(instanceIds, buildTimeSeries, Chunking.Instances, Throttling.Instances, retryMode, sanitationMode, token);
@@ -180,7 +182,7 @@ namespace Cognite.Extractor.Utils
                 var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
                 return await
                     BetaTimeSeriesExtensions
-                        .EnsureTimeSeriesExistsAsync<T>(_client.Beta.TimeSeries, timeSeries, betaParams, token)
+                        .EnsureTimeSeriesExistsAsync<T>(_betaTimeSeries, timeSeries, betaParams, token)
                         .ConfigureAwait(false);
             }
             return await
@@ -209,7 +211,7 @@ namespace Cognite.Extractor.Utils
             {
                 return await
                     BetaTimeSeriesExtensions
-                        .GetTimeSeriesByIdsIgnoreErrors<T>(_client.Beta.TimeSeries, timeSeries, Chunking.Instances, Throttling.Instances, token)
+                        .GetTimeSeriesByIdsIgnoreErrors<T>(_betaTimeSeries, timeSeries, Chunking.Instances, Throttling.Instances, token)
                         .ConfigureAwait(false);
             }
             return await
@@ -244,7 +246,7 @@ namespace Cognite.Extractor.Utils
             {
                 var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
                 return await
-                    BetaTimeSeriesExtensions.UpsertAsync(_client.Beta.TimeSeries, updates, betaParams, token).ConfigureAwait(false);
+                    BetaTimeSeriesExtensions.UpsertAsync(_betaTimeSeries, updates, betaParams, token).ConfigureAwait(false);
             }
             return await
                 _client.CoreDataModel

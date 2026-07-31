@@ -196,7 +196,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                             _logger.LogError("No instance id for view {View} with error {Error}", view.ExternalId, error);
                             continue;
                         }
-                        ;
                         duplicatedIds.Add(idt.InstanceId);
                     }
                 }

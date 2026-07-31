@@ -31,7 +31,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="options">Chunking, throttling, retry, and sanitation options</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found timeseries</returns>
-        public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> fGetOrCreateTimeSeriesAsync<T>(
+        public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildTimeSeries,
