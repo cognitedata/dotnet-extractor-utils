@@ -9,6 +9,8 @@ using CogniteSdk.DataModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Prometheus;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
