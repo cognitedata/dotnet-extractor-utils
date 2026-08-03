@@ -153,6 +153,52 @@ namespace ExtractorUtils.Test.Integration
             }
         }
 
+        /// <summary>
+        /// Verifies that a time series created with a state-set relation keeps that relation
+        /// when retrieved through the IDM convenience wrappers.
+        /// </summary>
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestCreateStateTimeSeriesWithStateSetReference(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+            var stateSetXid = $"{tester.Prefix}utils-test-state-set-for-ts";
+            var tsXid = $"{tester.Prefix}utils-test-state-ts";
+
+            try
+            {
+                await CreateStateSet(tester, spaceId, stateSetXid);
+
+                var stateSetId = new InstanceIdentifier(spaceId, stateSetXid);
+                var tsWrite =
+                    GetWritableTS<CogniteExtractorTimeSeries>(tester, tsXid, spaceId, TimeSeriesType.String, x => { x.Properties.Name = tsXid; return x; }, stateSetId);
+
+                var ensureResult =
+                    await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(
+                        new[] { tsWrite }, RetryMode.None, SanitationMode.None, tester.Source.Token);
+                ensureResult.Throw();
+                var created = Assert.Single(ensureResult.Results);
+                Assert.NotNull(created.Properties.StateSet);
+                Assert.Equal(stateSetXid, created.Properties.StateSet.ExternalId);
+                Assert.Equal(spaceId, created.Properties.StateSet.Space);
+
+                var identity = Identity.Create(new InstanceIdentifier(spaceId, tsXid));
+                var retrieved =
+                    await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
+                        new[] { identity }, tester.Source.Token);
+                var found = Assert.Single(retrieved);
+                Assert.NotNull(found.Properties.StateSet);
+                Assert.Equal(stateSetXid, found.Properties.StateSet.ExternalId);
+                Assert.Equal(spaceId, found.Properties.StateSet.Space);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
+            }
+        }
+
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
