@@ -89,16 +89,23 @@ namespace Cognite.Extensions
                     foreach (var dp in kvp.Value)
                     {
                         if (!dp.IsState) continue;
-                        finalDps.Datapoints.Add(new StateDatapoint
+                        var stateDp = new StateDatapoint
                         {
                             Timestamp = dp.Timestamp,
-                            NumericValue = (long)Math.Round(dp.NumericValue!.Value),
-                            StringValue = dp.StringValue!,
                             Status = new Status
                             {
                                 Code = (long)dp.Status.Code
                             }
-                        });
+                        };
+                        if (dp.NumericValue.HasValue)
+                        {
+                            stateDp.NumericValue = (long)Math.Round(dp.NumericValue.Value);
+                        }
+                        if (dp.StringValue != null)
+                        {
+                            stateDp.StringValue = dp.StringValue;
+                        }
+                        finalDps.Datapoints.Add(stateDp);
                     }
                     dataPointCount += finalDps.Datapoints.Count;
                     item.StateDatapoints = finalDps;

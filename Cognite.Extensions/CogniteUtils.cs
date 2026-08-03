@@ -55,6 +55,11 @@ namespace Cognite.Extensions
         public const long TimestampMax = 4102444799999L;
 
         /// <summary>
+        /// Cognite max size of state set
+        /// </summary>
+        public const long StateSetMax = 100;
+
+        /// <summary>
         /// Write missing identities to the provided identity set.
         /// </summary>
         /// <param name="missing">Set to add missing ids to</param>
@@ -709,7 +714,7 @@ namespace Cognite.Extensions
         /// True if datapoint is a state datapoint, carrying both a numeric and a string value.
         /// This is used for the beta state timeseries endpoint.
         /// </summary>
-        public bool IsState => !IsString && _numericValue.HasValue && _stringValue != null;
+        public bool IsState { get; }
 
         /// <summary>
         /// Datapoint status code.
@@ -779,19 +784,20 @@ namespace Cognite.Extensions
         }
 
         /// <summary>
-        /// Creates a state data point with a string and numeric value. This is used for the beta state timeseries endpoint.
+        /// Creates a state data point with a string and/or numeric value. This is used for the beta state timeseries endpoint.
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="numericValue">double value</param>
         /// <param name="str">string value</param>
         /// <param name="statusCode">BETA: set the data point status code.
         /// This is only used if the beta datapoints endpoint is used.</param>
-        public Datapoint(long timestamp, double numericValue, string str, StatusCode? statusCode = null)
+        public Datapoint(long timestamp, double? numericValue, string? str, StatusCode? statusCode = null)
         {
             _timestamp = timestamp;
             _numericValue = numericValue;
             IsString = false;
             _stringValue = str;
+            IsState = true;
             _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Good);
         }
         /// <summary>
@@ -849,11 +855,33 @@ namespace Cognite.Extensions
             else if (IsState)
             {
                 kind = 2;
-                var numBytes = BitConverter.GetBytes(_numericValue!.Value);
-                var strBytes = CogniteUtils.StringToStorable(_stringValue);
-                valBytes = new byte[numBytes.Length + strBytes.Length];
-                Buffer.BlockCopy(numBytes, 0, valBytes, 0, numBytes.Length);
-                Buffer.BlockCopy(strBytes, 0, valBytes, numBytes.Length, strBytes.Length);
+                if (_stringValue == null && _numericValue == null)
+                {
+                    throw new CogniteUtilsException("State datapoint must have a string or numeric value");
+                }
+                // Both values are individually optional for state datapoints, and a genuine empty
+                // string must remain distinguishable from a missing one, so presence of each is
+                // recorded with explicit flag bits rather than inferred from a zero-length prefix.
+                bool hasNumeric = _numericValue.HasValue;
+                bool hasString = _stringValue != null;
+                byte flags = (byte)((hasNumeric ? 1 : 0) | (hasString ? 2 : 0));
+                byte[] numBytes = hasNumeric ? BitConverter.GetBytes(_numericValue!.Value) : Array.Empty<byte>();
+                byte[] strBytes;
+                if (hasString)
+                {
+                    var rawStrBytes = System.Text.Encoding.UTF8.GetBytes(_stringValue!);
+                    strBytes = new byte[sizeof(ushort) + rawStrBytes.Length];
+                    Buffer.BlockCopy(BitConverter.GetBytes((ushort)rawStrBytes.Length), 0, strBytes, 0, sizeof(ushort));
+                    Buffer.BlockCopy(rawStrBytes, 0, strBytes, sizeof(ushort), rawStrBytes.Length);
+                }
+                else
+                {
+                    strBytes = Array.Empty<byte>();
+                }
+                valBytes = new byte[sizeof(byte) + numBytes.Length + strBytes.Length];
+                valBytes[0] = flags;
+                Buffer.BlockCopy(numBytes, 0, valBytes, sizeof(byte), numBytes.Length);
+                Buffer.BlockCopy(strBytes, 0, valBytes, sizeof(byte) + numBytes.Length, strBytes.Length);
             }
             else
             {
@@ -901,11 +929,31 @@ namespace Cognite.Extensions
             }
             else if (kind == 2)
             {
-                var valueBytes = new byte[sizeof(double)];
-                if (stream.Read(valueBytes, 0, sizeof(double)) < sizeof(double)) return null;
-                double numericValue = BitConverter.ToDouble(valueBytes, 0);
-                string? stringValue = CogniteUtils.StringFromStream(stream);
-                return new Datapoint(timestamp, numericValue, stringValue ?? "", StatusCode.Create(statusCode));
+                var flagsByte = new byte[sizeof(byte)];
+                if (stream.Read(flagsByte, 0, sizeof(byte)) < sizeof(byte)) return null;
+                bool hasNumeric = (flagsByte[0] & 1) != 0;
+                bool hasString = (flagsByte[0] & 2) != 0;
+
+                double? numericValue = null;
+                if (hasNumeric)
+                {
+                    var valueBytes = new byte[sizeof(double)];
+                    if (stream.Read(valueBytes, 0, sizeof(double)) < sizeof(double)) return null;
+                    numericValue = BitConverter.ToDouble(valueBytes, 0);
+                }
+
+                string? stringValue = null;
+                if (hasString)
+                {
+                    var sizeBytes = new byte[sizeof(ushort)];
+                    if (stream.Read(sizeBytes, 0, sizeof(ushort)) < sizeof(ushort)) return null;
+                    ushort strSize = BitConverter.ToUInt16(sizeBytes, 0);
+                    var strBytes = new byte[strSize];
+                    if (strSize > 0 && stream.Read(strBytes, 0, strSize) < strSize) return null;
+                    stringValue = System.Text.Encoding.UTF8.GetString(strBytes);
+                }
+
+                return new Datapoint(timestamp, numericValue, stringValue, StatusCode.Create(statusCode));
             }
             else
             {
