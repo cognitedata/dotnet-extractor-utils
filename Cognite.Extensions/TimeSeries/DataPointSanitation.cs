@@ -43,7 +43,7 @@ namespace Cognite.Extensions
                 if (safeNumericValue.HasValue)
                 {
                     double value = safeNumericValue.Value;
-                    if (double.IsNaN(value) || value >= CogniteUtils.StateSetMax || value < CogniteUtils.StateSetMin)
+                    if (double.IsNaN(value) || value > CogniteUtils.StateSetMax || value < CogniteUtils.StateSetMin)
                     {
                         // Numeric value is set but it is incorrect.
                         safeNumericValue = null;
