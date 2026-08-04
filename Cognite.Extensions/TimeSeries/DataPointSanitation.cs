@@ -99,19 +99,22 @@ namespace Cognite.Extensions
                 {
                     return ResourceType.DataPointValue;
                 }
+                // Also unconditional: the numeric value is cast to a long for the protobuf wire
+                // format, and a NaN or out-of-range double silently converts to 0 or a saturated
+                // long instead of throwing, so this must be caught regardless of Status.IsBad.
+                if (point.NumericValue.HasValue)
+                {
+                    double value = point.NumericValue.Value;
+                    if (double.IsNaN(value) || value < CogniteUtils.StateSetMin || value > CogniteUtils.StateSetMax)
+                    {
+                        return ResourceType.DataPointValue;
+                    }
+                }
                 if (!point.Status.IsBad)
                 {
                     if (!point.NumericValue.HasValue && point.StringValue == null)
                     {
                         return ResourceType.DataPointValue;
-                    }
-                    if (point.NumericValue.HasValue)
-                    {
-                        double value = point.NumericValue.Value;
-                        if (double.IsNaN(value) || value < CogniteUtils.StateSetMin || value > CogniteUtils.StateSetMax)
-                        {
-                            return ResourceType.DataPointValue;
-                        }
                     }
                 }
             }
