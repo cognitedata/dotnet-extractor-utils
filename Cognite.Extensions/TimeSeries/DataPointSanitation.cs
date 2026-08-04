@@ -43,7 +43,7 @@ namespace Cognite.Extensions
                 if (safeNumericValue.HasValue)
                 {
                     double value = safeNumericValue.Value;
-                    if (double.IsNaN(value) || value >= CogniteUtils.StateSetMax || value < 0)
+                    if (double.IsNaN(value) || value >= CogniteUtils.StateSetMax || value < CogniteUtils.StateSetMin)
                     {
                         // Numeric value is set but it is incorrect.
                         safeNumericValue = null;
@@ -108,7 +108,7 @@ namespace Cognite.Extensions
                     if (point.NumericValue.HasValue)
                     {
                         double value = point.NumericValue.Value;
-                        if (double.IsNaN(value) || value < 0 || value >= CogniteUtils.StateSetMax)
+                        if (double.IsNaN(value) || value < CogniteUtils.StateSetMin || value >= CogniteUtils.StateSetMax)
                         {
                             return ResourceType.DataPointValue;
                         }

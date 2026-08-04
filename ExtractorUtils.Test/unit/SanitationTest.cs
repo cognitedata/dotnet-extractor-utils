@@ -709,18 +709,11 @@ namespace ExtractorUtils.Test.Unit
             Assert.Equal(new string('æ', 500).TruncateBytes(CogniteUtils.TimeSeriesStringBytesMax), cleanDps[15].StringValue);
 
             Assert.True(cleanDps[16].IsState);
-            Assert.Equal(1E100, cleanDps[16].NumericValue.Value);
+            Assert.Null(cleanDps[16].NumericValue);
             Assert.Equal("high", cleanDps[16].StringValue);
 
             Assert.True(cleanDps[17].IsState);
-            if (nanRepl.HasValue)
-            {
-                Assert.Equal(nanRepl, cleanDps[17].NumericValue.Value);
-            }
-            else
-            {
-                Assert.True(double.IsNaN(cleanDps[17].NumericValue.Value));
-            }
+            Assert.Null(cleanDps[17].NumericValue);
             Assert.Equal("nan-state", cleanDps[17].StringValue);
 
             // A Bad-status state datapoint still has its oversized string truncated, same as a

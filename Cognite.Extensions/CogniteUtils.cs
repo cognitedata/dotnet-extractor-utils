@@ -57,7 +57,12 @@ namespace Cognite.Extensions
         /// <summary>
         /// Cognite max size of state set
         /// </summary>
-        public const long StateSetMax = 100;
+        public const long StateSetMax = Int32.MaxValue;
+
+        /// <summary>
+        /// Cognite min size of state set
+        /// </summary>
+        public const long StateSetMin = Int32.MinValue;
 
         /// <summary>
         /// Write missing identities to the provided identity set.
