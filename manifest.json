@@ -270,6 +270,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaResourceParams.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaResourceParams.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaResourceParams",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaResourceParams.yml\" sourcestartlinenumber=\"1\">Bundles the chunking, throttling, retry, and sanitation parameters shared by the\nbeta CDM state-set and time-series extension methods (<xref href=\"Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaStateSetsExtensions\" data-throw-if-not-resolved=\"false\"></xref>).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaStateSetsExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaStateSetsExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaStateSetsExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaStateSetsExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for creating and managing state sets through the beta CDM state set\nresource. State sets are currently only available through this beta API. These are thin\nwrappers around <xref href=\"Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaResourceExtensions\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.yml",
       "output": {
         ".html": {
