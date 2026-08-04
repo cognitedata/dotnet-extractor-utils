@@ -864,9 +864,9 @@ namespace Cognite.Extensions
                 {
                     throw new CogniteUtilsException("State datapoint must have a string or numeric value");
                 }
-                // Both values are individually optional for state datapoints, and a genuine empty
-                // string must remain distinguishable from a missing one, so presence of each is
-                // recorded with explicit flag bits rather than inferred from a zero-length prefix.
+                // Both values are individually optional(but not simultaneously) for state datapoints, and a
+                // genuine empty string must remain distinguishable from a missing one, so presence of each
+                // is recorded with explicit flag bits rather than inferred from a zero-length prefix.
                 bool hasNumeric = _numericValue.HasValue;
                 bool hasString = _stringValue != null;
                 byte flags = (byte)((hasNumeric ? 1 : 0) | (hasString ? 2 : 0));

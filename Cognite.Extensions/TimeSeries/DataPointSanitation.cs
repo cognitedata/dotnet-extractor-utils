@@ -108,7 +108,7 @@ namespace Cognite.Extensions
                     if (point.NumericValue.HasValue)
                     {
                         double value = point.NumericValue.Value;
-                        if (double.IsNaN(value) || value < CogniteUtils.StateSetMin || value >= CogniteUtils.StateSetMax)
+                        if (double.IsNaN(value) || value < CogniteUtils.StateSetMin || value > CogniteUtils.StateSetMax)
                         {
                             return ResourceType.DataPointValue;
                         }
