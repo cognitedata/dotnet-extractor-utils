@@ -767,9 +767,10 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="isString">Whether the time series is string.</param>
+        /// <param name="isState">Whether the time series is a state time series.</param>
         /// <param name="statusCode">BETA: set the data point status code.
         /// This is only used if the beta datapoints endpoint is used.</param>
-        public Datapoint(DateTime timestamp, bool isString, StatusCode? statusCode = null) : this(timestamp.ToUnixTimeMilliseconds(), isString, statusCode)
+        public Datapoint(DateTime timestamp, bool isString, bool isState = false, StatusCode? statusCode = null) : this(timestamp.ToUnixTimeMilliseconds(), isString, isState, statusCode)
         {
         }
         /// <summary>
@@ -827,14 +828,16 @@ namespace Cognite.Extensions
         /// </summary>
         /// <param name="timestamp">Timestamp</param>
         /// <param name="isString">Whether the time series is string.</param>
+        /// <param name="isState">Whether the time series is a state time series.</param>
         /// <param name="statusCode">BETA: set the data point status code.
         /// This is only used if the beta datapoints endpoint is used.</param>
-        public Datapoint(long timestamp, bool isString, StatusCode? statusCode = null)
+        public Datapoint(long timestamp, bool isString, bool isState = false, StatusCode? statusCode = null)
         {
             _timestamp = timestamp;
             _numericValue = null;
             _stringValue = null;
             IsString = isString;
+            IsState = isState;
             _statusCode = statusCode ?? StatusCode.FromCategory(StatusCodeCategory.Bad);
         }
         /// <summary>
