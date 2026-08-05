@@ -677,11 +677,7 @@ namespace Cognite.Extensions
             StreamRecordExtensions.SetLogger(logger);
             DataModelUtils.SetLogger(logger);
             DataPointExtensionsWithInstanceId.SetLogger(logger);
-<<<<<<< HEAD
-            DataModels.CogniteExtractorExtensions.BetaResourceExtensions.SetLogger(logger);
-=======
             BetaResourceExtensions.SetLogger(logger);
->>>>>>> ad310cd (Review parse)
         }
     }
 
