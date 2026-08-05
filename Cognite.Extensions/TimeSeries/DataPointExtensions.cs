@@ -97,7 +97,7 @@ namespace Cognite.Extensions
                                 Code = (long)dp.Status.Code
                             }
                         };
-                        if (dp.NumericValue.HasValue)
+                        if (dp.NumericValue.HasValue && double.IsFinite(dp.NumericValue.Value))
                         {
                             stateDp.NumericValue = (long)Math.Round(dp.NumericValue.Value);
                         }
