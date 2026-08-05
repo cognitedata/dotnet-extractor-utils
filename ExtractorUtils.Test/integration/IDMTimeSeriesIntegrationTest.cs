@@ -980,5 +980,92 @@ namespace ExtractorUtils.Test.Integration
                 await DeleteTimeseries(tester, spaceId, new[] { existingXid, missingXid });
             }
         }
+
+        /// <summary>
+        /// Exercises the beta state-time-series path in one flow: upsert one state time series,
+        /// get-or-create two state time series where one already exists, then retrieve both.
+        /// </summary>
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestStateTimeSeriesUpsertAndGetOrCreateAsync(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+            var stateSetXid = $"{tester.Prefix}utils-test-state-set-state-ts";
+            var existingXid = $"{tester.Prefix}utils-test-state-ts-existing";
+            var missingXid = $"{tester.Prefix}utils-test-state-ts-missing";
+
+            try
+            {
+                await CreateStateSet(tester, spaceId, stateSetXid);
+                var stateSetId = new InstanceIdentifier(spaceId, stateSetXid);
+                var newTS = GetWritableTS<CogniteExtractorTimeSeries>(
+                    tester,
+                    existingXid,
+                    spaceId,
+                    TimeSeriesType.State,
+                    x => { x.Properties.Name = existingXid; return x; },
+                    stateSetId);
+
+                var upsertResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
+                    new[] { newTS },
+                    RetryMode.None,
+                    SanitationMode.None,
+                    tester.Source.Token,
+                    isBeta: true);
+                upsertResult.Throw();
+                Assert.Single(upsertResult.Results);
+
+                var result = await tester.DestinationWithIDM.GetOrCreateTimeSeriesAsync<CogniteExtractorTimeSeries>(
+                    new[]
+                    {
+                        new InstanceIdentifier(spaceId, existingXid),
+                        new InstanceIdentifier(spaceId, missingXid)
+                    },
+                    missing =>
+                    {
+                        var missingId = Assert.Single(missing);
+                        Assert.Equal(missingXid, missingId.ExternalId);
+                        return new[]
+                        {
+                            GetWritableTS<CogniteExtractorTimeSeries>(
+                                tester,
+                                missingId.ExternalId,
+                                missingId.Space,
+                                TimeSeriesType.State,
+                                x => { x.Properties.Name = missingId.ExternalId; return x; },
+                                stateSetId)
+                        };
+                    },
+                    RetryMode.OnError,
+                    SanitationMode.Clean,
+                    tester.Source.Token,
+                    isBeta: true);
+
+                result.Throw();
+                Assert.Equal(2, result.Results.Count());
+
+                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
+                    new[]
+                    {
+                        Identity.Create(new InstanceIdentifier(spaceId, existingXid)),
+                        Identity.Create(new InstanceIdentifier(spaceId, missingXid))
+                    },
+                    tester.Source.Token,
+                    isBeta: true);
+
+                Assert.Equal(2, retrieved.Count());
+                Assert.All(retrieved, ts =>
+                {
+                    Assert.Equal(TimeSeriesType.State, ts.Properties.Type);
+                    Assert.Equal(stateSetXid, ts.Properties.StateSet?.ExternalId);
+                });
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { existingXid, missingXid, stateSetXid });
+            }
+        }
     }
 }
