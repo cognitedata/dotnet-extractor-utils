@@ -667,6 +667,7 @@ namespace Cognite.Extensions
             StreamRecordExtensions.SetLogger(logger);
             DataModelUtils.SetLogger(logger);
             DataPointExtensionsWithInstanceId.SetLogger(logger);
+            DataModels.CogniteExtractorExtensions.BetaResourceExtensions.SetLogger(logger);
         }
     }
 

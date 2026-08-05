@@ -376,6 +376,16 @@ namespace Cognite.Extensions
             IEnumerable<CogniteError<SequenceRowError>> errors;
             (toCreate, errors) = Sanitation.CleanSequenceDataRequest(toCreate, sanitationMode);
 
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                foreach (var err in errors)
+                {
+                    _logger.LogDebug(
+                        "Local sanitation produced error: resource {Resource}, type {Type}, skipped {Skipped}",
+                        err.Resource, err.Type, err.Skipped?.Count() ?? 0);
+                }
+            }
+
             var dict = toCreate.ToDictionary(create => create.Id.HasValue ? Identity.Create(create.Id.Value) : Identity.Create(create.ExternalId));
             var chunks = dict
                 .Select(kvp => (kvp.Key, kvp.Value.Rows))
@@ -447,7 +457,16 @@ namespace Cognite.Extensions
                 catch (Exception ex)
                 {
                     _logger.LogDebug("Failed to create rows for {seq} sequences", toCreate.Count());
+                    if (ex is ResponseException rex)
+                    {
+                        _logger.LogDebug(
+                            "CreateRowsAsync failed with code {Code}, message '{Message}', missing: {Missing}, duplicated: {Duplicated}",
+                            rex.Code, rex.Message, rex.Missing?.Count() ?? 0, rex.Duplicated?.Count() ?? 0);
+                    }
                     var error = ResultHandlers.ParseException<SequenceRowError>(ex, RequestType.CreateSequenceRows);
+                    _logger.LogDebug(
+                        "Parsed sequence row error as resource {Resource}, type {Type}, complete {Complete}, values: {Values}",
+                        error.Resource, error.Type, error.Complete, error.Values?.Count() ?? 0);
 
                     if (error.Type == ErrorType.FatalFailure
                         && (retryMode == RetryMode.OnFatal

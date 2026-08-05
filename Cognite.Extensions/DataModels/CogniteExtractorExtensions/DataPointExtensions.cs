@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
-using CogniteSdk.Resources;
-using Com.Cognite.V1.Timeseries.Proto;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Prometheus;
-using TimeRange = Cognite.Extractor.Common.TimeRange;
 
 namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
@@ -94,7 +88,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 {
                     Space = id.InstanceId.Space,
                     ExternalId = id.InstanceId.ExternalId,
-                    Properties = new CogniteTimeSeriesBase() { Type = isString ? TimeSeriesType.String : TimeSeriesType.Numeric }
+                    Properties = new CogniteTimeSeriesBase() { Type = isString ? CogniteSdk.DataModels.Core.TimeSeriesType.String : CogniteSdk.DataModels.Core.TimeSeriesType.Numeric }
                 });
             }
 

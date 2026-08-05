@@ -15,8 +15,11 @@ namespace Cognite.Extensions
     {
         private static CogniteError<TError>? ParseCommonErrors<TError>(ResponseException ex)
         {
-            // Handle any common behavior here
-            if (ex.Code >= 500 || ex.Code != 400 && ex.Code != 422 && ex.Code != 409)
+            // Handle any common behavior here.
+            // 404 is included here so that per-type handlers (e.g. ParseSequenceRowException,
+            // which treats 404 as a missing-column error) actually get a chance to run instead of
+            // this generic fallback swallowing the response first.
+            if (ex.Code >= 500 || ex.Code != 400 && ex.Code != 404 && ex.Code != 422 && ex.Code != 409)
                 return new CogniteError<TError> { Message = ex.Message, Status = ex.Code, Exception = ex };
             return null;
         }

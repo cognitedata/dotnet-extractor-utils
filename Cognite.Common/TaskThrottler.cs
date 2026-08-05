@@ -58,9 +58,9 @@ namespace Cognite.Extractor.Common
     /// <summary>
     /// Tool to throttle the execution of tasks based on max perallelism, and max number of tasks
     /// scheduled per time unit.
-    /// 
+    ///
     /// Maximum parallelism simply limits the number of parallel tasks.
-    /// 
+    ///
     /// Per unit sets the maximum number of tasks scheduled per time unit.
     ///
     /// Tasks are enqueued and scheduled for execution in order.
@@ -92,6 +92,7 @@ namespace Cognite.Extractor.Common
         private readonly bool _keepAllResults;
 
         private int _taskIndex;
+        private long _waitTimeMs { get; set; } = (long)TimeSpan.FromMinutes(5).TotalMilliseconds; // 5 minutes, default wait time for a new task to be scheduled before checking if we are done
 
         /// <summary>
         /// Constructor
@@ -103,11 +104,13 @@ namespace Cognite.Extractor.Common
         /// <param name="keepAllResults">Keep all task result objects, not those who have failed or are within the
         /// last <paramref name="timeUnit"/>. This means that the size in memory of the task throttler will grow forever,
         /// do not use this unless you intend to dispose of the throttler within a short period of time.</param>
+        /// <param name="waitTime">Time to wait for a new task to be scheduled before checking if we are done. </param>
         public TaskThrottler(int maxParallelism,
             bool quitOnFailure = false,
             int perUnit = 0,
             TimeSpan? timeUnit = null,
-            bool keepAllResults = false)
+            bool keepAllResults = false,
+            long waitTime = 0)
         {
             _maxParallelism = maxParallelism;
             _maxPerUnit = perUnit;
@@ -125,6 +128,7 @@ namespace Cognite.Extractor.Common
             _quitOnFailure = quitOnFailure;
             _completionSource = CancellationTokenSource.CreateLinkedTokenSource(_source.Token);
             _keepAllResults = keepAllResults;
+            _waitTimeMs = waitTime > 0 ? waitTime : _waitTimeMs;
             RunTask = Task.Run(async () => await Run().ConfigureAwait(false));
         }
 
@@ -279,10 +283,15 @@ namespace Cognite.Extractor.Common
                 {
                     try
                     {
-                        var generator = _generators.Take(token);
-                        lock (_lock)
+                        // Wait for upto waitTimeMs for a new task to be scheduled, if none is scheduled,
+                        // we will move ahead and check if we are done.
+                        var generator = _generators.TryTake(out var item, (int)_waitTimeMs, token) ? item : null;
+                        if (generator != null)
                         {
-                            _runningTasks.Add(generator());
+                            lock (_lock)
+                            {
+                                _runningTasks.Add(generator());
+                            }
                         }
                     }
                     catch (InvalidOperationException)
