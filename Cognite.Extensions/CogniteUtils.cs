@@ -678,6 +678,7 @@ namespace Cognite.Extensions
             DataModelUtils.SetLogger(logger);
             DataPointExtensionsWithInstanceId.SetLogger(logger);
             BetaResourceExtensions.SetLogger(logger);
+            Datapoint.SetLogger(logger);
         }
     }
 
@@ -686,6 +687,13 @@ namespace Cognite.Extensions
     /// </summary>
     public class Datapoint
     {
+        private static ILogger _logger = new NullLogger<Client>();
+
+        internal static void SetLogger(ILogger logger)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
         private readonly long _timestamp;
         private readonly double? _numericValue;
         private readonly string? _stringValue;
@@ -861,7 +869,9 @@ namespace Cognite.Extensions
                 kind = 2;
                 if (_stringValue == null && _numericValue == null)
                 {
-                    throw new CogniteUtilsException("State datapoint must have a string or numeric value");
+                    // We'll log this as an error, and still insert datapoint with no value.
+                    // For bad datapoints, this is allowed. Flag will become 0 automatically.
+                    _logger.LogError("Invalid state datapoint at timestamp {Timestamp}: missing both numeric and string values", _timestamp);
                 }
                 // Both values are individually optional(but not simultaneously) for state datapoints, and a
                 // genuine empty string must remain distinguishable from a missing one, so presence of each
@@ -933,11 +943,10 @@ namespace Cognite.Extensions
             }
             else if (kind == 2)
             {
-                var flagsByte = new byte[sizeof(byte)];
-                if (stream.Read(flagsByte, 0, sizeof(byte)) < sizeof(byte)) return null;
-                bool hasNumeric = (flagsByte[0] & 1) != 0;
-                bool hasString = (flagsByte[0] & 2) != 0;
-
+                int flags = stream.ReadByte();
+                if (flags < 0) return null;
+                bool hasNumeric = (flags & 1) != 0;
+                bool hasString = (flags & 2) != 0;
                 double? numericValue = null;
                 if (hasNumeric)
                 {
