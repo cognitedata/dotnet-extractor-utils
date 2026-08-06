@@ -298,6 +298,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaTimeSeriesExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaTimeSeriesExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaTimeSeriesExtensions",
+      "Summary": "<p sourcefile=\"api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaTimeSeriesExtensions.yml\" sourcestartlinenumber=\"1\">Extension methods for creating and managing time series through the beta CDM time series\nresource. State time series (<xref href=\"CogniteSdk.DataModels.Core.TimeSeriesType.State\" data-throw-if-not-resolved=\"false\"></xref>) are currently only\navailable through this beta API, targeting <xref href=\"CogniteSdk.Resources.Beta.TimeSeriesResource\" data-throw-if-not-resolved=\"false\"></xref>\ninstead of the generic <xref href=\"CogniteSdk.Resources.DataModels.CoreTimeSeriesResource%601\" data-throw-if-not-resolved=\"false\"></xref>. These are thin wrappers around\n<xref href=\"Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaResourceExtensions\" data-throw-if-not-resolved=\"false\"></xref>, which they share with <xref href=\"Cognite.Extensions.DataModels.CogniteExtractorExtensions.BetaStateSetsExtensions\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extensions.DataModels.CogniteExtractorExtensions.CogniteExtractorAsset.yml",
       "output": {
         ".html": {
