@@ -30,10 +30,10 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
     /// <summary>
     /// Shared get-or-create/ensure-exists/get-by-ids/upsert implementation for beta CDM resources
     /// (<see cref="CogniteSdk.Resources.Beta.StateSetsResource"/>, <see cref="CogniteSdk.Resources.Beta.TimeSeriesResource"/>).
-    /// These resources do not implement <c>BaseDataModelResource&lt;T&gt;</c>, so they cannot use the
-    /// generic implementation in <see cref="Cognite.Extensions.DataModels.DataModelUtils"/>; instead
     /// <see cref="BetaStateSetsExtensions"/> is a thin public wrapper that supplies its resource's
     /// retrieve/upsert/sanitize operations to the methods here.
+    /// These resources do not implement <c>BaseDataModelResource&lt;T&gt;</c>, so they cannot use the
+    /// generic implementation in <see cref="Cognite.Extensions.DataModels.DataModelUtils"/>; instead
     /// </summary>
     internal static class BetaResourceExtensions
     {
@@ -144,6 +144,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 {
                     found = await retrieve(
                         instanceIds.Select(x => new InstanceIdentifierWithType(InstanceType.node, x)), token).ConfigureAwait(false);
+                    found ??= Enumerable.Empty<SourcedNode<T>>();
+
                 }
                 catch (Exception ex)
                 {
@@ -187,7 +189,15 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 foreach (var error in duplicateErrors)
                 {
                     if (error.Values == null || !error.Values.Any()) continue;
-                    foreach (var idt in error.Values) duplicatedIds.Add(idt.InstanceId);
+                    foreach (var idt in error.Values)
+                    {
+                        if (idt.InstanceId == null)
+                        {
+                            _logger.LogError("No instance id for view {View} with error {Error}", view.ExternalId, error);
+                            continue;
+                        }
+                        duplicatedIds.Add(idt.InstanceId);
+                    }
                 }
             }
 

@@ -1,5 +1,4 @@
 using Cognite.Extensions;
-using Cognite.Extensions.DataModels;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
 using Cognite.Extractor.Utils.Unstable.Configuration;
 using CogniteSdk;
@@ -25,6 +24,7 @@ namespace Cognite.Extractor.Utils
     {
         private readonly Client _client;
         private readonly ILogger<CogniteDestination> _logger;
+        private readonly CogniteSdk.Resources.Beta.TimeSeriesResource _betaTimeSeries;
 
         /// <summary>
         /// View identifier for IDM TimeSeries
@@ -42,6 +42,7 @@ namespace Cognite.Extractor.Utils
         {
             _client = client;
             _logger = logger;
+            _betaTimeSeries = _client.Beta.TimeSeries;
             if (viewIdentifier != null)
             {
                 IDMViewIdentifier = viewIdentifier;
@@ -61,10 +62,32 @@ namespace Cognite.Extractor.Utils
             if (config == null) throw new ArgumentNullException(nameof(config));
             _client = client;
             _logger = logger;
+            _betaTimeSeries = _client.Beta.TimeSeries;
             if (viewIdentifier != null)
             {
                 IDMViewIdentifier = viewIdentifier;
             }
+        }
+
+        private Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateDispatch<T>(
+            bool isBeta,
+            IEnumerable<InstanceIdentifier> instanceIds,
+            Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildTimeSeries,
+            RetryMode retryMode,
+            SanitationMode sanitationMode,
+            CancellationToken token) where T : CogniteTimeSeriesBase
+        {
+            if (instanceIds == null) return Task.FromResult(new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null));
+            if (buildTimeSeries == null) throw new ArgumentNullException(nameof(buildTimeSeries));
+            _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
+            if (isBeta)
+            {
+                var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
+                return BetaTimeSeriesExtensions.GetOrCreateTimeSeriesAsync<T>(
+                    _betaTimeSeries, instanceIds, buildTimeSeries, betaParams, token);
+            }
+            return _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier> { CoreTimeSeriesResource<T>.DefaultView })
+                .GetOrCreateTimeSeriesAsync(instanceIds, buildTimeSeries, Chunking.Instances, Throttling.Instances, retryMode, sanitationMode, token);
         }
 
         #region timeseries
@@ -83,25 +106,20 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to TimeSeries before creating</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occurred and a list of the created and found TimeSeries</returns>
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildTimeSeries,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            bool isBeta = false) where T : CogniteTimeSeriesBase
         {
-            _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView })
-                .GetOrCreateTimeSeriesAsync(
-                    instanceIds,
-                    buildTimeSeries,
-                    Chunking.Instances,
-                    Throttling.Instances,
-                    retryMode,
-                    sanitationMode,
-                    token
-                ).ConfigureAwait(false);
+            if (buildTimeSeries == null) throw new ArgumentNullException(nameof(buildTimeSeries));
+            return await GetOrCreateDispatch(isBeta, instanceIds,
+                ids => Task.FromResult(buildTimeSeries(ids)), retryMode, sanitationMode, token).ConfigureAwait(false);
         }
         /// <summary>
         /// Ensures the the time series with the provided <paramref name="instanceIds"/> exist in CDF.
@@ -118,23 +136,20 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to TimeSeries before creating</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found TimeSeries</returns>
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildTimeSeries,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            bool isBeta = false) where T : CogniteTimeSeriesBase
         {
-            _logger.LogInformation("Getting or creating {Number} time series in CDF", instanceIds.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier>() { CoreTimeSeriesResource<T>.DefaultView }).GetOrCreateTimeSeriesAsync(
-                instanceIds,
-                buildTimeSeries,
-                Chunking.Instances,
-                Throttling.Instances,
-                retryMode,
-                sanitationMode,
-                token).ConfigureAwait(false);
+            return await
+                GetOrCreateDispatch(isBeta, instanceIds, buildTimeSeries, retryMode, sanitationMode, token)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -151,21 +166,31 @@ namespace Cognite.Extractor.Utils
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureTimeSeriesExistsAsync<T>(
             IEnumerable<SourcedNodeWrite<T>> timeSeries,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            bool isBeta = false) where T : CogniteTimeSeriesBase
         {
+            if (timeSeries == null) return new CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>(null, null);
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).EnsureTimeSeriesExistsAsync<T>(
-                timeSeries,
-                Chunking.Instances,
-                Throttling.Instances,
-                retryMode,
-                sanitationMode,
-                token).ConfigureAwait(false);
+            if (isBeta)
+            {
+                var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
+                return await
+                    BetaTimeSeriesExtensions
+                        .EnsureTimeSeriesExistsAsync<T>(_betaTimeSeries, timeSeries, betaParams, token)
+                        .ConfigureAwait(false);
+            }
+            return await
+                _client.CoreDataModel
+                    .TimeSeries<T>(IDMViewIdentifier)
+                    .EnsureTimeSeriesExistsAsync<T>(timeSeries, Chunking.Instances, Throttling.Instances, retryMode, sanitationMode, token)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -173,17 +198,27 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="timeSeries">List of TimeSeries instance ids to fetch</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// Required to fetch state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
         public async Task<IEnumerable<SourcedNode<T>>> GetTimeSeriesByIdsIgnoreErrors<T>(
             IEnumerable<Identity> timeSeries,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            bool isBeta = false) where T : CogniteTimeSeriesBase
         {
+            if (timeSeries == null) return new List<SourcedNode<T>>();
             _logger.LogInformation("Ensuring that {Number} time series exist in CDF", timeSeries.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).GetTimeSeriesByIdsIgnoreErrors<T>(
-                timeSeries,
-                Chunking.Instances,
-                Throttling.Instances,
-                token).ConfigureAwait(false);
+            if (isBeta)
+            {
+                return await
+                    BetaTimeSeriesExtensions
+                        .GetTimeSeriesByIdsIgnoreErrors<T>(_betaTimeSeries, timeSeries, Chunking.Instances, Throttling.Instances, token)
+                        .ConfigureAwait(false);
+            }
+            return await
+                _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier)
+                    .GetTimeSeriesByIdsIgnoreErrors<T>(timeSeries, Chunking.Instances, Throttling.Instances, token)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -196,21 +231,29 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to assets before updating</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// Required to update state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated TimeSeries</returns>
         public async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertTimeSeriesAsync<T>(
             IEnumerable<SourcedNodeWrite<T>> updates,
             RetryMode retryMode,
             SanitationMode sanitationMode,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            bool isBeta = false) where T : CogniteTimeSeriesBase
         {
+            if (updates == null) return new CogniteResult<SlimInstance, SourcedNodeWrite<T>>(null, null);
             _logger.LogInformation("Updating {Number} timeseries in CDF", updates.Count());
-            return await _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier).UpsertAsync(
-                updates,
-                Chunking.Instances,
-                Throttling.Instances,
-                retryMode,
-                sanitationMode,
-                token).ConfigureAwait(false);
+            if (isBeta)
+            {
+                var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
+                return await
+                    BetaTimeSeriesExtensions.UpsertAsync(_betaTimeSeries, updates, betaParams, token).ConfigureAwait(false);
+            }
+            return await
+                _client.CoreDataModel
+                    .TimeSeries<T>(IDMViewIdentifier)
+                    .UpsertAsync(updates, Chunking.Instances, Throttling.Instances, retryMode, sanitationMode, token)
+                    .ConfigureAwait(false);
         }
         #endregion
 

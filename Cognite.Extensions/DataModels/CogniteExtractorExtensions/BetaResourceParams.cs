@@ -1,3 +1,4 @@
+using System;
 namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
     /// <summary>
@@ -35,6 +36,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="sanitationMode">The type of sanitation to apply before sending requests</param>
         public BetaResourceParams(int chunkSize, int throttleSize, RetryMode retryMode, SanitationMode sanitationMode)
         {
+            if (chunkSize <= 0) throw new ArgumentOutOfRangeException(nameof(chunkSize), "Chunk size must be greater than zero.");
+            if (throttleSize <= 0) throw new ArgumentOutOfRangeException(nameof(throttleSize), "Throttle size must be greater than zero.");
             ChunkSize = chunkSize;
             ThrottleSize = throttleSize;
             RetryMode = retryMode;
