@@ -118,7 +118,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     Properties = new CogniteTimeSeriesBase() { Type = hasString ? CogniteSdk.DataModels.Core.TimeSeriesType.String : CogniteSdk.DataModels.Core.TimeSeriesType.Numeric }
                 });
             }
-            result = result.Merge(mixedResult);
+            result = mixedResult.Merge(result);
 
             var tsResult = await client.CoreDataModel.TimeSeries<CogniteTimeSeriesBase>().EnsureTimeSeriesExistsAsync(
                 toCreate,
