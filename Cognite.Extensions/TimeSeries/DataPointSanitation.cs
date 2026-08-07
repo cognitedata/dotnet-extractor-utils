@@ -20,15 +20,42 @@ namespace Cognite.Extensions
             {
                 if (point.StringValue == null && !point.Status.IsBad)
                 {
-                    return new Datapoint(point.Timestamp, "", point.Status);
+                    return new Datapoint(point.Timestamp, (string?)"", point.Status);
                 }
                 else if (SafeByteCount(point.StringValue) > CogniteUtils.TimeSeriesStringBytesMax)
                 {
-                    return new Datapoint(point.Timestamp, point.StringValue.TruncateBytes(CogniteUtils.TimeSeriesStringBytesMax) ?? "", point.Status);
+                    return new Datapoint(point.Timestamp, (string?)(point.StringValue.TruncateBytes(CogniteUtils.TimeSeriesStringBytesMax) ?? ""), point.Status);
                 }
                 return point;
             }
-            else if (!point.Status.IsBad)
+            else if (point.IsState)
+            {
+                // The string-byte-length limit is a hard wire-format constraint, so unlike the numeric
+                // range check below it applies regardless of Status.IsBad.
+                // This should never happen for a good datapoint because the state set would be validated before being used to create a state datapoint,
+                // so in this case we just drop the string value and allow CDF to take over.
+                bool isStateWithOversizeString = SafeByteCount(point.StringValue) > CogniteUtils.TimeSeriesStringBytesMax;
+                string? safeStringValue = isStateWithOversizeString ? null : point.StringValue;
+                bool stringChanged = safeStringValue != point.StringValue;
+
+                double? safeNumericValue = point.NumericValue;
+                bool numericChanged = false;
+                if (safeNumericValue.HasValue)
+                {
+                    double value = safeNumericValue.Value;
+                    if (double.IsNaN(value) || value > CogniteUtils.StateSetMax || value < CogniteUtils.StateSetMin)
+                    {
+                        // Numeric value is set but it is incorrect.
+                        safeNumericValue = null;
+                        numericChanged = true;
+                    }
+                }
+
+                return numericChanged || stringChanged
+                    ? new Datapoint(point.Timestamp, safeNumericValue, safeStringValue, point.Status)
+                    : point;
+            }
+            if (!point.Status.IsBad)
             {
                 if (!point.NumericValue.HasValue)
                 {
@@ -64,19 +91,49 @@ namespace Cognite.Extensions
                     return ResourceType.DataPointValue;
                 }
             }
-            else if (!point.Status.IsBad)
+            else if (point.IsState)
             {
-                if (!point.NumericValue.HasValue)
+                // Unconditional, like the IsString byte-length check above: a hard wire-format
+                // constraint that applies regardless of Status.IsBad.
+                if (SafeByteCount(point.StringValue) > CogniteUtils.TimeSeriesStringBytesMax)
                 {
                     return ResourceType.DataPointValue;
                 }
-                double value = point.NumericValue.Value;
-                if (double.IsNaN(value)
-                    || double.IsInfinity(value)
-                    || value > CogniteUtils.NumericValueMax
-                    || value < CogniteUtils.NumericValueMin)
+                // Also unconditional: the numeric value is cast to a long for the protobuf wire
+                // format, and a NaN or out-of-range double silently converts to 0 or a saturated
+                // long instead of throwing, so this must be caught regardless of Status.IsBad.
+                if (point.NumericValue.HasValue)
                 {
-                    return ResourceType.DataPointValue;
+                    double value = point.NumericValue.Value;
+                    if (double.IsNaN(value) || value < CogniteUtils.StateSetMin || value > CogniteUtils.StateSetMax)
+                    {
+                        return ResourceType.DataPointValue;
+                    }
+                }
+                if (!point.Status.IsBad)
+                {
+                    if (!point.NumericValue.HasValue && point.StringValue == null)
+                    {
+                        return ResourceType.DataPointValue;
+                    }
+                }
+            }
+            else
+            {
+                if (!point.Status.IsBad)
+                {
+                    if (!point.NumericValue.HasValue)
+                    {
+                        return ResourceType.DataPointValue;
+                    }
+                    double value = point.NumericValue.Value;
+                    if (double.IsNaN(value)
+                        || double.IsInfinity(value)
+                        || value > CogniteUtils.NumericValueMax
+                        || value < CogniteUtils.NumericValueMin)
+                    {
+                        return ResourceType.DataPointValue;
+                    }
                 }
             }
             if (point.Timestamp > CogniteUtils.TimestampMax
@@ -112,6 +169,7 @@ namespace Cognite.Extensions
                 if (!kvp.Value.Any()) continue;
 
                 var isString = kvp.Value.First().IsString;
+                var isState = kvp.Value.First().IsState;
 
                 var id = kvp.Key;
                 var dps = kvp.Value;
@@ -121,7 +179,7 @@ namespace Cognite.Extensions
 
                 foreach (var dp in dps)
                 {
-                    if (dp.IsString != isString)
+                    if (dp.IsString != isString || dp.IsState != isState)
                     {
                         badDps.Add((ResourceType.DataPointValue, dp));
                         CdfMetrics.DatapointsSkipped.Inc();

@@ -612,6 +612,21 @@ namespace ExtractorUtils.Test.Integration
                 var createdCount = tsResult.Results.Count();
                 // Not perfectly consistent, since FDM isn't immediately consistent.
                 Assert.True(createdCount == 2 || createdCount == 3);
+
+                // All datapoints for a missing time series must be of the same type:
+                // a mix of numeric and string is rejected since the type cannot be inferred.
+                var mixedDps = new Dictionary<Identity, IEnumerable<Datapoint>>()
+                {
+                    { Identity.Create(new InstanceIdentifier(spaceId, $"{tester.Prefix} utils-test-ts-missing-3")), new[]
+                    {
+                        new Datapoint(DateTime.UtcNow, 1.0),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(1), "test")
+                    } },
+                };
+                var (dpResultMixed, tsResultMixed) =
+                    await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
+                        mixedDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
+                Assert.True(dpResultMixed.Errors.Count() == 2);
             }
             finally
             {
@@ -898,6 +913,7 @@ namespace ExtractorUtils.Test.Integration
                 ensureResult.Throw();
                 Assert.Single(ensureResult.Results);
 
+                await Task.Delay(500); // Try to get eventual consistency before retrieval.
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
                 var retrieved = await stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token);
                 var found = Assert.Single(retrieved);

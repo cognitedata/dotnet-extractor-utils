@@ -10,6 +10,7 @@ using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Com.Cognite.V1.Timeseries.Proto;
 
 namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
 {
@@ -77,16 +78,36 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             _logger.LogInformation("Creating {Count} missing timeseries", missingIds.Count);
 
             var toCreate = new List<SourcedNodeWrite<CogniteTimeSeriesBase>>();
+            var mixedResult = new CogniteResult<DataPointInsertError>(new List<CogniteError<DataPointInsertError>>());
             foreach (var id in missingIds)
             {
                 var dps = points[id];
                 if (!dps.Any()) continue;
 
+                if (dps.Any(dp => dp.IsState))
+                {
+                    _logger.LogError("Cannot create missing timeseries with externalId {ExternalId} since it has state datapoints.", id.InstanceId.ExternalId);
+                    mixedResult.Errors.Append(new CogniteError<DataPointInsertError>
+                    {
+                        Type = ErrorType.IllegalItem,
+                        Message = $"Cannot create missing timeseries with externalId {id.InstanceId.ExternalId} since it has state datapoints.",
+                        Resource = ResourceType.DataPointValue,
+                        Values = new List<Identity> { id }
+                    });
+                    continue;
+                }
                 bool hasNumeric = dps.Any(dp => !dp.IsString);
                 bool hasString = dps.Any(dp => dp.IsString);
                 if (hasNumeric && hasString)
                 {
                     _logger.LogError("Cannot infer type for timeseries with externalId {ExternalId} since it has datapoints with mixed types.", id.InstanceId.ExternalId);
+                    mixedResult.Errors.Append(new CogniteError<DataPointInsertError>
+                    {
+                        Type = ErrorType.MismatchedType,
+                        Message = $"Cannot infer type for timeseries with externalId {id.InstanceId.ExternalId} since it has datapoints with mixed types.",
+                        Resource = ResourceType.DataPointValue,
+                        Values = new List<Identity> { id }
+                    });
                     continue;
                 }
 
@@ -97,6 +118,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     Properties = new CogniteTimeSeriesBase() { Type = hasString ? CogniteSdk.DataModels.Core.TimeSeriesType.String : CogniteSdk.DataModels.Core.TimeSeriesType.Numeric }
                 });
             }
+            result = result.Merge(mixedResult);
 
             var tsResult = await client.CoreDataModel.TimeSeries<CogniteTimeSeriesBase>().EnsureTimeSeriesExistsAsync(
                 toCreate,
@@ -209,24 +231,44 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 try
                 {
                     bool useGzip = false;
-                    int count = request.Items.Sum(r => r.NumericDatapoints?.Datapoints?.Count ?? 0 + r.StringDatapoints?.Datapoints?.Count ?? 0);
+                    int count = request.Items.Sum(r =>
+                        (r.NumericDatapoints?.Datapoints?.Count ?? 0)
+                        + (r.StringDatapoints?.Datapoints?.Count ?? 0)
+                        + (r.StateDatapoints?.Datapoints?.Count ?? 0));
                     if (gzipCountLimit >= 0 && count >= gzipCountLimit)
                     {
                         useGzip = true;
                     }
 
+                    // State datapoints are only supported through the beta data points API.
+                    bool hasStateDatapoints = request.Items.Any(r => r.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.StateDatapoints);
+
                     if (useGzip)
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            if (hasStateDatapoints)
+                            {
+                                await client.Beta.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                await client.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            }
                         }
                     }
                     else
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            if (hasStateDatapoints)
+                            {
+                                await client.Beta.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            }
                         }
                     }
 

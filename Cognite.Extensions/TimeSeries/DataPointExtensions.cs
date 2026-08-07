@@ -57,11 +57,12 @@ namespace Cognite.Extensions
                     item.InstanceId = new InstanceId() { Space = kvp.Key.InstanceId.Space, ExternalId = kvp.Key.InstanceId.ExternalId };
                 }
 
-                if (!kvp.Value.Any())
+                if (kvp.Value == null || !kvp.Value.Any())
                 {
                     continue;
                 }
                 var isString = kvp.Value.First().IsString;
+                var isState = kvp.Value.First().IsState;
                 if (isString)
                 {
                     var finalDps = new StringDatapoints();
@@ -81,6 +82,33 @@ namespace Cognite.Extensions
                     }
                     dataPointCount += finalDps.Datapoints.Count;
                     item.StringDatapoints = finalDps;
+                }
+                else if (isState)
+                {
+                    var finalDps = new StateDatapoints();
+                    foreach (var dp in kvp.Value)
+                    {
+                        if (!dp.IsState) continue;
+                        var stateDp = new StateDatapoint
+                        {
+                            Timestamp = dp.Timestamp,
+                            Status = new Status
+                            {
+                                Code = (long)dp.Status.Code
+                            }
+                        };
+                        if (dp.NumericValue.HasValue && !double.IsNaN(dp.NumericValue.Value) && !double.IsInfinity(dp.NumericValue.Value))
+                        {
+                            stateDp.NumericValue = (long)Math.Round(dp.NumericValue.Value);
+                        }
+                        if (dp.StringValue != null)
+                        {
+                            stateDp.StringValue = dp.StringValue;
+                        }
+                        finalDps.Datapoints.Add(stateDp);
+                    }
+                    dataPointCount += finalDps.Datapoints.Count;
+                    item.StateDatapoints = finalDps;
                 }
                 else
                 {
@@ -287,24 +315,44 @@ namespace Cognite.Extensions
                 try
                 {
                     bool useGzip = false;
-                    int count = request.Items.Sum(r => r.NumericDatapoints?.Datapoints?.Count ?? 0 + r.StringDatapoints?.Datapoints?.Count ?? 0);
+                    int count = request.Items.Sum(r =>
+                        (r.NumericDatapoints?.Datapoints?.Count ?? 0)
+                        + (r.StringDatapoints?.Datapoints?.Count ?? 0)
+                        + (r.StateDatapoints?.Datapoints?.Count ?? 0));
                     if (gzipCountLimit >= 0 && count >= gzipCountLimit)
                     {
                         useGzip = true;
                     }
 
+                    // State datapoints are only supported through the beta data points API.
+                    bool hasStateDatapoints = request.Items.Any(r => r.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.StateDatapoints);
+
                     if (useGzip)
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            if (hasStateDatapoints)
+                            {
+                                await client.Beta.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                await client.DataPoints.CreateAsync(request, CompressionLevel.Fastest, token).ConfigureAwait(false);
+                            }
                         }
                     }
                     else
                     {
                         using (CdfMetrics.Datapoints.WithLabels("create"))
                         {
-                            await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            if (hasStateDatapoints)
+                            {
+                                await client.Beta.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                await client.DataPoints.CreateAsync(request, token).ConfigureAwait(false);
+                            }
                         }
                     }
 
@@ -354,7 +402,7 @@ namespace Cognite.Extensions
         /// <summary>
         /// Deletes ranges of data points in CDF. The <paramref name="ranges"/> parameter contains the first (inclusive)
         /// and last (inclusive) timestamps for the range. After the delete request is sent to CDF, attempt to confirm that
-        /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to 
+        /// the data points were deleted by querying the time range. Deletes in CDF are eventually consistent, failing to
         /// confirm the deletion does not mean that the operation failed in CDF
         /// </summary>
         /// <param name="dataPoints">Cognite datapoints resource</param>
