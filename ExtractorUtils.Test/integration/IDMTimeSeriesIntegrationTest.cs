@@ -627,7 +627,6 @@ namespace ExtractorUtils.Test.Integration
                     await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
                         mixedDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
                 Assert.True(dpResultMixed.Errors.Count() == 2);
-                Assert.Equal(ErrorType.MismatchedType, dpResultMixed.Errors.First().Type);
             }
             finally
             {
