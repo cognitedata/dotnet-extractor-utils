@@ -78,16 +78,36 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             _logger.LogInformation("Creating {Count} missing timeseries", missingIds.Count);
 
             var toCreate = new List<SourcedNodeWrite<CogniteTimeSeriesBase>>();
+            var mixedResult = new CogniteResult<DataPointInsertError>(new List<CogniteError<DataPointInsertError>>());
             foreach (var id in missingIds)
             {
                 var dps = points[id];
                 if (!dps.Any()) continue;
 
+                if (dps.Any(dp => dp.IsState))
+                {
+                    _logger.LogError("Cannot create missing timeseries with externalId {ExternalId} since it has state datapoints.", id.InstanceId.ExternalId);
+                    mixedResult.Errors.Append(new CogniteError<DataPointInsertError>
+                    {
+                        Type = ErrorType.IllegalItem,
+                        Message = $"Cannot create missing timeseries with externalId {id.InstanceId.ExternalId} since it has state datapoints.",
+                        Resource = ResourceType.DataPointValue,
+                        Values = new List<Identity> { id }
+                    });
+                    continue;
+                }
                 bool hasNumeric = dps.Any(dp => !dp.IsString);
                 bool hasString = dps.Any(dp => dp.IsString);
                 if (hasNumeric && hasString)
                 {
                     _logger.LogError("Cannot infer type for timeseries with externalId {ExternalId} since it has datapoints with mixed types.", id.InstanceId.ExternalId);
+                    mixedResult.Errors.Append(new CogniteError<DataPointInsertError>
+                    {
+                        Type = ErrorType.MismatchedType,
+                        Message = $"Cannot infer type for timeseries with externalId {id.InstanceId.ExternalId} since it has datapoints with mixed types.",
+                        Resource = ResourceType.DataPointValue,
+                        Values = new List<Identity> { id }
+                    });
                     continue;
                 }
 
@@ -98,6 +118,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     Properties = new CogniteTimeSeriesBase() { Type = hasString ? CogniteSdk.DataModels.Core.TimeSeriesType.String : CogniteSdk.DataModels.Core.TimeSeriesType.Numeric }
                 });
             }
+            result = result.Merge(mixedResult);
 
             var tsResult = await client.CoreDataModel.TimeSeries<CogniteTimeSeriesBase>().EnsureTimeSeriesExistsAsync(
                 toCreate,

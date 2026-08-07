@@ -623,8 +623,11 @@ namespace ExtractorUtils.Test.Integration
                         new Datapoint(DateTime.UtcNow.AddSeconds(1), "test")
                     } },
                 };
-                await Assert.ThrowsAsync<ArgumentException>(() => tester.DestinationWithIDM
-                    .InsertDataPointsCreateMissingAsync(mixedDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token));
+                var (dpResultMixed, tsResultMixed) =
+                    await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
+                        mixedDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
+                Assert.Single(dpResultMixed.Errors);
+                Assert.Equal(ErrorType.MismatchedType, dpResultMixed.Errors.First().Type);
             }
             finally
             {

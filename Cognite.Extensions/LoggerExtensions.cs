@@ -81,7 +81,7 @@ namespace Cognite.Extensions
             {
                 case ErrorType.FatalFailure:
                     logger.Log(fatalLevel, "Fatal error in request of type {type}: {msg}. {cdf}\n Affected resources: {rsc}",
-                        requestType, error.Message, cogniteString, string.Join(", ", error.Values?.Select(idt => idt.ExternalId ?? idt.Id.ToString())) ?? "");
+                        requestType, error.Message, cogniteString, string.Join(", ", error.Values?.Select(idt => idt.ExternalId ?? idt.Id.ToString()) ?? Array.Empty<string>()));
                     break;
                 case ErrorType.ItemDuplicated:
                     logger.Log(handledLevel, "The following {resource}s were duplicated in the request: {values}, " +

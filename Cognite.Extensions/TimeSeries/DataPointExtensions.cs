@@ -57,7 +57,7 @@ namespace Cognite.Extensions
                     item.InstanceId = new InstanceId() { Space = kvp.Key.InstanceId.Space, ExternalId = kvp.Key.InstanceId.ExternalId };
                 }
 
-                if (!kvp.Value.Any())
+                if (kvp.Value == null || !kvp.Value.Any())
                 {
                     continue;
                 }
