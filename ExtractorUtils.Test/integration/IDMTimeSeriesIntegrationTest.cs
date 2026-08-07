@@ -626,7 +626,7 @@ namespace ExtractorUtils.Test.Integration
                 var (dpResultMixed, tsResultMixed) =
                     await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
                         mixedDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
-                Assert.Single(dpResultMixed.Errors);
+                Assert.True(dpResultMixed.Errors.Count() == 2);
                 Assert.Equal(ErrorType.MismatchedType, dpResultMixed.Errors.First().Type);
             }
             finally
@@ -914,6 +914,7 @@ namespace ExtractorUtils.Test.Integration
                 ensureResult.Throw();
                 Assert.Single(ensureResult.Results);
 
+                await Task.Delay(500); // Try to get eventual consistency before retrieval.
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
                 var retrieved = await stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token);
                 var found = Assert.Single(retrieved);
