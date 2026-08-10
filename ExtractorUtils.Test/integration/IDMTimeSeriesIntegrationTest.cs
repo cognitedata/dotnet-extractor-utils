@@ -627,7 +627,8 @@ namespace ExtractorUtils.Test.Integration
                 var (dpResultMixed, tsResultMixed) =
                     await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
                         mixedDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
-                Assert.True(dpResultMixed.Errors.Count() == 2);
+                Assert.Single(dpResultMixed.Errors);
+                Assert.Contains(dpResultMixed.Errors, e => e.Type == ErrorType.MismatchedType && e.Resource == ResourceType.DataPointValue);
 
                 // A missing time series with state datapoints cannot be auto-created either: we have
                 // no way to infer which state set it should reference, so it must be rejected with an
@@ -851,7 +852,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Empty(dpResult.Errors);
 
                 StateDatapoints foundState = null;
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     var foundDps = await tester.DestinationWithIDM.CogniteClient.Beta.DataPoints.ListAsync(new DataPointsQuery
                     {

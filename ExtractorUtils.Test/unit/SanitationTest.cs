@@ -716,9 +716,7 @@ namespace ExtractorUtils.Test.Unit
             Assert.Null(cleanDps[17].NumericValue);
             Assert.Equal("nan-state", cleanDps[17].StringValue);
 
-            // A Bad-status state datapoint still has its oversized string truncated, same as a
-            // Bad-status pure-string datapoint would (the byte-length limit is a wire-format
-            // constraint, not conditional on status).
+            // A Bad-status state datapoint still has its oversized string truncated.
             Assert.True(cleanDps[18].IsState);
             Assert.True(cleanDps[18].Status.IsBad);
             Assert.Equal(20.0, cleanDps[18].NumericValue.Value);

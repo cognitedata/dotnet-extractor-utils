@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extensions.DataModels;
 using Cognite.Extensions.DataModels.CogniteExtractorExtensions;
+using Cognite.Extensions.DataModels.QueryBuilder;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using Microsoft.Extensions.DependencyInjection;
@@ -879,6 +880,7 @@ namespace Cognite.Extensions
                 bool hasNumeric = _numericValue.HasValue;
                 bool hasString = _stringValue != null;
                 byte flags = (byte)((hasNumeric ? 1 : 0) | (hasString ? 2 : 0));
+                _logger.LogDebug("Encoding state datapoint {dp} at timestamp {Timestamp}: hasNumeric={HasNumeric}, hasString={HasString}, flags={Flags}", this.NumericValue, _timestamp, hasNumeric, hasString, flags);
                 byte[] numBytes = hasNumeric ? BitConverter.GetBytes(_numericValue!.Value) : Array.Empty<byte>();
                 byte[] strBytes;
                 if (hasString)
