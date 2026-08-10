@@ -87,7 +87,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 if (dps.Any(dp => dp.IsState))
                 {
                     _logger.LogError("Cannot create missing timeseries with externalId {ExternalId} since it has state datapoints.", id.InstanceId.ExternalId);
-                    mixedResult.Errors.Append(new CogniteError<DataPointInsertError>
+                    mixedResult.Errors = (mixedResult.Errors ?? Enumerable.Empty<CogniteError<DataPointInsertError>>()).Append(new CogniteError<DataPointInsertError>
                     {
                         Type = ErrorType.IllegalItem,
                         Message = $"Cannot create missing timeseries with externalId {id.InstanceId.ExternalId} since it has state datapoints.",
@@ -101,7 +101,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                 if (hasNumeric && hasString)
                 {
                     _logger.LogError("Cannot infer type for timeseries with externalId {ExternalId} since it has datapoints with mixed types.", id.InstanceId.ExternalId);
-                    mixedResult.Errors.Append(new CogniteError<DataPointInsertError>
+                    mixedResult.Errors = (mixedResult.Errors ?? Enumerable.Empty<CogniteError<DataPointInsertError>>()).Append(new CogniteError<DataPointInsertError>
                     {
                         Type = ErrorType.MismatchedType,
                         Message = $"Cannot infer type for timeseries with externalId {id.InstanceId.ExternalId} since it has datapoints with mixed types.",

@@ -34,7 +34,13 @@ namespace ExtractorUtils.Test.Unit
                 } },
                 { Identity.Create("state"), new[] {
                     new Datapoint(t1, 42.0, "OPEN"),
-                    new Datapoint(t2, 7.0, "CLOSED", StatusCode.FromCategory(StatusCodeCategory.BadNoCommunication))
+                    new Datapoint(t2, 7.0, "CLOSED", StatusCode.FromCategory(StatusCodeCategory.BadNoCommunication)),
+                    // Numeric-only state datapoint (no string component).
+                    new Datapoint(t1.AddHours(1), 99.5, (string?)null),
+                    // String-only state datapoint (no numeric component), with a non-default status.
+                    new Datapoint(new DateTimeOffset(t2.AddHours(1)).ToUnixTimeMilliseconds(), (double?)null, "OFF", StatusCode.FromCategory(StatusCodeCategory.GoodCascade)),
+                    // Neither value set - only valid for a Bad-status state datapoint.
+                    new Datapoint(t3.AddHours(1), isString: false, isState: true)
                 } }
             };
             var dps2 = new Dictionary<Identity, IEnumerable<Datapoint>>() {
@@ -79,7 +85,7 @@ namespace ExtractorUtils.Test.Unit
             }
 
             var stateId = Identity.Create("state");
-            Assert.Equal(2, readDps[stateId].Count());
+            Assert.Equal(5, readDps[stateId].Count());
             foreach (var dp in readDps[stateId])
             {
                 Assert.True(dp.IsState);
