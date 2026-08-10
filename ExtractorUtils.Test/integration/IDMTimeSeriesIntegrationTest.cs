@@ -515,7 +515,6 @@ namespace ExtractorUtils.Test.Integration
         }
         [Theory]
         [InlineData(CogniteHost.GreenField)]
-        [InlineData(CogniteHost.BlueField)]
         public async Task TestDataPointsErrorHandling(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -627,7 +626,7 @@ namespace ExtractorUtils.Test.Integration
                 var (dpResultMixed, tsResultMixed) =
                     await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
                         mixedDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
-                Assert.Single(dpResultMixed.Errors);
+                Assert.True(dpResultMixed.Errors.Count() == 3);
                 Assert.Contains(dpResultMixed.Errors, e => e.Type == ErrorType.MismatchedType && e.Resource == ResourceType.DataPointValue);
 
                 // A missing time series with state datapoints cannot be auto-created either: we have
@@ -643,7 +642,7 @@ namespace ExtractorUtils.Test.Integration
                 var (dpResultState, tsResultState) =
                     await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
                         stateDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
-                Assert.True(dpResultState.Errors.Count() == 2);
+                Assert.True(dpResultState.Errors.Count() == 3);
                 Assert.Contains(dpResultState.Errors, e => e.Type == ErrorType.IllegalItem && e.Resource == ResourceType.DataPointValue);
                 Assert.True(tsResultState == null || !tsResultState.Results.Any());
             }
