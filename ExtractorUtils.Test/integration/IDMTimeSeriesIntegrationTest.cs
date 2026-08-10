@@ -882,14 +882,14 @@ namespace ExtractorUtils.Test.Integration
                 Assert.True(byTimestamp[0].HasStringValue);
                 Assert.Equal("CLOSED", byTimestamp[0].StringValue);
 
-                // Numeric-only: CDF's state time series storage carries the string component forward
-                // from the previous datapoint rather than leaving it unset, so we only assert on the
-                // field we actually control from the client - the numeric value that was sent.
+                // CDF's state time series will infer the string component
+                // from the datapoint rather than leaving it unset, and vice-versa
                 Assert.True(byTimestamp[1].HasNumericValue);
                 Assert.Equal(1L, byTimestamp[1].NumericValue);
+                Assert.Equal("OPEN", byTimestamp[1].StringValue);
 
-                // String-only: same carry-forward behavior applies to the numeric component here.
                 Assert.True(byTimestamp[2].HasStringValue);
+                Assert.Equal(0L, byTimestamp[2].NumericValue);
                 Assert.Equal("CLOSED", byTimestamp[2].StringValue);
             }
             finally
