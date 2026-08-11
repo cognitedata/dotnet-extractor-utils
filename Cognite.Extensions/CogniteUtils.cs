@@ -56,14 +56,19 @@ namespace Cognite.Extensions
         public const long TimestampMax = 4102444799999L;
 
         /// <summary>
-        /// Cognite max size of state set
+        /// Cognite max value in state set
         /// </summary>
         public const long StateSetMax = Int32.MaxValue;
 
         /// <summary>
-        /// Cognite min size of state set
+        /// Cognite min value in state set
         /// </summary>
         public const long StateSetMin = Int32.MinValue;
+
+        /// <summary>
+        /// Cognite max size of state set
+        /// </summary>
+        public const long StateSetSizeMax = 100;
 
         /// <summary>
         /// Write missing identities to the provided identity set.

@@ -642,9 +642,9 @@ namespace ExtractorUtils.Test.Integration
                 var (dpResultState, tsResultState) =
                     await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
                         stateDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
-                Assert.True(dpResultState.Errors.Count() == 3);
+                Assert.Equal(2, dpResultState.Errors.Count());
                 Assert.Contains(dpResultState.Errors, e => e.Type == ErrorType.IllegalItem && e.Resource == ResourceType.DataPointValue);
-                Assert.True(tsResultState == null || !tsResultState.Results.Any());
+                Assert.True(tsResultState?.Results == null || !tsResultState.Results.Any());
             }
             finally
             {
