@@ -769,7 +769,8 @@ namespace ExtractorUtils.Test.Integration
                     new Datapoint(DateTime.UtcNow.AddSeconds(2), "test2")
                 } },
                 { Identity.Create("missing-ts-1"), new[] { new Datapoint(DateTime.UtcNow, 1.0) } },
-                { Identity.Create(1), new[] { new Datapoint(DateTime.UtcNow, "test") } }
+                { Identity.Create(1), new[] { new Datapoint(DateTime.UtcNow, "test") } },
+                { Identity.Create("missing-ts-2"), new[] { new Datapoint(DateTime.UtcNow, Math.Pow(2, 32)) } }
             };
 
             try
@@ -784,7 +785,7 @@ namespace ExtractorUtils.Test.Integration
                 err = errs[0];
                 Assert.Equal(ResourceType.Id, err.Resource);
                 Assert.Equal(ErrorType.ItemMissing, err.Type);
-                Assert.Equal(2, err.Values.Count());
+                Assert.Equal(3, err.Values.Count());
                 err = errs[1];
 
                 Assert.Equal(ResourceType.DataPointValue, err.Resource);
@@ -805,11 +806,12 @@ namespace ExtractorUtils.Test.Integration
             }
         }
         [Theory]
-        [InlineData(CogniteHost.GreenField)]
-        [InlineData(CogniteHost.BlueField)]
-        public async Task TestDataPointsCreateMissing(CogniteHost host)
+        [InlineData(CogniteHost.GreenField, 2)]
+        [InlineData(CogniteHost.BlueField, 100)]
+        public async Task TestDataPointsCreateMissing(CogniteHost host, int gzipCount)
         {
             using var tester = new CDFTester(host, _output);
+            tester.Config.Cognite.CdfChunking.DataPointsGzipLimit = gzipCount;
 
             var tss = await CreateTestTimeSeries(tester);
 

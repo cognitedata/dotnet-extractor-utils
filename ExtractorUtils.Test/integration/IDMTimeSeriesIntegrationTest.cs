@@ -105,6 +105,7 @@ namespace ExtractorUtils.Test.Integration
 
         private static async Task DeleteTimeseries(CDFTester tester, string space, IEnumerable<string> externalIds)
         {
+            Task.Delay(500).Wait(); // Wait for eventual consistency
             await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(externalIds.Select(x => new InstanceIdentifierWithType(InstanceType.node, space, x)), tester.Source.Token);
         }
 
@@ -966,7 +967,7 @@ namespace ExtractorUtils.Test.Integration
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
 
-                // GetStateSetsByIdsIgnoreErrors finds it.
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
                 var retrieved = await tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token);
                 var found = Assert.Single(retrieved);
                 Assert.Equal(stateSetXid, found.ExternalId);
@@ -1058,6 +1059,7 @@ namespace ExtractorUtils.Test.Integration
                 }, options, tester.Source.Token);
                 upsertResult.Throw();
                 Assert.Single(upsertResult.Results);
+                await Task.Delay(1000);      // Try to get eventual consistency before retrieval.
 
                 retrieved = await stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token);
                 found = Assert.Single(retrieved);
@@ -1086,6 +1088,7 @@ namespace ExtractorUtils.Test.Integration
                     RetryMode.None, SanitationMode.None, tester.Source.Token);
                 ensureResult.Throw();
                 Assert.Single(ensureResult.Results);
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, existingXid));
                 var retrieved = await tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token);
@@ -1181,6 +1184,7 @@ namespace ExtractorUtils.Test.Integration
                 result.Throw();
                 Assert.Equal(2, result.Results.Count());
 
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
                 var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
                     new[]
                     {

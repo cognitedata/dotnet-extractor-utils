@@ -241,7 +241,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
                     }
 
                     // State datapoints are only supported through the beta data points API.
-                    bool hasStateDatapoints = request.Items.Any(r => r.DatapointTypeCase == DataPointInsertionItem.DatapointTypeOneofCase.StateDatapoints);
+                    bool hasStateDatapoints = request.Items.Any(r => r.StateDatapoints?.Datapoints?.Count > 0);
 
                     if (useGzip)
                     {
