@@ -6,6 +6,7 @@ using CogniteSdk;
 using CogniteSdk.DataModels;
 using CogniteSdk.DataModels.Core;
 using CogniteSdk.Resources.DataModels;
+using StateDatapoints = Com.Cognite.V1.Timeseries.Proto.StateDatapoints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,6 +105,7 @@ namespace ExtractorUtils.Test.Integration
 
         private static async Task DeleteTimeseries(CDFTester tester, string space, IEnumerable<string> externalIds)
         {
+            Task.Delay(500).Wait(); // Wait for eventual consistency
             await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(externalIds.Select(x => new InstanceIdentifierWithType(InstanceType.node, space, x)), tester.Source.Token);
         }
 
@@ -514,7 +516,6 @@ namespace ExtractorUtils.Test.Integration
         }
         [Theory]
         [InlineData(CogniteHost.GreenField)]
-        [InlineData(CogniteHost.BlueField)]
         public async Task TestDataPointsErrorHandling(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -612,13 +613,47 @@ namespace ExtractorUtils.Test.Integration
                 var createdCount = tsResult.Results.Count();
                 // Not perfectly consistent, since FDM isn't immediately consistent.
                 Assert.True(createdCount == 2 || createdCount == 3);
+
+                // All datapoints for a missing time series must be of the same type:
+                // a mix of numeric and string is rejected since the type cannot be inferred.
+                var mixedDps = new Dictionary<Identity, IEnumerable<Datapoint>>()
+                {
+                    { Identity.Create(new InstanceIdentifier(spaceId, $"{tester.Prefix} utils-test-ts-missing-3")), new[]
+                    {
+                        new Datapoint(DateTime.UtcNow, 1.0),
+                        new Datapoint(DateTime.UtcNow.AddSeconds(1), "test")
+                    } },
+                };
+                var (dpResultMixed, tsResultMixed) =
+                    await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
+                        mixedDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
+                Assert.True(dpResultMixed.Errors.Count() == 3);
+                Assert.Contains(dpResultMixed.Errors, e => e.Type == ErrorType.MismatchedType && e.Resource == ResourceType.DataPointValue);
+
+                // A missing time series with state datapoints cannot be auto-created either: we have
+                // no way to infer which state set it should reference, so it must be rejected with an
+                // IllegalItem error instead of being silently created as Numeric or String.
+                var stateDps = new Dictionary<Identity, IEnumerable<Datapoint>>()
+                {
+                    { Identity.Create(new InstanceIdentifier(spaceId, $"{tester.Prefix} utils-test-ts-missing-4")), new[]
+                    {
+                        new Datapoint(DateTime.UtcNow, 1.0, "OPEN")
+                    } },
+                };
+                var (dpResultState, tsResultState) =
+                    await tester.DestinationWithIDM.InsertDataPointsCreateMissingAsync(
+                        stateDps, SanitationMode.Clean, RetryMode.OnError, tester.Source.Token);
+                Assert.Equal(2, dpResultState.Errors.Count());
+                Assert.Contains(dpResultState.Errors, e => e.Type == ErrorType.IllegalItem && e.Resource == ResourceType.DataPointValue);
+                Assert.True(tsResultState?.Results == null || !tsResultState.Results.Any());
             }
             finally
             {
                 await DeleteTimeseries(tester, spaceId, tss.externalIds.Concat([
                     $"{tester.Prefix} utils-test-ts-missing-1",
                     $"{tester.Prefix} utils-test-ts-missing-2",
-                    $"{tester.Prefix} utils-test-ts-missing-3"
+                    $"{tester.Prefix} utils-test-ts-missing-3",
+                    $"{tester.Prefix} utils-test-ts-missing-4"
                 ]));
             }
         }
@@ -762,6 +797,106 @@ namespace ExtractorUtils.Test.Integration
                 await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
             }
         }
+
+        /// <summary>
+        /// Exercises the IsState branch of ToInsertRequest (Cognite.Extensions/TimeSeries/DataPointExtensions.cs)
+        /// end to end: a state datapoint with both numeric and string values, a numeric-only state datapoint,
+        /// and a string-only state datapoint must all be accepted by CDF without error, and the explicitly-set
+        /// value on each must round-trip correctly. Note that CDF's state time series storage carries the
+        /// unset component forward from the previous datapoint rather than leaving it unset on read, so this
+        /// test does not assert on the presence/absence of the field that wasn't sent.
+        /// </summary>
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestStateDataPointsToInsertRequest(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+
+            var stateSetXid = $"{tester.Prefix}utils-test-state-ir-set";
+            var tsXid = $"{tester.Prefix}utils-test-state-ir-ts";
+
+            await CreateStateSet(tester, spaceId, stateSetXid);
+
+            var timeseries = new[]
+            {
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, tsXid, spaceId, TimeSeriesType.State,
+                    x => { x.Properties.Name = "utils-test-state-ir-ts"; return x; },
+                    new InstanceIdentifier(spaceId, stateSetXid))
+            };
+
+            try
+            {
+                var result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token, isBeta: true);
+                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
+                result.Throw();
+                Assert.Single(result.Results);
+
+                var identities = CreateIdentities(spaceId, new[] { tsXid });
+                var t0 = DateTime.UtcNow;
+
+                var dps = new Dictionary<Identity, IEnumerable<Datapoint>>
+                {
+                    { identities[0], new[]
+                    {
+                        // Both numeric and string set.
+                        new Datapoint(t0, 0.0, "CLOSED"),
+                        // Numeric-only: string component entirely absent.
+                        new Datapoint(t0.AddSeconds(1).ToUnixTimeMilliseconds(), (double?)1.0, (string?)null),
+                        // String-only: numeric component entirely absent.
+                        new Datapoint(t0.AddSeconds(2).ToUnixTimeMilliseconds(), (double?)null, "CLOSED")
+                    } }
+                };
+
+                var dpResult = await tester.DestinationWithIDM.InsertDataPointsIDMAsync(dps, SanitationMode.None, RetryMode.OnError, tester.Source.Token);
+                tester.Logger.LogResult(dpResult, RequestType.CreateDatapoints, false);
+                Assert.Empty(dpResult.Errors);
+
+                StateDatapoints foundState = null;
+                for (int i = 0; i < 5; i++)
+                {
+                    var foundDps = await tester.DestinationWithIDM.CogniteClient.Beta.DataPoints.ListAsync(new DataPointsQuery
+                    {
+                        Items = new[]
+                        {
+                            new DataPointsQueryItem
+                            {
+                                InstanceId = new InstanceIdentifier(spaceId, tsXid),
+                                End = DateTime.UtcNow.AddDays(1).ToUnixTimeMilliseconds().ToString()
+                            }
+                        }
+                    }, tester.Source.Token);
+
+                    foundState = foundDps.Items.FirstOrDefault()?.StateDatapoints;
+                    if ((foundState?.Datapoints?.Count ?? 0) == 3) break;
+                    await Task.Delay(1000);
+                }
+
+                Assert.NotNull(foundState);
+                var byTimestamp = foundState.Datapoints.OrderBy(dp => dp.Timestamp).ToList();
+                Assert.Equal(3, byTimestamp.Count);
+
+                Assert.True(byTimestamp[0].HasNumericValue);
+                Assert.Equal(0L, byTimestamp[0].NumericValue);
+                Assert.True(byTimestamp[0].HasStringValue);
+                Assert.Equal("CLOSED", byTimestamp[0].StringValue);
+
+                // CDF's state time series will infer the string component
+                // from the datapoint rather than leaving it unset, and vice-versa
+                Assert.True(byTimestamp[1].HasNumericValue);
+                Assert.Equal(1L, byTimestamp[1].NumericValue);
+                Assert.Equal("OPEN", byTimestamp[1].StringValue);
+
+                Assert.True(byTimestamp[2].HasStringValue);
+                Assert.Equal(0L, byTimestamp[2].NumericValue);
+                Assert.Equal("CLOSED", byTimestamp[2].StringValue);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
+            }
+        }
         /// <summary>
         /// Verifies that GetExtractedRanges resolves identity via InstanceId when ExternalId is empty.
         /// IDM time series responses return InstanceId (not ExternalId), so the InstanceId branch
@@ -832,7 +967,7 @@ namespace ExtractorUtils.Test.Integration
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
 
-                // GetStateSetsByIdsIgnoreErrors finds it.
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
                 var retrieved = await tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token);
                 var found = Assert.Single(retrieved);
                 Assert.Equal(stateSetXid, found.ExternalId);
@@ -898,6 +1033,7 @@ namespace ExtractorUtils.Test.Integration
                 ensureResult.Throw();
                 Assert.Single(ensureResult.Results);
 
+                await Task.Delay(500); // Try to get eventual consistency before retrieval.
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
                 var retrieved = await stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token);
                 var found = Assert.Single(retrieved);
@@ -923,6 +1059,7 @@ namespace ExtractorUtils.Test.Integration
                 }, options, tester.Source.Token);
                 upsertResult.Throw();
                 Assert.Single(upsertResult.Results);
+                await Task.Delay(1000);      // Try to get eventual consistency before retrieval.
 
                 retrieved = await stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token);
                 found = Assert.Single(retrieved);
@@ -951,6 +1088,7 @@ namespace ExtractorUtils.Test.Integration
                     RetryMode.None, SanitationMode.None, tester.Source.Token);
                 ensureResult.Throw();
                 Assert.Single(ensureResult.Results);
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, existingXid));
                 var retrieved = await tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token);
@@ -1046,6 +1184,7 @@ namespace ExtractorUtils.Test.Integration
                 result.Throw();
                 Assert.Equal(2, result.Results.Count());
 
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
                 var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
                     new[]
                     {

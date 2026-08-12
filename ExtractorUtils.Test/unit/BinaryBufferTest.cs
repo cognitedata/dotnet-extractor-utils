@@ -31,6 +31,16 @@ namespace ExtractorUtils.Test.Unit
                 { Identity.Create("status"), new[] {
                     new Datapoint(t1, 123.123, StatusCode.FromCategory(StatusCodeCategory.GoodCascade)),
                     new Datapoint(t2, 321.321, StatusCode.FromCategory(StatusCodeCategory.BadNoCommunication))
+                } },
+                { Identity.Create("state"), new[] {
+                    new Datapoint(t1, 42.0, "OPEN"),
+                    new Datapoint(t2, 7.0, "CLOSED", StatusCode.FromCategory(StatusCodeCategory.BadNoCommunication)),
+                    // Numeric-only state datapoint (no string component).
+                    new Datapoint(t1.AddHours(1), 99.5, (string?)null),
+                    // String-only state datapoint (no numeric component), with a non-default status.
+                    new Datapoint(new DateTimeOffset(t2.AddHours(1)).ToUnixTimeMilliseconds(), (double?)null, "OFF", StatusCode.FromCategory(StatusCodeCategory.GoodCascade)),
+                    // Neither value set - only valid for a Bad-status state datapoint.
+                    new Datapoint(t3.AddHours(1), isString: false, isState: true)
                 } }
             };
             var dps2 = new Dictionary<Identity, IEnumerable<Datapoint>>() {
@@ -43,7 +53,9 @@ namespace ExtractorUtils.Test.Unit
             {
                 if (lhs.Timestamp != rhs.Timestamp) return false;
                 if (lhs.IsString != rhs.IsString) return false;
+                if (lhs.IsState != rhs.IsState) return false;
                 if (lhs.Status != rhs.Status) return false;
+                if (lhs.IsState) return lhs.StringValue == rhs.StringValue && lhs.NumericValue == rhs.NumericValue;
                 if (lhs.IsString) return lhs.StringValue == rhs.StringValue;
                 return lhs.NumericValue == rhs.NumericValue;
             }
@@ -59,16 +71,26 @@ namespace ExtractorUtils.Test.Unit
 
                 readDps = await CogniteUtils.ReadDatapointsAsync(stream, CancellationToken.None);
             }
-            Assert.Equal(4, readDps.Count);
+            Assert.Equal(5, readDps.Count);
             Assert.False(readDps.ContainsKey(Identity.Create("empty")));
             Assert.True(readDps.ContainsKey(Identity.Create("idæøå1")));
             Assert.True(readDps.ContainsKey(Identity.Create(123)));
             Assert.True(readDps.ContainsKey(Identity.Create(234)));
+            Assert.True(readDps.ContainsKey(Identity.Create("state")));
             var id1 = Identity.Create("idæøå1");
             Assert.Equal(4, readDps[id1].Count());
             foreach (var dp in readDps[id1])
             {
                 Assert.True(dps1[id1].Any(odp => dpEquals(odp, dp)) || dps2[id1].Any(odp => dpEquals(odp, dp)));
+            }
+
+            var stateId = Identity.Create("state");
+            Assert.Equal(5, readDps[stateId].Count());
+            foreach (var dp in readDps[stateId])
+            {
+                Assert.True(dp.IsState);
+                bool foundMatch = dps1[stateId].Any(odp => dpEquals(odp, dp));
+                Assert.True(foundMatch);
             }
         }
         [Fact]
