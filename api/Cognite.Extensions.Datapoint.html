@@ -113,13 +113,13 @@
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Boolean_System_Nullable_CogniteSdk_StatusCode__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.DateTime%2CSystem.Boolean%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Boolean_System_Nullable_CogniteSdk_StatusCode__System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.DateTime%2CSystem.Boolean%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L740">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L783">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint__ctor_" data-uid="Cognite.Extensions.Datapoint.#ctor*"></a>
-  <h4 id="Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Boolean_System_Nullable_CogniteSdk_StatusCode__" data-uid="Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Boolean,System.Nullable{CogniteSdk.StatusCode})">Datapoint(DateTime, bool, StatusCode?)</h4>
+  <h4 id="Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Boolean_System_Nullable_CogniteSdk_StatusCode__System_Boolean_" data-uid="Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Boolean,System.Nullable{CogniteSdk.StatusCode},System.Boolean)">Datapoint(DateTime, bool, StatusCode?, bool)</h4>
   <div class="markdown level1 summary"><p>Creates a data point without a value. You still need to specify whether
 the time series it is being written to is a string or numeric time series.
 Default quality is bad.</p>
@@ -127,7 +127,7 @@ Default quality is bad.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Datapoint(DateTime timestamp, bool isString, StatusCode? statusCode = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Datapoint(DateTime timestamp, bool isString, StatusCode? statusCode = null, bool isState = false)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -158,6 +158,12 @@ Default quality is bad.</p>
 This is only used if the beta datapoints endpoint is used.</p>
 </td>
       </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">isState</span></td>
+        <td><p>Whether the time series is a state time series.</p>
+</td>
+      </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
@@ -165,7 +171,7 @@ This is only used if the beta datapoints endpoint is used.</p>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Double_System_Nullable_CogniteSdk_StatusCode__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.DateTime%2CSystem.Double%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L716">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L746">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint__ctor_" data-uid="Cognite.Extensions.Datapoint.#ctor*"></a>
   <h4 id="Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Double_System_Nullable_CogniteSdk_StatusCode__" data-uid="Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Double,System.Nullable{CogniteSdk.StatusCode})">Datapoint(DateTime, double, StatusCode?)</h4>
@@ -209,10 +215,63 @@ This is only used if the beta datapoints endpoint is used.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Double_System_String_System_Nullable_CogniteSdk_StatusCode__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.DateTime%2CSystem.Double%2CSystem.String%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L758">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_Datapoint__ctor_" data-uid="Cognite.Extensions.Datapoint.#ctor*"></a>
+  <h4 id="Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Double_System_String_System_Nullable_CogniteSdk_StatusCode__" data-uid="Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Double,System.String,System.Nullable{CogniteSdk.StatusCode})">Datapoint(DateTime, double, string, StatusCode?)</h4>
+  <div class="markdown level1 summary"><p>Creates a state data point with a string and numeric value. This is used for the beta state timeseries endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Datapoint(DateTime timestamp, double numericValue, string str, StatusCode? statusCode = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetime">DateTime</a></td>
+        <td><span class="parametername">timestamp</span></td>
+        <td><p>Timestamp</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td><span class="parametername">numericValue</span></td>
+        <td><p>double value</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">str</span></td>
+        <td><p>string value</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">StatusCode</span>?</td>
+        <td><span class="parametername">statusCode</span></td>
+        <td><p>BETA: set the data point status code.
+This is only used if the beta datapoints endpoint is used.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_DateTime_System_String_System_Nullable_CogniteSdk_StatusCode__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.DateTime%2CSystem.String%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L727">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L769">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint__ctor_" data-uid="Cognite.Extensions.Datapoint.#ctor*"></a>
   <h4 id="Cognite_Extensions_Datapoint__ctor_System_DateTime_System_String_System_Nullable_CogniteSdk_StatusCode__" data-uid="Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.String,System.Nullable{CogniteSdk.StatusCode})">Datapoint(DateTime, string?, StatusCode?)</h4>
@@ -256,20 +315,20 @@ This is only used if the beta datapoints endpoint is used.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_Int64_System_Boolean_System_Nullable_CogniteSdk_StatusCode__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.Int64%2CSystem.Boolean%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_Int64_System_Boolean_System_Nullable_CogniteSdk_StatusCode__System_Boolean_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.Int64%2CSystem.Boolean%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L783">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L844">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint__ctor_" data-uid="Cognite.Extensions.Datapoint.#ctor*"></a>
-  <h4 id="Cognite_Extensions_Datapoint__ctor_System_Int64_System_Boolean_System_Nullable_CogniteSdk_StatusCode__" data-uid="Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Boolean,System.Nullable{CogniteSdk.StatusCode})">Datapoint(long, bool, StatusCode?)</h4>
+  <h4 id="Cognite_Extensions_Datapoint__ctor_System_Int64_System_Boolean_System_Nullable_CogniteSdk_StatusCode__System_Boolean_" data-uid="Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Boolean,System.Nullable{CogniteSdk.StatusCode},System.Boolean)">Datapoint(long, bool, StatusCode?, bool)</h4>
   <div class="markdown level1 summary"><p>Creates a data point without a value. You still need to specify whether
 the time series it is being written to is a string or numeric time series.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Datapoint(long timestamp, bool isString, StatusCode? statusCode = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Datapoint(long timestamp, bool isString, StatusCode? statusCode = null, bool isState = false)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-condensed">
@@ -300,6 +359,12 @@ the time series it is being written to is a string or numeric time series.</p>
 This is only used if the beta datapoints endpoint is used.</p>
 </td>
       </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">isState</span></td>
+        <td><p>Whether the time series is a state time series.</p>
+</td>
+      </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
@@ -307,7 +372,7 @@ This is only used if the beta datapoints endpoint is used.</p>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_Int64_System_Double_System_Nullable_CogniteSdk_StatusCode__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.Int64%2CSystem.Double%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L750">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L793">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint__ctor_" data-uid="Cognite.Extensions.Datapoint.#ctor*"></a>
   <h4 id="Cognite_Extensions_Datapoint__ctor_System_Int64_System_Double_System_Nullable_CogniteSdk_StatusCode__" data-uid="Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Double,System.Nullable{CogniteSdk.StatusCode})">Datapoint(long, double, StatusCode?)</h4>
@@ -351,10 +416,63 @@ This is only used if the beta datapoints endpoint is used.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_Int64_System_Nullable_System_Double__System_String_System_Nullable_CogniteSdk_StatusCode__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.Int64%2CSystem.Nullable%7BSystem.Double%7D%2CSystem.String%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L810">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_Datapoint__ctor_" data-uid="Cognite.Extensions.Datapoint.#ctor*"></a>
+  <h4 id="Cognite_Extensions_Datapoint__ctor_System_Int64_System_Nullable_System_Double__System_String_System_Nullable_CogniteSdk_StatusCode__" data-uid="Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Nullable{System.Double},System.String,System.Nullable{CogniteSdk.StatusCode})">Datapoint(long, double?, string?, StatusCode?)</h4>
+  <div class="markdown level1 summary"><p>Creates a state data point with a string and/or numeric value. This is used for the beta state timeseries endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Datapoint(long timestamp, double? numericValue, string? str, StatusCode? statusCode = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td><span class="parametername">timestamp</span></td>
+        <td><p>Timestamp</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>?</td>
+        <td><span class="parametername">numericValue</span></td>
+        <td><p>double value</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
+        <td><span class="parametername">str</span></td>
+        <td><p>string value</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">StatusCode</span>?</td>
+        <td><span class="parametername">statusCode</span></td>
+        <td><p>BETA: set the data point status code.
+This is only used if the beta datapoints endpoint is used.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint__ctor_System_Int64_System_String_System_Nullable_CogniteSdk_StatusCode__.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.%23ctor(System.Int64%2CSystem.String%2CSystem.Nullable%7BCogniteSdk.StatusCode%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L766">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L826">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint__ctor_" data-uid="Cognite.Extensions.Datapoint.#ctor*"></a>
   <h4 id="Cognite_Extensions_Datapoint__ctor_System_Int64_System_String_System_Nullable_CogniteSdk_StatusCode__" data-uid="Cognite.Extensions.Datapoint.#ctor(System.Int64,System.String,System.Nullable{CogniteSdk.StatusCode})">Datapoint(long, string?, StatusCode?)</h4>
@@ -400,10 +518,42 @@ This is only used if the beta datapoints endpoint is used.</p>
 </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint_IsState.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.IsState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L732">View Source</a>
+  </span>
+  <a id="Cognite_Extensions_Datapoint_IsState_" data-uid="Cognite.Extensions.Datapoint.IsState*"></a>
+  <h4 id="Cognite_Extensions_Datapoint_IsState" data-uid="Cognite.Extensions.Datapoint.IsState">IsState</h4>
+  <div class="markdown level1 summary"><p>True if datapoint is a state datapoint, carrying both a numeric and a string value.
+This is used for the beta state timeseries endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsState { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint_IsString.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.IsString%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L702">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L726">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint_IsString_" data-uid="Cognite.Extensions.Datapoint.IsString*"></a>
   <h4 id="Cognite_Extensions_Datapoint_IsString" data-uid="Cognite.Extensions.Datapoint.IsString">IsString</h4>
@@ -434,7 +584,7 @@ This is only used if the beta datapoints endpoint is used.</p>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint_NumericValue.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.NumericValue%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L697">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L721">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint_NumericValue_" data-uid="Cognite.Extensions.Datapoint.NumericValue*"></a>
   <h4 id="Cognite_Extensions_Datapoint_NumericValue" data-uid="Cognite.Extensions.Datapoint.NumericValue">NumericValue</h4>
@@ -465,7 +615,7 @@ This is only used if the beta datapoints endpoint is used.</p>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint_Status.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.Status%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L707">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L737">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint_Status_" data-uid="Cognite.Extensions.Datapoint.Status*"></a>
   <h4 id="Cognite_Extensions_Datapoint_Status" data-uid="Cognite.Extensions.Datapoint.Status">Status</h4>
@@ -496,7 +646,7 @@ This is only used if the beta datapoints endpoint is used.</p>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint_StringValue.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.StringValue%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L692">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L716">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint_StringValue_" data-uid="Cognite.Extensions.Datapoint.StringValue*"></a>
   <h4 id="Cognite_Extensions_Datapoint_StringValue" data-uid="Cognite.Extensions.Datapoint.StringValue">StringValue</h4>
@@ -527,7 +677,7 @@ This is only used if the beta datapoints endpoint is used.</p>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint_Timestamp.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.Timestamp%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L687">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L711">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint_Timestamp_" data-uid="Cognite.Extensions.Datapoint.Timestamp*"></a>
   <h4 id="Cognite_Extensions_Datapoint_Timestamp" data-uid="Cognite.Extensions.Datapoint.Timestamp">Timestamp</h4>
@@ -560,7 +710,7 @@ This is only used if the beta datapoints endpoint is used.</p>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint_FromStream_System_IO_Stream_.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.FromStream(System.IO.Stream)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L829">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L931">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint_FromStream_" data-uid="Cognite.Extensions.Datapoint.FromStream*"></a>
   <h4 id="Cognite_Extensions_Datapoint_FromStream_System_IO_Stream_" data-uid="Cognite.Extensions.Datapoint.FromStream(System.IO.Stream)">FromStream(Stream)</h4>
@@ -609,12 +759,15 @@ This is only used if the beta datapoints endpoint is used.</p>
     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint_ToStorableBytes.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint.ToStorableBytes%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L796">View Source</a>
+    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L861">View Source</a>
   </span>
   <a id="Cognite_Extensions_Datapoint_ToStorableBytes_" data-uid="Cognite.Extensions.Datapoint.ToStorableBytes*"></a>
   <h4 id="Cognite_Extensions_Datapoint_ToStorableBytes" data-uid="Cognite.Extensions.Datapoint.ToStorableBytes">ToStorableBytes()</h4>
   <div class="markdown level1 summary"><p>Convert datapoint into an array of bytes on the form
-[long timestamp][boolean isString]{Either [ushort length][string value] or [double value]}</p>
+[long timestamp][byte kind (0 = numeric, 1 = string, 2 = state)][ulong statusCode]
+{[double value] or [ushort length][string value] or [double value][ushort length][string value]}.
+The kind byte occupies the same slot and size as the old boolean isString flag, so
+existing numeric (0)/string (1) records on disk remain readable.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -658,7 +811,7 @@ This is only used if the beta datapoints endpoint is used.</p>
                     <a href="https://github.com/cognitedata/dotnet-extractor-utils/new/master/apiSpec/new?filename=Cognite_Extensions_Datapoint.md&amp;value=---%0Auid%3A%20Cognite.Extensions.Datapoint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
                   </li>
                   <li>
-                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L677" class="contribution-link">View Source</a>
+                    <a href="https://github.com/cognitedata/dotnet-extractor-utils/blob/master/Cognite.Extensions/CogniteUtils.cs/#L694" class="contribution-link">View Source</a>
                   </li>
                 </ul>
               </div>

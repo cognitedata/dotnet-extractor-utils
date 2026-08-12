@@ -1348,6 +1348,24 @@ references:
   commentId: F:Cognite.Extensions.CogniteUtils.SequenceStringLengthMax
   fullName: Cognite.Extensions.CogniteUtils.SequenceStringLengthMax
   nameWithType: CogniteUtils.SequenceStringLengthMax
+- uid: Cognite.Extensions.CogniteUtils.StateSetMax
+  name: StateSetMax
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StateSetMax
+  commentId: F:Cognite.Extensions.CogniteUtils.StateSetMax
+  fullName: Cognite.Extensions.CogniteUtils.StateSetMax
+  nameWithType: CogniteUtils.StateSetMax
+- uid: Cognite.Extensions.CogniteUtils.StateSetMin
+  name: StateSetMin
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StateSetMin
+  commentId: F:Cognite.Extensions.CogniteUtils.StateSetMin
+  fullName: Cognite.Extensions.CogniteUtils.StateSetMin
+  nameWithType: CogniteUtils.StateSetMin
+- uid: Cognite.Extensions.CogniteUtils.StateSetSizeMax
+  name: StateSetSizeMax
+  href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StateSetSizeMax
+  commentId: F:Cognite.Extensions.CogniteUtils.StateSetSizeMax
+  fullName: Cognite.Extensions.CogniteUtils.StateSetSizeMax
+  nameWithType: CogniteUtils.StateSetSizeMax
 - uid: Cognite.Extensions.CogniteUtils.StringFromStream(System.IO.Stream,System.Nullable{System.UInt16})
   name: StringFromStream(Stream, ushort?)
   href: api/Cognite.Extensions.CogniteUtils.html#Cognite_Extensions_CogniteUtils_StringFromStream_System_IO_Stream_System_Nullable_System_UInt16__
@@ -3462,15 +3480,15 @@ references:
   commentId: T:Cognite.Extensions.Datapoint
   fullName: Cognite.Extensions.Datapoint
   nameWithType: Datapoint
-- uid: Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Boolean,System.Nullable{CogniteSdk.StatusCode})
-  name: Datapoint(DateTime, bool, StatusCode?)
-  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Boolean_System_Nullable_CogniteSdk_StatusCode__
-  commentId: M:Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Boolean,System.Nullable{CogniteSdk.StatusCode})
-  name.vb: New(Date, Boolean, StatusCode?)
-  fullName: Cognite.Extensions.Datapoint.Datapoint(System.DateTime, bool, CogniteSdk.StatusCode?)
-  fullName.vb: Cognite.Extensions.Datapoint.New(Date, Boolean, CogniteSdk.StatusCode?)
-  nameWithType: Datapoint.Datapoint(DateTime, bool, StatusCode?)
-  nameWithType.vb: Datapoint.New(Date, Boolean, StatusCode?)
+- uid: Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Boolean,System.Nullable{CogniteSdk.StatusCode},System.Boolean)
+  name: Datapoint(DateTime, bool, StatusCode?, bool)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Boolean_System_Nullable_CogniteSdk_StatusCode__System_Boolean_
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Boolean,System.Nullable{CogniteSdk.StatusCode},System.Boolean)
+  name.vb: New(Date, Boolean, StatusCode?, Boolean)
+  fullName: Cognite.Extensions.Datapoint.Datapoint(System.DateTime, bool, CogniteSdk.StatusCode?, bool)
+  fullName.vb: Cognite.Extensions.Datapoint.New(Date, Boolean, CogniteSdk.StatusCode?, Boolean)
+  nameWithType: Datapoint.Datapoint(DateTime, bool, StatusCode?, bool)
+  nameWithType.vb: Datapoint.New(Date, Boolean, StatusCode?, Boolean)
 - uid: Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Double,System.Nullable{CogniteSdk.StatusCode})
   name: Datapoint(DateTime, double, StatusCode?)
   href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Double_System_Nullable_CogniteSdk_StatusCode__
@@ -3480,6 +3498,15 @@ references:
   fullName.vb: Cognite.Extensions.Datapoint.New(Date, Double, CogniteSdk.StatusCode?)
   nameWithType: Datapoint.Datapoint(DateTime, double, StatusCode?)
   nameWithType.vb: Datapoint.New(Date, Double, StatusCode?)
+- uid: Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Double,System.String,System.Nullable{CogniteSdk.StatusCode})
+  name: Datapoint(DateTime, double, string, StatusCode?)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_DateTime_System_Double_System_String_System_Nullable_CogniteSdk_StatusCode__
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.Double,System.String,System.Nullable{CogniteSdk.StatusCode})
+  name.vb: New(Date, Double, String, StatusCode?)
+  fullName: Cognite.Extensions.Datapoint.Datapoint(System.DateTime, double, string, CogniteSdk.StatusCode?)
+  fullName.vb: Cognite.Extensions.Datapoint.New(Date, Double, String, CogniteSdk.StatusCode?)
+  nameWithType: Datapoint.Datapoint(DateTime, double, string, StatusCode?)
+  nameWithType.vb: Datapoint.New(Date, Double, String, StatusCode?)
 - uid: Cognite.Extensions.Datapoint.#ctor(System.DateTime,System.String,System.Nullable{CogniteSdk.StatusCode})
   name: Datapoint(DateTime, string?, StatusCode?)
   href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_DateTime_System_String_System_Nullable_CogniteSdk_StatusCode__
@@ -3489,15 +3516,15 @@ references:
   fullName.vb: Cognite.Extensions.Datapoint.New(Date, String, CogniteSdk.StatusCode?)
   nameWithType: Datapoint.Datapoint(DateTime, string?, StatusCode?)
   nameWithType.vb: Datapoint.New(Date, String, StatusCode?)
-- uid: Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Boolean,System.Nullable{CogniteSdk.StatusCode})
-  name: Datapoint(long, bool, StatusCode?)
-  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_Int64_System_Boolean_System_Nullable_CogniteSdk_StatusCode__
-  commentId: M:Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Boolean,System.Nullable{CogniteSdk.StatusCode})
-  name.vb: New(Long, Boolean, StatusCode?)
-  fullName: Cognite.Extensions.Datapoint.Datapoint(long, bool, CogniteSdk.StatusCode?)
-  fullName.vb: Cognite.Extensions.Datapoint.New(Long, Boolean, CogniteSdk.StatusCode?)
-  nameWithType: Datapoint.Datapoint(long, bool, StatusCode?)
-  nameWithType.vb: Datapoint.New(Long, Boolean, StatusCode?)
+- uid: Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Boolean,System.Nullable{CogniteSdk.StatusCode},System.Boolean)
+  name: Datapoint(long, bool, StatusCode?, bool)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_Int64_System_Boolean_System_Nullable_CogniteSdk_StatusCode__System_Boolean_
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Boolean,System.Nullable{CogniteSdk.StatusCode},System.Boolean)
+  name.vb: New(Long, Boolean, StatusCode?, Boolean)
+  fullName: Cognite.Extensions.Datapoint.Datapoint(long, bool, CogniteSdk.StatusCode?, bool)
+  fullName.vb: Cognite.Extensions.Datapoint.New(Long, Boolean, CogniteSdk.StatusCode?, Boolean)
+  nameWithType: Datapoint.Datapoint(long, bool, StatusCode?, bool)
+  nameWithType.vb: Datapoint.New(Long, Boolean, StatusCode?, Boolean)
 - uid: Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Double,System.Nullable{CogniteSdk.StatusCode})
   name: Datapoint(long, double, StatusCode?)
   href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_Int64_System_Double_System_Nullable_CogniteSdk_StatusCode__
@@ -3507,6 +3534,15 @@ references:
   fullName.vb: Cognite.Extensions.Datapoint.New(Long, Double, CogniteSdk.StatusCode?)
   nameWithType: Datapoint.Datapoint(long, double, StatusCode?)
   nameWithType.vb: Datapoint.New(Long, Double, StatusCode?)
+- uid: Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Nullable{System.Double},System.String,System.Nullable{CogniteSdk.StatusCode})
+  name: Datapoint(long, double?, string?, StatusCode?)
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_Int64_System_Nullable_System_Double__System_String_System_Nullable_CogniteSdk_StatusCode__
+  commentId: M:Cognite.Extensions.Datapoint.#ctor(System.Int64,System.Nullable{System.Double},System.String,System.Nullable{CogniteSdk.StatusCode})
+  name.vb: New(Long, Double?, String, StatusCode?)
+  fullName: Cognite.Extensions.Datapoint.Datapoint(long, double?, string?, CogniteSdk.StatusCode?)
+  fullName.vb: Cognite.Extensions.Datapoint.New(Long, Double?, String, CogniteSdk.StatusCode?)
+  nameWithType: Datapoint.Datapoint(long, double?, string?, StatusCode?)
+  nameWithType.vb: Datapoint.New(Long, Double?, String, StatusCode?)
 - uid: Cognite.Extensions.Datapoint.#ctor(System.Int64,System.String,System.Nullable{CogniteSdk.StatusCode})
   name: Datapoint(long, string?, StatusCode?)
   href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint__ctor_System_Int64_System_String_System_Nullable_CogniteSdk_StatusCode__
@@ -3539,6 +3575,19 @@ references:
   isSpec: "True"
   fullName: Cognite.Extensions.Datapoint.FromStream
   nameWithType: Datapoint.FromStream
+- uid: Cognite.Extensions.Datapoint.IsState
+  name: IsState
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_IsState
+  commentId: P:Cognite.Extensions.Datapoint.IsState
+  fullName: Cognite.Extensions.Datapoint.IsState
+  nameWithType: Datapoint.IsState
+- uid: Cognite.Extensions.Datapoint.IsState*
+  name: IsState
+  href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_IsState_
+  commentId: Overload:Cognite.Extensions.Datapoint.IsState
+  isSpec: "True"
+  fullName: Cognite.Extensions.Datapoint.IsState
+  nameWithType: Datapoint.IsState
 - uid: Cognite.Extensions.Datapoint.IsString
   name: IsString
   href: api/Cognite.Extensions.Datapoint.html#Cognite_Extensions_Datapoint_IsString
