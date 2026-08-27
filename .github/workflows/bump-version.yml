@@ -65,7 +65,7 @@ jobs:
       run: docfx docfx_project/docfx.json
 
     - name: Deploy documentation to github pages
-      uses: JamesIves/github-pages-deploy-action@releases/v3
+      uses: JamesIves/github-pages-deploy-action@132898c54c57c7cc6b80eb3a89968de8fc283505 # releases/v3
       if: ${{ steps.get-branch.outputs.branch == 'master' && steps.confirm-release.outputs.test == 0 }}
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,7 +99,7 @@ jobs:
         CLIENT_CERTIFICATE: ${{ secrets.CODE_SIGNING_CLIENT_CERT }}
         CLIENT_CERTIFICATE_PASSWORD: ${{ secrets.CODE_SIGNING_CLIENT_CERT_PASSWORD }}
         KEYPAIR_ALIAS: ${{ secrets.CODE_SIGNING_KEYPAIR_ALIAS }}
-      uses: cognitedata/code-sign-action/@v5
+      uses: cognitedata/code-sign-action/@a29458b69495966f90920f07aeed5acfe03e1f45 # v5
       with:
         path-to-binary: 'nuget-packages/'
 
@@ -108,7 +108,7 @@ jobs:
       continue-on-error: false
 
     - name: Create Release
-      uses: actions/create-release@master
+      uses: actions/create-release@89e8dc236279a907f495cdc4ebff2056b7036b3d # master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
