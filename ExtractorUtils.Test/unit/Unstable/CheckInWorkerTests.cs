@@ -36,6 +36,10 @@ namespace ExtractorUtils.Test.Unit.Unstable
         private int? _lastConfigRevision;
         private List<dynamic> _pendingActionsToReturn = new();
         private int _failCheckInsRemaining;
+        // Fires exactly once, immediately before a simulated checkin failure -- lets a test
+        // queue a new update "while the failing send is still in flight", deterministically,
+        // without needing real thread concurrency (everything here is single-threaded async).
+        private Action _onCheckInFailureAboutToHappen;
 
         private readonly ITestOutputHelper _output;
         private int _checkInCount;
@@ -336,6 +340,59 @@ namespace ExtractorUtils.Test.Unit.Unstable
         }
 
         [Fact]
+        public async Task TestFailedActionUpdateIsRequeuedBeforeNewerOnes()
+        {
+            // ActionUpdate has no timestamp field, so unlike errors/task updates (re-sorted by
+            // time on every send regardless of queue order), action updates are always sent in
+            // raw queue order. A stale update that failed to send must be retried *before* any
+            // update queued after the failed attempt -- for the same action externalId, sending
+            // them out of order could reverse their effective final state at the server. Matches
+            // python-extractor-utils' checkin_worker.py, which prepends requeued action updates
+            // for the same reason.
+            //
+            // Note: this only exercises the bug if the *newer* update is queued while the
+            // failing send is still in flight, i.e. after "running" has already been drained out
+            // of the worker's internal queue into the in-flight request, but before the failure
+            // is observed and "running" is requeued. If "succeeded" were queued strictly after
+            // Flush() had already returned, the internal queue would be empty at requeue time and
+            // insert-at-front vs. append-at-end would be indistinguishable -- this is exactly the
+            // gap in an earlier version of this test that let it pass against the bugged code.
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.running,
+                ResultMessage = "50% complete",
+            });
+
+            _failCheckInsRemaining = 1;
+            _onCheckInFailureAboutToHappen = () => checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = "Done",
+            });
+            await checkIn.Flush(source.Token);
+            Assert.Empty(actionUpdates);
+
+            await checkIn.Flush(source.Token);
+
+            // The stale "running" update must be sent first, not after "succeeded".
+            Assert.Equal(2, actionUpdates.Count);
+            Assert.Equal("running", (string)actionUpdates[0].status);
+            Assert.Equal("succeeded", (string)actionUpdates[1].status);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
         public async Task TestActionDispatcherInvokedWithPendingActions()
         {
             var (provider, checkIn) = GetCheckInWorker();
@@ -479,6 +536,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
                 if (_failCheckInsRemaining > 0)
                 {
                     _failCheckInsRemaining--;
+                    var callback = _onCheckInFailureAboutToHappen;
+                    _onCheckInFailureAboutToHappen = null;
+                    callback?.Invoke();
                     throw new HttpRequestException("Simulated transient failure");
                 }
 
