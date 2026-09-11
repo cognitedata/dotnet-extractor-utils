@@ -502,6 +502,170 @@ namespace ExtractorUtils.Test.unit.Unstable
         }
 
         [Fact]
+        public async Task TestTryCancelTaskReturnsFalseWhenIdle()
+        {
+            // EDG-875: TryCancelTask must be able to tell "there was nothing to cancel" apart
+            // from "successfully cancelled a running task" -- CancelTask's void return cannot
+            // express this, which is exactly the ambiguity a Stop action needs resolved to
+            // report `failed` ("is not currently running") instead of a false success.
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            // A task with a schedule far in the future is registered, but not running yet.
+            var task = new ScheduledTask("Task1", (_, tok) => Task.FromResult<TaskUpdatePayload>(null), TimeSpan.FromMinutes(10));
+            sched.AddScheduledTask(task, false);
+
+            Assert.False(sched.TryCancelTask("Task1"));
+            // A true no-op: no error, no task-end event, nothing changed.
+            Assert.Empty(sink.Errors);
+            Assert.Empty(sink.TaskEnd);
+
+            source.Cancel();
+            await running;
+        }
+
+        [Fact]
+        public async Task TestTryCancelTaskReturnsTrueWhenRunning()
+        {
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            using var startEvt = new ManualResetEvent(false);
+            using var evt = new ManualResetEvent(false);
+            var task = new RunQuickTask("Task1", async (_, tok) =>
+            {
+                startEvt.Set();
+                await CommonUtils.WaitAsync(evt, TimeSpan.FromSeconds(5), tok);
+                return null;
+            });
+            sched.AddScheduledTask(task, true);
+            startEvt.WaitOne();
+
+            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(3));
+            Assert.True(sched.TryCancelTask("Task1", "Stop action"));
+            await Assert.ThrowsAnyAsync<Exception>(async () => await waitTask);
+
+            source.Cancel();
+            await running;
+        }
+
+        [Fact]
+        public void TestTryCancelTaskThrowsForUnknownTask()
+        {
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            Assert.Throws<InvalidOperationException>(() => sched.TryCancelTask("DoesNotExist"));
+        }
+
+        [Fact]
+        public async Task TestTryScheduleTaskNowReturnsFalseWhenAlreadyRunning()
+        {
+            // EDG-875: mirrors TestTryCancelTaskReturnsFalseWhenIdle for the Start-action case --
+            // a Start handler needs to distinguish "queued to run" from "already running" to
+            // report `failed` ("already running") instead of a false success.
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            using var startEvt = new ManualResetEvent(false);
+            using var evt = new ManualResetEvent(false);
+            var task = new RunQuickTask("Task1", async (_, tok) =>
+            {
+                startEvt.Set();
+                await CommonUtils.WaitAsync(evt, Timeout.InfiniteTimeSpan, tok);
+                return null;
+            });
+            sched.AddScheduledTask(task, true);
+            startEvt.WaitOne();
+
+            Assert.False(sched.TryScheduleTaskNow("Task1"));
+
+            evt.Set();
+            await sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
+
+            source.Cancel();
+            await running;
+        }
+
+        [Fact]
+        public async Task TestTryScheduleTaskNowReturnsTrueAndRunsWhenIdle()
+        {
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            var ran = false;
+            var task = new ScheduledTask("Task1", (_, tok) =>
+            {
+                ran = true;
+                return Task.FromResult<TaskUpdatePayload>(null);
+            }, TimeSpan.FromMinutes(10));
+            // Not run immediately -- only the explicit TryScheduleTaskNow call below should start it.
+            sched.AddScheduledTask(task, false);
+
+            Assert.True(sched.TryScheduleTaskNow("Task1"));
+            await sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
+            Assert.True(ran);
+
+            source.Cancel();
+            await running;
+        }
+
+        [Fact]
+        public void TestTryScheduleTaskNowThrowsForUnknownTask()
+        {
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            Assert.Throws<InvalidOperationException>(() => sched.TryScheduleTaskNow("DoesNotExist"));
+        }
+
+        [Fact]
+        public async Task TestCanTaskRunNowReflectsTaskState()
+        {
+            // EDG-875: a task can be successfully queued (TryScheduleTaskNow returns true) while
+            // still being unable to actually start, for an unbounded period -- e.g. a task that
+            // requires a live external connection. CanTaskRunNow must be able to observe this
+            // independently, so a Start handler can fail fast instead of hanging.
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            var canRun = false;
+            var task = new RunQuickTask("Task1", (_, tok) => Task.FromResult<TaskUpdatePayload>(null))
+            {
+                CanRun = () => canRun
+            };
+            sched.AddScheduledTask(task, false);
+
+            Assert.False(sched.CanTaskRunNow("Task1"));
+            canRun = true;
+            Assert.True(sched.CanTaskRunNow("Task1"));
+
+            source.Cancel();
+            await running;
+        }
+
+        [Fact]
+        public void TestCanTaskRunNowThrowsForUnknownTask()
+        {
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            Assert.Throws<InvalidOperationException>(() => sched.CanTaskRunNow("DoesNotExist"));
+        }
+
+        [Fact]
         public async Task TestFutureScheduledTasks()
         {
             var sink = new DummySink();
