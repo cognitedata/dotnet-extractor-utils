@@ -21,6 +21,8 @@ namespace ExtractorUtils.Test.unit.Unstable
         public List<(string, DateTime)> TaskEnd { get; } = new();
 
         public List<StartupRequest> StartupRequests { get; } = new();
+        public List<ActionUpdate> ActionUpdates { get; } = new();
+        public Func<IReadOnlyList<IntegrationAction>, Task> ActionDispatcher { get; private set; }
 
         public Task Flush(CancellationToken token)
         {
@@ -53,6 +55,16 @@ namespace ExtractorUtils.Test.unit.Unstable
         {
             StartupRequests.Add(startupPayload);
             while (!token.IsCancellationRequested) await Task.Delay(100000, token);
+        }
+
+        public void QueueActionUpdate(ActionUpdate update)
+        {
+            ActionUpdates.Add(update);
+        }
+
+        public void SetActionDispatcher(Func<IReadOnlyList<IntegrationAction>, Task> dispatcher)
+        {
+            ActionDispatcher = dispatcher;
         }
     }
 
