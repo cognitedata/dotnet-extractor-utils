@@ -204,7 +204,16 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     if (!_errors.ContainsKey(err.ExternalId)) _errors.Add(err.ExternalId, err);
                 }
                 _taskUpdates.AddRange(tasks);
-                _actionUpdates.AddRange(actionUpdates);
+                // Unlike errors/task updates (which are re-sorted by timestamp on every send
+                // regardless of list order, making append-order irrelevant), ActionUpdate has no
+                // timestamp and is always sent in raw list order. Requeued action updates must
+                // therefore go back to the *front* of the queue, not the end -- otherwise a
+                // stale update that failed to send (e.g. a `running` progress update) could end
+                // up ordered after a newer update for the same action queued in the meantime
+                // (e.g. its own terminal `succeeded`), reversing their effective order on the
+                // next send. Matches python-extractor-utils' checkin_worker.py, which does the
+                // same prepend for the same reason.
+                _actionUpdates.InsertRange(0, actionUpdates);
             }
         }
 
