@@ -313,6 +313,206 @@ namespace Cognite.Extractor.Utils.Unstable
         }
 
         /// <summary>
+        /// Entry point registered with <see cref="IIntegrationSink.SetActionDispatcher"/>: routes
+        /// each pending action to its handler on its own independent <see cref="Task.Run(Action)"/>,
+        /// and returns promptly without waiting for any of them to finish. Overlapping dispatch,
+        /// both across actions and across check-in cycles, is intentional -- action externalIds
+        /// are server-assigned and the check-in interval is far larger than typical handling
+        /// time, so there is no queue to preserve ordering in here.
+        ///
+        /// Only routes to the auto-generated Start/Stop actions for actionable tasks. Custom
+        /// action dispatch is not implemented yet (see the dispatch engine's follow-up ticket) --
+        /// until then, a triggered custom action is indistinguishable from an unrecognized name
+        /// and reports `failed` accordingly, even though it is a registered action.
+        /// </summary>
+        /// <param name="actions">Actions pending execution, from a check-in or startup response.</param>
+        private Task DispatchActions(IReadOnlyList<IntegrationAction> actions)
+        {
+            if (actions == null) throw new ArgumentNullException(nameof(actions));
+            foreach (var action in actions)
+            {
+                DispatchAction(action);
+            }
+            return Task.CompletedTask;
+        }
+
+        private void DispatchAction(IntegrationAction action)
+        {
+            if (action.ActionName != null && action.ActionName.StartsWith(ActionNaming.StartPrefix, StringComparison.Ordinal))
+            {
+                var taskName = action.ActionName.Substring(ActionNaming.StartPrefix.Length);
+                if (action.Status == ActionStatus.cancel_pending)
+                {
+                    // A Start action already in flight is backed by a real, cancellable task run
+                    // -- resolve a cancel request the same way a Stop action would, via
+                    // TryCancelTask, rather than needing any action-specific cancellation
+                    // machinery. The original dispatched Start action's own WaitForNextEndOfTask
+                    // call observes the resulting task cancellation and reports the terminal
+                    // update itself; nothing needs to be queued from here. If there is nothing
+                    // currently running under this task name (e.g. it already finished, or this
+                    // process instance never dispatched it), TryCancelTask is a silent, safe
+                    // no-op -- including in the accepted, extremely narrow edge case where this
+                    // arrives in the brief window after RunStartTaskAction's TryScheduleTaskNow
+                    // call queued the task but before the scheduler's own loop has actually set
+                    // ActiveTask for it (TryCancelTask can only cancel an *active* run). That
+                    // window is bounded by thread-pool dispatch latency (microseconds), which is
+                    // irrelevant next to the checkin interval a real cancel_pending redelivery
+                    // would have to cross (seconds), so this is not considered worth adding
+                    // extra synchronization for.
+                    TaskScheduler.TryCancelTask(taskName, "Action cancelled");
+                    return;
+                }
+                Task.Run(() => RunStartTaskAction(action.ExternalId, taskName));
+                return;
+            }
+            if (action.ActionName != null && action.ActionName.StartsWith(ActionNaming.StopPrefix, StringComparison.Ordinal))
+            {
+                var taskName = action.ActionName.Substring(ActionNaming.StopPrefix.Length);
+                Task.Run(() => RunStopTaskAction(action.ExternalId, taskName));
+                return;
+            }
+
+            QueueFailedAction(action.ExternalId, $"No action named '{action.ActionName}' registered");
+        }
+
+        private async Task RunStartTaskAction(string externalId, string taskName)
+        {
+            try
+            {
+                Task waitTask;
+                try
+                {
+                    // Register interest in this task's *next* completion before triggering it
+                    // below, not after -- otherwise a fast-completing task could run to
+                    // completion and flush its waiters before this handler starts listening,
+                    // which -- combined with the deliberate no-timeout wait further down --
+                    // would hang this handler forever. This mirrors the "register the wait, then
+                    // trigger, then await" convention this codebase's own scheduler tests already
+                    // use (see e.g. TaskSchedulerTest.TestScheduler), and matches
+                    // WaitForNextEndOfTask's documented behavior of being safe to call before the
+                    // task has (re)started, not just while it's already running.
+                    waitTask = TaskScheduler.WaitForNextEndOfTask(taskName, Timeout.InfiniteTimeSpan);
+                }
+                catch (ArgumentException)
+                {
+                    // No task with this name is currently registered -- can happen if the action
+                    // was advertised for a task that existed at a previous startup but not this
+                    // one.
+                    QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
+                    return;
+                }
+
+                if (!TaskScheduler.TryScheduleTaskNow(taskName))
+                {
+                    // waitTask above is left un-awaited here -- it will still eventually resolve
+                    // when whatever run is *actually* in progress finishes, just with nothing
+                    // listening; that's harmless (no unobserved-exception crash risk on any
+                    // target framework this library multi-targets), and simpler than trying to
+                    // unregister it.
+                    QueueFailedAction(externalId, $"Task '{taskName}' is already running");
+                    return;
+                }
+
+                // TryScheduleTaskNow succeeding only means the task was queued -- CanRunNow
+                // independently and unboundedly gates whether it actually starts (e.g. a task
+                // that requires a live external connection can stay un-runnable for extended
+                // periods). Check this immediately, so an un-runnable task fails fast instead of
+                // hanging indefinitely below. The task remains scheduled either way (this check
+                // does not un-schedule it), so it will still run once it becomes able to --
+                // this failure is only about not blocking *this* dispatch waiting for that.
+                if (!TaskScheduler.CanTaskRunNow(taskName))
+                {
+                    QueueFailedAction(externalId, $"Task '{taskName}' is not currently able to run");
+                    return;
+                }
+
+                _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.running });
+
+                try
+                {
+                    // No timeout: a dedicated Task.Run per action means blocking here has no
+                    // cost to other actions, and there is no principled upper bound on how long
+                    // a legitimate task should be allowed to run -- an operator-issued Stop
+                    // action or a cancel_pending redelivery (routed above, via TryCancelTask) is
+                    // the intended way to end this early, not a client-side timeout.
+                    await waitTask.ConfigureAwait(false);
+                    _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.succeeded });
+                }
+                catch (Exception ex)
+                {
+                    // WaitForNextEndOfTask can surface a cancellation two different shapes,
+                    // depending on which of two independent paths in ExtractorTaskScheduler
+                    // resolves this waiter first: RegisteredTask.FinishTask (the task actually
+                    // finished, exception rethrown directly via ExceptionDispatchInfo -- a bare
+                    // TaskCanceledException) or RegisteredTask.Cancel (an explicit cancel request
+                    // was made and immediately unblocks any current waiter via TrySetCanceled,
+                    // before the task itself has necessarily finished -- accessing .Result on
+                    // that then throws AggregateException wrapping a TaskCanceledException; the
+                    // existing TaskSchedulerTest.TestWaitWhenCancel documents this same shape).
+                    // Unwrap once to treat both as the same outcome.
+                    var actual = (ex as AggregateException)?.Flatten().InnerException ?? ex;
+                    if (actual is TaskCanceledException)
+                    {
+                        _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.canceled });
+                    }
+                    else
+                    {
+                        QueueFailedAction(externalId, actual.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Mandatory catch-all for the entire unit of work: an unhandled exception
+                // anywhere above must still produce a terminal update, never a silently dropped
+                // action.
+                _logger.LogError(ex, "Unhandled exception dispatching Start action for task {TaskName}", taskName);
+                QueueFailedAction(externalId, $"Internal error: {ex.Message}");
+            }
+        }
+
+        private void RunStopTaskAction(string externalId, string taskName)
+        {
+            try
+            {
+                bool cancelled;
+                try
+                {
+                    cancelled = TaskScheduler.TryCancelTask(taskName, "Stop action");
+                }
+                catch (InvalidOperationException)
+                {
+                    QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
+                    return;
+                }
+
+                if (cancelled)
+                {
+                    // Matches python-extractor-utils' convention: `succeeded`, not `canceled` --
+                    // `canceled` is reserved for the target task's own run being cancelled, a
+                    // distinct, separately-observable outcome from "the stop request succeeded".
+                    // odin does not enforce either choice server-side; this is purely for
+                    // cross-language parity.
+                    _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.succeeded });
+                }
+                else
+                {
+                    QueueFailedAction(externalId, $"Task '{taskName}' is not currently running");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception dispatching Stop action for task {TaskName}", taskName);
+                QueueFailedAction(externalId, $"Internal error: {ex.Message}");
+            }
+        }
+
+        private void QueueFailedAction(string externalId, string message)
+        {
+            _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.failed, ResultMessage = message });
+        }
+
+        /// <summary>
         /// Start the extractor and wait for it to finish.
         /// </summary>
         /// <param name="token"></param>
@@ -330,6 +530,10 @@ namespace Cognite.Extractor.Utils.Unstable
                 throw;
             }
             StartTime = DateTime.UtcNow;
+            // Register the action dispatcher before the check-in worker starts, so no pending
+            // actions in the very first startup response can arrive with nothing registered to
+            // handle them.
+            _sink.SetActionDispatcher(DispatchActions);
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
             AddMonitoredTask(t => _sink.RunPeriodicCheckIn(t, GetStartupRequest()), SchedulerTaskResult.Unexpected, "CheckInWorker");
