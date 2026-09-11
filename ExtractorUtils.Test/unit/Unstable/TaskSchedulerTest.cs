@@ -613,8 +613,16 @@ namespace ExtractorUtils.Test.unit.Unstable
             // Not run immediately -- only the explicit TryScheduleTaskNow call below should start it.
             sched.AddScheduledTask(task, false);
 
+            // Register the wait *before* triggering the task, not after -- otherwise this races
+            // a fast-completing task finishing and flushing its waiters before this call gets to
+            // AddWaiter, which would then hang until the 5s timeout. See
+            // TestScheduler above for the same "register wait, then trigger" convention this
+            // codebase already uses elsewhere, and BaseExtractor.RunStartTaskAction (EDG-878) for
+            // where the identical bug was originally found and fixed in production code -- this
+            // test had the same latent issue and was just lucky not to hit it until now.
+            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
             Assert.True(sched.TryScheduleTaskNow("Task1"));
-            await sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(5));
+            await waitTask;
             Assert.True(ran);
 
             source.Cancel();
