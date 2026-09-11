@@ -348,6 +348,112 @@ namespace ExtractorUtils.Test.unit.Unstable
         }
 
         [Fact]
+        public async Task TestSchedulerCancelInnerAndWaitWithErrorIsFatalDoesNotCrash()
+        {
+            // Regression test for EDG-874: previously, an ordinary, expected shutdown
+            // (CancelInnerAndWait) of a scheduler with an ErrorIsFatal=true task still running
+            // would cause the scheduler's own Run task to fault, even though nothing actually
+            // went wrong. This is reachable through BaseExtractor.ShutdownInternal ->
+            // TaskScheduler.CancelInnerAndWait, with no Actions/Stop-action feature involved at
+            // all -- any extractor with a long-running ErrorIsFatal continuous task (as
+            // opcua-extractor-net has) would hit this on every normal shutdown.
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            using var startEvt = new ManualResetEvent(false);
+            using var evt = new ManualResetEvent(false);
+            var task = new RunQuickTask("Task1", async (cbs, tok) =>
+            {
+                startEvt.Set();
+                await CommonUtils.WaitAsync(evt, Timeout.InfiniteTimeSpan, tok);
+                return null;
+            });
+            task.SetErrorFatal = true;
+
+            sched.AddScheduledTask(task, true);
+            startEvt.WaitOne();
+
+            await sched.CancelInnerAndWait(5000, sink);
+
+            // The scheduler's Run task must complete cleanly, not throw, even though the task
+            // that was cancelled underneath it has ErrorIsFatal set.
+            var result = await running;
+            Assert.Equal(SchedulerTaskResult.Expected, result);
+
+            Assert.Single(sink.TaskStart);
+            Assert.Single(sink.TaskEnd);
+            Assert.Single(sink.Errors.DistinctBy(e => e.ExternalId));
+            var err = sink.Errors[0];
+            Assert.Equal(ErrorLevel.warning, err.Level);
+            Assert.Equal("Task1", err.TaskName);
+            Assert.Equal("Task was cancelled", err.Description);
+        }
+
+        [Fact]
+        public async Task TestSchedulerCancelTaskWithErrorIsFatalDoesNotCrashScheduler()
+        {
+            // Regression test for EDG-874, the Stop-action-shaped case: cancelling a single
+            // ErrorIsFatal=true task via CancelTask, while the scheduler and extractor otherwise
+            // continue running normally, must not crash the whole scheduler. The waiter for that
+            // specific task should still observe the cancellation, but nothing beyond that task
+            // should be affected.
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            using var startEvt = new ManualResetEvent(false);
+            using var evt = new ManualResetEvent(false);
+            var task = new RunQuickTask("Task1", async (cbs, tok) =>
+            {
+                startEvt.Set();
+                await CommonUtils.WaitAsync(evt, TimeSpan.FromSeconds(5), tok);
+                return null;
+            });
+            task.SetErrorFatal = true;
+
+            sched.AddScheduledTask(task, true);
+            startEvt.WaitOne();
+
+            var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(3));
+
+            sched.CancelTask("Task1", "Stop action");
+
+            // The waiter for this task is still told it was cancelled.
+            await Assert.ThrowsAnyAsync<Exception>(async () => await waitTask);
+
+            // But the scheduler itself must still be running -- ErrorIsFatal must not turn an
+            // intentional Stop action into a process-crashing failure.
+            Assert.False(running.IsCompleted);
+
+            Assert.Single(sink.Errors.DistinctBy(e => e.ExternalId));
+            var err = sink.Errors[0];
+            Assert.Equal(ErrorLevel.warning, err.Level);
+            Assert.Equal("Task1", err.TaskName);
+            Assert.Equal("Task was cancelled", err.Description);
+            Assert.Equal("Stop action", err.Details);
+
+            // The scheduler should still be able to run other tasks normally afterwards.
+            using var evt2 = new ManualResetEvent(false);
+            var task2Ran = false;
+            var task2 = new RunQuickTask("Task2", async (_, tok) =>
+            {
+                task2Ran = true;
+                return null;
+            });
+            sched.AddScheduledTask(task2, true);
+            await sched.WaitForNextEndOfTask("Task2", TimeSpan.FromSeconds(5));
+            Assert.True(task2Ran);
+
+            source.Cancel();
+            await running;
+        }
+
+        [Fact]
         public async Task TestFutureScheduledTasks()
         {
             var sink = new DummySink();
