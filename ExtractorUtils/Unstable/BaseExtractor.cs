@@ -276,7 +276,26 @@ namespace Cognite.Extractor.Utils.Unstable
             InitBase(token);
             await TestConfig().ConfigureAwait(false);
             await InitTasks().ConfigureAwait(false);
+            RegisterBuiltInActions();
             await InitActions().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Register the framework's own built-in actions, before any user-defined
+        /// <see cref="InitActions"/> override runs -- so built-ins are always earlier in
+        /// registration order, matching the ordering convention the Python reference
+        /// implementation made deterministic and test-covered.
+        /// </summary>
+        private void RegisterBuiltInActions()
+        {
+            RegisterAction(new CustomAction<TConfig>(
+                FetchLogsAction.Name,
+                (ctx, token) => FetchLogsAction.RunAsync(
+                    ctx,
+                    Provider.GetService<Cognite.Extractor.Logging.LoggerConfig>(),
+                    Provider.GetService<System.Net.Http.IHttpClientFactory>(),
+                    token),
+                "Upload rotated log files covering a requested date range to CDF Files."));
         }
 
         /// <summary>
