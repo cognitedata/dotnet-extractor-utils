@@ -668,6 +668,30 @@ namespace ExtractorUtils.Test.Unit.Unstable
         }
 
         [Fact]
+        public async Task TestShutdownCancelsInFlightCustomActions()
+        {
+            using var startedEvt = new ManualResetEvent(false);
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                async (ctx, tok) =>
+                {
+                    startedEvt.Set();
+                    await Task.Delay(Timeout.Infinite, tok);
+                }));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+            startedEvt.WaitOne();
+
+            // Shut the extractor down while the custom action is still in flight -- its token
+            // must be signalled to stop, not abandoned running past the extractor's own
+            // lifetime (there is no odin-side cancel_pending redelivery involved here at all).
+            await ext.DisposeAsync();
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.canceled), 5);
+        }
+
+        [Fact]
         public async Task TestDispatchCustomActionNotInFlightCancelPendingIsSafeNoOp()
         {
             var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(

@@ -415,7 +415,14 @@ namespace Cognite.Extractor.Utils.Unstable
                 // authors' callbacks are arbitrary code that may not be safe to invoke twice
                 // concurrently. Start/Stop don't need this: they're naturally idempotent via the
                 // scheduler's own state (TryScheduleTaskNow/TryCancelTask).
-                var cts = new CancellationTokenSource();
+                //
+                // Linked to Source, not a bare CancellationTokenSource, so a custom action's
+                // token is a proper child of the extractor's own lifetime -- matching every other
+                // cancellation source in this class (RegisteredTask's per-run token is likewise a
+                // child of the scheduler's, which is itself a child of Source). ShutdownInternal
+                // additionally cancels in-flight custom actions explicitly and promptly (see
+                // there for why this alone isn't enough).
+                var cts = CancellationTokenSource.CreateLinkedTokenSource(Source.Token);
                 if (!_inFlightCustomActions.TryAdd(action.ExternalId, cts))
                 {
                     cts.Dispose();
@@ -723,6 +730,15 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <returns></returns>
         protected virtual async Task ShutdownInternal()
         {
+            // Signal any in-flight custom actions to stop now, at the same point the task
+            // scheduler itself is signalled below. Source (which each action's token is a child
+            // of) isn't cancelled until the very end of Shutdown()/DisposeAsyncCore(), well after
+            // this method returns -- without this explicit step, an in-flight custom action's
+            // target would keep running, unsignalled, for this entire graceful-shutdown window.
+            foreach (var cts in _inFlightCustomActions.Values)
+            {
+                cts.Cancel();
+            }
             // First, shut down the task scheduler.
             await TaskScheduler.CancelInnerAndWait(20000, this).ConfigureAwait(false);
             // Next, flush any remaining task updates.
