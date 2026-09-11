@@ -355,10 +355,29 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         /// <summary>
         /// Cancel a task if it is currently running.
+        ///
+        /// This is a thin wrapper around <see cref="TryCancelTask"/> that discards the
+        /// "did it actually do anything" outcome. Prefer <see cref="TryCancelTask"/> for any
+        /// new caller that needs to distinguish "cancelled a running task" from "there was
+        /// nothing to cancel" -- for example, a Stop action needs to report those as different
+        /// outcomes (`succeeded` vs. `failed`), not silently treat both as success.
         /// </summary>
         /// <param name="name">Name of the task to cancel</param>
         /// <param name="reason">Reason for canceling the task</param>
         public void CancelTask(string name, string? reason = null)
+        {
+            TryCancelTask(name, reason);
+        }
+
+        /// <summary>
+        /// Cancel a task if it is currently running.
+        /// </summary>
+        /// <param name="name">Name of the task to cancel.</param>
+        /// <param name="reason">Reason for canceling the task.</param>
+        /// <returns><c>true</c> if the task had an active run and was cancelled; <c>false</c> if
+        /// the task exists but was not currently running, in which case this is a no-op.</returns>
+        /// <exception cref="InvalidOperationException">If no task with this name is registered.</exception>
+        public bool TryCancelTask(string name, string? reason = null)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
@@ -368,7 +387,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     throw new InvalidOperationException($"No task with name {name}");
                 }
+                if (task.ActiveTask == null)
+                {
+                    return false;
+                }
                 task.Cancel(reason);
+                return true;
             }
         }
 
@@ -394,6 +418,71 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     task.NextRun = DateTime.UtcNow;
                     _evt.Set();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Schedule a task to run now, unless it is already running.
+        ///
+        /// Unlike <see cref="ScheduleTaskNow"/>, this never re-schedules a task that is already
+        /// running -- it exists specifically to let a caller (e.g. a Start action handler)
+        /// distinguish "the task was queued to run" from "it was already running", which
+        /// <see cref="ScheduleTaskNow"/>'s <c>void</c> return cannot express.
+        ///
+        /// A <c>true</c> return only means the task was queued to run on the scheduler's next
+        /// tick -- it does not mean the task actually started, since
+        /// <see cref="BaseSchedulableTask.CanRunNow"/> independently gates that. Use
+        /// <see cref="CanTaskRunNow"/> immediately afterwards if the caller needs to know whether
+        /// the task is actually eligible to start right now, rather than merely queued.
+        /// </summary>
+        /// <param name="name">Name of the task to schedule.</param>
+        /// <returns><c>true</c> if the task was not running and has been queued to run now;
+        /// <c>false</c> if it was already running, in which case this is a no-op.</returns>
+        /// <exception cref="InvalidOperationException">If no task with this name is registered.</exception>
+        public bool TryScheduleTaskNow(string name)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
+            lock (_lock)
+            {
+                if (!_tasks.TryGetValue(name, out var task))
+                {
+                    throw new InvalidOperationException($"No task with name {name}");
+                }
+                if (task.ActiveTask != null)
+                {
+                    return false;
+                }
+                task.NextRun = DateTime.UtcNow;
+                _evt.Set();
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Check whether the task given by <paramref name="name"/> currently reports itself as
+        /// able to run, via <see cref="BaseSchedulableTask.CanRunNow"/>.
+        ///
+        /// This is independent of whether the task has been queued to run (see
+        /// <see cref="TryScheduleTaskNow"/>): a task can be queued while <see cref="BaseSchedulableTask.CanRunNow"/>
+        /// stays false for an extended, unbounded period (for example, a task that requires a
+        /// live external connection before it can start). Callers that need a fast, explicit
+        /// failure instead of hanging on <see cref="WaitForNextEndOfTask"/> should check this
+        /// immediately after a successful <see cref="TryScheduleTaskNow"/> call.
+        /// </summary>
+        /// <param name="name">Name of the task to check.</param>
+        /// <exception cref="InvalidOperationException">If no task with this name is registered.</exception>
+        public bool CanTaskRunNow(string name)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
+            lock (_lock)
+            {
+                if (!_tasks.TryGetValue(name, out var task))
+                {
+                    throw new InvalidOperationException($"No task with name {name}");
+                }
+                return task.Operation.CanRunNow();
             }
         }
 
