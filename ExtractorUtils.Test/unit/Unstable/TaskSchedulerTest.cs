@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
@@ -108,6 +109,18 @@ namespace ExtractorUtils.Test.unit.Unstable
         public TaskSchedulerTest(ITestOutputHelper output)
         {
             _output = output;
+        }
+
+        // ExtractorTaskScheduler keeps its task registry in a private field, so tests that need
+        // to reach the internal RegisteredTask directly (to reproduce a state the public API
+        // can't construct on its own, such as "completed but not yet finished") go through
+        // reflection. RegisteredTask itself is `internal`, not `private`, so it's directly usable
+        // here thanks to ExtractorUtils' InternalsVisibleTo grant to this assembly.
+        private static RegisteredTask GetRegisteredTask(ExtractorTaskScheduler sched, string name)
+        {
+            var field = typeof(ExtractorTaskScheduler).GetField("_tasks", BindingFlags.NonPublic | BindingFlags.Instance);
+            var tasks = (Dictionary<string, RegisteredTask>)field!.GetValue(sched)!;
+            return tasks[name];
         }
 
         [Fact]
@@ -564,6 +577,35 @@ namespace ExtractorUtils.Test.unit.Unstable
         }
 
         [Fact]
+        public async Task TestTryCancelTaskReturnsFalseForCompletedButNotYetFinishedTask()
+        {
+            // Regression test for a Gemini-review-flagged race: a task whose underlying Task has
+            // already completed, but whose ActiveTask hasn't been cleared yet because the
+            // scheduler's tick loop hasn't run FinishTask on it, must be treated as "not
+            // running" by TryCancelTask -- otherwise Cancel() would mark an already-finished
+            // task as CancelledIntentionally, causing FinishTask to later misreport a task that
+            // actually completed successfully as cancelled.
+            //
+            // The scheduler's Run() loop is deliberately never started here, so nothing can race
+            // in and clear ActiveTask -- this reproduces the "completed but not yet finished"
+            // state deterministically via direct access to the internal RegisteredTask (visible
+            // to this assembly via InternalsVisibleTo), rather than relying on hitting a real
+            // timing window.
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+
+            var task = new RunQuickTask("Task1", (_, __) => Task.FromResult<TaskUpdatePayload>(null));
+            sched.AddScheduledTask(task, false);
+
+            var registered = GetRegisteredTask(sched, "Task1");
+            registered.Run(DateTime.UtcNow, CancellationToken.None);
+            await registered.ActiveTask!.Task;
+
+            Assert.True(registered.ActiveTask.Task.IsCompleted);
+            Assert.False(sched.TryCancelTask("Task1", "Stop action"));
+        }
+
+        [Fact]
         public async Task TestTryScheduleTaskNowReturnsFalseWhenAlreadyRunning()
         {
             // EDG-875: mirrors TestTryCancelTaskReturnsFalseWhenIdle for the Start-action case --
@@ -635,6 +677,29 @@ namespace ExtractorUtils.Test.unit.Unstable
             var sink = new DummySink();
             using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
             Assert.Throws<InvalidOperationException>(() => sched.TryScheduleTaskNow("DoesNotExist"));
+        }
+
+        [Fact]
+        public async Task TestTryScheduleTaskNowReturnsTrueForCompletedButNotYetFinishedTask()
+        {
+            // Regression test for a Gemini-review-flagged race, mirroring
+            // TestTryCancelTaskReturnsFalseForCompletedButNotYetFinishedTask for the Start-action
+            // case: a task whose underlying Task has completed, but whose ActiveTask hasn't been
+            // cleared yet because the scheduler's tick loop hasn't run FinishTask, must not be
+            // reported as "already running" -- otherwise a Start action would spuriously fail on
+            // a task that in fact just finished.
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+
+            var task = new RunQuickTask("Task1", (_, __) => Task.FromResult<TaskUpdatePayload>(null));
+            sched.AddScheduledTask(task, false);
+
+            var registered = GetRegisteredTask(sched, "Task1");
+            registered.Run(DateTime.UtcNow, CancellationToken.None);
+            await registered.ActiveTask!.Task;
+
+            Assert.True(registered.ActiveTask.Task.IsCompleted);
+            Assert.True(sched.TryScheduleTaskNow("Task1"));
         }
 
         [Fact]

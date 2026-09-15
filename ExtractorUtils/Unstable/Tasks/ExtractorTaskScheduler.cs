@@ -415,7 +415,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     throw new InvalidOperationException($"No task with name {name}");
                 }
-                if (task.ActiveTask == null)
+                // A task whose Task has already completed, but whose ActiveTask hasn't been
+                // cleared yet because the scheduler's tick loop hasn't run FinishTask on it,
+                // must be treated the same as "not running" -- otherwise Cancel() would mark a
+                // task that already finished (successfully or not) as CancelledIntentionally,
+                // causing FinishTask to misreport it as cancelled once it does run.
+                if (task.ActiveTask == null || task.ActiveTask.Task.IsCompleted)
                 {
                     return false;
                 }
@@ -477,7 +482,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     throw new InvalidOperationException($"No task with name {name}");
                 }
-                if (task.ActiveTask != null)
+                // A task whose Task has already completed, but whose ActiveTask hasn't been
+                // cleared yet because the scheduler's tick loop hasn't run FinishTask on it, is
+                // safe to re-queue here: the tick loop always calls FinishTask for a completed
+                // task before checking NextRun for that same task within the same iteration, so
+                // ActiveTask will be null again well before this task is next considered to run.
+                if (task.ActiveTask != null && !task.ActiveTask.Task.IsCompleted)
                 {
                     return false;
                 }
