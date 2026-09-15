@@ -38,7 +38,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// regardless of this setting, since there is nothing left to protect by crashing a
         /// process that is already exiting.
         /// </summary>
-        public virtual bool CancellationIsFatal => ErrorIsFatal;
+        public virtual bool CancellationIsFatal { get => ErrorIsFatal; }
 
         /// <summary>
         /// Return whether the task can run now.
