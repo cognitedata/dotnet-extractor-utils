@@ -61,8 +61,12 @@ namespace ExtractorUtils.Test.unit.Unstable
         bool _errorIsFatal;
         public override bool ErrorIsFatal => _errorIsFatal;
 
+        bool? _cancellationIsFatal;
+        public override bool CancellationIsFatal => _cancellationIsFatal ?? base.CancellationIsFatal;
+
         private TimeSpan _schedule = TimeSpan.Zero;
         public bool SetErrorFatal { set => _errorIsFatal = value; }
+        public bool SetCancellationFatal { set => _cancellationIsFatal = value; }
         public Func<bool> CanRun { get; set; } = () => true;
 
         public override string Name { get; }
@@ -393,13 +397,15 @@ namespace ExtractorUtils.Test.unit.Unstable
         }
 
         [Fact]
-        public async Task TestSchedulerCancelTaskWithErrorIsFatalDoesNotCrashScheduler()
+        public async Task TestSchedulerCancelTaskWithErrorIsFatalCrashesSchedulerByDefault()
         {
-            // Regression test for EDG-874, the Stop-action-shaped case: cancelling a single
-            // ErrorIsFatal=true task via CancelTask, while the scheduler and extractor otherwise
-            // continue running normally, must not crash the whole scheduler. The waiter for that
-            // specific task should still observe the cancellation, but nothing beyond that task
-            // should be affected.
+            // A task with ErrorIsFatal=true that hasn't explicitly opted out via
+            // CancellationIsFatal=false is, by default, also fatal-on-Stop: the framework has no
+            // way to know on its own whether this particular task can safely be interrupted
+            // mid-run, so CancellationIsFatal defaults to matching ErrorIsFatal. Cancelling such a
+            // task via CancelTask (the Stop-action path) must therefore still crash the scheduler,
+            // same as it did before EDG-874 -- only scheduler-shutdown-caused cancellation is
+            // unconditionally non-fatal (see TestSchedulerCancelInnerAndWaitWithErrorIsFatalDoesNotCrash).
             var sink = new DummySink();
             using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
             using var source = new CancellationTokenSource();
@@ -419,6 +425,47 @@ namespace ExtractorUtils.Test.unit.Unstable
             sched.AddScheduledTask(task, true);
             startEvt.WaitOne();
 
+            sched.CancelTask("Task1", "Stop action");
+
+            // The scheduler's Run task must fault -- ErrorIsFatal is preserved on Stop by default.
+            await Assert.ThrowsAnyAsync<Exception>(async () => await running);
+
+            Assert.Single(sink.Errors.DistinctBy(e => e.ExternalId));
+            var err = sink.Errors[0];
+            Assert.Equal(ErrorLevel.warning, err.Level);
+            Assert.Equal("Task1", err.TaskName);
+            Assert.Equal("Task was cancelled", err.Description);
+            Assert.Equal("Stop action", err.Details);
+        }
+
+        [Fact]
+        public async Task TestSchedulerCancelTaskWithCancellationIsFatalFalseDoesNotCrashScheduler()
+        {
+            // A task that explicitly opts out via CancellationIsFatal=false (while still keeping
+            // ErrorIsFatal=true for genuine unexpected failures) may safely be Stopped mid-run:
+            // cancelling it via CancelTask must not crash the whole scheduler. The waiter for that
+            // specific task should still observe the cancellation, but nothing beyond that task
+            // should be affected.
+            var sink = new DummySink();
+            using var sched = new ExtractorTaskScheduler(sink, TestLogging.GetTestLogger<ExtractorTaskScheduler>(_output));
+            using var source = new CancellationTokenSource();
+
+            var running = sched.Run(source.Token);
+
+            using var startEvt = new ManualResetEvent(false);
+            using var evt = new ManualResetEvent(false);
+            var task = new RunQuickTask("Task1", async (cbs, tok) =>
+            {
+                startEvt.Set();
+                await CommonUtils.WaitAsync(evt, TimeSpan.FromSeconds(5), tok);
+                return null;
+            });
+            task.SetErrorFatal = true;
+            task.SetCancellationFatal = false;
+
+            sched.AddScheduledTask(task, true);
+            startEvt.WaitOne();
+
             var waitTask = sched.WaitForNextEndOfTask("Task1", TimeSpan.FromSeconds(3));
 
             sched.CancelTask("Task1", "Stop action");
@@ -426,8 +473,9 @@ namespace ExtractorUtils.Test.unit.Unstable
             // The waiter for this task is still told it was cancelled.
             await Assert.ThrowsAnyAsync<Exception>(async () => await waitTask);
 
-            // But the scheduler itself must still be running -- ErrorIsFatal must not turn an
-            // intentional Stop action into a process-crashing failure.
+            // But the scheduler itself must still be running -- this task declared itself safe to
+            // Stop mid-run, so ErrorIsFatal must not turn that intentional Stop into a
+            // process-crashing failure.
             Assert.False(running.IsCompleted);
 
             Assert.Single(sink.Errors.DistinctBy(e => e.ExternalId));
