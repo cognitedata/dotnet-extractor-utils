@@ -24,35 +24,15 @@ jobs:
     - name: Check formatting
       run: dotnet format --verify-no-changes --no-restore
     - name: Unit Test
-      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ --filter "FullyQualifiedName!~ExtractorUtils.Test.Integration" ./ExtractorUtils.Test/
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-  integration-test:
-    needs: build
-    if: ${{ github.event_name != 'pull_request' || github.base_ref == 'refs/heads/master' }}
-    timeout-minutes: 25
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
-      with:
-        dotnet-version: 9
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Debug --no-restore
+      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ --filter ExtractorUtils.Test.Unit. ./ExtractorUtils.Test/
+      if: ${{ github.event == 'pull_request' && github.base_ref == 'refs/heads/integration' }}
     - name: Start Redis
       uses: supercharge/redis-github-action@bc274cb7238cd63a45029db04ee48c07a72609fd # 1.8.1
       with:
         redis-version: 5
-    - name: Integration Test
-      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ --filter "FullyQualifiedName~ExtractorUtils.Test.Integration" ./ExtractorUtils.Test/
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal /p:Exclude="[*.Test]*" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/ ./ExtractorUtils.Test/
+      if: ${{ github.event != 'pull_request' || github.base_ref == 'refs/heads/master' }}
       env:
         TEST_PROJECT: "extractor-tests"
         TEST_HOST: "https://greenfield.cognitedata.com"

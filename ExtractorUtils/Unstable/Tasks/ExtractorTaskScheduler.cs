@@ -228,7 +228,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                         exc = exc.InnerException;
                     }
 
-                    bool wasCancelled = finished.Task.IsCanceled || finished.Source.IsCancellationRequested;
+                    // Whether this specific task's execution was actually cancelled. This is
+                    // deliberately based only on the task's own outcome (IsCanceled) and whether
+                    // an explicit per-task Cancel() was requested (CancelledIntentionally) -- not
+                    // on finished.Source.IsCancellationRequested, which can flip to true well
+                    // after the task already completed successfully (e.g. because the scheduler
+                    // itself is shut down on a later tick), incorrectly reclassifying a
+                    // successful completion as a cancellation.
+                    bool wasCancelled = finished.Task.IsCanceled || finished.CancelledIntentionally;
 
                     // Whether a cancellation of this task should be treated as fatal for a task
                     // with ErrorIsFatal set. The two recognized intentional-cancellation sources
@@ -242,7 +249,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     // A cancellation from neither recognized source (shouldn't currently be
                     // reachable) falls back to ErrorIsFatal, so this stays correct if a future
                     // change introduces another cancellation source that genuinely should be fatal.
-                    bool cancellationIsFatal = false; // SABOTAGE
+                    bool cancellationIsFatal = schedulerShuttingDown ? false : Operation.CancellationIsFatal;
 
                     // Report a fatal error to integrations if the task exited non-cleanly.
                     // This typically means a crash or manual cancellation.
