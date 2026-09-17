@@ -237,19 +237,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     // successful completion as a cancellation.
                     bool wasCancelled = finished.Task.IsCanceled || finished.CancelledIntentionally;
 
-                    // Whether a cancellation of this task should be treated as fatal for a task
-                    // with ErrorIsFatal set. The two recognized intentional-cancellation sources
-                    // are handled differently on purpose:
-                    //  - Scheduler shutdown is never fatal -- there is nothing left to protect by
-                    //    crashing a process that is already exiting.
-                    //  - An explicit Cancel() call on this task (e.g. a Stop action) follows
-                    //    CancellationIsFatal, since the framework has no way to know on its own
-                    //    whether this particular task can safely be interrupted mid-run; a task
-                    //    that hasn't opted out defaults to matching ErrorIsFatal.
-                    // A cancellation from neither recognized source (shouldn't currently be
-                    // reachable) falls back to ErrorIsFatal, so this stays correct if a future
-                    // change introduces another cancellation source that genuinely should be fatal.
-                    bool cancellationIsFatal = schedulerShuttingDown ? false : Operation.CancellationIsFatal;
+                    // Whether this cancellation should be treated as fatal. Scheduler shutdown is
+                    // never fatal -- there is nothing left to protect by crashing a process that's
+                    // already exiting. Any other cancellation defers entirely to
+                    // CancellationIsFatal, since the framework has no way to know on its own
+                    // whether this particular task can safely be interrupted mid-run.
+                    bool isFatalCancellation = schedulerShuttingDown ? false : Operation.CancellationIsFatal;
 
                     // Report a fatal error to integrations if the task exited non-cleanly.
                     // This typically means a crash or manual cancellation.
@@ -284,9 +277,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     _waiters.Clear();
 
                     // If the task is critical, then at this stage we should throw an exception.
-                    // A cancellation's fatal-ness is governed by cancellationIsFatal (see above);
+                    // A cancellation's fatal-ness is governed by isFatalCancellation (see above);
                     // any other failure is fatal exactly when ErrorIsFatal is set.
-                    if (exc != null && (wasCancelled ? cancellationIsFatal : Operation.ErrorIsFatal))
+                    if (exc != null && (wasCancelled ? isFatalCancellation : Operation.ErrorIsFatal))
                     {
                         ExceptionDispatchInfo.Capture(exc).Throw();
                     }
