@@ -105,9 +105,8 @@ namespace ExtractorUtils.Test.Integration
 
         private static async Task DeleteTimeseries(CDFTester tester, string space, IEnumerable<string> externalIds)
         {
-            Task.Delay(300).Wait(); // Wait for eventual consistency
+            Task.Delay(500).Wait(); // Wait for eventual consistency
             await tester.DestinationWithIDM.CogniteClient.DataModels.DeleteInstances(externalIds.Select(x => new InstanceIdentifierWithType(InstanceType.node, space, x)), tester.Source.Token);
-            Task.Delay(300).Wait();
         }
 
         [Theory]
