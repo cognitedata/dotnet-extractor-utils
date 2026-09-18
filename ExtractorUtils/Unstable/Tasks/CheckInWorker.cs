@@ -18,6 +18,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         private readonly object _lock = new object();
         private readonly Dictionary<string, ErrorWithTask> _errors = new Dictionary<string, ErrorWithTask>();
         private List<TaskUpdate> _taskUpdates = new List<TaskUpdate>();
+        private List<ActionUpdate> _actionUpdates = new List<ActionUpdate>();
+        private Func<IReadOnlyList<IntegrationAction>, Task>? _actionDispatcher;
         private readonly Client _client;
 
         private readonly string _integrationId;
@@ -25,6 +27,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         private const int MAX_ERRORS_PER_CHECKIN = 1000;
         private const int MAX_TASK_UPDATES_PER_CHECKIN = 1000;
+        private const int MAX_ACTION_UPDATES_PER_CHECKIN = 100;
 
         private bool _isRunning;
 
@@ -192,7 +195,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
         }
 
-        private void RequeueCheckIn(IEnumerable<ErrorWithTask> errors, IEnumerable<TaskUpdate> tasks)
+        private void RequeueCheckIn(IEnumerable<ErrorWithTask> errors, IEnumerable<TaskUpdate> tasks, IEnumerable<ActionUpdate> actionUpdates)
         {
             lock (_lock)
             {
@@ -201,10 +204,20 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     if (!_errors.ContainsKey(err.ExternalId)) _errors.Add(err.ExternalId, err);
                 }
                 _taskUpdates.AddRange(tasks);
+                // Unlike errors/task updates (which are re-sorted by timestamp on every send
+                // regardless of list order, making append-order irrelevant), ActionUpdate has no
+                // timestamp and is always sent in raw list order. Requeued action updates must
+                // therefore go back to the *front* of the queue, not the end -- otherwise a
+                // stale update that failed to send (e.g. a `running` progress update) could end
+                // up ordered after a newer update for the same action queued in the meantime
+                // (e.g. its own terminal `succeeded`), reversing their effective order on the
+                // next send. Matches python-extractor-utils' checkin_worker.py, which does the
+                // same prepend for the same reason.
+                _actionUpdates.InsertRange(0, actionUpdates);
             }
         }
 
-        private async Task TryWriteCheckIn(IEnumerable<ErrorWithTask> errors, IEnumerable<TaskUpdate> tasks, CancellationToken token)
+        private async Task TryWriteCheckIn(IEnumerable<ErrorWithTask> errors, IEnumerable<TaskUpdate> tasks, IEnumerable<ActionUpdate> actionUpdates, CancellationToken token)
         {
             try
             {
@@ -213,18 +226,25 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     ExternalId = _integrationId,
                     TaskEvents = tasks,
                     Errors = errors,
+                    ActionUpdates = actionUpdates,
                 }, token).ConfigureAwait(false);
-                HandleCheckInResponse(response);
+                await HandleCheckInResponse(response).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 if (ex is ResponseException rex && (rex.Code == 400 || rex.Code == 404))
                 {
+                    // A 404 here typically means one of the action externalIds we reported an
+                    // update for is unknown to the server (e.g. a very stale queue entry from
+                    // before a restart) -- odin does not support partial failure within a
+                    // check-in batch, so the whole batch is dropped rather than requeued, to
+                    // avoid retrying an unresolvable bad ID forever and blocking every other
+                    // queued item behind it.
                     _logger.LogError(rex, "CheckIn failed with a 400 status code, this is a bug! Dropping current check-in batch and continuing.");
                     return;
                 }
                 // If pushing the update failed, keep the updates to try again later.
-                RequeueCheckIn(errors, tasks);
+                RequeueCheckIn(errors, tasks, actionUpdates);
                 throw;
             }
         }
@@ -243,6 +263,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         {
             List<ErrorWithTask> newErrors;
             List<TaskUpdate> taskUpdates;
+            List<ActionUpdate> actionUpdates;
 
             lock (_lock)
             {
@@ -261,6 +282,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                         _errors.Remove(err.ExternalId);
                     }
                     taskUpdates = new List<TaskUpdate>();
+                    // Actions can't have been triggered before startup has succeeded (the
+                    // extractor hasn't advertised any AvailableActions yet), but leave
+                    // _actionUpdates untouched regardless, same as task updates above, so nothing
+                    // queued so far is lost.
+                    actionUpdates = new List<ActionUpdate>();
                 }
                 else
                 {
@@ -277,6 +303,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     _errors.Clear();
                     taskUpdates = _taskUpdates;
                     _taskUpdates = new List<TaskUpdate>();
+                    actionUpdates = _actionUpdates;
+                    _actionUpdates = new List<ActionUpdate>();
                 }
             }
 
@@ -288,16 +316,23 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 return (aTime ?? 0).CompareTo(bTime ?? 0);
             });
             taskUpdates.Sort((a, b) => a.Timestamp.CompareTo(b.Timestamp));
+            // ActionUpdate has no timestamp field to sort by (unlike errors/task updates), so
+            // action updates are always sent in the order they were queued (FIFO), independent of
+            // the error/task-update time-based merge below.
 
             while (!token.IsCancellationRequested)
             {
-                if (newErrors.Count <= MAX_ERRORS_PER_CHECKIN && taskUpdates.Count <= MAX_TASK_UPDATES_PER_CHECKIN)
+                if (newErrors.Count <= MAX_ERRORS_PER_CHECKIN
+                    && taskUpdates.Count <= MAX_TASK_UPDATES_PER_CHECKIN
+                    && actionUpdates.Count <= MAX_ACTION_UPDATES_PER_CHECKIN)
                 {
                     var errorsToWrite = newErrors;
                     var tasksToWrite = taskUpdates;
+                    var actionsToWrite = actionUpdates;
                     newErrors = new List<ErrorWithTask>();
                     taskUpdates = new List<TaskUpdate>();
-                    await TryWriteCheckIn(errorsToWrite, tasksToWrite, token).ConfigureAwait(false);
+                    actionUpdates = new List<ActionUpdate>();
+                    await TryWriteCheckIn(errorsToWrite, tasksToWrite, actionsToWrite, token).ConfigureAwait(false);
                     break;
                 }
 
@@ -324,26 +359,60 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
                 var errorsBatch = newErrors.Take(errIdx).ToList();
                 var taskBatch = taskUpdates.Take(taskIdx).ToList();
+                // Action updates are batched independently of the time-based merge above, in
+                // simple FIFO chunks of at most MAX_ACTION_UPDATES_PER_CHECKIN -- this runs on
+                // every iteration of the outer loop, so a large action-update backlog with few or
+                // no errors/tasks queued alongside it still drains correctly (the outer loop only
+                // exits once errors, task updates, *and* action updates are all empty).
+                var actionIdx = Math.Min(actionUpdates.Count, MAX_ACTION_UPDATES_PER_CHECKIN);
+                var actionBatch = actionUpdates.Take(actionIdx).ToList();
 
                 if (errIdx > 0) newErrors = newErrors.Skip(errIdx).ToList();
                 if (taskIdx > 0) taskUpdates = taskUpdates.Skip(taskIdx).ToList();
+                if (actionIdx > 0) actionUpdates = actionUpdates.Skip(actionIdx).ToList();
 
-                await TryWriteCheckIn(errorsBatch, taskBatch, token).ConfigureAwait(false);
-                if (newErrors.Count == 0 && taskUpdates.Count == 0) break;
+                await TryWriteCheckIn(errorsBatch, taskBatch, actionBatch, token).ConfigureAwait(false);
+                if (newErrors.Count == 0 && taskUpdates.Count == 0 && actionUpdates.Count == 0) break;
             }
 
             // If the task was cancelled, re-queue any unsubmitted errors and updates.
             // This way, we don't lose any updates, and can push them when doing the final flush.
             if (token.IsCancellationRequested)
             {
-                RequeueCheckIn(newErrors, taskUpdates);
+                RequeueCheckIn(newErrors, taskUpdates, actionUpdates);
             }
         }
 
         private async Task ReportStartup(StartupRequest request, CancellationToken token)
         {
             var response = await _client.Alpha.Integrations.StartupAsync(request, token).ConfigureAwait(false);
-            HandleCheckInResponse(response);
+            await HandleCheckInResponse(response).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Queue an update to the status of a triggered action, to be sent on a future check-in.
+        /// </summary>
+        /// <param name="update">Update to queue. Must have <see cref="ActionUpdate.ExternalId"/> set.</param>
+        public void QueueActionUpdate(ActionUpdate update)
+        {
+            if (update == null) throw new ArgumentNullException(nameof(update));
+            lock (_lock)
+            {
+                _actionUpdates.Add(update);
+            }
+        }
+
+        /// <summary>
+        /// Register the callback to invoke whenever a check-in or startup response contains one
+        /// or more actions pending execution by the extractor.
+        /// </summary>
+        /// <param name="dispatcher">Callback invoked with the current list of pending actions.</param>
+        public void SetActionDispatcher(Func<IReadOnlyList<IntegrationAction>, Task> dispatcher)
+        {
+            lock (_lock)
+            {
+                _actionDispatcher = dispatcher;
+            }
         }
 
         /// <inheritdoc />
@@ -389,7 +458,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
         }
 
-        private void HandleCheckInResponse(CheckInResponse response)
+        private async Task HandleCheckInResponse(CheckInResponse response)
         {
             if (response.LastConfigRevision != _activeRevision && response.LastConfigRevision != null)
             {
@@ -405,6 +474,40 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                         _activeRevision, response.LastConfigRevision);
                 }
                 _activeRevision = response.LastConfigRevision.Value;
+            }
+
+            await DispatchPendingActions(response.PendingActions).ConfigureAwait(false);
+        }
+
+        private async Task DispatchPendingActions(IEnumerable<IntegrationAction>? pendingActions)
+        {
+            var actions = pendingActions?.ToList();
+            if (actions == null || actions.Count == 0) return;
+
+            Func<IReadOnlyList<IntegrationAction>, Task>? dispatcher;
+            lock (_lock)
+            {
+                dispatcher = _actionDispatcher;
+            }
+
+            if (dispatcher == null)
+            {
+                _logger.LogWarning("Received {Count} pending action(s), but no action dispatcher is registered. Ignoring.", actions.Count);
+                return;
+            }
+
+            try
+            {
+                await dispatcher(actions).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                // The dispatcher is expected to hand off actual execution rather than run
+                // actions to completion itself (see SetActionDispatcher), so an exception here
+                // means the dispatcher's own routing/hand-off logic failed, not that a single
+                // action failed -- that must never be silently lost, but it also must never take
+                // down the check-in loop, which is why this catches broadly and only logs.
+                _logger.LogError(ex, "Action dispatcher threw an unhandled exception: {Message}", ex.Message);
             }
         }
     }
