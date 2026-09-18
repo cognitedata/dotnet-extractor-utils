@@ -408,6 +408,100 @@ namespace ExtractorUtils.Test.unit.Unstable
             source.Cancel();
             await running;
         }
+
+        [Fact]
+        public async Task TestFinishTaskDoesNotReportCancelledForTaskThatCompletedBeforeCancellation()
+        {
+            // EDG-883: regression test for a race where a task that already completed
+            // successfully could be misreported as "cancelled", if an unrelated later
+            // cancellation (e.g. scheduler shutdown) happened to fire before the scheduler's own
+            // loop got around to calling FinishTask for that already-finished task.
+            //
+            // Exercises RegisteredTask directly (rather than going through the full
+            // ExtractorTaskScheduler.Run loop, as the originally-flaky
+            // BaseExtractorTest.TestBaseExtractor does) specifically so this is deterministic:
+            // by explicitly awaiting the task's own completion before cancelling, the ordering
+            // this test needs ("task finished" strictly before "cancellation requested") is
+            // guaranteed on every run, rather than depending on incidental scheduler/thread-pool
+            // timing that only reproduced the bug intermittently.
+            var sink = new DummySink();
+            var reporter = new TaskReporter("task1", sink);
+            var task = new RunQuickTask("task1", (_, tok) => Task.FromResult<TaskUpdatePayload>(null));
+            using var registered = new RegisteredTask(task, reporter, runImmediately: true);
+
+            using var outerSource = new CancellationTokenSource();
+            registered.Run(DateTime.UtcNow, outerSource.Token);
+
+            // Wait for the task to actually finish running.
+            await registered.ActiveTask!.Task;
+
+            // Cancel strictly after the task already completed successfully. This cascades into
+            // the per-task linked CancellationTokenSource (see RegisteredTask.Run), which is
+            // exactly the mechanism that used to cause a false "cancelled" report.
+            outerSource.Cancel();
+
+            registered.FinishTask(DateTime.UtcNow);
+
+            Assert.Empty(sink.Errors);
+        }
+
+        [Fact]
+        public async Task TestFinishTaskStillReportsCancelledForTaskThatFaultedWhileCancellationWasRequested()
+        {
+            // Companion to the test above, verifying the fix didn't overcorrect: a task that
+            // faults with an *unrelated* exception (not a clean OperationCanceledException tied
+            // to its own token) while cancellation had already been requested must still be
+            // reported as a benign cancellation-related warning, not escalated to Fatal. This is
+            // pre-existing, deliberate behavior -- it must keep working, and this test would
+            // fail if WasCancellationRequestedAtCompletion were hardcoded to always be false
+            // (which would make the test above pass for the wrong reason).
+            var sink = new DummySink();
+            var reporter = new TaskReporter("task1", sink);
+            using var startEvt = new ManualResetEvent(false);
+            using var evt = new ManualResetEvent(false);
+            // Deliberately waits on CancellationToken.None, not `tok` -- this task ignores its
+            // own cancellation token and instead faults with an unrelated exception once
+            // signalled, rather than ending in the Canceled state.
+            var task = new RunQuickTask("task1", async (_, tok) =>
+            {
+                startEvt.Set();
+                await CommonUtils.WaitAsync(evt, Timeout.InfiniteTimeSpan, CancellationToken.None);
+                throw new InvalidOperationException("boom");
+            });
+            using var registered = new RegisteredTask(task, reporter, runImmediately: true);
+
+            using var outerSource = new CancellationTokenSource();
+            registered.Run(DateTime.UtcNow, outerSource.Token);
+
+            // Wait for the delegate to actually start before cancelling -- otherwise this can
+            // race Task.Run's own pre-execution cancellation check (which can cancel the outer
+            // task before the delegate ever runs at all if the token is already cancelled by the
+            // time a thread-pool thread picks it up), rather than exercising the intended
+            // "faulted while already running" scenario.
+            startEvt.WaitOne();
+
+            // Cancellation is requested while the task is still running (well before it faults).
+            outerSource.Cancel();
+            evt.Set();
+
+            try
+            {
+                await registered.ActiveTask!.Task;
+            }
+            catch (InvalidOperationException)
+            {
+                // Expected -- the task faults rather than cancelling cleanly.
+            }
+
+            registered.FinishTask(DateTime.UtcNow);
+
+            // A single logical report shows up as two entries with the same ExternalId (once
+            // for start, once for end) -- matches the existing convention in e.g.
+            // TestSchedulerCancel above.
+            Assert.Single(sink.Errors.DistinctBy(e => e.ExternalId));
+            Assert.Equal(ErrorLevel.warning, sink.Errors[0].Level);
+            Assert.Equal("Task was cancelled", sink.Errors[0].Description);
+        }
     }
 
     class ScheduledTask : BaseSchedulableTask

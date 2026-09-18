@@ -75,16 +75,63 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public abstract TaskMetadata Metadata { get; }
     }
 
+    /// <summary>
+    /// Mutable box for a single bool, created before the task that will eventually write into it
+    /// starts running (see <see cref="RegisteredTask.Run"/>), so that the write has somewhere
+    /// to land without the ordering hazard of capturing a not-yet-assigned <see cref="RunningTaskInfo"/>
+    /// reference directly in the task's closure.
+    /// </summary>
+    internal sealed class CancellationSnapshot
+    {
+        public bool WasRequested;
+    }
+
     internal sealed class RunningTaskInfo : IDisposable
     {
         public Task<TaskUpdatePayload?> Task { get; }
         public CancellationTokenSource Source { get; }
 
         public string? CancellationReason { get; set; }
-        public RunningTaskInfo(Task<TaskUpdatePayload?> activeTask, CancellationTokenSource tokenSource)
+
+        private readonly CancellationSnapshot _cancellationSnapshot;
+
+        /// <summary>
+        /// Whether <see cref="Source"/>'s cancellation had already been requested by the time
+        /// this task's own execution finished, captured as the very last synchronous step inside
+        /// the task itself (see <see cref="RegisteredTask.Run"/>) -- not read live much later in
+        /// <see cref="RegisteredTask.FinishTask"/>.
+        ///
+        /// This matters because <see cref="Source"/> is a linked <see cref="CancellationTokenSource"/>:
+        /// it flips to cancelled whenever its *parent* token is cancelled, regardless of whether
+        /// this task has already finished running by then. <see cref="RegisteredTask.FinishTask"/>
+        /// only runs once the scheduler's own loop gets around to processing a completed task,
+        /// which can happen an arbitrary amount of time after the task itself actually finished --
+        /// if an unrelated *later* cancellation (e.g. the scheduler shutting down) fires in that
+        /// gap, a live read of <c>Source.IsCancellationRequested</c> at that point would be true
+        /// even though this specific task had already completed successfully before the
+        /// cancellation happened, misreporting a successful run as cancelled.
+        ///
+        /// Capturing this from inside the task's own execution, as the last thing it does before
+        /// becoming observably complete, closes the *practically relevant* version of the race:
+        /// a task's own antecedent work happens-before its completion is visible to any other
+        /// thread, so a cancellation that arrives once this task is already observably complete
+        /// (the original bug -- a gap that could span until the scheduler's next full loop tick,
+        /// easily milliseconds) can no longer influence a value already written before that
+        /// point. This does not claim mathematical perfection: a cancellation landing in the
+        /// genuinely tiny window between the wrapped operation finishing and this snapshot being
+        /// written (a handful of CPU instructions, not an arbitrary scheduler-tick-sized gap)
+        /// could in principle still race with this read. Closing that last sliver would need
+        /// synchronizing this write against every possible cancellation source with a shared
+        /// lock, which -- for a race this narrow, causing at worst a misleading warning-level log
+        /// line, never a crash or data loss -- was judged not worth the added complexity.
+        /// </summary>
+        public bool WasCancellationRequestedAtCompletion => _cancellationSnapshot.WasRequested;
+
+        public RunningTaskInfo(Task<TaskUpdatePayload?> activeTask, CancellationTokenSource tokenSource, CancellationSnapshot cancellationSnapshot)
         {
             Source = tokenSource;
             Task = activeTask;
+            _cancellationSnapshot = cancellationSnapshot;
         }
 
         public void Dispose()
@@ -123,7 +170,21 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         {
             if (ActiveTask != null) throw new InvalidOperationException("Attempt to start an already running task");
             var source = CancellationTokenSource.CreateLinkedTokenSource(token);
-            var task = Task.Run(() => Operation.Run(_reporter, source.Token), source.Token);
+            var cancellationSnapshot = new CancellationSnapshot();
+            var task = Task.Run(async () =>
+            {
+                try
+                {
+                    return await Operation.Run(_reporter, source.Token).ConfigureAwait(false);
+                }
+                finally
+                {
+                    // The very last synchronous action of this task's own execution -- see
+                    // RunningTaskInfo.WasCancellationRequestedAtCompletion for why this can't be
+                    // read live, later, from outside the task instead.
+                    cancellationSnapshot.WasRequested = source.IsCancellationRequested;
+                }
+            }, source.Token);
 
             if (Operation.Schedule != null)
             {
@@ -144,7 +205,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 NextRun = null;
             }
 
-            ActiveTask = new RunningTaskInfo(task, source);
+            ActiveTask = new RunningTaskInfo(task, source, cancellationSnapshot);
             _reporter.ReportStart(null, now);
         }
 
@@ -191,7 +252,15 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
                 // Report a fatal error to integrations if the task exited non-cleanly.
                 // This typically means a crash or manual cancellation.
-                if (finished.Task.IsCanceled || finished.Source.IsCancellationRequested)
+                //
+                // Deliberately uses the snapshot captured at completion time
+                // (WasCancellationRequestedAtCompletion), not a live read of
+                // finished.Source.IsCancellationRequested -- see that property's doc comment.
+                // A live read here would race: it could be flipped true by a cancellation that
+                // happened strictly *after* this task already completed successfully (e.g.
+                // scheduler shutdown racing the scheduler's own loop noticing the task was done),
+                // misreporting a successful run as cancelled.
+                if (finished.Task.IsCanceled || finished.WasCancellationRequestedAtCompletion)
                 {
                     _reporter.Warning("Task was cancelled", finished.CancellationReason, now);
                     exc = new TaskCanceledException();
