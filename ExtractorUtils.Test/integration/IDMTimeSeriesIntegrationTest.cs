@@ -20,6 +20,9 @@ namespace ExtractorUtils.Test.Integration
 {
     public class IDMTimeSeriesIntegrationTest
     {
+        // Delay used to allow for eventual consistency in CDF before retrieval.
+        private const int _eventualConsistencyDelayMs = 1500;
+
         private readonly ITestOutputHelper _output;
         public IDMTimeSeriesIntegrationTest(ITestOutputHelper output)
         {
@@ -967,7 +970,7 @@ namespace ExtractorUtils.Test.Integration
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
 
-                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
+                await Task.Delay(_eventualConsistencyDelayMs);      // Try to get eventual consistency before retrieval.
                 var retrieved = await tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token);
                 var found = Assert.Single(retrieved);
                 Assert.Equal(stateSetXid, found.ExternalId);
@@ -1033,7 +1036,7 @@ namespace ExtractorUtils.Test.Integration
                 ensureResult.Throw();
                 Assert.Single(ensureResult.Results);
 
-                await Task.Delay(500); // Try to get eventual consistency before retrieval.
+                await Task.Delay(_eventualConsistencyDelayMs); // Try to get eventual consistency before retrieval.
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
                 var retrieved = await stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token);
                 var found = Assert.Single(retrieved);
@@ -1088,7 +1091,7 @@ namespace ExtractorUtils.Test.Integration
                     RetryMode.None, SanitationMode.None, tester.Source.Token);
                 ensureResult.Throw();
                 Assert.Single(ensureResult.Results);
-                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
+                await Task.Delay(_eventualConsistencyDelayMs);      // Try to get eventual consistency before retrieval.
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, existingXid));
                 var retrieved = await tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token);
@@ -1184,7 +1187,7 @@ namespace ExtractorUtils.Test.Integration
                 result.Throw();
                 Assert.Equal(2, result.Results.Count());
 
-                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
+                await Task.Delay(_eventualConsistencyDelayMs);      // Try to get eventual consistency before retrieval.
                 var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
                     new[]
                     {
