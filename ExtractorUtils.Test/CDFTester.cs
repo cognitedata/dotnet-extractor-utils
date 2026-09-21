@@ -190,7 +190,7 @@ namespace ExtractorUtils.Test
                 }
                 catch (Exception ex)
                 {
-                    if (DateTime.UtcNow < deadline && ex is ResponseException rex && rex.Message.Contains("contain nodes or edges"))
+                    if (DateTime.UtcNow < deadline && ex is ResponseException rex && (rex.Message?.Contains("contain nodes or edges") ?? false))
                     {
                         Thread.Sleep(500);
                         continue;

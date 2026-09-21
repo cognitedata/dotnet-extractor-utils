@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -30,19 +31,32 @@ namespace ExtractorUtils.Test.Integration
         /// actual lag turns out to be, up to <paramref name="timeout"/>, and returns the
         /// last-seen (possibly still-failing) result once that budget runs out, so the caller's
         /// own assertion produces a normal, readable failure rather than the poll itself throwing.
+        ///
+        /// A transient exception from <paramref name="attempt"/> (e.g. a 5xx, or a premature
+        /// not-found before consistency catches up) is treated the same as "not done yet" and
+        /// retried, as long as the deadline hasn't passed -- otherwise this would fail on the
+        /// exact class of error it exists to ride out. Once the deadline has passed, the next
+        /// exception is left to propagate, so the test fails with the real underlying error
+        /// instead of a generic "condition never became true".
         /// </summary>
-        private static async Task<T> PollUntilAsync<T>(Func<Task<T>> attempt, Func<T, bool> isDone, TimeSpan? timeout = null, TimeSpan? interval = null)
+        private static async Task<T> PollUntilAsync<T>(Func<Task<T>> attempt, Func<T, bool> isDone, TimeSpan? timeout = null, TimeSpan? interval = null, CancellationToken cancellationToken = default)
         {
             var deadline = DateTime.UtcNow + (timeout ?? TimeSpan.FromSeconds(10));
             var delay = interval ?? TimeSpan.FromMilliseconds(300);
             while (true)
             {
-                var result = await attempt();
-                if (isDone(result) || DateTime.UtcNow >= deadline)
+                try
                 {
-                    return result;
+                    var result = await attempt();
+                    if (isDone(result) || DateTime.UtcNow >= deadline)
+                    {
+                        return result;
+                    }
                 }
-                await Task.Delay(delay);
+                catch when (DateTime.UtcNow < deadline)
+                {
+                }
+                await Task.Delay(delay, cancellationToken);
             }
         }
 
@@ -434,12 +448,17 @@ namespace ExtractorUtils.Test.Integration
                                 End = DateTime.UtcNow.AddDays(1).ToUnixTimeMilliseconds().ToString()
                             }).ToArray()
                         });
-                        if (foundDps.Items.Count != 3) return new int[3];
+                        // The API doesn't guarantee response items come back in request order,
+                        // so match them back up by InstanceId.ExternalId rather than position.
+                        var itemMap = foundDps.Items
+                            .Where(item => item.InstanceId?.ExternalId != null)
+                            .ToDictionary(item => item.InstanceId.ExternalId);
+                        if (itemMap.Count != 3) return new int[3];
                         return new[]
                         {
-                            foundDps.Items[0]?.NumericDatapoints?.Datapoints?.Count ?? 0,
-                            foundDps.Items[1]?.StringDatapoints?.Datapoints?.Count ?? 0,
-                            foundDps.Items[2]?.NumericDatapoints?.Datapoints?.Count ?? 0,
+                            itemMap.TryGetValue(tss.externalIds[0], out var item0) ? item0.NumericDatapoints?.Datapoints?.Count ?? 0 : 0,
+                            itemMap.TryGetValue(tss.externalIds[1], out var item1) ? item1.StringDatapoints?.Datapoints?.Count ?? 0 : 0,
+                            itemMap.TryGetValue(tss.externalIds[2], out var item2) ? item2.NumericDatapoints?.Datapoints?.Count ?? 0 : 0,
                         };
                     },
                     counts => counts.All(cnt => cnt == 10));
