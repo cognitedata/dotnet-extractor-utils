@@ -23,26 +23,28 @@ namespace ExtractorUtils.Test.Integration
     {
         /// <summary>
         /// Repeatedly invokes <paramref name="attempt"/> until <paramref name="isDone"/> accepts
-        /// its result, or <paramref name="timeout"/> elapses -- whichever comes first (EDG-891).
+        /// its result, or <paramref name="timeoutSeconds"/> elapses -- whichever comes first
+        /// (EDG-891).
         ///
         /// Replaces a fixed "sleep, then read once" wait for CDF eventual consistency: a fixed
         /// delay either wastes time on the common case where the write is already visible, or
         /// isn't long enough on a slow one and fails outright. Polling adapts to whatever the
-        /// actual lag turns out to be, up to <paramref name="timeout"/>, and returns the
+        /// actual lag turns out to be, up to <paramref name="timeoutSeconds"/>, and returns the
         /// last-seen (possibly still-failing) result once that budget runs out, so the caller's
         /// own assertion produces a normal, readable failure rather than the poll itself throwing.
         ///
-        /// A transient exception from <paramref name="attempt"/> (e.g. a 5xx, or a premature
-        /// not-found before consistency catches up) is treated the same as "not done yet" and
-        /// retried, as long as the deadline hasn't passed -- otherwise this would fail on the
-        /// exact class of error it exists to ride out. Once the deadline has passed, the next
-        /// exception is left to propagate, so the test fails with the real underlying error
-        /// instead of a generic "condition never became true".
+        /// Any exception from <paramref name="attempt"/> other than cancellation (e.g. a 5xx, or
+        /// a premature not-found before consistency catches up) is treated the same as "not done
+        /// yet" and retried, as long as the deadline hasn't passed -- otherwise this would fail
+        /// on the exact class of error it exists to ride out. Once the deadline has passed, the
+        /// next exception is left to propagate, so the test fails with the real underlying error
+        /// instead of a generic "condition never became true". Cancellation is never retried --
+        /// if the caller's own token fires, that should stop the poll immediately, not extend it.
         /// </summary>
-        private static async Task<T> PollUntilAsync<T>(Func<Task<T>> attempt, Func<T, bool> isDone, TimeSpan? timeout = null, TimeSpan? interval = null, CancellationToken cancellationToken = default)
+        private static async Task<T> PollUntilAsync<T>(Func<Task<T>> attempt, Func<T, bool> isDone, double timeoutSeconds = 10, double intervalMs = 300, CancellationToken cancellationToken = default)
         {
-            var deadline = DateTime.UtcNow + (timeout ?? TimeSpan.FromSeconds(10));
-            var delay = interval ?? TimeSpan.FromMilliseconds(300);
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(timeoutSeconds);
+            var delay = TimeSpan.FromMilliseconds(intervalMs);
             while (true)
             {
                 try
@@ -53,7 +55,7 @@ namespace ExtractorUtils.Test.Integration
                         return result;
                     }
                 }
-                catch when (DateTime.UtcNow < deadline)
+                catch (Exception ex) when (ex is not OperationCanceledException && DateTime.UtcNow < deadline)
                 {
                 }
                 await Task.Delay(delay, cancellationToken);
