@@ -235,11 +235,49 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 if (ex is ResponseException rex && (rex.Code == 400 || rex.Code == 404))
                 {
                     // A 404 here typically means one of the action externalIds we reported an
-                    // update for is unknown to the server (e.g. a very stale queue entry from
-                    // before a restart) -- odin does not support partial failure within a
-                    // check-in batch, so the whole batch is dropped rather than requeued, to
-                    // avoid retrying an unresolvable bad ID forever and blocking every other
-                    // queued item behind it.
+                    // update for is unknown to the server. We can't tell from here whether that's
+                    // because it's a stale queue entry left over from before a restart, or a
+                    // genuine bug in the caller (e.g. an invalid or already-cancelled action
+                    // externalId) -- either way, when the response identifies the specific bad
+                    // externalId(s) via the standard "missing" error field, drop only those
+                    // action updates and requeue everything else -- errors, task updates, and
+                    // any other action updates in the batch are not at fault and shouldn't be
+                    // lost just because one entry was rejected.
+                    var badExternalIdSet = rex.Missing == null ? null : new HashSet<string>(
+                        rex.Missing
+                            .Select(dict => dict.TryGetValue("externalId", out var val) && val is MultiValue.String str ? str.Value : null)
+                            .OfType<string>());
+
+                    if (badExternalIdSet != null && badExternalIdSet.Count > 0)
+                    {
+                        var actionUpdatesList = actionUpdates is IList<ActionUpdate> list ? list : actionUpdates.ToList();
+                        var badUpdates = new List<ActionUpdate>();
+                        var remainingActionUpdates = new List<ActionUpdate>();
+                        foreach (var update in actionUpdatesList)
+                        {
+                            if (badExternalIdSet.Contains(update.ExternalId))
+                            {
+                                badUpdates.Add(update);
+                            }
+                            else
+                            {
+                                remainingActionUpdates.Add(update);
+                            }
+                        }
+
+                        if (badUpdates.Count > 0)
+                        {
+                            _logger.LogError(rex, "CheckIn failed, dropping {Count} action update(s) referencing unknown action(s): {Ids}",
+                                badUpdates.Count, string.Join(", ", badExternalIdSet));
+                            RequeueCheckIn(errors, tasks, remainingActionUpdates);
+                            return;
+                        }
+                    }
+
+                    // Could not identify which specific item(s) caused the failure -- odin does
+                    // not support partial failure within a check-in batch otherwise, so the
+                    // whole batch is dropped rather than requeued, to avoid retrying an
+                    // unresolvable bad ID forever and blocking every other queued item behind it.
                     _logger.LogError(rex, "CheckIn failed with a 400 status code, this is a bug! Dropping current check-in batch and continuing.");
                     return;
                 }
