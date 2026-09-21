@@ -185,9 +185,19 @@ namespace ExtractorUtils.Test
                     DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }).Wait();
                     return;
                 }
-                catch (Exception ex) when (DateTime.UtcNow < deadline && IsSpaceNotEmptyError(ex))
+                catch (Exception ex)
                 {
-                    Thread.Sleep(500);
+                    if (DateTime.UtcNow < deadline && IsSpaceNotEmptyError(ex))
+                    {
+                        Thread.Sleep(500);
+                        continue;
+                    }
+
+                    // Throwing from Dispose() would mask whatever the test's own failure was
+                    // (CA1065) -- log and let teardown finish instead of surfacing a confusing
+                    // "space not empty" error in place of the actual test result.
+                    Logger.LogError(ex, "Failed to delete test space {SpaceId} during teardown.", _spaceId);
+                    return;
                 }
             }
         }
