@@ -182,12 +182,15 @@ namespace ExtractorUtils.Test
             {
                 try
                 {
-                    DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }).Wait();
+                    // GetAwaiter().GetResult() (rather than .Wait()) throws the original
+                    // exception directly instead of wrapping it in an AggregateException, so
+                    // the check below can match ResponseException without needing to flatten it.
+                    DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }).GetAwaiter().GetResult();
                     return;
                 }
                 catch (Exception ex)
                 {
-                    if (DateTime.UtcNow < deadline && IsSpaceNotEmptyError(ex))
+                    if (DateTime.UtcNow < deadline && ex is ResponseException rex && rex.Message.Contains("contain nodes or edges"))
                     {
                         Thread.Sleep(500);
                         continue;
@@ -195,17 +198,11 @@ namespace ExtractorUtils.Test
 
                     // Throwing from Dispose() would mask whatever the test's own failure was
                     // (CA1065) -- log and let teardown finish instead of surfacing a confusing
-                    // "space not empty" error in place of the actual test result.
+                    // error in place of the actual test result.
                     Logger.LogError(ex, "Failed to delete test space {SpaceId} during teardown.", _spaceId);
                     return;
                 }
             }
-        }
-
-        private static bool IsSpaceNotEmptyError(Exception ex)
-        {
-            var inner = (ex as AggregateException)?.Flatten().InnerException ?? ex;
-            return inner is ResponseException rex && rex.Message.Contains("contain nodes or edges");
         }
 
         public void Dispose()
