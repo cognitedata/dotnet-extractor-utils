@@ -160,7 +160,7 @@ namespace ExtractorUtils.Test
                     System.IO.File.Delete(_configPath);
                     if (_spaceUpserted)
                     {
-                        DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }).Wait();
+                        DeleteSpaceWithRetry();
                     }
                     Provider.Dispose();
                     Source.Dispose();
@@ -168,6 +168,36 @@ namespace ExtractorUtils.Test
                 disposedValue = true;
             }
         }
+
+        /// <summary>
+        /// Deletes the test space, retrying for a bounded time if CDF reports it still contains
+        /// nodes or edges (EDG-891). A test's own cleanup may have deleted those instances just
+        /// moments earlier, and that deletion isn't always visible to CDF yet -- without a retry,
+        /// that ordinary eventual-consistency lag turns into a hard failure during teardown.
+        /// </summary>
+        private void DeleteSpaceWithRetry()
+        {
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+            while (true)
+            {
+                try
+                {
+                    DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }).Wait();
+                    return;
+                }
+                catch (Exception ex) when (DateTime.UtcNow < deadline && IsSpaceNotEmptyError(ex))
+                {
+                    Thread.Sleep(500);
+                }
+            }
+        }
+
+        private static bool IsSpaceNotEmptyError(Exception ex)
+        {
+            var inner = (ex as AggregateException)?.Flatten().InnerException ?? ex;
+            return inner is ResponseException rex && rex.Message.Contains("contain nodes or edges");
+        }
+
         public void Dispose()
         {
             Dispose(true);
