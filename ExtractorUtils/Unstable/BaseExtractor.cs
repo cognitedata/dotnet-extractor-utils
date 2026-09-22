@@ -60,7 +60,7 @@ namespace Cognite.Extractor.Utils.Unstable
 
         private readonly ILogger<BaseExtractor<TConfig>> _logger;
 
-        private readonly Dictionary<string, CustomAction<TConfig>> _customActions = new Dictionary<string, CustomAction<TConfig>>();
+        private readonly Dictionary<string, CustomAction<TConfig>> _customActions = new Dictionary<string, CustomAction<TConfig>>(StringComparer.OrdinalIgnoreCase);
 
         private object _lock = new object();
 
@@ -160,7 +160,8 @@ namespace Cognite.Extractor.Utils.Unstable
             foreach (var task in TaskScheduler.GetRegisteredTasks())
             {
                 if (!task.Action) continue;
-                if (action.Name == ActionNaming.StartActionName(task.Name) || action.Name == ActionNaming.StopActionName(task.Name))
+                if (string.Equals(action.Name, ActionNaming.StartActionName(task.Name), StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(action.Name, ActionNaming.StopActionName(task.Name), StringComparison.OrdinalIgnoreCase))
                 {
                     throw new InvalidOperationException(
                         $"Action name '{action.Name}' collides with the auto-generated Start/Stop action for task '{task.Name}'");

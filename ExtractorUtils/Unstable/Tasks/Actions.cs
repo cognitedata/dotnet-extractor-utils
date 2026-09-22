@@ -160,9 +160,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// </summary>
         /// <param name="message">Human-readable result message.</param>
         /// <param name="metadata">Optional structured result metadata.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="message"/> is null.</exception>
         /// <exception cref="InvalidOperationException">If called more than once.</exception>
         public void SetResult(string message, IReadOnlyDictionary<string, string>? metadata = null)
         {
+            if (message == null) throw new ArgumentNullException(nameof(message));
             lock (_lock)
             {
                 if (_resultSet) throw new InvalidOperationException("SetResult has already been called for this action");
