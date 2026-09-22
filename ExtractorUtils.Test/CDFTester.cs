@@ -170,38 +170,27 @@ namespace ExtractorUtils.Test
         }
 
         /// <summary>
-        /// Deletes the test space, retrying for a bounded time if CDF reports it still contains
-        /// nodes or edges (EDG-891). A test's own cleanup may have deleted those instances just
-        /// moments earlier, and that deletion isn't always visible to CDF yet -- without a retry,
-        /// that ordinary eventual-consistency lag turns into a hard failure during teardown.
+        /// Deletes the test space, retrying for a bounded number of attempts if CDF reports it
+        /// still contains nodes or edges (EDG-891). A test's own cleanup may have deleted those
+        /// instances just moments earlier, and that deletion isn't always visible to CDF yet --
+        /// without a retry, that ordinary eventual-consistency lag turns into a hard failure
+        /// during teardown.
         /// </summary>
         private void DeleteSpaceWithRetry()
         {
-            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(10);
-            while (true)
+            try
             {
-                try
-                {
-                    // GetAwaiter().GetResult() (rather than .Wait()) throws the original
-                    // exception directly instead of wrapping it in an AggregateException, so
-                    // the check below can match ResponseException without needing to flatten it.
-                    DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }).GetAwaiter().GetResult();
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    if (DateTime.UtcNow < deadline && ex is ResponseException rex && (rex.Message?.Contains("contain nodes or edges") ?? false))
-                    {
-                        Thread.Sleep(500);
-                        continue;
-                    }
-
-                    // Throwing from Dispose() would mask whatever the test's own failure was
-                    // (CA1065) -- log and let teardown finish instead of surfacing a confusing
-                    // error in place of the actual test result.
-                    Logger.LogError(ex, "Failed to delete test space {SpaceId} during teardown.", _spaceId);
-                    return;
-                }
+                Retry.RunAsync(
+                    () => DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }),
+                    shouldRetry: ex => ex is ResponseException rex && (rex.Message?.Contains("contain nodes or edges") ?? false)
+                ).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                // Throwing from Dispose() would mask whatever the test's own failure was
+                // (CA1065) -- log and let teardown finish instead of surfacing a confusing
+                // error (or retries-exhausted failure) in place of the actual test result.
+                Logger.LogError(ex, "Failed to delete test space {SpaceId} during teardown.", _spaceId);
             }
         }
 
