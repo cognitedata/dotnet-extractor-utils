@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extractor.Common;
 using Cognite.Extractor.Testing;
 using Cognite.Extractor.Utils;
 using CogniteSdk;
@@ -180,9 +181,13 @@ namespace ExtractorUtils.Test
         {
             try
             {
-                Retry.RunAsync(
+                RetryUtil.RetryAsync(
+                    "DeleteTestSpace",
                     () => DestinationWithIDM.CogniteClient.DataModels.DeleteSpaces(new List<string>() { _spaceId }),
-                    shouldRetry: ex => ex is ResponseException rex && (rex.Message?.Contains("contain nodes or edges") ?? false)
+                    new RetryUtilConfig { Timeout = "10s", InitialDelay = "500ms", MaxDelay = "500ms", UseJitter = true },
+                    ex => ex is ResponseException rex && (rex.Message?.Contains("contain nodes or edges") ?? false),
+                    Logger,
+                    Source.Token
                 ).GetAwaiter().GetResult();
             }
             catch (Exception ex)

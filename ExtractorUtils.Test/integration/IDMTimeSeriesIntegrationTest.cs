@@ -20,6 +20,10 @@ namespace ExtractorUtils.Test.Integration
 {
     public class IDMTimeSeriesIntegrationTest
     {
+        // Shared config for RetryUtil.RetryUntilAsync calls riding out CDF eventual
+        // consistency (EDG-891).
+        private static readonly RetryUtilConfig _pollConfig = new RetryUtilConfig { MaxTries = 6, InitialDelay = "300ms", MaxDelay = "5s", UseJitter = true };
+
         private readonly ITestOutputHelper _output;
         public IDMTimeSeriesIntegrationTest(ITestOutputHelper output)
         {
@@ -397,7 +401,8 @@ namespace ExtractorUtils.Test.Integration
                 tester.Logger.LogResult(result, RequestType.CreateDatapoints, false);
                 Assert.Empty(result.Errors);
 
-                var counts = await Retry.RunAsync(
+                var counts = await RetryUtil.RetryUntilAsync(
+                    "GetDataPointCounts",
                     async () =>
                     {
                         var foundDps = await tester.DestinationWithIDM.CogniteClient.DataPoints.ListAsync(new DataPointsQuery
@@ -421,7 +426,9 @@ namespace ExtractorUtils.Test.Integration
                             itemMap.TryGetValue(tss.externalIds[2], out var item2) ? item2.NumericDatapoints?.Datapoints?.Count ?? 0 : 0,
                         };
                     },
-                    isDone: counts => counts.All(cnt => cnt == 10));
+                    _pollConfig,
+                    counts => counts.All(cnt => cnt == 10),
+                    tester.Source.Token);
                 Assert.All(counts, cnt => Assert.Equal(10, cnt));
             }
             finally
@@ -858,7 +865,8 @@ namespace ExtractorUtils.Test.Integration
                 tester.Logger.LogResult(dpResult, RequestType.CreateDatapoints, false);
                 Assert.Empty(dpResult.Errors);
 
-                var foundState = await Retry.RunAsync(
+                var foundState = await RetryUtil.RetryUntilAsync(
+                    "GetStateDatapoints",
                     async () =>
                     {
                         var foundDps = await tester.DestinationWithIDM.CogniteClient.Beta.DataPoints.ListAsync(new DataPointsQuery
@@ -874,7 +882,9 @@ namespace ExtractorUtils.Test.Integration
                         }, tester.Source.Token);
                         return foundDps.Items.FirstOrDefault()?.StateDatapoints;
                     },
-                    isDone: state => (state?.Datapoints?.Count ?? 0) == 3);
+                    _pollConfig,
+                    state => (state?.Datapoints?.Count ?? 0) == 3,
+                    tester.Source.Token);
 
                 Assert.NotNull(foundState);
                 var byTimestamp = foundState.Datapoints.OrderBy(dp => dp.Timestamp).ToList();
@@ -970,9 +980,12 @@ namespace ExtractorUtils.Test.Integration
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
 
-                var retrieved = await Retry.RunAsync(
+                var retrieved = await RetryUtil.RetryUntilAsync(
+                    "GetStateSet",
                     () => tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token),
-                    isDone: r => r.Any());
+                    _pollConfig,
+                    r => r.Any(),
+                    tester.Source.Token);
                 var found = Assert.Single(retrieved);
                 Assert.Equal(stateSetXid, found.ExternalId);
                 Assert.Equal(2, found.Properties.States.Count());
@@ -1038,9 +1051,12 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Single(ensureResult.Results);
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, stateSetXid));
-                var retrieved = await Retry.RunAsync(
+                var retrieved = await RetryUtil.RetryUntilAsync(
+                    "GetStateSet",
                     () => stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token),
-                    isDone: r => r.Any());
+                    _pollConfig,
+                    r => r.Any(),
+                    tester.Source.Token);
                 var found = Assert.Single(retrieved);
                 Assert.Equal(stateSetXid, found.ExternalId);
                 Assert.Single(found.Properties.States);
@@ -1065,9 +1081,12 @@ namespace ExtractorUtils.Test.Integration
                 upsertResult.Throw();
                 Assert.Single(upsertResult.Results);
 
-                retrieved = await Retry.RunAsync(
+                retrieved = await RetryUtil.RetryUntilAsync(
+                    "GetStateSet",
                     () => stateSets.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, 1000, 1, tester.Source.Token),
-                    isDone: r => r.Any() && r.First().Properties.States.Count() == 2);
+                    _pollConfig,
+                    r => r.Any() && r.First().Properties.States.Count() == 2,
+                    tester.Source.Token);
                 found = Assert.Single(retrieved);
                 Assert.Equal(2, found.Properties.States.Count());
             }
@@ -1096,9 +1115,12 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Single(ensureResult.Results);
 
                 var identity = Identity.Create(new InstanceIdentifier(spaceId, existingXid));
-                var retrieved = await Retry.RunAsync(
+                var retrieved = await RetryUtil.RetryUntilAsync(
+                    "GetStateSet",
                     () => tester.DestinationWithIDM.GetStateSetsByIdsIgnoreErrors<CogniteStateSet>(new[] { identity }, tester.Source.Token),
-                    isDone: r => r.Any());
+                    _pollConfig,
+                    r => r.Any(),
+                    tester.Source.Token);
                 var found = Assert.Single(retrieved);
                 Assert.Equal(existingXid, found.ExternalId);
 
@@ -1191,7 +1213,8 @@ namespace ExtractorUtils.Test.Integration
                 result.Throw();
                 Assert.Equal(2, result.Results.Count());
 
-                var retrieved = await Retry.RunAsync(
+                var retrieved = await RetryUtil.RetryUntilAsync(
+                    "GetTimeSeries",
                     () => tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
                         new[]
                         {
@@ -1200,7 +1223,9 @@ namespace ExtractorUtils.Test.Integration
                         },
                         tester.Source.Token,
                         isBeta: true),
-                    isDone: r => r.Count() == 2);
+                    _pollConfig,
+                    r => r.Count() == 2,
+                    tester.Source.Token);
 
                 Assert.Equal(2, retrieved.Count());
                 Assert.All(retrieved, ts =>
