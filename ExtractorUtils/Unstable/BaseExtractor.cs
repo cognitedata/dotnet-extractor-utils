@@ -378,6 +378,27 @@ namespace Cognite.Extractor.Utils.Unstable
         {
             try
             {
+                // Checked first, before registering a waiter or scheduling the task: doing this
+                // after would leave a waiter that only clears once the task runs (a permanent
+                // leak if it never becomes runnable) and a task armed to start on its own later,
+                // with no action having reported success for that run.
+                try
+                {
+                    if (!TaskScheduler.CanTaskRunNow(taskName))
+                    {
+                        QueueFailedAction(externalId, $"Task '{taskName}' is not currently able to run");
+                        return;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // No task with this name is currently registered -- can happen if the action
+                    // was advertised for a task that existed at a previous startup but not this
+                    // one.
+                    QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
+                    return;
+                }
+
                 Task waitTask;
                 try
                 {
@@ -394,9 +415,9 @@ namespace Cognite.Extractor.Utils.Unstable
                 }
                 catch (ArgumentException)
                 {
-                    // No task with this name is currently registered -- can happen if the action
-                    // was advertised for a task that existed at a previous startup but not this
-                    // one.
+                    // No task with this name is currently registered -- same case as above, in
+                    // the narrow window where it was registered a moment ago but was removed
+                    // between the two checks.
                     QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
                     return;
                 }
@@ -409,19 +430,6 @@ namespace Cognite.Extractor.Utils.Unstable
                     // target framework this library multi-targets), and simpler than trying to
                     // unregister it.
                     QueueFailedAction(externalId, $"Task '{taskName}' is already running");
-                    return;
-                }
-
-                // TryScheduleTaskNow succeeding only means the task was queued -- CanRunNow
-                // independently and unboundedly gates whether it actually starts (e.g. a task
-                // that requires a live external connection can stay un-runnable for extended
-                // periods). Check this immediately, so an un-runnable task fails fast instead of
-                // hanging indefinitely below. The task remains scheduled either way (this check
-                // does not un-schedule it), so it will still run once it becomes able to --
-                // this failure is only about not blocking *this* dispatch waiting for that.
-                if (!TaskScheduler.CanTaskRunNow(taskName))
-                {
-                    QueueFailedAction(externalId, $"Task '{taskName}' is not currently able to run");
                     return;
                 }
 
