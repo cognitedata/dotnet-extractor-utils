@@ -396,6 +396,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public void QueueActionUpdate(ActionUpdate update)
         {
             if (update == null) throw new ArgumentNullException(nameof(update));
+            if (string.IsNullOrEmpty(update.ExternalId)) throw new ArgumentException("ActionUpdate must have ExternalId set", nameof(update));
             lock (_lock)
             {
                 _actionUpdates.Add(update);
