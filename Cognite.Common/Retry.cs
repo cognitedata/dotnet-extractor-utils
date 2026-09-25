@@ -60,6 +60,14 @@ namespace Cognite.Extractor.Common
             get => InitialDelayValue.RawValue;
             set => InitialDelayValue.RawValue = value;
         }
+
+        /// <summary>
+        /// If true, apply "equal jitter" to the computed delay between retries: half of it is
+        /// fixed, half is randomised, so many callers retrying at the same time don't
+        /// synchronize into a repeating load spike. Defaults to false, so existing callers keep
+        /// their exact current delay timing.
+        /// </summary>
+        public bool UseJitter { get; set; }
     }
 
     /// <summary>
@@ -67,6 +75,18 @@ namespace Cognite.Extractor.Common
     /// </summary>
     public static class RetryUtil
     {
+        // netstandard2.0 predates Random.Shared -- ThreadLocal gives each thread its own
+        // instance, avoiding the classic "shared System.Random is not thread-safe" bug.
+        private static readonly ThreadLocal<Random> _random = new ThreadLocal<Random>(() => new Random(Guid.NewGuid().GetHashCode()));
+
+        private static TimeSpan ComputeDelay(RetryUtilConfig config, int tries)
+        {
+            var delay = CogniteTime.Min(config.MaxDelayValue.Value, TimeSpan.FromTicks(config.InitialDelayValue.Value.Ticks * (int)Math.Pow(2, Math.Min(tries, 13))));
+            if (!config.UseJitter) return delay;
+            var half = delay.TotalMilliseconds / 2;
+            return TimeSpan.FromMilliseconds(half + _random.Value!.NextDouble() * half);
+        }
+
         /// <summary>
         /// Retry the given method based on <paramref name="config"/>.
         /// </summary>
@@ -110,7 +130,7 @@ namespace Cognite.Extractor.Common
                 {
                     if (shouldRetry(ex) && (tries < config.MaxTries - 1 || config.MaxTries == 0) && ((DateTime.UtcNow - start) < config.TimeoutValue.Value || config.TimeoutValue.Value == Timeout.InfiniteTimeSpan))
                     {
-                        var delay = CogniteTime.Min(config.MaxDelayValue.Value, TimeSpan.FromTicks(config.InitialDelayValue.Value.Ticks * (int)Math.Pow(2, Math.Min(tries, 13))));
+                        var delay = ComputeDelay(config, tries);
                         logger.LogTrace(ex, "Operation {Op} failed with error {Message}", name, ex.Message);
                         logger.LogDebug("Operation {Op} failed with error {Message}. Retrying after {Time}", name, ex.Message, delay);
                         await Task.Delay(delay, token).ConfigureAwait(false);
@@ -206,7 +226,7 @@ namespace Cognite.Extractor.Common
                 {
                     if (shouldRetry(ex) && (tries < config.MaxTries - 1 || config.MaxTries == 0) && ((DateTime.UtcNow - start) < config.TimeoutValue.Value || config.TimeoutValue.Value == Timeout.InfiniteTimeSpan))
                     {
-                        var delay = CogniteTime.Min(config.MaxDelayValue.Value, TimeSpan.FromTicks(config.InitialDelayValue.Value.Ticks * (int)Math.Pow(2, Math.Min(tries, 13))));
+                        var delay = ComputeDelay(config, tries);
                         logger.LogTrace(ex, "Operation {Op} failed with error {Message}", name, ex.Message);
                         logger.LogDebug("Operation {Op} failed with error {Message}. Retrying after {Time}", name, ex.Message, delay);
                         await Task.Delay(delay, token).ConfigureAwait(false);
@@ -231,6 +251,83 @@ namespace Cognite.Extractor.Common
         public static Task<T> RetryResultAsync<T>(string name, Func<Task<T>> generator, RetryUtilConfig config, CancellationToken token)
         {
             return RetryResultAsync(name, generator, config, _ => true, NullLogger.Instance, token);
+        }
+
+        /// <summary>
+        /// Like <see cref="RetryResultAsync{T}(string, Func{Task{T}}, RetryUtilConfig, Func{Exception, bool}, ILogger, CancellationToken)"/>,
+        /// but for calls that signal "not ready yet" by returning an incomplete result rather
+        /// than throwing (e.g. a read that comes back empty for a just-written resource). A
+        /// result rejected by <paramref name="isDone"/> is retried the same way an exception
+        /// accepted by <paramref name="shouldRetry"/> is. Once attempts are exhausted, the
+        /// last-seen result is returned rather than an exception being thrown, so the caller's
+        /// own check on the result produces the actual failure.
+        /// </summary>
+        /// <param name="name">Name of the task being retried, for logging.</param>
+        /// <param name="generator">Method returning a task, called once per retry.</param>
+        /// <param name="config">Retry config</param>
+        /// <param name="shouldRetry">A method returning true if the method should continue after the given exception was thrown.</param>
+        /// <param name="isDone">A method returning true if a successful result is acceptable.</param>
+        /// <param name="logger">Logger logging information about retries.</param>
+        /// <param name="token">Cancellation token</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<T> RetryUntilAsync<T>(
+            string name,
+            Func<Task<T>> generator,
+            RetryUtilConfig config,
+            Func<Exception, bool> shouldRetry,
+            Func<T, bool> isDone,
+            ILogger logger,
+            CancellationToken token)
+        {
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (generator == null) throw new ArgumentNullException(nameof(generator));
+            if (shouldRetry == null) throw new ArgumentNullException(nameof(shouldRetry));
+            if (isDone == null) throw new ArgumentNullException(nameof(isDone));
+            int tries = 0;
+            DateTime start = DateTime.UtcNow;
+
+            while (true)
+            {
+                logger.LogTrace("Run task {Task} attempt {Tries}. Elapsed: {Time}", name, tries + 1, DateTime.UtcNow - start);
+
+                bool canRetry = (config.MaxTries == 0 || tries < config.MaxTries - 1)
+                    && ((DateTime.UtcNow - start) < config.TimeoutValue.Value || config.TimeoutValue.Value == Timeout.InfiniteTimeSpan);
+
+                T result;
+                try
+                {
+                    result = await generator().ConfigureAwait(false);
+                }
+                catch (Exception ex) when (shouldRetry(ex) && canRetry)
+                {
+                    var delay = ComputeDelay(config, tries);
+                    logger.LogDebug(ex, "Operation {Op} failed with error {Message}. Retrying after {Time}", name, ex.Message, delay);
+                    await Task.Delay(delay, token).ConfigureAwait(false);
+                    tries++;
+                    token.ThrowIfCancellationRequested();
+                    continue;
+                }
+
+                if (isDone(result) || !canRetry)
+                {
+                    return result;
+                }
+
+                var idleDelay = ComputeDelay(config, tries);
+                logger.LogDebug("Operation {Op} not yet done, retrying after {Time}", name, idleDelay);
+                await Task.Delay(idleDelay, token).ConfigureAwait(false);
+                tries++;
+                token.ThrowIfCancellationRequested();
+            }
+        }
+
+        /// <summary>
+        /// Like <see cref="RetryUntilAsync{T}(string, Func{Task{T}}, RetryUtilConfig, Func{Exception, bool}, Func{T, bool}, ILogger, CancellationToken)"/>,
+        /// retrying on any exception except cancellation.
+        /// </summary>
+        public static Task<T> RetryUntilAsync<T>(string name, Func<Task<T>> generator, RetryUtilConfig config, Func<T, bool> isDone, CancellationToken token)
+        {
+            return RetryUntilAsync(name, generator, config, ex => !(ex is OperationCanceledException), isDone, NullLogger.Instance, token);
         }
 
         /// <summary>
