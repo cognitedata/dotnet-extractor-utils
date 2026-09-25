@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -62,6 +63,18 @@ namespace Cognite.Extractor.Utils.Unstable
 
         private readonly Dictionary<string, CustomAction<TConfig>> _customActions = new Dictionary<string, CustomAction<TConfig>>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// Custom actions currently being dispatched, keyed by action externalId, each mapped to
+        /// the CancellationTokenSource passed to that action's target. Used both to skip
+        /// re-dispatching an action redelivered before its first dispatch completes, and to
+        /// resolve a `cancel_pending` redelivery by cancelling the specific in-flight run --
+        /// see DispatchAction/RunCustomAction.
+        /// </summary>
+        private readonly ConcurrentDictionary<string, CancellationTokenSource> _inFlightCustomActions
+            = new ConcurrentDictionary<string, CancellationTokenSource>();
+
+        private readonly string _integrationExternalId;
+
         private object _lock = new object();
 
         private ManualResetEvent _triggerEvent = new ManualResetEvent(false);
@@ -101,6 +114,14 @@ namespace Cognite.Extractor.Utils.Unstable
             _sink = sink;
             TaskScheduler = taskScheduler;
             _logger = provider.GetService<ILogger<BaseExtractor<TConfig>>>() ?? new NullLogger<BaseExtractor<TConfig>>();
+            // Best-effort: ConnectionConfig is only registered when the extractor is built via
+            // the full Runtime/Builder DI setup with a real integration configured (e.g. not in
+            // unit tests that construct a BaseExtractor directly, and not for an extractor
+            // running fully offline). Falls back to empty rather than throwing, since a missing
+            // integration external id here is never actually observable in practice: without a
+            // real integration, nothing can ever invoke DispatchActions in the first place (it's
+            // only reachable via a checkin/startup response, which requires one).
+            _integrationExternalId = provider.GetService<ConnectionConfig>()?.Integration?.ExternalId ?? string.Empty;
         }
 
         /// <summary>
@@ -376,7 +397,134 @@ namespace Cognite.Extractor.Utils.Unstable
                 }
             }
 
+            if (action.Status == ActionStatus.cancel_pending)
+            {
+                // Cancel-in-flight for a custom action: look up its CancellationTokenSource
+                // (registered in DispatchAction's own dispatch branch below, before invoking the
+                // target) and cancel it. The in-flight unit of work's own try/catch/finally
+                // (RunCustomAction) is what reports the eventual terminal status once the target
+                // observes cancellation and unwinds -- nothing is queued from here.
+                if (_inFlightCustomActions.TryGetValue(action.ExternalId, out var cts))
+                {
+                    lock (cts)
+                    {
+                        try
+                        {
+                            cts.Cancel();
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            // Safe to ignore: the action completed and disposed its CTS concurrently.
+                        }
+                    }
+                }
+                // Not found: already completed, or unknown to this process instance (e.g. after
+                // a restart) -- a safe no-op, not an error.
+                return;
+            }
+
+            if (action.ActionName != null && _customActions.TryGetValue(action.ActionName, out var customAction))
+            {
+                // Guard against the same action id being redelivered in pendingActions before a
+                // terminal status has been reported for its first dispatch -- custom-action
+                // authors' callbacks are arbitrary code that may not be safe to invoke twice
+                // concurrently. Start/Stop don't need this: they're naturally idempotent via the
+                // scheduler's own state (TryScheduleTaskNow/TryCancelTask).
+                var cts = new CancellationTokenSource();
+                if (!_inFlightCustomActions.TryAdd(action.ExternalId, cts))
+                {
+                    cts.Dispose();
+                    return;
+                }
+                Task.Run(() => RunCustomAction(action.ExternalId, action.CallMetadata, customAction, cts));
+                return;
+            }
+
             QueueFailedAction(action.ExternalId, $"No action named '{actionName}' registered");
+        }
+
+        private async Task RunCustomAction(
+            string externalId,
+            IDictionary<string, string>? callMetadata,
+            CustomAction<TConfig> customAction,
+            CancellationTokenSource cts)
+        {
+            try
+            {
+                _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.running });
+
+                var ctx = new ActionContext<TConfig>(
+                    Config,
+                    Destination,
+                    _integrationExternalId,
+                    externalId,
+                    callMetadata == null ? null : new Dictionary<string, string>(callMetadata),
+                    _sink);
+
+                try
+                {
+                    await customAction.Target(ctx, cts.Token).ConfigureAwait(false);
+                    // The happy-path terminal update is queued by the dispatcher itself, after
+                    // the target returns without throwing -- using whatever SetResult state
+                    // exists at that point (an empty result if SetResult was never called).
+                    // SetResult itself only records state; it does not queue anything (see
+                    // ActionContext.SetResult).
+                    _sink.QueueActionUpdate(new ActionUpdate
+                    {
+                        ExternalId = externalId,
+                        Status = ActionStatus.succeeded,
+                        ResultMessage = ctx.ResultMessage,
+                        ResultMetadata = ctx.ResultMetadata?.ToDictionary(kv => kv.Key, kv => kv.Value),
+                    });
+                }
+                catch (Exception ex)
+                {
+                    // Disambiguated by token state, not exception type: a target that throws
+                    // while its own cancellation was requested is reporting the outcome of that
+                    // cancellation (whether or not it threw a "clean" OperationCanceledException
+                    // tied to this token), not a genuine failure.
+                    if (cts.IsCancellationRequested)
+                    {
+                        _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.canceled });
+                    }
+                    else if (ex is ActionError actionError)
+                    {
+                        _sink.QueueActionUpdate(new ActionUpdate
+                        {
+                            ExternalId = externalId,
+                            Status = ActionStatus.failed,
+                            ResultMessage = actionError.Message,
+                            ResultMetadata = actionError.ResultMetadata.ToDictionary(kv => kv.Key, kv => kv.Value),
+                        });
+                    }
+                    else
+                    {
+                        QueueFailedAction(externalId, ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Mandatory catch-all for the entire unit of work: an unhandled exception
+                // anywhere above (including in constructing ActionContext itself) must still
+                // produce a terminal update, never a silently dropped action.
+                _logger.LogError(ex, "Unhandled exception dispatching custom action '{Name}'", customAction.Name);
+                QueueFailedAction(externalId, $"Internal error: {ex.Message}");
+            }
+            finally
+            {
+                // Tied to finally, not the happy-path return, so a leaked dedup entry (blocking
+                // all future redelivery of this action id) or a silently-dropped action (if the
+                // callback throws before reaching the code above that records an outcome) can't
+                // happen.
+                _inFlightCustomActions.TryRemove(externalId, out _);
+                // Locked to synchronize with concurrent Cancel() calls from DispatchAction/
+                // ShutdownInternal, which look the CTS up before it is removed above.
+                lock (cts)
+                {
+                    cts.Dispose();
+                }
+            }
         }
 
         private async Task RunStartTaskAction(string externalId, string taskName)
@@ -602,8 +750,37 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <returns></returns>
         protected virtual async Task ShutdownInternal()
         {
+            // Signal any in-flight custom actions to stop now, at the same point the task
+            // scheduler itself is signalled below. Source (which each action's token is a child
+            // of) isn't cancelled until the very end of Shutdown()/DisposeAsyncCore(), well after
+            // this method returns -- without this explicit step, an in-flight custom action's
+            // target would keep running, unsignalled, for this entire graceful-shutdown window.
+            foreach (var cts in _inFlightCustomActions.Values)
+            {
+                lock (cts)
+                {
+                    try
+                    {
+                        cts.Cancel();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Safe to ignore: the action completed and disposed its CTS concurrently.
+                    }
+                }
+            }
             // First, shut down the task scheduler.
             await TaskScheduler.CancelInnerAndWait(20000, this).ConfigureAwait(false);
+            // Custom actions run as bare fire-and-forget tasks, not tracked by TaskScheduler, so
+            // the wait above does not cover them. Give them a bounded window to finish unwinding
+            // and queue their terminal `canceled` update -- otherwise the flush below (and the
+            // check-in worker's loop, which TaskScheduler.CancelInnerAndWait just stopped) may
+            // miss it entirely, silently dropping the terminal status.
+            var waitStart = DateTime.UtcNow;
+            while (!_inFlightCustomActions.IsEmpty && (DateTime.UtcNow - waitStart).TotalMilliseconds < 5000)
+            {
+                await Task.Delay(50).ConfigureAwait(false);
+            }
             // Next, flush any remaining task updates.
             await FlushSink(CancellationToken.None).ConfigureAwait(false);
         }
