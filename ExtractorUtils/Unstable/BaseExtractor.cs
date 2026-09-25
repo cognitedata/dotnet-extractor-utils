@@ -406,13 +406,16 @@ namespace Cognite.Extractor.Utils.Unstable
                 // observes cancellation and unwinds -- nothing is queued from here.
                 if (_inFlightCustomActions.TryGetValue(action.ExternalId, out var cts))
                 {
-                    try
+                    lock (cts)
                     {
-                        cts.Cancel();
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        // Safe to ignore: the action completed and disposed its CTS concurrently.
+                        try
+                        {
+                            cts.Cancel();
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            // Safe to ignore: the action completed and disposed its CTS concurrently.
+                        }
                     }
                 }
                 // Not found: already completed, or unknown to this process instance (e.g. after
@@ -515,7 +518,12 @@ namespace Cognite.Extractor.Utils.Unstable
                 // callback throws before reaching the code above that records an outcome) can't
                 // happen.
                 _inFlightCustomActions.TryRemove(externalId, out _);
-                cts.Dispose();
+                // Locked to synchronize with concurrent Cancel() calls from DispatchAction/
+                // ShutdownInternal, which look the CTS up before it is removed above.
+                lock (cts)
+                {
+                    cts.Dispose();
+                }
             }
         }
 
@@ -749,13 +757,16 @@ namespace Cognite.Extractor.Utils.Unstable
             // target would keep running, unsignalled, for this entire graceful-shutdown window.
             foreach (var cts in _inFlightCustomActions.Values)
             {
-                try
+                lock (cts)
                 {
-                    cts.Cancel();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Safe to ignore: the action completed and disposed its CTS concurrently.
+                    try
+                    {
+                        cts.Cancel();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Safe to ignore: the action completed and disposed its CTS concurrently.
+                    }
                 }
             }
             // First, shut down the task scheduler.
