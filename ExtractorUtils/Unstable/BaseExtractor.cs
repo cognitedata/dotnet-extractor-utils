@@ -415,14 +415,7 @@ namespace Cognite.Extractor.Utils.Unstable
                 // authors' callbacks are arbitrary code that may not be safe to invoke twice
                 // concurrently. Start/Stop don't need this: they're naturally idempotent via the
                 // scheduler's own state (TryScheduleTaskNow/TryCancelTask).
-                //
-                // Linked to Source, not a bare CancellationTokenSource, so a custom action's
-                // token is a proper child of the extractor's own lifetime -- matching every other
-                // cancellation source in this class (RegisteredTask's per-run token is likewise a
-                // child of the scheduler's, which is itself a child of Source). ShutdownInternal
-                // additionally cancels in-flight custom actions explicitly and promptly (see
-                // there for why this alone isn't enough).
-                var cts = CancellationTokenSource.CreateLinkedTokenSource(Source.Token);
+                var cts = new CancellationTokenSource();
                 if (!_inFlightCustomActions.TryAdd(action.ExternalId, cts))
                 {
                     cts.Dispose();

@@ -23,6 +23,24 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public abstract bool ErrorIsFatal { get; }
 
         /// <summary>
+        /// Return whether this task being cancelled via an explicit Stop action
+        /// (<see cref="ExtractorTaskScheduler.CancelTask"/>) should be considered fatal,
+        /// on the same terms as <see cref="ErrorIsFatal"/>.
+        ///
+        /// Defaults to <see cref="ErrorIsFatal"/>: a task that is fatal-on-error is, by
+        /// default, also fatal if stopped before it completes, since the framework has no
+        /// way to know whether this particular task can safely be interrupted mid-run.
+        /// Override this to return <c>false</c> only if the task is known to tolerate being
+        /// stopped at any point without leaving the extractor in an inconsistent state.
+        ///
+        /// This has no effect on cancellation caused by the extractor itself shutting down
+        /// (e.g. <c>Shutdown()</c>/<c>DisposeAsync()</c>) -- that is always non-fatal,
+        /// regardless of this setting, since there is nothing left to protect by crashing a
+        /// process that is already exiting.
+        /// </summary>
+        public virtual bool CancellationIsFatal { get => ErrorIsFatal; }
+
+        /// <summary>
         /// Return whether the task can run now.
         ///
         /// The task should make sure to call the callback provided in `RegisterReadyCallback`
@@ -87,9 +105,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// (e.g. via <see cref="RegisteredTask.Cancel"/>, which backs a Stop action), as opposed
         /// to the task's token being cancelled only because the scheduler itself is shutting
         /// down. Used by <see cref="RegisteredTask.FinishTask"/> to tell an intentional stop
-        /// apart from a genuine failure for tasks with <see cref="BaseSchedulableTask.ErrorIsFatal"/>
-        /// set -- cancellation must never be treated as a fatal error, whichever of the two
-        /// intentional-cancellation sources caused it.
+        /// apart from a genuine failure -- whether that is in turn treated as fatal depends on
+        /// <see cref="BaseSchedulableTask.CancellationIsFatal"/>, since not every task can
+        /// safely tolerate being stopped mid-run.
         /// </summary>
         public bool CancelledIntentionally { get; set; }
 
@@ -194,71 +212,81 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// whether this particular task was individually cancelled.</param>
         public void FinishTask(DateTime now, bool schedulerShuttingDown)
         {
-            if (ActiveTask == null || !ActiveTask.Task.IsCompleted) throw new InvalidOperationException("Attempt to finish a task that isn't completed");
             lock (_lock)
             {
+                if (ActiveTask == null || !ActiveTask.Task.IsCompleted) throw new InvalidOperationException("Attempt to finish a task that isn't completed");
+
                 var finished = ActiveTask;
-                finished.Dispose();
                 ActiveTask = null;
 
-                Exception? exc = finished.Task.Exception?.Flatten();
-
-                if (exc?.InnerException != null)
+                try
                 {
-                    exc = exc.InnerException;
+                    Exception? exc = finished.Task.Exception?.Flatten();
+
+                    if (exc?.InnerException != null)
+                    {
+                        exc = exc.InnerException;
+                    }
+
+                    // Whether this specific task's execution was actually cancelled. This is
+                    // deliberately based only on the task's own outcome (IsCanceled) and whether
+                    // an explicit per-task Cancel() was requested (CancelledIntentionally) -- not
+                    // on finished.Source.IsCancellationRequested, which can flip to true well
+                    // after the task already completed successfully (e.g. because the scheduler
+                    // itself is shut down on a later tick), incorrectly reclassifying a
+                    // successful completion as a cancellation.
+                    bool wasCancelled = finished.Task.IsCanceled || finished.CancelledIntentionally;
+
+                    // Whether this cancellation should be treated as fatal. Scheduler shutdown is
+                    // never fatal -- there is nothing left to protect by crashing a process that's
+                    // already exiting. Any other cancellation defers entirely to
+                    // CancellationIsFatal, since the framework has no way to know on its own
+                    // whether this particular task can safely be interrupted mid-run.
+                    bool isFatalCancellation = schedulerShuttingDown ? false : Operation.CancellationIsFatal;
+
+                    // Report a fatal error to integrations if the task exited non-cleanly.
+                    // This typically means a crash or manual cancellation.
+                    if (wasCancelled)
+                    {
+                        _reporter.Warning("Task was cancelled", finished.CancellationReason, now);
+                        exc = new TaskCanceledException();
+                    }
+                    else if (exc != null)
+                    {
+                        _reporter.Fatal(exc.Message, exc.StackTrace?.ToString(), now);
+                    }
+                    else if (finished.Task.IsFaulted)
+                    {
+                        // Should be impossible.
+                        _reporter.Fatal("Task failed without throwing an exception.", null, now);
+                        exc = new CogniteUtilsException("Task failed without throwing an exception");
+                    }
+
+                    // Report that the task ended.
+                    _reporter.ReportEnd(
+                        !finished.Task.IsFaulted && !finished.Task.IsCanceled
+                        ? finished.Task.Result
+                        : null,
+                        now);
+
+                    // Wake up any waiters and tell them the task has finished running.
+                    foreach (var cb in _waiters)
+                    {
+                        Task.Run(() => cb.TrySetResult(exc));
+                    }
+                    _waiters.Clear();
+
+                    // If the task is critical, then at this stage we should throw an exception.
+                    // A cancellation's fatal-ness is governed by isFatalCancellation (see above);
+                    // any other failure is fatal exactly when ErrorIsFatal is set.
+                    if (exc != null && (wasCancelled ? isFatalCancellation : Operation.ErrorIsFatal))
+                    {
+                        ExceptionDispatchInfo.Capture(exc).Throw();
+                    }
                 }
-
-                bool wasCancelled = finished.Task.IsCanceled || finished.Source.IsCancellationRequested;
-
-                // A cancellation is "intentional" -- and therefore never a fatal error, even for
-                // a task with ErrorIsFatal set -- if it was caused either by an explicit Cancel()
-                // call on this task (e.g. a Stop action) or because the scheduler itself is
-                // shutting down. Given how cancellation tokens are wired up in this class, these
-                // are currently the only two ways a task's token can become cancelled, but both
-                // are checked explicitly (rather than assuming "any cancellation is intentional")
-                // so this stays correct if a future change introduces another cancellation source
-                // that genuinely should be fatal.
-                bool wasIntentional = finished.CancelledIntentionally || schedulerShuttingDown;
-
-                // Report a fatal error to integrations if the task exited non-cleanly.
-                // This typically means a crash or manual cancellation.
-                if (wasCancelled)
+                finally
                 {
-                    _reporter.Warning("Task was cancelled", finished.CancellationReason, now);
-                    exc = new TaskCanceledException();
-                }
-                else if (exc != null)
-                {
-                    _reporter.Fatal(exc.Message, exc.StackTrace?.ToString(), now);
-                }
-                else if (finished.Task.IsFaulted)
-                {
-                    // Should be impossible.
-                    _reporter.Fatal("Task failed without throwing an exception.", null, now);
-                    exc = new CogniteUtilsException("Task failed without throwing an exception");
-                }
-
-                // Report that the task ended.
-                _reporter.ReportEnd(
-                    !finished.Task.IsFaulted && !finished.Task.IsCanceled
-                    ? finished.Task.Result
-                    : null,
-                    now);
-
-                // Wake up any waiters and tell them the task has finished running.
-                foreach (var cb in _waiters)
-                {
-                    Task.Run(() => cb.TrySetResult(exc));
-                }
-                _waiters.Clear();
-
-                // If the task is critical, then at this stage we should throw an exception --
-                // unless this was just an intentional cancellation, in which case ErrorIsFatal
-                // must not turn an ordinary Stop action or extractor shutdown into a process
-                // crash. ErrorIsFatal exists to catch *unexpected* failures.
-                if (exc != null && Operation.ErrorIsFatal && !(wasCancelled && wasIntentional))
-                {
-                    ExceptionDispatchInfo.Capture(exc).Throw();
+                    finished.Dispose();
                 }
             }
         }
@@ -387,7 +415,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     throw new InvalidOperationException($"No task with name {name}");
                 }
-                if (task.ActiveTask == null)
+                // A task whose Task has already completed, but whose ActiveTask hasn't been
+                // cleared yet because the scheduler's tick loop hasn't run FinishTask on it,
+                // must be treated the same as "not running" -- otherwise Cancel() would mark a
+                // task that already finished (successfully or not) as CancelledIntentionally,
+                // causing FinishTask to misreport it as cancelled once it does run.
+                if (task.ActiveTask == null || task.ActiveTask.Task.IsCompleted)
                 {
                     return false;
                 }
@@ -449,7 +482,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     throw new InvalidOperationException($"No task with name {name}");
                 }
-                if (task.ActiveTask != null)
+                // A task whose Task has already completed, but whose ActiveTask hasn't been
+                // cleared yet because the scheduler's tick loop hasn't run FinishTask on it, is
+                // safe to re-queue here: the tick loop always calls FinishTask for a completed
+                // task before checking NextRun for that same task within the same iteration, so
+                // ActiveTask will be null again well before this task is next considered to run.
+                if (task.ActiveTask != null && !task.ActiveTask.Task.IsCompleted)
                 {
                     return false;
                 }
