@@ -728,5 +728,151 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Equal(5000, ((string)errors[0].description).Length);
             Assert.Equal(5000, ((string)errors[0].details).Length);
         }
+
+        [Fact]
+        public async Task TestActionUpdateResultMessageIsTruncated()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = new string('a', 1500),
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            string message = actionUpdates[0].resultMessage;
+            Assert.Equal(1000, message.Length);
+            Assert.EndsWith("...", message);
+            Assert.Equal(new string('a', 997) + "...", message);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
+        public async Task TestActionUpdateResultMessageWithinLimitIsUnchanged()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = "short message",
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            Assert.Equal("short message", (string)actionUpdates[0].resultMessage);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
+        public async Task TestActionUpdateOversizedMetadataValueIsSanitizedNotFailed()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = "Done",
+                ResultMetadata = new Dictionary<string, string> { ["fileList"] = new string('a', 1000) },
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            var update = actionUpdates[0];
+            // The action's real outcome must be preserved -- oversized metadata is reduced and
+            // noted, never sufficient cause by itself to report `failed`.
+            Assert.Equal("succeeded", (string)update.status);
+            string fileList = update.resultMetadata.fileList;
+            Assert.True(System.Text.Encoding.UTF8.GetByteCount(fileList) <= 512);
+            Assert.Contains("exceeded odin's size limits", (string)update.resultMessage);
+            Assert.Contains("Done", (string)update.resultMessage);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
+        public async Task TestActionUpdateTooManyMetadataKeysIsSanitizedNotFailed()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            var metadata = new Dictionary<string, string>();
+            for (int i = 0; i < 25; i++) metadata[$"key{i}"] = "value";
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.canceled,
+                ResultMetadata = metadata,
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            var update = actionUpdates[0];
+            // Preserved even for a `canceled` outcome, not just `succeeded`.
+            Assert.Equal("canceled", (string)update.status);
+            var resultMetadataProps = (Newtonsoft.Json.Linq.JObject)update.resultMetadata;
+            Assert.True(resultMetadataProps.Count <= 16);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
+        public async Task TestActionUpdateMetadataWithinLimitsIsUnchanged()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = "Done",
+                ResultMetadata = new Dictionary<string, string> { ["fileCount"] = "3" },
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            var update = actionUpdates[0];
+            Assert.Equal("Done", (string)update.resultMessage);
+            Assert.Equal("3", (string)update.resultMetadata.fileCount);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
     }
 }
