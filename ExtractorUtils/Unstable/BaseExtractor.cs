@@ -338,41 +338,45 @@ namespace Cognite.Extractor.Utils.Unstable
 
         private void DispatchAction(IntegrationAction action)
         {
-            if (action.ActionName != null && action.ActionName.StartsWith(ActionNaming.StartPrefix, StringComparison.Ordinal))
+            var actionName = action.ActionName;
+            if (actionName != null)
             {
-                var taskName = action.ActionName.Substring(ActionNaming.StartPrefix.Length);
-                if (action.Status == ActionStatus.cancel_pending)
+                if (actionName.StartsWith(ActionNaming.StartPrefix, StringComparison.Ordinal))
                 {
-                    // A Start action already in flight is backed by a real, cancellable task run
-                    // -- resolve a cancel request the same way a Stop action would, via
-                    // TryCancelTask, rather than needing any action-specific cancellation
-                    // machinery. The original dispatched Start action's own WaitForNextEndOfTask
-                    // call observes the resulting task cancellation and reports the terminal
-                    // update itself; nothing needs to be queued from here. If there is nothing
-                    // currently running under this task name (e.g. it already finished, or this
-                    // process instance never dispatched it), TryCancelTask is a silent, safe
-                    // no-op -- including in the accepted, extremely narrow edge case where this
-                    // arrives in the brief window after RunStartTaskAction's TryScheduleTaskNow
-                    // call queued the task but before the scheduler's own loop has actually set
-                    // ActiveTask for it (TryCancelTask can only cancel an *active* run). That
-                    // window is bounded by thread-pool dispatch latency (microseconds), which is
-                    // irrelevant next to the checkin interval a real cancel_pending redelivery
-                    // would have to cross (seconds), so this is not considered worth adding
-                    // extra synchronization for.
-                    TaskScheduler.TryCancelTask(taskName, "Action cancelled");
+                    var taskName = actionName.Substring(ActionNaming.StartPrefix.Length);
+                    if (action.Status == ActionStatus.cancel_pending)
+                    {
+                        // A Start action already in flight is backed by a real, cancellable task run
+                        // -- resolve a cancel request the same way a Stop action would, via
+                        // TryCancelTask, rather than needing any action-specific cancellation
+                        // machinery. The original dispatched Start action's own WaitForNextEndOfTask
+                        // call observes the resulting task cancellation and reports the terminal
+                        // update itself; nothing needs to be queued from here. If there is nothing
+                        // currently running under this task name (e.g. it already finished, or this
+                        // process instance never dispatched it), TryCancelTask is a silent, safe
+                        // no-op -- including in the accepted, extremely narrow edge case where this
+                        // arrives in the brief window after RunStartTaskAction's TryScheduleTaskNow
+                        // call queued the task but before the scheduler's own loop has actually set
+                        // ActiveTask for it (TryCancelTask can only cancel an *active* run). That
+                        // window is bounded by thread-pool dispatch latency (microseconds), which is
+                        // irrelevant next to the checkin interval a real cancel_pending redelivery
+                        // would have to cross (seconds), so this is not considered worth adding
+                        // extra synchronization for.
+                        TaskScheduler.TryCancelTask(taskName, "Action cancelled");
+                        return;
+                    }
+                    Task.Run(() => RunStartTaskAction(action.ExternalId, taskName));
                     return;
                 }
-                Task.Run(() => RunStartTaskAction(action.ExternalId, taskName));
-                return;
-            }
-            if (action.ActionName != null && action.ActionName.StartsWith(ActionNaming.StopPrefix, StringComparison.Ordinal))
-            {
-                var taskName = action.ActionName.Substring(ActionNaming.StopPrefix.Length);
-                Task.Run(() => RunStopTaskAction(action.ExternalId, taskName));
-                return;
+                if (actionName.StartsWith(ActionNaming.StopPrefix, StringComparison.Ordinal))
+                {
+                    var taskName = actionName.Substring(ActionNaming.StopPrefix.Length);
+                    Task.Run(() => RunStopTaskAction(action.ExternalId, taskName));
+                    return;
+                }
             }
 
-            QueueFailedAction(action.ExternalId, $"No action named '{action.ActionName}' registered");
+            QueueFailedAction(action.ExternalId, $"No action named '{actionName}' registered");
         }
 
         private async Task RunStartTaskAction(string externalId, string taskName)
@@ -457,7 +461,7 @@ namespace Cognite.Extractor.Utils.Unstable
                     // before the task itself has necessarily finished -- accessing .Result on
                     // that then throws AggregateException wrapping a TaskCanceledException; the
                     // existing TaskSchedulerTest.TestWaitWhenCancel documents this same shape).
-                    // Unwrap once to treat both as the same outcome.
+                    // Unwrap once so both exception shapes are inspected the same way below.
                     var actual = (ex as AggregateException)?.Flatten().InnerException ?? ex;
                     if (actual is TaskCanceledException)
                     {
@@ -483,10 +487,10 @@ namespace Cognite.Extractor.Utils.Unstable
         {
             try
             {
-                bool cancelled;
+                bool isTaskCancelled;
                 try
                 {
-                    cancelled = TaskScheduler.TryCancelTask(taskName, "Stop action");
+                    isTaskCancelled = TaskScheduler.TryCancelTask(taskName, "Stop action");
                 }
                 catch (InvalidOperationException)
                 {
@@ -494,13 +498,12 @@ namespace Cognite.Extractor.Utils.Unstable
                     return;
                 }
 
-                if (cancelled)
+                if (isTaskCancelled)
                 {
-                    // Matches python-extractor-utils' convention: `succeeded`, not `canceled` --
-                    // `canceled` is reserved for the target task's own run being cancelled, a
-                    // distinct, separately-observable outcome from "the stop request succeeded".
-                    // odin does not enforce either choice server-side; this is purely for
-                    // cross-language parity.
+                    // `succeeded`, not `canceled` -- `canceled` means the target task's own run
+                    // was interrupted, a distinct outcome from "the stop request succeeded". Not
+                    // enforced server-side; purely for cross-language parity with
+                    // python-extractor-utils.
                     _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.succeeded });
                 }
                 else
