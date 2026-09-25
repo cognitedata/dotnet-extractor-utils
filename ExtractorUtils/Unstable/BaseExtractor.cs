@@ -60,6 +60,8 @@ namespace Cognite.Extractor.Utils.Unstable
 
         private readonly ILogger<BaseExtractor<TConfig>> _logger;
 
+        private readonly Dictionary<string, CustomAction<TConfig>> _customActions = new Dictionary<string, CustomAction<TConfig>>(StringComparer.OrdinalIgnoreCase);
+
         private object _lock = new object();
 
         private ManualResetEvent _triggerEvent = new ManualResetEvent(false);
@@ -114,6 +116,59 @@ namespace Cognite.Extractor.Utils.Unstable
         /// </summary>
         /// <returns></returns>
         protected abstract Task InitTasks();
+
+        /// <summary>
+        /// Register any custom actions this extractor supports, by calling
+        /// <see cref="RegisterAction"/>.
+        ///
+        /// This runs after <see cref="InitTasks"/> (see <see cref="Init"/>), so that the
+        /// auto-generated Start/Stop actions for tasks registered there are already known when
+        /// custom actions are registered, and can be checked for name collisions.
+        ///
+        /// Does nothing by default.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Task InitActions()
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Register a custom action, to be advertised to integrations at startup and dispatched
+        /// to when triggered.
+        ///
+        /// Must be called from within <see cref="InitActions"/> (or before it, but after
+        /// <see cref="InitTasks"/>) -- the framework does not verify this, but registering a
+        /// duplicate name later triggers a validation error on the next attempt.
+        /// </summary>
+        /// <param name="action">Action to register.</param>
+        /// <exception cref="InvalidOperationException">If an action or task with a colliding
+        /// name is already registered.</exception>
+        protected void RegisterAction(CustomAction<TConfig> action)
+        {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+            if (_customActions.ContainsKey(action.Name))
+            {
+                throw new InvalidOperationException($"An action named '{action.Name}' is already registered");
+            }
+            // Guard against colliding with an auto-generated Start/Stop action name for an
+            // already-registered actionable task. InitTasks() always runs before InitActions()
+            // (see Init()), so every actionable task the extractor will ever advertise at this
+            // startup is already known here -- this does not protect against a task added
+            // dynamically at runtime after startup, which is out of scope for action name
+            // collision checking (the two aren't recomputed together after startup anyway).
+            foreach (var task in TaskScheduler.GetRegisteredTasks())
+            {
+                if (!task.Action) continue;
+                if (string.Equals(action.Name, ActionNaming.StartActionName(task.Name), StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(action.Name, ActionNaming.StopActionName(task.Name), StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException(
+                        $"Action name '{action.Name}' collides with the auto-generated Start/Stop action for task '{task.Name}'");
+                }
+            }
+            _customActions.Add(action.Name, action);
+        }
 
         /// <summary>
         /// Return the version of the active extractor.
@@ -201,6 +256,43 @@ namespace Cognite.Extractor.Utils.Unstable
             InitBase(token);
             await TestConfig().ConfigureAwait(false);
             await InitTasks().ConfigureAwait(false);
+            await InitActions().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Build the AvailableActions list to advertise at startup: an auto-generated Start/Stop
+        /// pair for every actionable task (in task-registration order), followed by custom
+        /// actions in registration order.
+        /// </summary>
+        private IEnumerable<AvailableActionWrite> GetAvailableActions()
+        {
+            foreach (var task in TaskScheduler.GetRegisteredTasks())
+            {
+                if (!task.Action) continue;
+                yield return new AvailableActionWrite
+                {
+                    Name = ActionNaming.StartActionName(task.Name),
+                    Type = ActionType.start_task,
+                    Description = $"Start the '{task.Name}' task",
+                    Task = task.Name,
+                };
+                yield return new AvailableActionWrite
+                {
+                    Name = ActionNaming.StopActionName(task.Name),
+                    Type = ActionType.stop_task,
+                    Description = $"Stop the '{task.Name}' task",
+                    Task = task.Name,
+                };
+            }
+            foreach (var action in _customActions.Values)
+            {
+                yield return new AvailableActionWrite
+                {
+                    Name = action.Name,
+                    Type = ActionType.custom,
+                    Description = action.Description,
+                };
+            }
         }
 
         private StartupRequest GetStartupRequest()
@@ -216,6 +308,7 @@ namespace Cognite.Extractor.Utils.Unstable
                 Extractor = version,
                 // StartTime is not null here, as this is called after Init.
                 Timestamp = CogniteTime.ToUnixTimeMilliseconds(StartTime!.Value),
+                AvailableActions = GetAvailableActions().ToList(),
             };
         }
 
