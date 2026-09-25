@@ -36,6 +36,10 @@ namespace ExtractorUtils.Test.Unit.Unstable
         private int? _lastConfigRevision;
         private List<dynamic> _pendingActionsToReturn = new();
         private int _failCheckInsRemaining;
+        // When set, the next checkin attempt returns a 404 whose body identifies this specific
+        // externalId as missing (matching odin's actual error shape for an unknown action),
+        // instead of the generic transient-failure simulation below. Cleared after firing once.
+        private string _notFoundActionExternalId;
         // Fires exactly once, immediately before a simulated checkin failure -- lets a test
         // queue a new update "while the failing send is still in flight", deterministically,
         // without needing real thread concurrency (everything here is single-threaded async).
@@ -340,6 +344,50 @@ namespace ExtractorUtils.Test.Unit.Unstable
         }
 
         [Fact]
+        public async Task TestActionUpdateWithUnknownExternalIdDropsOnlyThatUpdate()
+        {
+            // Regression test: when a checkin fails because odin reports a specific action
+            // externalId as missing (e.g. a stale queue entry from before a restart), only that
+            // action update should be dropped -- everything else in the batch (errors, task
+            // updates, and any other action updates) must be requeued and retried, not discarded.
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "bad-action",
+                Status = ActionStatus.succeeded,
+            });
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "good-action",
+                Status = ActionStatus.succeeded,
+            });
+            checkIn.ReportTaskStart("task1", null, DateTime.UtcNow);
+
+            _notFoundActionExternalId = "bad-action";
+            await checkIn.Flush(source.Token);
+
+            // Nothing was received server-side yet -- the whole request failed.
+            Assert.Empty(actionUpdates);
+            Assert.Empty(taskEvents);
+
+            // The next flush should succeed, containing the requeued task update and the
+            // still-valid action update, but never the one that was reported missing.
+            await checkIn.Flush(source.Token);
+            Assert.Single(actionUpdates);
+            Assert.Equal("good-action", (string)actionUpdates[0].externalId);
+            Assert.Single(taskEvents);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
         public async Task TestFailedActionUpdateIsRequeuedBeforeNewerOnes()
         {
             // ActionUpdate has no timestamp field, so unlike errors/task updates (re-sorted by
@@ -540,6 +588,28 @@ namespace ExtractorUtils.Test.Unit.Unstable
                     _onCheckInFailureAboutToHappen = null;
                     callback?.Invoke();
                     throw new HttpRequestException("Simulated transient failure");
+                }
+
+                if (_notFoundActionExternalId != null)
+                {
+                    var badId = _notFoundActionExternalId;
+                    _notFoundActionExternalId = null;
+                    var errorBody = JsonConvert.SerializeObject(new
+                    {
+                        error = new
+                        {
+                            code = 404,
+                            message = "One or more actions not found",
+                            missing = new[] { new { externalId = badId } },
+                        }
+                    });
+                    var notFoundResponse = new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.NotFound,
+                        Content = new StringContent(errorBody)
+                    };
+                    notFoundResponse.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    return notFoundResponse;
                 }
 
                 var data = JsonConvert.DeserializeObject<dynamic>(content);
