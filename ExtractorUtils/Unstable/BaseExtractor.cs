@@ -406,7 +406,14 @@ namespace Cognite.Extractor.Utils.Unstable
                 // observes cancellation and unwinds -- nothing is queued from here.
                 if (_inFlightCustomActions.TryGetValue(action.ExternalId, out var cts))
                 {
-                    cts.Cancel();
+                    try
+                    {
+                        cts.Cancel();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Safe to ignore: the action completed and disposed its CTS concurrently.
+                    }
                 }
                 // Not found: already completed, or unknown to this process instance (e.g. after
                 // a restart) -- a safe no-op, not an error.
@@ -742,10 +749,27 @@ namespace Cognite.Extractor.Utils.Unstable
             // target would keep running, unsignalled, for this entire graceful-shutdown window.
             foreach (var cts in _inFlightCustomActions.Values)
             {
-                cts.Cancel();
+                try
+                {
+                    cts.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Safe to ignore: the action completed and disposed its CTS concurrently.
+                }
             }
             // First, shut down the task scheduler.
             await TaskScheduler.CancelInnerAndWait(20000, this).ConfigureAwait(false);
+            // Custom actions run as bare fire-and-forget tasks, not tracked by TaskScheduler, so
+            // the wait above does not cover them. Give them a bounded window to finish unwinding
+            // and queue their terminal `canceled` update -- otherwise the flush below (and the
+            // check-in worker's loop, which TaskScheduler.CancelInnerAndWait just stopped) may
+            // miss it entirely, silently dropping the terminal status.
+            var waitStart = DateTime.UtcNow;
+            while (!_inFlightCustomActions.IsEmpty && (DateTime.UtcNow - waitStart).TotalMilliseconds < 5000)
+            {
+                await Task.Delay(50).ConfigureAwait(false);
+            }
             // Next, flush any remaining task updates.
             await FlushSink(CancellationToken.None).ConfigureAwait(false);
         }
