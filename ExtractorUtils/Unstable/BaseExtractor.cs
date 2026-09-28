@@ -397,6 +397,12 @@ namespace Cognite.Extractor.Utils.Unstable
                 if (actionName.StartsWith(ActionNaming.StopPrefix, StringComparison.Ordinal))
                 {
                     var taskName = actionName.Substring(ActionNaming.StopPrefix.Length);
+                    if (action.Status == ActionStatus.cancel_pending)
+                    {
+                        // Stop's own dispatch is instant, so nothing is left to cancel -- ignore,
+                        // don't re-dispatch.
+                        return;
+                    }
                     Task.Run(() => RunStopTaskAction(action.ExternalId, taskName));
                     return;
                 }
@@ -473,15 +479,14 @@ namespace Cognite.Extractor.Utils.Unstable
                 try
                 {
                     await customAction.Target(ctx, cts.Token).ConfigureAwait(false);
-                    // The happy-path terminal update is queued by the dispatcher itself, after
-                    // the target returns without throwing -- using whatever SetResult state
-                    // exists at that point (an empty result if SetResult was never called).
-                    // SetResult itself only records state; it does not queue anything (see
-                    // ActionContext.SetResult).
+                    // No throw doesn't mean success: a well-behaved target may just return
+                    // normally on cancellation instead of throwing, so check the token too.
+                    // Uses whatever SetResult recorded (empty if never called) -- SetResult only
+                    // records state, it doesn't queue anything.
                     _sink.QueueActionUpdate(new ActionUpdate
                     {
                         ExternalId = externalId,
-                        Status = ActionStatus.succeeded,
+                        Status = cts.IsCancellationRequested ? ActionStatus.canceled : ActionStatus.succeeded,
                         ResultMessage = ctx.ResultMessage,
                         ResultMetadata = ctx.ResultMetadata?.ToDictionary(kv => kv.Key, kv => kv.Value),
                     });
@@ -778,18 +783,19 @@ namespace Cognite.Extractor.Utils.Unstable
                     }
                 }
             }
-            // First, shut down the task scheduler.
-            await TaskScheduler.CancelInnerAndWait(20000, this).ConfigureAwait(false);
-            // Custom actions run as bare fire-and-forget tasks, not tracked by TaskScheduler, so
-            // the wait above does not cover them. Give them a bounded window to finish unwinding
-            // and queue their terminal `canceled` update -- otherwise the flush below (and the
-            // check-in worker's loop, which TaskScheduler.CancelInnerAndWait just stopped) may
-            // miss it entirely, silently dropping the terminal status.
-            var waitStart = DateTime.UtcNow;
-            while (!_inFlightCustomActions.IsEmpty && (DateTime.UtcNow - waitStart).TotalMilliseconds < 5000)
+            // Wait for the scheduler and in-flight custom actions concurrently, not back-to-back
+            // -- both were already signalled to cancel above. Custom actions aren't tracked by
+            // TaskScheduler, so without this wait they could finish after the flush below and
+            // have their terminal `canceled` update silently dropped.
+            async Task WaitForCustomActionsAsync()
             {
-                await Task.Delay(50).ConfigureAwait(false);
+                var waitStart = DateTime.UtcNow;
+                while (!_inFlightCustomActions.IsEmpty && (DateTime.UtcNow - waitStart).TotalMilliseconds < 5000)
+                {
+                    await Task.Delay(50).ConfigureAwait(false);
+                }
             }
+            await Task.WhenAll(TaskScheduler.CancelInnerAndWait(20000, this), WaitForCustomActionsAsync()).ConfigureAwait(false);
             // Next, flush any remaining task updates.
             await FlushSink(CancellationToken.None).ConfigureAwait(false);
         }
