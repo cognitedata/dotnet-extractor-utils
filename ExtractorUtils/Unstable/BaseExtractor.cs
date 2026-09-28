@@ -65,10 +65,15 @@ namespace Cognite.Extractor.Utils.Unstable
 
         /// <summary>
         /// Custom actions currently being dispatched, keyed by action externalId, each mapped to
-        /// the CancellationTokenSource passed to that action's target. Used both to skip
-        /// re-dispatching an action redelivered before its first dispatch completes, and to
-        /// resolve a `cancel_pending` redelivery by cancelling the specific in-flight run --
-        /// see DispatchAction/RunCustomAction.
+        /// the CancellationTokenSource passed to that action's target.
+        ///
+        /// - Used for dedup: skip re-dispatching an action redelivered before its first dispatch
+        ///   completes (see DispatchAction).
+        /// - Used for cancel-in-flight: cancel the specific in-flight run on a `cancel_pending`
+        ///   redelivery (see RunCustomAction).
+        /// - Not used by Start/Stop -- those key off task name via <see cref="TaskScheduler"/>'s
+        ///   own per-task state instead, since a task (unlike a custom action) has no separate
+        ///   externalId to track.
         /// </summary>
         private readonly ConcurrentDictionary<string, CancellationTokenSource> _inFlightCustomActions
             = new ConcurrentDictionary<string, CancellationTokenSource>();
@@ -423,13 +428,17 @@ namespace Cognite.Extractor.Utils.Unstable
                 return;
             }
 
-            if (action.ActionName != null && _customActions.TryGetValue(action.ActionName, out var customAction))
+            if (actionName != null && _customActions.TryGetValue(actionName, out var customAction))
             {
-                // Guard against the same action id being redelivered in pendingActions before a
-                // terminal status has been reported for its first dispatch -- custom-action
-                // authors' callbacks are arbitrary code that may not be safe to invoke twice
-                // concurrently. Start/Stop don't need this: they're naturally idempotent via the
-                // scheduler's own state (TryScheduleTaskNow/TryCancelTask).
+                // - Guards against the same action id being redelivered before a terminal status
+                //   is reported for its first dispatch -- custom-action callbacks are arbitrary
+                //   code that may not be safe to invoke twice concurrently.
+                // - Start doesn't need this same guard: a redelivered Start can still reach
+                //   RunStartTaskAction again (this dedup is keyed by task name, not action id),
+                //   but TryScheduleTaskNow's ActiveTask check stops it from starting the task a
+                //   second time -- it just fails fast as "already running".
+                // - odin only redelivers an action while still `pending`/`cancel_pending`, never
+                //   once `running` has been reported, so that window is narrow in practice.
                 var cts = new CancellationTokenSource();
                 if (!_inFlightCustomActions.TryAdd(action.ExternalId, cts))
                 {
