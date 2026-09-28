@@ -362,12 +362,14 @@ namespace ExtractorUtils.Test.Unit.Unstable
             var (ext, sink) = await StartExtractorWithActionableTaskBlocking(blockEvt);
 
             await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "Start MyTask") });
+            // 30s, not the usual 5s: dispatch runs on Task.Run, which can lag under CI's
+            // contended thread pool -- a tighter budget would just test runner speed.
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.running), 5);
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.running), 30);
 
             await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-2", "Start MyTask") });
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-2" && u.Status == ActionStatus.failed), 5);
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-2" && u.Status == ActionStatus.failed), 30);
 
             var failure = sink.ActionUpdates.Single(u => u.ExternalId == "action-2");
             Assert.Equal(ActionStatus.failed, failure.Status);
