@@ -457,6 +457,38 @@ namespace ExtractorUtils.Test.Unit.Unstable
         }
 
         [Fact]
+        public async Task TestDispatchStartActionForUnregisteredTaskFails()
+        {
+            var (ext, sink) = await StartExtractorWithActionableTask();
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "Start NoSuchTask") });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1"), 5);
+            var update = sink.ActionUpdates.Single(u => u.ExternalId == "action-1");
+            Assert.Equal(ActionStatus.failed, update.Status);
+            Assert.Contains("No task named 'NoSuchTask' is currently registered", update.ResultMessage);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchStopActionForUnregisteredTaskFails()
+        {
+            var (ext, sink) = await StartExtractorWithActionableTask();
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "Stop NoSuchTask") });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1"), 5);
+            var update = sink.ActionUpdates.Single(u => u.ExternalId == "action-1");
+            Assert.Equal(ActionStatus.failed, update.Status);
+            Assert.Contains("No task named 'NoSuchTask' is currently registered", update.ResultMessage);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
         public async Task TestDispatchUnknownActionNameFails()
         {
             var (ext, sink) = await StartExtractorWithActionableTask();
