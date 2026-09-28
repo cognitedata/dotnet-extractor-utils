@@ -227,6 +227,7 @@ namespace ExtractorUtils.Test.Unit
             var mocks = TestUtilities.GetMockedHttpClientFactory(mockRawRequestAsync);
             var mockHttpMessageHandler = mocks.handler;
             var mockFactory = mocks.factory;
+            rows.Clear();
 
             // Setup services
             var services = new ServiceCollection();
@@ -351,12 +352,6 @@ namespace ExtractorUtils.Test.Unit
 
             await stateStore.StoreExtractionState(new[] { state }, _tableName, CancellationToken.None);
 
-            // RawStateStore.StoreExtractionState only persists a state whose LastTimeModified is
-            // strictly after the previous call's own DateTime.UtcNow snapshot -- back-to-back
-            // calls with no gap can land in the same clock tick, silently dropping this second
-            // write and leaving the first value as the only one ever stored. A short delay
-            // guarantees the two calls land in different ticks.
-            await Task.Delay(20);
             state.UpdateDestinationRange(new DateTime(2015, 01, 01), new DateTime(2025, 01, 01));
 
             await stateStore.StoreExtractionState(new[] { state }, _tableName, CancellationToken.None);
@@ -604,12 +599,8 @@ namespace ExtractorUtils.Test.Unit
             public List<RawItem> Items { get; set; }
         }
 
-        // Instance, not static: xunit constructs a fresh StateStoreTests per test method (and per
-        // Theory case), so this backs each test's mock Raw storage with its own dictionary --
-        // sharing one across every test via `static` previously let one test's rows leak into
-        // another's, keyed only by row id with no per-test isolation.
-        private readonly Dictionary<string, TestDto> rows = new Dictionary<string, TestDto>();
-        private async Task<HttpResponseMessage> mockRawRequestAsync(HttpRequestMessage message, CancellationToken token)
+        private static Dictionary<string, TestDto> rows = new Dictionary<string, TestDto>();
+        private static async Task<HttpResponseMessage> mockRawRequestAsync(HttpRequestMessage message, CancellationToken token)
         {
             var options = new JsonSerializerOptions
             {

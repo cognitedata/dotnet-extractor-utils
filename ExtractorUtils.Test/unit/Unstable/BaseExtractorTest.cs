@@ -362,14 +362,12 @@ namespace ExtractorUtils.Test.Unit.Unstable
             var (ext, sink) = await StartExtractorWithActionableTaskBlocking(blockEvt);
 
             await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "Start MyTask") });
-            // 30s, not the usual 5s: dispatch runs on Task.Run, which can lag under CI's
-            // contended thread pool -- a tighter budget would just test runner speed.
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.running), 30);
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.running), 5);
 
             await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-2", "Start MyTask") });
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-2" && u.Status == ActionStatus.failed), 30);
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-2" && u.Status == ActionStatus.failed), 5);
 
             var failure = sink.ActionUpdates.Single(u => u.ExternalId == "action-2");
             Assert.Equal(ActionStatus.failed, failure.Status);
@@ -421,29 +419,23 @@ namespace ExtractorUtils.Test.Unit.Unstable
         public async Task TestDispatchStopActionSucceeds()
         {
             using var blockEvt = new ManualResetEvent(false);
-            using var taskStartedEvt = new ManualResetEvent(false);
-            var (ext, sink) = await StartExtractorWithActionableTaskBlocking(blockEvt, taskStartedEvt);
+            var (ext, sink) = await StartExtractorWithActionableTaskBlocking(blockEvt);
 
             // Start it first via the scheduler directly (not through an action), then Stop it.
             await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("start-1", "Start MyTask") });
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "start-1" && u.Status == ActionStatus.running), 30);
-
-            // `running` is queued once the scheduler accepts the request, which can precede
-            // ActiveTask actually being set -- wait for the task body itself to start, or Stop's
-            // TryCancelTask can race that gap and report "not currently running".
-            Assert.True(await CommonUtils.WaitAsync(taskStartedEvt, TimeSpan.FromSeconds(30), CancellationToken.None));
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "start-1" && u.Status == ActionStatus.running), 5);
 
             await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("stop-1", "Stop MyTask") });
 
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "stop-1"), 30);
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "stop-1"), 5);
             var stopUpdate = sink.ActionUpdates.Single(u => u.ExternalId == "stop-1");
             Assert.Equal(ActionStatus.succeeded, stopUpdate.Status);
 
             // The original Start action's own dispatch observes the task being cancelled.
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "start-1" && u.Status == ActionStatus.canceled), 30);
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "start-1" && u.Status == ActionStatus.canceled), 5);
 
             await ext.DisposeAsync();
         }
@@ -489,7 +481,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
 
             await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "Start MyTask") });
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.running), 30);
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.running), 5);
 
             // Reporting `running` only means TryScheduleTaskNow queued the task -- the
             // scheduler's own loop hasn't necessarily set ActiveTask yet, and TryCancelTask is a
@@ -499,7 +491,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             // microseconds wide (bounded by thread-pool dispatch latency) against a ~30s checkin
             // interval, so it's a non-issue there -- it only matters in a same-process test that
             // dispatches the cancel_pending redelivery with no natural delay at all.
-            Assert.True(await CommonUtils.WaitAsync(taskStartedEvt, TimeSpan.FromSeconds(30), CancellationToken.None));
+            taskStartedEvt.WaitOne();
 
             // Simulate odin redelivering the same action with cancel_pending, e.g. because
             // someone cancelled it via the standalone /actions/cancel API.
@@ -509,7 +501,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             });
 
             await TestUtils.WaitForCondition(
-                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.canceled), 30);
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.canceled), 5);
 
             await ext.DisposeAsync();
         }
