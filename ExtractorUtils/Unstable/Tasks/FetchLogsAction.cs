@@ -81,6 +81,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         private const int MaxDateRangeDays = 7;
 
+        // Shared fallback for when IHttpClientFactory isn't registered in DI -- a single
+        // long-lived instance, never disposed, per Microsoft's guidance against creating a fresh
+        // HttpClient per call (socket exhaustion under the up-to-168-files-per-call volume this
+        // action can hit with hourly rolling over 7 days).
+        private static readonly HttpClient FallbackHttpClient = new HttpClient();
+
         /// <summary>
         /// Run the fetch_logs action.
         /// </summary>
@@ -122,12 +128,12 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     bytes = await UploadLogFileAsync(ctx, httpClientFactory, path, date, isLive, token).ConfigureAwait(false);
                 }
-                catch (IOException)
+                catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
                 {
-                    // The file existed a moment ago but vanished or became inaccessible before
-                    // we could open it (e.g. rotated out by RetentionLimit in the meantime) --
-                    // treat the same as "missing" rather than failing the whole action over one
-                    // date.
+                    // The file existed a moment ago but vanished, became inaccessible, or lost
+                    // read permission before we could open it (e.g. rotated out by RetentionLimit
+                    // in the meantime) -- treat the same as "missing" rather than failing the
+                    // whole action over one date.
                     skippedDates.Add(date);
                     continue;
                 }
@@ -181,6 +187,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 throw new ActionError("invalid_parameter", $"end_date '{endStr}' is not a valid ISO 8601 date", "Expected e.g. '2026-01-07'");
             }
 
+            // Log files roll on the extractor host's local time, so a caller-supplied UTC
+            // timestamp (Kind == Utc, e.g. a trailing "Z") must be converted to local time before
+            // truncating to a date -- DateTime comparisons compare raw Ticks and ignore Kind
+            // entirely, so an unconverted Utc value compared against DateTime.Now below could be
+            // off by the local UTC offset.
+            if (start.Kind == DateTimeKind.Utc) start = start.ToLocalTime();
+            if (end.Kind == DateTimeKind.Utc) end = end.ToLocalTime();
+
             start = start.Date;
             end = end.Date;
 
@@ -227,6 +241,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 }
                 else
                 {
+                    if (day > now) yield break;
                     var isLive = day.Date == now.Date;
                     yield return (GetLogFilePath(fileConfig.Path!, day, false), day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), isLive);
                 }
@@ -251,7 +266,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             // Stream: BoundedFileStream and FileStream share no common ancestor closer than
             // Stream itself, and netstandard2.0's C# 8 language version can't infer that common
             // type from a bare conditional expression the way C# 9+ target-typing would.
-            using Stream stream = isLive ? (Stream)new BoundedFileStream(path) : System.IO.File.OpenRead(path);
+            using Stream stream = isLive ? (Stream)new BoundedFileStream(path) : new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             var length = stream.Length;
 
             var uploadRead = await ctx.CdfClient!.CogniteClient.Files.UploadAsync(new FileCreate
@@ -265,14 +280,21 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             using var content = new StreamContent(stream);
             content.Headers.ContentLength = length;
             // Prefer the shared, pooled client from DI (already registered elsewhere in this
-            // repo's DI setup) over a fresh HttpClient per upload, to avoid socket exhaustion --
-            // falls back to a throwaway instance only if unavailable (e.g. a minimal test setup).
-            // Disposing an IHttpClientFactory-created HttpClient is safe and expected either way
-            // -- per Microsoft's documented design, it only releases the short-lived wrapper, not
-            // the pooled HttpMessageHandler underneath it.
-            using var httpClient = httpClientFactory?.CreateClient() ?? new HttpClient();
-            var response = await httpClient.PutAsync(uploadRead.UploadUrl, content, token).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
+            // repo's DI setup) over the static fallback -- falls back only if unavailable (e.g. a
+            // minimal test setup). Disposing an IHttpClientFactory-created HttpClient is safe and
+            // expected -- per Microsoft's documented design, it only releases the short-lived
+            // wrapper, not the pooled HttpMessageHandler underneath it -- but FallbackHttpClient
+            // itself must never be disposed, since it's shared across every call.
+            var httpClient = httpClientFactory?.CreateClient();
+            try
+            {
+                var response = await (httpClient ?? FallbackHttpClient).PutAsync(uploadRead.UploadUrl, content, token).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+            }
+            finally
+            {
+                httpClient?.Dispose();
+            }
 
             return length;
         }
