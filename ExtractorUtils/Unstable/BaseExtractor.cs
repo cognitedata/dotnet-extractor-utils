@@ -399,7 +399,9 @@ namespace Cognite.Extractor.Utils.Unstable
                 {
                     // No task with this name is currently registered -- can happen if the action
                     // was advertised for a task that existed at a previous startup but not this
-                    // one.
+                    // one. CanTaskRunNow's other failure, ArgumentNullException, can't happen here
+                    // since taskName is never null. Anything else unexpected still gets reported,
+                    // via the catch-all below.
                     QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
                     return;
                 }
@@ -494,6 +496,8 @@ namespace Cognite.Extractor.Utils.Unstable
                 }
                 catch (InvalidOperationException)
                 {
+                    // No task with this name is currently registered -- same reasoning as the
+                    // equivalent catch in RunStartTaskAction.
                     QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
                     return;
                 }
