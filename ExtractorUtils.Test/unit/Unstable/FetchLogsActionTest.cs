@@ -295,6 +295,44 @@ namespace ExtractorUtils.Test.unit.Unstable
         }
 
         [Fact]
+        public async Task TestBoundedFileStreamSeeksRelativeToSnapshotAfterFileGrows()
+        {
+            var path = Path.GetTempFileName();
+            try
+            {
+                await System.IO.File.WriteAllBytesAsync(path, new byte[] { 1, 2, 3 });
+                using var bounded = new BoundedFileStream(path);
+
+                using (var writer = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                {
+                    writer.WriteByte(4);
+                    writer.WriteByte(5);
+                }
+
+                Assert.Equal(3, bounded.Length);
+                Assert.Equal(3, bounded.Seek(0, SeekOrigin.End));
+                Assert.Equal(bounded.Length, bounded.Position);
+                Assert.Equal(-1, bounded.ReadByte());
+
+                Assert.Equal(2, bounded.Seek(-1, SeekOrigin.End));
+                var buffer = new byte[10];
+                Assert.Equal(1, await bounded.ReadAsync(buffer, 0, buffer.Length, CancellationToken.None));
+                Assert.Equal(3, buffer[0]);
+                Assert.Equal(-1, bounded.ReadByte());
+
+                Assert.Equal(4, bounded.Seek(1, SeekOrigin.End));
+                Assert.Equal(-1, bounded.ReadByte());
+                Assert.Equal(1, bounded.Seek(1, SeekOrigin.Begin));
+                Assert.Equal(0, bounded.Seek(-1, SeekOrigin.Current));
+                Assert.Equal(1, bounded.ReadByte());
+            }
+            finally
+            {
+                System.IO.File.Delete(path);
+            }
+        }
+
+        [Fact]
         public async Task TestRunAsyncThrowsActionErrorWhenNoFileHandlerConfigured()
         {
             var ctx = new ActionContext<string>("config", null, "integration-1", "action-1", null, new DummySink());
@@ -347,6 +385,100 @@ namespace ExtractorUtils.Test.unit.Unstable
                 Assert.Contains("No log files found", ctx.ResultMessage);
                 Assert.Equal("0", ctx.ResultMetadata!["fileCount"]);
                 Assert.Equal("0", ctx.ResultMetadata!["totalBytes"]);
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestRunAsyncSkipsFilesThatCannotBeOpened(bool isLive)
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempDir);
+            try
+            {
+                var day = DateTime.Now.Date.AddDays(isLive ? 0 : -1);
+                var date = day.ToString("yyyy-MM-dd");
+                var logPath = Path.Combine(tempDir, $"log{day:yyyyMMdd}.txt");
+                await System.IO.File.WriteAllTextAsync(logPath, "log content");
+                using var lockedFile = new FileStream(logPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                Assert.True(System.IO.File.Exists(logPath));
+
+                // Any upload request is unexpected: the file exists but cannot be opened.
+                var (provider, destination) = GetMockedDestination();
+                using var p = provider;
+                var sink = new DummySink();
+                var ctx = new ActionContext<string>("config", destination, "test-integration", "action-1", Metadata(date, date), sink);
+                var loggerConfig = new LoggerConfig { File = new FileConfig { Path = Path.Combine(tempDir, "log.txt"), RollingInterval = "day" } };
+
+                await FetchLogsAction.RunAsync(ctx, loggerConfig, provider.GetRequiredService<IHttpClientFactory>(), CancellationToken.None);
+
+                Assert.Equal("0", ctx.ResultMetadata!["fileCount"]);
+                Assert.Equal("0", ctx.ResultMetadata["totalBytes"]);
+                Assert.Contains("Skipped 1 missing/unavailable date(s)", ctx.ResultMessage);
+                Assert.Empty(sink.ActionUpdates);
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestRunAsyncPropagatesUploadIOExceptionAndDisposesStream(bool isLive)
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempDir);
+            try
+            {
+                var day = DateTime.Now.Date.AddDays(isLive ? 0 : -1);
+                var date = day.ToString("yyyy-MM-dd");
+                var logPath = Path.Combine(tempDir, $"log{day:yyyyMMdd}.txt");
+                await System.IO.File.WriteAllTextAsync(logPath, "log content");
+                var failure = new IOException("Upload failed");
+                Stream uploadStream = null;
+
+                async Task<HttpResponseMessage> ExtraHandler(HttpRequestMessage message, CancellationToken token)
+                {
+                    var uri = message.RequestUri!.ToString();
+                    if (uri.Contains("/files") && message.Method == HttpMethod.Post)
+                    {
+                        var body = "{\"id\": 1, \"uploaded\": false, \"createdTime\": 0, \"lastUpdatedTime\": 0, " +
+                                   "\"uploadUrl\": \"http://example.url/upload-blob\"}";
+                        var response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(body) };
+                        response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        return response;
+                    }
+                    if (uri == "http://example.url/upload-blob" && message.Method == HttpMethod.Put)
+                    {
+                        uploadStream = await message.Content!.ReadAsStreamAsync(token).ConfigureAwait(false);
+                        // A raw handler I/O failure must not be treated as a missing log file.
+                        throw failure;
+                    }
+                    throw new InvalidOperationException($"Unexpected HTTP call in this test: {uri}");
+                }
+
+                var (provider, destination) = GetMockedDestination(ExtraHandler);
+                using var p = provider;
+                var sink = new DummySink();
+                var ctx = new ActionContext<string>("config", destination, "test-integration", "action-1", Metadata(date, date), sink);
+                var loggerConfig = new LoggerConfig { File = new FileConfig { Path = Path.Combine(tempDir, "log.txt"), RollingInterval = "day" } };
+
+                var err = await Assert.ThrowsAsync<IOException>(() =>
+                    FetchLogsAction.RunAsync(ctx, loggerConfig, provider.GetRequiredService<IHttpClientFactory>(), CancellationToken.None));
+
+                Assert.Same(failure, err);
+                Assert.Null(ctx.ResultMessage);
+                Assert.Null(ctx.ResultMetadata);
+                Assert.Empty(sink.ActionUpdates);
+                Assert.NotNull(uploadStream);
+                Assert.Throws<ObjectDisposedException>(() => uploadStream.ReadByte());
             }
             finally
             {

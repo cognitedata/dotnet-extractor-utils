@@ -27,7 +27,15 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public BoundedFileStream(string path)
         {
             _inner = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            _boundedLength = _inner.Length;
+            try
+            {
+                _boundedLength = _inner.Length;
+            }
+            catch
+            {
+                _inner.Dispose();
+                throw;
+            }
         }
 
         public override bool CanRead => true;
@@ -55,7 +63,16 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             return await _inner.ReadAsync(buffer, offset, (int)Math.Min(count, remaining), cancellationToken).ConfigureAwait(false);
         }
 
-        public override long Seek(long offset, SeekOrigin origin) => _inner.Seek(offset, origin);
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            // Resolve End against the snapshot, not the possibly growing file.
+            if (origin == SeekOrigin.End)
+            {
+                return _inner.Seek(_boundedLength + offset, SeekOrigin.Begin);
+            }
+            return _inner.Seek(offset, origin);
+        }
+
         public override void Flush() => _inner.Flush();
         public override void SetLength(long value) => throw new NotSupportedException();
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
@@ -123,20 +140,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     continue;
                 }
 
-                long bytes;
-                try
+                using var stream = TryOpenLogFileStream(path, isLive);
+                if (stream == null)
                 {
-                    bytes = await UploadLogFileAsync(ctx, httpClientFactory, path, date, isLive, token).ConfigureAwait(false);
-                }
-                catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
-                {
-                    // The file existed a moment ago but vanished, became inaccessible, or lost
-                    // read permission before we could open it (e.g. rotated out by RetentionLimit
-                    // in the meantime) -- treat the same as "missing" rather than failing the
-                    // whole action over one date.
                     skippedDates.Add(date);
                     continue;
                 }
+
+                var bytes = await UploadLogFileAsync(ctx, httpClientFactory, stream, Path.GetFileName(path), date, token).ConfigureAwait(false);
 
                 uploaded.Add((date, bytes));
                 ctx.ReportProgress($"Uploading: {i + 1}/{candidates.Count} files complete");
@@ -257,22 +268,34 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             return Path.Combine(dir, $"{fileNameWithoutExt}{suffix}{ext}");
         }
 
-        private static async Task<long> UploadLogFileAsync<TConfig>(
-            ActionContext<TConfig> ctx, IHttpClientFactory? httpClientFactory, string path, string date, bool isLive, CancellationToken token)
+        /// <summary>
+        /// Open a log file, bounding reads for live files. Returns null if the file is unavailable.
+        /// The caller owns the returned stream.
+        /// </summary>
+        private static Stream? TryOpenLogFileStream(string path, bool isLive)
         {
-            // Only the file matching today's date (or the current hour, under hourly rolling) is
-            // still being written to -- everything else is already closed and static, and can be
-            // read directly without the bounded-length wrapper. Cast one branch explicitly to
-            // Stream: BoundedFileStream and FileStream share no common ancestor closer than
-            // Stream itself, and netstandard2.0's C# 8 language version can't infer that common
-            // type from a bare conditional expression the way C# 9+ target-typing would.
-            using Stream stream = isLive ? (Stream)new BoundedFileStream(path) : new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            try
+            {
+                if (isLive) return new BoundedFileStream(path);
+                return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+            {
+                // Rotation or permissions can make an existing file unavailable. Only catch
+                // file-open failures here; read and upload failures must propagate.
+                return null;
+            }
+        }
+
+        private static async Task<long> UploadLogFileAsync<TConfig>(
+            ActionContext<TConfig> ctx, IHttpClientFactory? httpClientFactory, Stream stream, string fileName, string date, CancellationToken token)
+        {
             var length = stream.Length;
 
             var uploadRead = await ctx.CdfClient!.CogniteClient.Files.UploadAsync(new FileCreate
             {
                 ExternalId = $"extractor-logs-{ctx.IntegrationExternalId}-{date}",
-                Name = Path.GetFileName(path),
+                Name = fileName,
                 MimeType = "text/plain",
                 Source = "extractor",
             }, overwrite: true, token).ConfigureAwait(false);
@@ -288,7 +311,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             var httpClient = httpClientFactory?.CreateClient();
             try
             {
-                var response = await (httpClient ?? FallbackHttpClient).PutAsync(uploadRead.UploadUrl, content, token).ConfigureAwait(false);
+                using var response = await (httpClient ?? FallbackHttpClient).PutAsync(uploadRead.UploadUrl, content, token).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
             }
             finally
