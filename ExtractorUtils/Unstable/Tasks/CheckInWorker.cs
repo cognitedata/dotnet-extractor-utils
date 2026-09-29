@@ -440,7 +440,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// Queue an update to the status of a triggered action, to be sent on a future check-in.
         ///
         /// Enforces odin's payload guardrails before queuing: <see cref="ActionUpdate.ResultMessage"/>
-        /// is truncated to <see cref="MAX_ACTION_RESULT_MESSAGE_LENGTH"/> characters, and
+        /// is trimmed of leading/trailing whitespace and truncated to <see cref="MAX_ACTION_RESULT_MESSAGE_LENGTH"/> characters, and
         /// <see cref="ActionUpdate.ResultMetadata"/> is checked against odin's key count/size and
         /// value/total size limits. If either field is oversized, it is reduced and a note is
         /// appended to the result message, but <see cref="ActionUpdate.Status"/> is left as-is --
@@ -487,7 +487,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 update.ExternalId, originalCount, sanitized?.Count ?? 0);
 
             const string note = "(note: some result metadata exceeded odin's size limits and was reduced)";
-            if (string.IsNullOrEmpty(update.ResultMessage))
+            if (string.IsNullOrWhiteSpace(update.ResultMessage))
             {
                 update.ResultMessage = TruncateResultMessage(note);
                 return;
@@ -503,6 +503,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         private static string? TruncateResultMessage(string? message, int maxLength = MAX_ACTION_RESULT_MESSAGE_LENGTH)
         {
+            // Reclaim padding without changing meaningful internal whitespace or formatting.
+            message = message?.Trim();
             if (message == null || message.Length <= maxLength) return message;
             if (maxLength <= 3) return message.Substring(0, maxLength);
             return message.Substring(0, maxLength - 3) + "...";
