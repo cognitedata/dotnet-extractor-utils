@@ -117,5 +117,17 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
         {
             throw new InvalidOperationException("Attempted to start periodic checkin during bootstrap");
         }
+
+        /// <inheritdoc />
+        public void QueueActionUpdate(ActionUpdate update)
+        {
+            throw new InvalidOperationException("Attempted to queue an action update during bootstrap");
+        }
+
+        /// <inheritdoc />
+        public void SetActionDispatcher(Func<IReadOnlyList<IntegrationAction>, Task> dispatcher)
+        {
+            throw new InvalidOperationException("Attempted to register an action dispatcher during bootstrap");
+        }
     }
 }
