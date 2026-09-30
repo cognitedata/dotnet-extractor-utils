@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Common;
@@ -209,6 +210,23 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// <param name="interval">Interval. If left out, uses an implementation-defined default.</param>
         /// <returns></returns>
         Task RunPeriodicCheckIn(CancellationToken token, StartupRequest startupPayload, TimeSpan? interval = null);
+
+        /// <summary>
+        /// Queue an update to the status of a triggered action, to be sent on a future check-in.
+        /// </summary>
+        /// <param name="update">Update to queue. Must have <see cref="ActionUpdate.ExternalId"/> set.</param>
+        void QueueActionUpdate(ActionUpdate update);
+
+        /// <summary>
+        /// Register the callback to invoke whenever a check-in or startup response contains one
+        /// or more actions pending execution by the extractor.
+        ///
+        /// The dispatcher is expected to return promptly -- it should hand off actual execution
+        /// (e.g. to one <see cref="Task.Run(Action)"/> per action) rather than running actions to
+        /// completion itself, since it is awaited as part of the regular check-in cycle.
+        /// </summary>
+        /// <param name="dispatcher">Callback invoked with the current list of pending actions.</param>
+        void SetActionDispatcher(Func<IReadOnlyList<IntegrationAction>, Task> dispatcher);
     }
 
     /// <summary>
