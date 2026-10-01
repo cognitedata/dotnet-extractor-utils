@@ -177,12 +177,10 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 throw new InvalidOperationException($"An action named '{action.Name}' is already registered");
             }
-            // Guard against colliding with an auto-generated Start/Stop action name for an
-            // already-registered actionable task. InitTasks() always runs before InitActions()
-            // (see Init()), so every actionable task the extractor will ever advertise at this
-            // startup is already known here -- this does not protect against a task added
-            // dynamically at runtime after startup, which is out of scope for action name
-            // collision checking (the two aren't recomputed together after startup anyway).
+            // Only block an exact name match with a real task's Start/Stop action -- e.g. "Stop
+            // Backup" is fine to register unless a task is actually named "Backup" (see
+            // IsActionableTask, which DispatchAction uses to fall through to custom actions
+            // otherwise). Doesn't cover a task added dynamically after startup.
             foreach (var task in TaskScheduler.GetRegisteredTasks())
             {
                 if (!task.Action) continue;
@@ -386,7 +384,8 @@ namespace Cognite.Extractor.Utils.Unstable
             var actionName = action.ActionName;
             if (actionName != null)
             {
-                if (actionName.StartsWith(ActionNaming.StartPrefix, StringComparison.Ordinal))
+                if (actionName.StartsWith(ActionNaming.StartPrefix, StringComparison.Ordinal)
+                    && IsActionableTask(actionName.Substring(ActionNaming.StartPrefix.Length)))
                 {
                     var taskName = actionName.Substring(ActionNaming.StartPrefix.Length);
                     if (action.Status == ActionStatus.cancel_pending)
@@ -407,13 +406,18 @@ namespace Cognite.Extractor.Utils.Unstable
                         // irrelevant next to the checkin interval a real cancel_pending redelivery
                         // would have to cross (seconds), so this is not considered worth adding
                         // extra synchronization for.
+                        //
+                        // No try/catch needed here: IsActionableTask just confirmed the task
+                        // exists, and tasks can't be unregistered at runtime, so TryCancelTask
+                        // can't fail with "task not found" at this point.
                         TaskScheduler.TryCancelTask(taskName, "Action cancelled");
                         return;
                     }
                     Task.Run(() => RunStartTaskAction(action.ExternalId, taskName));
                     return;
                 }
-                if (actionName.StartsWith(ActionNaming.StopPrefix, StringComparison.Ordinal))
+                if (actionName.StartsWith(ActionNaming.StopPrefix, StringComparison.Ordinal)
+                    && IsActionableTask(actionName.Substring(ActionNaming.StopPrefix.Length)))
                 {
                     var taskName = actionName.Substring(ActionNaming.StopPrefix.Length);
                     if (action.Status == ActionStatus.cancel_pending)
@@ -425,6 +429,9 @@ namespace Cognite.Extractor.Utils.Unstable
                     Task.Run(() => RunStopTaskAction(action.ExternalId, taskName));
                     return;
                 }
+                // Prefix matched but no such task exists (e.g. a custom action named "Stop
+                // Backup" with no task "Backup") -- fall through to custom-action dispatch below
+                // instead of treating it as a task action and failing.
             }
 
             if (action.Status == ActionStatus.cancel_pending)
@@ -445,6 +452,12 @@ namespace Cognite.Extractor.Utils.Unstable
                         catch (ObjectDisposedException)
                         {
                             // Safe to ignore: the action completed and disposed its CTS concurrently.
+                        }
+                        catch (AggregateException ex)
+                        {
+                            // A cancellation callback threw -- cancellation still took effect, but
+                            // unlike above this isn't expected, so log it instead of swallowing it.
+                            _logger.LogWarning(ex, "A cancellation callback threw while cancelling action {ExternalId}", action.ExternalId);
                         }
                     }
                 }
@@ -475,6 +488,16 @@ namespace Cognite.Extractor.Utils.Unstable
             }
 
             QueueFailedAction(action.ExternalId, $"No action named '{actionName}' registered");
+        }
+
+        /// <summary>
+        /// Whether <paramref name="taskName"/> is a currently registered actionable task --
+        /// i.e. whether "Start/Stop {taskName}" refers to a real task, not just a name that
+        /// happens to share the reserved prefix with an unrelated custom action.
+        /// </summary>
+        private bool IsActionableTask(string taskName)
+        {
+            return TaskScheduler.GetRegisteredTasks().Any(t => t.Action && t.Name == taskName);
         }
 
         private async Task RunCustomAction(
@@ -792,8 +815,10 @@ namespace Cognite.Extractor.Utils.Unstable
             // of) isn't cancelled until the very end of Shutdown()/DisposeAsyncCore(), well after
             // this method returns -- without this explicit step, an in-flight custom action's
             // target would keep running, unsignalled, for this entire graceful-shutdown window.
-            foreach (var cts in _inFlightCustomActions.Values)
+            foreach (var kvp in _inFlightCustomActions)
             {
+                var externalId = kvp.Key;
+                var cts = kvp.Value;
                 lock (cts)
                 {
                     try
@@ -803,6 +828,12 @@ namespace Cognite.Extractor.Utils.Unstable
                     catch (ObjectDisposedException)
                     {
                         // Safe to ignore: the action completed and disposed its CTS concurrently.
+                    }
+                    catch (AggregateException ex)
+                    {
+                        // A cancellation callback threw -- cancellation still took effect, but
+                        // unlike above this isn't expected, so log it instead of swallowing it.
+                        _logger.LogWarning(ex, "A cancellation callback threw while shutting down action {ExternalId}", externalId);
                     }
                 }
             }

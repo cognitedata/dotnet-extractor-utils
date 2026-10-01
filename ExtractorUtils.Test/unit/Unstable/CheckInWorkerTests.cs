@@ -729,8 +729,14 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Equal(5000, ((string)errors[0].details).Length);
         }
 
-        [Fact]
-        public async Task TestActionUpdateResultMessageIsTruncated()
+        [Theory]
+        [InlineData(1000, "", false)]
+        [InlineData(1000, " \t\r\n", false)]
+        [InlineData(1001, "", true)]
+        [InlineData(1001, " \t\r\n", true)]
+        [InlineData(1500, "", true)]
+        [InlineData(1500, " \t\r\n", true)]
+        public async Task TestActionUpdateResultMessageLengthLimitAfterTrimming(int contentLength, string padding, bool truncated)
         {
             var (provider, checkIn) = GetCheckInWorker();
             using var p = provider;
@@ -743,22 +749,27 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 ExternalId = "action-1",
                 Status = ActionStatus.succeeded,
-                ResultMessage = new string('a', 1500),
+                ResultMessage = padding + new string('a', contentLength) + padding,
             });
             await checkIn.Flush(source.Token);
 
             Assert.Single(actionUpdates);
             string message = actionUpdates[0].resultMessage;
             Assert.Equal(1000, message.Length);
-            Assert.EndsWith("...", message);
-            Assert.Equal(new string('a', 997) + "...", message);
+            Assert.Equal(truncated ? new string('a', 997) + "..." : new string('a', 1000), message);
 
             source.Cancel();
             await TestUtils.RunWithTimeout(runTask, 5);
         }
 
-        [Fact]
-        public async Task TestActionUpdateResultMessageWithinLimitIsUnchanged()
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("", "")]
+        [InlineData(" \t\r\n ", "")]
+        [InlineData("short message", "short message")]
+        [InlineData(" \tshort message\r\n ", "short message")]
+        [InlineData(" \tfirst  second\t\tthird\r\n\r\nfourth\nfifth\r\n ", "first  second\t\tthird\r\n\r\nfourth\nfifth")]
+        public async Task TestActionUpdateResultMessageWithinLimitOnlyTrimsBoundaries(string message, string expected)
         {
             var (provider, checkIn) = GetCheckInWorker();
             using var p = provider;
@@ -771,19 +782,48 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 ExternalId = "action-1",
                 Status = ActionStatus.succeeded,
-                ResultMessage = "short message",
+                ResultMessage = message,
             });
             await checkIn.Flush(source.Token);
 
             Assert.Single(actionUpdates);
-            Assert.Equal("short message", (string)actionUpdates[0].resultMessage);
+            Assert.Equal(expected, (string)actionUpdates[0].resultMessage);
 
             source.Cancel();
             await TestUtils.RunWithTimeout(runTask, 5);
         }
 
-        [Fact]
-        public async Task TestActionUpdateOversizedMetadataValueIsSanitizedNotFailed()
+        public static IEnumerable<object[]> OversizedMetadataMessageCases()
+        {
+            const string note = "(note: some result metadata exceeded odin's size limits and was reduced)";
+            yield return new object[] { null, note };
+            yield return new object[] { "", note };
+            yield return new object[] { " \t\r\n ", note };
+            yield return new object[] { "Done", "Done " + note };
+            yield return new object[] { " \tDone\r\n ", "Done " + note };
+            yield return new object[] { " \tfirst  second\t\tthird\r\nfourth\n ", "first  second\t\tthird\r\nfourth " + note };
+
+            // Padding must not consume the space reserved for the full note, or cause
+            // an original message that fits exactly alongside it to be truncated.
+            var originalBudget = 1000 - note.Length - 1;
+            foreach (var padding in new[] { "", " \t\r\n" })
+            {
+                yield return new object[]
+                {
+                    padding + new string('a', originalBudget) + padding,
+                    new string('a', originalBudget) + " " + note,
+                };
+                yield return new object[]
+                {
+                    padding + new string('a', 1000) + padding,
+                    new string('a', originalBudget - 3) + "... " + note,
+                };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(OversizedMetadataMessageCases))]
+        public async Task TestActionUpdateOversizedMetadataValueIsSanitizedNotFailed(string message, string expected)
         {
             var (provider, checkIn) = GetCheckInWorker();
             using var p = provider;
@@ -796,7 +836,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 ExternalId = "action-1",
                 Status = ActionStatus.succeeded,
-                ResultMessage = "Done",
+                ResultMessage = message,
                 ResultMetadata = new Dictionary<string, string> { ["fileList"] = new string('a', 1000) },
             });
             await checkIn.Flush(source.Token);
@@ -808,8 +848,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Equal("succeeded", (string)update.status);
             string fileList = update.resultMetadata.fileList;
             Assert.True(System.Text.Encoding.UTF8.GetByteCount(fileList) <= 512);
-            Assert.Contains("exceeded odin's size limits", (string)update.resultMessage);
-            Assert.Contains("Done", (string)update.resultMessage);
+            Assert.Equal(expected, (string)update.resultMessage);
+            Assert.True(((string)update.resultMessage).Length <= 1000);
 
             source.Cancel();
             await TestUtils.RunWithTimeout(runTask, 5);
@@ -847,8 +887,14 @@ namespace ExtractorUtils.Test.Unit.Unstable
             await TestUtils.RunWithTimeout(runTask, 5);
         }
 
-        [Fact]
-        public async Task TestActionUpdateMetadataWithinLimitsIsUnchanged()
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("", "")]
+        [InlineData(" \t\r\n ", "")]
+        [InlineData("Done", "Done")]
+        [InlineData(" \tDone\r\n ", "Done")]
+        [InlineData(" \tfirst  second\t\tthird\r\nfourth\n ", "first  second\t\tthird\r\nfourth")]
+        public async Task TestActionUpdateMetadataWithinLimitsIsUnchanged(string message, string expected)
         {
             var (provider, checkIn) = GetCheckInWorker();
             using var p = provider;
@@ -861,14 +907,14 @@ namespace ExtractorUtils.Test.Unit.Unstable
             {
                 ExternalId = "action-1",
                 Status = ActionStatus.succeeded,
-                ResultMessage = "Done",
+                ResultMessage = message,
                 ResultMetadata = new Dictionary<string, string> { ["fileCount"] = "3" },
             });
             await checkIn.Flush(source.Token);
 
             Assert.Single(actionUpdates);
             var update = actionUpdates[0];
-            Assert.Equal("Done", (string)update.resultMessage);
+            Assert.Equal(expected, (string)update.resultMessage);
             Assert.Equal("3", (string)update.resultMetadata.fileCount);
 
             source.Cancel();
