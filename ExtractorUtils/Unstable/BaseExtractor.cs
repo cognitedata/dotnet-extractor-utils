@@ -64,19 +64,19 @@ namespace Cognite.Extractor.Utils.Unstable
         private readonly Dictionary<string, CustomAction<TConfig>> _customActions = new Dictionary<string, CustomAction<TConfig>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Custom actions currently being dispatched, keyed by action externalId, each mapped to
-        /// the CancellationTokenSource passed to that action's target.
+        /// Custom actions currently running, keyed by action externalId, mapped to the
+        /// CancellationTokenSource passed to that action's target.
         ///
-        /// - Used for dedup: skip re-dispatching an action redelivered before its first dispatch
-        ///   completes (see DispatchAction).
-        /// - Used for cancel-in-flight: cancel the specific in-flight run on a `cancel_pending`
-        ///   redelivery (see RunCustomAction).
-        /// - Not used by Start/Stop -- those key off task name via <see cref="TaskScheduler"/>'s
-        ///   own per-task state instead, since a task (unlike a custom action) has no separate
-        ///   externalId to track.
+        /// - Dedup: skip re-dispatching an action redelivered before it finishes (see DispatchAction).
+        /// - Cancel-in-flight: cancel a run when its `cancel_pending` redelivery arrives (see RunCustomAction).
+        /// - Start/Stop don't need this: they key off task name via <see cref="TaskScheduler"/> instead.
         /// </summary>
         private readonly ConcurrentDictionary<string, CancellationTokenSource> _inFlightCustomActions
             = new ConcurrentDictionary<string, CancellationTokenSource>();
+
+        // True once ShutdownInternal has started. Stops DispatchAction from starting new custom
+        // actions after its one-time cancel-everything loop has already run.
+        private volatile bool _shuttingDown;
 
         private readonly string _integrationExternalId;
 
@@ -119,13 +119,10 @@ namespace Cognite.Extractor.Utils.Unstable
             _sink = sink;
             TaskScheduler = taskScheduler;
             _logger = provider.GetService<ILogger<BaseExtractor<TConfig>>>() ?? new NullLogger<BaseExtractor<TConfig>>();
-            // Best-effort: ConnectionConfig is only registered when the extractor is built via
-            // the full Runtime/Builder DI setup with a real integration configured (e.g. not in
-            // unit tests that construct a BaseExtractor directly, and not for an extractor
-            // running fully offline). Falls back to empty rather than throwing, since a missing
-            // integration external id here is never actually observable in practice: without a
-            // real integration, nothing can ever invoke DispatchActions in the first place (it's
-            // only reachable via a checkin/startup response, which requires one).
+            // ConnectionConfig may be missing (e.g. in unit tests, or an offline extractor) --
+            // fall back to empty rather than throw. Harmless either way: with no real
+            // integration, DispatchActions can never be invoked, since it's only reachable via a
+            // checkin/startup response.
             _integrationExternalId = provider.GetService<ConnectionConfig>()?.Integration?.ExternalId ?? string.Empty;
         }
 
@@ -177,10 +174,10 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 throw new InvalidOperationException($"An action named '{action.Name}' is already registered");
             }
-            // Only block an exact name match with a real task's Start/Stop action -- e.g. "Stop
-            // Backup" is fine to register unless a task is actually named "Backup" (see
-            // IsActionableTask, which DispatchAction uses to fall through to custom actions
-            // otherwise). Doesn't cover a task added dynamically after startup.
+            // Only blocks an exact match with a real task's Start/Stop name -- "Stop Backup" is
+            // fine to register unless a task is actually named "Backup" (DispatchAction falls
+            // through to custom actions otherwise, see IsActionableTask). Doesn't catch a task
+            // added later, after startup.
             foreach (var task in TaskScheduler.GetRegisteredTasks())
             {
                 if (!task.Action) continue;
@@ -362,11 +359,6 @@ namespace Cognite.Extractor.Utils.Unstable
         /// both across actions and across check-in cycles, is intentional -- action externalIds
         /// are server-assigned and the check-in interval is far larger than typical handling
         /// time, so there is no queue to preserve ordering in here.
-        ///
-        /// Only routes to the auto-generated Start/Stop actions for actionable tasks. Custom
-        /// action dispatch is not implemented yet (see the dispatch engine's follow-up ticket) --
-        /// until then, a triggered custom action is indistinguishable from an unrecognized name
-        /// and reports `failed` accordingly, even though it is a registered action.
         /// </summary>
         /// <param name="actions">Actions pending execution, from a check-in or startup response.</param>
         private Task DispatchActions(IReadOnlyList<IntegrationAction> actions)
@@ -390,26 +382,10 @@ namespace Cognite.Extractor.Utils.Unstable
                     var taskName = actionName.Substring(ActionNaming.StartPrefix.Length);
                     if (action.Status == ActionStatus.cancel_pending)
                     {
-                        // A Start action already in flight is backed by a real, cancellable task run
-                        // -- resolve a cancel request the same way a Stop action would, via
-                        // TryCancelTask, rather than needing any action-specific cancellation
-                        // machinery. The original dispatched Start action's own WaitForNextEndOfTask
-                        // call observes the resulting task cancellation and reports the terminal
-                        // update itself; nothing needs to be queued from here. If there is nothing
-                        // currently running under this task name (e.g. it already finished, or this
-                        // process instance never dispatched it), TryCancelTask is a silent, safe
-                        // no-op -- including in the accepted, extremely narrow edge case where this
-                        // arrives in the brief window after RunStartTaskAction's TryScheduleTaskNow
-                        // call queued the task but before the scheduler's own loop has actually set
-                        // ActiveTask for it (TryCancelTask can only cancel an *active* run). That
-                        // window is bounded by thread-pool dispatch latency (microseconds), which is
-                        // irrelevant next to the checkin interval a real cancel_pending redelivery
-                        // would have to cross (seconds), so this is not considered worth adding
-                        // extra synchronization for.
-                        //
-                        // No try/catch needed here: IsActionableTask just confirmed the task
-                        // exists, and tasks can't be unregistered at runtime, so TryCancelTask
-                        // can't fail with "task not found" at this point.
+                        // Cancel via TryCancelTask; RunStartTaskAction's own wait reports the
+                        // result. No-op if nothing is running yet (a microseconds-wide race,
+                        // irrelevant next to a seconds-wide checkin interval). No try/catch
+                        // needed: IsActionableTask already confirmed the task exists.
                         TaskScheduler.TryCancelTask(taskName, "Action cancelled");
                         return;
                     }
@@ -422,25 +398,24 @@ namespace Cognite.Extractor.Utils.Unstable
                     var taskName = actionName.Substring(ActionNaming.StopPrefix.Length);
                     if (action.Status == ActionStatus.cancel_pending)
                     {
-                        // Stop's own dispatch is instant, so nothing is left to cancel -- ignore,
-                        // don't re-dispatch.
+                        // Stop's own dispatch is near-instant, so this only fires if the Stop was
+                        // cancelled before ever being dispatched -- report canceled explicitly,
+                        // or the server redelivers this forever (nothing else ever resolves it).
+                        _sink.QueueActionUpdate(new ActionUpdate { ExternalId = action.ExternalId, Status = ActionStatus.canceled });
                         return;
                     }
                     Task.Run(() => RunStopTaskAction(action.ExternalId, taskName));
                     return;
                 }
-                // Prefix matched but no such task exists (e.g. a custom action named "Stop
-                // Backup" with no task "Backup") -- fall through to custom-action dispatch below
-                // instead of treating it as a task action and failing.
+                // Prefix matched but no such task exists -- e.g. a custom action named "Stop
+                // Backup" with no task "Backup". Fall through to custom-action dispatch below.
             }
 
             if (action.Status == ActionStatus.cancel_pending)
             {
-                // Cancel-in-flight for a custom action: look up its CancellationTokenSource
-                // (registered in DispatchAction's own dispatch branch below, before invoking the
-                // target) and cancel it. The in-flight unit of work's own try/catch/finally
-                // (RunCustomAction) is what reports the eventual terminal status once the target
-                // observes cancellation and unwinds -- nothing is queued from here.
+                // Custom action cancel-in-flight: find its CancellationTokenSource and cancel it.
+                // RunCustomAction's own try/catch/finally reports the final status once the
+                // target unwinds -- nothing is queued here.
                 if (_inFlightCustomActions.TryGetValue(action.ExternalId, out var cts))
                 {
                     lock (cts)
@@ -455,29 +430,39 @@ namespace Cognite.Extractor.Utils.Unstable
                         }
                         catch (AggregateException ex)
                         {
-                            // A cancellation callback threw -- cancellation still took effect, but
-                            // unlike above this isn't expected, so log it instead of swallowing it.
+                            // Unlike ObjectDisposedException above, this isn't expected: a
+                            // cancellation callback threw. Cancellation still took effect -- log
+                            // it rather than swallow it.
                             _logger.LogWarning(ex, "A cancellation callback threw while cancelling action {ExternalId}", action.ExternalId);
                         }
                     }
                 }
-                // Not found: already completed, or unknown to this process instance (e.g. after
-                // a restart) -- a safe no-op, not an error.
+                else
+                {
+                    // Nothing in flight: either already finished (harmless no-op, already
+                    // terminal) or never dispatched by this process (e.g. cancelled before we
+                    // ever saw it, or after a restart). Report canceled either way, or the server
+                    // redelivers this forever.
+                    _sink.QueueActionUpdate(new ActionUpdate { ExternalId = action.ExternalId, Status = ActionStatus.canceled });
+                }
                 return;
             }
 
             if (actionName != null && _customActions.TryGetValue(actionName, out var customAction))
             {
-                // - Guards against the same action id being redelivered before a terminal status
-                //   is reported for its first dispatch -- custom-action callbacks are arbitrary
-                //   code that may not be safe to invoke twice concurrently.
-                // - Start doesn't need this same guard: a redelivered Start can still reach
-                //   RunStartTaskAction again (this dedup is keyed by task name, not action id),
-                //   but TryScheduleTaskNow's ActiveTask check stops it from starting the task a
-                //   second time -- it just fails fast as "already running".
-                // - odin only redelivers an action while still `pending`/`cancel_pending`, never
-                //   once `running` has been reported, so that window is narrow in practice.
-                var cts = new CancellationTokenSource();
+                if (_shuttingDown)
+                {
+                    // Shutdown's own cancel loop already ran once -- don't start new work it
+                    // would never see.
+                    return;
+                }
+                // - Guards against the same action being redelivered before it finishes --
+                //   custom-action callbacks may not be safe to run twice at once.
+                // - Start doesn't need this: TryScheduleTaskNow's own ActiveTask check already
+                //   stops a task from starting twice, so a redelivered Start just fails fast.
+                // - Linked to Source (not standalone) as a backstop: if ShutdownInternal's cancel
+                //   loop ever misses this action, Source.Cancel() still catches it.
+                var cts = CancellationTokenSource.CreateLinkedTokenSource(Source.Token);
                 if (!_inFlightCustomActions.TryAdd(action.ExternalId, cts))
                 {
                     cts.Dispose();
@@ -491,9 +476,8 @@ namespace Cognite.Extractor.Utils.Unstable
         }
 
         /// <summary>
-        /// Whether <paramref name="taskName"/> is a currently registered actionable task --
-        /// i.e. whether "Start/Stop {taskName}" refers to a real task, not just a name that
-        /// happens to share the reserved prefix with an unrelated custom action.
+        /// Whether "Start/Stop {taskName}" refers to a real, registered actionable task -- not
+        /// just a custom action name that happens to share the reserved prefix.
         /// </summary>
         private bool IsActionableTask(string taskName)
         {
@@ -521,10 +505,8 @@ namespace Cognite.Extractor.Utils.Unstable
                 try
                 {
                     await customAction.Target(ctx, cts.Token).ConfigureAwait(false);
-                    // No throw doesn't mean success: a well-behaved target may just return
-                    // normally on cancellation instead of throwing, so check the token too.
-                    // Uses whatever SetResult recorded (empty if never called) -- SetResult only
-                    // records state, it doesn't queue anything.
+                    // No throw doesn't mean success -- a target may just return normally on
+                    // cancellation. Uses whatever SetResult recorded (empty if never called).
                     _sink.QueueActionUpdate(new ActionUpdate
                     {
                         ExternalId = externalId,
@@ -535,10 +517,8 @@ namespace Cognite.Extractor.Utils.Unstable
                 }
                 catch (Exception ex)
                 {
-                    // Disambiguated by token state, not exception type: a target that throws
-                    // while its own cancellation was requested is reporting the outcome of that
-                    // cancellation (whether or not it threw a "clean" OperationCanceledException
-                    // tied to this token), not a genuine failure.
+                    // Judged by token state, not exception type: if cancellation was requested,
+                    // any exception here is that cancellation playing out, not a real failure.
                     if (cts.IsCancellationRequested)
                     {
                         _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.canceled });
@@ -561,21 +541,17 @@ namespace Cognite.Extractor.Utils.Unstable
             }
             catch (Exception ex)
             {
-                // Mandatory catch-all for the entire unit of work: an unhandled exception
-                // anywhere above (including in constructing ActionContext itself) must still
-                // produce a terminal update, never a silently dropped action.
+                // Catches anything unhandled above, including ActionContext construction itself
+                // -- this action must never go without a terminal update.
                 _logger.LogError(ex, "Unhandled exception dispatching custom action '{Name}'", customAction.Name);
                 QueueFailedAction(externalId, $"Internal error: {ex.Message}");
             }
             finally
             {
-                // Tied to finally, not the happy-path return, so a leaked dedup entry (blocking
-                // all future redelivery of this action id) or a silently-dropped action (if the
-                // callback throws before reaching the code above that records an outcome) can't
-                // happen.
+                // In finally, not after the happy path, so this always runs even if the code
+                // above throws before recording an outcome.
                 _inFlightCustomActions.TryRemove(externalId, out _);
-                // Locked to synchronize with concurrent Cancel() calls from DispatchAction/
-                // ShutdownInternal, which look the CTS up before it is removed above.
+                // Locked: DispatchAction/ShutdownInternal may be looking this cts up right now.
                 lock (cts)
                 {
                     cts.Dispose();
@@ -587,10 +563,9 @@ namespace Cognite.Extractor.Utils.Unstable
         {
             try
             {
-                // Checked first, before registering a waiter or scheduling the task: doing this
-                // after would leave a waiter that only clears once the task runs (a permanent
-                // leak if it never becomes runnable) and a task armed to start on its own later,
-                // with no action having reported success for that run.
+                // Checked before registering a waiter or scheduling the task: otherwise a failure
+                // here would leave a waiter that never clears, and a task armed to start later
+                // with no action ever reporting success for it.
                 try
                 {
                     if (!TaskScheduler.CanTaskRunNow(taskName))
@@ -601,11 +576,7 @@ namespace Cognite.Extractor.Utils.Unstable
                 }
                 catch (InvalidOperationException)
                 {
-                    // No task with this name is currently registered -- can happen if the action
-                    // was advertised for a task that existed at a previous startup but not this
-                    // one. CanTaskRunNow's other failure, ArgumentNullException, can't happen here
-                    // since taskName is never null. Anything else unexpected still gets reported,
-                    // via the catch-all below.
+                    // Task not registered -- e.g. advertised at a previous startup, not this one.
                     QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
                     return;
                 }
@@ -613,33 +584,23 @@ namespace Cognite.Extractor.Utils.Unstable
                 Task waitTask;
                 try
                 {
-                    // Register interest in this task's *next* completion before triggering it
-                    // below, not after -- otherwise a fast-completing task could run to
-                    // completion and flush its waiters before this handler starts listening,
-                    // which -- combined with the deliberate no-timeout wait further down --
-                    // would hang this handler forever. This mirrors the "register the wait, then
-                    // trigger, then await" convention this codebase's own scheduler tests already
-                    // use (see e.g. TaskSchedulerTest.TestScheduler), and matches
-                    // WaitForNextEndOfTask's documented behavior of being safe to call before the
-                    // task has (re)started, not just while it's already running.
+                    // Register the wait before triggering the task below, not after -- a
+                    // fast-completing task could otherwise finish and clear its waiters before
+                    // this starts listening, hanging forever given the no-timeout wait below.
                     waitTask = TaskScheduler.WaitForNextEndOfTask(taskName, Timeout.InfiniteTimeSpan);
                 }
                 catch (ArgumentException)
                 {
-                    // No task with this name is currently registered -- same case as above, in
-                    // the narrow window where it was registered a moment ago but was removed
-                    // between the two checks.
+                    // Same "task not registered" case as above, in the narrow window between the
+                    // two checks.
                     QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
                     return;
                 }
 
                 if (!TaskScheduler.TryScheduleTaskNow(taskName))
                 {
-                    // waitTask above is left un-awaited here -- it will still eventually resolve
-                    // when whatever run is *actually* in progress finishes, just with nothing
-                    // listening; that's harmless (no unobserved-exception crash risk on any
-                    // target framework this library multi-targets), and simpler than trying to
-                    // unregister it.
+                    // waitTask is left un-awaited -- harmless; it resolves on its own once
+                    // whatever run is actually in progress finishes.
                     QueueFailedAction(externalId, $"Task '{taskName}' is already running");
                     return;
                 }
@@ -648,26 +609,18 @@ namespace Cognite.Extractor.Utils.Unstable
 
                 try
                 {
-                    // No timeout: a dedicated Task.Run per action means blocking here has no
-                    // cost to other actions, and there is no principled upper bound on how long
-                    // a legitimate task should be allowed to run -- an operator-issued Stop
-                    // action or a cancel_pending redelivery (routed above, via TryCancelTask) is
-                    // the intended way to end this early, not a client-side timeout.
+                    // No timeout: one Task.Run per action means blocking costs nothing else, and
+                    // a Stop action or cancel_pending (handled above) is the intended way to end
+                    // this early, not a client-side timeout.
                     await waitTask.ConfigureAwait(false);
                     _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.succeeded });
                 }
                 catch (Exception ex)
                 {
-                    // WaitForNextEndOfTask can surface a cancellation two different shapes,
-                    // depending on which of two independent paths in ExtractorTaskScheduler
-                    // resolves this waiter first: RegisteredTask.FinishTask (the task actually
-                    // finished, exception rethrown directly via ExceptionDispatchInfo -- a bare
-                    // TaskCanceledException) or RegisteredTask.Cancel (an explicit cancel request
-                    // was made and immediately unblocks any current waiter via TrySetCanceled,
-                    // before the task itself has necessarily finished -- accessing .Result on
-                    // that then throws AggregateException wrapping a TaskCanceledException; the
-                    // existing TaskSchedulerTest.TestWaitWhenCancel documents this same shape).
-                    // Unwrap once so both exception shapes are inspected the same way below.
+                    // A cancellation can arrive as a bare TaskCanceledException or one wrapped in
+                    // AggregateException, depending which of two paths in ExtractorTaskScheduler
+                    // resolves first (see TaskSchedulerTest.TestWaitWhenCancel) -- unwrap once so
+                    // both are treated the same way below.
                     var actual = (ex as AggregateException)?.Flatten().InnerException ?? ex;
                     if (actual is TaskCanceledException)
                     {
@@ -681,9 +634,8 @@ namespace Cognite.Extractor.Utils.Unstable
             }
             catch (Exception ex)
             {
-                // Mandatory catch-all for the entire unit of work: an unhandled exception
-                // anywhere above must still produce a terminal update, never a silently dropped
-                // action.
+                // Catches anything unhandled above -- this action must never go without a
+                // terminal update.
                 _logger.LogError(ex, "Unhandled exception dispatching Start action for task {TaskName}", taskName);
                 QueueFailedAction(externalId, $"Internal error: {ex.Message}");
             }
@@ -700,18 +652,16 @@ namespace Cognite.Extractor.Utils.Unstable
                 }
                 catch (InvalidOperationException)
                 {
-                    // No task with this name is currently registered -- same reasoning as the
-                    // equivalent catch in RunStartTaskAction.
+                    // Same "task not registered" case as RunStartTaskAction.
                     QueueFailedAction(externalId, $"No task named '{taskName}' is currently registered");
                     return;
                 }
 
                 if (isTaskCancelled)
                 {
-                    // `succeeded`, not `canceled` -- `canceled` means the target task's own run
-                    // was interrupted, a distinct outcome from "the stop request succeeded". Not
-                    // enforced server-side; purely for cross-language parity with
-                    // python-extractor-utils.
+                    // `succeeded`, not `canceled` -- `canceled` means the task's own run was
+                    // interrupted, a different thing from "the stop request succeeded". Not
+                    // required server-side; matches python-extractor-utils' convention.
                     _sink.QueueActionUpdate(new ActionUpdate { ExternalId = externalId, Status = ActionStatus.succeeded });
                 }
                 else
@@ -749,9 +699,8 @@ namespace Cognite.Extractor.Utils.Unstable
                 throw;
             }
             StartTime = DateTime.UtcNow;
-            // Register the action dispatcher before the check-in worker starts, so no pending
-            // actions in the very first startup response can arrive with nothing registered to
-            // handle them.
+            // Register before the check-in worker starts, so the first startup response can't
+            // arrive with no dispatcher registered yet.
             _sink.SetActionDispatcher(DispatchActions);
             // Start monitoring the task scheduler and run sink.
             AddMonitoredTask(TaskScheduler.Run, "TaskScheduler");
@@ -810,11 +759,11 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <returns></returns>
         protected virtual async Task ShutdownInternal()
         {
-            // Signal any in-flight custom actions to stop now, at the same point the task
-            // scheduler itself is signalled below. Source (which each action's token is a child
-            // of) isn't cancelled until the very end of Shutdown()/DisposeAsyncCore(), well after
-            // this method returns -- without this explicit step, an in-flight custom action's
-            // target would keep running, unsignalled, for this entire graceful-shutdown window.
+            // Set first, so nothing new can be dispatched after the cancel loop below runs.
+            _shuttingDown = true;
+            // Signal in-flight custom actions now -- Source isn't cancelled until the very end of
+            // Shutdown()/DisposeAsyncCore(), so without this they'd keep running, unsignalled,
+            // for this whole window (each token is also linked to Source as a backstop).
             foreach (var kvp in _inFlightCustomActions)
             {
                 var externalId = kvp.Key;
@@ -831,16 +780,15 @@ namespace Cognite.Extractor.Utils.Unstable
                     }
                     catch (AggregateException ex)
                     {
-                        // A cancellation callback threw -- cancellation still took effect, but
-                        // unlike above this isn't expected, so log it instead of swallowing it.
+                        // Unlike above, this isn't expected: a cancellation callback threw. Log
+                        // it, rather than swallow it -- cancellation still took effect.
                         _logger.LogWarning(ex, "A cancellation callback threw while shutting down action {ExternalId}", externalId);
                     }
                 }
             }
-            // Wait for the scheduler and in-flight custom actions concurrently, not back-to-back
-            // -- both were already signalled to cancel above. Custom actions aren't tracked by
-            // TaskScheduler, so without this wait they could finish after the flush below and
-            // have their terminal `canceled` update silently dropped.
+            // Wait for the scheduler and custom actions concurrently, not back-to-back -- both
+            // were already signalled above, and custom actions need this wait or their terminal
+            // `canceled` update could arrive after the flush below and be lost.
             async Task WaitForCustomActionsAsync()
             {
                 var waitStart = DateTime.UtcNow;
