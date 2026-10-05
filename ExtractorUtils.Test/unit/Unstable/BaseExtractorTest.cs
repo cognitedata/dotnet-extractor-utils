@@ -284,7 +284,11 @@ namespace ExtractorUtils.Test.Unit.Unstable
             };
             ext.InitActionsAction = (e) =>
             {
-                e.RegisterActionPub(new CustomAction<DummyConfig>("fetch_logs", (ctx, tok) => Task.CompletedTask, "Fetch logs"));
+                // Named distinctly from "fetch_logs": that name is now reserved by the
+                // framework's own built-in action (EDG-881), registered automatically before
+                // this override runs -- a custom action attempting to reuse it would hit the
+                // duplicate-name guard and fail extractor startup entirely.
+                e.RegisterActionPub(new CustomAction<DummyConfig>("my_custom_action", (ctx, tok) => Task.CompletedTask, "My custom action"));
             };
 
             var runTask = ext.Start(CancellationToken.None);
@@ -294,7 +298,10 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Single(sink.StartupRequests);
             var actions = sink.StartupRequests[0].AvailableActions.ToList();
 
-            Assert.Equal(3, actions.Count);
+            // Built-ins (fetch_logs) register before the user's own InitActions() override runs,
+            // so they appear after the auto-generated Start/Stop pair but before user-defined
+            // custom actions.
+            Assert.Equal(4, actions.Count);
             Assert.Equal("Start ActionableTask", actions[0].Name);
             Assert.Equal(ActionType.start_task, actions[0].Type);
             Assert.Equal("ActionableTask", actions[0].Task);
@@ -303,7 +310,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Equal("ActionableTask", actions[1].Task);
             Assert.Equal("fetch_logs", actions[2].Name);
             Assert.Equal(ActionType.custom, actions[2].Type);
-            Assert.Equal("Fetch logs", actions[2].Description);
+            Assert.Equal("my_custom_action", actions[3].Name);
+            Assert.Equal(ActionType.custom, actions[3].Type);
+            Assert.Equal("My custom action", actions[3].Description);
 
             Assert.DoesNotContain(actions, a => a.Task == "PlainTask");
         }
