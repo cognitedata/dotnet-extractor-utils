@@ -284,10 +284,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
             };
             ext.InitActionsAction = (e) =>
             {
-                // Named distinctly from "fetch_logs": that name is now reserved by the
-                // framework's own built-in action (EDG-881), registered automatically before
-                // this override runs -- a custom action attempting to reuse it would hit the
-                // duplicate-name guard and fail extractor startup entirely.
+                // Not "fetch_logs" -- that name is now taken by the built-in action registered
+                // automatically before InitActions runs (see RegisterBuiltInActions), so using it
+                // here would collide.
                 e.RegisterActionPub(new CustomAction<DummyConfig>("my_custom_action", (ctx, tok) => Task.CompletedTask, "My custom action"));
             };
 
@@ -298,9 +297,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Single(sink.StartupRequests);
             var actions = sink.StartupRequests[0].AvailableActions.ToList();
 
-            // Built-ins (fetch_logs) register before the user's own InitActions() override runs,
-            // so they appear after the auto-generated Start/Stop pair but before user-defined
-            // custom actions.
+            // Start/Stop for the actionable task, plus the built-in fetch_logs action, plus this
+            // test's own custom action.
             Assert.Equal(4, actions.Count);
             Assert.Equal("Start ActionableTask", actions[0].Name);
             Assert.Equal(ActionType.start_task, actions[0].Type);
