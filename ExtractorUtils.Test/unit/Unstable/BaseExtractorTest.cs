@@ -354,10 +354,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
         [Fact]
         public async Task TestDispatchStartActionAlreadyRunningFails()
         {
-            // Uses a task that blocks on an event (rather than the instant-completing default),
-            // so the first Start dispatch is still in flight when the second one arrives -- this
-            // is what makes "already running" observable and deterministic, rather than racing
-            // the first dispatch's own near-instant completion.
+            // A blocking task keeps the first Start in flight, so the second one reliably hits
+            // "already running" instead of racing the first one's near-instant completion.
             using var blockEvt = new ManualResetEvent(false);
             var (ext, sink) = await StartExtractorWithActionableTaskBlocking(blockEvt);
 
@@ -405,8 +403,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             await TestUtils.WaitForCondition(
                 () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1"), 5);
 
-            // Must report failed directly -- no `running` update should ever have been queued,
-            // since CanRunNow() being false must be caught before reporting the task as started.
+            // Only one update: CanRunNow() being false must be caught before `running` is ever reported.
             var updates = sink.ActionUpdates.Where(u => u.ExternalId == "action-1").ToList();
             Assert.Single(updates);
             Assert.Equal(ActionStatus.failed, updates[0].Status);
@@ -441,6 +438,24 @@ namespace ExtractorUtils.Test.Unit.Unstable
         }
 
         [Fact]
+        public async Task TestCancelPendingForStopActionReportsCanceled()
+        {
+            // A Stop cancelled before ever being dispatched must still get a terminal status, or
+            // the server redelivers it forever.
+            var (ext, sink) = await StartExtractorWithActionableTask();
+
+            await sink.ActionDispatcher(new List<IntegrationAction>
+            {
+                MakeAction("stop-1", "Stop MyTask", ActionStatus.cancel_pending)
+            });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "stop-1" && u.Status == ActionStatus.canceled), 5);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
         public async Task TestDispatchStopActionNotRunningFails()
         {
             var (ext, sink) = await StartExtractorWithActionableTask();
@@ -467,7 +482,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
                 () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1"), 5);
             var update = sink.ActionUpdates.Single(u => u.ExternalId == "action-1");
             Assert.Equal(ActionStatus.failed, update.Status);
-            Assert.Contains("No task named 'NoSuchTask' is currently registered", update.ResultMessage);
+            Assert.Equal("No action named 'Start NoSuchTask' registered", update.ResultMessage);
 
             await ext.DisposeAsync();
         }
@@ -483,7 +498,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
                 () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1"), 5);
             var update = sink.ActionUpdates.Single(u => u.ExternalId == "action-1");
             Assert.Equal(ActionStatus.failed, update.Status);
-            Assert.Contains("No task named 'NoSuchTask' is currently registered", update.ResultMessage);
+            Assert.Equal("No action named 'Stop NoSuchTask' registered", update.ResultMessage);
 
             await ext.DisposeAsync();
         }
@@ -515,14 +530,10 @@ namespace ExtractorUtils.Test.Unit.Unstable
             await TestUtils.WaitForCondition(
                 () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.running), 5);
 
-            // Reporting `running` only means TryScheduleTaskNow queued the task -- the
-            // scheduler's own loop hasn't necessarily set ActiveTask yet, and TryCancelTask is a
-            // silent no-op while ActiveTask is still null. Wait for the task's own delegate to
-            // actually start (not just for the `running` report) before cancelling it, or this
-            // could race and the cancel would be dropped. In production this window is
-            // microseconds wide (bounded by thread-pool dispatch latency) against a ~30s checkin
-            // interval, so it's a non-issue there -- it only matters in a same-process test that
-            // dispatches the cancel_pending redelivery with no natural delay at all.
+            // `running` only means the task was queued, not that ActiveTask is set yet --
+            // TryCancelTask is a no-op until then. Wait for the task to actually start so this
+            // test doesn't race a window that's microseconds-wide in production (against a ~30s
+            // checkin interval) but immediate here.
             taskStartedEvt.WaitOne();
 
             // Simulate odin redelivering the same action with cancel_pending, e.g. because
@@ -553,6 +564,363 @@ namespace ExtractorUtils.Test.Unit.Unstable
             // Give it a moment to (not) do anything, then confirm nothing was queued.
             await Task.Delay(100);
             Assert.DoesNotContain(sink.ActionUpdates, u => u.ExternalId == "never-dispatched");
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestCancelPendingForStartActionWithUnregisteredTaskDoesNotAbortBatch()
+        {
+            // No task named "NoSuchTask" exists, so this falls through to the generic
+            // cancel_pending path (reports canceled) instead of hitting TaskScheduler -- and
+            // must not stop the second action in the batch from being processed too.
+            var (ext, sink) = await StartExtractorWithActionableTask();
+
+            await sink.ActionDispatcher(new List<IntegrationAction>
+            {
+                MakeAction("stale-cancel", "Start NoSuchTask", ActionStatus.cancel_pending),
+                MakeAction("action-1", "Start MyTask"),
+            });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.succeeded), 5);
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "stale-cancel" && u.Status == ActionStatus.canceled), 5);
+
+            await ext.DisposeAsync();
+        }
+
+        private async Task<(DummyExtractor, DummySink)> StartExtractorWithCustomAction(CustomAction<DummyConfig> action)
+        {
+            var (ext, sink) = CreateExtractor();
+            ext.InitActionsAction = e => e.RegisterActionPub(action);
+            _ = ext.Start(CancellationToken.None);
+            await TestUtils.WaitForCondition(() => sink.ActionDispatcher != null, 5);
+            return (ext, sink);
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionSucceeds()
+        {
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                async (ctx, tok) =>
+                {
+                    await Task.Delay(10, tok);
+                    ctx.SetResult("Done", new Dictionary<string, string> { ["fileCount"] = "3" });
+                }));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.succeeded), 5);
+
+            var updates = sink.ActionUpdates.Where(u => u.ExternalId == "action-1").ToList();
+            Assert.Equal(ActionStatus.running, updates[0].Status);
+            Assert.Equal(ActionStatus.succeeded, updates[1].Status);
+            Assert.Equal("Done", updates[1].ResultMessage);
+            Assert.Equal("3", updates[1].ResultMetadata["fileCount"]);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionSucceedsWithoutCallingSetResult()
+        {
+            // An author who never calls SetResult still produces a valid terminal `succeeded`
+            // update, not an action stuck pending forever.
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action", (ctx, tok) => Task.CompletedTask));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.succeeded), 5);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionWithActionErrorReportsStructuredFailure()
+        {
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                (ctx, tok) => throw new ActionError("invalid_parameter", "start_date is invalid", "expected ISO 8601")));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.failed), 5);
+
+            var update = sink.ActionUpdates.Single(u => u.ExternalId == "action-1" && u.Status == ActionStatus.failed);
+            Assert.Equal("start_date is invalid", update.ResultMessage);
+            Assert.Equal("invalid_parameter", update.ResultMetadata["errorType"]);
+            Assert.Equal("expected ISO 8601", update.ResultMetadata["errorDetail"]);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionWithGenericExceptionReportsFailure()
+        {
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                (ctx, tok) => throw new InvalidOperationException("boom")));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.failed), 5);
+
+            var update = sink.ActionUpdates.Single(u => u.ExternalId == "action-1" && u.Status == ActionStatus.failed);
+            Assert.Equal("boom", update.ResultMessage);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionReceivesContextFields()
+        {
+            ActionContext<DummyConfig> captured = null;
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                (ctx, tok) =>
+                {
+                    captured = ctx;
+                    return Task.CompletedTask;
+                }));
+
+            var callMetadata = new Dictionary<string, string> { ["startDate"] = "2026-01-01" };
+            var action = MakeAction("action-1", "my_action");
+            action.CallMetadata = callMetadata;
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { action });
+
+            await TestUtils.WaitForCondition(() => captured != null, 5);
+            Assert.Equal("action-1", captured.ExternalId);
+            Assert.Equal("2026-01-01", captured.CallMetadata["startDate"]);
+            Assert.NotNull(captured.ApplicationConfig);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionCancelInFlightReportsCanceled()
+        {
+            using var startedEvt = new ManualResetEvent(false);
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                async (ctx, tok) =>
+                {
+                    startedEvt.Set();
+                    await Task.Delay(Timeout.Infinite, tok);
+                }));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+            startedEvt.WaitOne();
+
+            // Simulate odin redelivering the same action with cancel_pending, e.g. because
+            // someone cancelled it via the standalone /actions/cancel API.
+            await sink.ActionDispatcher(new List<IntegrationAction>
+            {
+                MakeAction("action-1", "my_action", ActionStatus.cancel_pending)
+            });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.canceled), 5);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionCancelInFlightWithThrowingCallbackDoesNotAbortBatch()
+        {
+            // A throwing cancellation callback shouldn't abort the whole batch -- check this
+            // action still resolves to `canceled`, and a second, unrelated action still runs.
+            using var startedEvt = new ManualResetEvent(false);
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                async (ctx, tok) =>
+                {
+                    tok.Register(() => throw new InvalidOperationException("callback blew up"));
+                    startedEvt.Set();
+                    await Task.Delay(Timeout.Infinite, tok);
+                }));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+            startedEvt.WaitOne();
+
+            await sink.ActionDispatcher(new List<IntegrationAction>
+            {
+                MakeAction("action-1", "my_action", ActionStatus.cancel_pending),
+                MakeAction("action-2", "Something Unregistered"),
+            });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.canceled), 5);
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-2" && u.Status == ActionStatus.failed), 5);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionAfterShutdownIsIgnored()
+        {
+            // ShutdownInternal's cancel loop only runs once, at the top -- an action dispatched
+            // after that must be stopped from starting at all, by _shuttingDown.
+            var callCount = 0;
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action", (ctx, tok) =>
+                {
+                    Interlocked.Increment(ref callCount);
+                    return Task.CompletedTask;
+                }));
+
+            await ext.DisposeAsync();
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+            await Task.Delay(100);
+
+            Assert.Equal(0, Volatile.Read(ref callCount));
+            Assert.DoesNotContain(sink.ActionUpdates, u => u.ExternalId == "action-1");
+        }
+
+        [Fact]
+        public async Task TestShutdownCancelsInFlightCustomActions()
+        {
+            using var startedEvt = new ManualResetEvent(false);
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                async (ctx, tok) =>
+                {
+                    startedEvt.Set();
+                    await Task.Delay(Timeout.Infinite, tok);
+                }));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "my_action") });
+            startedEvt.WaitOne();
+
+            // Shut down while the action is still running -- its token must be cancelled, not
+            // left running past the extractor's own lifetime.
+            await ext.DisposeAsync();
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.canceled), 5);
+        }
+
+        [Fact]
+        public async Task TestShutdownWithThrowingCancellationCallbackStillCancelsOtherActions()
+        {
+            // One action can't prove this fix works -- DisposeAsync hides the exception either
+            // way. Both throw here so that whichever gets enumerated first still breaks the test
+            // if unfixed (dictionary order isn't guaranteed).
+            using var startedA = new ManualResetEvent(false);
+            using var startedB = new ManualResetEvent(false);
+            var (ext, sink) = CreateExtractor();
+            ext.InitActionsAction = e =>
+            {
+                e.RegisterActionPub(new CustomAction<DummyConfig>("action_a", async (ctx, tok) =>
+                {
+                    tok.Register(() => throw new InvalidOperationException("callback blew up"));
+                    startedA.Set();
+                    await Task.Delay(Timeout.Infinite, tok);
+                }));
+                e.RegisterActionPub(new CustomAction<DummyConfig>("action_b", async (ctx, tok) =>
+                {
+                    tok.Register(() => throw new InvalidOperationException("callback blew up"));
+                    startedB.Set();
+                    await Task.Delay(Timeout.Infinite, tok);
+                }));
+            };
+            _ = ext.Start(CancellationToken.None);
+            await TestUtils.WaitForCondition(() => sink.ActionDispatcher != null, 5);
+
+            await sink.ActionDispatcher(new List<IntegrationAction>
+            {
+                MakeAction("a", "action_a"),
+                MakeAction("b", "action_b"),
+            });
+            startedA.WaitOne();
+            startedB.WaitOne();
+
+            await ext.DisposeAsync();
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "a" && u.Status == ActionStatus.canceled), 5);
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "b" && u.Status == ActionStatus.canceled), 5);
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionNotInFlightCancelPendingReportsCanceled()
+        {
+            // Never dispatched by this process (e.g. cancelled before we ever saw it, or after a
+            // restart) -- must still get a terminal status, or the server redelivers it forever.
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action", (ctx, tok) => Task.CompletedTask));
+
+            await sink.ActionDispatcher(new List<IntegrationAction>
+            {
+                MakeAction("never-dispatched", "my_action", ActionStatus.cancel_pending)
+            });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "never-dispatched" && u.Status == ActionStatus.canceled), 5);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionRedeliveredBeforeCompletionIsNotInvokedTwice()
+        {
+            var invocationCount = 0;
+            using var startedEvt = new ManualResetEvent(false);
+            using var releaseEvt = new ManualResetEvent(false);
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action",
+                async (ctx, tok) =>
+                {
+                    Interlocked.Increment(ref invocationCount);
+                    startedEvt.Set();
+                    await CommonUtils.WaitAsync(releaseEvt, Timeout.InfiniteTimeSpan, tok);
+                }));
+
+            var action = MakeAction("action-1", "my_action");
+            await sink.ActionDispatcher(new List<IntegrationAction> { action });
+            startedEvt.WaitOne();
+
+            // Redelivered before the first dispatch finished -- e.g. it's still showing up in
+            // pendingActions since odin hasn't seen a terminal update for it yet.
+            await sink.ActionDispatcher(new List<IntegrationAction> { action });
+            await sink.ActionDispatcher(new List<IntegrationAction> { action });
+
+            // Not cancel_pending, so the token is untouched -- releasing the block just lets the
+            // target finish normally.
+            releaseEvt.Set();
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1" && u.Status == ActionStatus.succeeded), 5);
+
+            Assert.Equal(1, invocationCount);
+
+            await ext.DisposeAsync();
+        }
+
+        [Fact]
+        public async Task TestDispatchCustomActionCollidingWithUnknownNameStillFails()
+        {
+            // An unknown action name must still fail -- registering some other custom action
+            // shouldn't make unrelated names resolve.
+            var (ext, sink) = await StartExtractorWithCustomAction(new CustomAction<DummyConfig>(
+                "my_action", (ctx, tok) => Task.CompletedTask));
+
+            await sink.ActionDispatcher(new List<IntegrationAction> { MakeAction("action-1", "some_other_action") });
+
+            await TestUtils.WaitForCondition(
+                () => sink.ActionUpdates.Any(u => u.ExternalId == "action-1"), 5);
+            var update = sink.ActionUpdates.Single(u => u.ExternalId == "action-1");
+            Assert.Equal(ActionStatus.failed, update.Status);
+            Assert.Contains("No action named", update.ResultMessage);
 
             await ext.DisposeAsync();
         }
