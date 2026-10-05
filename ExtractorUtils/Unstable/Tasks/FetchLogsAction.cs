@@ -126,6 +126,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             var candidates = GetCandidateFiles(fileConfig, start, end).ToList();
             var uploaded = new List<(string Date, long Bytes)>();
             var skippedDates = new List<string>();
+            var failedDates = new List<string>();
 
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -147,10 +148,30 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     continue;
                 }
 
-                var bytes = await UploadLogFileAsync(ctx, httpClientFactory, stream, Path.GetFileName(path), date, token).ConfigureAwait(false);
+                long bytes;
+                try
+                {
+                    bytes = await UploadLogFileAsync(ctx, httpClientFactory, stream, Path.GetFileName(path), date, token).ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is HttpRequestException || ex is ResponseException)
+                {
+                    // A genuine network/CDF failure for this one file -- don't let it void every
+                    // file already uploaded. token.ThrowIfCancellationRequested() above still
+                    // exits immediately for real cancellation, so this only catches the upload
+                    // call's own failures.
+                    failedDates.Add(date);
+                    continue;
+                }
 
                 uploaded.Add((date, bytes));
                 ctx.ReportProgress($"Uploading: {i + 1}/{candidates.Count} files complete");
+            }
+
+            // Nothing uploaded, and the reason is errors rather than "nothing to upload" -- a
+            // succeeded result with zero files would misreport a real failure as a no-op.
+            if (uploaded.Count == 0 && failedDates.Count > 0)
+            {
+                throw new ActionError("upload_failed", $"Failed to upload {failedDates.Count} log file(s) due to a network or CDF error.");
             }
 
             var metadata = new Dictionary<string, string>
@@ -173,6 +194,10 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             if (skippedDates.Count > 0)
             {
                 message += $" Skipped {skippedDates.Count} missing/unavailable date(s).";
+            }
+            if (failedDates.Count > 0)
+            {
+                message += $" Failed to upload {failedDates.Count} file(s) due to a network or CDF error.";
             }
 
             ctx.SetResult(message, metadata);

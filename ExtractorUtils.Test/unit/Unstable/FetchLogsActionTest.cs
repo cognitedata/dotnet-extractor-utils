@@ -20,6 +20,8 @@ using CogniteSdk;
 using CogniteSdk.Alpha;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Moq;
+using Moq.Protected;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -166,6 +168,22 @@ namespace ExtractorUtils.Test.unit.Unstable
         {
             var (start, end) = FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-01"));
             Assert.Equal(start, end);
+        }
+
+        [Fact]
+        public void TestValidateDateRangeConvertsUtcTimestampToLocalDateBeforeTruncating()
+        {
+            // A "Z"-suffixed timestamp parses as Kind == Utc, not auto-converted to local time --
+            // must match ToLocalTime().Date, not a hardcoded date, so this holds in any timezone
+            // (a UTC-offset-zero runner is the one case this can't catch a regression in).
+            const string timestamp = "2026-01-01T23:30:00Z";
+            var expected = DateTime.Parse(timestamp, System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.RoundtripKind).ToLocalTime().Date;
+
+            var (start, end) = FetchLogsAction.ParseAndValidateDateRange(Metadata(timestamp, timestamp));
+
+            Assert.Equal(expected, start);
+            Assert.Equal(expected, end);
         }
 
         [Fact]
@@ -545,6 +563,132 @@ namespace ExtractorUtils.Test.unit.Unstable
                 Assert.Contains("Uploaded 1 log file", ctx.ResultMessage);
                 Assert.Equal("1", ctx.ResultMetadata!["fileCount"]);
                 Assert.Equal(content.Length.ToString(), ctx.ResultMetadata!["totalBytes"]);
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public async Task TestRunAsyncCatchesUploadFailureAndStillUploadsRemainingFiles()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempDir);
+            try
+            {
+                var dayFail = DateTime.Now.Date.AddDays(-2);
+                var dayOk = DateTime.Now.Date.AddDays(-1);
+                await System.IO.File.WriteAllTextAsync(Path.Combine(tempDir, $"log{dayFail:yyyyMMdd}.txt"), "will fail");
+                await System.IO.File.WriteAllTextAsync(Path.Combine(tempDir, $"log{dayOk:yyyyMMdd}.txt"), "will succeed");
+
+                // Each file's upload URL is keyed by date, so PutHandler can fail just one.
+                async Task<HttpResponseMessage> ExtraHandler(HttpRequestMessage message, CancellationToken token)
+                {
+                    var uri = message.RequestUri!.ToString();
+                    if (uri.Contains("/files") && message.Method == HttpMethod.Post)
+                    {
+                        var requestBody = await message.Content!.ReadAsStringAsync(token).ConfigureAwait(false);
+                        var uploadUrl = requestBody.Contains(dayFail.ToString("yyyy-MM-dd"))
+                            ? "http://example.url/upload-blob-fail"
+                            : "http://example.url/upload-blob-ok";
+                        var body = "{\"id\": 1, \"uploaded\": false, \"createdTime\": 0, \"lastUpdatedTime\": 0, " +
+                                   $"\"uploadUrl\": \"{uploadUrl}\"}}";
+                        var response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(body) };
+                        response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        return response;
+                    }
+                    throw new InvalidOperationException($"Unexpected HTTP call in this test: {uri}");
+                }
+
+                // Needs its own fresh-client-per-call mock: TestUtilities.GetMockedHttpClientFactory
+                // reuses one HttpClient, which UploadLogFileAsync disposes after each file's PUT
+                // -- that would break the second file's call too.
+                async Task<HttpResponseMessage> PutHandler(HttpRequestMessage message, CancellationToken token)
+                {
+                    var uri = message.RequestUri!.ToString();
+                    if (uri == "http://example.url/upload-blob-fail")
+                    {
+                        // Network-level failure, not EnsureSuccessStatusCode -- same type HttpClient itself throws.
+                        await message.Content!.ReadAsByteArrayAsync(token).ConfigureAwait(false);
+                        throw new HttpRequestException("Connection reset");
+                    }
+                    if (uri == "http://example.url/upload-blob-ok")
+                    {
+                        await message.Content!.ReadAsByteArrayAsync(token).ConfigureAwait(false);
+                        return new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+                    }
+                    throw new InvalidOperationException($"Unexpected HTTP call in this test: {uri}");
+                }
+                var putMockHandler = new Mock<HttpMessageHandler>();
+                putMockHandler.Protected()
+                    .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                    .Returns<HttpRequestMessage, CancellationToken>(PutHandler);
+                var putMockFactory = new Mock<IHttpClientFactory>();
+                putMockFactory.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient(putMockHandler.Object));
+
+                var (provider, destination) = GetMockedDestination(ExtraHandler);
+                using var p = provider;
+                var sink = new DummySink();
+                var ctx = new ActionContext<string>(
+                    "config", destination, "test-integration", "action-1",
+                    Metadata(dayFail.ToString("yyyy-MM-dd"), dayOk.ToString("yyyy-MM-dd")), sink);
+
+                // Must not throw: one file failing shouldn't stop the other from uploading.
+                await FetchLogsAction.RunAsync(ctx, new LoggerConfig { File = new FileConfig { Path = Path.Combine(tempDir, "log.txt"), RollingInterval = "day" } },
+                    putMockFactory.Object, CancellationToken.None);
+
+                Assert.Equal("1", ctx.ResultMetadata!["fileCount"]);
+                Assert.Contains("Uploaded 1 log file", ctx.ResultMessage);
+                Assert.Contains("Failed to upload 1 file(s) due to a network or CDF error", ctx.ResultMessage);
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public async Task TestRunAsyncThrowsActionErrorWhenEveryUploadFails()
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempDir);
+            try
+            {
+                var day = DateTime.Now.Date.AddDays(-1);
+                var date = day.ToString("yyyy-MM-dd");
+                await System.IO.File.WriteAllTextAsync(Path.Combine(tempDir, $"log{day:yyyyMMdd}.txt"), "content");
+
+                async Task<HttpResponseMessage> ExtraHandler(HttpRequestMessage message, CancellationToken token)
+                {
+                    var uri = message.RequestUri!.ToString();
+                    if (uri.Contains("/files") && message.Method == HttpMethod.Post)
+                    {
+                        var body = "{\"id\": 1, \"uploaded\": false, \"createdTime\": 0, \"lastUpdatedTime\": 0, " +
+                                   "\"uploadUrl\": \"http://example.url/upload-blob\"}";
+                        var response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(body) };
+                        response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        return response;
+                    }
+                    if (uri == "http://example.url/upload-blob")
+                    {
+                        if (message.Content != null) await message.Content.ReadAsByteArrayAsync(token).ConfigureAwait(false);
+                        throw new HttpRequestException("Connection reset");
+                    }
+                    throw new InvalidOperationException($"Unexpected HTTP call in this test: {uri}");
+                }
+
+                var (provider, destination) = GetMockedDestination(ExtraHandler);
+                using var p = provider;
+                var sink = new DummySink();
+                var ctx = new ActionContext<string>("config", destination, "test-integration", "action-1", Metadata(date, date), sink);
+
+                // All uploads failed -- must report failed, not succeeded with zero files.
+                var err = await Assert.ThrowsAsync<ActionError>(() =>
+                    FetchLogsAction.RunAsync(ctx, new LoggerConfig { File = new FileConfig { Path = Path.Combine(tempDir, "log.txt"), RollingInterval = "day" } },
+                        provider.GetRequiredService<IHttpClientFactory>(), CancellationToken.None));
+
+                Assert.Equal("upload_failed", err.ErrorType);
             }
             finally
             {
