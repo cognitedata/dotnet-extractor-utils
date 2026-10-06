@@ -112,7 +112,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public static async Task RunAsync<TConfig>(ActionContext<TConfig> ctx, LoggerConfig? loggerConfig, IHttpClientFactory? httpClientFactory, CancellationToken token)
         {
             var fileConfig = loggerConfig?.File;
-            if (fileConfig?.Path == null)
+            if (fileConfig == null || string.IsNullOrWhiteSpace(fileConfig.Path))
             {
                 throw new ActionError("no_file_handler_configured", "This extractor is not configured to log to a file.");
             }
@@ -153,12 +153,15 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 {
                     bytes = await UploadLogFileAsync(ctx, httpClientFactory, stream, Path.GetFileName(path), date, token).ConfigureAwait(false);
                 }
-                catch (Exception ex) when (ex is HttpRequestException || ex is ResponseException)
+                catch (Exception ex) when (ex is HttpRequestException || ex is ResponseException || ex is TimeoutException
+                    || (ex is OperationCanceledException && !token.IsCancellationRequested))
                 {
                     // A genuine network/CDF failure for this one file -- don't let it void every
                     // file already uploaded. token.ThrowIfCancellationRequested() above still
-                    // exits immediately for real cancellation, so this only catches the upload
-                    // call's own failures.
+                    // exits immediately for real cancellation; the OperationCanceledException
+                    // branch here only catches HttpClient's own timeout (which throws
+                    // TaskCanceledException, not a plain TimeoutException), not a genuine
+                    // cancellation of the outer token.
                     failedDates.Add(date);
                     continue;
                 }
