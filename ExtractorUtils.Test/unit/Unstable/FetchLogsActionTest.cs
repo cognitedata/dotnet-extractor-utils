@@ -138,6 +138,25 @@ namespace ExtractorUtils.Test.unit.Unstable
         }
 
         [Fact]
+        public void TestGetCandidateFilesNullFileConfigReturnsEmpty()
+        {
+            var date = DateTime.Now.Date;
+            var candidates = FetchLogsAction.GetCandidateFiles(null, date, date).ToList();
+
+            Assert.Empty(candidates);
+        }
+
+        [Fact]
+        public void TestGetCandidateFilesNullPathReturnsEmpty()
+        {
+            var config = new FileConfig { Path = null, RollingInterval = "day" };
+            var date = DateTime.Now.Date;
+            var candidates = FetchLogsAction.GetCandidateFiles(config, date, date).ToList();
+
+            Assert.Empty(candidates);
+        }
+
+        [Fact]
         public void TestGetCandidateFilesDayRollingSingleDay()
         {
             var config = new FileConfig { Path = "/logs/log.txt", RollingInterval = "day" };
