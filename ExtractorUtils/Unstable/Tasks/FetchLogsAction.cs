@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Logging;
+using CogniteSdk;
 
 namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
@@ -95,6 +97,111 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public const string Name = "fetch_logs";
 
         private const int MaxDateRangeDays = 7;
+
+        // Shared fallback for when IHttpClientFactory isn't registered in DI -- a single
+        // long-lived instance, never disposed, per Microsoft's guidance against creating a fresh
+        // HttpClient per call (socket exhaustion under the up-to-168-files-per-call volume this
+        // action can hit with hourly rolling over 7 days).
+        private static readonly HttpClient FallbackHttpClient = new HttpClient();
+
+        /// <summary>
+        /// Run the fetch_logs action.
+        /// </summary>
+        /// <typeparam name="TConfig">Extractor configuration type -- irrelevant to this action's
+        /// own logic, but required since <see cref="ActionContext{TConfig}"/> is generic over it.</typeparam>
+        public static async Task RunAsync<TConfig>(ActionContext<TConfig> ctx, LoggerConfig? loggerConfig, IHttpClientFactory? httpClientFactory, CancellationToken token)
+        {
+            var fileConfig = loggerConfig?.File;
+            if (fileConfig?.Path == null)
+            {
+                throw new ActionError("no_file_handler_configured", "This extractor is not configured to log to a file.");
+            }
+            if (ctx.CdfClient == null)
+            {
+                throw new ActionError("no_cdf_client_configured", "This extractor has no CDF client configured, cannot upload log files.");
+            }
+
+            var (start, end) = ParseAndValidateDateRange(ctx.CallMetadata);
+
+            var candidates = GetCandidateFiles(fileConfig, start, end).ToList();
+            var uploaded = new List<(string Date, long Bytes)>();
+            var skippedDates = new List<string>();
+            var failedDates = new List<string>();
+
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                token.ThrowIfCancellationRequested();
+                var (path, date, isLive) = candidates[i];
+
+                if (!System.IO.File.Exists(path))
+                {
+                    // Expected and normal: a requested date may be outside the retention window,
+                    // or (for the most recent hour/day) not written yet.
+                    skippedDates.Add(date);
+                    continue;
+                }
+
+                using var stream = TryOpenLogFileStream(path, isLive);
+                if (stream == null)
+                {
+                    skippedDates.Add(date);
+                    continue;
+                }
+
+                long bytes;
+                try
+                {
+                    bytes = await UploadLogFileAsync(ctx, httpClientFactory, stream, Path.GetFileName(path), date, token).ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is HttpRequestException || ex is ResponseException)
+                {
+                    // A genuine network/CDF failure for this one file -- don't let it void every
+                    // file already uploaded. token.ThrowIfCancellationRequested() above still
+                    // exits immediately for real cancellation, so this only catches the upload
+                    // call's own failures.
+                    failedDates.Add(date);
+                    continue;
+                }
+
+                uploaded.Add((date, bytes));
+                ctx.ReportProgress($"Uploading: {i + 1}/{candidates.Count} files complete");
+            }
+
+            // Nothing uploaded, and the reason is errors rather than "nothing to upload" -- a
+            // succeeded result with zero files would misreport a real failure as a no-op.
+            if (uploaded.Count == 0 && failedDates.Count > 0)
+            {
+                throw new ActionError("upload_failed", $"Failed to upload {failedDates.Count} log file(s) due to a network or CDF error.");
+            }
+
+            var metadata = new Dictionary<string, string>
+            {
+                ["fileCount"] = uploaded.Count.ToString(CultureInfo.InvariantCulture),
+                ["totalBytes"] = uploaded.Sum(u => u.Bytes).ToString(CultureInfo.InvariantCulture),
+            };
+            // Per-file breakdown is included unconditionally -- if it doesn't fit within odin's
+            // metadata limits, CheckInWorker.QueueActionUpdate (EDG-880) already reduces it and
+            // notes as much, without turning this into a failure. No need to duplicate that
+            // "does it fit" logic here.
+            foreach (var (date, bytes) in uploaded)
+            {
+                metadata[$"file:{date}"] = bytes.ToString(CultureInfo.InvariantCulture);
+            }
+
+            var message = uploaded.Count == 0
+                ? $"No log files found for {start:yyyy-MM-dd} to {end:yyyy-MM-dd}."
+                : $"Uploaded {uploaded.Count} log file(s) covering {start:yyyy-MM-dd} to {end:yyyy-MM-dd}.";
+            if (skippedDates.Count > 0)
+            {
+                message += $" Skipped {skippedDates.Count} missing/unavailable date(s).";
+            }
+            if (failedDates.Count > 0)
+            {
+                message += $" Failed to upload {failedDates.Count} file(s) due to a network or CDF error.";
+            }
+
+            ctx.SetResult(message, metadata);
+        }
 
         internal static (DateTime Start, DateTime End) ParseAndValidateDateRange(IReadOnlyDictionary<string, string>? callMetadata)
         {
@@ -212,5 +319,39 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
         }
 
+        private static async Task<long> UploadLogFileAsync<TConfig>(
+            ActionContext<TConfig> ctx, IHttpClientFactory? httpClientFactory, Stream stream, string fileName, string date, CancellationToken token)
+        {
+            var length = stream.Length;
+
+            var uploadRead = await ctx.CdfClient!.CogniteClient.Files.UploadAsync(new FileCreate
+            {
+                ExternalId = $"extractor-logs-{ctx.IntegrationExternalId}-{date}",
+                Name = fileName,
+                MimeType = "text/plain",
+                Source = "extractor",
+            }, overwrite: true, token).ConfigureAwait(false);
+
+            using var content = new StreamContent(stream);
+            content.Headers.ContentLength = length;
+            // Prefer the shared, pooled client from DI (already registered elsewhere in this
+            // repo's DI setup) over the static fallback -- falls back only if unavailable (e.g. a
+            // minimal test setup). Disposing an IHttpClientFactory-created HttpClient is safe and
+            // expected -- per Microsoft's documented design, it only releases the short-lived
+            // wrapper, not the pooled HttpMessageHandler underneath it -- but FallbackHttpClient
+            // itself must never be disposed, since it's shared across every call.
+            var httpClient = httpClientFactory?.CreateClient();
+            try
+            {
+                using var response = await (httpClient ?? FallbackHttpClient).PutAsync(uploadRead.UploadUrl, content, token).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+            }
+            finally
+            {
+                httpClient?.Dispose();
+            }
+
+            return length;
+        }
     }
 }
