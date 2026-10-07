@@ -728,5 +728,197 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Equal(5000, ((string)errors[0].description).Length);
             Assert.Equal(5000, ((string)errors[0].details).Length);
         }
+
+        [Theory]
+        [InlineData(1000, "", false)]
+        [InlineData(1000, " \t\r\n", false)]
+        [InlineData(1001, "", true)]
+        [InlineData(1001, " \t\r\n", true)]
+        [InlineData(1500, "", true)]
+        [InlineData(1500, " \t\r\n", true)]
+        public async Task TestActionUpdateResultMessageLengthLimitAfterTrimming(int contentLength, string padding, bool truncated)
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = padding + new string('a', contentLength) + padding,
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            string message = actionUpdates[0].resultMessage;
+            Assert.Equal(1000, message.Length);
+            Assert.Equal(truncated ? new string('a', 997) + "..." : new string('a', 1000), message);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("", "")]
+        [InlineData(" \t\r\n ", "")]
+        [InlineData("short message", "short message")]
+        [InlineData(" \tshort message\r\n ", "short message")]
+        [InlineData(" \tfirst  second\t\tthird\r\n\r\nfourth\nfifth\r\n ", "first  second\t\tthird\r\n\r\nfourth\nfifth")]
+        public async Task TestActionUpdateResultMessageWithinLimitOnlyTrimsBoundaries(string message, string expected)
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = message,
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            Assert.Equal(expected, (string)actionUpdates[0].resultMessage);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        public static IEnumerable<object[]> OversizedMetadataMessageCases()
+        {
+            const string note = "(note: some result metadata exceeded odin's size limits and was reduced)";
+            yield return new object[] { null, note };
+            yield return new object[] { "", note };
+            yield return new object[] { " \t\r\n ", note };
+            yield return new object[] { "Done", "Done " + note };
+            yield return new object[] { " \tDone\r\n ", "Done " + note };
+            yield return new object[] { " \tfirst  second\t\tthird\r\nfourth\n ", "first  second\t\tthird\r\nfourth " + note };
+
+            // Padding must not consume the space reserved for the full note, or cause
+            // an original message that fits exactly alongside it to be truncated.
+            var originalBudget = 1000 - note.Length - 1;
+            foreach (var padding in new[] { "", " \t\r\n" })
+            {
+                yield return new object[]
+                {
+                    padding + new string('a', originalBudget) + padding,
+                    new string('a', originalBudget) + " " + note,
+                };
+                yield return new object[]
+                {
+                    padding + new string('a', 1000) + padding,
+                    new string('a', originalBudget - 3) + "... " + note,
+                };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(OversizedMetadataMessageCases))]
+        public async Task TestActionUpdateOversizedMetadataValueIsSanitizedNotFailed(string message, string expected)
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = message,
+                ResultMetadata = new Dictionary<string, string> { ["fileList"] = new string('a', 1000) },
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            var update = actionUpdates[0];
+            // The action's real outcome must be preserved -- oversized metadata is reduced and
+            // noted, never sufficient cause by itself to report `failed`.
+            Assert.Equal("succeeded", (string)update.status);
+            string fileList = update.resultMetadata.fileList;
+            Assert.True(System.Text.Encoding.UTF8.GetByteCount(fileList) <= 512);
+            Assert.Equal(expected, (string)update.resultMessage);
+            Assert.True(((string)update.resultMessage).Length <= 1000);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Fact]
+        public async Task TestActionUpdateTooManyMetadataKeysIsSanitizedNotFailed()
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            var metadata = new Dictionary<string, string>();
+            for (int i = 0; i < 25; i++) metadata[$"key{i}"] = "value";
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.canceled,
+                ResultMetadata = metadata,
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            var update = actionUpdates[0];
+            // Preserved even for a `canceled` outcome, not just `succeeded`.
+            Assert.Equal("canceled", (string)update.status);
+            var resultMetadataProps = (Newtonsoft.Json.Linq.JObject)update.resultMetadata;
+            Assert.True(resultMetadataProps.Count <= 16);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData("", "")]
+        [InlineData(" \t\r\n ", "")]
+        [InlineData("Done", "Done")]
+        [InlineData(" \tDone\r\n ", "Done")]
+        [InlineData(" \tfirst  second\t\tthird\r\nfourth\n ", "first  second\t\tthird\r\nfourth")]
+        public async Task TestActionUpdateMetadataWithinLimitsIsUnchanged(string message, string expected)
+        {
+            var (provider, checkIn) = GetCheckInWorker();
+            using var p = provider;
+            using var source = new CancellationTokenSource();
+
+            var runTask = checkIn.RunPeriodicCheckIn(source.Token, new StartupRequest(), Timeout.InfiniteTimeSpan);
+            await TestUtils.WaitForCondition(() => _checkInCount == 1, 5);
+
+            checkIn.QueueActionUpdate(new ActionUpdate
+            {
+                ExternalId = "action-1",
+                Status = ActionStatus.succeeded,
+                ResultMessage = message,
+                ResultMetadata = new Dictionary<string, string> { ["fileCount"] = "3" },
+            });
+            await checkIn.Flush(source.Token);
+
+            Assert.Single(actionUpdates);
+            var update = actionUpdates[0];
+            Assert.Equal(expected, (string)update.resultMessage);
+            Assert.Equal("3", (string)update.resultMetadata.fileCount);
+
+            source.Cancel();
+            await TestUtils.RunWithTimeout(runTask, 5);
+        }
     }
 }
