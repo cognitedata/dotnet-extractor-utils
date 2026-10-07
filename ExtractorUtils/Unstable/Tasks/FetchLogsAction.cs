@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Logging;
@@ -12,12 +14,8 @@ using CogniteSdk;
 namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
     /// <summary>
-    /// A stream over a file that may still be growing (e.g. the log file the extractor is
-    /// currently writing to), which caps reads at the length the file had when this stream was
-    /// opened, so an upload never reads past the point it declared as the content length even if
-    /// the underlying file keeps growing concurrently. Only needed for the current day's (or
-    /// current hour's, under hourly rolling) still-open log file -- rotated files are already
-    /// closed and static, and can be read directly.
+    /// Read-only stream over a file that may still be growing (the live log file), capped at the
+    /// length it had when opened so reads never exceed the declared upload Content-Length.
     /// </summary>
     internal sealed class BoundedFileStream : Stream
     {
@@ -85,8 +83,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
     }
 
     /// <summary>
-    /// Built-in custom action, registered automatically for every extractor (see
-    /// <see cref="BaseExtractor{TConfig}"/>), that uploads rotated log files covering a
+    /// Built-in action, registered for every extractor, that uploads log files covering a
     /// requested date range to CDF Files.
     /// </summary>
     internal static class FetchLogsAction
@@ -98,17 +95,18 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         private const int MaxDateRangeDays = 7;
 
-        // Shared fallback for when IHttpClientFactory isn't registered in DI -- a single
-        // long-lived instance, never disposed, per Microsoft's guidance against creating a fresh
-        // HttpClient per call (socket exhaustion under the up-to-168-files-per-call volume this
-        // action can hit with hourly rolling over 7 days).
+        // CDF's single-request upload limit.
+        private const long MaxFileSizeBytes = 4L * 1024 * 1024 * 1024;
+
+        // Mirrors CheckInWorker's private MAX_ACTION_METADATA_VALUE_BYTES.
+        private const int MaxMetadataValueBytes = 512;
+
+        // Shared, never-disposed fallback for when IHttpClientFactory isn't registered.
         private static readonly HttpClient FallbackHttpClient = new HttpClient();
 
         /// <summary>
         /// Run the fetch_logs action.
         /// </summary>
-        /// <typeparam name="TConfig">Extractor configuration type -- irrelevant to this action's
-        /// own logic, but required since <see cref="ActionContext{TConfig}"/> is generic over it.</typeparam>
         public static async Task RunAsync<TConfig>(ActionContext<TConfig> ctx, LoggerConfig? loggerConfig, IHttpClientFactory? httpClientFactory, CancellationToken token)
         {
             var fileConfig = loggerConfig?.File;
@@ -124,9 +122,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             var (start, end) = ParseAndValidateDateRange(ctx.CallMetadata);
 
             var candidates = GetCandidateFiles(fileConfig, start, end).ToList();
-            var uploaded = new List<(string Date, long Bytes)>();
-            var skippedDates = new List<string>();
-            var failedDates = new List<string>();
+            var fileResults = new List<Dictionary<string, string>>(candidates.Count);
+            int uploadedCount = 0, missingCount = 0, skippedTooLargeCount = 0, failedCount = 0;
 
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -135,72 +132,79 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
                 if (!System.IO.File.Exists(path))
                 {
-                    // Expected and normal: a requested date may be outside the retention window,
-                    // or (for the most recent hour/day) not written yet.
-                    skippedDates.Add(date);
+                    // Normal: outside the retention window, or not written yet.
+                    missingCount++;
+                    fileResults.Add(new Dictionary<string, string> { ["date"] = date, ["status"] = "skipped" });
                     continue;
                 }
 
                 using var stream = TryOpenLogFileStream(path, isLive);
                 if (stream == null)
                 {
-                    skippedDates.Add(date);
+                    missingCount++;
+                    fileResults.Add(new Dictionary<string, string> { ["date"] = date, ["status"] = "skipped" });
                     continue;
                 }
 
-                long bytes;
+                if (stream.Length > MaxFileSizeBytes)
+                {
+                    skippedTooLargeCount++;
+                    fileResults.Add(new Dictionary<string, string>
+                    {
+                        ["date"] = date,
+                        ["status"] = "skipped_too_large",
+                        ["size_bytes"] = stream.Length.ToString(CultureInfo.InvariantCulture),
+                    });
+                    continue;
+                }
+
+                long fileId;
                 try
                 {
-                    bytes = await UploadLogFileAsync(ctx, httpClientFactory, stream, Path.GetFileName(path), date, token).ConfigureAwait(false);
+                    fileId = await UploadLogFileAsync(ctx, httpClientFactory, stream, Path.GetFileName(path), date, token).ConfigureAwait(false);
                 }
                 catch (Exception ex) when (ex is HttpRequestException || ex is ResponseException || ex is TimeoutException
                     || (ex is OperationCanceledException && !token.IsCancellationRequested))
                 {
-                    // A genuine network/CDF failure for this one file -- don't let it void every
-                    // file already uploaded. token.ThrowIfCancellationRequested() above still
-                    // exits immediately for real cancellation; the OperationCanceledException
-                    // branch here only catches HttpClient's own timeout (which throws
-                    // TaskCanceledException, not a plain TimeoutException), not a genuine
-                    // cancellation of the outer token.
-                    failedDates.Add(date);
+                    // One file's failure must not void the others. OperationCanceledException is
+                    // only caught for HttpClient timeouts, not cancellation of the outer token.
+                    failedCount++;
+                    fileResults.Add(new Dictionary<string, string> { ["date"] = date, ["status"] = "failed", ["error"] = ex.Message });
                     continue;
                 }
 
-                uploaded.Add((date, bytes));
+                uploadedCount++;
+                fileResults.Add(new Dictionary<string, string>
+                {
+                    ["date"] = date,
+                    ["status"] = "uploaded",
+                    ["id"] = fileId.ToString(CultureInfo.InvariantCulture),
+                });
                 ctx.ReportProgress($"Uploading: {i + 1}/{candidates.Count} files complete");
             }
 
-            // Nothing uploaded, and the reason is errors rather than "nothing to upload" -- a
-            // succeeded result with zero files would misreport a real failure as a no-op.
-            if (uploaded.Count == 0 && failedDates.Count > 0)
-            {
-                throw new ActionError("upload_failed", $"Failed to upload {failedDates.Count} log file(s) due to a network or CDF error.");
-            }
+            fileResults.Sort((a, b) => string.CompareOrdinal(a["date"], b["date"]));
 
+            var message = $"{uploadedCount} of {candidates.Count} log files uploaded to CDF Files";
             var metadata = new Dictionary<string, string>
             {
-                ["fileCount"] = uploaded.Count.ToString(CultureInfo.InvariantCulture),
-                ["totalBytes"] = uploaded.Sum(u => u.Bytes).ToString(CultureInfo.InvariantCulture),
+                ["total_files"] = candidates.Count.ToString(CultureInfo.InvariantCulture),
+                ["uploaded_files"] = uploadedCount.ToString(CultureInfo.InvariantCulture),
+                ["missing_files"] = missingCount.ToString(CultureInfo.InvariantCulture),
+                ["skipped_too_large_files"] = skippedTooLargeCount.ToString(CultureInfo.InvariantCulture),
+                ["failed_files"] = failedCount.ToString(CultureInfo.InvariantCulture),
             };
-            // Per-file breakdown is included unconditionally -- if it doesn't fit within odin's
-            // metadata limits, CheckInWorker.QueueActionUpdate (EDG-880) already reduces it and
-            // notes as much, without turning this into a failure. No need to duplicate that
-            // "does it fit" logic here.
-            foreach (var (date, bytes) in uploaded)
-            {
-                metadata[$"file:{date}"] = bytes.ToString(CultureInfo.InvariantCulture);
-            }
 
-            var message = uploaded.Count == 0
-                ? $"No log files found for {start:yyyy-MM-dd} to {end:yyyy-MM-dd}."
-                : $"Uploaded {uploaded.Count} log file(s) covering {start:yyyy-MM-dd} to {end:yyyy-MM-dd}.";
-            if (skippedDates.Count > 0)
+            // Only attach the per-file breakdown if it fits in one metadata value; the counts
+            // above always do.
+            var filesJson = JsonSerializer.Serialize(fileResults);
+            if (Encoding.UTF8.GetByteCount(filesJson) <= MaxMetadataValueBytes)
             {
-                message += $" Skipped {skippedDates.Count} missing/unavailable date(s).";
+                metadata["files"] = filesJson;
             }
-            if (failedDates.Count > 0)
+            else
             {
-                message += $" Failed to upload {failedDates.Count} file(s) due to a network or CDF error.";
+                message += " (per-file detail omitted from result metadata -- see extractor logs for full detail)";
             }
 
             ctx.SetResult(message, metadata);
@@ -226,11 +230,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 throw new ActionError("invalid_parameter", $"end_date '{endStr}' is not a valid ISO 8601 date", "Expected e.g. '2026-01-07'");
             }
 
-            // Log files roll on the extractor host's local time, so a caller-supplied UTC
-            // timestamp (Kind == Utc, e.g. a trailing "Z") must be converted to local time before
-            // truncating to a date -- DateTime comparisons compare raw Ticks and ignore Kind
-            // entirely, so an unconverted Utc value compared against DateTime.Now below could be
-            // off by the local UTC offset.
+            // Log files roll on host-local time, so convert UTC inputs before truncating to a date.
             if (start.Kind == DateTimeKind.Utc) start = start.ToLocalTime();
             if (end.Kind == DateTimeKind.Utc) end = end.ToLocalTime();
 
@@ -254,12 +254,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         }
 
         /// <summary>
-        /// Enumerate candidate log file paths for the given (inclusive) date range, matching
-        /// Serilog's actual RollingInterval.Day/Hour on-disk naming -- confirmed empirically
-        /// (base filename, no separator, then the date suffix, then the original extension:
-        /// e.g. "log.txt" with day rolling produces "log20260911.txt", not the hyphenated
-        /// "log-20260911.txt" a naive port of Python's TimedRotatingFileHandler convention would
-        /// assume) rather than relied on Serilog's documented default without checking it.
+        /// Enumerate candidate log file paths for the (inclusive) date range, using Serilog's
+        /// on-disk naming: "log.txt" with day rolling gives "log20260911.txt" (no separator).
         /// </summary>
         internal static IEnumerable<(string Path, string Date, bool IsLive)> GetCandidateFiles(FileConfig fileConfig, DateTime start, DateTime end)
         {
@@ -297,8 +293,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         }
 
         /// <summary>
-        /// Open a log file, bounding reads for live files. Returns null if the file is unavailable.
-        /// The caller owns the returned stream.
+        /// Open a log file, bounding reads for live files. Returns null if unavailable.
         /// </summary>
         private static Stream? TryOpenLogFileStream(string path, bool isLive)
         {
@@ -309,8 +304,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
             catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
             {
-                // Rotation or permissions can make an existing file unavailable. Only catch
-                // file-open failures here; read and upload failures must propagate.
+                // Only open failures are swallowed; read and upload failures must propagate.
                 return null;
             }
         }
@@ -330,12 +324,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
             using var content = new StreamContent(stream);
             content.Headers.ContentLength = length;
-            // Prefer the shared, pooled client from DI (already registered elsewhere in this
-            // repo's DI setup) over the static fallback -- falls back only if unavailable (e.g. a
-            // minimal test setup). Disposing an IHttpClientFactory-created HttpClient is safe and
-            // expected -- per Microsoft's documented design, it only releases the short-lived
-            // wrapper, not the pooled HttpMessageHandler underneath it -- but FallbackHttpClient
-            // itself must never be disposed, since it's shared across every call.
+            // Factory clients are safe to dispose; FallbackHttpClient is shared and must not be.
             var httpClient = httpClientFactory?.CreateClient();
             try
             {
@@ -347,7 +336,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 httpClient?.Dispose();
             }
 
-            return length;
+            return uploadRead.Id;
         }
     }
 }

@@ -37,9 +37,8 @@ namespace ExtractorUtils.Test.unit.Unstable
         }
 
         /// <summary>
-        /// Builds a real, working CogniteDestination backed by a mocked HTTP client factory --
-        /// only the auth token endpoint is expected to be hit in tests that never reach an
-        /// actual CDF API call (e.g. because no candidate log file exists on disk to upload).
+        /// Builds a CogniteDestination backed by a mocked HTTP client factory. Only the auth token
+        /// endpoint is served unless <paramref name="extraHandler"/> handles other requests.
         /// </summary>
         private (ServiceProvider, CogniteDestination) GetMockedDestination(
             Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>>? extraHandler = null)
@@ -173,9 +172,8 @@ namespace ExtractorUtils.Test.unit.Unstable
         [Fact]
         public void TestValidateDateRangeConvertsUtcTimestampToLocalDateBeforeTruncating()
         {
-            // A "Z"-suffixed timestamp parses as Kind == Utc, not auto-converted to local time --
-            // must match ToLocalTime().Date, not a hardcoded date, so this holds in any timezone
-            // (a UTC-offset-zero runner is the one case this can't catch a regression in).
+            // "Z" timestamps parse as Kind == Utc; compare against ToLocalTime().Date so this
+            // holds in any timezone (it can't catch a regression on a UTC-offset-zero runner).
             const string timestamp = "2026-01-01T23:30:00Z";
             var expected = DateTime.Parse(timestamp, System.Globalization.CultureInfo.InvariantCulture,
                 System.Globalization.DateTimeStyles.RoundtripKind).ToLocalTime().Date;
@@ -189,11 +187,8 @@ namespace ExtractorUtils.Test.unit.Unstable
         [Fact]
         public void TestGetLogFilePathDayRollingMatchesEmpiricallyVerifiedSerilogFormat()
         {
-            // Confirmed empirically against the actual Serilog.Sinks.File version this repo
-            // uses (7.0.0): day rolling produces "log20260911.txt", *not* the hyphenated
-            // "log-20260911.txt" a naive port of Python's TimedRotatingFileHandler convention
-            // would assume, and *not* a distinct "current file has no suffix" scheme --
-            // today's file already carries the same date suffix as any rotated one.
+            // Serilog.Sinks.File 7.0.0 day rolling: "log20260911.txt", with no separator, and
+            // today's file carries the same suffix as rotated ones.
             var path = FetchLogsAction.GetLogFilePath("/var/log/log.txt", new DateTime(2026, 9, 11), hourly: false);
             Assert.Equal(Path.Combine("/var/log", "log20260911.txt"), path);
         }
@@ -245,8 +240,7 @@ namespace ExtractorUtils.Test.unit.Unstable
             var today = DateTime.Now.Date;
             var candidates = FetchLogsAction.GetCandidateFiles(config, today, today).ToList();
 
-            // Only hours up to and including the current one for today -- not all 24, since the
-            // rest haven't happened yet.
+            // Only hours up to and including the current one.
             Assert.Equal(DateTime.Now.Hour + 1, candidates.Count);
             Assert.True(candidates.Last().IsLive);
             Assert.All(candidates.Take(candidates.Count - 1), c => Assert.False(c.IsLive));
@@ -279,9 +273,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 var readSoFar = new List<byte>();
                 var buffer = new byte[100];
 
-                // Read half, then grow the file *while the stream is still open and being read
-                // from* -- simulating the extractor continuing to write to today's log file
-                // during an upload.
+                // Read half, then grow the file while the stream is still open.
                 int n;
                 while (readSoFar.Count < 500 && (n = await bounded.ReadAsync(buffer, 0, buffer.Length, CancellationToken.None)) > 0)
                 {
@@ -295,9 +287,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                     await fs.WriteAsync(extra, 0, extra.Length);
                 }
 
-                // Keep reading from the *same* already-open bounded stream -- it must stop at the
-                // original 1000 bytes, never reading into the newly-appended 5000 bytes, even
-                // though the underlying file is now 6000 bytes long.
+                // Must stop at the original 1000 bytes, not read the appended 5000.
                 while ((n = await bounded.ReadAsync(buffer, 0, buffer.Length, CancellationToken.None)) > 0)
                 {
                     readSoFar.AddRange(buffer.Take(n));
@@ -382,12 +372,8 @@ namespace ExtractorUtils.Test.unit.Unstable
         [Fact]
         public async Task TestRunAsyncSkipsMissingFilesAndReportsSuccessWithZeroFiles()
         {
-            // A date range where the configured log directory exists but has no matching files
-            // (e.g. retention already rotated them out) -- must report a real, non-error result,
-            // not fail, and never attempt a CDF upload. Uses a real (mocked-HTTP) CogniteDestination
-            // that would fail this test immediately if anything beyond the auth token endpoint
-            // were called, since the mock handler throws on any unexpected request -- proving no
-            // upload was attempted for a date range with nothing to upload.
+            // No matching files: must succeed without any upload (the mock handler throws on
+            // any request beyond the auth token).
             var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(tempDir);
             try
@@ -400,9 +386,10 @@ namespace ExtractorUtils.Test.unit.Unstable
 
                 await FetchLogsAction.RunAsync(ctx, loggerConfig, null, CancellationToken.None);
 
-                Assert.Contains("No log files found", ctx.ResultMessage);
-                Assert.Equal("0", ctx.ResultMetadata!["fileCount"]);
-                Assert.Equal("0", ctx.ResultMetadata!["totalBytes"]);
+                Assert.Equal("0 of 2 log files uploaded to CDF Files", ctx.ResultMessage);
+                Assert.Equal("2", ctx.ResultMetadata!["total_files"]);
+                Assert.Equal("0", ctx.ResultMetadata["uploaded_files"]);
+                Assert.Equal("2", ctx.ResultMetadata["missing_files"]);
             }
             finally
             {
@@ -426,7 +413,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 using var lockedFile = new FileStream(logPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
                 Assert.True(System.IO.File.Exists(logPath));
 
-                // Any upload request is unexpected: the file exists but cannot be opened.
+                // The file can't be opened, so any upload request is unexpected.
                 var (provider, destination) = GetMockedDestination();
                 using var p = provider;
                 var sink = new DummySink();
@@ -435,9 +422,9 @@ namespace ExtractorUtils.Test.unit.Unstable
 
                 await FetchLogsAction.RunAsync(ctx, loggerConfig, provider.GetRequiredService<IHttpClientFactory>(), CancellationToken.None);
 
-                Assert.Equal("0", ctx.ResultMetadata!["fileCount"]);
-                Assert.Equal("0", ctx.ResultMetadata["totalBytes"]);
-                Assert.Contains("Skipped 1 missing/unavailable date(s)", ctx.ResultMessage);
+                Assert.Equal("0", ctx.ResultMetadata!["uploaded_files"]);
+                Assert.Equal("1", ctx.ResultMetadata["missing_files"]);
+                Assert.Equal("0 of 1 log files uploaded to CDF Files", ctx.ResultMessage);
                 Assert.Empty(sink.ActionUpdates);
             }
             finally
@@ -476,7 +463,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                     if (uri == "http://example.url/upload-blob" && message.Method == HttpMethod.Put)
                     {
                         uploadStream = await message.Content!.ReadAsStreamAsync(token).ConfigureAwait(false);
-                        // A raw handler I/O failure must not be treated as a missing log file.
+                        // An I/O failure here must propagate, not count as a missing file.
                         throw failure;
                     }
                     throw new InvalidOperationException($"Unexpected HTTP call in this test: {uri}");
@@ -560,9 +547,12 @@ namespace ExtractorUtils.Test.unit.Unstable
                 Assert.Equal(ActionStatus.running, sink.ActionUpdates[0].Status);
                 Assert.Contains("1/1", sink.ActionUpdates[0].ResultMessage);
 
-                Assert.Contains("Uploaded 1 log file", ctx.ResultMessage);
-                Assert.Equal("1", ctx.ResultMetadata!["fileCount"]);
-                Assert.Equal(content.Length.ToString(), ctx.ResultMetadata!["totalBytes"]);
+                Assert.Equal("1 of 1 log files uploaded to CDF Files", ctx.ResultMessage);
+                Assert.Equal("1", ctx.ResultMetadata!["total_files"]);
+                Assert.Equal("1", ctx.ResultMetadata["uploaded_files"]);
+                Assert.Equal("0", ctx.ResultMetadata["missing_files"]);
+                Assert.Contains("\"status\":\"uploaded\"", ctx.ResultMetadata["files"]);
+                Assert.Contains("\"id\":\"1\"", ctx.ResultMetadata["files"]);
             }
             finally
             {
@@ -582,7 +572,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 await System.IO.File.WriteAllTextAsync(Path.Combine(tempDir, $"log{dayFail:yyyyMMdd}.txt"), "will fail");
                 await System.IO.File.WriteAllTextAsync(Path.Combine(tempDir, $"log{dayOk:yyyyMMdd}.txt"), "will succeed");
 
-                // Each file's upload URL is keyed by date, so PutHandler can fail just one.
+                // Upload URL is keyed by date so PutHandler can fail just one file.
                 async Task<HttpResponseMessage> ExtraHandler(HttpRequestMessage message, CancellationToken token)
                 {
                     var uri = message.RequestUri!.ToString();
@@ -601,15 +591,13 @@ namespace ExtractorUtils.Test.unit.Unstable
                     throw new InvalidOperationException($"Unexpected HTTP call in this test: {uri}");
                 }
 
-                // Needs its own fresh-client-per-call mock: TestUtilities.GetMockedHttpClientFactory
-                // reuses one HttpClient, which UploadLogFileAsync disposes after each file's PUT
-                // -- that would break the second file's call too.
+                // Fresh client per call: UploadLogFileAsync disposes its client after each PUT.
                 async Task<HttpResponseMessage> PutHandler(HttpRequestMessage message, CancellationToken token)
                 {
                     var uri = message.RequestUri!.ToString();
                     if (uri == "http://example.url/upload-blob-fail")
                     {
-                        // Network-level failure, not EnsureSuccessStatusCode -- same type HttpClient itself throws.
+                        // Network-level failure, as HttpClient would throw.
                         await message.Content!.ReadAsByteArrayAsync(token).ConfigureAwait(false);
                         throw new HttpRequestException("Connection reset");
                     }
@@ -634,13 +622,13 @@ namespace ExtractorUtils.Test.unit.Unstable
                     "config", destination, "test-integration", "action-1",
                     Metadata(dayFail.ToString("yyyy-MM-dd"), dayOk.ToString("yyyy-MM-dd")), sink);
 
-                // Must not throw: one file failing shouldn't stop the other from uploading.
+                // One file failing must not stop the other.
                 await FetchLogsAction.RunAsync(ctx, new LoggerConfig { File = new FileConfig { Path = Path.Combine(tempDir, "log.txt"), RollingInterval = "day" } },
                     putMockFactory.Object, CancellationToken.None);
 
-                Assert.Equal("1", ctx.ResultMetadata!["fileCount"]);
-                Assert.Contains("Uploaded 1 log file", ctx.ResultMessage);
-                Assert.Contains("Failed to upload 1 file(s) due to a network or CDF error", ctx.ResultMessage);
+                Assert.Equal("1", ctx.ResultMetadata!["uploaded_files"]);
+                Assert.Equal("1", ctx.ResultMetadata["failed_files"]);
+                Assert.Equal("1 of 2 log files uploaded to CDF Files", ctx.ResultMessage);
             }
             finally
             {
@@ -649,7 +637,7 @@ namespace ExtractorUtils.Test.unit.Unstable
         }
 
         [Fact]
-        public async Task TestRunAsyncThrowsActionErrorWhenEveryUploadFails()
+        public async Task TestRunAsyncReportsFailureCountsWhenEveryUploadFails()
         {
             var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(tempDir);
@@ -683,12 +671,13 @@ namespace ExtractorUtils.Test.unit.Unstable
                 var sink = new DummySink();
                 var ctx = new ActionContext<string>("config", destination, "test-integration", "action-1", Metadata(date, date), sink);
 
-                // All uploads failed -- must report failed, not succeeded with zero files.
-                var err = await Assert.ThrowsAsync<ActionError>(() =>
-                    FetchLogsAction.RunAsync(ctx, new LoggerConfig { File = new FileConfig { Path = Path.Combine(tempDir, "log.txt"), RollingInterval = "day" } },
-                        provider.GetRequiredService<IHttpClientFactory>(), CancellationToken.None));
+                // Failures are reported via failed_files, not thrown.
+                await FetchLogsAction.RunAsync(ctx, new LoggerConfig { File = new FileConfig { Path = Path.Combine(tempDir, "log.txt"), RollingInterval = "day" } },
+                    provider.GetRequiredService<IHttpClientFactory>(), CancellationToken.None);
 
-                Assert.Equal("upload_failed", err.ErrorType);
+                Assert.Equal("0", ctx.ResultMetadata!["uploaded_files"]);
+                Assert.Equal("1", ctx.ResultMetadata["failed_files"]);
+                Assert.Equal("0 of 1 log files uploaded to CDF Files", ctx.ResultMessage);
             }
             finally
             {
