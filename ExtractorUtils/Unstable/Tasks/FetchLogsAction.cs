@@ -257,8 +257,15 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// Enumerate candidate log file paths for the (inclusive) date range, using Serilog's
         /// on-disk naming: "log.txt" with day rolling gives "log20260911.txt" (no separator).
         /// </summary>
-        internal static IEnumerable<(string Path, string Date, bool IsLive)> GetCandidateFiles(FileConfig fileConfig, DateTime start, DateTime end)
+        internal static IEnumerable<(string Path, string Date, bool IsLive)> GetCandidateFiles(FileConfig? fileConfig, DateTime start, DateTime end)
         {
+            // File logging is optional (LoggerConfig.File and FileConfig.Path are both
+            // nullable), so an extractor that hasn't configured it has no log files to offer.
+            if (fileConfig?.Path == null)
+            {
+                yield break;
+            }
+
             var isHourly = string.Equals(fileConfig.RollingInterval, "hour", StringComparison.OrdinalIgnoreCase);
             var now = DateTime.Now;
 
@@ -271,14 +278,14 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                         var timestamp = day.AddHours(h);
                         if (timestamp > now) yield break;
                         var isLive = timestamp.Date == now.Date && timestamp.Hour == now.Hour;
-                        yield return (GetLogFilePath(fileConfig.Path!, timestamp, true), timestamp.ToString("yyyy-MM-ddTHH", CultureInfo.InvariantCulture), isLive);
+                        yield return (GetLogFilePath(fileConfig.Path, timestamp, true), timestamp.ToString("yyyy-MM-ddTHH", CultureInfo.InvariantCulture), isLive);
                     }
                 }
                 else
                 {
                     if (day > now) yield break;
                     var isLive = day.Date == now.Date;
-                    yield return (GetLogFilePath(fileConfig.Path!, day, false), day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), isLive);
+                    yield return (GetLogFilePath(fileConfig.Path, day, false), day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), isLive);
                 }
             }
         }
