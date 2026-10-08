@@ -131,13 +131,13 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             {
                 throw new ActionError("invalid_date_range", "end_date must not be before start_date");
             }
-            if ((end - start).TotalDays > MaxDateRangeDays)
+            if ((end - start).Days + 1 > MaxDateRangeDays)
             {
                 throw new ActionError("invalid_date_range", $"Date range must not exceed {MaxDateRangeDays} days");
             }
-            if (start > DateTime.Now.Date)
+            if (end > DateTime.Now.Date)
             {
-                throw new ActionError("invalid_date_range", "start_date must not be in the future");
+                throw new ActionError("invalid_date_range", "end_date must not be in the future");
             }
 
             return (start, end);
@@ -160,7 +160,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 yield break;
             }
 
-            var isHourly = string.Equals(fileConfig.RollingInterval, "hour", StringComparison.OrdinalIgnoreCase);
+            var isHourly = fileConfig.RollingInterval == "hour";
             var now = DateTime.Now;
 
             for (var day = start; day <= end; day = day.AddDays(1))

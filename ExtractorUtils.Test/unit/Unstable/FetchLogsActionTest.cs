@@ -67,7 +67,16 @@ namespace ExtractorUtils.Test.unit.Unstable
         public void TestValidateDateRangeExceedingSevenDaysThrowsInvalidDateRange()
         {
             var err = Assert.Throws<ActionError>(() =>
-                FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-10")));
+                FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-08")));
+            Assert.Equal("invalid_date_range", err.ErrorType);
+        }
+
+        [Fact]
+        public void TestValidateDateRangeEndInFutureThrowsInvalidDateRange()
+        {
+            var today = DateTime.Now.Date;
+            var err = Assert.Throws<ActionError>(() =>
+                FetchLogsAction.ParseAndValidateDateRange(Metadata(today.ToString("yyyy-MM-dd"), today.AddDays(1).ToString("yyyy-MM-dd"))));
             Assert.Equal("invalid_date_range", err.ErrorType);
         }
 
@@ -83,9 +92,9 @@ namespace ExtractorUtils.Test.unit.Unstable
         [Fact]
         public void TestValidateDateRangeExactlySevenDaysIsAccepted()
         {
-            var (start, end) = FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-08"));
+            var (start, end) = FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-07"));
             Assert.Equal(new DateTime(2026, 1, 1), start);
-            Assert.Equal(new DateTime(2026, 1, 8), end);
+            Assert.Equal(new DateTime(2026, 1, 7), end);
         }
 
         [Fact]
