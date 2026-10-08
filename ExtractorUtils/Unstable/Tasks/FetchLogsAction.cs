@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -102,7 +104,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         private const int MaxMetadataValueBytes = 512;
 
         // Shared, never-disposed fallback for when IHttpClientFactory isn't registered.
-        private static readonly HttpClient FallbackHttpClient = new HttpClient();
+        // Uploads can legitimately outlast HttpClient's default 100s timeout; the token governs cancellation.
+        private static readonly HttpClient FallbackHttpClient = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
 
         /// <summary>
         /// Run the fetch_logs action.
@@ -125,7 +128,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             var fileResults = new List<Dictionary<string, string>>(candidates.Count);
             int uploadedCount = 0, missingCount = 0, skippedTooLargeCount = 0, failedCount = 0;
 
-            for (int i = 0; i < candidates.Count; i++)
+            int i;
+            void ReportUploadProgress() =>
+                ctx.ReportProgress($"Uploading: {i + 1}/{candidates.Count} files complete" + (failedCount > 0 ? $", {failedCount} failed" : ""));
+
+            for (i = 0; i < candidates.Count; i++)
             {
                 token.ThrowIfCancellationRequested();
                 var (path, date, isLive) = candidates[i];
@@ -170,6 +177,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     // only caught for HttpClient timeouts, not cancellation of the outer token.
                     failedCount++;
                     fileResults.Add(new Dictionary<string, string> { ["date"] = date, ["status"] = "failed", ["error"] = ex.Message });
+                    ReportUploadProgress();
                     continue;
                 }
 
@@ -180,7 +188,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                     ["status"] = "uploaded",
                     ["id"] = fileId.ToString(CultureInfo.InvariantCulture),
                 });
-                ctx.ReportProgress($"Uploading: {i + 1}/{candidates.Count} files complete");
+                ReportUploadProgress();
             }
 
             fileResults.Sort((a, b) => string.CompareOrdinal(a["date"], b["date"]));
@@ -316,6 +324,50 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
         }
 
+        /// <summary>
+        /// Streams a log file as the request body, remembering local read failures so they can be
+        /// told apart from network errors, which HttpClient reports identically.
+        /// </summary>
+        private sealed class LogFileContent : HttpContent
+        {
+            private readonly Stream _source;
+            private readonly long _length;
+
+            public Exception? ReadFailure { get; private set; }
+
+            public LogFileContent(Stream source, long length)
+            {
+                _source = source;
+                _length = length;
+            }
+
+            protected override async Task SerializeToStreamAsync(Stream stream, TransportContext? context)
+            {
+                var buffer = new byte[81920];
+                while (true)
+                {
+                    int read;
+                    try
+                    {
+                        read = await _source.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
+                    }
+                    catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+                    {
+                        ReadFailure = ex;
+                        throw;
+                    }
+                    if (read == 0) break;
+                    await stream.WriteAsync(buffer, 0, read).ConfigureAwait(false);
+                }
+            }
+
+            protected override bool TryComputeLength(out long length)
+            {
+                length = _length;
+                return true;
+            }
+        }
+
         private static async Task<long> UploadLogFileAsync<TConfig>(
             ActionContext<TConfig> ctx, IHttpClientFactory? httpClientFactory, Stream stream, string fileName, string date, CancellationToken token)
         {
@@ -329,14 +381,24 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 Source = "extractor",
             }, overwrite: true, token).ConfigureAwait(false);
 
-            using var content = new StreamContent(stream);
-            content.Headers.ContentLength = length;
+            using var content = new LogFileContent(stream, length);
             // Factory clients are safe to dispose; FallbackHttpClient is shared and must not be.
             var httpClient = httpClientFactory?.CreateClient();
+            if (httpClient != null)
+            {
+                try { httpClient.Timeout = Timeout.InfiniteTimeSpan; }
+                catch (InvalidOperationException) { /* Reused instance that already sent a request; timeout is locked. */ }
+            }
             try
             {
                 using var response = await (httpClient ?? FallbackHttpClient).PutAsync(uploadRead.UploadUrl, content, token).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException) when (content.ReadFailure != null)
+            {
+                // HttpClient wraps local file read errors as HttpRequestException; surface the real error.
+                ExceptionDispatchInfo.Capture(content.ReadFailure).Throw();
+                throw;
             }
             finally
             {
