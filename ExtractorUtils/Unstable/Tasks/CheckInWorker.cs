@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions;
 using Cognite.Extractor.Common;
 using CogniteSdk;
 using CogniteSdk.Alpha;
@@ -28,6 +29,17 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         private const int MAX_ERRORS_PER_CHECKIN = 1000;
         private const int MAX_TASK_UPDATES_PER_CHECKIN = 1000;
         private const int MAX_ACTION_UPDATES_PER_CHECKIN = 100;
+
+        // Action-metadata limits enforced by odin (from cognite-fastapi's _design_guide_types.py).
+        // Applies to ResultMetadata; callMetadata limits are the server's own concern.
+        private const int MAX_ACTION_METADATA_KEY_BYTES = 32;
+        private const int MAX_ACTION_METADATA_KEY_COUNT = 16;
+        private const int MAX_ACTION_METADATA_VALUE_BYTES = 512;
+        private const int MAX_ACTION_METADATA_TOTAL_BYTES = 4096;
+
+        // Matches python-extractor-utils' MAX_MESSAGE_LENGTH. Odin has no server-side limit on
+        // ResultMessage; this is for cross-language parity and payload hygiene only.
+        private const int MAX_ACTION_RESULT_MESSAGE_LENGTH = 1000;
 
         private bool _isRunning;
 
@@ -426,16 +438,76 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
         /// <summary>
         /// Queue an update to the status of a triggered action, to be sent on a future check-in.
+        ///
+        /// Enforces odin's payload guardrails before queuing: <see cref="ActionUpdate.ResultMessage"/>
+        /// is trimmed of leading/trailing whitespace and truncated to <see cref="MAX_ACTION_RESULT_MESSAGE_LENGTH"/> characters, and
+        /// <see cref="ActionUpdate.ResultMetadata"/> is checked against odin's key count/size and
+        /// value/total size limits. If either field is oversized, it is reduced and a note is
+        /// appended to the result message, but <see cref="ActionUpdate.Status"/> is left as-is --
+        /// an oversized field is reduced and flagged via the note, never treated as a failure.
         /// </summary>
         /// <param name="update">Update to queue. Must have <see cref="ActionUpdate.ExternalId"/> set.</param>
         public void QueueActionUpdate(ActionUpdate update)
         {
             if (update == null) throw new ArgumentNullException(nameof(update));
             if (string.IsNullOrEmpty(update.ExternalId)) throw new ArgumentException("ActionUpdate must have ExternalId set", nameof(update));
+
+            SanitizeActionUpdate(update);
+
             lock (_lock)
             {
                 _actionUpdates.Add(update);
             }
+        }
+
+        private void SanitizeActionUpdate(ActionUpdate update)
+        {
+            if (update.ResultMetadata == null || update.ResultMetadata.Count == 0)
+            {
+                update.ResultMessage = TruncateResultMessage(update.ResultMessage);
+                return;
+            }
+
+            var metadata = update.ResultMetadata is Dictionary<string, string> asDict
+                ? asDict
+                : new Dictionary<string, string>(update.ResultMetadata);
+
+            if (metadata.VerifyMetadata(MAX_ACTION_METADATA_KEY_BYTES, MAX_ACTION_METADATA_KEY_COUNT, MAX_ACTION_METADATA_VALUE_BYTES, MAX_ACTION_METADATA_TOTAL_BYTES, out _))
+            {
+                update.ResultMessage = TruncateResultMessage(update.ResultMessage);
+                return;
+            }
+
+            var originalCount = metadata.Count;
+            var sanitized = metadata.SanitizeMetadata(MAX_ACTION_METADATA_KEY_BYTES, MAX_ACTION_METADATA_KEY_COUNT, MAX_ACTION_METADATA_VALUE_BYTES, MAX_ACTION_METADATA_TOTAL_BYTES, out _);
+            update.ResultMetadata = sanitized;
+
+            _logger.LogWarning(
+                "Result metadata for action {ExternalId} exceeded odin's size limits ({OriginalCount} keys reduced to {NewCount}); truncating/dropping rather than failing the action.",
+                update.ExternalId, originalCount, sanitized?.Count ?? 0);
+
+            const string note = "(note: some result metadata exceeded odin's size limits and was reduced)";
+            if (string.IsNullOrWhiteSpace(update.ResultMessage))
+            {
+                update.ResultMessage = TruncateResultMessage(note);
+                return;
+            }
+
+            // Reserve enough room for " " + note up front, so appending it can never be
+            // silently cut off by a second truncation pass over an already near-max-length
+            // original message.
+            var maxOriginalLength = Math.Max(0, MAX_ACTION_RESULT_MESSAGE_LENGTH - note.Length - 1);
+            var truncatedOriginal = TruncateResultMessage(update.ResultMessage, maxOriginalLength);
+            update.ResultMessage = truncatedOriginal + " " + note;
+        }
+
+        private static string? TruncateResultMessage(string? message, int maxLength = MAX_ACTION_RESULT_MESSAGE_LENGTH)
+        {
+            // Reclaim padding without changing meaningful internal whitespace or formatting.
+            message = message?.Trim();
+            if (message == null || message.Length <= maxLength) return message;
+            if (maxLength <= 3) return message.Substring(0, maxLength);
+            return message.Substring(0, maxLength - 3) + "...";
         }
 
         /// <summary>
