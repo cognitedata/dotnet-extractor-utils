@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Runtime.ExceptionServices;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Cognite.Extractor.Logging;
+using CogniteSdk;
 
 namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
@@ -95,6 +101,127 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         public const string Name = "fetch_logs";
 
         private const int MaxDateRangeDays = 7;
+
+        // CDF's single-request upload limit.
+        private const long MaxFileSizeBytes = 4L * 1024 * 1024 * 1024;
+
+        // Mirrors CheckInWorker's private MAX_ACTION_METADATA_VALUE_BYTES.
+        private const int MaxMetadataValueBytes = 512;
+
+        // Shared, never-disposed fallback for when IHttpClientFactory isn't registered.
+        // Uploads can legitimately outlast HttpClient's default 100s timeout; the token governs cancellation.
+        private static readonly HttpClient FallbackHttpClient = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
+
+        /// <summary>
+        /// Run the fetch_logs action.
+        /// </summary>
+        public static async Task RunAsync<TConfig>(ActionContext<TConfig> ctx, LoggerConfig? loggerConfig, IHttpClientFactory? httpClientFactory, CancellationToken token)
+        {
+            var fileConfig = loggerConfig?.File;
+            if (fileConfig == null || string.IsNullOrWhiteSpace(fileConfig.Path))
+            {
+                throw new ActionError("no_file_handler_configured", "This extractor is not configured to log to a file.");
+            }
+            if (ctx.CdfClient == null)
+            {
+                throw new ActionError("no_cdf_client_configured", "This extractor has no CDF client configured, cannot upload log files.");
+            }
+
+            var (start, end) = ParseAndValidateDateRange(ctx.CallMetadata);
+
+            var candidates = GetCandidateFiles(fileConfig, start, end).ToList();
+            var fileResults = new List<Dictionary<string, string>>(candidates.Count);
+            int uploadedCount = 0, missingCount = 0, skippedTooLargeCount = 0, failedCount = 0;
+
+            int i;
+            void ReportUploadProgress() =>
+                ctx.ReportProgress($"Uploading: {i + 1}/{candidates.Count} files complete" + (failedCount > 0 ? $", {failedCount} failed" : ""));
+
+            for (i = 0; i < candidates.Count; i++)
+            {
+                token.ThrowIfCancellationRequested();
+                var (path, date, isLive) = candidates[i];
+
+                if (!System.IO.File.Exists(path))
+                {
+                    // Normal: outside the retention window, or not written yet.
+                    missingCount++;
+                    fileResults.Add(new Dictionary<string, string> { ["date"] = date, ["status"] = "skipped" });
+                    continue;
+                }
+
+                using var stream = TryOpenLogFileStream(path, isLive);
+                if (stream == null)
+                {
+                    missingCount++;
+                    fileResults.Add(new Dictionary<string, string> { ["date"] = date, ["status"] = "skipped" });
+                    continue;
+                }
+
+                if (stream.Length > MaxFileSizeBytes)
+                {
+                    skippedTooLargeCount++;
+                    fileResults.Add(new Dictionary<string, string>
+                    {
+                        ["date"] = date,
+                        ["status"] = "skipped_too_large",
+                        ["size_bytes"] = stream.Length.ToString(CultureInfo.InvariantCulture),
+                    });
+                    continue;
+                }
+
+                long fileId;
+                try
+                {
+                    fileId = await UploadLogFileAsync(ctx, httpClientFactory, stream, Path.GetFileName(path), date, token).ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is HttpRequestException || ex is ResponseException || ex is TimeoutException
+                    || (ex is OperationCanceledException && !token.IsCancellationRequested))
+                {
+                    // One file's failure must not void the others. OperationCanceledException is
+                    // only caught for HttpClient timeouts, not cancellation of the outer token.
+                    failedCount++;
+                    fileResults.Add(new Dictionary<string, string> { ["date"] = date, ["status"] = "failed", ["error"] = ex.Message });
+                    ReportUploadProgress();
+                    continue;
+                }
+
+                uploadedCount++;
+                fileResults.Add(new Dictionary<string, string>
+                {
+                    ["date"] = date,
+                    ["status"] = "uploaded",
+                    ["id"] = fileId.ToString(CultureInfo.InvariantCulture),
+                });
+                ReportUploadProgress();
+            }
+
+            fileResults.Sort((a, b) => string.CompareOrdinal(a["date"], b["date"]));
+
+            var message = $"{uploadedCount} of {candidates.Count} log files uploaded to CDF Files";
+            var metadata = new Dictionary<string, string>
+            {
+                ["total_files"] = candidates.Count.ToString(CultureInfo.InvariantCulture),
+                ["uploaded_files"] = uploadedCount.ToString(CultureInfo.InvariantCulture),
+                ["missing_files"] = missingCount.ToString(CultureInfo.InvariantCulture),
+                ["skipped_too_large_files"] = skippedTooLargeCount.ToString(CultureInfo.InvariantCulture),
+                ["failed_files"] = failedCount.ToString(CultureInfo.InvariantCulture),
+            };
+
+            // Only attach the per-file breakdown if it fits in one metadata value; the counts
+            // above always do.
+            var filesJson = JsonSerializer.Serialize(fileResults);
+            if (Encoding.UTF8.GetByteCount(filesJson) <= MaxMetadataValueBytes)
+            {
+                metadata["files"] = filesJson;
+            }
+            else
+            {
+                message += " (per-file detail omitted from result metadata -- see extractor logs for full detail)";
+            }
+
+            ctx.SetResult(message, metadata);
+        }
 
         internal static (DateTime Start, DateTime End) ParseAndValidateDateRange(IReadOnlyDictionary<string, string>? callMetadata)
         {
@@ -212,5 +339,88 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
         }
 
+        /// <summary>
+        /// Streams a log file as the request body, remembering local read failures so they can be
+        /// told apart from network errors, which HttpClient reports identically.
+        /// </summary>
+        private sealed class LogFileContent : HttpContent
+        {
+            private readonly Stream _source;
+            private readonly long _length;
+
+            public Exception? ReadFailure { get; private set; }
+
+            public LogFileContent(Stream source, long length)
+            {
+                _source = source;
+                _length = length;
+            }
+
+            protected override async Task SerializeToStreamAsync(Stream stream, TransportContext? context)
+            {
+                var buffer = new byte[81920];
+                while (true)
+                {
+                    int read;
+                    try
+                    {
+                        read = await _source.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
+                    }
+                    catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+                    {
+                        ReadFailure = ex;
+                        throw;
+                    }
+                    if (read == 0) break;
+                    await stream.WriteAsync(buffer, 0, read).ConfigureAwait(false);
+                }
+            }
+
+            protected override bool TryComputeLength(out long length)
+            {
+                length = _length;
+                return true;
+            }
+        }
+
+        private static async Task<long> UploadLogFileAsync<TConfig>(
+            ActionContext<TConfig> ctx, IHttpClientFactory? httpClientFactory, Stream stream, string fileName, string date, CancellationToken token)
+        {
+            var length = stream.Length;
+
+            var uploadRead = await ctx.CdfClient!.CogniteClient.Files.UploadAsync(new FileCreate
+            {
+                ExternalId = $"extractor-logs-{ctx.IntegrationExternalId}-{date}",
+                Name = fileName,
+                MimeType = "text/plain",
+                Source = "extractor",
+            }, overwrite: true, token).ConfigureAwait(false);
+
+            using var content = new LogFileContent(stream, length);
+            // Factory clients are safe to dispose; FallbackHttpClient is shared and must not be.
+            var httpClient = httpClientFactory?.CreateClient();
+            if (httpClient != null)
+            {
+                try { httpClient.Timeout = Timeout.InfiniteTimeSpan; }
+                catch (InvalidOperationException) { /* Reused instance that already sent a request; timeout is locked. */ }
+            }
+            try
+            {
+                using var response = await (httpClient ?? FallbackHttpClient).PutAsync(uploadRead.UploadUrl, content, token).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException) when (content.ReadFailure != null)
+            {
+                // HttpClient wraps local file read errors as HttpRequestException; surface the real error.
+                ExceptionDispatchInfo.Capture(content.ReadFailure).Throw();
+                throw;
+            }
+            finally
+            {
+                httpClient?.Dispose();
+            }
+
+            return uploadRead.Id;
+        }
     }
 }
