@@ -141,7 +141,16 @@ namespace ExtractorUtils.Test.unit.Unstable
         public void TestValidateDateRangeExceedingSevenDaysThrowsInvalidDateRange()
         {
             var err = Assert.Throws<ActionError>(() =>
-                FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-10")));
+                FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-08")));
+            Assert.Equal("invalid_date_range", err.ErrorType);
+        }
+
+        [Fact]
+        public void TestValidateDateRangeEndInFutureThrowsInvalidDateRange()
+        {
+            var today = DateTime.Now.Date;
+            var err = Assert.Throws<ActionError>(() =>
+                FetchLogsAction.ParseAndValidateDateRange(Metadata(today.ToString("yyyy-MM-dd"), today.AddDays(1).ToString("yyyy-MM-dd"))));
             Assert.Equal("invalid_date_range", err.ErrorType);
         }
 
@@ -157,9 +166,9 @@ namespace ExtractorUtils.Test.unit.Unstable
         [Fact]
         public void TestValidateDateRangeExactlySevenDaysIsAccepted()
         {
-            var (start, end) = FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-08"));
+            var (start, end) = FetchLogsAction.ParseAndValidateDateRange(Metadata("2026-01-01", "2026-01-07"));
             Assert.Equal(new DateTime(2026, 1, 1), start);
-            Assert.Equal(new DateTime(2026, 1, 8), end);
+            Assert.Equal(new DateTime(2026, 1, 7), end);
         }
 
         [Fact]
@@ -172,8 +181,9 @@ namespace ExtractorUtils.Test.unit.Unstable
         [Fact]
         public void TestValidateDateRangeConvertsUtcTimestampToLocalDateBeforeTruncating()
         {
-            // "Z" timestamps parse as Kind == Utc; compare against ToLocalTime().Date so this
-            // holds in any timezone (it can't catch a regression on a UTC-offset-zero runner).
+            // A "Z"-suffixed timestamp parses as Kind == Utc, not auto-converted to local time --
+            // must match ToLocalTime().Date, not a hardcoded date, so this holds in any timezone
+            // (a UTC-offset-zero runner is the one case this can't catch a regression in).
             const string timestamp = "2026-01-01T23:30:00Z";
             var expected = DateTime.Parse(timestamp, System.Globalization.CultureInfo.InvariantCulture,
                 System.Globalization.DateTimeStyles.RoundtripKind).ToLocalTime().Date;
@@ -187,8 +197,11 @@ namespace ExtractorUtils.Test.unit.Unstable
         [Fact]
         public void TestGetLogFilePathDayRollingMatchesEmpiricallyVerifiedSerilogFormat()
         {
-            // Serilog.Sinks.File 7.0.0 day rolling: "log20260911.txt", with no separator, and
-            // today's file carries the same suffix as rotated ones.
+            // Confirmed empirically against the actual Serilog.Sinks.File version this repo
+            // uses (7.0.0): day rolling produces "log20260911.txt", *not* the hyphenated
+            // "log-20260911.txt" a naive port of Python's TimedRotatingFileHandler convention
+            // would assume, and *not* a distinct "current file has no suffix" scheme --
+            // today's file already carries the same date suffix as any rotated one.
             var path = FetchLogsAction.GetLogFilePath("/var/log/log.txt", new DateTime(2026, 9, 11), hourly: false);
             Assert.Equal(Path.Combine("/var/log", "log20260911.txt"), path);
         }
@@ -259,7 +272,8 @@ namespace ExtractorUtils.Test.unit.Unstable
             var today = DateTime.Now.Date;
             var candidates = FetchLogsAction.GetCandidateFiles(config, today, today).ToList();
 
-            // Only hours up to and including the current one.
+            // Only hours up to and including the current one for today -- not all 24, since the
+            // rest haven't happened yet.
             Assert.Equal(DateTime.Now.Hour + 1, candidates.Count);
             Assert.True(candidates.Last().IsLive);
             Assert.All(candidates.Take(candidates.Count - 1), c => Assert.False(c.IsLive));
@@ -292,7 +306,9 @@ namespace ExtractorUtils.Test.unit.Unstable
                 var readSoFar = new List<byte>();
                 var buffer = new byte[100];
 
-                // Read half, then grow the file while the stream is still open.
+                // Read half, then grow the file *while the stream is still open and being read
+                // from* -- simulating the extractor continuing to write to today's log file
+                // during an upload.
                 int n;
                 while (readSoFar.Count < 500 && (n = await bounded.ReadAsync(buffer, 0, buffer.Length, CancellationToken.None)) > 0)
                 {
@@ -306,7 +322,9 @@ namespace ExtractorUtils.Test.unit.Unstable
                     await fs.WriteAsync(extra, 0, extra.Length);
                 }
 
-                // Must stop at the original 1000 bytes, not read the appended 5000.
+                // Keep reading from the *same* already-open bounded stream -- it must stop at the
+                // original 1000 bytes, never reading into the newly-appended 5000 bytes, even
+                // though the underlying file is now 6000 bytes long.
                 while ((n = await bounded.ReadAsync(buffer, 0, buffer.Length, CancellationToken.None)) > 0)
                 {
                     readSoFar.AddRange(buffer.Take(n));

@@ -16,8 +16,12 @@ using CogniteSdk;
 namespace Cognite.Extractor.Utils.Unstable.Tasks
 {
     /// <summary>
-    /// Read-only stream over a file that may still be growing (the live log file), capped at the
-    /// length it had when opened so reads never exceed the declared upload Content-Length.
+    /// A stream over a file that may still be growing (e.g. the log file the extractor is
+    /// currently writing to), which caps reads at the length the file had when this stream was
+    /// opened, so an upload never reads past the point it declared as the content length even if
+    /// the underlying file keeps growing concurrently. Only needed for the current day's (or
+    /// current hour's, under hourly rolling) still-open log file -- rotated files are already
+    /// closed and static, and can be read directly.
     /// </summary>
     internal sealed class BoundedFileStream : Stream
     {
@@ -85,7 +89,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
     }
 
     /// <summary>
-    /// Built-in action, registered for every extractor, that uploads log files covering a
+    /// Built-in custom action, registered automatically for every extractor (see
+    /// <see cref="BaseExtractor{TConfig}"/>), that uploads rotated log files covering a
     /// requested date range to CDF Files.
     /// </summary>
     internal static class FetchLogsAction
@@ -238,7 +243,11 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 throw new ActionError("invalid_parameter", $"end_date '{endStr}' is not a valid ISO 8601 date", "Expected e.g. '2026-01-07'");
             }
 
-            // Log files roll on host-local time, so convert UTC inputs before truncating to a date.
+            // Log files roll on the extractor host's local time, so a caller-supplied UTC
+            // timestamp (Kind == Utc, e.g. a trailing "Z") must be converted to local time before
+            // truncating to a date -- DateTime comparisons compare raw Ticks and ignore Kind
+            // entirely, so an unconverted Utc value compared against DateTime.Now below could be
+            // off by the local UTC offset.
             if (start.Kind == DateTimeKind.Utc) start = start.ToLocalTime();
             if (end.Kind == DateTimeKind.Utc) end = end.ToLocalTime();
 
@@ -249,21 +258,25 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             {
                 throw new ActionError("invalid_date_range", "end_date must not be before start_date");
             }
-            if ((end - start).TotalDays > MaxDateRangeDays)
+            if ((end - start).Days + 1 > MaxDateRangeDays)
             {
                 throw new ActionError("invalid_date_range", $"Date range must not exceed {MaxDateRangeDays} days");
             }
-            if (start > DateTime.Now.Date)
+            if (end > DateTime.Now.Date)
             {
-                throw new ActionError("invalid_date_range", "start_date must not be in the future");
+                throw new ActionError("invalid_date_range", "end_date must not be in the future");
             }
 
             return (start, end);
         }
 
         /// <summary>
-        /// Enumerate candidate log file paths for the (inclusive) date range, using Serilog's
-        /// on-disk naming: "log.txt" with day rolling gives "log20260911.txt" (no separator).
+        /// Enumerate candidate log file paths for the given (inclusive) date range, matching
+        /// Serilog's actual RollingInterval.Day/Hour on-disk naming -- confirmed empirically
+        /// (base filename, no separator, then the date suffix, then the original extension:
+        /// e.g. "log.txt" with day rolling produces "log20260911.txt", not the hyphenated
+        /// "log-20260911.txt" a naive port of Python's TimedRotatingFileHandler convention would
+        /// assume) rather than relied on Serilog's documented default without checking it.
         /// </summary>
         internal static IEnumerable<(string Path, string Date, bool IsLive)> GetCandidateFiles(FileConfig? fileConfig, DateTime start, DateTime end)
         {
@@ -274,7 +287,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
                 yield break;
             }
 
-            var isHourly = string.Equals(fileConfig.RollingInterval, "hour", StringComparison.OrdinalIgnoreCase);
+            var isHourly = fileConfig.RollingInterval == "hour";
             var now = DateTime.Now;
 
             for (var day = start; day <= end; day = day.AddDays(1))
@@ -308,7 +321,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         }
 
         /// <summary>
-        /// Open a log file, bounding reads for live files. Returns null if unavailable.
+        /// Open a log file, bounding reads for live files. Returns null if the file is unavailable.
+        /// The caller owns the returned stream.
         /// </summary>
         private static Stream? TryOpenLogFileStream(string path, bool isLive)
         {
@@ -319,7 +333,8 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
             }
             catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
             {
-                // Only open failures are swallowed; read and upload failures must propagate.
+                // Rotation or permissions can make an existing file unavailable. Only catch
+                // file-open failures here; read and upload failures must propagate.
                 return null;
             }
         }
