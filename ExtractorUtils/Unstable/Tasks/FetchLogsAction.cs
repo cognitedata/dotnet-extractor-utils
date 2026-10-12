@@ -345,6 +345,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// </summary>
         private sealed class LogFileContent : HttpContent
         {
+            // Same as Stream.CopyTo's default; stays under the 85,000-byte large object heap threshold.
+            private const int BufferSize = 81920;
+
             private readonly Stream _source;
             private readonly long _length;
 
@@ -358,7 +361,7 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
             protected override async Task SerializeToStreamAsync(Stream stream, TransportContext? context)
             {
-                var buffer = new byte[81920];
+                var buffer = new byte[BufferSize];
                 while (true)
                 {
                     int read;
