@@ -284,7 +284,10 @@ namespace ExtractorUtils.Test.Unit.Unstable
             };
             ext.InitActionsAction = (e) =>
             {
-                e.RegisterActionPub(new CustomAction<DummyConfig>("fetch_logs", (ctx, tok) => Task.CompletedTask, "Fetch logs"));
+                // Not "fetch_logs" -- that name is now taken by the built-in action registered
+                // automatically before InitActions runs (see RegisterBuiltInActions), so using it
+                // here would collide.
+                e.RegisterActionPub(new CustomAction<DummyConfig>("my_custom_action", (ctx, tok) => Task.CompletedTask, "My custom action"));
             };
 
             var runTask = ext.Start(CancellationToken.None);
@@ -294,7 +297,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Single(sink.StartupRequests);
             var actions = sink.StartupRequests[0].AvailableActions.ToList();
 
-            Assert.Equal(3, actions.Count);
+            // Start/Stop for the actionable task, plus the built-in fetch_logs action, plus this
+            // test's own custom action.
+            Assert.Equal(4, actions.Count);
             Assert.Equal("Start ActionableTask", actions[0].Name);
             Assert.Equal(ActionType.start_task, actions[0].Type);
             Assert.Equal("ActionableTask", actions[0].Task);
@@ -303,7 +308,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Assert.Equal("ActionableTask", actions[1].Task);
             Assert.Equal("fetch_logs", actions[2].Name);
             Assert.Equal(ActionType.custom, actions[2].Type);
-            Assert.Equal("Fetch logs", actions[2].Description);
+            Assert.Equal("my_custom_action", actions[3].Name);
+            Assert.Equal(ActionType.custom, actions[3].Type);
+            Assert.Equal("My custom action", actions[3].Description);
 
             Assert.DoesNotContain(actions, a => a.Task == "PlainTask");
         }
