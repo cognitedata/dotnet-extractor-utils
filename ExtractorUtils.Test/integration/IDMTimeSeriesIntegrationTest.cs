@@ -1354,9 +1354,8 @@ namespace ExtractorUtils.Test.Integration
         }
 
         /// <summary>
-        /// Creates one state time series (through the beta path) and one numeric time series (through the
-        /// non-beta path), then updates both in a single call with each value of isBeta. Verified that the beta
-        /// path updates both series, while the non-beta path only updates the numeric series and fails for the state series.
+        /// Creates one state time series and one numeric time series, then updates both in a single call with each value of isBeta. Verified
+        /// that the beta path updates both series, while the non-beta path only updates the numeric series and fails for the state series.
         /// </summary>
         [Theory]
         [InlineData(CogniteHost.GreenField)]
