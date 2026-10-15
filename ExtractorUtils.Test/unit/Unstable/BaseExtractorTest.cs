@@ -275,11 +275,11 @@ namespace ExtractorUtils.Test.Unit.Unstable
                     taskCompletedEvent.Set();
                     return null;
                 });
-                actionableTask.Metadata.Action = true;
                 sched.AddScheduledTask(actionableTask, true);
 
-                // A non-actionable task must not get auto-generated Start/Stop actions.
+                // Tasks are actionable by default; one that opts out gets no Start/Stop actions.
                 var plainTask = new RunQuickTask("PlainTask", (_, tok) => Task.FromResult<TaskUpdatePayload>(null));
+                plainTask.Metadata.Action = false;
                 sched.AddScheduledTask(plainTask, false);
             };
             ext.InitActionsAction = (e) =>
