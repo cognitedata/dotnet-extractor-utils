@@ -30,18 +30,23 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="buildTimeSeries">Function that builds CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="options">Chunking, throttling, retry, and sanitation options</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="extensionView">Optional view that extends the core time series view, to write and
+        /// read a subtype of <typeparamref name="T"/> carrying additional properties. Defaults to the core
+        /// time series view.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found timeseries</returns>
         public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildTimeSeries,
             BetaResourceParams options,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
+            var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.GetOrCreateAsync(
-                TimeSeriesResource.View,
-                (ids, tok) => timeSeries.RetrieveAsync<T>(ids, tok),
-                (items, tok) => timeSeries.UpsertAsync(items, null, tok),
+                view,
+                (ids, tok) => timeSeries.RetrieveAsync<T>(ids, tok, view),
+                (items, tok) => timeSeries.UpsertAsync(items, null, tok, view),
                 CoreTSSanitation.CleanTimeSeriesRequest,
                 instanceIds, buildTimeSeries, options, token);
         }
@@ -57,19 +62,24 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="buildTimeSeries">Async function that builds CogniteSdk SourcedNodeWrite objects</param>
         /// <param name="options">Chunking, throttling, retry, and sanitation options</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="extensionView">Optional view that extends the core time series view, to write and
+        /// read a subtype of <typeparamref name="T"/> carrying additional properties. Defaults to the core
+        /// time series view.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found timeseries</returns>
         public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildTimeSeries,
             BetaResourceParams options,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
+            var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.GetOrCreateAsync(
-                TimeSeriesResource.View,
-                (ids, tok) => timeSeries.RetrieveAsync<T>(ids, tok),
-                (items, tok) => timeSeries.UpsertAsync(items, null, tok),
+                view,
+                (ids, tok) => timeSeries.RetrieveAsync<T>(ids, tok, view),
+                (items, tok) => timeSeries.UpsertAsync(items, null, tok, view),
                 CoreTSSanitation.CleanTimeSeriesRequest,
                 instanceIds, buildTimeSeries, options, token);
         }
@@ -84,17 +94,22 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="options">Chunking, throttling, retry, and sanitation options. Keeping duplicates
         /// via the retry mode is not valid for this method.</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="extensionView">Optional view that extends the core time series view, to write a
+        /// subtype of <typeparamref name="T"/> carrying additional properties. Defaults to the core
+        /// time series view.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
         public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureTimeSeriesExistsAsync<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<SourcedNodeWrite<T>> timeSeriesToEnsure,
             BetaResourceParams options,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
+            var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.EnsureExistsAsync(
-                TimeSeriesResource.View,
-                (items, tok) => timeSeries.UpsertAsync(items, null, tok),
+                view,
+                (items, tok) => timeSeries.UpsertAsync(items, null, tok, view),
                 CoreTSSanitation.CleanTimeSeriesRequest,
                 timeSeriesToEnsure, options, token);
         }
@@ -107,17 +122,22 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="chunkSize">Chunk size</param>
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="extensionView">Optional view that extends the core time series view, to read a
+        /// subtype of <typeparamref name="T"/> carrying additional properties. Defaults to the core
+        /// time series view.</param>
         /// <returns>Retrieved timeseries</returns>
         public static Task<IEnumerable<SourcedNode<T>>> GetTimeSeriesByIdsIgnoreErrors<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<Identity> ids,
             int chunkSize,
             int throttleSize,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
+            var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.GetByIdsIgnoreErrors(
-                TimeSeriesResource.View,
-                (chunkIds, tok) => timeSeries.RetrieveAsync<T>(chunkIds, tok),
+                view,
+                (chunkIds, tok) => timeSeries.RetrieveAsync<T>(chunkIds, tok, view),
                 ids, chunkSize, throttleSize, token);
         }
 
@@ -130,17 +150,22 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="items">List of timeseries updates</param>
         /// <param name="options">Chunking, throttling, retry, and sanitation options</param>
         /// <param name="token">Cancellation token</param>
+        /// <param name="extensionView">Optional view that extends the core time series view, to write a
+        /// subtype of <typeparamref name="T"/> carrying additional properties. Defaults to the core
+        /// time series view.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated timeseries</returns>
         public static Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertAsync<T>(
             this TimeSeriesResource resource,
             IEnumerable<SourcedNodeWrite<T>> items,
             BetaResourceParams options,
-            CancellationToken token) where T : CogniteTimeSeriesBase
+            CancellationToken token,
+            ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
+            var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.UpsertAsync(
-                TimeSeriesResource.View,
-                (chunkItems, tok) => resource.UpsertAsync(chunkItems, null, tok),
+                view,
+                (chunkItems, tok) => resource.UpsertAsync(chunkItems, null, tok, view),
                 CoreTSSanitation.CleanTimeSeriesRequest,
                 items, options, token);
         }

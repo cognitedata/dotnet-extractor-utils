@@ -84,7 +84,7 @@ namespace Cognite.Extractor.Utils
             {
                 var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
                 return BetaTimeSeriesExtensions.GetOrCreateTimeSeriesAsync<T>(
-                    _betaTimeSeries, instanceIds, buildTimeSeries, betaParams, token);
+                    _betaTimeSeries, instanceIds, buildTimeSeries, betaParams, token, IDMViewIdentifier);
             }
             return _client.CoreDataModel.TimeSeries<T>(IDMViewIdentifier, new List<ViewIdentifier> { CoreTimeSeriesResource<T>.DefaultView })
                 .GetOrCreateTimeSeriesAsync(instanceIds, buildTimeSeries, Chunking.Instances, Throttling.Instances, retryMode, sanitationMode, token);
@@ -183,7 +183,7 @@ namespace Cognite.Extractor.Utils
                 var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
                 return await
                     BetaTimeSeriesExtensions
-                        .EnsureTimeSeriesExistsAsync<T>(_betaTimeSeries, timeSeries, betaParams, token)
+                        .EnsureTimeSeriesExistsAsync<T>(_betaTimeSeries, timeSeries, betaParams, token, IDMViewIdentifier)
                         .ConfigureAwait(false);
             }
             return await
@@ -212,7 +212,7 @@ namespace Cognite.Extractor.Utils
             {
                 return await
                     BetaTimeSeriesExtensions
-                        .GetTimeSeriesByIdsIgnoreErrors<T>(_betaTimeSeries, timeSeries, Chunking.Instances, Throttling.Instances, token)
+                        .GetTimeSeriesByIdsIgnoreErrors<T>(_betaTimeSeries, timeSeries, Chunking.Instances, Throttling.Instances, token, IDMViewIdentifier)
                         .ConfigureAwait(false);
             }
             return await
@@ -247,7 +247,7 @@ namespace Cognite.Extractor.Utils
             {
                 var betaParams = new BetaResourceParams(Chunking.Instances, Throttling.Instances, retryMode, sanitationMode);
                 return await
-                    BetaTimeSeriesExtensions.UpsertAsync(_betaTimeSeries, updates, betaParams, token).ConfigureAwait(false);
+                    BetaTimeSeriesExtensions.UpsertAsync(_betaTimeSeries, updates, betaParams, token, IDMViewIdentifier).ConfigureAwait(false);
             }
             return await
                 _client.CoreDataModel
