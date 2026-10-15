@@ -811,6 +811,17 @@ namespace ExtractorUtils.Test.unit.Unstable
             source.Cancel();
             await running;
         }
+
+        [Theory]
+        [InlineData(TaskType.batch, true)]
+        [InlineData(TaskType.continuous, true)]
+        [InlineData((TaskType)99, false)]
+        public void TestTaskMetadataActionDefaultDependsOnTaskType(TaskType type, bool expected)
+        {
+            Assert.Equal(expected, new TaskMetadata(type).Action);
+            Assert.True(new TaskMetadata(type) { Action = true }.Action);
+            Assert.False(new TaskMetadata(type) { Action = false }.Action);
+        }
     }
 
     class ScheduledTask : BaseSchedulableTask
