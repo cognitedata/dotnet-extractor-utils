@@ -291,6 +291,12 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 services.AddCogniteClient(_params.AppId, _params.UserAgent, _params.AddLogger,
                     _params.AddMetrics, _params.SetupHttpClient, false);
                 services.AddCogniteDestination();
+
+                // Opt-in: route writes through the Charon CDF-writer service instead of directly to CDF.
+                if (_connectionConfig.CdfWriter?.Enabled == true)
+                {
+                    services.AddCharonWriter(_params.UserAgent);
+                }
             }
 
             // Register a live integration sink that the extractor will use for check-ins.

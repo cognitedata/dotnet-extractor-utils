@@ -156,6 +156,56 @@ namespace Cognite.Extractor.Utils.Unstable
         public const string AUTH_CLIENT_NAME = "AuthenticatorClient";
 
         /// <summary>
+        /// The name of the HTTP client used for the Charon CDF-writer service.
+        /// </summary>
+        public const string CHARON_CLIENT_NAME = "CharonClient";
+
+        /// <summary>
+        /// Register the Charon CDF-writer client, writer façade, and its HTTP client.
+        /// Opt-in: only call this when <c>cdf-writer</c> is enabled in the connection config.
+        /// Reuses the same bearer token flow as the CDF client, so <see cref="AddCogniteClient"/>
+        /// (or an equivalent <see cref="IAuthenticator"/> registration) must run first.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="userAgent">Optional User-Agent header for Charon requests.</param>
+        public static void AddCharonWriter(this IServiceCollection services, string? userAgent = null)
+        {
+            services.AddHttpClient(CHARON_CLIENT_NAME, c =>
+            {
+                c.Timeout = Timeout.InfiniteTimeSpan;
+                if (userAgent != null) c.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+            })
+                .AddHttpMessageHandler(provider =>
+                {
+                    try
+                    {
+                        return new AuthenticatorDelegatingHandler(provider.GetService<IAuthenticator>());
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        return new AuthenticatorDelegatingHandler(null);
+                    }
+                })
+                .ConfigureCogniteHttpClientHandlers();
+
+            services.AddSingleton<Charon.ICharonClient>(provider =>
+            {
+                var connection = provider.GetRequiredService<ConnectionConfig>();
+                var factory = provider.GetRequiredService<IHttpClientFactory>();
+                return new Charon.CharonClient(
+                    factory.CreateClient(CHARON_CLIENT_NAME),
+                    connection.CdfWriter ?? new CdfWriterConfig(),
+                    provider.GetService<ILogger<Charon.CharonClient>>());
+            });
+
+            services.AddSingleton<Charon.CharonWriter>(provider => new Charon.CharonWriter(
+                provider.GetRequiredService<Charon.ICharonClient>(),
+                provider.GetRequiredService<ConnectionConfig>(),
+                provider.GetRequiredService<BaseCogniteConfig>(),
+                provider.GetService<ILogger<Charon.CharonWriter>>()));
+        }
+
+        /// <summary>
         /// Adds a configured Cognite client to the <paramref name="services"/> collection as a transient service
         /// </summary>
         /// <param name="services">The service collection</param>
