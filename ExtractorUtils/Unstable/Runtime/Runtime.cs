@@ -280,6 +280,8 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                 })
                 .Distinct().ToArray();
             services.AddConfig(config.Config, configTypes);
+            // Needed to build CogniteDestination (e.g. for fetch_logs), even if the extractor config doesn't contain it.
+            services.TryAddSingleton(new BaseCogniteConfig());
             services.AddConfig(_connectionConfig, typeof(ConnectionConfig));
             services.AddSingleton(config);
             services.AddSingleton<ExtractorTaskScheduler>();
