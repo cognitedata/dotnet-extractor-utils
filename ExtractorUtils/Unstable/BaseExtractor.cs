@@ -112,6 +112,7 @@ namespace Cognite.Extractor.Utils.Unstable
         )
         {
             if (config == null) throw new ArgumentNullException(nameof(config));
+            if (provider == null) throw new ArgumentNullException(nameof(provider));
             Config = config.Config;
             ConfigRevision = config.Revision;
             Destination = destination ?? provider.GetService<CogniteDestination>();
