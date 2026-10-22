@@ -1239,5 +1239,193 @@ namespace ExtractorUtils.Test.Integration
                 await DeleteTimeseries(tester, spaceId, new[] { existingXid, missingXid, stateSetXid });
             }
         }
+
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestBetaTimeSeriesExtractedDataRoundTrips(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+
+            var stateSetXid = $"{tester.Prefix}utils-test-beta-extdata-set";
+            var tsXid = $"{tester.Prefix}utils-test-beta-extdata-ts";
+
+            // The beta path is used for state time series, which must reference a state set.
+            await CreateStateSet(tester, spaceId, stateSetXid);
+
+            var extractedData = new Dictionary<string, string>
+            {
+                { "sourceKey", "sourceValue" },
+                { "sourceUnit", "celsius" }
+            };
+
+            var timeseries = new[]
+            {
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, tsXid, spaceId, TimeSeriesType.State,
+                    x => { x.Properties.Name = tsXid; x.Properties.extractedData = extractedData; return x; },
+                    new InstanceIdentifier(spaceId, stateSetXid))
+            };
+
+            try
+            {
+                var result = await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(timeseries, RetryMode.OnError, SanitationMode.Clean, tester.Source.Token, isBeta: true);
+                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
+                result.Throw();
+                Assert.Single(result.Results);
+
+                // Read back from CDF through the beta retrieve path: this is the real round-trip that
+                // proves the extension view was written and is readable, not just echoed from the write.
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
+                var identities = CreateIdentities(spaceId, new[] { tsXid });
+                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true);
+                var found = Assert.Single(retrieved);
+
+                Assert.Equal(TimeSeriesType.State, found.Properties.Type);
+                Assert.Equal(stateSetXid, found.Properties.StateSet?.ExternalId);
+                Assert.NotNull(found.Properties.extractedData);
+                Assert.Equal("sourceValue", found.Properties.extractedData["sourceKey"]);
+                Assert.Equal("celsius", found.Properties.extractedData["sourceUnit"]);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
+            }
+        }
+
+        /// <summary>
+        /// Verifies extractedData round-trips through the beta UpsertTimeSeriesAsync path (isBeta: true),
+        /// and that updating the extractor-specific property through the beta path is persisted.
+        /// </summary>
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestBetaUpsertTimeSeriesExtractedData(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+
+            var stateSetXid = $"{tester.Prefix}utils-test-beta-upsert-extdata-set";
+            var tsXid = $"{tester.Prefix}utils-test-beta-upsert-extdata-ts";
+
+            await CreateStateSet(tester, spaceId, stateSetXid);
+            var stateSetId = new InstanceIdentifier(spaceId, stateSetXid);
+            var identities = CreateIdentities(spaceId, new[] { tsXid });
+
+            try
+            {
+                var writes = new[]
+                {
+                    GetWritableTS<CogniteExtractorTimeSeries>(tester, tsXid, spaceId, TimeSeriesType.State,
+                        x => { x.Properties.Name = tsXid; x.Properties.extractedData = new Dictionary<string, string> { { "key", "initial" } }; return x; },
+                        stateSetId)
+                };
+
+                var result = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(writes, RetryMode.None, SanitationMode.None, tester.Source.Token, isBeta: true);
+                tester.Logger.LogResult(result, RequestType.UpsertInstances, false);
+                result.Throw();
+                Assert.Single(result.Results);
+
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
+                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true);
+                var found = Assert.Single(retrieved);
+                Assert.NotNull(found.Properties.extractedData);
+                Assert.Equal("initial", found.Properties.extractedData["key"]);
+
+                // Upsert again with a changed extractedData value and confirm it is persisted.
+                var updates = new[]
+                {
+                    GetWritableTS<CogniteExtractorTimeSeries>(tester, tsXid, spaceId, TimeSeriesType.State,
+                        x => { x.Properties.Name = tsXid; x.Properties.extractedData = new Dictionary<string, string> { { "key", "updated" } }; return x; },
+                        stateSetId)
+                };
+                var updateResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(updates, RetryMode.None, SanitationMode.None, tester.Source.Token, isBeta: true);
+                updateResult.Throw();
+
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
+                retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true);
+                found = Assert.Single(retrieved);
+                Assert.Equal("updated", found.Properties.extractedData["key"]);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { tsXid, stateSetXid });
+            }
+        }
+
+        /// <summary>
+        /// Creates one state time series and one numeric time series, then updates both in a single call with each value of isBeta. Verified
+        /// that the beta path updates both series, while the non-beta path only updates the numeric series and fails for the state series.
+        /// </summary>
+        [Theory]
+        [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
+        public async Task TestBetaUpdatesStateAndNumericTimeSeries(CogniteHost host)
+        {
+            using var tester = new CDFTester(host, _output);
+            var spaceId = await tester.GetSpaceId();
+
+            var stateSetXid = $"{tester.Prefix}utils-test-beta-flag-set";
+            var stateXid = $"{tester.Prefix}utils-test-beta-flag-state-ts";
+            var numericXid = $"{tester.Prefix}utils-test-beta-flag-numeric-ts";
+
+            await CreateStateSet(tester, spaceId, stateSetXid);
+            var stateSetId = new InstanceIdentifier(spaceId, stateSetXid);
+
+            // Builds an update for both time series, changing the description.
+            SourcedNodeWrite<CogniteExtractorTimeSeries>[] BuildUpdates(string description) => new[]
+            {
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, stateXid, spaceId, TimeSeriesType.State,
+                    x => { x.Properties.Name = stateXid; x.Properties.Description = description; return x; }, stateSetId),
+                GetWritableTS<CogniteExtractorTimeSeries>(tester, numericXid, spaceId, TimeSeriesType.Numeric,
+                    x => { x.Properties.Name = numericXid; x.Properties.Description = description; return x; })
+            };
+
+            async Task<Dictionary<string, SourcedNode<CogniteExtractorTimeSeries>>> RetrieveBoth()
+            {
+                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
+                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
+                    CreateIdentities(spaceId, new[] { stateXid, numericXid }), tester.Source.Token, isBeta: true);
+                return retrieved.ToDictionary(ts => ts.ExternalId, ts => ts);
+            }
+
+            try
+            {
+                // Create the state series through the beta path and the numeric series through the non-beta path.
+                var stateCreate = GetWritableTS<CogniteExtractorTimeSeries>(tester, stateXid, spaceId, TimeSeriesType.State,
+                    x => { x.Properties.Name = stateXid; x.Properties.Description = "original"; return x; }, stateSetId);
+                (await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(new[] { stateCreate }, RetryMode.None, SanitationMode.None, tester.Source.Token, isBeta: true)).Throw();
+
+                var numericCreate = GetWritableTS<CogniteExtractorTimeSeries>(tester, numericXid, spaceId, TimeSeriesType.Numeric,
+                    x => { x.Properties.Name = numericXid; x.Properties.Description = "original"; return x; });
+                (await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(new[] { numericCreate }, RetryMode.None, SanitationMode.None, tester.Source.Token, isBeta: false)).Throw();
+
+                // Non-beta update: must fail for the state series, but still update the numeric series.
+                var nonBetaResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
+                    BuildUpdates("updated-nonbeta"), RetryMode.OnError, SanitationMode.None, tester.Source.Token, isBeta: false);
+                tester.Logger.LogResult(nonBetaResult, RequestType.UpsertInstances, false);
+                nonBetaResult.ThrowOnFatal();
+                Assert.NotEmpty(nonBetaResult.Errors);
+
+                var afterNonBeta = await RetrieveBoth();
+                Assert.Equal("updated-nonbeta", afterNonBeta[numericXid].Properties.Description);
+                Assert.Equal("original", afterNonBeta[stateXid].Properties.Description);
+
+                // Beta update: must succeed for both series.
+                var betaResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
+                    BuildUpdates("updated-beta"), RetryMode.None, SanitationMode.None, tester.Source.Token, isBeta: true);
+                tester.Logger.LogResult(betaResult, RequestType.UpsertInstances, false);
+                betaResult.Throw();
+                Assert.Equal(2, betaResult.Results.Count());
+
+                var afterBeta = await RetrieveBoth();
+                Assert.Equal("updated-beta", afterBeta[stateXid].Properties.Description);
+                Assert.Equal("updated-beta", afterBeta[numericXid].Properties.Description);
+            }
+            finally
+            {
+                await DeleteTimeseries(tester, spaceId, new[] { stateXid, numericXid, stateSetXid });
+            }
+        }
     }
 }
