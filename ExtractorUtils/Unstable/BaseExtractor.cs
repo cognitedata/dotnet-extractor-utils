@@ -102,7 +102,7 @@ namespace Cognite.Extractor.Utils.Unstable
         /// <param name="provider">Service provider used to build this</param>
         /// <param name="taskScheduler">Task scheduler.</param>
         /// <param name="sink">Sink for extractor task updates and errors.</param>
-        /// <param name="destination">Cognite destination.</param>
+        /// <param name="destination">Cognite destination. If null, the one registered in <paramref name="provider"/> is used, if any.</param>
         public BaseExtractor(
             ConfigWrapper<TConfig> config,
             IServiceProvider provider,
@@ -114,7 +114,7 @@ namespace Cognite.Extractor.Utils.Unstable
             if (config == null) throw new ArgumentNullException(nameof(config));
             Config = config.Config;
             ConfigRevision = config.Revision;
-            Destination = destination;
+            Destination = destination ?? provider.GetService<CogniteDestination>();
             Provider = provider;
             _sink = sink;
             TaskScheduler = taskScheduler;
