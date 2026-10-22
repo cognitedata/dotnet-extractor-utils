@@ -12,7 +12,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
     public class BaseCogniteConfig
     {
         /// <summary>
-        /// Chunking sizes towards CDF 
+        /// Chunking sizes towards CDF
         /// </summary>
         public ChunkingConfig CdfChunking { get => _cdfChunking; set { _cdfChunking = value ?? _cdfChunking; } }
         private ChunkingConfig _cdfChunking = new ChunkingConfig();
@@ -26,5 +26,9 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         /// Optional replacement for non-finite double values in datapoints
         /// </summary>
         public double? NanReplacement { get; set; }
+        /// <summary>
+        /// Mappings sent to the CDF writer when the extractor starts. See <see cref="CdfMappingItem"/>.
+        /// </summary>
+        public List<CdfMappingItem>? CdfMapping { get; set; }
     }
 }
