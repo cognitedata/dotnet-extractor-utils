@@ -34,9 +34,17 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
         /// </summary>
         public TaskType Type { get; private set; }
         /// <summary>
-        /// Whether the task can be triggered by an action or not.
+        /// Whether the task can be started and stopped by Start/Stop actions. Enabled by default
+        /// for batch and continuous tasks only; set to <c>false</c> to opt a task out. Any other
+        /// task type is not actionable unless this is explicitly set to <c>true</c>.
         /// </summary>
-        public bool Action { get; set; }
+        public bool Action
+        {
+            get => _action ?? (Type == TaskType.batch || Type == TaskType.continuous);
+            set => _action = value;
+        }
+
+        private bool? _action;
         /// <summary>
         /// Task description.
         /// </summary>
