@@ -75,6 +75,19 @@
     <h3 id="classes">
 Classes
 </h3>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.ActionContext-1.html">ActionContext&lt;TConfig&gt;</a></h4>
+      <section><p>Context passed to a custom action's target callback, giving it access to the extractor's
+configuration and CDF client, information about the specific action invocation it's
+handling, and the means to report progress and a final result.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.ActionError.html">ActionError</a></h4>
+      <section><p>Exception type for expected, structured failures raised from within a custom action's
+target callback.</p>
+<p>Unlike an arbitrary exception, an <a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.ActionError.html">ActionError</a> carries a caller-chosen
+<a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.ActionError.html#Cognite_Extractor_Utils_Unstable_Tasks_ActionError_ErrorType">ErrorType</a> and optional <a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.ActionError.html#Cognite_Extractor_Utils_Unstable_Tasks_ActionError_Details">Details</a>, which the dispatcher surfaces
+as structured <code>resultMetadata</code> on the action's terminal <code>failed</code> update, in
+addition to using <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception.message">Message</a> as the result message.</p>
+</section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.html">BaseErrorReporter</a></h4>
       <section><p>Base class for classes that report errors to integrations,
 implemented by tasks and extractors respectively.</p>
@@ -84,6 +97,9 @@ implemented by tasks and extractors respectively.</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.html">CheckInWorker</a></h4>
       <section><p>Worker for submitting periodic check-ins to the integrations API.</p>
+</section>
+      <h4><a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.CustomAction-1.html">CustomAction&lt;TConfig&gt;</a></h4>
+      <section><p>A custom action registered by an extractor via <a class="xref" href="Cognite.Extractor.Utils.Unstable.BaseExtractor-1.html#Cognite_Extractor_Utils_Unstable_BaseExtractor_1_RegisterAction_Cognite_Extractor_Utils_Unstable_Tasks_CustomAction__0__">RegisterAction(CustomAction&lt;TConfig&gt;)</a>.</p>
 </section>
       <h4><a class="xref" href="Cognite.Extractor.Utils.Unstable.Tasks.ExtractorError.html">ExtractorError</a></h4>
       <section><p>Utility type for reporting errors to integrations.</p>

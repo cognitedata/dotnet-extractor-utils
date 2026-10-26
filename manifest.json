@@ -1,4 +1,5 @@
 {
+  "docfx_version": "2.81.0+ba844df625370a6bd7c1ecab0d0ec4d1d9128ac4",
   "source_base_path": "/home/runner/work/dotnet-extractor-utils/dotnet-extractor-utils/docfx_project",
   "xrefmap": "xrefmap.yml",
   "files": [
@@ -2678,6 +2679,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.ActionContext-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.ActionContext-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.ActionContext<TConfig>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ActionContext-1.yml\" sourcestartlinenumber=\"1\">Context passed to a custom action's target callback, giving it access to the extractor's\nconfiguration and CDF client, information about the specific action invocation it's\nhandling, and the means to report progress and a final result.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.ActionError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.ActionError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.ActionError",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ActionError.yml\" sourcestartlinenumber=\"1\">Exception type for expected, structured failures raised from within a custom action's\ntarget callback.</p>\n<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.ActionError.yml\" sourcestartlinenumber=\"4\">Unlike an arbitrary exception, an <xref href=\"Cognite.Extractor.Utils.Unstable.Tasks.ActionError\" data-throw-if-not-resolved=\"false\"></xref> carries a caller-chosen\n<xref href=\"Cognite.Extractor.Utils.Unstable.Tasks.ActionError.ErrorType\" data-throw-if-not-resolved=\"false\"></xref> and optional <xref href=\"Cognite.Extractor.Utils.Unstable.Tasks.ActionError.Details\" data-throw-if-not-resolved=\"false\"></xref>, which the dispatcher surfaces\nas structured <code>resultMetadata</code> on the action's terminal <code>failed</code> update, in\naddition to using <xref href=\"System.Exception.Message\" data-throw-if-not-resolved=\"false\"></xref> as the result message.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.BaseErrorReporter.yml",
       "output": {
         ".html": {
@@ -2717,6 +2746,20 @@
       "IsMRef": true,
       "Title": "Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker",
       "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.CheckInWorker.yml\" sourcestartlinenumber=\"1\">Worker for submitting periodic check-ins to the integrations API.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.CustomAction-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Cognite.Extractor.Utils.Unstable.Tasks.CustomAction-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Cognite.Extractor.Utils.Unstable.Tasks.CustomAction<TConfig>",
+      "Summary": "<p sourcefile=\"api/Cognite.Extractor.Utils.Unstable.Tasks.CustomAction-1.yml\" sourcestartlinenumber=\"1\">A custom action registered by an extractor via <xref href=\"Cognite.Extractor.Utils.Unstable.BaseExtractor%601.RegisterAction(Cognite.Extractor.Utils.Unstable.Tasks.CustomAction%7b%600%7d)\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
     },
     {
       "type": "ManagedReference",
