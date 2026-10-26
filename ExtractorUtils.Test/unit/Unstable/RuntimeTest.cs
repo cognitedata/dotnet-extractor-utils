@@ -187,6 +187,37 @@ authentication:
         }
 
         [Fact(Timeout = 5000)]
+        public async Task TestExtractorGetsDestinationWhenConfigHasNoCogniteConfig()
+        {
+            // DummyConfig has no BaseCogniteConfig property, so the runtime has to supply the default one.
+            var builder = CreateMockRuntimeBuilder();
+
+            using var evt = new ManualResetEventSlim(false);
+
+            DummyExtractor extractor = null;
+            builder.OnCreateExtractor = (_, ext) =>
+            {
+                ext.InitAction = (_) =>
+                {
+                    extractor = ext;
+                    evt.Set();
+                };
+            };
+
+            using var source = new CancellationTokenSource();
+
+            var runtime = await builder.MakeRuntime(source.Token);
+            var runTask = runtime.Run();
+
+            Assert.True(await CommonUtils.WaitAsync(evt.WaitHandle, TimeSpan.FromSeconds(5), source.Token));
+            Assert.NotNull(extractor);
+            Assert.NotNull(extractor.DestinationPub);
+
+            source.Cancel();
+            await runTask;
+        }
+
+        [Fact(Timeout = 5000)]
         public async Task TestCleanShutdownNoRestart()
         {
             var builder = CreateMockRuntimeBuilder();

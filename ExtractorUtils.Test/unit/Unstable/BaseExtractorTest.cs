@@ -43,6 +43,9 @@ namespace ExtractorUtils.Test.Unit.Unstable
             Sink = sink;
         }
 
+        public CogniteDestination DestinationPub => Destination;
+        public IServiceProvider ProviderPub => Provider;
+
         public void AddMonitoredTaskPub(Func<CancellationToken, Task> task, SchedulerTaskResult staticResult, string name)
         {
             AddMonitoredTask(task, staticResult, name);
@@ -88,7 +91,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             _output = output;
         }
 
-        private (DummyExtractor, DummySink) CreateExtractor(int? revision = null)
+        private (DummyExtractor, DummySink) CreateExtractor(int? revision = null, bool withDestination = false)
         {
             var sink = new DummySink();
             var services = new ServiceCollection();
@@ -97,8 +100,36 @@ namespace ExtractorUtils.Test.Unit.Unstable
             services.AddTestLogging(_output);
             services.AddTransient<ExtractorTaskScheduler>();
             services.AddTransient<DummyExtractor>();
+            if (withDestination) services.AddTestCogniteDestination();
             var provider = services.BuildServiceProvider();
             return (provider.GetRequiredService<DummyExtractor>(), sink);
+        }
+
+        [Fact]
+        public void TestDestinationDefaultsToRegisteredDestination()
+        {
+            var (ext, _) = CreateExtractor(withDestination: true);
+
+            Assert.NotNull(ext.DestinationPub);
+        }
+
+        [Fact]
+        public void TestExplicitDestinationTakesPrecedenceOverRegistered()
+        {
+            var (registered, sink) = CreateExtractor(withDestination: true);
+            var provider = registered.ProviderPub;
+            var explicitDestination = provider.GetRequiredService<CogniteDestination>();
+            // Transient registration, so this is a different instance from what the fallback would resolve.
+            Assert.NotSame(explicitDestination, registered.DestinationPub);
+
+            var ext = new DummyExtractor(
+                provider.GetRequiredService<ConfigWrapper<DummyConfig>>(),
+                provider,
+                provider.GetRequiredService<ExtractorTaskScheduler>(),
+                sink,
+                explicitDestination);
+
+            Assert.Same(explicitDestination, ext.DestinationPub);
         }
 
         [Fact]

@@ -4,7 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Cognite.Extensions.Unstable;
+using Cognite.Extractor.Configuration;
 using Cognite.Extractor.StateStorage;
+using Cognite.Extractor.Utils;
+using Cognite.Extractor.Utils.Unstable;
+using Cognite.Extractor.Utils.Unstable.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
@@ -27,6 +33,31 @@ namespace ExtractorUtils.Test
             var mockFactory = new Mock<IHttpClientFactory>();
             mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
             return (mockFactory, mockHttpMessageHandler);
+        }
+
+        /// <summary>
+        /// Registers a CogniteDestination backed by a mocked HTTP client that rejects all requests.
+        /// Logging must be registered separately.
+        /// </summary>
+        public static void AddTestCogniteDestination(this IServiceCollection services)
+        {
+            services.AddConfig(new ConnectionConfig
+            {
+                Project = "project",
+                BaseUrl = "https://greenfield.cognitedata.com",
+                Authentication = new ClientCredentialsConfig
+                {
+                    ClientId = "someId",
+                    ClientSecret = "thisIsASecret",
+                    Scopes = new Cognite.Common.ListOrSpaceSeparated("https://greenfield.cognitedata.com/.default"),
+                    TokenUrl = "http://example.url/token",
+                }
+            }, typeof(ConnectionConfig));
+            services.AddConfig(new BaseCogniteConfig(), typeof(BaseCogniteConfig));
+            services.AddSingleton(GetMockedHttpClientFactory((msg, token) =>
+                Task.FromException<HttpResponseMessage>(new InvalidOperationException("No HTTP calls expected"))).factory.Object);
+            DestinationUtilsUnstable.AddCogniteClient(services, "myApp", null, setLogger: true, setMetrics: true, setHttpClient: true);
+            services.AddCogniteDestination();
         }
     }
 
