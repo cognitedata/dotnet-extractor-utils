@@ -1405,7 +1405,7 @@ namespace ExtractorUtils.Test.Integration
                 var mixedNonBetaResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
                     BuildUpdates("updated-nonbeta"), RetryMode.OnError, SanitationMode.None, tester.Source.Token, isBeta: false);
                 tester.Logger.LogResult(mixedNonBetaResult, RequestType.UpsertInstances, false);
-                Assert.Throws<ResponseException>(() => mixedNonBetaResult.ThrowOnFatal());
+                Assert.Throws<CogniteErrorException>(() => mixedNonBetaResult.ThrowOnFatal());
                 Assert.NotEmpty(mixedNonBetaResult.Errors);
 
                 var afterMixedNonBeta = await RetrieveBoth();
