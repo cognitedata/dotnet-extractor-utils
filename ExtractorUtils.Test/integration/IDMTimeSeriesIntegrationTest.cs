@@ -528,6 +528,7 @@ namespace ExtractorUtils.Test.Integration
         }
         [Theory]
         [InlineData(CogniteHost.GreenField)]
+        [InlineData(CogniteHost.BlueField)]
         public async Task TestDataPointsErrorHandling(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -1400,16 +1401,30 @@ namespace ExtractorUtils.Test.Integration
                     x => { x.Properties.Name = numericXid; x.Properties.Description = "original"; return x; });
                 (await tester.DestinationWithIDM.EnsureTimeSeriesExistsAsync(new[] { numericCreate }, RetryMode.None, SanitationMode.None, tester.Source.Token, isBeta: false)).Throw();
 
-                // Non-beta update: must fail for the state series, but still update the numeric series.
-                var nonBetaResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
+                // Mixed update: must fail for the state series, but still update the numeric series.
+                var mixedNonBetaResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
                     BuildUpdates("updated-nonbeta"), RetryMode.OnError, SanitationMode.None, tester.Source.Token, isBeta: false);
-                tester.Logger.LogResult(nonBetaResult, RequestType.UpsertInstances, false);
-                nonBetaResult.ThrowOnFatal();
-                Assert.NotEmpty(nonBetaResult.Errors);
+                tester.Logger.LogResult(mixedNonBetaResult, RequestType.UpsertInstances, false);
+                mixedNonBetaResult.ThrowOnFatal();
+                Assert.NotEmpty(mixedNonBetaResult.Errors);
 
-                var afterNonBeta = await RetrieveBoth();
-                Assert.Equal("updated-nonbeta", afterNonBeta[numericXid].Properties.Description);
-                Assert.Equal("original", afterNonBeta[stateXid].Properties.Description);
+                var afterMixedNonBeta = await RetrieveBoth();
+                Assert.Equal("updated-nonbeta", afterMixedNonBeta[numericXid].Properties.Description);
+                Assert.Equal("original", afterMixedNonBeta[stateXid].Properties.Description);
+
+                // Numeric-only update: must succeed when the unsupported state series is excluded.
+                var numericOnlyUpdates = BuildUpdates("updated-numeric-only")
+                    .Where(ts => ts.ExternalId == numericXid)
+                    .ToArray();
+                var numericOnlyResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
+                    numericOnlyUpdates, RetryMode.None, SanitationMode.None, tester.Source.Token, isBeta: false);
+                tester.Logger.LogResult(numericOnlyResult, RequestType.UpsertInstances, false);
+                numericOnlyResult.Throw();
+                Assert.Single(numericOnlyResult.Results);
+
+                var afterNumericOnly = await RetrieveBoth();
+                Assert.Equal("updated-numeric-only", afterNumericOnly[numericXid].Properties.Description);
+                Assert.Equal("original", afterNumericOnly[stateXid].Properties.Description);
 
                 // Beta update: must succeed for both series.
                 var betaResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
