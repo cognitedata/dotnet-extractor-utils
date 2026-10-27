@@ -1,11 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json.Nodes;
 
 namespace Cognite.Extractor.Utils.Unstable.Configuration
 {
     /// <summary>
-    /// A single entry in the <c>cognite.cdf-mapping</c> config section. The contents are passed through
-    /// to the CDF writer as-is, the extractor only validates that the required fields are present.
+    /// A single entry in the <c>cognite.cdf-mapping</c> config section. The extractor only validates that
+    /// the required fields are present. Parameters are sent to the CDF writer with their YAML types.
     /// </summary>
     public class CdfMappingItem
     {
@@ -25,9 +25,9 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         public string? Type { get; set; }
         /// <summary>
         /// Type specific parameters. Must be a mapping, which may contain any nested YAML structure.
-        /// All scalar values are sent as strings. Not allowed for custom items.
+        /// Not allowed for custom items.
         /// </summary>
-        public object? Parameters { get; set; }
+        public CdfMappingParameters? Parameters { get; set; }
         /// <summary>
         /// Destination endpoint, for example <c>/timeseries/update</c>.
         /// Required for custom items, optional for other types.
@@ -62,12 +62,12 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
                 {
                     if (item.Destination == null) return $"Missing required field {path}.destination";
                     if (item.Fields == null || item.Fields.Count == 0) return $"Missing required field {path}.fields";
-                    if (item.Parameters != null) return $"{path}.parameters is not allowed when type is {CustomType}";
+                    if (item.Parameters?.Value != null) return $"{path}.parameters is not allowed when type is {CustomType}";
                 }
                 else
                 {
                     if (item.Fields != null) return $"{path}.fields is only allowed when type is {CustomType}";
-                    if (item.Parameters != null && !(item.Parameters is IDictionary))
+                    if (item.Parameters?.Value != null && !(item.Parameters.Value is JsonObject))
                     {
                         return $"{path}.parameters must be a mapping";
                     }

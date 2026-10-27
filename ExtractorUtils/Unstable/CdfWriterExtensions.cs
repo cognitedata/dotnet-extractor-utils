@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -54,7 +53,7 @@ namespace Cognite.Extractor.Utils.Unstable
             {
                 throw new ConfigurationException($"CDF rejected the cdf-mapping configuration: {ex.Code} {ex.Message}", ex);
             }
-            catch (Exception ex) when (!(ex is OperationCanceledException))
+            catch (Exception ex) when (!token.IsCancellationRequested)
             {
                 throw new CogniteUtilsException($"Failed to send cdf-mapping to CDF: {ex.Message}", ex);
             }
@@ -83,7 +82,7 @@ namespace Cognite.Extractor.Utils.Unstable
                 {
                     TaskName = item.TaskName,
                     Type = item.Type,
-                    Parameters = ToJsonElement(item.Parameters),
+                    Parameters = ToJsonElement(item.Parameters?.Value),
                     Destination = item.Destination,
                     Fields = item.Fields,
                 }).ToList(),
@@ -99,42 +98,10 @@ namespace Cognite.Extractor.Utils.Unstable
             return status >= 400 && status < 500 && status != 408 && status != 429;
         }
 
-        private static JsonElement? ToJsonElement(object? value)
+        private static JsonElement? ToJsonElement(JsonNode? node)
         {
-            var node = ToJson(value);
             if (node == null) return null;
             return JsonSerializer.Deserialize<JsonElement>(node.ToJsonString());
-        }
-
-        /// <summary>
-        /// Convert an untyped deserialized YAML value to JSON. YAML scalars are deserialized as strings,
-        /// mappings as dictionaries and sequences as lists.
-        /// </summary>
-        private static JsonNode? ToJson(object? value)
-        {
-            switch (value)
-            {
-                case null:
-                    return null;
-                case string s:
-                    return JsonValue.Create(s);
-                case IDictionary dict:
-                    var obj = new JsonObject();
-                    foreach (DictionaryEntry entry in dict)
-                    {
-                        obj[entry.Key.ToString() ?? ""] = ToJson(entry.Value);
-                    }
-                    return obj;
-                case IEnumerable list:
-                    var arr = new JsonArray();
-                    foreach (var child in list)
-                    {
-                        arr.Add(ToJson(child));
-                    }
-                    return arr;
-                default:
-                    return JsonValue.Create(value.ToString());
-            }
         }
     }
 }

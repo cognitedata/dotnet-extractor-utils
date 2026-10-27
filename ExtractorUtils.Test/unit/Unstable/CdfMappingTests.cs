@@ -75,7 +75,7 @@ cdf-mapping:
 
             Assert.Equal("space_routing", mapping[0].Type);
             Assert.Equal("/timeseries/update", mapping[0].Destination);
-            Assert.IsAssignableFrom<IDictionary<object, object>>(mapping[0].Parameters);
+            Assert.IsType<JsonObject>(mapping[0].Parameters!.Value);
             Assert.Equal(CdfMappingItem.CustomType, mapping[2].Type);
             Assert.Equal(2, mapping[2].Fields!.Count);
             Assert.Null(mapping[3].Parameters);
@@ -106,7 +106,7 @@ cdf-mapping:
                 Type = type,
                 Destination = destination,
                 Fields = fields ? new Dictionary<string, string> { ["externalId"] = "input.id" } : null,
-                Parameters = parameters ? new Dictionary<object, object> { ["a"] = "b" } : null,
+                Parameters = parameters ? new CdfMappingParameters { Value = new JsonObject { ["a"] = "b" } } : null,
             };
             var result = CdfMappingItem.Validate(new[] { item });
             if (error == null)
@@ -138,7 +138,7 @@ cdf-mapping:
 
             result = CdfMappingItem.Validate(new[]
             {
-                new CdfMappingItem { TaskName = "t", Type = "space_routing", Parameters = "scalar" }
+                new CdfMappingItem { TaskName = "t", Type = "space_routing", Parameters = new CdfMappingParameters { Value = JsonValue.Create("scalar") } }
             });
             Assert.Equal("cognite.cdf-mapping[0].parameters must be a mapping", result);
 
@@ -177,7 +177,7 @@ cdf-mapping:
                     {
                         ""taskName"": ""task-2"",
                         ""type"": ""location_routing"",
-                        ""parameters"": { ""nested"": { ""list"": [ ""1"", ""true"", { ""key"": ""value"" } ] } }
+                        ""parameters"": { ""nested"": { ""list"": [ 1, true, { ""key"": ""value"" } ] } }
                     },
                     {
                         ""taskName"": ""task-3"",
@@ -195,6 +195,32 @@ cdf-mapping:
                 ]
             }");
             Assert.True(JsonNode.DeepEquals(expected, JsonNode.Parse(json)), json);
+        }
+
+        [Fact]
+        public void TestParameterScalarTypes()
+        {
+            var config = ConfigurationUtils.ReadString<BaseCogniteConfig>(@"
+cdf-mapping:
+  - task-name: task-1
+    type: space_routing
+    parameters:
+      threshold: 5
+      ratio: 1.5
+      enabled: true
+      quoted: ""5""
+      plain: text
+      empty: ~
+      ~: null-key
+");
+            var parameters = config.CdfMapping!.Single().Parameters!.Value!.AsObject();
+            Assert.Equal(5L, (long?)parameters["threshold"]);
+            Assert.Equal(1.5, (double?)parameters["ratio"]);
+            Assert.True((bool?)parameters["enabled"]);
+            Assert.Equal("5", (string?)parameters["quoted"]);
+            Assert.Equal("text", (string?)parameters["plain"]);
+            Assert.Null(parameters["empty"]);
+            Assert.Equal("null-key", (string?)parameters["~"]);
         }
 
         private sealed class SetupServer
@@ -282,7 +308,7 @@ cdf-mapping:
             Assert.Equal("1.0.0", (string?)body["extractorVersion"]);
             Assert.Equal(4, body["items"]!.AsArray().Count);
             Assert.Equal("space-1", (string?)body["items"]![0]!["parameters"]!["abcd.*"]);
-            Assert.Null(body["items"]![3]!["parameters"]);
+            Assert.False(body["items"]![3]!.AsObject().ContainsKey("parameters"));
         }
 
         [Theory]
