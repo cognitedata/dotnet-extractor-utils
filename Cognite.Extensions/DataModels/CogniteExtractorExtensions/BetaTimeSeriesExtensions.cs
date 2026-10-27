@@ -46,8 +46,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.GetOrCreateAsync(
                 view,
-                (ids, tok) => timeSeries.RetrieveAsync<T>(ids, tok, view),
-                (items, tok) => timeSeries.UpsertAsync(items, null, tok, view),
+                (ids, tok) => timeSeries.RetrieveAsync<T>(ids, view, tok),
+                (items, tok) => timeSeries.UpsertAsync(items, view, null, tok),
                 CoreTSSanitation.CleanTimeSeriesRequest,
                 instanceIds, buildTimeSeries, options, token);
         }
@@ -79,8 +79,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.GetOrCreateAsync(
                 view,
-                (ids, tok) => timeSeries.RetrieveAsync<T>(ids, tok, view),
-                (items, tok) => timeSeries.UpsertAsync(items, null, tok, view),
+                (ids, tok) => timeSeries.RetrieveAsync<T>(ids, view, tok),
+                (items, tok) => timeSeries.UpsertAsync(items, view, null, tok),
                 CoreTSSanitation.CleanTimeSeriesRequest,
                 instanceIds, buildTimeSeries, options, token);
         }
@@ -110,7 +110,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.EnsureExistsAsync(
                 view,
-                (items, tok) => timeSeries.UpsertAsync(items, null, tok, view),
+                (items, tok) => timeSeries.UpsertAsync(items, view, null, tok),
                 CoreTSSanitation.CleanTimeSeriesRequest,
                 timeSeriesToEnsure, options, token);
         }
@@ -138,7 +138,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.GetByIdsIgnoreErrors(
                 view,
-                (chunkIds, tok) => timeSeries.RetrieveAsync<T>(chunkIds, tok, view),
+                (chunkIds, tok) => timeSeries.RetrieveAsync<T>(chunkIds, view, tok),
                 ids, chunkSize, throttleSize, token);
         }
 
@@ -166,7 +166,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.UpsertAsync(
                 view,
-                (chunkItems, tok) => resource.UpsertAsync(chunkItems, null, tok, view),
+                (chunkItems, tok) => resource.UpsertAsync(chunkItems, view, null, tok),
                 CoreTSSanitation.CleanTimeSeriesRequest,
                 items, options, token);
         }
