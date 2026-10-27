@@ -1355,8 +1355,8 @@ namespace ExtractorUtils.Test.Integration
         }
 
         /// <summary>
-        /// Creates one state time series and one numeric time series, then updates both in a single call with each value of isBeta. Verified
-        /// that the beta path updates both series, while the non-beta path only updates the numeric series and fails for the state series.
+        /// Verifies that a mixed state/numeric update fails through the non-beta path, while a numeric-only
+        /// update succeeds. The beta path must successfully update both series together.
         /// </summary>
         [Theory]
         [InlineData(CogniteHost.GreenField)]
@@ -1405,7 +1405,7 @@ namespace ExtractorUtils.Test.Integration
                 var mixedNonBetaResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(
                     BuildUpdates("updated-nonbeta"), RetryMode.OnError, SanitationMode.None, tester.Source.Token, isBeta: false);
                 tester.Logger.LogResult(mixedNonBetaResult, RequestType.UpsertInstances, false);
-                mixedNonBetaResult.ThrowOnFatal();
+                Assert.Throws<ResponseException>(() => mixedNonBetaResult.ThrowOnFatal());
                 Assert.NotEmpty(mixedNonBetaResult.Errors);
 
                 var afterMixedNonBeta = await RetrieveBoth();
