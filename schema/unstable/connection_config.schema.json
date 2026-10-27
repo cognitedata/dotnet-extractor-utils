@@ -154,6 +154,22 @@
                     }
                 }
             }
+        },
+        "cdf-writer": {
+            "type": "object",
+            "description": "Opt-in configuration for routing writes through the Charon CDF-writer service instead of directly to CDF. Charon is a POC with a changing contract; when disabled (the default), writes go directly to CDF.",
+            "unevaluatedProperties": false,
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Enable routing writes through Charon instead of directly to CDF.",
+                    "default": false
+                },
+                "base-url": {
+                    "type": "string",
+                    "description": "Base URL of the Charon service. Endpoints live under `/cdfwriter`."
+                }
+            }
         }
     }
 }
