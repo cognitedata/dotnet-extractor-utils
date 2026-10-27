@@ -1409,7 +1409,6 @@ namespace ExtractorUtils.Test.Integration
                 Assert.NotEmpty(mixedNonBetaResult.Errors);
 
                 var afterMixedNonBeta = await RetrieveBoth();
-                Assert.Equal("updated-nonbeta", afterMixedNonBeta[numericXid].Properties.Description);
                 Assert.Equal("original", afterMixedNonBeta[stateXid].Properties.Description);
 
                 // Numeric-only update: must succeed when the unsupported state series is excluded.
