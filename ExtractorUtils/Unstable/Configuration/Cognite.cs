@@ -30,5 +30,9 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         /// Mappings sent to the CDF writer when the extractor starts. See <see cref="CdfMappingItem"/>.
         /// </summary>
         public List<CdfMappingItem>? CdfMapping { get; set; }
+        /// <summary>
+        /// Send writes through the CDF writer. See <see cref="CdfWriterConfig"/>.
+        /// </summary>
+        public CdfWriterConfig? CdfWriter { get; set; }
     }
 }
