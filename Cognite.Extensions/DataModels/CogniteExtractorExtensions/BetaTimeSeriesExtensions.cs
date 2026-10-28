@@ -42,7 +42,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            if (options == null) throw new ArgumentNullException(nameof(options));
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.GetOrCreateAsync(
                 view,
@@ -75,7 +74,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            if (options == null) throw new ArgumentNullException(nameof(options));
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.GetOrCreateAsync(
                 view,
@@ -106,7 +104,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            if (options == null) throw new ArgumentNullException(nameof(options));
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.EnsureExistsAsync(
                 view,
@@ -162,7 +159,6 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            if (options == null) throw new ArgumentNullException(nameof(options));
             var view = extensionView ?? TimeSeriesResource.View;
             return BetaResourceExtensions.UpsertAsync(
                 view,
