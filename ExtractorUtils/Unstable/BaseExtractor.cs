@@ -280,6 +280,25 @@ namespace Cognite.Extractor.Utils.Unstable
             await InitTasks().ConfigureAwait(false);
             RegisterBuiltInActions();
             await InitActions().ConfigureAwait(false);
+            await SetupCdfWriter(token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Send the <c>cdf-mapping</c> to the CDF writer when <c>cdf-writer</c> is enabled. Runs at the end
+        /// of init, so the mapping is in place before the first check-in.
+        /// </summary>
+        private async Task SetupCdfWriter(CancellationToken token)
+        {
+            var cogniteConfig = Provider.GetService<BaseCogniteConfig>();
+            if (cogniteConfig?.CdfWriter?.Enabled != true) return;
+
+            var mapping = cogniteConfig.CdfMapping ?? new List<CdfMappingItem>();
+            var error = CdfWriterConfig.Validate(cogniteConfig.CdfWriter, mapping)
+                ?? CdfMappingItem.Validate(mapping);
+            if (error != null) throw new ConfigurationException(error);
+            if (Destination == null) throw new ConfigurationException("cognite.cdf-writer requires a CDF destination");
+
+            await Destination.SetupConfig(_integrationExternalId, GetExtractorVersion(), mapping, token).ConfigureAwait(false);
         }
 
         /// <summary>
