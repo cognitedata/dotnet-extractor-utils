@@ -3,7 +3,6 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "description": "Configuration for the CDF pusher (BaseCogniteConfig). Authentication, project, and connection settings belong in connection.yml (see connection_config.schema.json).",
-    "unevaluatedProperties": false,
     "properties": {
         "cdf-chunking": {
             "type": "object",
