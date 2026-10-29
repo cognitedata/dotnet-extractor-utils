@@ -51,7 +51,7 @@ cognite:
         # Max delay in ms between each try. Base delay is calculated according to 125*2^retry ms.
         # If less than 0, there is no maximum. (0 means that there is never any delay)
         max-delay: 5000
-    # Configure chunking of data on requests to CDF. Note that increasing these may cause requests to fail due to limits in CDF.
+    # Configure the maximum number of items per request to CDF, such as time series, data points, events, and Raw rows. Requests can fail if you set these values above CDF API limits.
     cdf-chunking:
         # Maximum number of timeseries per get/create timeseries request
         time-series: 1000
