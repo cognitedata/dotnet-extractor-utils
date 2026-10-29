@@ -7,7 +7,7 @@
     "properties": {
         "cdf-chunking": {
             "type": "object",
-            "description": "Configure how the extractor chunks data on requests to CDF. Larger chunks can fail if they exceed CDF API limits.",
+            "description": "Configure the maximum number of items per request to CDF, such as time series, data points, events, and Raw rows. Requests can fail if you set these values above CDF API limits.",
             "unevaluatedProperties": false,
             "properties": {
                 "time-series": {
