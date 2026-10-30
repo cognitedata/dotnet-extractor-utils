@@ -91,7 +91,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             _output = output;
         }
 
-        private (DummyExtractor, DummySink) CreateExtractor(int? revision = null, bool withDestination = false)
+        private (DummyExtractor, DummySink) CreateExtractor(int? revision = null, bool withDestination = false, BaseCogniteConfig cogniteConfig = null)
         {
             var sink = new DummySink();
             var services = new ServiceCollection();
@@ -100,9 +100,34 @@ namespace ExtractorUtils.Test.Unit.Unstable
             services.AddTestLogging(_output);
             services.AddTransient<ExtractorTaskScheduler>();
             services.AddTransient<DummyExtractor>();
+            if (cogniteConfig != null) services.AddSingleton(cogniteConfig);
             if (withDestination) services.AddTestCogniteDestination();
             var provider = services.BuildServiceProvider();
             return (provider.GetRequiredService<DummyExtractor>(), sink);
+        }
+
+        [Fact]
+        public async Task TestCdfWriterDisabledSkipsSetup()
+        {
+            var (ext, _) = CreateExtractor(cogniteConfig: new BaseCogniteConfig
+            {
+                CdfWriter = new CdfWriterConfig { Enabled = false },
+            });
+
+            await ext.Init(CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestCdfWriterEnabledValidatesMappingBeforeSetup()
+        {
+            // Enabled with no cdf-mapping items: rejected at init, before any call to CDF.
+            var (ext, _) = CreateExtractor(cogniteConfig: new BaseCogniteConfig
+            {
+                CdfWriter = new CdfWriterConfig { Enabled = true },
+            });
+
+            var ex = await Assert.ThrowsAsync<ConfigurationException>(() => ext.Init(CancellationToken.None));
+            Assert.Contains("datapoints", ex.Message);
         }
 
         [Fact]
