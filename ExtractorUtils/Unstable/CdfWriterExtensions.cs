@@ -20,31 +20,26 @@ namespace Cognite.Extractor.Utils.Unstable
     {
         /// <summary>
         /// Send the <c>cognite.cdf-mapping</c> config section to the CDF writer, replacing any
-        /// existing mapping for the integration. Items should be validated with
-        /// <see cref="CdfMappingItem.Validate"/> before calling this.
+        /// existing mapping for the integration. Config should be validated with
+        /// <see cref="CdfMappingConfig.Validate"/> before calling this.
         /// </summary>
         /// <param name="destination">Destination to send through</param>
-        /// <param name="integrationId">External ID of the integration the mapping belongs to</param>
-        /// <param name="extractorId">Extractor type and version</param>
-        /// <param name="items">Mapping items</param>
+        /// <param name="config">Mapping configuration</param>
         /// <param name="token">Cancellation token</param>
         /// <exception cref="ConfigurationException">If CDF rejects the mapping. Retrying with the same config will not help.</exception>
         /// <exception cref="CogniteUtilsException">If the request fails for other reasons, such as rate limiting or server errors.</exception>
         public static async Task SetupConfig(
             this CogniteDestination destination,
-            string integrationId,
-            ExtractorId extractorId,
-            IEnumerable<CdfMappingItem> items,
+            CdfMappingConfig config,
             CancellationToken token)
         {
             if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (extractorId == null) throw new ArgumentNullException(nameof(extractorId));
-            if (items == null) throw new ArgumentNullException(nameof(items));
-            if (string.IsNullOrWhiteSpace(integrationId)) throw new ArgumentException("Integration id is required", nameof(integrationId));
-            if (string.IsNullOrWhiteSpace(extractorId.ExternalId)) throw new ArgumentException("Extractor type is required", nameof(extractorId));
-            if (string.IsNullOrWhiteSpace(extractorId.Version)) throw new ArgumentException("Extractor version is required", nameof(extractorId));
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (string.IsNullOrWhiteSpace(config.IntegrationId)) throw new ArgumentException("Integration id is required", nameof(config));
+            if (string.IsNullOrWhiteSpace(config.ExtractorType)) throw new ArgumentException("Extractor type is required", nameof(config));
+            if (string.IsNullOrWhiteSpace(config.ExtractorVersion)) throw new ArgumentException("Extractor version is required", nameof(config));
 
-            var request = BuildSetupRequest(items, integrationId, extractorId);
+            var request = BuildSetupRequest(config);
             try
             {
                 await destination.CogniteClient.Alpha.CdfWriter.SetupAsync(request, token).ConfigureAwait(false);
@@ -60,32 +55,42 @@ namespace Cognite.Extractor.Utils.Unstable
         }
 
         /// <summary>
-        /// Build the request sent to the CDF writer setup endpoint from config items.
+        /// Build the request sent to the CDF writer setup endpoint from config.
+        /// Transforms mappings and bindings into a flattened list of items.
         /// </summary>
-        /// <param name="items">Mapping items</param>
-        /// <param name="integrationId">External ID of the integration</param>
-        /// <param name="extractorId">Extractor type and version</param>
+        /// <param name="config">Mapping configuration</param>
         /// <returns>Request</returns>
-        public static CdfWriterSetupRequest BuildSetupRequest(
-            IEnumerable<CdfMappingItem> items,
-            string integrationId,
-            ExtractorId extractorId)
+        public static CdfWriterSetupRequest BuildSetupRequest(CdfMappingConfig config)
         {
-            if (items == null) throw new ArgumentNullException(nameof(items));
-            if (extractorId == null) throw new ArgumentNullException(nameof(extractorId));
+            if (config == null) throw new ArgumentNullException(nameof(config));
+            if (config.Mappings == null) throw new ArgumentException("Mappings are required", nameof(config));
+            if (config.Bindings == null) throw new ArgumentException("Bindings are required", nameof(config));
+
+            var mappingDict = config.Mappings.ToDictionary(m => m.ExternalId!);
+            var items = new List<CdfWriterSetupItem>();
+
+            foreach (var binding in config.Bindings)
+            {
+                if (!mappingDict.TryGetValue(binding.MappingId!, out var mapping))
+                    continue;
+
+                foreach (var destination in binding.Destinations ?? new List<string>())
+                {
+                    items.Add(new CdfWriterSetupItem
+                    {
+                        Destination = destination,
+                        Type = mapping.Type,
+                        Parameters = ToJsonElement(mapping.Parameters?.Value),
+                    });
+                }
+            }
+
             return new CdfWriterSetupRequest
             {
-                IntegrationId = integrationId,
-                ExtractorType = extractorId.ExternalId,
-                ExtractorVersion = extractorId.Version,
-                Items = items.Select(item => new CdfWriterSetupItem
-                {
-                    TaskName = item.TaskName,
-                    Type = item.Type,
-                    Parameters = ToJsonElement(item.Parameters?.Value),
-                    Destination = item.Destination,
-                    Fields = item.Fields,
-                }).ToList(),
+                IntegrationId = config.IntegrationId,
+                ExtractorType = config.ExtractorType,
+                ExtractorVersion = config.ExtractorVersion,
+                Items = items,
             };
         }
 

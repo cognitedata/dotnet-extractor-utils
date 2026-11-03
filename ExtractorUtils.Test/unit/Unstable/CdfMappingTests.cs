@@ -35,28 +35,43 @@ namespace ExtractorUtils.Test.Unit.Unstable
 
         private const string Yaml = @"
 cdf-mapping:
-  - task-name: task-1
-    type: space_routing
-    destination: /timeseries/update
-    parameters:
-      ""abcd.*"": space-1
-      ""def.*"": space-2
-  - task-name: task-2
-    type: location_routing
-    parameters:
-      nested:
-        list:
-          - 1
-          - true
-          - key: value
-  - task-name: task-3
-    type: custom
-    destination: /timeseries/update
-    fields:
-      externalId: input.id
-      space: ""if(regex_match(input.name, 'nor.*'), 'norway', 'sweden')""
-  - task-name: task-4
-    type: no_parameters
+  integration-id: my-integration
+  extractor-type: cognite-opcua
+  extractor-version: 1.0.0
+  mappings:
+    - external-id: map-1
+      name: ""Space Routing""
+      type: space_routing
+      parameters:
+        ""abcd.*"": space-1
+        ""def.*"": space-2
+    - external-id: map-2
+      name: ""Location Routing""
+      type: location_routing
+      parameters:
+        nested:
+          list:
+            - 1
+            - true
+            - key: value
+    - external-id: map-3
+      name: ""Custom Mapping""
+      type: custom
+    - external-id: map-4
+      name: ""No Parameters""
+      type: no_parameters
+  bindings:
+    - task-ids: [task-1]
+      destinations: [/timeseries/update]
+      mapping-id: map-1
+    - task-ids: [task-2]
+      destinations: [/timeseries/update]
+      mapping-id: map-2
+    - task-ids: [task-3]
+      destinations: [/timeseries/update]
+      mapping-id: map-3
+    - destinations: [/timeseries/update]
+      mapping-id: map-4
 ";
 
         private static readonly ExtractorId extractorId = new ExtractorId
@@ -70,131 +85,142 @@ cdf-mapping:
         {
             var config = ConfigurationUtils.ReadString<BaseCogniteConfig>(Yaml);
             var mapping = config.CdfMapping!;
-            Assert.Equal(4, mapping.Count);
-            Assert.Null(CdfMappingItem.Validate(mapping));
+            Assert.NotNull(mapping);
+            Assert.Equal("my-integration", mapping.IntegrationId);
+            Assert.Equal("cognite-opcua", mapping.ExtractorType);
+            Assert.Equal("1.0.0", mapping.ExtractorVersion);
+            Assert.Equal(4, mapping.Mappings!.Count);
+            Assert.Equal(4, mapping.Bindings!.Count);
+            Assert.Null(CdfMappingConfig.Validate(mapping));
 
-            Assert.Equal("space_routing", mapping[0].Type);
-            Assert.Equal("/timeseries/update", mapping[0].Destination);
-            Assert.IsType<JsonObject>(mapping[0].Parameters!.Value);
-            Assert.Equal(CdfMappingItem.CustomType, mapping[2].Type);
-            Assert.Equal(2, mapping[2].Fields!.Count);
-            Assert.Null(mapping[3].Parameters);
-            Assert.Null(mapping[3].Destination);
-            Assert.Null(mapping[3].Fields);
+            Assert.Equal("space_routing", mapping.Mappings[0].Type);
+            Assert.IsType<JsonObject>(mapping.Mappings[0].Parameters!.Value);
+            Assert.Equal("custom", mapping.Mappings[2].Type);
+            Assert.Null(mapping.Mappings[3].Parameters);
 
             Assert.Null(ConfigurationUtils.ReadString<BaseCogniteConfig>("nan-replacement: 0").CdfMapping);
         }
 
         [Theory]
-        [InlineData(null, "space_routing", null, false, false, "task-name")]
-        [InlineData("  ", "space_routing", null, false, false, "task-name")]
-        [InlineData("t", null, null, false, false, "type")]
-        [InlineData("t", "custom", null, true, false, "destination")]
-        [InlineData("t", "custom", "/dest", false, false, "fields")]
-        [InlineData("t", "custom", "/dest", true, true, "parameters is not allowed")]
-        [InlineData("t", "custom", "/dest", true, false, null)]
-        [InlineData("t", "space_routing", "/dest", false, true, null)]
-        [InlineData("t", "space_routing", "", false, false, "destination must not be empty")]
-        [InlineData("t", "space_routing", null, true, false, "fields is only allowed")]
-        [InlineData("t", "space_routing", null, false, true, null)]
-        [InlineData("t", "space_routing", null, false, false, null)]
-        public void TestValidate(string? taskName, string? type, string? destination, bool fields, bool parameters, string? error)
+        [InlineData(null, null, null, "integration-id")]
+        [InlineData("i", null, null, "extractor-type")]
+        [InlineData("i", "t", null, "extractor-version")]
+        [InlineData("i", "t", "v", "mappings")]
+        public void TestValidate(string? integrationId, string? extractorType, string? extractorVersion, string? expectedError)
         {
-            var item = new CdfMappingItem
+            var hasAllRequiredFields = !string.IsNullOrEmpty(integrationId) && !string.IsNullOrEmpty(extractorType) && !string.IsNullOrEmpty(extractorVersion);
+
+            var config = new CdfMappingConfig
             {
-                TaskName = taskName,
-                Type = type,
-                Destination = destination,
-                Fields = fields ? new Dictionary<string, string> { ["externalId"] = "input.id" } : null,
-                Parameters = parameters ? new CdfMappingParameters { Value = new JsonObject { ["a"] = "b" } } : null,
+                IntegrationId = integrationId,
+                ExtractorType = extractorType,
+                ExtractorVersion = extractorVersion,
+                Mappings = hasAllRequiredFields ? null : new List<CdfMapping> { new CdfMapping { ExternalId = "m1", Name = "M1", Type = "t" } },
+                Bindings = hasAllRequiredFields ? null : new List<CdfMappingBinding> { new CdfMappingBinding { MappingId = "m1", Destinations = new List<string> { "/d" } } },
             };
-            var result = CdfMappingItem.Validate(new[] { item });
-            if (error == null)
+            var result = CdfMappingConfig.Validate(config);
+            Assert.NotNull(result);
+            Assert.Contains(expectedError, result, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void TestValidateSucceeds()
+        {
+            var config = new CdfMappingConfig
             {
-                Assert.Null(result);
-            }
-            else
-            {
-                Assert.NotNull(result);
-                Assert.Contains(error, result, StringComparison.Ordinal);
-                Assert.Contains("cognite.cdf-mapping[0]", result, StringComparison.Ordinal);
-            }
+                IntegrationId = "i",
+                ExtractorType = "t",
+                ExtractorVersion = "v",
+                Mappings = new List<CdfMapping> { new CdfMapping { ExternalId = "m1", Name = "M1", Type = "t" } },
+                Bindings = new List<CdfMappingBinding> { new CdfMappingBinding { MappingId = "m1", Destinations = new List<string> { "/d" } } },
+            };
+            var result = CdfMappingConfig.Validate(config);
+            Assert.Null(result);
         }
 
         [Fact]
         public void TestValidateEdgeCases()
         {
-            Assert.Null(CdfMappingItem.Validate(null));
-            Assert.Null(CdfMappingItem.Validate(Array.Empty<CdfMappingItem>()));
+            Assert.Null(CdfMappingConfig.Validate(null));
 
-            var result = CdfMappingItem.Validate(new CdfMappingItem?[] { null });
-            Assert.Equal("cognite.cdf-mapping[0] must not be empty", result);
-
-            result = CdfMappingItem.Validate(new[]
+            // Duplicate mapping IDs
+            var result = CdfMappingConfig.Validate(new CdfMappingConfig
             {
-                new CdfMappingItem { TaskName = "t", Type = "custom", Destination = "/dest", Fields = new Dictionary<string, string>() }
+                IntegrationId = "i",
+                ExtractorType = "t",
+                ExtractorVersion = "v",
+                Mappings = new List<CdfMapping>
+                {
+                    new CdfMapping { ExternalId = "m1", Name = "M1", Type = "t" },
+                    new CdfMapping { ExternalId = "m1", Name = "M2", Type = "t" }
+                },
+                Bindings = new List<CdfMappingBinding>
+                {
+                    new CdfMappingBinding { MappingId = "m1", Destinations = new List<string> { "/d" } }
+                }
             });
-            Assert.Equal("Missing required field cognite.cdf-mapping[0].fields", result);
+            Assert.Contains("not unique", result!, StringComparison.Ordinal);
 
-            result = CdfMappingItem.Validate(new[]
+            // Dangling binding reference
+            result = CdfMappingConfig.Validate(new CdfMappingConfig
             {
-                new CdfMappingItem { TaskName = "t", Type = "space_routing", Parameters = new CdfMappingParameters { Value = JsonValue.Create("scalar") } }
+                IntegrationId = "i",
+                ExtractorType = "t",
+                ExtractorVersion = "v",
+                Mappings = new List<CdfMapping>
+                {
+                    new CdfMapping { ExternalId = "m1", Name = "M1", Type = "t" }
+                },
+                Bindings = new List<CdfMappingBinding>
+                {
+                    new CdfMappingBinding { MappingId = "m2", Destinations = new List<string> { "/d" } }
+                }
             });
-            Assert.Equal("cognite.cdf-mapping[0].parameters must be a mapping", result);
+            Assert.Contains("does not reference an existing mapping", result!, StringComparison.Ordinal);
 
-            // Index is reported for the failing item
-            result = CdfMappingItem.Validate(new[]
+            // Empty destinations
+            result = CdfMappingConfig.Validate(new CdfMappingConfig
             {
-                new CdfMappingItem { TaskName = "t", Type = "space_routing" },
-                new CdfMappingItem { TaskName = "t" }
+                IntegrationId = "i",
+                ExtractorType = "t",
+                ExtractorVersion = "v",
+                Mappings = new List<CdfMapping>
+                {
+                    new CdfMapping { ExternalId = "m1", Name = "M1", Type = "t" }
+                },
+                Bindings = new List<CdfMappingBinding>
+                {
+                    new CdfMappingBinding { MappingId = "m1", Destinations = new List<string> { "" } }
+                }
             });
-            Assert.Equal("Missing required field cognite.cdf-mapping[1].type", result);
+            Assert.Contains("contains an empty value", result!, StringComparison.Ordinal);
         }
 
         [Fact]
         public void TestBuildSetupRequest()
         {
             var config = ConfigurationUtils.ReadString<BaseCogniteConfig>(Yaml);
-            var request = CdfWriterExtensions.BuildSetupRequest(config.CdfMapping!, "my-integration", extractorId);
+            var request = CdfWriterExtensions.BuildSetupRequest(config.CdfMapping!);
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-            };
-            var json = JsonSerializer.Serialize(request, options);
-            var expected = JsonNode.Parse(@"{
-                ""integrationId"": ""my-integration"",
-                ""extractorType"": ""cognite-opcua"",
-                ""extractorVersion"": ""1.0.0"",
-                ""items"": [
-                    {
-                        ""taskName"": ""task-1"",
-                        ""type"": ""space_routing"",
-                        ""destination"": ""/timeseries/update"",
-                        ""parameters"": { ""abcd.*"": ""space-1"", ""def.*"": ""space-2"" }
-                    },
-                    {
-                        ""taskName"": ""task-2"",
-                        ""type"": ""location_routing"",
-                        ""parameters"": { ""nested"": { ""list"": [ 1, true, { ""key"": ""value"" } ] } }
-                    },
-                    {
-                        ""taskName"": ""task-3"",
-                        ""type"": ""custom"",
-                        ""destination"": ""/timeseries/update"",
-                        ""fields"": {
-                            ""externalId"": ""input.id"",
-                            ""space"": ""if(regex_match(input.name, 'nor.*'), 'norway', 'sweden')""
-                        }
-                    },
-                    {
-                        ""taskName"": ""task-4"",
-                        ""type"": ""no_parameters""
-                    }
-                ]
-            }");
-            Assert.True(JsonNode.DeepEquals(expected, JsonNode.Parse(json)), json);
+            Assert.Equal("my-integration", request.IntegrationId);
+            Assert.Equal("cognite-opcua", request.ExtractorType);
+            Assert.Equal("1.0.0", request.ExtractorVersion);
+            Assert.NotNull(request.Items);
+            var items = request.Items.ToList();
+            Assert.Equal(4, items.Count);
+
+            // Verify each item is derived from the correct mapping and binding
+            Assert.Equal("space_routing", items[0].Type);
+            Assert.Equal("/timeseries/update", items[0].Destination);
+
+            Assert.Equal("location_routing", items[1].Type);
+            Assert.Equal("/timeseries/update", items[1].Destination);
+
+            Assert.Equal("custom", items[2].Type);
+            Assert.Equal("/timeseries/update", items[2].Destination);
+
+            Assert.Equal("no_parameters", items[3].Type);
+            Assert.Equal("/timeseries/update", items[3].Destination);
         }
 
         [Fact]
@@ -202,18 +228,26 @@ cdf-mapping:
         {
             var config = ConfigurationUtils.ReadString<BaseCogniteConfig>(@"
 cdf-mapping:
-  - task-name: task-1
-    type: space_routing
-    parameters:
-      threshold: 5
-      ratio: 1.5
-      enabled: true
-      quoted: ""5""
-      plain: text
-      empty: ~
-      ~: null-key
+  integration-id: test
+  extractor-type: test
+  extractor-version: 1.0
+  mappings:
+    - external-id: m1
+      name: Test
+      type: space_routing
+      parameters:
+        threshold: 5
+        ratio: 1.5
+        enabled: true
+        quoted: ""5""
+        plain: text
+        empty: ~
+        ~: null-key
+  bindings:
+    - mapping-id: m1
+      destinations: [/test]
 ");
-            var parameters = config.CdfMapping!.Single().Parameters!.Value!.AsObject();
+            var parameters = config.CdfMapping!.Mappings!.Single().Parameters!.Value!.AsObject();
             Assert.Equal(5L, (long?)parameters["threshold"]);
             Assert.Equal(1.5, (double?)parameters["ratio"]);
             Assert.True((bool?)parameters["enabled"]);
@@ -296,9 +330,9 @@ cdf-mapping:
         {
             var (provider, destination, server) = GetDestination();
             using var p = provider;
-            var items = ConfigurationUtils.ReadString<BaseCogniteConfig>(Yaml).CdfMapping!;
+            var config = ConfigurationUtils.ReadString<BaseCogniteConfig>(Yaml).CdfMapping!;
 
-            await destination.SetupConfig("my-integration", extractorId, items, CancellationToken.None);
+            await destination.SetupConfig(config, CancellationToken.None);
 
             Assert.Equal(1, server.Calls);
             Assert.Equal("https://greenfield.cognitedata.com/api/v1/projects/project/cdfwriter/setup", server.LastUrl);
@@ -323,10 +357,17 @@ cdf-mapping:
             var (provider, destination, server) = GetDestination();
             using var p = provider;
             server.Status = status;
-            var items = new[] { new CdfMappingItem { TaskName = "t", Type = "space_routing" } };
+            var config = new CdfMappingConfig
+            {
+                IntegrationId = "i",
+                ExtractorType = "t",
+                ExtractorVersion = "v",
+                Mappings = new List<CdfMapping> { new CdfMapping { ExternalId = "m", Name = "M", Type = "space_routing" } },
+                Bindings = new List<CdfMappingBinding> { new CdfMappingBinding { MappingId = "m", Destinations = new List<string> { "/d" } } }
+            };
 
             var exc = await Assert.ThrowsAsync(expected, () =>
-                destination.SetupConfig("my-integration", extractorId, items, CancellationToken.None));
+                destination.SetupConfig(config, CancellationToken.None));
             Assert.Contains("cdf-mapping", exc.Message, StringComparison.Ordinal);
             Assert.Contains("test failure", exc.Message, StringComparison.Ordinal);
         }
@@ -336,14 +377,22 @@ cdf-mapping:
         {
             var (provider, destination, server) = GetDestination();
             using var p = provider;
-            var items = new[] { new CdfMappingItem { TaskName = "t", Type = "space_routing" } };
+
+            var invalidConfig1 = new CdfMappingConfig
+            {
+                IntegrationId = "",
+                ExtractorType = "t",
+                ExtractorVersion = "v",
+                Mappings = new List<CdfMapping> { new CdfMapping { ExternalId = "m", Name = "M", Type = "t" } },
+                Bindings = new List<CdfMappingBinding> { new CdfMappingBinding { MappingId = "m", Destinations = new List<string> { "/d" } } }
+            };
 
             await Assert.ThrowsAsync<ArgumentException>(() =>
-                destination.SetupConfig("", extractorId, items, CancellationToken.None));
-            await Assert.ThrowsAsync<ArgumentException>(() =>
-                destination.SetupConfig("i", new ExtractorId { ExternalId = "x" }, items, CancellationToken.None));
+                destination.SetupConfig(invalidConfig1, CancellationToken.None));
+
             await Assert.ThrowsAsync<ArgumentNullException>(() =>
-                destination.SetupConfig("i", extractorId, null!, CancellationToken.None));
+                destination.SetupConfig(null!, CancellationToken.None));
+
             Assert.Equal(0, server.Calls);
         }
     }

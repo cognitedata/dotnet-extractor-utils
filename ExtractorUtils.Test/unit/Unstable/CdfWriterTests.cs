@@ -8,8 +8,21 @@ namespace ExtractorUtils.Test.Unit.Unstable
 {
     public class CdfWriterTests
     {
-        private static List<CdfMappingItem> Mapping(params string[] tasks)
-            => tasks.Select(t => new CdfMappingItem { TaskName = t, Type = "space_routing" }).ToList();
+        private static CdfMappingConfig Mapping()
+            => new CdfMappingConfig
+            {
+                IntegrationId = "test",
+                ExtractorType = "test",
+                ExtractorVersion = "1.0",
+                Mappings = new List<CdfMapping>
+                {
+                    new CdfMapping { ExternalId = "m1", Name = "M1", Type = "space_routing" }
+                },
+                Bindings = new List<CdfMappingBinding>
+                {
+                    new CdfMappingBinding { MappingId = "m1", Destinations = new List<string> { "/d" } }
+                }
+            };
 
         [Fact]
         public void TestParseConfig()
@@ -18,10 +31,16 @@ namespace ExtractorUtils.Test.Unit.Unstable
 cdf-writer:
     enabled: true
 cdf-mapping:
-    - task-name: datapoints
-      type: space_routing
-    - task-name: timeseries
-      type: space_routing
+    integration-id: test
+    extractor-type: test
+    extractor-version: 1.0
+    mappings:
+      - external-id: m1
+        name: M1
+        type: space_routing
+    bindings:
+      - mapping-id: m1
+        destinations: [/d]
 ");
             Assert.NotNull(config.CdfWriter);
             Assert.True(config.CdfWriter!.Enabled);
@@ -43,14 +62,13 @@ cdf-mapping:
             Assert.Null(CdfWriterConfig.Validate(null, null));
             Assert.Null(CdfWriterConfig.Validate(new CdfWriterConfig { Enabled = false }, null));
 
-            // Enabled without a mapping section, both tasks are missing.
-            Assert.Equal("cognite.cdf-writer requires a cognite.cdf-mapping item with task-name \"datapoints\"",
-                CdfWriterConfig.Validate(enabled, null));
-            Assert.Equal("cognite.cdf-writer requires a cognite.cdf-mapping item with task-name \"datapoints\"",
-                CdfWriterConfig.Validate(enabled, Mapping("other")));
-            Assert.Equal("cognite.cdf-writer requires a cognite.cdf-mapping item with task-name \"timeseries\"",
-                CdfWriterConfig.Validate(enabled, Mapping("datapoints")));
-            Assert.Null(CdfWriterConfig.Validate(enabled, Mapping("datapoints", "timeseries")));
+            // Enabled without a mapping section
+            var error = CdfWriterConfig.Validate(enabled, null);
+            Assert.NotNull(error);
+            Assert.Contains("requires cognite.cdf-mapping", error, System.StringComparison.Ordinal);
+
+            // With mapping
+            Assert.Null(CdfWriterConfig.Validate(enabled, Mapping()));
         }
 
         [Fact]

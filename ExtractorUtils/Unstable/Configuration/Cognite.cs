@@ -27,9 +27,9 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         /// </summary>
         public double? NanReplacement { get; set; }
         /// <summary>
-        /// Mappings sent to the CDF writer when the extractor starts. See <see cref="CdfMappingItem"/>.
+        /// Mappings sent to the CDF writer when the extractor starts. See <see cref="CdfMappingConfig"/>.
         /// </summary>
-        public List<CdfMappingItem>? CdfMapping { get; set; }
+        public CdfMappingConfig? CdfMapping { get; set; }
         /// <summary>
         /// Send writes through the CDF writer. See <see cref="CdfWriterConfig"/>.
         /// </summary>

@@ -292,13 +292,13 @@ namespace Cognite.Extractor.Utils.Unstable
             var cogniteConfig = Provider.GetService<BaseCogniteConfig>();
             if (cogniteConfig?.CdfWriter?.Enabled != true) return;
 
-            var mapping = cogniteConfig.CdfMapping ?? new List<CdfMappingItem>();
+            var mapping = cogniteConfig.CdfMapping;
             var error = CdfWriterConfig.Validate(cogniteConfig.CdfWriter, mapping)
-                ?? CdfMappingItem.Validate(mapping);
+                ?? CdfMappingConfig.Validate(mapping);
             if (error != null) throw new ConfigurationException(error);
             if (Destination == null) throw new ConfigurationException("cognite.cdf-writer requires a CDF destination");
 
-            await Destination.SetupConfig(_integrationExternalId, GetExtractorVersion(), mapping, token).ConfigureAwait(false);
+            await Destination.SetupConfig(mapping, token).ConfigureAwait(false);
         }
 
         /// <summary>

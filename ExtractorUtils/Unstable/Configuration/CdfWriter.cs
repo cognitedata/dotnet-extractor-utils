@@ -28,26 +28,20 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Validate the config section. When enabled, the <c>cdf-mapping</c> must contain items for both
-        /// <see cref="DatapointsTaskName"/> and <see cref="TimeseriesTaskName"/>.
+        /// Validate the config section. When enabled, the <c>cdf-mapping</c> configuration must be present.
         /// </summary>
         /// <param name="config">Config to validate, may be null.</param>
-        /// <param name="mapping">The <c>cdf-mapping</c> items, may be null if no mapping is configured.</param>
+        /// <param name="mapping">The <c>cdf-mapping</c> config, may be null if no mapping is configured.</param>
         /// <returns>An error message if the config is invalid, null otherwise.</returns>
-        public static string? Validate(CdfWriterConfig? config, IEnumerable<CdfMappingItem?>? mapping)
+        public static string? Validate(CdfWriterConfig? config, CdfMappingConfig? mapping)
         {
             if (config == null || !config.Enabled) return null;
 
-            var tasks = new HashSet<string>((mapping ?? Enumerable.Empty<CdfMappingItem?>())
-                .Select(item => item?.TaskName)
-                .OfType<string>());
-            foreach (var task in new[] { DatapointsTaskName, TimeseriesTaskName })
+            if (mapping == null)
             {
-                if (!tasks.Contains(task))
-                {
-                    return $"cognite.cdf-writer requires a cognite.cdf-mapping item with task-name \"{task}\"";
-                }
+                return "cognite.cdf-writer requires cognite.cdf-mapping to be configured";
             }
+
             return null;
         }
     }
