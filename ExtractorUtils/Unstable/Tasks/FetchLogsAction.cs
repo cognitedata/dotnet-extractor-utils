@@ -393,7 +393,9 @@ namespace Cognite.Extractor.Utils.Unstable.Tasks
 
             var uploadRead = await ctx.CdfClient!.CogniteClient.Files.UploadAsync(new FileCreate
             {
-                ExternalId = $"extractor-logs-{ctx.IntegrationExternalId}-{date}",
+                // Random suffix: CDF rejects an upload whose external id already exists (e.g. fetching the
+                // same day twice), so each upload gets its own unique id.
+                ExternalId = $"extractor-logs-{ctx.IntegrationExternalId}-{date}-{Guid.NewGuid().ToString("N").Substring(0, 6)}",
                 Name = fileName,
                 MimeType = "text/plain",
                 Source = "extractor",

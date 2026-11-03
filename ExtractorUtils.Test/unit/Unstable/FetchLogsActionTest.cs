@@ -541,6 +541,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                 await System.IO.File.WriteAllTextAsync(logPath, content);
 
                 var uploadCalls = new List<string>();
+                var uploadBodies = new List<string>();
                 var blobBytesReceived = new List<byte[]>();
 
                 async Task<HttpResponseMessage> ExtraHandler(HttpRequestMessage message, CancellationToken token)
@@ -549,6 +550,7 @@ namespace ExtractorUtils.Test.unit.Unstable
                     if (uri.Contains("/files") && message.Method == HttpMethod.Post)
                     {
                         uploadCalls.Add(uri);
+                        uploadBodies.Add(await message.Content!.ReadAsStringAsync(token).ConfigureAwait(false));
                         var body = "{\"externalId\": \"extractor-logs-test-integration-" + yesterday.ToString("yyyy-MM-dd") + "\", " +
                                    "\"id\": 1, \"uploaded\": false, \"createdTime\": 0, \"lastUpdatedTime\": 0, " +
                                    "\"uploadUrl\": \"http://example.url/upload-blob\"}";
@@ -579,6 +581,8 @@ namespace ExtractorUtils.Test.unit.Unstable
                 Assert.Single(uploadCalls);
                 Assert.Single(blobBytesReceived);
                 Assert.Equal(content, System.Text.Encoding.UTF8.GetString(blobBytesReceived[0]));
+                // External id carries a random 6-char suffix so re-fetching the same day doesn't collide.
+                Assert.Matches("\"externalId\":\\s*\"extractor-logs-test-integration-" + yesterday.ToString("yyyy-MM-dd") + "-[0-9a-f]{6}\"", uploadBodies[0]);
 
                 Assert.Single(sink.ActionUpdates);
                 Assert.Equal(ActionStatus.running, sink.ActionUpdates[0].Status);
