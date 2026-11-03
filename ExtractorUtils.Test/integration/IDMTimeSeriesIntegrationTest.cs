@@ -1277,9 +1277,13 @@ namespace ExtractorUtils.Test.Integration
 
                 // Read back from CDF through the beta retrieve path: this is the real round-trip that
                 // proves the extension view was written and is readable, not just echoed from the write.
-                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
                 var identities = CreateIdentities(spaceId, new[] { tsXid });
-                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true);
+                var retrieved = await RetryUtil.RetryUntilAsync(
+                    "GetTimeSeries",
+                    () => tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true),
+                    _pollConfig,
+                    r => r.Count() == 1 && r.First().Properties.extractedData != null,
+                    tester.Source.Token);
                 var found = Assert.Single(retrieved);
 
                 Assert.Equal(TimeSeriesType.State, found.Properties.Type);
@@ -1327,8 +1331,12 @@ namespace ExtractorUtils.Test.Integration
                 result.Throw();
                 Assert.Single(result.Results);
 
-                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
-                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true);
+                var retrieved = await RetryUtil.RetryUntilAsync(
+                    "GetTimeSeries",
+                    () => tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true),
+                    _pollConfig,
+                    r => r.Count() == 1 && r.First().Properties.extractedData != null,
+                    tester.Source.Token);
                 var found = Assert.Single(retrieved);
                 Assert.NotNull(found.Properties.extractedData);
                 Assert.Equal("initial", found.Properties.extractedData["key"]);
@@ -1343,8 +1351,13 @@ namespace ExtractorUtils.Test.Integration
                 var updateResult = await tester.DestinationWithIDM.UpsertTimeSeriesAsync(updates, RetryMode.None, SanitationMode.None, tester.Source.Token, isBeta: true);
                 updateResult.Throw();
 
-                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
-                retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true);
+                retrieved = await RetryUtil.RetryUntilAsync(
+                    "GetTimeSeriesAfterUpdate",
+                    () => tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(identities, tester.Source.Token, isBeta: true),
+                    _pollConfig,
+                    r => r.Count() == 1 && r.First().Properties.extractedData != null
+                        && r.First().Properties.extractedData.TryGetValue("key", out var value) && value == "updated",
+                    tester.Source.Token);
                 found = Assert.Single(retrieved);
                 Assert.Equal("updated", found.Properties.extractedData["key"]);
             }
@@ -1382,12 +1395,18 @@ namespace ExtractorUtils.Test.Integration
                     x => { x.Properties.Name = numericXid; x.Properties.Description = description; return x; })
             };
 
-            async Task<Dictionary<string, SourcedNode<CogniteExtractorTimeSeries>>> RetrieveBoth()
+            // Retries until both series are returned and isDone accepts them, to ride out eventual consistency.
+            async Task<Dictionary<string, SourcedNode<CogniteExtractorTimeSeries>>> RetrieveBoth(
+                Func<Dictionary<string, SourcedNode<CogniteExtractorTimeSeries>>, bool> isDone)
             {
-                await Task.Delay(500);      // Try to get eventual consistency before retrieval.
-                var retrieved = await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
-                    CreateIdentities(spaceId, new[] { stateXid, numericXid }), tester.Source.Token, isBeta: true);
-                return retrieved.ToDictionary(ts => ts.ExternalId, ts => ts);
+                var identities = CreateIdentities(spaceId, new[] { stateXid, numericXid });
+                return await RetryUtil.RetryUntilAsync(
+                    "GetTimeSeriesBoth",
+                    async () => (await tester.DestinationWithIDM.GetTimeSeriesByIdsIgnoreErrors<CogniteExtractorTimeSeries>(
+                        identities, tester.Source.Token, isBeta: true)).ToDictionary(ts => ts.ExternalId, ts => ts),
+                    _pollConfig,
+                    isDone,
+                    tester.Source.Token);
             }
 
             try
@@ -1408,7 +1427,7 @@ namespace ExtractorUtils.Test.Integration
                 Assert.Throws<CogniteErrorException>(() => mixedNonBetaResult.ThrowOnFatal());
                 Assert.NotEmpty(mixedNonBetaResult.Errors);
 
-                var afterMixedNonBeta = await RetrieveBoth();
+                var afterMixedNonBeta = await RetrieveBoth(d => d.Count == 2 && d[stateXid].Properties.Description == "original");
                 Assert.Equal("original", afterMixedNonBeta[stateXid].Properties.Description);
 
                 // Numeric-only update: must succeed when the unsupported state series is excluded.
@@ -1421,7 +1440,9 @@ namespace ExtractorUtils.Test.Integration
                 numericOnlyResult.Throw();
                 Assert.Single(numericOnlyResult.Results);
 
-                var afterNumericOnly = await RetrieveBoth();
+                var afterNumericOnly = await RetrieveBoth(d => d.Count == 2
+                    && d[numericXid].Properties.Description == "updated-numeric-only"
+                    && d[stateXid].Properties.Description == "original");
                 Assert.Equal("updated-numeric-only", afterNumericOnly[numericXid].Properties.Description);
                 Assert.Equal("original", afterNumericOnly[stateXid].Properties.Description);
 
@@ -1432,7 +1453,9 @@ namespace ExtractorUtils.Test.Integration
                 betaResult.Throw();
                 Assert.Equal(2, betaResult.Results.Count());
 
-                var afterBeta = await RetrieveBoth();
+                var afterBeta = await RetrieveBoth(d => d.Count == 2
+                    && d[stateXid].Properties.Description == "updated-beta"
+                    && d[numericXid].Properties.Description == "updated-beta");
                 Assert.Equal("updated-beta", afterBeta[stateXid].Properties.Description);
                 Assert.Equal("updated-beta", afterBeta[numericXid].Properties.Description);
             }

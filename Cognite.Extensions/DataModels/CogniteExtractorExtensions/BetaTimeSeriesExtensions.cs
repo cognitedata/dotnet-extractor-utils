@@ -19,6 +19,8 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
     /// </summary>
     public static class BetaTimeSeriesExtensions
     {
+        private static ViewIdentifier ResolveView(ViewIdentifier? extensionView) => extensionView ?? TimeSeriesResource.View;
+
         /// <summary>
         /// Get or create the time series with the provided <paramref name="instanceIds"/> if they exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct
@@ -42,7 +44,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            var view = extensionView ?? TimeSeriesResource.View;
+            var view = ResolveView(extensionView);
             return BetaResourceExtensions.GetOrCreateAsync(
                 view,
                 (ids, tok) => timeSeries.RetrieveAsync<T>(ids, view, tok),
@@ -74,7 +76,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            var view = extensionView ?? TimeSeriesResource.View;
+            var view = ResolveView(extensionView);
             return BetaResourceExtensions.GetOrCreateAsync(
                 view,
                 (ids, tok) => timeSeries.RetrieveAsync<T>(ids, view, tok),
@@ -104,7 +106,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            var view = extensionView ?? TimeSeriesResource.View;
+            var view = ResolveView(extensionView);
             return BetaResourceExtensions.EnsureExistsAsync(
                 view,
                 (items, tok) => timeSeries.UpsertAsync(items, view, null, tok),
@@ -132,7 +134,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            var view = extensionView ?? TimeSeriesResource.View;
+            var view = ResolveView(extensionView);
             return BetaResourceExtensions.GetByIdsIgnoreErrors(
                 view,
                 (chunkIds, tok) => timeSeries.RetrieveAsync<T>(chunkIds, view, tok),
@@ -159,7 +161,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
             CancellationToken token,
             ViewIdentifier? extensionView = null) where T : CogniteTimeSeriesBase
         {
-            var view = extensionView ?? TimeSeriesResource.View;
+            var view = ResolveView(extensionView);
             return BetaResourceExtensions.UpsertAsync(
                 view,
                 (chunkItems, tok) => resource.UpsertAsync(chunkItems, view, null, tok),

@@ -106,7 +106,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to TimeSeries before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// <param name="isBeta">If true, use the beta CDM time series API, with <see cref="IDMViewIdentifier"/> as its extension view. If false, use the IDM view directly.
         /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occurred and a list of the created and found TimeSeries</returns>
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
@@ -136,7 +136,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to handle failed requests</param>
         /// <param name="sanitationMode">The type of sanitation to apply to TimeSeries before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// <param name="isBeta">If true, use the beta CDM time series API, with <see cref="IDMViewIdentifier"/> as its extension view. If false, use the IDM view directly.
         /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found TimeSeries</returns>
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
@@ -166,7 +166,7 @@ namespace Cognite.Extractor.Utils
         /// this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to timeseries before creating</param>
         /// <param name="token">Cancellation token</param>
-        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// <param name="isBeta">If true, use the beta CDM time series API, with <see cref="IDMViewIdentifier"/> as its extension view. If false, use the IDM view directly.
         /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureTimeSeriesExistsAsync<T>(
@@ -198,7 +198,7 @@ namespace Cognite.Extractor.Utils
         /// </summary>
         /// <param name="timeSeries">List of TimeSeries instance ids to fetch</param>
         /// <param name="token">Cancellation token</param>
-        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// <param name="isBeta">If true, use the beta CDM time series API, with <see cref="IDMViewIdentifier"/> as its extension view. If false, use the IDM view directly.
         /// Required to fetch state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
         public async Task<IEnumerable<SourcedNode<T>>> GetTimeSeriesByIdsIgnoreErrors<T>(
@@ -231,7 +231,7 @@ namespace Cognite.Extractor.Utils
         /// <param name="retryMode">How to do retries. Keeping duplicates is not valid for this method.</param>
         /// <param name="sanitationMode">The type of sanitation to apply to assets before updating</param>
         /// <param name="token">Cancellation token</param>
-        /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
+        /// <param name="isBeta">If true, use the beta CDM time series API, with <see cref="IDMViewIdentifier"/> as its extension view. If false, use the IDM view directly.
         /// Required to update state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated TimeSeries</returns>
         public async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertTimeSeriesAsync<T>(
