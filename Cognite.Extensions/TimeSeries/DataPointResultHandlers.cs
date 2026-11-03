@@ -37,7 +37,8 @@ namespace Cognite.Extensions
                 }).Where(id => id != null);
             }
             else if (ex.Message.StartsWith("Expected string value", StringComparison.InvariantCultureIgnoreCase)
-                || ex.Message.StartsWith("Expected numeric value", StringComparison.InvariantCultureIgnoreCase))
+                || ex.Message.StartsWith("Expected numeric value", StringComparison.InvariantCultureIgnoreCase)
+                || ex.Message.StartsWith("Expected state value", StringComparison.InvariantCultureIgnoreCase))
             {
                 err.Type = ErrorType.MismatchedType;
                 err.Resource = ResourceType.DataPointValue;
