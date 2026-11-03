@@ -30,7 +30,7 @@
         "push-gateways": {
             "type": "array",
             "uniqueItems": true,
-            "description": "A list of pushgateway destinations to push metrics to. The extractor will automatically push metrics to each of these.",
+            "description": "A list of Prometheus Pushgateway destinations. The extractor pushes metrics to each destination in the list.",
             "items": {
                 "type": "object",
                 "properties": {
