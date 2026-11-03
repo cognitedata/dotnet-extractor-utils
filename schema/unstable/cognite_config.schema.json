@@ -175,6 +175,73 @@
         "nan-replacement": {
             "type": ["number", "null"],
             "description": "Replacement for NaN/Infinity double values when writing datapoints to CDF. If omitted, non-finite values are skipped."
+        },
+        "cdf-mapping": {
+            "type": "array",
+            "description": "List of mappings sent to the CDF writer when the extractor starts. Contents are passed through to CDF as-is.",
+            "items": {
+                "type": "object",
+                "unevaluatedProperties": false,
+                "required": [
+                    "task-name",
+                    "type"
+                ],
+                "properties": {
+                    "task-name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Name of the extractor task this mapping applies to."
+                    },
+                    "type": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Type of mapping, for example `space_routing`. `custom` requires `destination` and `fields`, all other types may set `parameters` and optionally `destination`."
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "description": "Type specific parameters. May contain any nested structure, all scalar values are sent as strings. Not allowed when `type` is `custom`.",
+                        "additionalProperties": true
+                    },
+                    "destination": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Destination endpoint, for example `/timeseries/update`. Required when `type` is `custom`, optional otherwise."
+                    },
+                    "fields": {
+                        "type": "object",
+                        "minProperties": 1,
+                        "description": "Map from target field to expression. Only allowed when `type` is `custom`.",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "if": {
+                    "properties": {
+                        "type": {
+                            "const": "custom"
+                        }
+                    }
+                },
+                "then": {
+                    "required": [
+                        "destination",
+                        "fields"
+                    ],
+                    "not": {
+                        "required": [
+                            "parameters"
+                        ]
+                    }
+                },
+                "else": {
+                    "not": {
+                        "required": [
+                            "fields"
+                        ]
+                    }
+                }
+            }
         }
     }
 }

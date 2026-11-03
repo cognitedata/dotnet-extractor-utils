@@ -31,6 +31,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="options">Chunking, throttling, retry, and sanitation options</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found timeseries</returns>
+        [Obsolete]
         public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<InstanceIdentifier> instanceIds,
@@ -58,6 +59,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="options">Chunking, throttling, retry, and sanitation options</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found timeseries</returns>
+        [Obsolete]
         public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<InstanceIdentifier> instanceIds,
@@ -85,6 +87,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// via the retry mode is not valid for this method.</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
+        [Obsolete]
         public static Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureTimeSeriesExistsAsync<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<SourcedNodeWrite<T>> timeSeriesToEnsure,
@@ -108,6 +111,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="throttleSize">Throttle size</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>Retrieved timeseries</returns>
+        [Obsolete]
         public static Task<IEnumerable<SourcedNode<T>>> GetTimeSeriesByIdsIgnoreErrors<T>(
             this TimeSeriesResource timeSeries,
             IEnumerable<Identity> ids,
@@ -131,6 +135,7 @@ namespace Cognite.Extensions.DataModels.CogniteExtractorExtensions
         /// <param name="options">Chunking, throttling, retry, and sanitation options</param>
         /// <param name="token">Cancellation token</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated timeseries</returns>
+        [Obsolete]
         public static Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertAsync<T>(
             this TimeSeriesResource resource,
             IEnumerable<SourcedNodeWrite<T>> items,
