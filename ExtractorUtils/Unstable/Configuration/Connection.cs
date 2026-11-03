@@ -42,6 +42,12 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         private CdfConnectionConfig _cdfConnection = new CdfConnectionConfig();
 
         /// <summary>
+        /// Opt-in configuration for routing writes through the Charon CDF-writer service.
+        /// Disabled (null) by default, in which case writes go directly to CDF.
+        /// </summary>
+        public CdfWriterConfig? CdfWriter { get; set; }
+
+        /// <summary>
         /// Register any necessary yaml converters.
         /// </summary>
         public static void RegisterConverters(YamlConfigBuilder builder)
@@ -129,6 +135,23 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         /// External ID of the integration.
         /// </summary>
         public string? ExternalId { get; set; }
+    }
+
+    /// <summary>
+    /// Opt-in configuration for the Charon CDF-writer service (POC, unstable contract).
+    /// When enabled, timeseries writes are routed through Charon instead of directly to CDF.
+    /// </summary>
+    public class CdfWriterConfig
+    {
+        /// <summary>
+        /// Enable routing writes through Charon. Default false (direct-to-CDF).
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// Base URL of the Charon service. Endpoints live under <c>/cdfwriter</c>.
+        /// </summary>
+        public string? BaseUrl { get; set; }
     }
 
     /// <summary>

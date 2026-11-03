@@ -25,3 +25,5 @@
   href: version.md
 - name: Running as service
   href: service.md
+- name: Charon CDF-writer (unstable)
+  href: charon-writer.md
