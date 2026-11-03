@@ -190,7 +190,7 @@ namespace Cognite.Extractor.Utils.Unstable
                 }
             }
             _customActions.Add(action.Name, action);
-	        _logger.LogDebug("Registered action {name}: {description}", action.Name, action.Description);
+            _logger.LogDebug("Registered action {name}: {description}", action.Name, action.Description);
         }
 
         /// <summary>
