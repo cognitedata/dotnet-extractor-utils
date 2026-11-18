@@ -280,6 +280,37 @@ namespace Cognite.Extractor.Utils.Unstable
             await InitTasks().ConfigureAwait(false);
             RegisterBuiltInActions();
             await InitActions().ConfigureAwait(false);
+            await SetupCdfWriter(token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Declare the integration tasks that write through the CDF writer, the resources each one emits,
+        /// and the view each upserting resource is shaped for. Called during init, after <see cref="InitTasks"/>,
+        /// only when the <c>cdf-writer</c> config section is present.
+        ///
+        /// Return null if this extractor does not support the CDF writer, which fails startup when
+        /// <c>cdf-writer</c> is configured.
+        /// </summary>
+        /// <returns>Tasks and emitted views, or null if the CDF writer is not supported.</returns>
+        protected virtual CdfWriterDeclaration? GetCdfWriterDeclaration() => null;
+
+        /// <summary>
+        /// Register tasks, emitted views, mappings and bindings with the CDF writer when the <c>cdf-writer</c>
+        /// section is present. Runs at the end of init, so the config is in place before the first check-in.
+        /// </summary>
+        private async Task SetupCdfWriter(CancellationToken token)
+        {
+            var config = Provider.GetService<CdfWriterConfig>();
+            if (config == null) return;
+
+            var error = CdfWriterConfig.Validate(config);
+            if (error != null) throw new ConfigurationException(error);
+            var declaration = GetCdfWriterDeclaration()
+                ?? throw new ConfigurationException("cdf-writer is configured, but this extractor does not support the CDF writer");
+            if (Destination == null) throw new ConfigurationException("cdf-writer requires a CDF destination");
+
+            var result = await Destination.SetupCdfWriter(_integrationExternalId, GetExtractorVersion(), config, declaration, token).ConfigureAwait(false);
+            _logger.LogInformation("Registered cdf-writer config revision {Version} for integration {Integration}", result?.Version, _integrationExternalId);
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
     public class BaseCogniteConfig
     {
         /// <summary>
-        /// Chunking sizes towards CDF 
+        /// Chunking sizes towards CDF
         /// </summary>
         public ChunkingConfig CdfChunking { get => _cdfChunking; set { _cdfChunking = value ?? _cdfChunking; } }
         private ChunkingConfig _cdfChunking = new ChunkingConfig();

@@ -1,0 +1,179 @@
+{
+    "$id": "cdf_writer_config.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "description": "Configuration for the CDF writer (CdfWriterConfig), placed at the root of the extractor config as `cdf-writer`. When present, the extractor registers its tasks, emitted views, mappings and bindings with the CDF writer at startup, and writes go through the CDF writer instead of directly to CDF.",
+    "unevaluatedProperties": false,
+    "required": ["mappings", "bindings"],
+    "properties": {
+        "merge": {
+            "type": "string",
+            "enum": ["replace", "preserve"],
+            "default": "replace",
+            "description": "Integration-wide upsert merge behaviour. `replace` writes properties as emitted, without reading. `preserve` reads existing nodes first: object properties keep existing keys with emitted keys winning, lists union, scalars are replaced. Under `preserve`, objects never lose keys and lists never shrink."
+        },
+        "mappings": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Mapping definitions. `external-id` must be unique. A mapping that no binding refers to is allowed and ignored.",
+            "items": {
+                "$ref": "#/$defs/mapping"
+            }
+        },
+        "bindings": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Bindings attaching integration tasks to mappings. Every (task, resource) pair the extractor declares must be covered by exactly one binding.",
+            "items": {
+                "type": "object",
+                "unevaluatedProperties": false,
+                "required": ["task-ids", "mapping-id"],
+                "properties": {
+                    "task-ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "description": "Integration task names, verbatim. No wildcards.",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    },
+                    "mapping-id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "`external-id` of a mapping in `mappings`. The binding covers every resource the mapping declares."
+                    }
+                }
+            }
+        }
+    },
+    "$defs": {
+        "mapping": {
+            "type": "object",
+            "unevaluatedProperties": false,
+            "required": ["external-id", "name", "kind", "resources"],
+            "properties": {
+                "external-id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Identifier of the mapping, scoped to the integration."
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Human-readable name."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Optional description."
+                },
+                "kind": {
+                    "type": "string",
+                    "enum": ["spaceRouting"],
+                    "description": "Mapping kind. Only `spaceRouting` is supported."
+                },
+                "api-version": {
+                    "type": "string",
+                    "enum": ["stable", "beta"],
+                    "default": "stable",
+                    "description": "CDF API version to write with. `beta` is required for state time series and `CogniteStateSet`."
+                },
+                "resources": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "description": "Emitted resource to its config block. A mapping declaring `CogniteTimeseries` should also declare the resources its direct relations target, such as `CogniteSourceSystem`.",
+                    "propertyNames": {
+                        "enum": ["CogniteTimeseries", "CogniteSourceSystem", "CogniteStateSet", "CogniteAsset", "edges"]
+                    },
+                    "additionalProperties": {
+                        "$ref": "#/$defs/resource"
+                    }
+                }
+            },
+            "if": {
+                "properties": {
+                    "resources": {
+                        "required": ["CogniteStateSet"]
+                    }
+                },
+                "required": ["resources"]
+            },
+            "then": {
+                "required": ["api-version"],
+                "properties": {
+                    "api-version": {
+                        "const": "beta"
+                    }
+                }
+            }
+        },
+        "resource": {
+            "type": "object",
+            "unevaluatedProperties": false,
+            "required": ["parameters"],
+            "properties": {
+                "parameters": {
+                    "$ref": "#/$defs/space-routing-parameters"
+                },
+                "properties": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Optional Kuiper expression applied to upsert items, with the emitted item bound as `input`. Returns `{ type?, properties }`, or `null` to skip the item. An explicit `null` property clears it in CDF, so omit keys that should be left untouched."
+                },
+                "auto-create-direct-relations": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Create missing target nodes of direct relations."
+                }
+            }
+        },
+        "space-routing-parameters": {
+            "type": "object",
+            "unevaluatedProperties": false,
+            "required": ["default"],
+            "dependentRequired": {
+                "rules": ["property"],
+                "property": ["rules"]
+            },
+            "properties": {
+                "property": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "Path to the value the rules match, as segments joined with dots. `[externalId]` matches the item's external ID on every operation. Any other path, such as `[extractedData, site]`, is read from upsert properties, and the chosen space is recorded for data points and deletes. Required together with `rules`.",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[^.]+$"
+                    }
+                },
+                "rules": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "Tried in order, the first match wins. Patterns must be unique. Required together with `property`.",
+                    "items": {
+                        "type": "object",
+                        "unevaluatedProperties": false,
+                        "required": ["pattern", "space"],
+                        "properties": {
+                            "pattern": {
+                                "type": "string",
+                                "minLength": 1,
+                                "description": "Regex matched against the whole value."
+                            },
+                            "space": {
+                                "type": "string",
+                                "minLength": 1,
+                                "description": "Space for matching items."
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Space used when no rule matches, or when there are no rules."
+                }
+            }
+        }
+    }
+}
