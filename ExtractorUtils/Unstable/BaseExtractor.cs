@@ -284,21 +284,33 @@ namespace Cognite.Extractor.Utils.Unstable
         }
 
         /// <summary>
-        /// Send the <c>cdf-mapping</c> to the CDF writer when <c>cdf-writer</c> is enabled. Runs at the end
-        /// of init, so the mapping is in place before the first check-in.
+        /// Declare the integration tasks that write through the CDF writer, the resources each one emits,
+        /// and the view each upserting resource is shaped for. Called during init, after <see cref="InitTasks"/>,
+        /// only when the <c>cdf-writer</c> config section is present.
+        ///
+        /// Return null if this extractor does not support the CDF writer, which fails startup when
+        /// <c>cdf-writer</c> is configured.
+        /// </summary>
+        /// <returns>Tasks and emitted views, or null if the CDF writer is not supported.</returns>
+        protected virtual CdfWriterDeclaration? GetCdfWriterDeclaration() => null;
+
+        /// <summary>
+        /// Register tasks, emitted views, mappings and bindings with the CDF writer when the <c>cdf-writer</c>
+        /// section is present. Runs at the end of init, so the config is in place before the first check-in.
         /// </summary>
         private async Task SetupCdfWriter(CancellationToken token)
         {
-            var cogniteConfig = Provider.GetService<BaseCogniteConfig>();
-            if (cogniteConfig?.CdfWriter?.Enabled != true) return;
+            var config = Provider.GetService<CdfWriterConfig>();
+            if (config == null) return;
 
-            var mapping = cogniteConfig.CdfMapping;
-            var error = CdfWriterConfig.Validate(cogniteConfig.CdfWriter, mapping)
-                ?? CdfMappingConfig.Validate(mapping);
+            var error = CdfWriterConfig.Validate(config);
             if (error != null) throw new ConfigurationException(error);
-            if (Destination == null) throw new ConfigurationException("cognite.cdf-writer requires a CDF destination");
+            var declaration = GetCdfWriterDeclaration()
+                ?? throw new ConfigurationException("cdf-writer is configured, but this extractor does not support the CDF writer");
+            if (Destination == null) throw new ConfigurationException("cdf-writer requires a CDF destination");
 
-            await Destination.SetupConfig(mapping, token).ConfigureAwait(false);
+            var result = await Destination.SetupCdfWriter(_integrationExternalId, GetExtractorVersion(), config, declaration, token).ConfigureAwait(false);
+            _logger.LogInformation("Registered cdf-writer config revision {Version} for integration {Integration}", result?.Version, _integrationExternalId);
         }
 
         /// <summary>

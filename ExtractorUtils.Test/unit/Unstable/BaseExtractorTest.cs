@@ -30,6 +30,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
     {
         public Action<ExtractorTaskScheduler> InitAction { get; set; }
         public Action<DummyExtractor> InitActionsAction { get; set; }
+        public CdfWriterDeclaration CdfWriterDeclaration { get; set; }
         public IIntegrationSink Sink { get; }
 
         public DummyExtractor(
@@ -73,6 +74,8 @@ namespace ExtractorUtils.Test.Unit.Unstable
             return Task.CompletedTask;
         }
 
+        protected override CdfWriterDeclaration GetCdfWriterDeclaration() => CdfWriterDeclaration;
+
         protected override ExtractorId GetExtractorVersion()
         {
             return new ExtractorId
@@ -91,7 +94,7 @@ namespace ExtractorUtils.Test.Unit.Unstable
             _output = output;
         }
 
-        private (DummyExtractor, DummySink) CreateExtractor(int? revision = null, bool withDestination = false, BaseCogniteConfig cogniteConfig = null)
+        private (DummyExtractor, DummySink) CreateExtractor(int? revision = null, bool withDestination = false, CdfWriterConfig cdfWriterConfig = null)
         {
             var sink = new DummySink();
             var services = new ServiceCollection();
@@ -100,34 +103,60 @@ namespace ExtractorUtils.Test.Unit.Unstable
             services.AddTestLogging(_output);
             services.AddTransient<ExtractorTaskScheduler>();
             services.AddTransient<DummyExtractor>();
-            if (cogniteConfig != null) services.AddSingleton(cogniteConfig);
+            if (cdfWriterConfig != null) services.AddSingleton(cdfWriterConfig);
             if (withDestination) services.AddTestCogniteDestination();
             var provider = services.BuildServiceProvider();
             return (provider.GetRequiredService<DummyExtractor>(), sink);
         }
 
-        [Fact]
-        public async Task TestCdfWriterDisabledSkipsSetup()
+        private static CdfWriterConfig ValidCdfWriterConfig() => new CdfWriterConfig
         {
-            var (ext, _) = CreateExtractor(cogniteConfig: new BaseCogniteConfig
+            Mappings = new List<CdfWriterMappingConfig>
             {
-                CdfWriter = new CdfWriterConfig { Enabled = false },
-            });
+                new CdfWriterMappingConfig
+                {
+                    ExternalId = "m1",
+                    Name = "M1",
+                    Kind = CdfWriterConfig.KindSpaceRouting,
+                    Resources = new Dictionary<string, CdfWriterResourceConfig>
+                    {
+                        ["CogniteTimeseries"] = new CdfWriterResourceConfig { Parameters = new SpaceRoutingParametersConfig { Default = "sp" } },
+                    },
+                },
+            },
+            Bindings = new List<CdfWriterBindingConfig>
+            {
+                new CdfWriterBindingConfig { MappingId = "m1", TaskIds = new List<string> { "task" } },
+            },
+        };
+
+        [Fact]
+        public async Task TestCdfWriterAbsentSkipsSetup()
+        {
+            // No cdf-writer section and no destination: init must not try to call CDF.
+            var (ext, _) = CreateExtractor();
 
             await ext.Init(CancellationToken.None);
         }
 
         [Fact]
-        public async Task TestCdfWriterEnabledValidatesMappingBeforeSetup()
+        public async Task TestCdfWriterValidatesConfigBeforeSetup()
         {
-            // Enabled with no cdf-mapping items: rejected at init, before any call to CDF.
-            var (ext, _) = CreateExtractor(cogniteConfig: new BaseCogniteConfig
-            {
-                CdfWriter = new CdfWriterConfig { Enabled = true },
-            });
+            // Invalid cdf-writer section: rejected at init, before any call to CDF.
+            var (ext, _) = CreateExtractor(cdfWriterConfig: new CdfWriterConfig());
 
             var ex = await Assert.ThrowsAsync<ConfigurationException>(() => ext.Init(CancellationToken.None));
-            Assert.Contains("datapoints", ex.Message);
+            Assert.Contains("cdf-writer.mappings", ex.Message);
+        }
+
+        [Fact]
+        public async Task TestCdfWriterRequiresExtractorSupport()
+        {
+            // Valid config, but the extractor declares no tasks or views.
+            var (ext, _) = CreateExtractor(cdfWriterConfig: ValidCdfWriterConfig());
+
+            var ex = await Assert.ThrowsAsync<ConfigurationException>(() => ext.Init(CancellationToken.None));
+            Assert.Contains("does not support the CDF writer", ex.Message);
         }
 
         [Fact]

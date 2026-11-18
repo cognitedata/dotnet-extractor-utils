@@ -26,13 +26,5 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
         /// Optional replacement for non-finite double values in datapoints
         /// </summary>
         public double? NanReplacement { get; set; }
-        /// <summary>
-        /// Mappings sent to the CDF writer when the extractor starts. See <see cref="CdfMappingConfig"/>.
-        /// </summary>
-        public CdfMappingConfig? CdfMapping { get; set; }
-        /// <summary>
-        /// Send writes through the CDF writer. See <see cref="CdfWriterConfig"/>.
-        /// </summary>
-        public CdfWriterConfig? CdfWriter { get; set; }
     }
 }
