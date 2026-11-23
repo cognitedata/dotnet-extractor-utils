@@ -79,14 +79,17 @@ namespace Cognite.Extractor.Utils.Unstable
             if (declaration == null) throw new ArgumentNullException(nameof(declaration));
             if (extractorId == null) throw new ArgumentNullException(nameof(extractorId));
 
-            return new CdfWriterSetupRequest
+            var emittedViews = declaration.EmittedViews.Count > 0
+                ? new Dictionary<string, CdfWriterViewReference>(declaration.EmittedViews)
+                : null;
+
+            return new CdfWriterSetupRequest(emittedViews)
             {
                 IntegrationId = integrationId,
                 ExtractorType = extractorId.ExternalId,
                 ExtractorVersion = extractorId.Version,
                 Merge = config.Merge,
                 Tasks = declaration.Tasks.ToList(),
-                EmittedViews = new Dictionary<string, CdfWriterViewReference>(declaration.EmittedViews),
                 Mappings = (config.Mappings ?? Enumerable.Empty<CdfWriterMappingConfig>()).Select(ToMapping).ToList(),
                 Bindings = (config.Bindings ?? Enumerable.Empty<CdfWriterBindingConfig>()).Select(b => new CdfWriterBinding
                 {
@@ -98,28 +101,29 @@ namespace Cognite.Extractor.Utils.Unstable
 
         private static CdfWriterMapping ToMapping(CdfWriterMappingConfig mapping)
         {
-            return new CdfWriterMapping
+            var resources = mapping.Resources?.ToDictionary(kvp => kvp.Key, kvp => new CdfWriterMappingResource
+            {
+                Parameters = kvp.Value.Parameters == null ? null : new CdfWriterSpaceRoutingParameters
+                {
+                    Property = kvp.Value.Parameters.Property?.ToList(),
+                    Rules = kvp.Value.Parameters.Rules?.Select(r => new CdfWriterSpaceRoutingRule
+                    {
+                        Pattern = r.Pattern,
+                        Space = r.Space,
+                    }).ToList(),
+                    Default = kvp.Value.Parameters.Default,
+                },
+                Properties = kvp.Value.Properties,
+                AutoCreateDirectRelations = kvp.Value.AutoCreateDirectRelations,
+            });
+
+            return new CdfWriterMapping(resources)
             {
                 ExternalId = mapping.ExternalId,
                 Name = mapping.Name,
                 Description = mapping.Description,
                 Kind = mapping.Kind,
                 ApiVersion = mapping.ApiVersion,
-                Resources = mapping.Resources?.ToDictionary(kvp => kvp.Key, kvp => new CdfWriterMappingResource
-                {
-                    Parameters = kvp.Value.Parameters == null ? null : new CdfWriterSpaceRoutingParameters
-                    {
-                        Property = kvp.Value.Parameters.Property?.ToList(),
-                        Rules = kvp.Value.Parameters.Rules?.Select(r => new CdfWriterSpaceRoutingRule
-                        {
-                            Pattern = r.Pattern,
-                            Space = r.Space,
-                        }).ToList(),
-                        Default = kvp.Value.Parameters.Default,
-                    },
-                    Properties = kvp.Value.Properties,
-                    AutoCreateDirectRelations = kvp.Value.AutoCreateDirectRelations,
-                }),
             };
         }
 
