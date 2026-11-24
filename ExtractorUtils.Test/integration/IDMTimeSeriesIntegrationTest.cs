@@ -1125,21 +1125,27 @@ namespace ExtractorUtils.Test.Integration
                 var found = Assert.Single(retrieved);
                 Assert.Equal(existingXid, found.ExternalId);
 
-                var result = await tester.DestinationWithIDM.GetOrCreateStateSetsAsync<CogniteStateSet>(
-                    new[] { new InstanceIdentifier(spaceId, existingXid), new InstanceIdentifier(spaceId, missingXid) },
-                    missing =>
-                    {
-                        var missingId = Assert.Single(missing);
-                        Assert.Equal(missingXid, missingId.ExternalId);
-                        return Task.FromResult<IEnumerable<SourcedNodeWrite<CogniteStateSet>>>(new[]
+                // A successful read does not guarantee visibility on the next read, so retry the
+                // whole operation. The builder assertions run before any state sets are written.
+                var result = await RetryUtil.RetryResultAsync(
+                    "GetOrCreateStateSets",
+                    () => tester.DestinationWithIDM.GetOrCreateStateSetsAsync<CogniteStateSet>(
+                        new[] { new InstanceIdentifier(spaceId, existingXid), new InstanceIdentifier(spaceId, missingXid) },
+                        missing =>
                         {
-                            GetWritableStateSet(missingId.Space, missingId.ExternalId, new[]
+                            var missingId = Assert.Single(missing);
+                            Assert.Equal(missingXid, missingId.ExternalId);
+                            return Task.FromResult<IEnumerable<SourcedNodeWrite<CogniteStateSet>>>(new[]
                             {
-                                new CogniteState { NumericValue = 0, StringValue = "IDLE" }
-                            })
-                        });
-                    },
-                    RetryMode.OnError, SanitationMode.Clean, tester.Source.Token);
+                                GetWritableStateSet(missingId.Space, missingId.ExternalId, new[]
+                                {
+                                    new CogniteState { NumericValue = 0, StringValue = "IDLE" }
+                                })
+                            });
+                        },
+                        RetryMode.OnError, SanitationMode.Clean, tester.Source.Token),
+                    _pollConfig,
+                    tester.Source.Token);
                 result.Throw();
                 Assert.Equal(2, result.Results.Count());
             }
