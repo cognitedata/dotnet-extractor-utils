@@ -121,6 +121,7 @@ namespace Cognite.Extractor.Utils
             return await GetOrCreateDispatch(isBeta, instanceIds,
                 ids => Task.FromResult(buildTimeSeries(ids)), retryMode, sanitationMode, token).ConfigureAwait(false);
         }
+
         /// <summary>
         /// Ensures the the time series with the provided <paramref name="instanceIds"/> exist in CDF.
         /// If one or more do not exist, use the <paramref name="buildTimeSeries"/> function to construct

@@ -277,6 +277,7 @@ namespace Cognite.Extractor.Utils.Unstable.Runtime
                     typeof(HighAvailabilityConfig),
                     typeof(MetricsConfig),
                     typeof(StateStoreConfig),
+                    typeof(CdfWriterConfig),
                 })
                 .Distinct().ToArray();
             services.AddConfig(config.Config, configTypes);
