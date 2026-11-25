@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.13.17" />
+    <PackageReference Include="StackExchange.Redis" Version="2.13.23" />
     <PackageReference Include="System.CommandLine" Version="2.0.12" />
   </ItemGroup>
   <ItemGroup>
