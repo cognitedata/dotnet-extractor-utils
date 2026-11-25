@@ -142,8 +142,9 @@ namespace Cognite.Extractor.Utils.Unstable.Configuration
             {
                 var resourcePath = $"{path}.resources.{kvp.Key}";
                 if (kvp.Value == null) return $"{resourcePath} must not be empty";
-                var error = kvp.Value.Parameters?.Validate($"{resourcePath}.parameters")
-                    ?? (kvp.Value.Parameters == null ? $"Missing required field {resourcePath}.parameters" : null);
+                if (kvp.Value.Parameters == null)
+                    return $"Missing required field {resourcePath}.parameters";
+                var error = kvp.Value.Parameters.Validate($"{resourcePath}.parameters");
                 if (error != null) return error;
                 if (kvp.Value.Properties != null && string.IsNullOrWhiteSpace(kvp.Value.Properties))
                     return $"{resourcePath}.properties must not be empty";

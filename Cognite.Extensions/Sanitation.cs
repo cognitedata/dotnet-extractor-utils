@@ -315,9 +315,9 @@ namespace Cognite.Extensions
                 for (int i = 0; i < distinctResources.Length; i++)
                 {
                     var value = distinctResources[i].Selector(item);
-                    if (value != null && !existingResources[i].Add((Identity)value))
+                    if (value != null && !existingResources[i].Add(value))
                     {
-                        duplicates[i].Add(((T Item, Identity Idt))(item, value));
+                        duplicates[i].Add((item, value));
                         toAdd = false;
                     }
                 }

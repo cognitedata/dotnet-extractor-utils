@@ -116,7 +116,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestCreateTimeSeries(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -167,7 +166,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestCreateStateTimeSeriesWithStateSetReference(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -210,7 +208,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestSanitation(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -256,7 +253,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestUpdateTimeSeries(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -288,7 +284,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestUpdateSanitation(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -678,7 +673,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestGetOrCreate(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -765,7 +759,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestStateTimeSeries(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -828,7 +821,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestStateDataPointsToInsertRequest(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);
@@ -1169,7 +1161,6 @@ namespace ExtractorUtils.Test.Integration
         [Theory]
         [InlineData(CogniteHost.GreenField)]
         [InlineData(CogniteHost.BlueField)]
-        [Obsolete]
         public async Task TestStateTimeSeriesUpsertAndGetOrCreateAsync(CogniteHost host)
         {
             using var tester = new CDFTester(host, _output);

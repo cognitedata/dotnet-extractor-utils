@@ -303,10 +303,12 @@ namespace Cognite.Extractor.Utils.Unstable
             var config = Provider.GetService<CdfWriterConfig>();
             if (config == null) return;
 
-            var error = CdfWriterConfig.Validate(config);
-            if (error != null) throw new ConfigurationException(error);
             var declaration = GetCdfWriterDeclaration()
                 ?? throw new ConfigurationException("cdf-writer is configured, but this extractor does not support the CDF writer");
+
+            var error = CdfWriterConfig.Validate(config);
+            if (error != null) throw new ConfigurationException(error);
+
             if (Destination == null) throw new ConfigurationException("cdf-writer requires a CDF destination");
 
             var result = await Destination.SetupCdfWriter(_integrationExternalId, GetExtractorVersion(), config, declaration, token).ConfigureAwait(false);

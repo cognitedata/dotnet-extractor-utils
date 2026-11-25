@@ -69,7 +69,6 @@ namespace Cognite.Extractor.Utils
             }
         }
 
-        [Obsolete]
         private Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateDispatch<T>(
             bool isBeta,
             IEnumerable<InstanceIdentifier> instanceIds,
@@ -110,7 +109,6 @@ namespace Cognite.Extractor.Utils
         /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
         /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occurred and a list of the created and found TimeSeries</returns>
-        [Obsolete]
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, IEnumerable<SourcedNodeWrite<T>>> buildTimeSeries,
@@ -142,7 +140,6 @@ namespace Cognite.Extractor.Utils
         /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
         /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created and found TimeSeries</returns>
-        [Obsolete]
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> GetOrCreateTimeSeriesAsync<T>(
             IEnumerable<InstanceIdentifier> instanceIds,
             Func<IEnumerable<InstanceIdentifier>, Task<IEnumerable<SourcedNodeWrite<T>>>> buildTimeSeries,
@@ -173,7 +170,6 @@ namespace Cognite.Extractor.Utils
         /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
         /// Required to create state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
-        [Obsolete]
         public async Task<CogniteResult<SourcedNode<T>, SourcedNodeWrite<T>>> EnsureTimeSeriesExistsAsync<T>(
             IEnumerable<SourcedNodeWrite<T>> timeSeries,
             RetryMode retryMode,
@@ -206,7 +202,6 @@ namespace Cognite.Extractor.Utils
         /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
         /// Required to fetch state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the created timeseries</returns>
-        [Obsolete]
         public async Task<IEnumerable<SourcedNode<T>>> GetTimeSeriesByIdsIgnoreErrors<T>(
             IEnumerable<Identity> timeSeries,
             CancellationToken token,
@@ -240,7 +235,6 @@ namespace Cognite.Extractor.Utils
         /// <param name="isBeta">If true, use the beta CDM time series API instead of the IDM view.
         /// Required to update state time series.</param>
         /// <returns>A <see cref="CogniteResult{TResult, TError}"/> containing errors that occured and a list of the updated TimeSeries</returns>
-        [Obsolete]
         public async Task<CogniteResult<SlimInstance, SourcedNodeWrite<T>>> UpsertTimeSeriesAsync<T>(
             IEnumerable<SourcedNodeWrite<T>> updates,
             RetryMode retryMode,
